@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+ 	<extension
+         point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+      <contribution
+            class="il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranchContribution"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.contributions.shortestBranch"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            description="Spartan Refactoring Actions"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.actionSet"
+            label="Spartanization"
+            visible="true">
+         <menu
+               id="il.ac.technion.cs.ssdl.spartan.refactoring.menu"
+               label="Spartanization"
+               path="org.eclipse.jdt.ui.refactoring.menu/dummySeperator">
+            <separator name="group" />    
+         </menu>
+         
+         <action
+               class="il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranchAction"
+               enablesFor="*"
+               id="il.ac.technion.cs.ssdl.spartan.refactoring.actions.ShortestBranchAction"
+               label="Shortest Conditional Branch First..."  
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/il.ac.technion.cs.ssdl.spartan.refactoring.menu/group"
+               style="push">
+         </action>
+
+         <action
+               class="il.ac.technion.cs.ssdl.spartan.refactoring.RedundantEqualityAction"
+               enablesFor="*"
+               id="il.ac.technion.cs.ssdl.spartan.refactoring.RedundantEqualityAction"
+               label="Eliminate Redundant Equalities..."  
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/il.ac.technion.cs.ssdl.spartan.refactoring.menu/group"
+               style="push">
+         </action>
+         
+         <action
+               class="il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTernaryAction"
+               enablesFor="*"
+               id="il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTrenaryAction"
+               label="Convert Conditional to Ternary..."  
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/il.ac.technion.cs.ssdl.spartan.refactoring.menu/group"
+               style="push">
+         </action>
+
+         <action
+               class="il.ac.technion.cs.ssdl.spartan.refactoring.InlineSingleUseAction"
+               enablesFor="*"
+               id="il.ac.technion.cs.ssdl.spartan.refactoring.InlineSingleUseAction"
+               label="Inline Single Use of Variable..."  
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/il.ac.technion.cs.ssdl.spartan.refactoring.menu/group"
+               style="push">
+         </action>
+
+      </actionSet>
+   </extension>
+
+   <extension
+         id="il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder"
+         name="Spartanization Checker"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="il.ac.technion.cs.ssdl.spartan.builder.SpartaBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="il.ac.technion.cs.ssdl.spartan.spartaNature"
+         name="Spartanization Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="il.ac.technion.cs.ssdl.spartan.builder.SpartanizationNature">
+         </run>
+      </runtime>
+      <builder
+            id="il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder">
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            nameFilter="*"
+            id="il.ac.technion.cs.ssdl.spartan.contribution1">
+         <action
+               label="Add/Remove Spartanization"
+               class="il.ac.technion.cs.ssdl.spartan.builder.ToggleNatureAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="il.ac.technion.cs.ssdl.spartan.addRemoveNatureAction">
+         </action>
+      </objectContribution>
+   </extension>
+   
+<extension
+    id="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
+    name="Spartanization Suggestion"
+    point="org.eclipse.core.resources.markers">
+  <super
+    type="org.eclipse.core.resources.problemmarker">
+  </super>
+</extension>
+
+   <extension point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+         markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
+         class="il.ac.technion.cs.ssdl.spartan.builder.SpartanizationQuickfixer"/>
+   </extension>
+   
+</plugin>
