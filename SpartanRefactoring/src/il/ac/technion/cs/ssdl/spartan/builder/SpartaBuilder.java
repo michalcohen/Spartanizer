@@ -114,7 +114,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
 							blahMarker.setAttribute(IMarker.CHAR_END,
 									rng.to);
 							blahMarker.setAttribute(IMarker.SEVERITY,
-									IMarker.SEVERITY_WARNING);
+									IMarker.SEVERITY_INFO);
 							blahMarker.setAttribute(SPARTANIZATION_TYPE_KEY,
 									currSpartanization.toString());
 							blahMarker

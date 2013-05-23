@@ -106,9 +106,8 @@
     id="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
     name="Spartanization Suggestion"
     point="org.eclipse.core.resources.markers">
-  <super
-    type="org.eclipse.core.resources.problemmarker">
-  </super>
+  <super type="org.eclipse.core.resources.problemmarker" />
+  <super type="org.eclipse.core.resources.textmarker" />
 </extension>
 
    <extension point="org.eclipse.ui.ide.markerResolution">
@@ -116,5 +115,27 @@
          markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
          class="il.ac.technion.cs.ssdl.spartan.builder.SpartanizationQuickfixer"/>
    </extension>
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+      <type markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion" name="il.ac.technion.cs.ssdl.spartan.spartanizationMarker" />
+   </extension>
+   <extension
+      point="org.eclipse.ui.editors.markerAnnotationSpecification">
+   <specification
+         annotationType="il.ac.technion.cs.ssdl.spartan.spartanizationMarker"
+         colorPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.color"
+         colorPreferenceValue="0,0,180"
+         contributesToHeader="false"
+         includeOnPreferencePage="true"
+         label="Spartanization Suggestion"
+         overviewRulerPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.overview"
+         overviewRulerPreferenceValue="true"
+         presentationLayer="0"
+         textPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.text"
+         textPreferenceValue="true"
+         textStylePreferenceValue="PROBLEM_UNDERLINE"
+         verticalRulerPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.ruler"
+         verticalRulerPreferenceValue="true">
+   </specification>
+</extension>
    
 </plugin>
