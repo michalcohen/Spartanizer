@@ -45,12 +45,10 @@ public class BasicSpartanization {
 	public class SpartanizationResolution implements
 	IMarkerResolution {
 
-		@Override
 		public String getLabel() {
 			return BasicSpartanization.this.toString() + ": Do it!";
 		}
 
-		@Override
 		public void run(final IMarker arg0) { 
 			try {
 				getRefactoring().runAsMarkerFix(new org.eclipse.core.runtime.NullProgressMonitor(), arg0);
@@ -64,12 +62,10 @@ public class BasicSpartanization {
 	public class SpartanizationResolutionWithPreview implements
 	IMarkerResolution {
 
-		@Override
 		public String getLabel() {
 			return BasicSpartanization.this.toString() + ": Show me a preview first";
 		}
 
-		@Override
 		public void run(final IMarker arg0) {
 			getRefactoring().setMarker(arg0);
 			final BaseRefactoringWizard wiz = new BaseRefactoringWizard(getRefactoring());

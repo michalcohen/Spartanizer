@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayAccess;
+import org.eclipse.jdt.core.dom.ArrayCreation;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.CastExpression;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.ForStatement;
@@ -31,7 +33,7 @@ public enum VariableCounter {
 
 		@Override
 		public List<Expression> list(final ASTNode n, final SimpleName v) {
-			final List<Expression> $ = new ArrayList<>();
+			final List<Expression> $ = new ArrayList<Expression>();
 
 			n.accept(new ASTVisitor() {
 				@Override
@@ -88,6 +90,34 @@ public enum VariableCounter {
 				}
 				
 				@Override
+				public boolean visit(final ConstructorInvocation node) {
+					for (final Object arg : node.arguments())
+						$.addAll(listSingle((Expression)arg,v));
+					return true;					
+				}
+				
+				@Override
+				public boolean visit(final ClassInstanceCreation node) {
+					for (final Object arg : node.arguments())
+						$.addAll(listSingle((Expression)arg,v));
+					return true;										
+				};
+				
+				@Override
+				public boolean visit(final ArrayCreation node) {
+					for (final Object dim : node.dimensions())
+						$.addAll(listSingle((Expression)dim, v));
+					return true;
+				};
+				
+				@Override
+				public boolean visit(final ArrayInitializer node) {
+					for (final Object item : node.expressions())
+						$.addAll(listSingle((Expression)item, v));
+					return true;
+				};
+				
+				@Override
 				public boolean visit(final ReturnStatement node) {
 					$.addAll(listSingle(node.getExpression(), v));
 					return true;
@@ -128,7 +158,7 @@ public enum VariableCounter {
 
 		@Override
 		public List<Expression> list(final ASTNode n, final SimpleName v) {
-			final List<Expression> $ = new ArrayList<>();
+			final List<Expression> $ = new ArrayList<Expression>();
 
 			n.accept(new ASTVisitor() {
 				@Override
@@ -149,11 +179,10 @@ public enum VariableCounter {
 
 			@Override
 			public List<Expression> list(final ASTNode n, final SimpleName v) {
-				final List<Expression> $ = new ArrayList<>(USES.list(n, v));
+				final List<Expression> $ = new ArrayList<Expression>(USES.list(n, v));
 				$.addAll(ASSIGNMENTS.list(n, v));
 				Collections.sort($, new Comparator<Expression>() {
 
-					@Override
 					public int compare(final Expression e1, final Expression e2) {
 						return e1.getStartPosition() - e2.getStartPosition();
 					}
@@ -163,7 +192,7 @@ public enum VariableCounter {
 	public abstract List<Expression> list(ASTNode n, SimpleName v);
 		
 	private static List<Expression> listSingle(final Expression e, SimpleName v) {
-		final List<Expression> $ = new ArrayList<>();
+		final List<Expression> $ = new ArrayList<Expression>();
 		if (e instanceof SimpleName && ((SimpleName)e).getIdentifier().equals(v.getIdentifier()))
 			$.add(e);
 		return $;

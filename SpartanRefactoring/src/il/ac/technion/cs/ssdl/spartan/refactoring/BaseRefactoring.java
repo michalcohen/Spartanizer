@@ -83,8 +83,8 @@ public abstract class BaseRefactoring extends Refactoring {
 	
 	protected boolean isNodeOutsideMarker(ASTNode node, IMarker m) {
 		try {
-			return (node.getStartPosition() < (int)m.getAttribute(IMarker.CHAR_START)
-					|| node.getStartPosition() + node.getLength() > (int)m.getAttribute(IMarker.CHAR_END));
+			return (node.getStartPosition() < (Integer)m.getAttribute(IMarker.CHAR_START)
+					|| node.getStartPosition() + node.getLength() > (Integer)m.getAttribute(IMarker.CHAR_END));
 		} catch (CoreException e) {
 			return true;
 		}

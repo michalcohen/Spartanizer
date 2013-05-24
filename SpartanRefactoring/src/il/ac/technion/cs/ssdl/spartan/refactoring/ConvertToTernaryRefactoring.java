@@ -277,7 +277,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 
 	@Override
 	public Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu) {
-		final Collection<SpartanizationRange> $ = new ArrayList<>();
+		final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
 		cu.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(IfStatement node) {

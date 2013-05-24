@@ -77,7 +77,7 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
 
 	@Override
 	public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-		final Collection<SpartanizationRange> $ = new ArrayList<>();
+		final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
 		cu.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(final InfixExpression node) {

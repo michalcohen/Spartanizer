@@ -33,5 +33,5 @@ public class SpartanizationFactory {
 		return spartanizations.values();
 	}
 
-	private static final Map<String, BasicSpartanization> spartanizations = new HashMap<>();
+	private static final Map<String, BasicSpartanization> spartanizations = new HashMap<String, BasicSpartanization>();
 }

@@ -107,17 +107,17 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
 					for (final SpartanizationRange rng : currSpartanization
 							.checkForSpartanization(concreteCu)) {
 						if (rng != null) {
-							final IMarker blahMarker = file
+							final IMarker spartanizationMarker = file
 									.createMarker(MARKER_TYPE);
-							blahMarker.setAttribute(IMarker.CHAR_START,
+							spartanizationMarker.setAttribute(IMarker.CHAR_START,
 									rng.from);
-							blahMarker.setAttribute(IMarker.CHAR_END,
+							spartanizationMarker.setAttribute(IMarker.CHAR_END,
 									rng.to);
-							blahMarker.setAttribute(IMarker.SEVERITY,
+							spartanizationMarker.setAttribute(IMarker.SEVERITY,
 									IMarker.SEVERITY_INFO);
-							blahMarker.setAttribute(SPARTANIZATION_TYPE_KEY,
+							spartanizationMarker.setAttribute(SPARTANIZATION_TYPE_KEY,
 									currSpartanization.toString());
-							blahMarker
+							spartanizationMarker
 									.setAttribute(IMarker.MESSAGE,
 											"Spartanization suggestion: " + currSpartanization.getMessage());
 						}
