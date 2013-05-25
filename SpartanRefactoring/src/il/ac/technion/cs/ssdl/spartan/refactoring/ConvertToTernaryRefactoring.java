@@ -32,8 +32,9 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 	}
 	
 	@Override
-	protected ASTRewrite innerCreateRewrite(CompilationUnit cu, SubProgressMonitor pm, final IMarker m) {
-		pm.beginTask("Creating rewrite operation...", 1);
+	protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
+		if (pm!=null)
+			pm.beginTask("Creating rewrite operation...", 1);
 		
 		final AST ast = cu.getAST();
 		final ASTRewrite rewrite = ASTRewrite.create(ast);
@@ -46,25 +47,16 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 				if (m!=null && isNodeOutsideMarker(node, m))
 					return true;
 				
-				ASTNode oldnode  = node;
-				ASTNode newnode = treatAssignment(ast, rewrite, node);
-				if(newnode == null)
-					newnode = treatReturn(ast, rewrite, node);
-				if(newnode == null) {
-					final ASTNodePair p = treatIfReturn(ast, rewrite, node);
-					if (p!=null) {
-						oldnode = p.oldNode;
-						newnode = p.newNode;
-					}
-				}
-				if (newnode == null)
+				if(treatAssignment(ast, rewrite, node))
 					return true;
-								
-				rewrite.replace(oldnode, newnode, null);						
-				return false;
+				if(treatReturn(ast, rewrite, node))
+					return true;
+				treatIfReturn(ast, rewrite, node);
+				return true;
 			}
 		});
-		pm.done();
+		if (pm!=null)
+			pm.done();
 		return rewrite;
 	}
 
@@ -132,14 +124,14 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 	 * @param node The root if node.
 	 * @return Returns null if it is not possible to rewrite as return. Otherwise returns the new node.
 	 */
-	private Statement treatReturn(AST ast, ASTRewrite rewrite,
+	private boolean treatReturn(AST ast, ASTRewrite rewrite,
 			IfStatement node) {
 		
 		ReturnStatement retThen = getReturnStatement(node.getThenStatement());
 		ReturnStatement retElse = getReturnStatement(node.getElseStatement());
 		
 		if(retThen == null || retElse == null)
-			return null;
+			return false;
 		
 		ConditionalExpression newCondExp = ast.newConditionalExpression();
 		newCondExp.setExpression((Expression) rewrite.createMoveTarget(node.getExpression()));
@@ -149,7 +141,9 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 		ReturnStatement newnode = ast.newReturnStatement();
 		newnode.setExpression(newCondExp);
 		
-		return newnode;
+		rewrite.replace(node, newnode, null);
+		
+		return true;
 	}
 	
 	
@@ -160,17 +154,11 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 	 * @param node The root if node.
 	 * @return Returns null if it is not possible to rewrite as assignment. Otherwise returns the new node.
 	 */
-	private Statement treatAssignment(final AST ast,
+	private boolean treatAssignment(final AST ast,
 			final ASTRewrite rewrite, IfStatement node) {
 		Assignment asgnThen = getAssignment(node.getThenStatement());
 		Assignment asgnElse = getAssignment(node.getElseStatement());
 		
-		/*if(asgnThen == null || asgnElse == null) 
-			return null;*/
-		
-		/*if(((SimpleName)assThen.getLeftHandSide()).isDeclaration() || ((SimpleName)assElse.getLeftHandSide()).isDeclaration())
-			return true;
-		*/
 		// We will rewrite only if the two assignments assign to the same variable
 		if(asgnElse!=null && asgnThen.getLeftHandSide().subtreeMatch(new ASTMatcher(), asgnElse.getLeftHandSide()) &&
 				asgnThen.getOperator().equals(asgnElse.getOperator())) {
@@ -186,7 +174,8 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 			newAsgn.setRightHandSide(newCondExp);
 			newAsgn.setLeftHandSide((Expression) rewrite.createMoveTarget(asgnThen.getLeftHandSide()));
 			
-			return ast.newExpressionStatement(newAsgn);
+			rewrite.replace(node, ast.newExpressionStatement(newAsgn), null);
+			return true;
 		}
 		else if (asgnElse == null && asgnThen != null && asgnThen.getOperator().equals(Operator.ASSIGN)) {
 			final Assignment newAsgn = ast.newAssignment();
@@ -198,13 +187,13 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 			newAsgn.setOperator(Operator.ASSIGN);
 			newAsgn.setRightHandSide(newCondExp);
 			newAsgn.setLeftHandSide((Expression) rewrite.createMoveTarget(asgnThen.getLeftHandSide()));
-			return ast.newExpressionStatement(newAsgn);
+			rewrite.replace(node, ast.newExpressionStatement(newAsgn), null);
+			return true;
 		}
-		return null;
+		return false;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private ASTNodePair treatIfReturn(AST ast, ASTRewrite rewrite, IfStatement node) {
+	private boolean treatIfReturn(AST ast, ASTRewrite rewrite, IfStatement node) {
 		final ASTNode parent = node.getParent();
 		if (parent.getNodeType() == ASTNode.BLOCK) {
 			@SuppressWarnings("rawtypes")
@@ -220,14 +209,15 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 					newCondExp.setElseExpression((Expression) rewrite.createMoveTarget(nextReturn.getExpression()));
 					final ReturnStatement newReturn = ast.newReturnStatement();
 					newReturn.setExpression(newCondExp);
-					Block newParent = (Block) ASTNode.copySubtree(ast, parent);
-					newParent.statements().set(ifIdx, newReturn);
-					newParent.statements().remove(ifIdx+1);
-					return new ASTNodePair(parent, newParent);
+					
+					rewrite.replace(node, newReturn, null);
+					rewrite.remove(nextReturn, null);
+					
+					return true;
 				}
 			}
 		}
-		return null;
+		return false;
 	}
 	
 	private SpartanizationRange detectAssignment(final IfStatement node) {
@@ -265,14 +255,6 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 			}
 		}
 		return null;
-	}
-	
-	private static class ASTNodePair {
-		public final ASTNode oldNode, newNode;
-		public ASTNodePair(final ASTNode on, final ASTNode nn) {
-			oldNode = on;
-			newNode = nn;
-		}
 	}
 
 	@Override
