@@ -45,6 +45,26 @@ public class SpartanizationTests {
 		runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary5");
 	}
 	
+	@Test
+	public void testForwardDeclaration1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration1");
+	}
+
+	@Test
+	public void testForwardDeclaration2() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration2");
+	}
+	
+	@Test
+	public void testForwardDeclaration3() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration3");
+	}
+	
+	@Test
+	public void testForwardDeclaration4() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration4");
+	}
+	
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {
 		final ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);

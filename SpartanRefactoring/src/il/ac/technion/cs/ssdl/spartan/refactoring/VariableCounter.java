@@ -19,10 +19,12 @@ import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SwitchStatement;
@@ -129,6 +131,12 @@ public enum VariableCounter {
 					return true;
 				};
 				
+				@Override
+				public boolean visit(final QualifiedName node) {
+					$.addAll(listSingle(node.getQualifier(), v));
+					return true;
+				};
+				
 				public boolean visit(final VariableDeclarationFragment node) {
 					$.addAll(listSingle(node.getInitializer(), v));
 					return true;
@@ -149,6 +157,12 @@ public enum VariableCounter {
 				@Override
 				public boolean visit(final ForStatement node) {
 					$.addAll(listSingle(node.getExpression(), v));
+					return true;
+				};
+				
+				@Override
+				public boolean visit(final InstanceofExpression node) {
+					$.addAll(listSingle(node.getLeftOperand(), v));
 					return true;
 				};
 			});

@@ -1,0 +1,14 @@
+package p;
+
+public class Blah {
+	public void yada4() {
+		/*
+		 * This is a comment
+		 */
+		
+		int i = 6;
+		int j = 2;
+		int k = i+2;
+		System.out.println(i-j+k);
+	}
+}

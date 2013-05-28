@@ -172,7 +172,7 @@ public abstract class BaseRefactoring extends Refactoring {
 			throws CoreException {
 		
 		pm.beginTask("Creating change for a single compilation unit...", 2);	
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setResolveBindings(false);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(u);
