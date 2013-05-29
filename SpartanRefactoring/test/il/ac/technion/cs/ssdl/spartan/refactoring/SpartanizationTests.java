@@ -65,6 +65,16 @@ public class SpartanizationTests {
 		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration4");
 	}
 	
+	@Test
+	public void testForwardDeclaration5() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration5");
+	}
+
+	@Test
+	public void testForwardDeclaration6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration6");
+	}
+	
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {
 		final ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
