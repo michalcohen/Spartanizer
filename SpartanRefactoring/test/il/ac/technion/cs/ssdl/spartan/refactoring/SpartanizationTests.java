@@ -46,6 +46,16 @@ public class SpartanizationTests {
 	}
 	
 	@Test
+	public void testConvertToTernary6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ConvertToTernaryRefactoring(),"ConvertToTernary6");
+	}
+
+	@Test
+	public void testConvertToTernary7() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary7");
+	}
+	
+	@Test
 	public void testForwardDeclaration1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration1");
 	}
@@ -73,6 +83,31 @@ public class SpartanizationTests {
 	@Test
 	public void testForwardDeclaration6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration6");
+	}
+	
+	@Test
+	public void testInlineSingleUse1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse1");
+	}
+	
+	@Test
+	public void testInlineSingleUse2() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse2");
+	}
+	
+	@Test
+	public void testInlineSingleUse3() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse3");
+	}
+	
+	@Test
+	public void testInlineSingleUse4() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse4");
+	}
+
+	@Test
+	public void testInlineSingleUse5() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse5");
 	}
 	
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {

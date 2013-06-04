@@ -226,7 +226,8 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 				if (prevAsgn != null && asgnThen!=null && asgnElse==null &&
 						!dependsOn(node.getExpression(),asgnThen.getLeftHandSide()) &&
 						asgnThen.getOperator().equals(Operator.ASSIGN)) {
-					rewrite.remove(prevAsgn, null);
+					if (prevAsgn.getParent().getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+						rewrite.remove(prevAsgn.getParent(), null);
 					rewriteAssignIfAssignToAssignTernary(ast, rewrite, node, asgnThen, prevAsgn.getRightHandSide());
 					return  true;
 				}
