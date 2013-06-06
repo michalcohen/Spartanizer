@@ -28,7 +28,8 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
 	
 	@Override
 	protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-		pm.beginTask("Creating rewrite operation...", 1);
+		if (pm!=null)
+			pm.beginTask("Creating rewrite operation...", 1);
 		
 		final AST ast = cu.getAST();
 		final ASTRewrite rewrite = ASTRewrite.create(ast);
@@ -71,7 +72,8 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
 				return true;
 			}
 		});
-		pm.done();
+		if (pm!=null)
+			pm.done();
 		return rewrite;
 	}
 

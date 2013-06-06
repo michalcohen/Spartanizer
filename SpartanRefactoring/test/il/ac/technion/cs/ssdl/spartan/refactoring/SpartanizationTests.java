@@ -135,6 +135,22 @@ public class SpartanizationTests {
 		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse5");
 	}
 	
+	@Test
+	public void testRedundantEquality1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality1");
+	}
+
+	@Test
+	public void testRedundantEquality2() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality2");
+	}
+
+	@Test
+	public void testRedundantEquality3() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality3");
+	}
+
+	
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {
 		final ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
