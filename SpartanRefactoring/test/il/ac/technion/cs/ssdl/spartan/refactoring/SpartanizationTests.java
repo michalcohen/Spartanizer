@@ -54,7 +54,27 @@ public class SpartanizationTests {
 	public void testConvertToTernary7() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary7");
 	}
+
+	@Test
+	public void testConvertToTernary8() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ConvertToTernaryRefactoring(),"ConvertToTernary8");
+	}
+
+	@Test
+	public void testConvertToTernary9() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ConvertToTernaryRefactoring(),"ConvertToTernary9");
+	}
+
+	@Test
+	public void testConvertToTernary10() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary10");
+	}
 	
+	@Test
+	public void testConvertToTernary11() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ConvertToTernaryRefactoring(),"ConvertToTernary11");
+	}
+
 	@Test
 	public void testForwardDeclaration1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration1");

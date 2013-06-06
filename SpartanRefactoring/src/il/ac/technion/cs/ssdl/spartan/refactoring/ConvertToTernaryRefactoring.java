@@ -241,12 +241,12 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 					return  true;
 				}
 				final VariableDeclarationStatement prevMultiDecl = getDeclaration((Statement)stmts.get(ifIdx-1), asgnThen.getLeftHandSide());
-				if (prevDecl != null && asgnThen!=null && asgnElse==null &&
+				if (prevMultiDecl != null && asgnThen!=null && asgnElse==null &&
 						!dependsOn(node.getExpression(),asgnThen.getLeftHandSide()) &&
 						asgnThen.getOperator().equals(Operator.ASSIGN)) {
 					final VariableDeclarationFragment singleDecl = getDeclarationFragment(prevMultiDecl, asgnThen.getLeftHandSide());
 					rewriteAssignIfAssignToDeclareTernary(ast, rewrite, node, asgnThen, singleDecl);
-					rewrite.remove(singleDecl, null);
+					rewrite.remove(node, null);
 					return  true;
 				}
 			}
