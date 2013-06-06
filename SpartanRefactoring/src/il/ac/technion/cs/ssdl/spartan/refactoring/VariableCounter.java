@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTMatcher;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
@@ -17,16 +18,19 @@ import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -38,6 +42,34 @@ public enum VariableCounter {
 			final List<Expression> $ = new ArrayList<Expression>();
 
 			n.accept(new ASTVisitor() {
+				@Override
+				public boolean visit(final MethodDeclaration node) {
+					/* Now: this is a bit complicated.
+					 * Java allows declaring methods in anonymous classes in which the formal parameters
+					 * hide variables in the enclosing scope. We don't want to count them as uses of the
+					 * varaible 
+					 */
+					for (final Object obj : node.parameters()) {
+						final SingleVariableDeclaration decl = (SingleVariableDeclaration)obj;
+						if (decl.getName().subtreeMatch(matcher, e))
+							return false;
+					}
+					return true;
+				};
+				
+				@Override
+				public boolean visit(final AnonymousClassDeclaration node) {
+					/*
+					 * Similar case for fields in anonymous classes
+					 */
+					final List<VariableDeclarationFragment> fieldDecls = getFieldsOfClass(node);
+					for (final VariableDeclarationFragment decl : fieldDecls) {
+						if (decl.getName().subtreeMatch(matcher, e))
+							return false;
+					}
+					return true;
+				};
+				
 				@Override
 				public boolean visit(final InfixExpression node) {
 					$.addAll(listSingle(node.getRightOperand(),e));
@@ -175,6 +207,12 @@ public enum VariableCounter {
 			final List<Expression> $ = new ArrayList<Expression>();
 
 			n.accept(new ASTVisitor() {
+				
+				@Override
+				public boolean visit(final AnonymousClassDeclaration node) {
+					return false;
+				}
+				
 				@Override
 				public boolean visit(final Assignment node) {
 					$.addAll(listSingle(node.getLeftHandSide(),e));
@@ -209,6 +247,18 @@ public enum VariableCounter {
 		final List<Expression> $ = new ArrayList<Expression>();
 		if (e1!=null && e1.getNodeType() == e2.getNodeType() && e1.subtreeMatch(matcher, e2))
 			$.add(e1);
+		return $;
+	}
+	
+	protected static List<VariableDeclarationFragment> getFieldsOfClass(final ASTNode classNode) {
+		final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
+		classNode.accept(new ASTVisitor() {
+			@SuppressWarnings("unchecked")
+			public boolean visit(final FieldDeclaration node) {
+				$.addAll((List<VariableDeclarationFragment>) node.fragments());
+				return false;
+			};
+		});
 		return $;
 	}
 	

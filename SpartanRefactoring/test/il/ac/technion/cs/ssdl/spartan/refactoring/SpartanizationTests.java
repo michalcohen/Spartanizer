@@ -84,7 +84,12 @@ public class SpartanizationTests {
 	public void testForwardDeclaration6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration6");
 	}
-	
+
+	@Test
+	public void testForwardDeclaration7() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration7");
+	}
+
 	@Test
 	public void testInlineSingleUse1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse1");
