@@ -150,7 +150,51 @@ public class SpartanizationTests {
 		runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality3");
 	}
 
+	@Test
+	public void testShortestBranchFirst1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst1");
+	}
 	
+	@Test
+	public void testShortestBranchFirst2() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst2");
+	}
+
+	@Test
+	public void testShortestBranchFirst3() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst3");
+	}
+
+	@Test
+	public void testShortestBranchFirst4() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst4");
+	}
+
+	@Test
+	public void testShortestBranchFirst5() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst5");
+	}
+
+	@Test
+	public void testShortestBranchFirst6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst6");
+	}
+	
+	@Test
+	public void testShortestBranchFirst7() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst7");
+	}
+
+	@Test
+	public void testShortestBranchFirst8() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst8");
+	}
+	
+	@Test
+	public void testShortestBranchFirst9() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst9");
+	}
+
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {
 		final ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);

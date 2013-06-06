@@ -1,0 +1,9 @@
+package p;
+
+public class Blah {
+	private int yada3(int x) { return x+6; }
+
+	public int yada2(final String s) {
+		return s.equals("yada") ? 9 * yada3(s.length()) : 6;
+	}
+}

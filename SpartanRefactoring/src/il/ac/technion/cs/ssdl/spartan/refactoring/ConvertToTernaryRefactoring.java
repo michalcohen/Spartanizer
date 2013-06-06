@@ -389,9 +389,6 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 		cu.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(IfStatement node) {
-				if (isNodeOutsideSelection(node))
-					return true;
-				
 				SpartanizationRange rng = null;
 				if ((rng=detectAssignIfAssign(node))!=null) {
 					$.add(rng);
