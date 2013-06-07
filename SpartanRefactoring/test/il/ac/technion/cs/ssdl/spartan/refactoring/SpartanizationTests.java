@@ -205,6 +205,36 @@ public class SpartanizationTests {
 		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar2");
 	}
 
+	@Test
+	public void testChangeReturnVariableToDollar3() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar3");
+	}
+	
+	@Test
+	public void testChangeReturnVariableToDollar4() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCaseNoChange(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar4");
+	}
+
+	@Test
+	public void testChangeReturnVariableToDollar5() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar5");
+	}
+	
+	@Test
+	public void testChangeReturnVariableToDollar6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar6");
+	}
+	
+	@Test
+	public void testChangeReturnVariableToDollar7() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar7");
+	}
+	
+	@Test
+	public void testChangeReturnVariableToDollar8() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar8");
+	}
+
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {
 		final ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
