@@ -85,7 +85,6 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 					project.setDescription(description, null);
 					project.accept(new IResourceVisitor() {
 						
-						@Override
 						public boolean visit(final IResource resource) throws CoreException {
 							if (resource instanceof IFile && resource.getName().endsWith(".java"))
 								SpartaBuilder.deleteMarkers((IFile) resource);
