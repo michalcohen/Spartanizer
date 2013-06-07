@@ -327,8 +327,10 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
 			if (ifIdx>=1) {
 				final Assignment asgnThen = getAssignment(node.getThenStatement());
 				final Assignment asgnElse = getAssignment(node.getElseStatement());
+				if (asgnThen==null)
+					return null;
 				final ASTNode possibleAssignment = getAssignmentOrDeclaration((Statement)stmts.get(ifIdx-1), asgnThen.getLeftHandSide());
-				if (possibleAssignment != null && asgnThen!=null && asgnElse==null &&
+				if (possibleAssignment != null &&  asgnElse==null &&
 						!dependsOn(node.getExpression(),asgnThen.getLeftHandSide()) &&
 						asgnThen.getOperator().equals(Operator.ASSIGN))
 					return  new SpartanizationRange(possibleAssignment,node);

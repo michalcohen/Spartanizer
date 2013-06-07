@@ -195,6 +195,16 @@ public class SpartanizationTests {
 		runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst9");
 	}
 
+	@Test
+	public void testChangeReturnVariableToDollar1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar1");
+	}
+	
+	@Test
+	public void testChangeReturnVariableToDollar2() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar2");
+	}
+
 	private void runTestCase(final BaseRefactoring s, final String testCaseName) throws MalformedTreeException, IllegalArgumentException, BadLocationException, IOException {
 		final ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
