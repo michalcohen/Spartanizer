@@ -2,8 +2,11 @@ package il.ac.technion.cs.ssdl.spartan.builder;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
@@ -80,6 +83,15 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 							natures.length - i - 1);
 					description.setNatureIds(newNatures);
 					project.setDescription(description, null);
+					project.accept(new IResourceVisitor() {
+						
+						@Override
+						public boolean visit(final IResource resource) throws CoreException {
+							if (resource instanceof IFile && resource.getName().endsWith(".java"))
+								SpartaBuilder.deleteMarkers((IFile) resource);
+							return true;
+						}
+					});
 					return;
 				}
 			}

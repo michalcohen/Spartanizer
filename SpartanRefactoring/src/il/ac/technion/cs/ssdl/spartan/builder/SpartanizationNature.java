@@ -54,7 +54,7 @@ public class SpartanizationNature implements IProjectNature {
 				System.arraycopy(commands, i + 1, newCommands, i,
 						commands.length - i - 1);
 				description.setBuildSpec(newCommands);
-				project.setDescription(description, null);			
+				project.setDescription(description, null);
 				return;
 			}
 		}

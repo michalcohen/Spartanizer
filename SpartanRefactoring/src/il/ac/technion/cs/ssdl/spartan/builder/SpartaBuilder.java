@@ -24,7 +24,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanizationFactory;
 
 public class SpartaBuilder extends IncrementalProjectBuilder {
 
-	class SampleDeltaVisitor implements IResourceDeltaVisitor {
+	static class SampleDeltaVisitor implements IResourceDeltaVisitor {
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -52,7 +52,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	class SampleResourceVisitor implements IResourceVisitor {
+	static class SampleResourceVisitor implements IResourceVisitor {
 		public boolean visit(final IResource resource) {
 			checkJava(resource, FULL_BUILD);
 			// return true to continue visiting children.
@@ -89,7 +89,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
-	void checkJava(final IResource resource, final int buildLevel) {
+	static void checkJava(final IResource resource, final int buildLevel) {
 		if (resource instanceof IFile && resource.getName().endsWith(".java")) {
 			final IFile file = (IFile) resource;
 			deleteMarkers(file);
@@ -129,7 +129,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void deleteMarkers(final IFile file) {
+	public static void deleteMarkers(final IFile file) {
 		try {
 			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
 		} catch (final CoreException ce) {
