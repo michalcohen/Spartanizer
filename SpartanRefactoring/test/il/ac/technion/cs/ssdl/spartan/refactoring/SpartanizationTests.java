@@ -136,6 +136,12 @@ public class SpartanizationTests {
 	}
 	
 	@Test
+	public void testInlineSingleUse6() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+		runTestCaseNoChange(new InlineSingleUseRefactoring(), "InlineSingleUse6");
+	}
+
+	
+	@Test
 	public void testRedundantEquality1() throws IOException, JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
 		runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality1");
 	}
