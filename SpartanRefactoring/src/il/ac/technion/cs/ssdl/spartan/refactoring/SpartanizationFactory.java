@@ -22,6 +22,10 @@ public class SpartanizationFactory {
 		final BasicSpartanization forwardDeclaration = new BasicSpartanization(new ForwardDeclarationRefactoring(), "Forward Declaration", "Forward declaration of variable to first use");
 		spartanizations.put(forwardDeclaration.toString(),
 				forwardDeclaration);
+		final BasicSpartanization changeReturnToDollar = new BasicSpartanization(new ChangeReturnToDollarRefactoring(), "Change Return Variable to $", "Change return variable to $");
+		spartanizations.put(changeReturnToDollar.toString(),
+				changeReturnToDollar);
+
 	}
 
 	public static BasicSpartanization getSpartanizationByName(

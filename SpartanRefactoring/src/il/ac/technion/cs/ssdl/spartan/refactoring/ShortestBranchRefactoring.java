@@ -46,7 +46,8 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
 	
 	@Override
 	protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-		pm.beginTask("Creating rewrite operation...", 1);
+		if (pm!=null)
+			pm.beginTask("Creating rewrite operation...", 1);
 		
 		final AST ast = cu.getAST();
 		final ASTRewrite rewrite = ASTRewrite.create(ast);
@@ -79,7 +80,9 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
 			}
 			
 			public boolean visit(ConditionalExpression node) {
-				if (isNodeOutsideSelection(node))
+				if ((m==null) && isNodeOutsideSelection(node))
+					return true;
+				if (m!=null && isNodeOutsideMarker(node, m))
 					return true;
 				
 				if (node.getElseExpression() == null)
@@ -100,7 +103,8 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
 				return true;
 			}
 		});
-		pm.done();
+		if (pm!=null)
+			pm.done();
 		return rewrite;
 	}
 
@@ -167,9 +171,6 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
 		final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
 		cu.accept(new ASTVisitor() {
 			public boolean visit(IfStatement node) {
-				if (isNodeOutsideSelection(node))
-					return true;
-				
 				if (node.getElseStatement() == null)
 					return true;
 				
@@ -182,9 +183,6 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
 			}
 			
 			public boolean visit(ConditionalExpression node) {
-				if (isNodeOutsideSelection(node))
-					return true;
-				
 				if (node.getElseExpression() == null)
 					return true;
 				
