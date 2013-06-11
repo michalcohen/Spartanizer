@@ -23,130 +23,112 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Spartaniza
 import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanizationFactory;
 
 public class SpartaBuilder extends IncrementalProjectBuilder {
-
-	static class SampleDeltaVisitor implements IResourceDeltaVisitor {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
-		 * .core.resources.IResourceDelta)
-		 */
-		public boolean visit(final IResourceDelta delta) throws CoreException {
-			final IResource resource = delta.getResource();
-			switch (delta.getKind()) {
-			case IResourceDelta.ADDED:
-				// handle added resource
-				checkJava(resource, FULL_BUILD);
-				break;
-			case IResourceDelta.REMOVED:
-				// handle removed resource
-				break;
-			case IResourceDelta.CHANGED:
-				// handle changed resource
-				checkJava(resource, INCREMENTAL_BUILD);
-				break;
-			}
-			// return true to continue visiting children.
-			return true;
-		}
-	}
-
-	static class SampleResourceVisitor implements IResourceVisitor {
-		public boolean visit(final IResource resource) {
-			checkJava(resource, FULL_BUILD);
-			// return true to continue visiting children.
-			return true;
-		}
-	}
-
-	public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder";
-
-	private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion";
-
-	public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
-	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	@SuppressWarnings("rawtypes") //Auto-generated code. Didn't write it.
-	protected IProject[] build(final int kind, final Map args,
-			final IProgressMonitor monitor) throws CoreException {
-		if (kind == FULL_BUILD) {
-			fullBuild(monitor);
-		} else {
-			final IResourceDelta delta = getDelta(getProject());
-			if (delta == null) {
-				fullBuild(monitor);
-			} else {
-				incrementalBuild(delta, monitor);
-			}
-		}
-		return null;
-	}
-
-	static void checkJava(final IResource resource, final int buildLevel) {
-		if (resource instanceof IFile && resource.getName().endsWith(".java")) {
-			final IFile file = (IFile) resource;
-			deleteMarkers(file);
-			try {
-				final ICompilationUnit cu = JavaCore
-						.createCompilationUnitFrom(file);
-				final ASTParser parser = ASTParser.newParser(AST.JLS4);
-				parser.setResolveBindings(false);
-				parser.setKind(ASTParser.K_COMPILATION_UNIT);
-				parser.setSource(cu);
-				final CompilationUnit concreteCu = (CompilationUnit) parser
-						.createAST(null);
-				for (final BasicSpartanization currSpartanization : SpartanizationFactory
-						.getAllSpartanizations()) {
-					for (final SpartanizationRange rng : currSpartanization
-							.checkForSpartanization(concreteCu)) {
-						if (rng != null) {
-							final IMarker spartanizationMarker = file
-									.createMarker(MARKER_TYPE);
-							spartanizationMarker.setAttribute(IMarker.CHAR_START,
-									rng.from);
-							spartanizationMarker.setAttribute(IMarker.CHAR_END,
-									rng.to);
-							spartanizationMarker.setAttribute(IMarker.SEVERITY,
-									IMarker.SEVERITY_INFO);
-							spartanizationMarker.setAttribute(SPARTANIZATION_TYPE_KEY,
-									currSpartanization.toString());
-							spartanizationMarker
-									.setAttribute(IMarker.MESSAGE,
-											"Spartanization suggestion: " + currSpartanization.getMessage());
-						}
-					}
-				}
-			} catch (final Exception e1) {
-				e1.printStackTrace();
-			}
-		}
-	}
-
-	public static void deleteMarkers(final IFile file) {
-		try {
-			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
-		} catch (final CoreException ce) {
-		}
-	}
-
-	protected void fullBuild(final IProgressMonitor monitor)
-			throws CoreException {
-		try {
-			getProject().accept(new SampleResourceVisitor());
-		} catch (final CoreException e) {
-		}
-	}
-
-	protected void incrementalBuild(final IResourceDelta delta,
-			final IProgressMonitor monitor) throws CoreException {
-		// the visitor does the work.
-		delta.accept(new SampleDeltaVisitor());
-	}
+  static class SampleDeltaVisitor implements IResourceDeltaVisitor {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
+     * .core.resources.IResourceDelta)
+     */
+    public boolean visit(final IResourceDelta delta) throws CoreException {
+      final IResource resource = delta.getResource();
+      switch (delta.getKind()) {
+        case IResourceDelta.ADDED:
+          // handle added resource
+          checkJava(resource, FULL_BUILD);
+          break;
+        case IResourceDelta.REMOVED:
+          // handle removed resource
+          break;
+        case IResourceDelta.CHANGED:
+          // handle changed resource
+          checkJava(resource, INCREMENTAL_BUILD);
+          break;
+      }
+      // return true to continue visiting children.
+      return true;
+    }
+  }
+  
+  static class SampleResourceVisitor implements IResourceVisitor {
+    public boolean visit(final IResource resource) {
+      checkJava(resource, FULL_BUILD);
+      // return true to continue visiting children.
+      return true;
+    }
+  }
+  
+  public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder";
+  private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion";
+  public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
+  
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
+   * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+   */
+  @Override @SuppressWarnings("rawtypes")// Auto-generated code. Didn't write
+                                         // it.
+  protected IProject[] build(final int kind, final Map args, final IProgressMonitor monitor) throws CoreException {
+    if (kind == FULL_BUILD) {
+      fullBuild(monitor);
+    } else {
+      final IResourceDelta delta = getDelta(getProject());
+      if (delta == null) {
+        fullBuild(monitor);
+      } else {
+        incrementalBuild(delta, monitor);
+      }
+    }
+    return null;
+  }
+  
+  static void checkJava(final IResource resource, final int buildLevel) {
+    if (resource instanceof IFile && resource.getName().endsWith(".java")) {
+      final IFile file = (IFile) resource;
+      deleteMarkers(file);
+      try {
+        final ICompilationUnit cu = JavaCore.createCompilationUnitFrom(file);
+        final ASTParser parser = ASTParser.newParser(AST.JLS4);
+        parser.setResolveBindings(false);
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        parser.setSource(cu);
+        final CompilationUnit concreteCu = (CompilationUnit) parser.createAST(null);
+        for (final BasicSpartanization currSpartanization : SpartanizationFactory.getAllSpartanizations()) {
+          for (final SpartanizationRange rng : currSpartanization.checkForSpartanization(concreteCu)) {
+            if (rng != null) {
+              final IMarker spartanizationMarker = file.createMarker(MARKER_TYPE);
+              spartanizationMarker.setAttribute(IMarker.CHAR_START, rng.from);
+              spartanizationMarker.setAttribute(IMarker.CHAR_END, rng.to);
+              spartanizationMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+              spartanizationMarker.setAttribute(SPARTANIZATION_TYPE_KEY, currSpartanization.toString());
+              spartanizationMarker.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + currSpartanization.getMessage());
+            }
+          }
+        }
+      } catch (final Exception e1) {
+        e1.printStackTrace();
+      }
+    }
+  }
+  
+  public static void deleteMarkers(final IFile file) {
+    try {
+      file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
+    } catch (final CoreException ce) {
+    }
+  }
+  
+  protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
+    try {
+      getProject().accept(new SampleResourceVisitor());
+    } catch (final CoreException e) {
+    }
+  }
+  
+  protected void incrementalBuild(final IResourceDelta delta, final IProgressMonitor monitor) throws CoreException {
+    // the visitor does the work.
+    delta.accept(new SampleDeltaVisitor());
+  }
 }
