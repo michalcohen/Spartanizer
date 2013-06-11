@@ -12,7 +12,6 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -30,20 +29,23 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
      * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
      * .core.resources.IResourceDelta)
      */
-    public boolean visit(final IResourceDelta delta) throws CoreException {
+	@Override
+	public boolean visit(final IResourceDelta delta) throws CoreException {
       final IResource resource = delta.getResource();
       switch (delta.getKind()) {
         case IResourceDelta.ADDED:
           // handle added resource
-          checkJava(resource, FULL_BUILD);
+          checkJava(resource);
           break;
         case IResourceDelta.REMOVED:
           // handle removed resource
           break;
         case IResourceDelta.CHANGED:
           // handle changed resource
-          checkJava(resource, INCREMENTAL_BUILD);
+          checkJava(resource);
           break;
+	    default:
+		  break;
       }
       // return true to continue visiting children.
       return true;
@@ -51,8 +53,9 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   }
   
   static class SampleResourceVisitor implements IResourceVisitor {
-    public boolean visit(final IResource resource) {
-      checkJava(resource, FULL_BUILD);
+	@Override
+	public boolean visit(final IResource resource) {
+      checkJava(resource);
       // return true to continue visiting children.
       return true;
     }
@@ -84,16 +87,15 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     return null;
   }
   
-  static void checkJava(final IResource resource, final int buildLevel) {
+  static void checkJava(final IResource resource) {
     if (resource instanceof IFile && resource.getName().endsWith(".java")) {
       final IFile file = (IFile) resource;
       deleteMarkers(file);
       try {
-        final ICompilationUnit cu = JavaCore.createCompilationUnitFrom(file);
         final ASTParser parser = ASTParser.newParser(AST.JLS4);
         parser.setResolveBindings(false);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setSource(cu);
+        parser.setSource(JavaCore.createCompilationUnitFrom(file));
         final CompilationUnit concreteCu = (CompilationUnit) parser.createAST(null);
         for (final BasicSpartanization currSpartanization : SpartanizationFactory.getAllSpartanizations()) {
           for (final SpartanizationRange rng : currSpartanization.checkForSpartanization(concreteCu)) {
@@ -117,18 +119,28 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     try {
       file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
     } catch (final CoreException ce) {
+    	// we assume that other builder handle cause compilation failure on CoreException
     }
   }
   
-  protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
+  protected void fullBuild(final IProgressMonitor monitor) {
     try {
+      if (monitor!=null)
+        monitor.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
       getProject().accept(new SampleResourceVisitor());
     } catch (final CoreException e) {
+    	// we assume that other builder handle cause compilation failure on CoreException
     }
+    if (monitor!=null)
+      monitor.done();
   }
   
-  protected void incrementalBuild(final IResourceDelta delta, final IProgressMonitor monitor) throws CoreException {
+  protected static void incrementalBuild(final IResourceDelta delta, final IProgressMonitor monitor) throws CoreException {
     // the visitor does the work.
+    if (monitor!=null)
+      monitor.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     delta.accept(new SampleDeltaVisitor());
+    if (monitor!=null)
+        monitor.done();
   }
 }

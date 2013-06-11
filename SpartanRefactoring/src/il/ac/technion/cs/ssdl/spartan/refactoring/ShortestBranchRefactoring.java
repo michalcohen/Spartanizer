@@ -33,43 +33,44 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
    *          The node.
    * @return Number of ast nodes under the node.
    */
-  private int countNodes(ASTNode node) {
-    final AtomicInteger c = new AtomicInteger(0);
+  static int countNodes(ASTNode node) {
+    final AtomicInteger $ = new AtomicInteger(0);
     node.accept(new ASTVisitor() {
-      public void preVisit(ASTNode node) {
-        c.incrementAndGet();
+      @Override
+      public void preVisit(final ASTNode n) {
+        $.incrementAndGet();
       }
     });
-    return c.get();
+    return $.get();
   }
   
   @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
     if (pm != null)
       pm.beginTask("Creating rewrite operation...", 1);
     final AST ast = cu.getAST();
-    final ASTRewrite rewrite = ASTRewrite.create(ast);
+    final ASTRewrite $ = ASTRewrite.create(ast);
     cu.accept(new ASTVisitor() {
-      public boolean visit(IfStatement node) {
+      @Override
+	  public boolean visit(IfStatement node) {
         if ((m == null) && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))
           return true;
         if (node.getElseStatement() == null)
           return true;
-        int thenCount = countNodes(node.getThenStatement());
-        int elseCount = countNodes(node.getElseStatement());
-        if (thenCount - elseCount <= -threshold)
+        if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) <= -threshold)
           return true;
         IfStatement newnode = ast.newIfStatement();
-        Expression neg = negateExpression(ast, rewrite, node.getExpression());
+        Expression neg = negateExpression(ast, $, node.getExpression());
         newnode.setExpression(neg);
-        newnode.setThenStatement((org.eclipse.jdt.core.dom.Statement) rewrite.createMoveTarget(node.getElseStatement()));
-        newnode.setElseStatement((org.eclipse.jdt.core.dom.Statement) rewrite.createMoveTarget(node.getThenStatement()));
-        rewrite.replace(node, newnode, null);
+        newnode.setThenStatement((org.eclipse.jdt.core.dom.Statement) $.createMoveTarget(node.getElseStatement()));
+        newnode.setElseStatement((org.eclipse.jdt.core.dom.Statement) $.createMoveTarget(node.getThenStatement()));
+        $.replace(node, newnode, null);
         return true;
       }
       
-      public boolean visit(ConditionalExpression node) {
+      @Override
+	public boolean visit(ConditionalExpression node) {
         if ((m == null) && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))
@@ -79,24 +80,24 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
         if (node.getThenExpression().getLength() - node.getElseExpression().getLength() <= -threshold)
           return true;
         ConditionalExpression newnode = ast.newConditionalExpression();
-        Expression neg = negateExpression(ast, rewrite, node.getExpression());
+        Expression neg = negateExpression(ast, $, node.getExpression());
         newnode.setExpression(neg);
-        newnode.setThenExpression((Expression) rewrite.createMoveTarget(node.getElseExpression()));
-        newnode.setElseExpression((Expression) rewrite.createMoveTarget(node.getThenExpression()));
-        rewrite.replace(node, newnode, null);
+        newnode.setThenExpression((Expression) $.createMoveTarget(node.getElseExpression()));
+        newnode.setElseExpression((Expression) $.createMoveTarget(node.getThenExpression()));
+        $.replace(node, newnode, null);
         return true;
       }
     });
     if (pm != null)
       pm.done();
-    return rewrite;
+    return $;
   }
   
   /**
    * @return Returns a prefix expression that is the negation of the provided
    *         expression.
    */
-  private Expression negateExpression(final AST ast, final ASTRewrite rewrite, Expression exp) {
+  static Expression negateExpression(final AST ast, final ASTRewrite rewrite, Expression exp) {
     Expression negatedComparison = null;
     if (exp instanceof InfixExpression && (negatedComparison = tryNegateComparison(ast, rewrite, (InfixExpression) exp)) != null)
       return negatedComparison;
@@ -111,7 +112,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     return neg;
   }
   
-  private Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, InfixExpression exp) {
+  private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, InfixExpression exp) {
     final InfixExpression $ = ast.newInfixExpression();
     $.setRightOperand((Expression) rewrite.createCopyTarget(exp.getRightOperand()));
     $.setLeftOperand((Expression) rewrite.createCopyTarget(exp.getLeftOperand()));
@@ -142,7 +143,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     return null;
   }
   
-  private Expression tryNegatePrefix(final ASTRewrite rewrite, PrefixExpression exp) {
+  private static Expression tryNegatePrefix(final ASTRewrite rewrite, PrefixExpression exp) {
     if (exp.getOperator().equals(PrefixExpression.Operator.NOT))
       return (Expression) rewrite.createCopyTarget(exp.getOperand());
     return null;
@@ -153,17 +154,17 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   @Override public Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu) {
     final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
     cu.accept(new ASTVisitor() {
-      public boolean visit(IfStatement node) {
+      @Override
+	public boolean visit(IfStatement node) {
         if (node.getElseStatement() == null)
           return true;
-        int thenCount = countNodes(node.getThenStatement());
-        int elseCount = countNodes(node.getElseStatement());
-        if (thenCount - elseCount > threshold)
+        if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) > threshold)
           $.add(new SpartanizationRange(node));
         return true;
       }
       
-      public boolean visit(ConditionalExpression node) {
+      @Override
+	public boolean visit(ConditionalExpression node) {
         if (node.getElseExpression() == null)
           return true;
         if (node.getThenExpression().getLength() - node.getElseExpression().getLength() > threshold)

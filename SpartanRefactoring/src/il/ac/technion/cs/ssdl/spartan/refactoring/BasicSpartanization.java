@@ -42,11 +42,13 @@ public class BasicSpartanization {
   }
   
   public class SpartanizationResolution implements IMarkerResolution {
-    public String getLabel() {
+    @Override
+	public String getLabel() {
       return BasicSpartanization.this.toString() + ": Do it!";
     }
     
-    public void run(final IMarker arg0) {
+    @Override
+	public void run(final IMarker arg0) {
       try {
         getRefactoring().runAsMarkerFix(new org.eclipse.core.runtime.NullProgressMonitor(), arg0);
       } catch (CoreException e) {
@@ -57,15 +59,16 @@ public class BasicSpartanization {
   }
   
   public class SpartanizationResolutionWithPreview implements IMarkerResolution {
-    public String getLabel() {
+    @Override
+	public String getLabel() {
       return BasicSpartanization.this.toString() + ": Show me a preview first";
     }
     
-    public void run(final IMarker arg0) {
+    @Override
+	public void run(final IMarker arg0) {
       getRefactoring().setMarker(arg0);
-      final BaseRefactoringWizard wiz = new BaseRefactoringWizard(getRefactoring());
       try {
-        new RefactoringWizardOpenOperation(wiz).run(Display.getCurrent().getActiveShell(), "Spartan Refactoring: "
+        new RefactoringWizardOpenOperation(new BaseRefactoringWizard(getRefactoring())).run(Display.getCurrent().getActiveShell(), "Spartan Refactoring: "
             + BasicSpartanization.this.toString());
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block

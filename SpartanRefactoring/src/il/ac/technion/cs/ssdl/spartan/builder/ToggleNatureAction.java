@@ -23,6 +23,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * 
    * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
    */
+  @Override
   @SuppressWarnings("rawtypes")// Auto-generated code. Didn't write it.
   public void run(IAction action) {
     if (selection instanceof IStructuredSelection) {
@@ -48,8 +49,9 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
    * .IAction, org.eclipse.jface.viewers.ISelection)
    */
-  public void selectionChanged(IAction action, ISelection selection) {
-    this.selection = selection;
+  @Override
+  public void selectionChanged(IAction action, ISelection selection_) {
+    this.selection = selection_;
   }
   
   /*
@@ -59,7 +61,9 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action
    * .IAction, org.eclipse.ui.IWorkbenchPart)
    */
+  @Override
   public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	// Auto-generated code. Didn't write it.
   }
   
   /**
@@ -68,7 +72,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * @param project
    *          to have sample nature added or removed
    */
-  private void toggleNature(IProject project) {
+  private static void toggleNature(final IProject project) {
     try {
       IProjectDescription description = project.getDescription();
       String[] natures = description.getNatureIds();
@@ -81,7 +85,8 @@ public class ToggleNatureAction implements IObjectActionDelegate {
           description.setNatureIds(newNatures);
           project.setDescription(description, null);
           project.accept(new IResourceVisitor() {
-            public boolean visit(final IResource resource) throws CoreException {
+            @Override
+			public boolean visit(final IResource resource) throws CoreException {
               if (resource instanceof IFile && resource.getName().endsWith(".java"))
                 SpartaBuilder.deleteMarkers((IFile) resource);
               return true;
@@ -97,6 +102,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
       description.setNatureIds(newNatures);
       project.setDescription(description, null);
     } catch (CoreException e) {
+    	// we assume that other builder handle cause compilation failure on CoreException
     }
   }
 }

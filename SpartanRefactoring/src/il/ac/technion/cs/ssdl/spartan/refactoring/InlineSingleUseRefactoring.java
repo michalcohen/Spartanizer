@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -27,8 +26,7 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
   @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
     if (pm != null)
       pm.beginTask("Creating rewrite operation...", 1);
-    final AST ast = cu.getAST();
-    final ASTRewrite rewrite = ASTRewrite.create(ast);
+    final ASTRewrite $ = ASTRewrite.create(cu.getAST());
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(VariableDeclarationFragment node) {
         if ((m == null) && isNodeOutsideSelection(node))
@@ -39,14 +37,14 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
         if (node.getParent() instanceof VariableDeclarationStatement) {
           final VariableDeclarationStatement parent = (VariableDeclarationStatement) (node.getParent());
           boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
-          final List<Expression> uses = VariableCounter.USES.list(parent.getParent(), varName);
+          final List<Expression> uses = VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName);
           if (uses.size() == 1 && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1)) {
-            final ASTNode initializerExpr = rewrite.createCopyTarget(node.getInitializer());
-            rewrite.replace(uses.get(0), initializerExpr, null);
+            final ASTNode initializerExpr = $.createCopyTarget(node.getInitializer());
+            $.replace(uses.get(0), initializerExpr, null);
             if (parent.fragments().size() == 1)
-              rewrite.remove(parent, null);
+              $.remove(parent, null);
             else
-              rewrite.remove(node, null);
+              $.remove(node, null);
           }
         }
         return true;
@@ -54,7 +52,7 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
     });
     if (pm != null)
       pm.done();
-    return rewrite;
+    return $;
   }
   
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
@@ -65,7 +63,7 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
         if (node.getParent() instanceof VariableDeclarationStatement) {
           final VariableDeclarationStatement parent = (VariableDeclarationStatement) (node.getParent());
           boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
-          if (VariableCounter.USES.list(parent.getParent(), varName).size() == 1
+          if (VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName).size() == 1
               && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1))
             $.add(new SpartanizationRange(node));
         }

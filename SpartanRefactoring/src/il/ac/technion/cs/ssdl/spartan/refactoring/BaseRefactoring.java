@@ -71,20 +71,20 @@ public abstract class BaseRefactoring extends Refactoring {
         .getOffset());
   }
   
-  protected boolean isNodeOutsideMarker(ASTNode node, IMarker m) {
+  protected static boolean isNodeOutsideMarker(ASTNode node, IMarker m) {
     try {
-      return (node.getStartPosition() < (Integer) m.getAttribute(IMarker.CHAR_START) || node.getStartPosition() + node.getLength() > (Integer) m
-          .getAttribute(IMarker.CHAR_END));
+      return (node.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue() ||
+    		  node.getStartPosition() + node.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue());
     } catch (CoreException e) {
       return true;
     }
   }
   
   @Override public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
-    RefactoringStatus status = new RefactoringStatus();
+    RefactoringStatus $ = new RefactoringStatus();
     if (compilationUnit == null && marker == null)
-      status.merge(RefactoringStatus.createFatalErrorStatus("Nothing to refactor."));
-    return status;
+      $.merge(RefactoringStatus.createFatalErrorStatus("Nothing to refactor."));
+    return $;
   }
   
   public void setMarker(final IMarker m) {
@@ -92,7 +92,7 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   @Override public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-    final RefactoringStatus status = new RefactoringStatus();
+    final RefactoringStatus $ = new RefactoringStatus();
     changes.clear();
     // TODO: Catch exceptions and change status accordingly
     if (marker != null) {
@@ -102,7 +102,7 @@ public abstract class BaseRefactoring extends Refactoring {
       runAsManualCall(pm);
     }
     pm.done();
-    return status;
+    return $;
   }
   
   private void runAsManualCall(IProgressMonitor pm) throws JavaModelException, CoreException {
@@ -122,13 +122,13 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   private RefactoringStatus innerRunAsMarkerFix(IProgressMonitor pm, IMarker m, boolean preview) throws CoreException {
-    final RefactoringStatus status = new RefactoringStatus();
+    final RefactoringStatus $ = new RefactoringStatus();
     marker = m;
     pm.beginTask("Running refactoring...", 2);
     scanCompilationUnitForMarkerFix(m, pm, preview);
     marker = null;
     pm.done();
-    return status;
+    return $;
   }
   
   /**
@@ -184,8 +184,8 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   public static ICompilationUnit getCompilationUnitFromMarker(IMarker m) {
-    final ICompilationUnit u = JavaCore.createCompilationUnitFrom((IFile) m.getResource());
-    return u;
+    final ICompilationUnit $ = JavaCore.createCompilationUnitFrom((IFile) m.getResource());
+    return $;
   }
   
   /**
@@ -194,19 +194,19 @@ public abstract class BaseRefactoring extends Refactoring {
    */
   protected ArrayList<ICompilationUnit> getAllProjectCompilationUnits(IProgressMonitor pm) throws JavaModelException {
     pm.beginTask("Gathering project information...", 1);
-    ArrayList<ICompilationUnit> units = new ArrayList<ICompilationUnit>();
+    ArrayList<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
     IJavaProject proj = compilationUnit.getJavaProject();
     for (IPackageFragmentRoot r : proj.getPackageFragmentRoots()) {
       if (r.getKind() == IPackageFragmentRoot.K_SOURCE) {
         for (IJavaElement e : r.getChildren()) {
           if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
-            units.addAll(Arrays.asList(((IPackageFragment) e).getCompilationUnits()));
+            $.addAll(Arrays.asList(((IPackageFragment) e).getCompilationUnits()));
           }
         }
       }
     }
     pm.done();
-    return units;
+    return $;
   }
   
   public abstract Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu);
@@ -216,7 +216,7 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   @SuppressWarnings("rawtypes") public RefactoringStatus initialize(final Map fArguments) {
-    RefactoringStatus status = new RefactoringStatus();
-    return status;
+    RefactoringStatus $ = new RefactoringStatus();
+    return $;
   }
 }

@@ -30,7 +30,8 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
     final AST ast = cu.getAST();
     final ASTRewrite rewrite = ASTRewrite.create(ast);
     cu.accept(new ASTVisitor() {
-      public boolean visit(InfixExpression node) {
+      @Override
+	  public boolean visit(InfixExpression node) {
         if ((m == null) && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))

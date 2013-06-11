@@ -89,7 +89,7 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
     final ASTNode declarationFragment = var.getParent();
     final ASTNode declarationStmt = declarationFragment.getParent();
     for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i) {
-      final List<Expression> usesInCurrItem = VariableCounter.BOTH.list((ASTNode) (b.statements().get(i)), var);
+      final List<Expression> usesInCurrItem = VariableCounter.BOTH_SEMANTIC.list((ASTNode) (b.statements().get(i)), var);
       final int usesInBlockItem = usesInCurrItem.size();
       if (usesInBlockItem > 0)
         return i; // first use!

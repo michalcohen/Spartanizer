@@ -32,7 +32,7 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
     if (pm != null)
       pm.beginTask("Creating rewrite operation...", 1);
     final AST ast = cu.getAST();
-    final ASTRewrite rewrite = ASTRewrite.create(ast);
+    final ASTRewrite $ = ASTRewrite.create(ast);
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration node) {
         final VariableDeclarationFragment returnVar = getOnlyReturnVariable(node);
@@ -41,76 +41,77 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
             return true;
           if (m != null && isNodeOutsideMarker(returnVar, m))
             return true;
-          for (final Expression exp : VariableCounter.BOTH.list(node, returnVar.getName()))
-            rewrite.replace(exp, ast.newSimpleName("$"), null);
+          for (final Expression exp : VariableCounter.BOTH_SEMANTIC.list(node, returnVar.getName()))
+            $.replace(exp, ast.newSimpleName("$"), null);
         }
         return true;
-      };
+      }
     });
     if (pm != null)
       pm.done();
-    return rewrite;
+    return $;
   }
   
-  List<VariableDeclarationFragment> getCandidates(final ASTNode container) {
+  static List<VariableDeclarationFragment> getCandidates(final ASTNode container) {
     final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
     container.accept(new ASTVisitor() {
       @Override public boolean visit(final AnonymousClassDeclaration node) {
         // we don't want to visit declarations inside anonymous classes
         return false;
-      };
+      }
       
       @Override public boolean visit(VariableDeclarationFragment node) {
         $.add(node);
         return true;
-      };
+      }
     });
     return $;
   }
   
-  List<ReturnStatement> getReturnStatements(final ASTNode container) {
+  static List<ReturnStatement> getReturnStatements(final ASTNode container) {
     final List<ReturnStatement> $ = new ArrayList<ReturnStatement>();
     container.accept(new ASTVisitor() {
       @Override public boolean visit(final AnonymousClassDeclaration node) {
         // we don't want to visit declarations inside anonymous classes
         return false;
-      };
+      }
       
       @Override public boolean visit(final ReturnStatement node) {
         $.add(node);
         return true;
-      };
+      }
     });
     return $;
   }
   
-  VariableDeclarationFragment getOnlyReturnVariable(final MethodDeclaration node) {
-    final List<VariableDeclarationFragment> candidates = getCandidates(node);
+  static VariableDeclarationFragment getOnlyReturnVariable(final MethodDeclaration node) {
+    final List<VariableDeclarationFragment> $ = getCandidates(node);
     // check if we already have $
-    for (final VariableDeclaration decl : candidates)
+    for (final VariableDeclaration decl : $)
       if (decl.getName().getIdentifier().equals("$"))
         return null;
     final List<ReturnStatement> returnStatements = getReturnStatements(node);
-    final Iterator<VariableDeclarationFragment> iter = candidates.iterator();
+    final Iterator<VariableDeclarationFragment> iter = $.iterator();
     while (iter.hasNext()) {
       final VariableDeclarationFragment currDecl = iter.next();
       for (final ReturnStatement returnStmt : returnStatements) {
-        if (literals.contains(returnStmt.getExpression().getNodeType()))
+        if (literals.contains(Integer.valueOf(returnStmt.getExpression().getNodeType())))
           continue;
-        final List<Expression> uses = VariableCounter.BOTH.list(returnStmt, currDecl.getName());
+        final List<Expression> uses = VariableCounter.BOTH_SEMANTIC.list(returnStmt, currDecl.getName());
         if (uses.size() == 0) {
           iter.remove();
           break;
         }
       }
     }
-    if (candidates.size() == 1 && returnStatements.size() > 0) {
-      return candidates.get(0);
+    if ($.size() == 1 && returnStatements.size() > 0) {
+      return $.get(0);
     }
     return null;
   }
   
-  private final Collection<Integer> literals = Collections.unmodifiableCollection(Arrays.asList(ASTNode.NULL_LITERAL,
+@SuppressWarnings("boxing")
+private static final Collection<Integer> literals = Collections.unmodifiableCollection(Arrays.asList(ASTNode.NULL_LITERAL,
       ASTNode.CHARACTER_LITERAL, ASTNode.NUMBER_LITERAL, ASTNode.STRING_LITERAL, ASTNode.BOOLEAN_LITERAL));
   
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
@@ -121,7 +122,7 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
         if (returnVar != null)
           $.add(new SpartanizationRange(returnVar));
         return true;
-      };
+      }
     });
     return $;
   }

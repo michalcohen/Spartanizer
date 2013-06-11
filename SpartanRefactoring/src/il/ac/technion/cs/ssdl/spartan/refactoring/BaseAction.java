@@ -43,6 +43,7 @@ public abstract class BaseAction implements IWorkbenchWindowActionDelegate {
     return new BaseRefactoringWizard(refactoring);
   }
   
+  @Override
   public void run(IAction action) {
     if (window == null)
       return;
@@ -55,9 +56,10 @@ public abstract class BaseAction implements IWorkbenchWindowActionDelegate {
     }
   }
   
-  public void selectionChanged(IAction action, ISelection selection) {
+  @Override
+  public void selectionChanged(final IAction action,final ISelection selection_) {
     this.compilationUnit = getCompilationUnit();
-    this.selection = selection instanceof ITextSelection ? (ITextSelection) selection : null;
+    this.selection = selection_ instanceof ITextSelection ? (ITextSelection) selection_ : null;
     action.setEnabled(compilationUnit != null);
   }
   
@@ -73,11 +75,13 @@ public abstract class BaseAction implements IWorkbenchWindowActionDelegate {
     return cu; // cu may be null
   }
   
+  @Override
   public void dispose() {
     return;
   }
   
-  public void init(IWorkbenchWindow window) {
-    this.window = window;
+  @Override
+  public void init(final IWorkbenchWindow window_) {
+    this.window = window_;
   }
 }
