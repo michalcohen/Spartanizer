@@ -60,12 +60,12 @@ public enum VariableCounter {
         }
         
         @Override public boolean visit(final Assignment node) {
-          $.addAll(listSingle(node.getLeftHandSide(), e));
+          $.addAll(listSingle(node.getLeftHandSide(), e, false));
           return true;
         }
         
         @Override public boolean visit(final VariableDeclarationFragment node) {
-          $.addAll(listSingle(node.getName(), e));
+          $.addAll(listSingle(node.getName(), e, false));
           return true;
         }
       });
@@ -100,10 +100,13 @@ public enum VariableCounter {
       });
   }
 
-static List<Expression> listSingle(final Expression e1, Expression e2) {
+static List<Expression> listSingle(final Expression e1, Expression e2, boolean repeated) {
     final List<Expression> $ = new ArrayList<Expression>();
-    if (e1 != null && e1.getNodeType() == e2.getNodeType() && e1.subtreeMatch(matcher, e2))
+    if (e1 != null && e1.getNodeType() == e2.getNodeType() && e1.subtreeMatch(matcher, e2)) {
       $.add(e1);
+      if (repeated)
+    	$.add(e1);
+    }
     return $;
   }
   
@@ -145,131 +148,159 @@ static List<Expression> listSingle(final Expression e1, Expression e2) {
           }
           
           @Override public boolean visit(final InfixExpression node) {
-            $.addAll(listSingle(node.getRightOperand(), e));
-            $.addAll(listSingle(node.getLeftOperand(), e));
+            $.addAll(listSingle(node.getRightOperand(), e, repeated()));
+            $.addAll(listSingle(node.getLeftOperand(), e, repeated()));
             for (final Object item : node.extendedOperands())
-              $.addAll(listSingle((Expression) item, e));
+              $.addAll(listSingle((Expression) item, e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final PrefixExpression node) {
-            $.addAll(listSingle(node.getOperand(), e));
+            $.addAll(listSingle(node.getOperand(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final PostfixExpression node) {
-            $.addAll(listSingle(node.getOperand(), e));
+            $.addAll(listSingle(node.getOperand(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(ParenthesizedExpression node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final Assignment node) {
-            $.addAll(listSingle(node.getRightHandSide(), e));
+            $.addAll(listSingle(node.getRightHandSide(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final CastExpression node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ArrayAccess node) {
-            $.addAll(listSingle(node.getArray(), e));
+            $.addAll(listSingle(node.getArray(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final MethodInvocation node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             for (final Object arg : node.arguments())
-              $.addAll(listSingle((Expression) arg, e));
+              $.addAll(listSingle((Expression) arg, e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ConstructorInvocation node) {
             for (final Object arg : node.arguments())
-              $.addAll(listSingle((Expression) arg, e));
+              $.addAll(listSingle((Expression) arg, e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ClassInstanceCreation node) {
             for (final Object arg : node.arguments())
-              $.addAll(listSingle((Expression) arg, e));
+              $.addAll(listSingle((Expression) arg, e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ArrayCreation node) {
             for (final Object dim : node.dimensions())
-              $.addAll(listSingle((Expression) dim, e));
+              $.addAll(listSingle((Expression) dim, e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ArrayInitializer node) {
             for (final Object item : node.expressions())
-              $.addAll(listSingle((Expression) item, e));
+              $.addAll(listSingle((Expression) item, e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ReturnStatement node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final FieldAccess node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final QualifiedName node) {
-            $.addAll(listSingle(node.getQualifier(), e));
+            $.addAll(listSingle(node.getQualifier(), e, repeated()));
             return true;
           }
           
           @Override
   		public boolean visit(final VariableDeclarationFragment node) {
-            $.addAll(listSingle(node.getInitializer(), e));
+            $.addAll(listSingle(node.getInitializer(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final IfStatement node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final SwitchStatement node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
             return true;
           }
           
           @Override public boolean visit(final ForStatement node) {
-            $.addAll(listSingle(node.getExpression(), e));
-            return semantic;
+        	forNesting += 1;
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
+            return true;
+          }
+          
+          @Override
+          public void endVisit(final ForStatement node) {
+        	  forNesting -= 1;
           }
           
           @Override public boolean visit(final EnhancedForStatement node) {
-            $.addAll(listSingle(node.getExpression(), e));
+            $.addAll(listSingle(node.getExpression(), e, repeated()));
+            foreachNesting += 1;
             return semantic;
           }
           
+          @Override
+          public void endVisit(final EnhancedForStatement node) {
+        	  foreachNesting -= 1;
+          }
+
           @Override public boolean visit(final WhileStatement node) {
-        	  if (semantic)
-        		  $.addAll(listSingle(node.getExpression(), e));
-        	  return semantic;
+        	  whileNesting += 1;
+        	  $.addAll(listSingle(node.getExpression(), e, repeated()));
+        	  return true;
+          }
+          
+          @Override
+          public void endVisit(final WhileStatement node) {
+        	  whileNesting -= 1;
           }
           
           @Override public boolean visit(final DoStatement node) {
-        	  if (semantic)
-        		  $.addAll(listSingle(node.getExpression(), e));
-        	  return semantic;
+            doWhileNesting += 1;
+        	$.addAll(listSingle(node.getExpression(), e, repeated()));
+        	return true;
+          }
+          
+          @Override
+          public void endVisit(final DoStatement node) {
+        	  doWhileNesting -= 1;
           }
           
           @Override public boolean visit(final InstanceofExpression node) {
-            $.addAll(listSingle(node.getLeftOperand(), e));
+            $.addAll(listSingle(node.getLeftOperand(), e, repeated()));
             return true;
           }
+          
+          private boolean repeated() {
+        	  return semantic && (forNesting + foreachNesting + whileNesting + doWhileNesting > 0);
+          }
+          
+          private int whileNesting=0, doWhileNesting=0, forNesting=0, foreachNesting=0;
         });
       return $;
   }

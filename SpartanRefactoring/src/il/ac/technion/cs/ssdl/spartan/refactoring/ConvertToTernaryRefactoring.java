@@ -254,8 +254,8 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
   static SpartanizationRange detectAssignment(final IfStatement node) {
     final Assignment asgnThen = getAssignment(node.getThenStatement());
     final Assignment asgnElse = getAssignment(node.getElseStatement());
-    if ((asgnElse != null && asgnThen.getLeftHandSide().subtreeMatch(matcher, asgnElse.getLeftHandSide()) && asgnThen.getOperator()
-        .equals(asgnElse.getOperator())))
+    if (asgnThen != null && asgnElse != null && asgnThen.getLeftHandSide().subtreeMatch(matcher, asgnElse.getLeftHandSide()) && asgnThen.getOperator()
+        .equals(asgnElse.getOperator()))
       return new SpartanizationRange(node);
     return null;
   }
