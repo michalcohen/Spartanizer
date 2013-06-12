@@ -232,7 +232,7 @@ static List<Expression> listSingle(final Expression e1, Expression e2, boolean r
           }
           
           @Override
-  		public boolean visit(final VariableDeclarationFragment node) {
+  	      public boolean visit(final VariableDeclarationFragment node) {
             $.addAll(listSingle(node.getInitializer(), e, repeated()));
             return true;
           }
@@ -261,7 +261,7 @@ static List<Expression> listSingle(final Expression e1, Expression e2, boolean r
           @Override public boolean visit(final EnhancedForStatement node) {
             $.addAll(listSingle(node.getExpression(), e, repeated()));
             foreachNesting += 1;
-            return semantic;
+            return true;
           }
           
           @Override

@@ -5,7 +5,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Spartaniza
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -50,8 +49,7 @@ public abstract class BaseRefactoring extends Refactoring {
     parser.setResolveBindings(false);
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
     parser.setSource(getCompilationUnitFromMarker(m));
-    final CompilationUnit concreteCu = (CompilationUnit) parser.createAST(null);
-    return innerCreateRewrite(concreteCu, pm, m);
+    return innerCreateRewrite((CompilationUnit) parser.createAST(null), pm, m);
   }
   
   protected boolean isTextSelected() {
@@ -65,9 +63,7 @@ public abstract class BaseRefactoring extends Refactoring {
    *         at all will return false.
    */
   protected boolean isNodeOutsideSelection(ASTNode node) {
-    if (!isTextSelected())
-      return false;
-    return (node.getStartPosition() > selection.getOffset() + selection.getLength() || node.getStartPosition() < selection
+    return isTextSelected() && (node.getStartPosition() > selection.getOffset() + selection.getLength() || node.getStartPosition() < selection
         .getOffset());
   }
   
@@ -184,8 +180,7 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   public static ICompilationUnit getCompilationUnitFromMarker(IMarker m) {
-    final ICompilationUnit $ = JavaCore.createCompilationUnitFrom((IFile) m.getResource());
-    return $;
+    return JavaCore.createCompilationUnitFrom((IFile) m.getResource());
   }
   
   /**
@@ -213,10 +208,5 @@ public abstract class BaseRefactoring extends Refactoring {
   
   @Override public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
-  }
-  
-  @SuppressWarnings("rawtypes") public RefactoringStatus initialize(final Map fArguments) {
-    RefactoringStatus $ = new RefactoringStatus();
-    return $;
   }
 }
