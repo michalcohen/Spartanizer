@@ -199,8 +199,12 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
         	return false;
         final Assignment asgnElse = getAssignment(node.getElseStatement());
         final Assignment prevAsgn = getAssignment((Statement) stmts.get(ifIdx - 1));
-        if (prevAsgn != null && asgnElse == null
-            && !dependsOn(node.getExpression(), asgnThen.getLeftHandSide()) && asgnThen.getOperator().equals(Operator.ASSIGN)) {
+        if (dependsOn(node.getExpression(), asgnThen.getLeftHandSide()) ||
+        		dependsOn(asgnThen.getRightHandSide(), asgnThen.getLeftHandSide()) ||
+        		!asgnThen.getOperator().equals(Operator.ASSIGN) ||
+        		asgnElse != null) 
+        	return false;
+        if (prevAsgn != null) {
           if (prevAsgn.getParent().getNodeType() == ASTNode.EXPRESSION_STATEMENT)
             rewrite.remove(prevAsgn.getParent(), null);
           rewriteAssignIfAssignToAssignTernary(ast, rewrite, node, asgnThen, prevAsgn.getRightHandSide());
@@ -208,8 +212,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
         }
         final VariableDeclarationStatement prevDecl = getSingleDeclaration((Statement) stmts.get(ifIdx - 1),
             asgnThen.getLeftHandSide());
-        if (prevDecl != null && asgnElse == null
-            && !dependsOn(node.getExpression(), asgnThen.getLeftHandSide()) && asgnThen.getOperator().equals(Operator.ASSIGN)) {
+        if (prevDecl != null) {
           rewriteAssignIfAssignToDeclareTernary(ast, rewrite, node, asgnThen,
               getDeclarationFragment(prevDecl, asgnThen.getLeftHandSide()));
           rewrite.remove(node, null);
@@ -217,8 +220,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
         }
         final VariableDeclarationStatement prevMultiDecl = getDeclaration((Statement) stmts.get(ifIdx - 1),
             asgnThen.getLeftHandSide());
-        if (prevMultiDecl != null && asgnElse == null
-            && !dependsOn(node.getExpression(), asgnThen.getLeftHandSide()) && asgnThen.getOperator().equals(Operator.ASSIGN)) {
+        if (prevMultiDecl != null) {
           final VariableDeclarationFragment singleDecl = getDeclarationFragment(prevMultiDecl, asgnThen.getLeftHandSide());
           rewriteAssignIfAssignToDeclareTernary(ast, rewrite, node, asgnThen, singleDecl);
           rewrite.remove(node, null);
@@ -292,11 +294,12 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
       final int ifIdx = stmts.indexOf(node);
       if (ifIdx >= 1) {
         final Assignment asgnThen = getAssignment(node.getThenStatement());
-        final Assignment asgnElse = getAssignment(node.getElseStatement());
-        if (asgnThen == null)
+		final Assignment asgnElse = getAssignment(node.getElseStatement());
+		if (asgnThen == null || asgnElse != null)
           return null;
         final ASTNode possibleAssignment = getAssignmentOrDeclaration((Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
-        if (possibleAssignment != null && asgnElse == null && !dependsOn(node.getExpression(), asgnThen.getLeftHandSide())
+        if (possibleAssignment != null &&
+        		!dependsOn(node.getExpression(), asgnThen.getLeftHandSide()) && !dependsOn(asgnThen.getRightHandSide(), asgnThen.getLeftHandSide())
             && asgnThen.getOperator().equals(Operator.ASSIGN))
           return new SpartanizationRange(possibleAssignment, node);
       }

@@ -41,7 +41,7 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
             return true;
           if (m != null && isNodeOutsideMarker(returnVar, m))
             return true;
-          for (final Expression exp : VariableCounter.BOTH_SEMANTIC.list(node, returnVar.getName()))
+          for (final Expression exp : VariableCounter.BOTH_LEXICAL.list(node, returnVar.getName()))
             $.replace(exp, ast.newSimpleName("$"), null);
         }
         return true;
@@ -92,22 +92,21 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
         return null;
     final List<ReturnStatement> returnStatements = getReturnStatements(node);
     final Iterator<VariableDeclarationFragment> iter = $.iterator();
+    int usesOfLastCondidate = 0;
     while (iter.hasNext()) {
       final VariableDeclarationFragment currDecl = iter.next();
       for (final ReturnStatement returnStmt : returnStatements) {
         if (literals.contains(Integer.valueOf(returnStmt.getExpression().getNodeType())))
           continue;
-        final List<Expression> uses = VariableCounter.BOTH_SEMANTIC.list(returnStmt, currDecl.getName());
+        final List<Expression> uses = VariableCounter.BOTH_LEXICAL.list(returnStmt, currDecl.getName());
         if (uses.size() == 0) {
           iter.remove();
           break;
         }
+        usesOfLastCondidate = uses.size();
       }
     }
-    if ($.size() == 1 && returnStatements.size() > 0) {
-      return $.get(0);
-    }
-    return null;
+    return $.size() == 1 && returnStatements.size() > 0 && usesOfLastCondidate > 0 ? $.get(0) : null;
   }
   
 @SuppressWarnings("boxing")
