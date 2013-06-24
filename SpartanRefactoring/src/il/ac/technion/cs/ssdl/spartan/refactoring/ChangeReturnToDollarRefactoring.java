@@ -37,7 +37,7 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
       @Override public boolean visit(final MethodDeclaration node) {
         final VariableDeclarationFragment returnVar = getOnlyReturnVariable(node);
         if (returnVar != null) {
-          if ((m == null) && isNodeOutsideSelection(returnVar))
+          if (m == null && isNodeOutsideSelection(returnVar))
             return true;
           if (m != null && isNodeOutsideMarker(returnVar, m))
             return true;
@@ -60,7 +60,7 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
         return false;
       }
       
-      @Override public boolean visit(VariableDeclarationFragment node) {
+      @Override public boolean visit(final VariableDeclarationFragment node) {
         $.add(node);
         return true;
       }
@@ -109,9 +109,8 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
     return $.size() == 1 && returnStatements.size() > 0 && usesOfLastCondidate > 0 ? $.get(0) : null;
   }
   
-@SuppressWarnings("boxing")
-private static final Collection<Integer> literals = Collections.unmodifiableCollection(Arrays.asList(ASTNode.NULL_LITERAL,
-      ASTNode.CHARACTER_LITERAL, ASTNode.NUMBER_LITERAL, ASTNode.STRING_LITERAL, ASTNode.BOOLEAN_LITERAL));
+  @SuppressWarnings("boxing") private static final Collection<Integer> literals = Collections.unmodifiableCollection(Arrays.asList(
+      ASTNode.NULL_LITERAL, ASTNode.CHARACTER_LITERAL, ASTNode.NUMBER_LITERAL, ASTNode.STRING_LITERAL, ASTNode.BOOLEAN_LITERAL));
   
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
     final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();

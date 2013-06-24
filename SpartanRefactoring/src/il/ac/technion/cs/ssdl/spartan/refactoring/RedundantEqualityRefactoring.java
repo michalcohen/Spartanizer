@@ -30,9 +30,8 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
     final AST ast = cu.getAST();
     final ASTRewrite rewrite = ASTRewrite.create(ast);
     cu.accept(new ASTVisitor() {
-      @Override
-	  public boolean visit(InfixExpression node) {
-        if ((m == null) && isNodeOutsideSelection(node))
+      @Override public boolean visit(final InfixExpression node) {
+        if (m == null && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))
           return true;
@@ -51,11 +50,11 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
         } else
           return true;
         ASTNode newnode = null;
-        if ((literal.booleanValue() && node.getOperator() == Operator.EQUALS)
-            || (!literal.booleanValue() && node.getOperator() == Operator.NOT_EQUALS)) {
+        if (literal.booleanValue() && node.getOperator() == Operator.EQUALS || !literal.booleanValue()
+            && node.getOperator() == Operator.NOT_EQUALS)
           newnode = nonliteral;
-        } else {
-          ParenthesizedExpression paren = ast.newParenthesizedExpression();
+        else {
+          final ParenthesizedExpression paren = ast.newParenthesizedExpression();
           paren.setExpression((Expression) nonliteral);
           newnode = ast.newPrefixExpression();
           ((PrefixExpression) newnode).setOperand(paren);
@@ -77,9 +76,8 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
         if (node.getOperator() != Operator.EQUALS && node.getOperator() != Operator.NOT_EQUALS)
           return true;
         if (node.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-            || node.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL) {
+            || node.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL)
           $.add(new SpartanizationRange(node));
-        }
         return true;
       }
     });

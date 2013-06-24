@@ -5,6 +5,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Spartaniza
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -40,7 +41,7 @@ public abstract class BaseRefactoring extends Refactoring {
   
   protected abstract ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m);
   
-  public final ASTRewrite createRewrite(final CompilationUnit cu, SubProgressMonitor pm) {
+  public final ASTRewrite createRewrite(final CompilationUnit cu, final SubProgressMonitor pm) {
     return innerCreateRewrite(cu, pm, null);
   }
   
@@ -62,22 +63,23 @@ public abstract class BaseRefactoring extends Refactoring {
    * @return true if the node is not inside selection. If there is no selection
    *         at all will return false.
    */
-  protected boolean isNodeOutsideSelection(ASTNode node) {
-    return isTextSelected() && (node.getStartPosition() > selection.getOffset() + selection.getLength() || node.getStartPosition() < selection
-        .getOffset());
+  protected boolean isNodeOutsideSelection(final ASTNode node) {
+    return isTextSelected()
+        && (node.getStartPosition() > selection.getOffset() + selection.getLength() || node.getStartPosition() < selection
+            .getOffset());
   }
   
-  protected static boolean isNodeOutsideMarker(ASTNode node, IMarker m) {
+  protected static boolean isNodeOutsideMarker(final ASTNode node, final IMarker m) {
     try {
-      return (node.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue() ||
-    		  node.getStartPosition() + node.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue());
-    } catch (CoreException e) {
+      return node.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue()
+          || node.getStartPosition() + node.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
+    } catch (final CoreException e) {
       return true;
     }
   }
   
-  @Override public RefactoringStatus checkInitialConditions(IProgressMonitor pm) {
-    RefactoringStatus $ = new RefactoringStatus();
+  @Override public RefactoringStatus checkInitialConditions(final IProgressMonitor pm) {
+    final RefactoringStatus $ = new RefactoringStatus();
     if (compilationUnit == null && marker == null)
       $.merge(RefactoringStatus.createFatalErrorStatus("Nothing to refactor."));
     return $;
@@ -87,37 +89,37 @@ public abstract class BaseRefactoring extends Refactoring {
     marker = m;
   }
   
-  @Override public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+  @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
+      OperationCanceledException {
     final RefactoringStatus $ = new RefactoringStatus();
     changes.clear();
     // TODO: Catch exceptions and change status accordingly
     if (marker != null) {
       innerRunAsMarkerFix(pm, marker, true);
       marker = null; // consume marker
-    } else {
+    } else
       runAsManualCall(pm);
-    }
     pm.done();
     return $;
   }
   
-  private void runAsManualCall(IProgressMonitor pm) throws JavaModelException, CoreException {
+  private void runAsManualCall(final IProgressMonitor pm) throws JavaModelException, CoreException {
     ArrayList<ICompilationUnit> units;
     pm.beginTask("Checking preconditions...", 2);
     if (isTextSelected()) {
       units = new ArrayList<ICompilationUnit>();
       units.add(compilationUnit);
-    } else {
+    } else
       units = getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-    }
     scanCompilationUnits(units, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
   }
   
-  public RefactoringStatus runAsMarkerFix(IProgressMonitor pm, IMarker m) throws CoreException {
+  public RefactoringStatus runAsMarkerFix(final IProgressMonitor pm, final IMarker m) throws CoreException {
     return innerRunAsMarkerFix(pm, m, false);
   }
   
-  private RefactoringStatus innerRunAsMarkerFix(IProgressMonitor pm, IMarker m, boolean preview) throws CoreException {
+  private RefactoringStatus innerRunAsMarkerFix(final IProgressMonitor pm, final IMarker m, final boolean preview)
+      throws CoreException {
     final RefactoringStatus $ = new RefactoringStatus();
     marker = m;
     pm.beginTask("Running refactoring...", 2);
@@ -134,12 +136,11 @@ public abstract class BaseRefactoring extends Refactoring {
    * @throws IllegalArgumentException
    * @throws CoreException
    */
-  protected void scanCompilationUnits(ArrayList<ICompilationUnit> units, IProgressMonitor pm) throws IllegalArgumentException,
-      CoreException {
+  protected void scanCompilationUnits(final ArrayList<ICompilationUnit> units, final IProgressMonitor pm)
+      throws IllegalArgumentException, CoreException {
     pm.beginTask("Iterating over gathered compilation units...", units.size());
-    for (ICompilationUnit u : units) {
+    for (final ICompilationUnit u : units)
       scanCompilationUnit(u, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-    }
     pm.done();
   }
   
@@ -147,15 +148,15 @@ public abstract class BaseRefactoring extends Refactoring {
    * @param u
    * @throws CoreException
    */
-  protected void scanCompilationUnit(ICompilationUnit u, IProgressMonitor pm) throws CoreException {
+  protected void scanCompilationUnit(final ICompilationUnit u, final IProgressMonitor pm) throws CoreException {
     pm.beginTask("Creating change for a single compilation unit...", 2);
-    ASTParser parser = ASTParser.newParser(AST.JLS4);
+    final ASTParser parser = ASTParser.newParser(AST.JLS4);
     parser.setResolveBindings(false);
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
     parser.setSource(u);
-    CompilationUnit cu = (CompilationUnit) parser
-        .createAST(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-    TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
+    final CompilationUnit cu = (CompilationUnit) parser.createAST(new SubProgressMonitor(pm, 1,
+        SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+    final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
     textChange.setTextType("java");
     textChange.setEdit(createRewrite(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
     if (textChange.getEdit().getLength() != 0)
@@ -163,23 +164,23 @@ public abstract class BaseRefactoring extends Refactoring {
     pm.done();
   }
   
-  protected void scanCompilationUnitForMarkerFix(IMarker m, IProgressMonitor pm, boolean preview) throws CoreException {
+  protected void scanCompilationUnitForMarkerFix(final IMarker m, final IProgressMonitor pm, final boolean preview)
+      throws CoreException {
     pm.beginTask("Creating change for a single compilation unit...", 2);
     final ICompilationUnit u = getCompilationUnitFromMarker(m);
-    TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
+    final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
     textChange.setTextType("java");
     textChange.setEdit(createRewriteForMarker(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m)
         .rewriteAST());
-    if (textChange.getEdit().getLength() != 0) {
+    if (textChange.getEdit().getLength() != 0)
       if (preview)
         changes.add(textChange);
       else
         textChange.perform(pm);
-    }
     pm.done();
   }
   
-  public static ICompilationUnit getCompilationUnitFromMarker(IMarker m) {
+  public static ICompilationUnit getCompilationUnitFromMarker(final IMarker m) {
     return JavaCore.createCompilationUnitFrom((IFile) m.getResource());
   }
   
@@ -187,26 +188,22 @@ public abstract class BaseRefactoring extends Refactoring {
    * @param units
    * @throws JavaModelException
    */
-  protected ArrayList<ICompilationUnit> getAllProjectCompilationUnits(IProgressMonitor pm) throws JavaModelException {
+  protected ArrayList<ICompilationUnit> getAllProjectCompilationUnits(final IProgressMonitor pm) throws JavaModelException {
     pm.beginTask("Gathering project information...", 1);
-    ArrayList<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
-    IJavaProject proj = compilationUnit.getJavaProject();
-    for (IPackageFragmentRoot r : proj.getPackageFragmentRoots()) {
-      if (r.getKind() == IPackageFragmentRoot.K_SOURCE) {
-        for (IJavaElement e : r.getChildren()) {
-          if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
+    final ArrayList<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
+    final IJavaProject proj = compilationUnit.getJavaProject();
+    for (final IPackageFragmentRoot r : proj.getPackageFragmentRoots())
+      if (r.getKind() == IPackageFragmentRoot.K_SOURCE)
+        for (final IJavaElement e : r.getChildren())
+          if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
             $.addAll(Arrays.asList(((IPackageFragment) e).getCompilationUnits()));
-          }
-        }
-      }
-    }
     pm.done();
     return $;
   }
   
   public abstract Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu);
   
-  @Override public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+  @Override public Change createChange(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
 }

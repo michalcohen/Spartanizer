@@ -33,11 +33,10 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
    *          The node.
    * @return Number of ast nodes under the node.
    */
-  static int countNodes(ASTNode node) {
+  static int countNodes(final ASTNode node) {
     final AtomicInteger $ = new AtomicInteger(0);
     node.accept(new ASTVisitor() {
-      @Override
-      public void preVisit(final ASTNode n) {
+      @Override public void preVisit(final ASTNode n) {
         $.incrementAndGet();
       }
     });
@@ -50,9 +49,8 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     final AST ast = cu.getAST();
     final ASTRewrite $ = ASTRewrite.create(ast);
     cu.accept(new ASTVisitor() {
-      @Override
-	  public boolean visit(IfStatement node) {
-        if ((m == null) && isNodeOutsideSelection(node))
+      @Override public boolean visit(final IfStatement node) {
+        if (m == null && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))
           return true;
@@ -60,8 +58,8 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
           return true;
         if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) <= -threshold)
           return true;
-        IfStatement newnode = ast.newIfStatement();
-        Expression neg = negateExpression(ast, $, node.getExpression());
+        final IfStatement newnode = ast.newIfStatement();
+        final Expression neg = negateExpression(ast, $, node.getExpression());
         newnode.setExpression(neg);
         newnode.setThenStatement((org.eclipse.jdt.core.dom.Statement) $.createMoveTarget(node.getElseStatement()));
         newnode.setElseStatement((org.eclipse.jdt.core.dom.Statement) $.createMoveTarget(node.getThenStatement()));
@@ -69,9 +67,8 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
         return true;
       }
       
-      @Override
-	public boolean visit(ConditionalExpression node) {
-        if ((m == null) && isNodeOutsideSelection(node))
+      @Override public boolean visit(final ConditionalExpression node) {
+        if (m == null && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))
           return true;
@@ -79,8 +76,8 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
           return true;
         if (node.getThenExpression().getLength() - node.getElseExpression().getLength() <= -threshold)
           return true;
-        ConditionalExpression newnode = ast.newConditionalExpression();
-        Expression neg = negateExpression(ast, $, node.getExpression());
+        final ConditionalExpression newnode = ast.newConditionalExpression();
+        final Expression neg = negateExpression(ast, $, node.getExpression());
         newnode.setExpression(neg);
         newnode.setThenExpression((Expression) $.createMoveTarget(node.getElseExpression()));
         newnode.setElseExpression((Expression) $.createMoveTarget(node.getThenExpression()));
@@ -97,22 +94,22 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
    * @return Returns a prefix expression that is the negation of the provided
    *         expression.
    */
-  static Expression negateExpression(final AST ast, final ASTRewrite rewrite, Expression exp) {
+  static Expression negateExpression(final AST ast, final ASTRewrite rewrite, final Expression exp) {
     Expression negatedComparison = null;
     if (exp instanceof InfixExpression && (negatedComparison = tryNegateComparison(ast, rewrite, (InfixExpression) exp)) != null)
       return negatedComparison;
     Expression negatedNot = null;
     if (exp instanceof PrefixExpression && (negatedNot = tryNegatePrefix(rewrite, (PrefixExpression) exp)) != null)
       return negatedNot;
-    ParenthesizedExpression paren = ast.newParenthesizedExpression();
+    final ParenthesizedExpression paren = ast.newParenthesizedExpression();
     paren.setExpression((Expression) rewrite.createCopyTarget(exp));
-    PrefixExpression neg = ast.newPrefixExpression();
+    final PrefixExpression neg = ast.newPrefixExpression();
     neg.setOperand(paren);
     neg.setOperator(PrefixExpression.Operator.NOT);
     return neg;
   }
   
-  private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, InfixExpression exp) {
+  private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression exp) {
     final InfixExpression $ = ast.newInfixExpression();
     $.setRightOperand((Expression) rewrite.createCopyTarget(exp.getRightOperand()));
     $.setLeftOperand((Expression) rewrite.createCopyTarget(exp.getLeftOperand()));
@@ -143,7 +140,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     return null;
   }
   
-  private static Expression tryNegatePrefix(final ASTRewrite rewrite, PrefixExpression exp) {
+  private static Expression tryNegatePrefix(final ASTRewrite rewrite, final PrefixExpression exp) {
     if (exp.getOperator().equals(PrefixExpression.Operator.NOT))
       return (Expression) rewrite.createCopyTarget(exp.getOperand());
     return null;
@@ -151,11 +148,10 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   
   private static final int threshold = 1;
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu) {
+  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
     final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
     cu.accept(new ASTVisitor() {
-      @Override
-	public boolean visit(IfStatement node) {
+      @Override public boolean visit(final IfStatement node) {
         if (node.getElseStatement() == null)
           return true;
         if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) > threshold)
@@ -163,8 +159,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
         return true;
       }
       
-      @Override
-	public boolean visit(ConditionalExpression node) {
+      @Override public boolean visit(final ConditionalExpression node) {
         if (node.getElseExpression() == null)
           return true;
         if (node.getThenExpression().getLength() - node.getElseExpression().getLength() > threshold)

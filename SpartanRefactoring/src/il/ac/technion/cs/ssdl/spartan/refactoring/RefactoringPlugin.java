@@ -1,11 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import org.osgi.framework.BundleContext;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 public class RefactoringPlugin extends AbstractUIPlugin {
   private static RefactoringPlugin plugin;
@@ -15,11 +13,11 @@ public class RefactoringPlugin extends AbstractUIPlugin {
     SpartanizationFactory.initialize();
   }
   
-  @Override public void start(BundleContext context) throws Exception {
+  @Override public void start(final BundleContext context) throws Exception {
     super.start(context);
   }
   
-  @Override public void stop(BundleContext context) throws Exception {
+  @Override public void stop(final BundleContext context) throws Exception {
     plugin = null;
     super.stop(context);
   }
@@ -28,7 +26,7 @@ public class RefactoringPlugin extends AbstractUIPlugin {
     return plugin;
   }
   
-  public static void log(Throwable throwable) {
+  public static void log(final Throwable throwable) {
     getDefault().getLog().log(
         new Status(IStatus.ERROR, "il.ac.technion.cs.ssdl.spartan.refactoring", 0, throwable.getMessage(), throwable));
   }

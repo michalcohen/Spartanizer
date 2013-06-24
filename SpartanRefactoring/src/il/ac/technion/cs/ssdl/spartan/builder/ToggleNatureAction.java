@@ -23,23 +23,20 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * 
    * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
    */
-  @Override
-  @SuppressWarnings("rawtypes")// Auto-generated code. Didn't write it.
-  public void run(IAction action) {
-    if (selection instanceof IStructuredSelection) {
-      for (Iterator it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
-        Object element = it.next();
+  @Override @SuppressWarnings("rawtypes")// Auto-generated code. Didn't write
+  // it.
+  public void run(final IAction action) {
+    if (selection instanceof IStructuredSelection)
+      for (final Iterator it = ((IStructuredSelection) selection).iterator(); it.hasNext();) {
+        final Object element = it.next();
         IProject project = null;
-        if (element instanceof IProject) {
+        if (element instanceof IProject)
           project = (IProject) element;
-        } else if (element instanceof IAdaptable) {
+        else if (element instanceof IAdaptable)
           project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
-        }
-        if (project != null) {
+        if (project != null)
           toggleNature(project);
-        }
       }
-    }
   }
   
   /*
@@ -49,9 +46,8 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action
    * .IAction, org.eclipse.jface.viewers.ISelection)
    */
-  @Override
-  public void selectionChanged(IAction action, ISelection selection_) {
-    this.selection = selection_;
+  @Override public void selectionChanged(final IAction action, final ISelection selection_) {
+    selection = selection_;
   }
   
   /*
@@ -61,9 +57,8 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    * org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action
    * .IAction, org.eclipse.ui.IWorkbenchPart)
    */
-  @Override
-  public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	// Auto-generated code. Didn't write it.
+  @Override public void setActivePart(final IAction action, final IWorkbenchPart targetPart) {
+    // Auto-generated code. Didn't write it.
   }
   
   /**
@@ -74,19 +69,18 @@ public class ToggleNatureAction implements IObjectActionDelegate {
    */
   private static void toggleNature(final IProject project) {
     try {
-      IProjectDescription description = project.getDescription();
-      String[] natures = description.getNatureIds();
-      for (int i = 0; i < natures.length; ++i) {
+      final IProjectDescription description = project.getDescription();
+      final String[] natures = description.getNatureIds();
+      for (int i = 0; i < natures.length; ++i)
         if (SpartanizationNature.NATURE_ID.equals(natures[i])) {
           // Remove the nature
-          String[] newNatures = new String[natures.length - 1];
+          final String[] newNatures = new String[natures.length - 1];
           System.arraycopy(natures, 0, newNatures, 0, i);
           System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
           description.setNatureIds(newNatures);
           project.setDescription(description, null);
           project.accept(new IResourceVisitor() {
-            @Override
-			public boolean visit(final IResource resource) throws CoreException {
+            @Override public boolean visit(final IResource resource) throws CoreException {
               if (resource instanceof IFile && resource.getName().endsWith(".java"))
                 SpartaBuilder.deleteMarkers((IFile) resource);
               return true;
@@ -94,15 +88,15 @@ public class ToggleNatureAction implements IObjectActionDelegate {
           });
           return;
         }
-      }
       // Add the nature
-      String[] newNatures = new String[natures.length + 1];
+      final String[] newNatures = new String[natures.length + 1];
       System.arraycopy(natures, 0, newNatures, 0, natures.length);
       newNatures[natures.length] = SpartanizationNature.NATURE_ID;
       description.setNatureIds(newNatures);
       project.setDescription(description, null);
-    } catch (CoreException e) {
-    	// we assume that other builder handle cause compilation failure on CoreException
+    } catch (final CoreException e) {
+      // we assume that other builder handle cause compilation failure on
+      // CoreException
     }
   }
 }

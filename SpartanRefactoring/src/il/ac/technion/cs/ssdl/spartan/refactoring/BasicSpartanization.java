@@ -12,7 +12,7 @@ import org.eclipse.ui.IMarkerResolution;
 
 public class BasicSpartanization {
   public BasicSpartanization(final BaseRefactoring ref, final String name, final String message) {
-    this.refactoring = ref;
+    refactoring = ref;
     this.name = name;
     this.message = message;
   }
@@ -42,16 +42,14 @@ public class BasicSpartanization {
   }
   
   public class SpartanizationResolution implements IMarkerResolution {
-    @Override
-	public String getLabel() {
+    @Override public String getLabel() {
       return BasicSpartanization.this.toString() + ": Do it!";
     }
     
-    @Override
-	public void run(final IMarker arg0) {
+    @Override public void run(final IMarker arg0) {
       try {
         getRefactoring().runAsMarkerFix(new org.eclipse.core.runtime.NullProgressMonitor(), arg0);
-      } catch (CoreException e) {
+      } catch (final CoreException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -59,18 +57,16 @@ public class BasicSpartanization {
   }
   
   public class SpartanizationResolutionWithPreview implements IMarkerResolution {
-    @Override
-	public String getLabel() {
+    @Override public String getLabel() {
       return BasicSpartanization.this.toString() + ": Show me a preview first";
     }
     
-    @Override
-	public void run(final IMarker arg0) {
+    @Override public void run(final IMarker arg0) {
       getRefactoring().setMarker(arg0);
       try {
-        new RefactoringWizardOpenOperation(new BaseRefactoringWizard(getRefactoring())).run(Display.getCurrent().getActiveShell(), "Spartan Refactoring: "
-            + BasicSpartanization.this.toString());
-      } catch (InterruptedException e) {
+        new RefactoringWizardOpenOperation(new BaseRefactoringWizard(getRefactoring())).run(Display.getCurrent().getActiveShell(),
+            "Spartan Refactoring: " + BasicSpartanization.this.toString());
+      } catch (final InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -84,7 +80,7 @@ public class BasicSpartanization {
   public static class SpartanizationRange {
     public final int from, to;
     
-    public SpartanizationRange(int from, int to) {
+    public SpartanizationRange(final int from, final int to) {
       this.from = from;
       this.to = to;
     }

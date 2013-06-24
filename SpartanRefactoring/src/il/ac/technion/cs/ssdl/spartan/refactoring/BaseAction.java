@@ -37,51 +37,46 @@ public abstract class BaseAction implements IWorkbenchWindowActionDelegate {
    * @return
    */
   protected RefactoringWizard getWizard() {
-    BaseRefactoring refactoring = getRefactoring();
+    final BaseRefactoring refactoring = getRefactoring();
     refactoring.selection = selection;
     refactoring.compilationUnit = compilationUnit;
     return new BaseRefactoringWizard(refactoring);
   }
   
-  @Override
-  public void run(IAction action) {
+  @Override public void run(final IAction action) {
     if (window == null)
       return;
-    RefactoringWizardOpenOperation wop = new RefactoringWizardOpenOperation(getWizard());
+    final RefactoringWizardOpenOperation wop = new RefactoringWizardOpenOperation(getWizard());
     try {
       wop.run(window.getShell(), getDialogTitle());
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
   
-  @Override
-  public void selectionChanged(final IAction action,final ISelection selection_) {
-    this.compilationUnit = getCompilationUnit();
-    this.selection = selection_ instanceof ITextSelection ? (ITextSelection) selection_ : null;
+  @Override public void selectionChanged(final IAction action, final ISelection selection_) {
+    compilationUnit = getCompilationUnit();
+    selection = selection_ instanceof ITextSelection ? (ITextSelection) selection_ : null;
     action.setEnabled(compilationUnit != null);
   }
   
   private ICompilationUnit getCompilationUnit() {
-    IEditorPart editorPart = window.getActivePage().getActiveEditor();
+    final IEditorPart editorPart = window.getActivePage().getActiveEditor();
     if (editorPart == null)
       return null;
-    IEditorInput editorInput = editorPart.getEditorInput();
-    IResource resource = (IResource) editorInput.getAdapter(IResource.class);
+    final IEditorInput editorInput = editorPart.getEditorInput();
+    final IResource resource = (IResource) editorInput.getAdapter(IResource.class);
     if (resource == null)
       return null;
-    ICompilationUnit cu = JavaCore.createCompilationUnitFrom((IFile) resource);
-    return cu; // cu may be null
+    return JavaCore.createCompilationUnitFrom((IFile) resource); // cu may be null
   }
   
-  @Override
-  public void dispose() {
+  @Override public void dispose() {
     return;
   }
   
-  @Override
-  public void init(final IWorkbenchWindow window_) {
-    this.window = window_;
+  @Override public void init(final IWorkbenchWindow window_) {
+    window = window_;
   }
 }

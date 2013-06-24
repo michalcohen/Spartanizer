@@ -28,15 +28,15 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
       pm.beginTask("Creating rewrite operation...", 1);
     final ASTRewrite $ = ASTRewrite.create(cu.getAST());
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(VariableDeclarationFragment node) {
-        if ((m == null) && isNodeOutsideSelection(node))
+      @Override public boolean visit(final VariableDeclarationFragment node) {
+        if (m == null && isNodeOutsideSelection(node))
           return true;
         if (m != null && isNodeOutsideMarker(node, m))
           return true;
         final SimpleName varName = node.getName();
         if (node.getParent() instanceof VariableDeclarationStatement) {
-          final VariableDeclarationStatement parent = (VariableDeclarationStatement) (node.getParent());
-          boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
+          final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
+          final boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
           final List<Expression> uses = VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName);
           if (uses.size() == 1 && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1)) {
             final ASTNode initializerExpr = $.createCopyTarget(node.getInitializer());
@@ -58,11 +58,11 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
     final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(VariableDeclarationFragment node) {
+      @Override public boolean visit(final VariableDeclarationFragment node) {
         final SimpleName varName = node.getName();
         if (node.getParent() instanceof VariableDeclarationStatement) {
-          final VariableDeclarationStatement parent = (VariableDeclarationStatement) (node.getParent());
-          boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
+          final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
+          final boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
           if (VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName).size() == 1
               && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1))
             $.add(new SpartanizationRange(node));

@@ -43,14 +43,14 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
           return true;
         final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
         if (beginingOfDeclarationsBlockIdx > declaredIdx) {
-          final ASTNode declarationNode = (ASTNode) (block.statements().get(declaredIdx));
+          final ASTNode declarationNode = (ASTNode) block.statements().get(declaredIdx);
           if (((VariableDeclarationStatement) declarationNode).fragments().size() == 1) {
             final ListRewrite lstRewrite = rewrite.getListRewrite(block, Block.STATEMENTS_PROPERTY);
             lstRewrite.remove(declarationNode, null);
             lstRewrite.insertAt(ASTNode.copySubtree(ast, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
           } else {
             rewrite.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-                ast.newVariableDeclarationStatement((VariableDeclarationFragment) (ASTNode.copySubtree(ast, node))),
+                ast.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(ast, node)),
                 beginingOfDeclarationsBlockIdx + 1, null);
             rewrite.remove(node, null);
           }
@@ -89,7 +89,7 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
     final ASTNode declarationFragment = var.getParent();
     final ASTNode declarationStmt = declarationFragment.getParent();
     for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i) {
-      final List<Expression> usesInCurrItem = VariableCounter.BOTH_LEXICAL.list((ASTNode) (b.statements().get(i)), var);
+      final List<Expression> usesInCurrItem = VariableCounter.BOTH_LEXICAL.list((ASTNode) b.statements().get(i), var);
       final int usesInBlockItem = usesInCurrItem.size();
       if (usesInBlockItem > 0)
         return i; // first use!
@@ -102,9 +102,9 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
     for (int i = firstUseIdx - 1; i > declaredIdx; --i) {
       if (!(b.statements().get(i) instanceof VariableDeclarationStatement))
         break;
-      final VariableDeclarationStatement declarations = (VariableDeclarationStatement) (b.statements().get(i));
+      final VariableDeclarationStatement declarations = (VariableDeclarationStatement) b.statements().get(i);
       boolean foundUsedVariable = false;
-      for (Object item : declarations.fragments()) {
+      for (final Object item : declarations.fragments()) {
         final int firstUseOfCurr = findFirstUse(b, ((VariableDeclarationFragment) item).getName());
         if (firstUseOfCurr == firstUseIdx) {
           beginingOfDeclarationsBlockIdx = i - 1;
