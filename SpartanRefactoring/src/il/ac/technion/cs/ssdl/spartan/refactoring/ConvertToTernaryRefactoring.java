@@ -99,15 +99,14 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
       return null;
     if (node.getNodeType() == ASTNode.RETURN_STATEMENT)
       return (ReturnStatement) node;
-    else if (node.getNodeType() == ASTNode.BLOCK) {
-      final Block block = (Block) node;
-      if (block.statements().size() != 1)
-        return null;
-      if (((ASTNode) block.statements().get(0)).getNodeType() != ASTNode.RETURN_STATEMENT)
-        return null;
-      return (ReturnStatement) block.statements().get(0);
-    } else
+    if (node.getNodeType() != ASTNode.BLOCK)
       return null;
+    final Block b = (Block) node;
+    if (b.statements().size() != 1)
+      return null;
+    if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.RETURN_STATEMENT)
+      return null;
+    return (ReturnStatement) b.statements().get(0);
   }
   
   /**

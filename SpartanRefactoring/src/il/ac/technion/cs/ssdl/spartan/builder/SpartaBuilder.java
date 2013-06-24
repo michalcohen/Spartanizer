@@ -119,25 +119,25 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     }
   }
   
-  protected void fullBuild(final IProgressMonitor monitor) {
+  protected void fullBuild(final IProgressMonitor m) {
     try {
-      if (monitor != null)
-        monitor.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
+      if (m != null)
+        m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
       getProject().accept(new SampleResourceVisitor());
     } catch (final CoreException e) {
       // we assume that other builder handle cause compilation failure on
       // CoreException
     }
-    if (monitor != null)
-      monitor.done();
+    if (m != null)
+      m.done();
   }
   
-  protected static void incrementalBuild(final IResourceDelta delta, final IProgressMonitor monitor) throws CoreException {
+  protected static void incrementalBuild(final IResourceDelta delta, final IProgressMonitor m) throws CoreException {
     // the visitor does the work.
-    if (monitor != null)
-      monitor.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
+    if (m != null)
+      m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     delta.accept(new SampleDeltaVisitor());
-    if (monitor != null)
-      monitor.done();
+    if (m != null)
+      m.done();
   }
 }

@@ -91,19 +91,18 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
       if (decl.getName().getIdentifier().equals("$"))
         return null;
     final List<ReturnStatement> returnStatements = getReturnStatements(node);
-    final Iterator<VariableDeclarationFragment> iter = $.iterator();
     int usesOfLastCondidate = 0;
-    while (iter.hasNext()) {
+    for (final Iterator<VariableDeclarationFragment> iter = $.iterator(); iter.hasNext();) {
       final VariableDeclarationFragment currDecl = iter.next();
       for (final ReturnStatement returnStmt : returnStatements) {
         if (literals.contains(Integer.valueOf(returnStmt.getExpression().getNodeType())))
           continue;
-        final List<Expression> uses = VariableCounter.BOTH_LEXICAL.list(returnStmt, currDecl.getName());
-        if (uses.size() == 0) {
+        final int nUses = VariableCounter.BOTH_LEXICAL.list(returnStmt, currDecl.getName()).size();
+        if (nUses == 0) {
           iter.remove();
           break;
         }
-        usesOfLastCondidate = uses.size();
+        usesOfLastCondidate = nUses;
       }
     }
     return $.size() == 1 && returnStatements.size() > 0 && usesOfLastCondidate > 0 ? $.get(0) : null;
