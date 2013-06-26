@@ -130,5 +130,59 @@
          verticalRulerPreferenceValue="true">
    </specification>
 </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="il.ac.technion.cs.ssdl.spartan.commands.category"
+            name="Spartanization Category">
+      </category>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.commands.category"
+            id="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
+            name="Toggle Automatic Spartanization Suggestion">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ToggleSpartanizationHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="S1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="il.ac.technion.cs.ssdl.spartan.menus.spartanization"
+               label="Spartanization"
+               mnemonic="S">
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
+                  id="il.ac.technion.cs.ssdl.spartan.menus.toggleCommand"
+                  mnemonic="S">
+            </command>
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
+   </extension>
    
 </plugin>
