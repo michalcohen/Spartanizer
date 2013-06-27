@@ -80,9 +80,9 @@ public class ToggleNatureAction implements IObjectActionDelegate {
           description.setNatureIds(newNatures);
           project.setDescription(description, null);
           project.accept(new IResourceVisitor() {
-            @Override public boolean visit(final IResource resource) throws CoreException {
-              if (resource instanceof IFile && resource.getName().endsWith(".java"))
-                SpartaBuilder.deleteMarkers((IFile) resource);
+            @Override public boolean visit(final IResource r) throws CoreException {
+              if (r instanceof IFile && r.getName().endsWith(".java"))
+                SpartaBuilder.deleteMarkers((IFile) r);
               return true;
             }
           });

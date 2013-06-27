@@ -62,25 +62,24 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
    * Extracts an assignment from a node. Expression, and the Expression contains
    * Assignment.
    * 
-   * @param node
+   * @param n
    *          The node from which to extract assignment.
    * @return null if it is not possible to extract the assignment.
    */
-  static Assignment getAssignment(final Statement node) {
-    if (node == null)
+  static Assignment getAssignment(final Statement n) {
+    if (n == null)
       return null;
     ExpressionStatement expStmnt = null;
-    if (node.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
-      expStmnt = (ExpressionStatement) node;
-    else if (node.getNodeType() == ASTNode.BLOCK) {
-      final Block block = (Block) node;
-      if (block.statements().size() != 1)
-        return null;
-      if (((ASTNode) block.statements().get(0)).getNodeType() != ASTNode.EXPRESSION_STATEMENT)
-        return null;
-      expStmnt = (ExpressionStatement) (ASTNode) block.statements().get(0);
-    } else
+    if (n.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+      expStmnt = (ExpressionStatement) n;
+    else if (n.getNodeType() != ASTNode.BLOCK)
       return null;
+    final Block b = (Block) n;
+    if (b.statements().size() != 1)
+      return null;
+    if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.EXPRESSION_STATEMENT)
+      return null;
+    expStmnt = (ExpressionStatement) (ASTNode) b.statements().get(0);
     if (expStmnt.getExpression().getNodeType() != ASTNode.ASSIGNMENT)
       return null;
     return (Assignment) expStmnt.getExpression();
@@ -90,18 +89,18 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
    * Extracts a return statement from a node. Expression, and the Expression
    * contains Assignment.
    * 
-   * @param node
+   * @param s
    *          The node from which to return statement assignment.
    * @return null if it is not possible to extract the return statement.
    */
-  static ReturnStatement getReturnStatement(final Statement node) {
-    if (node == null)
+  static ReturnStatement getReturnStatement(final Statement s) {
+    if (s == null)
       return null;
-    if (node.getNodeType() == ASTNode.RETURN_STATEMENT)
-      return (ReturnStatement) node;
-    if (node.getNodeType() != ASTNode.BLOCK)
+    if (s.getNodeType() == ASTNode.RETURN_STATEMENT)
+      return (ReturnStatement) s;
+    if (s.getNodeType() != ASTNode.BLOCK)
       return null;
-    final Block b = (Block) node;
+    final Block b = (Block) s;
     if (b.statements().size() != 1)
       return null;
     if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.RETURN_STATEMENT)
@@ -263,9 +262,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
   static SpartanizationRange detectReturn(final IfStatement node) {
     final ReturnStatement retThen = getReturnStatement(node.getThenStatement());
     final ReturnStatement retElse = getReturnStatement(node.getElseStatement());
-    if (retThen != null && retElse != null)
-      return new SpartanizationRange(node);
-    return null;
+    return retThen == null || retElse == null ? null : new SpartanizationRange(node);
   }
   
   static SpartanizationRange detectIfReturn(final IfStatement node) {
@@ -305,47 +302,46 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     return null;
   }
   
-  private static boolean dependsOn(final Expression expression, final Expression leftHandSide) {
-    return VariableCounter.BOTH_SEMANTIC.list(expression, leftHandSide).size() > 0;
+  private static boolean dependsOn(final Expression e, final Expression leftHandSide) {
+    return VariableCounter.BOTH_SEMANTIC.list(e, leftHandSide).size() > 0;
   }
   
-  private static ASTNode getAssignmentOrDeclaration(final Statement statement, final Expression expression) {
+  private static ASTNode getAssignmentOrDeclaration(final Statement s, final Expression e) {
     ASTNode $ = null;
-    if (($ = getAssignment(statement)) != null)
+    if (($ = getAssignment(s)) != null)
       return $;
-    if (($ = getSingleDeclaration(statement, expression)) != null)
+    if (($ = getSingleDeclaration(s, e)) != null)
       return $;
-    if (($ = getDeclaration(statement, expression)) != null)
+    if (($ = getDeclaration(s, e)) != null)
       return $;
     return $;
   }
   
-  private static VariableDeclarationStatement getDeclaration(final Statement statement, final Expression expression) {
-    if (statement == null)
+  private static VariableDeclarationStatement getDeclaration(final Statement s, final Expression e) {
+    if (s == null)
       return null;
-    if (statement.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
-      final VariableDeclarationStatement decl = (VariableDeclarationStatement) statement;
-      return getDeclarationFragment(decl, expression) != null ? (VariableDeclarationStatement) statement : null;
+    if (s.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
+      final VariableDeclarationStatement d = (VariableDeclarationStatement) s;
+      return getDeclarationFragment(d, e) != null ? (VariableDeclarationStatement) s : null;
     }
     return null;
   }
   
-  private static VariableDeclarationStatement getSingleDeclaration(final Statement statement, final Expression expression) {
-    if (statement == null)
+  private static VariableDeclarationStatement getSingleDeclaration(final Statement s, final Expression expression) {
+    if (s == null)
       return null;
-    if (statement.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
-      final VariableDeclarationStatement decl = (VariableDeclarationStatement) statement;
-      if (decl.fragments().size() == 1 && getDeclarationFragment(decl, expression) != null)
-        return (VariableDeclarationStatement) statement;
+    if (s.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
+      final VariableDeclarationStatement d = (VariableDeclarationStatement) s;
+      if (d.fragments().size() == 1 && getDeclarationFragment(d, expression) != null)
+        return (VariableDeclarationStatement) s;
     }
     return null;
   }
   
-  private static VariableDeclarationFragment getDeclarationFragment(final VariableDeclarationStatement decl,
-      final Expression expression) {
-    if (expression.getNodeType() == ASTNode.SIMPLE_NAME) {
-      final SimpleName name = (SimpleName) expression;
-      for (final Object obj : decl.fragments())
+  private static VariableDeclarationFragment getDeclarationFragment(final VariableDeclarationStatement d, final Expression e) {
+    if (e.getNodeType() == ASTNode.SIMPLE_NAME) {
+      final SimpleName name = (SimpleName) e;
+      for (final Object obj : d.fragments())
         if (name.subtreeMatch(matcher, ((VariableDeclarationFragment) obj).getName()))
           return (VariableDeclarationFragment) obj;
     }
@@ -356,17 +352,20 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final IfStatement node) {
-        SpartanizationRange rng = null;
+        SpartanizationRange rng;
         if ((rng = detectAssignIfAssign(node)) != null) {
           $.add(rng);
           return true;
-        } else if ((rng = detectAssignment(node)) != null) {
+        }
+        if ((rng = detectAssignment(node)) != null) {
           $.add(rng);
           return true;
-        } else if ((rng = detectReturn(node)) != null) {
+        }
+        if ((rng = detectReturn(node)) != null) {
           $.add(rng);
           return true;
-        } else if ((rng = detectIfReturn(node)) != null) {
+        }
+        if ((rng = detectIfReturn(node)) != null) {
           $.add(rng);
           return true;
         }

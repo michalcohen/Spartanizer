@@ -132,8 +132,8 @@ public enum VariableCounter {
       }
       
       @Override public boolean visit(final AnonymousClassDeclaration node) {
-        for (final VariableDeclarationFragment decl : getFieldsOfClass(node))
-          if (decl.getName().subtreeMatch(matcher, e))
+        for (final VariableDeclarationFragment d : getFieldsOfClass(node))
+          if (d.getName().subtreeMatch(matcher, e))
             return false;
         return true;
       }

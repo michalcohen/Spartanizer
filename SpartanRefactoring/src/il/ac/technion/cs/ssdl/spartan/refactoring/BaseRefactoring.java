@@ -89,17 +89,17 @@ public abstract class BaseRefactoring extends Refactoring {
     marker = m;
   }
   
-  @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
+  @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor m) throws CoreException,
       OperationCanceledException {
     final RefactoringStatus $ = new RefactoringStatus();
     changes.clear();
     // TODO: Catch exceptions and change status accordingly
     if (marker != null) {
-      innerRunAsMarkerFix(pm, marker, true);
+      innerRunAsMarkerFix(m, marker, true);
       marker = null; // consume marker
     } else
-      runAsManualCall(pm);
-    pm.done();
+      runAsManualCall(m);
+    m.done();
     return $;
   }
   

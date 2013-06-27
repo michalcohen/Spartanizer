@@ -41,8 +41,8 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
             return true;
           if (m != null && isNodeOutsideMarker(returnVar, m))
             return true;
-          for (final Expression exp : VariableCounter.BOTH_LEXICAL.list(node, returnVar.getName()))
-            $.replace(exp, ast.newSimpleName("$"), null);
+          for (final Expression e : VariableCounter.BOTH_LEXICAL.list(node, returnVar.getName()))
+            $.replace(e, ast.newSimpleName("$"), null);
         }
         return true;
       }
@@ -87,8 +87,8 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
   static VariableDeclarationFragment getOnlyReturnVariable(final MethodDeclaration node) {
     final List<VariableDeclarationFragment> $ = getCandidates(node);
     // check if we already have $
-    for (final VariableDeclaration decl : $)
-      if (decl.getName().getIdentifier().equals("$"))
+    for (final VariableDeclaration d : $)
+      if (d.getName().getIdentifier().equals("$"))
         return null;
     final List<ReturnStatement> returnStatements = getReturnStatements(node);
     int usesOfLastCondidate = 0;

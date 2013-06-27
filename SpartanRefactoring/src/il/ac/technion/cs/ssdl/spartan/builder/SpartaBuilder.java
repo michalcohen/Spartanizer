@@ -30,18 +30,18 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
      * .core.resources.IResourceDelta)
      */
     @Override public boolean visit(final IResourceDelta delta) throws CoreException {
-      final IResource resource = delta.getResource();
+      final IResource r = delta.getResource();
       switch (delta.getKind()) {
         case IResourceDelta.ADDED:
           // handle added resource
-          checkJava(resource);
+          checkJava(r);
           break;
         case IResourceDelta.REMOVED:
           // handle removed resource
           break;
         case IResourceDelta.CHANGED:
           // handle changed resource
-          checkJava(resource);
+          checkJava(r);
           break;
         default:
           break;
@@ -52,8 +52,8 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   }
   
   static class SampleResourceVisitor implements IResourceVisitor {
-    @Override public boolean visit(final IResource resource) {
-      checkJava(resource);
+    @Override public boolean visit(final IResource r) {
+      checkJava(r);
       // return true to continue visiting children.
       return true;
     }
@@ -71,41 +71,41 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
    */
   @Override @SuppressWarnings("rawtypes")// Auto-generated code. Didn't write
   // it.
-  protected IProject[] build(final int kind, final Map args, final IProgressMonitor monitor) throws CoreException {
+  protected IProject[] build(final int kind, final Map args, final IProgressMonitor m) throws CoreException {
     if (kind == FULL_BUILD)
-      fullBuild(monitor);
+      fullBuild(m);
     else {
       final IResourceDelta delta = getDelta(getProject());
       if (delta == null)
-        fullBuild(monitor);
+        fullBuild(m);
       else
-        incrementalBuild(delta, monitor);
+        incrementalBuild(delta, m);
     }
     return null;
   }
   
-  static void checkJava(final IResource resource) {
-    if (resource instanceof IFile && resource.getName().endsWith(".java")) {
-      final IFile file = (IFile) resource;
-      deleteMarkers(file);
+  static void checkJava(final IResource r) {
+    if (r instanceof IFile && r.getName().endsWith(".java")) {
+      final IFile f = (IFile) r;
+      deleteMarkers(f);
       try {
-        final ASTParser parser = ASTParser.newParser(AST.JLS4);
-        parser.setResolveBindings(false);
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        parser.setSource(JavaCore.createCompilationUnitFrom(file));
-        final CompilationUnit concreteCu = (CompilationUnit) parser.createAST(null);
+        final ASTParser p = ASTParser.newParser(AST.JLS4);
+        p.setResolveBindings(false);
+        p.setKind(ASTParser.K_COMPILATION_UNIT);
+        p.setSource(JavaCore.createCompilationUnitFrom(f));
+        final CompilationUnit concreteCu = (CompilationUnit) p.createAST(null);
         for (final BasicSpartanization currSpartanization : SpartanizationFactory.getAllSpartanizations())
-          for (final SpartanizationRange rng : currSpartanization.checkForSpartanization(concreteCu))
-            if (rng != null) {
-              final IMarker spartanizationMarker = file.createMarker(MARKER_TYPE);
-              spartanizationMarker.setAttribute(IMarker.CHAR_START, rng.from);
-              spartanizationMarker.setAttribute(IMarker.CHAR_END, rng.to);
+          for (final SpartanizationRange range : currSpartanization.checkForSpartanization(concreteCu))
+            if (range != null) {
+              final IMarker spartanizationMarker = f.createMarker(MARKER_TYPE);
+              spartanizationMarker.setAttribute(IMarker.CHAR_START, range.from);
+              spartanizationMarker.setAttribute(IMarker.CHAR_END, range.to);
               spartanizationMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
               spartanizationMarker.setAttribute(SPARTANIZATION_TYPE_KEY, currSpartanization.toString());
               spartanizationMarker.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + currSpartanization.getMessage());
             }
-      } catch (final Exception e1) {
-        e1.printStackTrace();
+      } catch (final Exception e) {
+        e.printStackTrace();
       }
     }
   }
@@ -120,16 +120,15 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   }
   
   protected void fullBuild(final IProgressMonitor m) {
+    if (m != null)
+      m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     try {
-      if (m != null)
-        m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
       getProject().accept(new SampleResourceVisitor());
     } catch (final CoreException e) {
       // we assume that other builder handle cause compilation failure on
       // CoreException
     }
-    if (m != null)
-      m.done();
+    done(m);
   }
   
   protected static void incrementalBuild(final IResourceDelta delta, final IProgressMonitor m) throws CoreException {
@@ -137,6 +136,10 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     if (m != null)
       m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     delta.accept(new SampleDeltaVisitor());
+    done(m);
+  }
+  
+  public static void done(final IProgressMonitor m) {
     if (m != null)
       m.done();
   }

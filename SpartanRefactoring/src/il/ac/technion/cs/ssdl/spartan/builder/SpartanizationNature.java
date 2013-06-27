@@ -20,17 +20,20 @@ public class SpartanizationNature implements IProjectNature {
    */
   @Override public void configure() throws CoreException {
     final IProjectDescription desc = project.getDescription();
-    final ICommand[] commands = desc.getBuildSpec();
-    for (final ICommand command2 : commands)
-      if (command2.getBuilderName().equals(SpartaBuilder.BUILDER_ID))
+    final ICommand[] cs = desc.getBuildSpec();
+    for (final ICommand c : cs)
+      if (c.getBuilderName().equals(SpartaBuilder.BUILDER_ID))
         return;
-    final ICommand[] newCommands = new ICommand[commands.length + 1];
-    System.arraycopy(commands, 0, newCommands, 0, commands.length);
-    final ICommand command = desc.newCommand();
-    command.setBuilderName(SpartaBuilder.BUILDER_ID);
-    newCommands[newCommands.length - 1] = command;
-    desc.setBuildSpec(newCommands);
+    desc.setBuildSpec(make(desc, cs));
     project.setDescription(desc, null);
+  }
+  
+  private ICommand[] make(final IProjectDescription desc, final ICommand[] cs) {
+    final ICommand[] $ = new ICommand[cs.length + 1];
+    System.arraycopy(cs, 0, $, 0, cs.length);
+    final ICommand c = $[$.length - 1] = desc.newCommand();
+    c.setBuilderName(SpartaBuilder.BUILDER_ID);
+    return $;
   }
   
   /*
@@ -40,16 +43,20 @@ public class SpartanizationNature implements IProjectNature {
    */
   @Override public void deconfigure() throws CoreException {
     final IProjectDescription description = getProject().getDescription();
-    final ICommand[] commands = description.getBuildSpec();
-    for (int i = 0; i < commands.length; ++i)
-      if (commands[i].getBuilderName().equals(SpartaBuilder.BUILDER_ID)) {
-        final ICommand[] newCommands = new ICommand[commands.length - 1];
-        System.arraycopy(commands, 0, newCommands, 0, i);
-        System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
-        description.setBuildSpec(newCommands);
+    final ICommand[] cs = description.getBuildSpec();
+    for (int i = 0; i < cs.length; ++i)
+      if (cs[i].getBuilderName().equals(SpartaBuilder.BUILDER_ID)) {
+        description.setBuildSpec(make(cs, i));
         project.setDescription(description, null);
         return;
       }
+  }
+
+  private ICommand[] make(final ICommand[] cs, int i) {
+    final ICommand[] $ = new ICommand[cs.length - 1];
+    System.arraycopy(cs, 0, $, 0, i);
+    System.arraycopy(cs, i + 1, $, i, cs.length - i - 1);
+    return $;
   }
   
   /*

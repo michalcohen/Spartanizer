@@ -9,7 +9,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -65,11 +64,9 @@ public abstract class BaseAction implements IWorkbenchWindowActionDelegate {
     final IEditorPart editorPart = window.getActivePage().getActiveEditor();
     if (editorPart == null)
       return null;
-    final IEditorInput editorInput = editorPart.getEditorInput();
-    final IResource resource = (IResource) editorInput.getAdapter(IResource.class);
-    if (resource == null)
-      return null;
-    return JavaCore.createCompilationUnitFrom((IFile) resource); // cu may be null
+    final IResource r = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
+    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
+    // cu be null
   }
   
   @Override public void dispose() {

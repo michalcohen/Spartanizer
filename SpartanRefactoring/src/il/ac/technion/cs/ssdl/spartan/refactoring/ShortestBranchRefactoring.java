@@ -29,14 +29,14 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   /**
    * Count number of nodes in the tree of which node is root.
    * 
-   * @param node
+   * @param n
    *          The node.
    * @return Number of ast nodes under the node.
    */
-  static int countNodes(final ASTNode node) {
+  static int countNodes(final ASTNode n) {
     final AtomicInteger $ = new AtomicInteger(0);
-    node.accept(new ASTVisitor() {
-      @Override public void preVisit(final ASTNode n) {
+    n.accept(new ASTVisitor() {
+      @Override public void preVisit(final ASTNode _) {
         $.incrementAndGet();
       }
     });
