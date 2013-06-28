@@ -141,6 +141,40 @@
             id="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
             name="Toggle Automatic Spartanization Suggestion">
       </command>
+      <category
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            name="Spartan Refactoring">
+      </category>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
+            name="Change return variable to $">
+      </command>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
+            name="Convert condition to ternary">
+      </command>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
+            name="Forward declaration">
+      </command>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
+            name="Inline single use">
+      </command>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
+            name="Redandant equality">
+      </command>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
+            name="Shortest branch first">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -148,15 +182,10 @@
             class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ToggleSpartanizationHandler"
             commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand">
       </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="S1+6">
-      </key>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ChangeReturnToDollarHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -181,6 +210,46 @@
                   </adapt>
                </iterate>
             </visibleWhen>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?before=navigate">
+         <menu
+               id="org.eclipse.jdt.ui.refactoring.menu"
+               label="Refactor">
+            <menu
+                  label="Spartanization">
+               <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
+                     id="il.ac.technion.cs.ssdl.spartan.menus.ChangeReturnToDollarCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
+                     label="Convert condition to ternary..."
+                     style="push">
+               </command>
+               <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
+                     label="Forward declaration of varialbe..."
+                     style="push">
+               </command>
+               <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
+                     label="Inline single use of variable..."
+                     style="push">
+               </command>
+               <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
+                     label="Remove redunant equality..."
+                     style="push">
+               </command>
+               <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
+                     label="Make shortest side of branch first..."
+                     style="push">
+               </command>
+            </menu>
          </menu>
       </menuContribution>
    </extension>

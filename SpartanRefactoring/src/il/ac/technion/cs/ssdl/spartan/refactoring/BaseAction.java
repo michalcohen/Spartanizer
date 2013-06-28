@@ -37,8 +37,8 @@ public abstract class BaseAction implements IWorkbenchWindowActionDelegate {
    */
   protected RefactoringWizard getWizard() {
     final BaseRefactoring refactoring = getRefactoring();
-    refactoring.selection = selection;
-    refactoring.compilationUnit = compilationUnit;
+    refactoring.setSelection(selection);
+    refactoring.setCompilationUnit(compilationUnit);
     return new BaseRefactoringWizard(refactoring);
   }
   

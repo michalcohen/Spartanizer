@@ -32,8 +32,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 public abstract class BaseRefactoring extends Refactoring {
-  ITextSelection selection = null;
-  ICompilationUnit compilationUnit = null;
+  private ITextSelection selection = null;
+  private ICompilationUnit compilationUnit = null;
   IMarker marker = null;
   final Collection<TextFileChange> changes = new ArrayList<TextFileChange>();
   
@@ -206,4 +206,32 @@ public abstract class BaseRefactoring extends Refactoring {
   @Override public Change createChange(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
+
+/**
+ * @return the selection
+ */
+public ITextSelection getSelection() {
+	return selection;
+}
+
+/**
+ * @param selection the selection to set
+ */
+public void setSelection(ITextSelection selection) {
+	this.selection = selection;
+}
+
+/**
+ * @return the compilationUnit
+ */
+public ICompilationUnit getCompilationUnit() {
+	return compilationUnit;
+}
+
+/**
+ * @param compilationUnit the compilationUnit to set
+ */
+public void setCompilationUnit(ICompilationUnit compilationUnit) {
+	this.compilationUnit = compilationUnit;
+}
 }

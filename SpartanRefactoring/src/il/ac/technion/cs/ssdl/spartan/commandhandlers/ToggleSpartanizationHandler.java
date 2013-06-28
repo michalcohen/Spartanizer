@@ -20,23 +20,23 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
- * Our sample handler extends AbstractHandler, an IHandler base class.
+ * A command handler which toggles the spartanization nature
+ * @author Boris van Sosin
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {
 	/**
-	 * The constructor.
+	 * The constructor. auto-generated
 	 */
 	public ToggleSpartanizationHandler() {
 	}
 
 	/**
-	 * the command has been executed, so extract extract the needed information
-	 * from the application context.
+	 * the main method of the command handler. runs when the command is called.
 	 */
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		String partId = HandlerUtil.getActivePartIdChecked(event);
 		System.out.println(partId);
 		final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
