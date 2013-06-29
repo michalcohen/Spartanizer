@@ -21,6 +21,11 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ *
+ */
 public class ShortestBranchRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Shortest Conditional Branch First";

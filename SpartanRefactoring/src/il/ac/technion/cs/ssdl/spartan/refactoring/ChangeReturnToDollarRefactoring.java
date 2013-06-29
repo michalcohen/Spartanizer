@@ -23,6 +23,11 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ *
+ */
 public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Convert Return Variable to $";

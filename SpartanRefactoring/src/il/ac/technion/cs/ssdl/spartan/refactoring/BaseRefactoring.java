@@ -31,6 +31,11 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ * the base class for all Spartanization Refactoring classes. contains common functionality
+ */
 public abstract class BaseRefactoring extends Refactoring {
   private ITextSelection selection = null;
   private ICompilationUnit compilationUnit = null;
@@ -41,10 +46,28 @@ public abstract class BaseRefactoring extends Refactoring {
   
   protected abstract ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m);
   
+  /**
+   * creates an ASTRewrite which contains the changes
+   * @param cu
+   * 	the Compilation Unit (outermost ASTNode in the Java Grammar)
+   * @param pm
+   * 	a progress monitor in which to display the progress of the refactoring
+   * @return
+   * 	an ASTRewrite which contains the changes
+  */
   public final ASTRewrite createRewrite(final CompilationUnit cu, final SubProgressMonitor pm) {
     return innerCreateRewrite(cu, pm, null);
   }
   
+  /**
+   * creates an ASTRewrite, under the context of a text marker, which contains the changes
+   * @param pm
+   * 	a progress monitor in which to display the progress of the refactoring
+   * @param m
+   * 	the marker
+   * @return
+   * 	an ASTRewrite which contains the changes
+  */
   public final ASTRewrite createRewriteForMarker(final SubProgressMonitor pm, final IMarker m) {
     final ASTParser parser = ASTParser.newParser(AST.JLS4);
     parser.setResolveBindings(false);
@@ -85,6 +108,10 @@ public abstract class BaseRefactoring extends Refactoring {
     return $;
   }
   
+  /**
+   * @param m
+   * 	the marker to set for the refactoring
+  */
   public void setMarker(final IMarker m) {
     marker = m;
   }
@@ -114,6 +141,16 @@ public abstract class BaseRefactoring extends Refactoring {
     scanCompilationUnits(units, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
   }
   
+  /**
+   * @param pm
+   * 	a progress monitor in which to display the progress of the refactoring
+   * @param m
+   * 	the marker for which the refactoring needs to run
+   * @return
+   * 	a RefactoringStatus
+   * @throws CoreException
+   * 	the JDT core throws it
+  */
   public RefactoringStatus runAsMarkerFix(final IProgressMonitor pm, final IMarker m) throws CoreException {
     return innerRunAsMarkerFix(pm, m, false);
   }
@@ -180,7 +217,7 @@ public abstract class BaseRefactoring extends Refactoring {
     pm.done();
   }
   
-  public static ICompilationUnit getCompilationUnitFromMarker(final IMarker m) {
+  private static ICompilationUnit getCompilationUnitFromMarker(final IMarker m) {
     return JavaCore.createCompilationUnitFrom((IFile) m.getResource());
   }
   
@@ -201,37 +238,44 @@ public abstract class BaseRefactoring extends Refactoring {
     return $;
   }
   
+  /**
+   * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for spartanization suggestions
+   * @param cu
+   * 	the Compilation Unit
+   * @return
+   * 	a collection of SpartanizationRange's, each containing a spartanization suggestion
+  */
   public abstract Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu);
   
   @Override public Change createChange(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
 
-/**
- * @return the selection
- */
-public ITextSelection getSelection() {
-	return selection;
-}
-
-/**
- * @param selection the selection to set
- */
-public void setSelection(ITextSelection selection) {
-	this.selection = selection;
-}
-
-/**
- * @return the compilationUnit
- */
-public ICompilationUnit getCompilationUnit() {
-	return compilationUnit;
-}
-
-/**
- * @param compilationUnit the compilationUnit to set
- */
-public void setCompilationUnit(ICompilationUnit compilationUnit) {
-	this.compilationUnit = compilationUnit;
-}
+	/**
+	 * @return the selection
+	 */
+	public ITextSelection getSelection() {
+		return selection;
+	}
+	
+	/**
+	 * @param selection the selection to set
+	 */
+	public void setSelection(ITextSelection selection) {
+		this.selection = selection;
+	}
+	
+	/**
+	 * @return the compilationUnit
+	 */
+	public ICompilationUnit getCompilationUnit() {
+		return compilationUnit;
+	}
+	
+	/**
+	 * @param compilationUnit the compilationUnit to set
+	 */
+	public void setCompilationUnit(ICompilationUnit compilationUnit) {
+		this.compilationUnit = compilationUnit;
+	}
 }

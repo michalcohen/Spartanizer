@@ -5,10 +5,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+/**
+ * @author Artium Nihamkin
+ *
+ */
 public class RefactoringPlugin extends AbstractUIPlugin {
   private static RefactoringPlugin plugin;
   
-  public RefactoringPlugin() {
+  /**
+ * an empty c'tor. creates an instance of the plugin.
+ */
+public RefactoringPlugin() {
     plugin = this;
     SpartanizationFactory.initialize();
   }
@@ -22,10 +29,18 @@ public class RefactoringPlugin extends AbstractUIPlugin {
     super.stop(context);
   }
   
+  /**
+  * @return the (single) instance of the plugin
+  */
   public static RefactoringPlugin getDefault() {
     return plugin;
   }
   
+  /**
+   * logs an error in the plugin
+   * @param throwable
+   * 		an error
+   */
   public static void log(final Throwable throwable) {
     getDefault().getLog().log(
         new Status(IStatus.ERROR, "il.ac.technion.cs.ssdl.spartan.refactoring", 0, throwable.getMessage(), throwable));

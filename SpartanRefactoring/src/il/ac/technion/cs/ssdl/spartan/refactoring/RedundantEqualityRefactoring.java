@@ -19,6 +19,11 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ *
+ */
 public class RedundantEqualityRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Remove Redundant Equality";

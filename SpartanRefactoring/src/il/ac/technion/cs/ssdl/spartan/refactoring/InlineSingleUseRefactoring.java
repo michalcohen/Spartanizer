@@ -18,6 +18,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ *
+ */
 public class InlineSingleUseRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Inline Single Use of Variable";

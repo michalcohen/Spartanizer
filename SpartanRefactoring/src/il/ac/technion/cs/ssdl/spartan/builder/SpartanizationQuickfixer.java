@@ -6,6 +6,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
+/**
+ * @author Boris van Sosin
+ * a quickfix generator for spartanization refactoring
+ */
 public class SpartanizationQuickfixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker arg0) {
     try {

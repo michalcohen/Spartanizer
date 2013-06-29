@@ -6,6 +6,10 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * @author Eclipse (auto-generated)
+ *
+ */
 public class SpartanizationNature implements IProjectNature {
   /**
    * ID of this project nature
@@ -28,7 +32,7 @@ public class SpartanizationNature implements IProjectNature {
     project.setDescription(desc, null);
   }
   
-  private ICommand[] make(final IProjectDescription desc, final ICommand[] cs) {
+  private static ICommand[] make(final IProjectDescription desc, final ICommand[] cs) {
     final ICommand[] $ = new ICommand[cs.length + 1];
     System.arraycopy(cs, 0, $, 0, cs.length);
     final ICommand c = $[$.length - 1] = desc.newCommand();
@@ -52,7 +56,7 @@ public class SpartanizationNature implements IProjectNature {
       }
   }
 
-  private ICommand[] make(final ICommand[] cs, int i) {
+  private static ICommand[] make(final ICommand[] cs, int i) {
     final ICommand[] $ = new ICommand[cs.length - 1];
     System.arraycopy(cs, 0, $, 0, i);
     System.arraycopy(cs, i + 1, $, i, cs.length - i - 1);

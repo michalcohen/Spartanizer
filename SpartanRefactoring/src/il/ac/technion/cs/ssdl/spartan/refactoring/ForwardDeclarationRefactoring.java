@@ -20,6 +20,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ *
+ */
 public class ForwardDeclarationRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Forward Declaraion of Variable";
@@ -32,6 +37,10 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
     final ASTRewrite rewrite = ASTRewrite.create(ast);
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
+        if (m == null && isNodeOutsideSelection(node))
+          return true;
+        if (m != null && isNodeOutsideMarker(node, m))
+          return true;
         final SimpleName varName = node.getName();
         final ASTNode containingNode = node.getParent().getParent();
         if (!(containingNode instanceof Block))

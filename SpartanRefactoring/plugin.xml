@@ -272,6 +272,51 @@
             </menu>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="org.eclipse.jdt.ui.refactoring.menu2"
+               label="Refactor">
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
+                  style="push">
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
+                  style="push">
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
+                  style="push">
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
+                  style="push">
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
+                  style="push">
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
+                  style="push">
+            </command>
+            <visibleWhen>
+               <with
+                     variable="activeEditorInput">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.core.resources.extension"
+                           value="java">
+                     </test>
+                  </adapt>
+               </with>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
    </extension>
    
 </plugin>

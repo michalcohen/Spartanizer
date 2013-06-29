@@ -21,6 +21,11 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+/**
+ * @author Eclipse (auto-generated)
+ * @author Boris van Sosin (mostly auto-generated)
+ *
+ */
 public class SpartaBuilder extends IncrementalProjectBuilder {
   static class SampleDeltaVisitor implements IResourceDeltaVisitor {
     /*
@@ -59,8 +64,15 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     }
   }
   
+  /**
+   * the ID which which the builder is registered 
+  */
   public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder";
   private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion";
+  
+  /**
+   * the Key in the marker's properties map under which the type of the spartanization is stored
+  */
   public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
   
   /*
@@ -110,6 +122,11 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     }
   }
   
+  /**
+   * deletes all spartanization suggestion markers
+   * @param file
+   * 	the file from which to delete the markers
+  */
   public static void deleteMarkers(final IFile file) {
     try {
       file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
@@ -139,6 +156,11 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     done(m);
   }
   
+  /**
+   * indicates to the progress monitor that the spartanization check is done
+   * @param m
+   * 	the progress monitor
+  */
   public static void done(final IProgressMonitor m) {
     if (m != null)
       m.done();
