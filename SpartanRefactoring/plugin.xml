@@ -153,7 +153,7 @@
       <command
             categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
             id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
-            name="Convert condition to ternary">
+            name="Convert conditional to ternary">
       </command>
       <command
             categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
@@ -185,6 +185,26 @@
       <handler
             class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ChangeReturnToDollarHandler"
             commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar">
+      </handler>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ConvertToTernaryHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary">
+      </handler>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ForwardDeclarationHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion">
+      </handler>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.InlineSinleUseHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse">
+      </handler>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.RedundantEqualityHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality">
+      </handler>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ShortestBranchFirstHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst">
       </handler>
    </extension>
    <extension
@@ -226,27 +246,27 @@
                </command>
                <command
                      commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
-                     label="Convert condition to ternary..."
+                     id="il.ac.technion.cs.ssdl.spartan.menus.ConvertToTernaryCommand"
                      style="push">
                </command>
                <command
                      commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
-                     label="Forward declaration of varialbe..."
+                     id="il.ac.technion.cs.ssdl.spartan.menus.ForwardDeclarationCommand"
                      style="push">
                </command>
                <command
                      commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
-                     label="Inline single use of variable..."
+                     id="il.ac.technion.cs.ssdl.spartan.menus.InlineSingleUseCommand"
                      style="push">
                </command>
                <command
                      commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
-                     label="Remove redunant equality..."
+                     id="il.ac.technion.cs.ssdl.spartan.menus.RedundantEqualityCommand"
                      style="push">
                </command>
                <command
                      commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
-                     label="Make shortest side of branch first..."
+                     id="il.ac.technion.cs.ssdl.spartan.menus.ShortestBranchFirstCommand"
                      style="push">
                </command>
             </menu>

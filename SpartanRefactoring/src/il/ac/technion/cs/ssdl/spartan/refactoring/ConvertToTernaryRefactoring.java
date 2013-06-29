@@ -27,6 +27,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+/**
+ * @author Artium Nihamkin (original)
+ * @author Boris van Sosin (v2)
+ *
+ */
 public class ConvertToTernaryRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Convert Conditional Into a Trenary";
@@ -70,16 +75,18 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     if (n == null)
       return null;
     ExpressionStatement expStmnt = null;
-    if (n.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+    if (n.getNodeType() == ASTNode.BLOCK) {
+        final Block b = (Block) n;
+        if (b.statements().size() != 1)
+          return null;
+        if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.EXPRESSION_STATEMENT)
+          return null;
+        expStmnt = (ExpressionStatement) (ASTNode) b.statements().get(0);
+      }
+    else if (n.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
       expStmnt = (ExpressionStatement) n;
-    else if (n.getNodeType() != ASTNode.BLOCK)
+    else
       return null;
-    final Block b = (Block) n;
-    if (b.statements().size() != 1)
-      return null;
-    if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.EXPRESSION_STATEMENT)
-      return null;
-    expStmnt = (ExpressionStatement) (ASTNode) b.statements().get(0);
     if (expStmnt.getExpression().getNodeType() != ASTNode.ASSIGNMENT)
       return null;
     return (Assignment) expStmnt.getExpression();
@@ -143,7 +150,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     final Assignment asgnThen = getAssignment(node.getThenStatement());
     final Assignment asgnElse = getAssignment(node.getElseStatement());
     // We will rewrite only if the two assignments assign to the same variable
-    if (asgnElse != null && asgnThen.getLeftHandSide().subtreeMatch(matcher, asgnElse.getLeftHandSide())
+    if (asgnThen != null && asgnElse != null && asgnThen.getLeftHandSide().subtreeMatch(matcher, asgnElse.getLeftHandSide())
         && asgnThen.getOperator().equals(asgnElse.getOperator())) {
       // Now create the new assignment with the conditional inside it
       final ConditionalExpression newCondExp = ast.newConditionalExpression();
