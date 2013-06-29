@@ -37,17 +37,30 @@ import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
+/**
+ * @author Boris van Sosin
+ * a utility class for counting uses and assignments of expressions in other expressions
+ */
 public enum VariableCounter {
+  /**
+   * counts semantic (multiple uses for loops) uses of an expression 
+  */
   USES_SEMANTIC {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       return countUses(n, e, true);
     }
   },
+  /**
+   * counts lexical (single use for loops) uses of an expression 
+  */
   USES_LEXICAL {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       return countUses(n, e, false);
     }
   },
+  /**
+   * counts assignments of an expression 
+  */
   ASSIGNMENTS {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>();
@@ -69,6 +82,9 @@ public enum VariableCounter {
       return $;
     }
   },
+  /**
+   * counts assignments AND semantic (multiple uses for loops) uses of an expression 
+  */
   BOTH_SEMANTIC {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>(USES_SEMANTIC.list(n, e));
@@ -76,6 +92,9 @@ public enum VariableCounter {
       return $;
     }
   },
+  /**
+   * counts assignments AND lexical (single use for loops) uses of an expression 
+  */
   BOTH_LEXICAL {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>(USES_LEXICAL.list(n, e));
@@ -83,7 +102,17 @@ public enum VariableCounter {
       return $;
     }
   };
-  public abstract List<Expression> list(ASTNode n, Expression e);
+  
+  /**
+   * Lists the required occurrences
+   * @param n
+   * 	the node in which to counted
+   * @param e
+   * 	the expression to count
+   * @return
+   * 	the list of uses/assignments
+  */
+  public abstract List<Expression> list(final ASTNode n, final Expression e);
   
   static void addAssignments(final List<Expression> $, final ASTNode n, final Expression e) {
     $.addAll(ASSIGNMENTS.list(n, e));

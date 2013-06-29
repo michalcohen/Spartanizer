@@ -4,7 +4,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Boris van Sosin
+ * 
+ */
 public class SpartanizationFactory {
+  /**
+   * adds all the spartanizatino types to the factory 
+  */
   public static void initialize() {
     final BasicSpartanization redundantEquality = new BasicSpartanization(new RedundantEqualityRefactoring(), "Redundant Equality",
         "Convert reduntant comparison to boolean constant");
@@ -26,10 +33,20 @@ public class SpartanizationFactory {
     spartanizations.put(changeReturnToDollar.toString(), changeReturnToDollar);
   }
   
+  /**
+   * @param SpartanizationName
+   * 	the name of the spartanization
+   * @return
+   * 	an instance of the spartanization
+  */
   public static BasicSpartanization getSpartanizationByName(final String SpartanizationName) {
     return spartanizations.get(SpartanizationName);
   }
   
+  /**
+   * @return
+   * 	all the registered spatranization refactoring objects
+  */
   public static Collection<BasicSpartanization> getAllSpartanizations() {
     return spartanizations.values();
   }
