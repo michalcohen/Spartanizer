@@ -208,7 +208,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <menu
                id="org.eclipse.jdt.ui.refactoring.menu2"
-               label="Refactor">
+               label="Spartanization">
             <command
                   commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
                   style="push">
