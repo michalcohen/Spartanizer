@@ -5,6 +5,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Spartaniza
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -33,8 +34,8 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
- * the base class for all Spartanization Refactoring classes. contains common functionality
+ * @author Boris van Sosin (v2) the base class for all Spartanization
+ *         Refactoring classes. contains common functionality
  */
 public abstract class BaseRefactoring extends Refactoring {
   private ITextSelection selection = null;
@@ -48,32 +49,35 @@ public abstract class BaseRefactoring extends Refactoring {
   
   /**
    * creates an ASTRewrite which contains the changes
+   * 
    * @param cu
-   * 	the Compilation Unit (outermost ASTNode in the Java Grammar)
+   *          the Compilation Unit (outermost ASTNode in the Java Grammar)
    * @param pm
-   * 	a progress monitor in which to display the progress of the refactoring
-   * @return
-   * 	an ASTRewrite which contains the changes
-  */
+   *          a progress monitor in which to display the progress of the
+   *          refactoring
+   * @return an ASTRewrite which contains the changes
+   */
   public final ASTRewrite createRewrite(final CompilationUnit cu, final SubProgressMonitor pm) {
     return innerCreateRewrite(cu, pm, null);
   }
   
   /**
-   * creates an ASTRewrite, under the context of a text marker, which contains the changes
+   * creates an ASTRewrite, under the context of a text marker, which contains
+   * the changes
+   * 
    * @param pm
-   * 	a progress monitor in which to display the progress of the refactoring
+   *          a progress monitor in which to display the progress of the
+   *          refactoring
    * @param m
-   * 	the marker
-   * @return
-   * 	an ASTRewrite which contains the changes
-  */
+   *          the marker
+   * @return an ASTRewrite which contains the changes
+   */
   public final ASTRewrite createRewriteForMarker(final SubProgressMonitor pm, final IMarker m) {
-    final ASTParser parser = ASTParser.newParser(AST.JLS4);
-    parser.setResolveBindings(false);
-    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-    parser.setSource(getCompilationUnitFromMarker(m));
-    return innerCreateRewrite((CompilationUnit) parser.createAST(null), pm, m);
+    final ASTParser p = ASTParser.newParser(AST.JLS4);
+    p.setResolveBindings(false);
+    p.setKind(ASTParser.K_COMPILATION_UNIT);
+    p.setSource(getCompilationUnitFromMarker(m));
+    return innerCreateRewrite((CompilationUnit) p.createAST(null), pm, m);
   }
   
   protected boolean isTextSelected() {
@@ -110,8 +114,8 @@ public abstract class BaseRefactoring extends Refactoring {
   
   /**
    * @param m
-   * 	the marker to set for the refactoring
-  */
+   *          the marker to set for the refactoring
+   */
   public void setMarker(final IMarker m) {
     marker = m;
   }
@@ -131,26 +135,28 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   private void runAsManualCall(final IProgressMonitor pm) throws JavaModelException, CoreException {
-    ArrayList<ICompilationUnit> units;
     pm.beginTask("Checking preconditions...", 2);
-    if (isTextSelected()) {
-      units = new ArrayList<ICompilationUnit>();
-      units.add(compilationUnit);
-    } else
-      units = getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-    scanCompilationUnits(units, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+    scanCompilationUnits(getUnits(pm), new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+  }
+  
+  private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
+    if (!isTextSelected())
+      return getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+    List<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
+    $.add(compilationUnit);
+    return $;
   }
   
   /**
    * @param pm
-   * 	a progress monitor in which to display the progress of the refactoring
+   *          a progress monitor in which to display the progress of the
+   *          refactoring
    * @param m
-   * 	the marker for which the refactoring needs to run
-   * @return
-   * 	a RefactoringStatus
+   *          the marker for which the refactoring needs to run
+   * @return a RefactoringStatus
    * @throws CoreException
-   * 	the JDT core throws it
-  */
+   *           the JDT core throws it
+   */
   public RefactoringStatus runAsMarkerFix(final IProgressMonitor pm, final IMarker m) throws CoreException {
     return innerRunAsMarkerFix(pm, m, false);
   }
@@ -173,11 +179,11 @@ public abstract class BaseRefactoring extends Refactoring {
    * @throws IllegalArgumentException
    * @throws CoreException
    */
-  protected void scanCompilationUnits(final ArrayList<ICompilationUnit> units, final IProgressMonitor pm)
-      throws IllegalArgumentException, CoreException {
-    pm.beginTask("Iterating over gathered compilation units...", units.size());
-    for (final ICompilationUnit u : units)
-      scanCompilationUnit(u, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+  protected void scanCompilationUnits(final List<ICompilationUnit> cus, final IProgressMonitor pm) throws IllegalArgumentException,
+      CoreException {
+    pm.beginTask("Iterating over gathered compilation units...", cus.size());
+    for (final ICompilationUnit cu : cus)
+      scanCompilationUnit(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     pm.done();
   }
   
@@ -239,43 +245,47 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   /**
-   * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for spartanization suggestions
+   * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
+   * spartanization suggestions
+   * 
    * @param cu
-   * 	the Compilation Unit
-   * @return
-   * 	a collection of SpartanizationRange's, each containing a spartanization suggestion
-  */
+   *          the Compilation Unit
+   * @return a collection of SpartanizationRange's, each containing a
+   *         spartanization suggestion
+   */
   public abstract Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu);
   
   @Override public Change createChange(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
-
-	/**
-	 * @return the selection
-	 */
-	public ITextSelection getSelection() {
-		return selection;
-	}
-	
-	/**
-	 * @param selection the selection to set
-	 */
-	public void setSelection(ITextSelection selection) {
-		this.selection = selection;
-	}
-	
-	/**
-	 * @return the compilationUnit
-	 */
-	public ICompilationUnit getCompilationUnit() {
-		return compilationUnit;
-	}
-	
-	/**
-	 * @param compilationUnit the compilationUnit to set
-	 */
-	public void setCompilationUnit(ICompilationUnit compilationUnit) {
-		this.compilationUnit = compilationUnit;
-	}
+  
+  /**
+   * @return the selection
+   */
+  public ITextSelection getSelection() {
+    return selection;
+  }
+  
+  /**
+   * @param selection
+   *          the selection to set
+   */
+  public void setSelection(ITextSelection selection) {
+    this.selection = selection;
+  }
+  
+  /**
+   * @return the compilationUnit
+   */
+  public ICompilationUnit getCompilationUnit() {
+    return compilationUnit;
+  }
+  
+  /**
+   * @param compilationUnit
+   *          the compilationUnit to set
+   */
+  public void setCompilationUnit(ICompilationUnit compilationUnit) {
+    this.compilationUnit = compilationUnit;
+  }
 }

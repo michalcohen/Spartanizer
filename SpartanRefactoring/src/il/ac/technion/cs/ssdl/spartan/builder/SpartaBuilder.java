@@ -56,7 +56,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     }
   }
   
-  static class SampleResourceVisitor implements IResourceVisitor {
+  static class Visitor implements IResourceVisitor {
     @Override public boolean visit(final IResource r) {
       checkJava(r);
       // return true to continue visiting children.
@@ -140,7 +140,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     if (m != null)
       m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     try {
-      getProject().accept(new SampleResourceVisitor());
+      getProject().accept(new Visitor());
     } catch (final CoreException e) {
       // we assume that other builder handle cause compilation failure on
       // CoreException

@@ -23,19 +23,19 @@ public class SpartanizationNature implements IProjectNature {
    * @see org.eclipse.core.resources.IProjectNature#configure()
    */
   @Override public void configure() throws CoreException {
-    final IProjectDescription desc = project.getDescription();
-    final ICommand[] cs = desc.getBuildSpec();
+    final IProjectDescription d = project.getDescription();
+    final ICommand[] cs = d.getBuildSpec();
     for (final ICommand c : cs)
       if (c.getBuilderName().equals(SpartaBuilder.BUILDER_ID))
         return;
-    desc.setBuildSpec(make(desc, cs));
-    project.setDescription(desc, null);
+    d.setBuildSpec(make(d, cs));
+    project.setDescription(d, null);
   }
   
-  private static ICommand[] make(final IProjectDescription desc, final ICommand[] cs) {
+  private static ICommand[] make(final IProjectDescription d, final ICommand[] cs) {
     final ICommand[] $ = new ICommand[cs.length + 1];
     System.arraycopy(cs, 0, $, 0, cs.length);
-    final ICommand c = $[$.length - 1] = desc.newCommand();
+    final ICommand c = $[$.length - 1] = d.newCommand();
     c.setBuilderName(SpartaBuilder.BUILDER_ID);
     return $;
   }
