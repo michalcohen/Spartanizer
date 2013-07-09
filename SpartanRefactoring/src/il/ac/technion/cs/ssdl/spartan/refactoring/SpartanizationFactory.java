@@ -1,6 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,8 +9,8 @@ import java.util.Map;
  */
 public class SpartanizationFactory {
   /**
-   * adds all the spartanizatino types to the factory 
-  */
+   * adds all the spartanization types to the factory
+   */
   public static void initialize() {
     final BasicSpartanization redundantEquality = new BasicSpartanization(new RedundantEqualityRefactoring(), "Redundant Equality",
         "Convert reduntant comparison to boolean constant");
@@ -35,19 +34,17 @@ public class SpartanizationFactory {
   
   /**
    * @param SpartanizationName
-   * 	the name of the spartanization
-   * @return
-   * 	an instance of the spartanization
-  */
+   *          the name of the spartanization
+   * @return an instance of the spartanization
+   */
   public static BasicSpartanization getSpartanizationByName(final String SpartanizationName) {
     return spartanizations.get(SpartanizationName);
   }
   
   /**
-   * @return
-   * 	all the registered spatranization refactoring objects
-  */
-  public static Collection<BasicSpartanization> getAllSpartanizations() {
+   * @return all the registered spartanization refactoring objects
+   */
+  public static Iterable<BasicSpartanization> all() {
     return spartanizations.values();
   }
   

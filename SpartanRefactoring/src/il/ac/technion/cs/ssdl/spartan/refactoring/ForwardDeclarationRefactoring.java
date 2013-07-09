@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -23,23 +22,17 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
- *
+ * 
  */
 public class ForwardDeclarationRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Forward Declaraion of Variable";
   }
   
-  @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-    if (pm != null)
-      pm.beginTask("Creating rewrite operation...", 1);
-    final AST ast = cu.getAST();
-    final ASTRewrite rewrite = ASTRewrite.create(ast);
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
-        if (m == null && isNodeOutsideSelection(node))
-          return true;
-        if (m != null && isNodeOutsideMarker(node, m))
+        if (!inRange(m, node))
           return true;
         final SimpleName varName = node.getName();
         final ASTNode containingNode = node.getParent().getParent();
@@ -54,22 +47,19 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
         if (beginingOfDeclarationsBlockIdx > declaredIdx) {
           final ASTNode declarationNode = (ASTNode) block.statements().get(declaredIdx);
           if (((VariableDeclarationStatement) declarationNode).fragments().size() == 1) {
-            final ListRewrite lstRewrite = rewrite.getListRewrite(block, Block.STATEMENTS_PROPERTY);
+            final ListRewrite lstRewrite = r.getListRewrite(block, Block.STATEMENTS_PROPERTY);
             lstRewrite.remove(declarationNode, null);
-            lstRewrite.insertAt(ASTNode.copySubtree(ast, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
+            lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
           } else {
-            rewrite.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-                ast.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(ast, node)),
+            r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
+                t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, node)),
                 beginingOfDeclarationsBlockIdx + 1, null);
-            rewrite.remove(node, null);
+            r.remove(node, null);
           }
         }
         return true;
       }
     });
-    if (pm != null)
-      pm.done();
-    return rewrite;
   }
   
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {

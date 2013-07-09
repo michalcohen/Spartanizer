@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -22,23 +21,17 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
- *
+ * 
  */
 public class RedundantEqualityRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Remove Redundant Equality";
   }
   
-  @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-    if (pm != null)
-      pm.beginTask("Creating rewrite operation...", 1);
-    final AST ast = cu.getAST();
-    final ASTRewrite rewrite = ASTRewrite.create(ast);
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression node) {
-        if (m == null && isNodeOutsideSelection(node))
-          return true;
-        if (m != null && isNodeOutsideMarker(node, m))
+        if (!inRange(m, node))
           return true;
         if (node.getOperator() != Operator.EQUALS && node.getOperator() != Operator.NOT_EQUALS)
           return true;
@@ -46,11 +39,11 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
         BooleanLiteral literal = null;
         if (node.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
             && node.getLeftOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
-          nonliteral = rewrite.createMoveTarget(node.getLeftOperand());
+          nonliteral = r.createMoveTarget(node.getLeftOperand());
           literal = (BooleanLiteral) node.getRightOperand();
         } else if (node.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
             && node.getRightOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
-          nonliteral = rewrite.createMoveTarget(node.getRightOperand());
+          nonliteral = r.createMoveTarget(node.getRightOperand());
           literal = (BooleanLiteral) node.getLeftOperand();
         } else
           return true;
@@ -59,19 +52,16 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
             && node.getOperator() == Operator.NOT_EQUALS)
           newnode = nonliteral;
         else {
-          final ParenthesizedExpression paren = ast.newParenthesizedExpression();
+          final ParenthesizedExpression paren = t.newParenthesizedExpression();
           paren.setExpression((Expression) nonliteral);
-          newnode = ast.newPrefixExpression();
+          newnode = t.newPrefixExpression();
           ((PrefixExpression) newnode).setOperand(paren);
           ((PrefixExpression) newnode).setOperator(PrefixExpression.Operator.NOT);
         }
-        rewrite.replace(node, newnode, null);
+        r.replace(node, newnode, null);
         return true;
       }
     });
-    if (pm != null)
-      pm.done();
-    return rewrite;
   }
   
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {

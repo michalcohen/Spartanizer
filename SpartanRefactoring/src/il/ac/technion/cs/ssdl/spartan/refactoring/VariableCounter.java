@@ -38,34 +38,39 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 /**
- * @author Boris van Sosin
- * a utility class for counting uses and assignments of expressions in other expressions
+ * @author Boris van Sosin a utility class for counting uses and assignments of
+ *         expressions in other expressions
  */
 public enum VariableCounter {
   /**
-   * counts semantic (multiple uses for loops) uses of an expression 
-  */
+   * counts semantic (multiple uses for loops) uses of an expression
+   */
   USES_SEMANTIC {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       return countUses(n, e, true);
     }
   },
   /**
-   * counts lexical (single use for loops) uses of an expression 
-  */
+   * counts lexical (single use for loops) uses of an expression
+   */
   USES_LEXICAL {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       return countUses(n, e, false);
     }
   },
   /**
-   * counts assignments of an expression 
-  */
+   * counts assignments of an expression
+   */
   ASSIGNMENTS {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>();
       n.accept(new ASTVisitor() {
-        @Override public boolean visit(final AnonymousClassDeclaration node) {
+        /**
+         * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnonymousClassDeclaration)
+         * @param _
+         *          ignored
+         */
+        @Override public boolean visit(final AnonymousClassDeclaration _) {
           return false;
         }
         
@@ -83,8 +88,9 @@ public enum VariableCounter {
     }
   },
   /**
-   * counts assignments AND semantic (multiple uses for loops) uses of an expression 
-  */
+   * counts assignments AND semantic (multiple uses for loops) uses of an
+   * expression
+   */
   BOTH_SEMANTIC {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>(USES_SEMANTIC.list(n, e));
@@ -93,8 +99,8 @@ public enum VariableCounter {
     }
   },
   /**
-   * counts assignments AND lexical (single use for loops) uses of an expression 
-  */
+   * counts assignments AND lexical (single use for loops) uses of an expression
+   */
   BOTH_LEXICAL {
     @Override public List<Expression> list(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>(USES_LEXICAL.list(n, e));
@@ -102,16 +108,15 @@ public enum VariableCounter {
       return $;
     }
   };
-  
   /**
    * Lists the required occurrences
+   * 
    * @param n
-   * 	the node in which to counted
+   *          the node in which to counted
    * @param e
-   * 	the expression to count
-   * @return
-   * 	the list of uses/assignments
-  */
+   *          the expression to count
+   * @return the list of uses/assignments
+   */
   public abstract List<Expression> list(final ASTNode n, final Expression e);
   
   static void addAssignments(final List<Expression> $, final ASTNode n, final Expression e) {
@@ -272,7 +277,16 @@ public enum VariableCounter {
         return true;
       }
       
-      @Override public void endVisit(final ForStatement node) {
+      /**
+       * 
+       * 
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom
+       *      .ForStatement)
+       * 
+       * @param _
+       *          ignored
+       */
+      @Override public void endVisit(final ForStatement _) {
         forNesting -= 1;
       }
       
@@ -282,7 +296,12 @@ public enum VariableCounter {
         return true;
       }
       
-      @Override public void endVisit(final EnhancedForStatement node) {
+      /**
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnhancedForStatement)
+       * @param _
+       *          ignored
+       */
+      @Override public void endVisit(final EnhancedForStatement _) {
         foreachNesting -= 1;
       }
       
@@ -292,17 +311,32 @@ public enum VariableCounter {
         return true;
       }
       
-      @Override public void endVisit(final WhileStatement node) {
+      /**
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.WhileStatement)
+       * @param _
+       *          ignored
+       */
+      @Override public void endVisit(final WhileStatement _) {
         whileNesting -= 1;
       }
       
+      /**
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.DoStatement)
+       */
       @Override public boolean visit(final DoStatement node) {
         doWhileNesting += 1;
         $.addAll(listSingle(node.getExpression(), e, repeated()));
         return true;
       }
       
-      @Override public void endVisit(final DoStatement node) {
+      /**
+       * (non-Javadoc)
+       * 
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.DoStatement)
+       * @param _
+       *          ignored
+       */
+      @Override public void endVisit(final DoStatement _) {
         doWhileNesting -= 1;
       }
       

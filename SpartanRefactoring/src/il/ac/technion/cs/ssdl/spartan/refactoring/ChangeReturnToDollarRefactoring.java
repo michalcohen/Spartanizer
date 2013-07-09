@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -26,41 +25,40 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
- *
+ * 
  */
 public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Convert Return Variable to $";
   }
   
-  @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-    if (pm != null)
-      pm.beginTask("Creating rewrite operation...", 1);
-    final AST ast = cu.getAST();
-    final ASTRewrite $ = ASTRewrite.create(ast);
+  @Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final MethodDeclaration node) {
-        final VariableDeclarationFragment returnVar = getOnlyReturnVariable(node);
+      @Override public boolean visit(final MethodDeclaration n) {
+        final VariableDeclarationFragment returnVar = getOnlyReturnVariable(n);
         if (returnVar != null) {
-          if (m == null && isNodeOutsideSelection(returnVar))
+          if (!inRange(m, n))
             return true;
-          if (m != null && isNodeOutsideMarker(returnVar, m))
-            return true;
-          for (final Expression e : VariableCounter.BOTH_LEXICAL.list(node, returnVar.getName()))
-            $.replace(e, ast.newSimpleName("$"), null);
+          for (final Expression e : VariableCounter.BOTH_LEXICAL.list(n, returnVar.getName()))
+            $.replace(e, t.newSimpleName("$"), null);
         }
         return true;
       }
     });
-    if (pm != null)
-      pm.done();
-    return $;
   }
   
   static List<VariableDeclarationFragment> getCandidates(final ASTNode container) {
     final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
     container.accept(new ASTVisitor() {
-      @Override public boolean visit(final AnonymousClassDeclaration node) {
+      /**
+       * 
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+       *      AnonymousClassDeclaration)
+       * 
+       * @param _
+       *          ignored
+       */
+      @Override public boolean visit(final AnonymousClassDeclaration _) {
         // we don't want to visit declarations inside anonymous classes
         return false;
       }
@@ -76,7 +74,16 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
   static List<ReturnStatement> getReturnStatements(final ASTNode container) {
     final List<ReturnStatement> $ = new ArrayList<ReturnStatement>();
     container.accept(new ASTVisitor() {
-      @Override public boolean visit(final AnonymousClassDeclaration node) {
+      /**
+       * 
+       * 
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+       *      AnonymousClassDeclaration)
+       * 
+       * @param _
+       *          ignored
+       */
+      @Override public boolean visit(final AnonymousClassDeclaration _) {
         // we don't want to visit declarations inside anonymous classes
         return false;
       }

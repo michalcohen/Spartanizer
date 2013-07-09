@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -24,7 +23,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
- *
+ * 
  */
 public class ShortestBranchRefactoring extends BaseRefactoring {
   @Override public String getName() {
@@ -41,6 +40,11 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   static int countNodes(final ASTNode n) {
     final AtomicInteger $ = new AtomicInteger(0);
     n.accept(new ASTVisitor() {
+      /**
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
+       * @param _
+       *          ignored
+       */
       @Override public void preVisit(final ASTNode _) {
         $.incrementAndGet();
       }
@@ -48,51 +52,40 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     return $.get();
   }
   
-  @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-    if (pm != null)
-      pm.beginTask("Creating rewrite operation...", 1);
-    final AST ast = cu.getAST();
-    final ASTRewrite $ = ASTRewrite.create(ast);
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final IfStatement node) {
-        if (m == null && isNodeOutsideSelection(node))
-          return true;
-        if (m != null && isNodeOutsideMarker(node, m))
+        if (!inRange(m, node))
           return true;
         if (node.getElseStatement() == null)
           return true;
         if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) <= -threshold)
           return true;
-        final IfStatement newnode = ast.newIfStatement();
-        final Expression neg = negateExpression(ast, $, node.getExpression());
+        final IfStatement newnode = t.newIfStatement();
+        final Expression neg = negateExpression(t, r, node.getExpression());
         newnode.setExpression(neg);
-        newnode.setThenStatement((org.eclipse.jdt.core.dom.Statement) $.createMoveTarget(node.getElseStatement()));
-        newnode.setElseStatement((org.eclipse.jdt.core.dom.Statement) $.createMoveTarget(node.getThenStatement()));
-        $.replace(node, newnode, null);
+        newnode.setThenStatement((org.eclipse.jdt.core.dom.Statement) r.createMoveTarget(node.getElseStatement()));
+        newnode.setElseStatement((org.eclipse.jdt.core.dom.Statement) r.createMoveTarget(node.getThenStatement()));
+        r.replace(node, newnode, null);
         return true;
       }
       
       @Override public boolean visit(final ConditionalExpression node) {
-        if (m == null && isNodeOutsideSelection(node))
-          return true;
-        if (m != null && isNodeOutsideMarker(node, m))
+        if (!inRange(m, node))
           return true;
         if (node.getElseExpression() == null)
           return true;
         if (node.getThenExpression().getLength() - node.getElseExpression().getLength() <= -threshold)
           return true;
-        final ConditionalExpression newnode = ast.newConditionalExpression();
-        final Expression neg = negateExpression(ast, $, node.getExpression());
+        final ConditionalExpression newnode = t.newConditionalExpression();
+        final Expression neg = negateExpression(t, r, node.getExpression());
         newnode.setExpression(neg);
-        newnode.setThenExpression((Expression) $.createMoveTarget(node.getElseExpression()));
-        newnode.setElseExpression((Expression) $.createMoveTarget(node.getThenExpression()));
-        $.replace(node, newnode, null);
+        newnode.setThenExpression((Expression) r.createMoveTarget(node.getElseExpression()));
+        newnode.setElseExpression((Expression) r.createMoveTarget(node.getThenExpression()));
+        r.replace(node, newnode, null);
         return true;
       }
     });
-    if (pm != null)
-      pm.done();
-    return $;
   }
   
   /**

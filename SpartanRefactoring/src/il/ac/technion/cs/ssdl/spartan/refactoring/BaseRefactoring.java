@@ -45,8 +45,6 @@ public abstract class BaseRefactoring extends Refactoring {
   
   @Override public abstract String getName();
   
-  protected abstract ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m);
-  
   /**
    * creates an ASTRewrite which contains the changes
    * 
@@ -58,7 +56,7 @@ public abstract class BaseRefactoring extends Refactoring {
    * @return an ASTRewrite which contains the changes
    */
   public final ASTRewrite createRewrite(final CompilationUnit cu, final SubProgressMonitor pm) {
-    return innerCreateRewrite(cu, pm, null);
+    return createRewrite(pm, cu.getAST(), cu, (IMarker) null);
   }
   
   /**
@@ -72,15 +70,36 @@ public abstract class BaseRefactoring extends Refactoring {
    *          the marker
    * @return an ASTRewrite which contains the changes
    */
-  public final ASTRewrite createRewriteForMarker(final SubProgressMonitor pm, final IMarker m) {
+  private final ASTRewrite createRewrite(final SubProgressMonitor pm, final IMarker m) {
     final ASTParser p = ASTParser.newParser(AST.JLS4);
     p.setResolveBindings(false);
     p.setKind(ASTParser.K_COMPILATION_UNIT);
     p.setSource(getCompilationUnitFromMarker(m));
-    return innerCreateRewrite((CompilationUnit) p.createAST(null), pm, m);
+    return createRewrite(pm, (CompilationUnit) p.createAST(null), m);
   }
   
-  protected boolean isTextSelected() {
+  private ASTRewrite createRewrite(SubProgressMonitor pm, CompilationUnit cu, IMarker m) {
+    return createRewrite(pm, cu.getAST(), cu, m);
+  }
+  
+  private ASTRewrite createRewrite(SubProgressMonitor pm, AST t, CompilationUnit cu, IMarker m) {
+    if (pm != null)
+      pm.beginTask("Creating rewrite operation...", 1);
+    final ASTRewrite $ = createRewrite(t, cu, m);
+    if (pm != null)
+      pm.done();
+    return $;
+  }
+  
+  private ASTRewrite createRewrite(AST ast, CompilationUnit cu, IMarker m) {
+    ASTRewrite $ = ASTRewrite.create(ast);
+    fillRewrite($, ast, cu, m);
+    return $;
+  }
+  
+  protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
+  
+  private final boolean isTextSelected() {
     return selection != null && !selection.isEmpty() && selection.getLength() != 0;
   }
   
@@ -105,7 +124,7 @@ public abstract class BaseRefactoring extends Refactoring {
     }
   }
   
-  @Override public RefactoringStatus checkInitialConditions(final IProgressMonitor pm) {
+  @Override public RefactoringStatus checkInitialConditions(@SuppressWarnings("unused") final IProgressMonitor pm) {
     final RefactoringStatus $ = new RefactoringStatus();
     if (compilationUnit == null && marker == null)
       $.merge(RefactoringStatus.createFatalErrorStatus("Nothing to refactor."));
@@ -116,7 +135,7 @@ public abstract class BaseRefactoring extends Refactoring {
    * @param m
    *          the marker to set for the refactoring
    */
-  public void setMarker(final IMarker m) {
+  public final void setMarker(final IMarker m) {
     marker = m;
   }
   
@@ -213,8 +232,7 @@ public abstract class BaseRefactoring extends Refactoring {
     final ICompilationUnit u = getCompilationUnitFromMarker(m);
     final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
     textChange.setTextType("java");
-    textChange.setEdit(createRewriteForMarker(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m)
-        .rewriteAST());
+    textChange.setEdit(createRewrite(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m).rewriteAST());
     if (textChange.getEdit().getLength() != 0)
       if (preview)
         changes.add(textChange);
@@ -255,7 +273,7 @@ public abstract class BaseRefactoring extends Refactoring {
    */
   public abstract Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu);
   
-  @Override public Change createChange(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
+  @Override public Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm) throws OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
   
@@ -287,5 +305,13 @@ public abstract class BaseRefactoring extends Refactoring {
    */
   public void setCompilationUnit(ICompilationUnit compilationUnit) {
     this.compilationUnit = compilationUnit;
+  }
+  
+  protected final boolean inRange(final IMarker m, final ASTNode n) {
+    if (m == null && isNodeOutsideSelection(n))
+      return false;
+    if (m != null && isNodeOutsideMarker(n, m))
+      return false;
+    return true;
   }
 }

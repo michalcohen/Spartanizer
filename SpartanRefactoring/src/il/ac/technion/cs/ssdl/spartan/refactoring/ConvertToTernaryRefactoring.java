@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTMatcher;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -30,37 +29,28 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
- *
+ * 
  */
 public class ConvertToTernaryRefactoring extends BaseRefactoring {
   @Override public String getName() {
     return "Convert Conditional Into a Trenary";
   }
   
-  @Override protected ASTRewrite innerCreateRewrite(final CompilationUnit cu, final SubProgressMonitor pm, final IMarker m) {
-    if (pm != null)
-      pm.beginTask("Creating rewrite operation...", 1);
-    final AST ast = cu.getAST();
-    final ASTRewrite $ = ASTRewrite.create(ast);
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final IfStatement node) {
-        if (m == null && isNodeOutsideSelection(node))
+      @Override public boolean visit(final IfStatement n) {
+        if (!inRange(m, n))
           return true;
-        if (m != null && isNodeOutsideMarker(node, m))
+        if (treatAssignIfAssign(t, r, n))
           return true;
-        if (treatAssignIfAssign(ast, $, node))
+        if (treatAssignment(t, r, n))
           return true;
-        if (treatAssignment(ast, $, node))
+        if (treatReturn(t, r, n))
           return true;
-        if (treatReturn(ast, $, node))
-          return true;
-        treatIfReturn(ast, $, node);
+        treatIfReturn(t, r, n);
         return true;
       }
     });
-    if (pm != null)
-      pm.done();
-    return $;
   }
   
   /**
@@ -76,14 +66,13 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
       return null;
     ExpressionStatement expStmnt = null;
     if (n.getNodeType() == ASTNode.BLOCK) {
-        final Block b = (Block) n;
-        if (b.statements().size() != 1)
-          return null;
-        if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.EXPRESSION_STATEMENT)
-          return null;
-        expStmnt = (ExpressionStatement) (ASTNode) b.statements().get(0);
-      }
-    else if (n.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+      final Block b = (Block) n;
+      if (b.statements().size() != 1)
+        return null;
+      if (((ASTNode) b.statements().get(0)).getNodeType() != ASTNode.EXPRESSION_STATEMENT)
+        return null;
+      expStmnt = (ExpressionStatement) (ASTNode) b.statements().get(0);
+    } else if (n.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
       expStmnt = (ExpressionStatement) n;
     else
       return null;

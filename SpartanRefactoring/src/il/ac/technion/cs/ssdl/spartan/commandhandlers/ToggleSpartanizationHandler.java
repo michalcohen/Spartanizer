@@ -68,7 +68,7 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
           description.setNatureIds(newNatures);
           project.setDescription(description, null);
           project.accept(new IResourceVisitor() {
-            @Override public boolean visit(final IResource r) throws CoreException {
+            @Override public boolean visit(final IResource r) {
               if (r instanceof IFile && r.getName().endsWith(".java"))
                 SpartaBuilder.deleteMarkers((IFile) r);
               return true;
