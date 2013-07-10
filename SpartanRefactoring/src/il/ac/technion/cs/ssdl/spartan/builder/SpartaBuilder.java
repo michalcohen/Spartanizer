@@ -38,15 +38,12 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
       final IResource r = delta.getResource();
       switch (delta.getKind()) {
         case IResourceDelta.ADDED:
-          // handle added resource
+        case IResourceDelta.CHANGED:
+          // handle added and changed resource
           checkJava(r);
           break;
         case IResourceDelta.REMOVED:
           // handle removed resource
-          break;
-        case IResourceDelta.CHANGED:
-          // handle changed resource
-          checkJava(r);
           break;
         default:
           break;
@@ -112,12 +109,12 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
       for (final BasicSpartanization currSpartanization : SpartanizationFactory.all())
         for (final SpartanizationRange range : currSpartanization.checkForSpartanization((CompilationUnit) p.createAST(null)))
           if (range != null) {
-            final IMarker spartanizationMarker = f.createMarker(MARKER_TYPE);
-            spartanizationMarker.setAttribute(IMarker.CHAR_START, range.from);
-            spartanizationMarker.setAttribute(IMarker.CHAR_END, range.to);
-            spartanizationMarker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-            spartanizationMarker.setAttribute(SPARTANIZATION_TYPE_KEY, currSpartanization.toString());
-            spartanizationMarker.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + currSpartanization.getMessage());
+            final IMarker m = f.createMarker(MARKER_TYPE);
+            m.setAttribute(IMarker.CHAR_START, range.from);
+            m.setAttribute(IMarker.CHAR_END, range.to);
+            m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+            m.setAttribute(SPARTANIZATION_TYPE_KEY, currSpartanization.toString());
+            m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + currSpartanization.getMessage());
           }
     } catch (final Exception e) {
       e.printStackTrace();
@@ -127,12 +124,12 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   /**
    * deletes all spartanization suggestion markers
    * 
-   * @param file
+   * @param f
    *          the file from which to delete the markers
    */
-  public static void deleteMarkers(final IFile file) {
+  public static void deleteMarkers(final IFile f) {
     try {
-      file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
+      f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
     } catch (final CoreException ce) {
       // we assume that other builder handle cause compilation failure on
       // CoreException
@@ -148,7 +145,8 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
       // we assume that other builder handle cause compilation failure on
       // CoreException
     }
-    done(m);
+    if (m != null)
+      m.done();
   }
   
   protected static void incrementalBuild(final IResourceDelta delta, final IProgressMonitor m) throws CoreException {
@@ -156,16 +154,6 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     if (m != null)
       m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     delta.accept(new SampleDeltaVisitor());
-    done(m);
-  }
-  
-  /**
-   * indicates to the progress monitor that the spartanization check is done
-   * 
-   * @param m
-   *          the progress monitor
-   */
-  public static void done(final IProgressMonitor m) {
     if (m != null)
       m.done();
   }

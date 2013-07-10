@@ -38,8 +38,10 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 /**
- * @author Boris van Sosin a utility class for counting uses and assignments of
- *         expressions in other expressions
+ * a utility class for counting uses and assignments of expressions in other
+ * expressions
+ * 
+ * @author Boris van Sosin
  */
 public enum VariableCounter {
   /**
@@ -149,132 +151,123 @@ public enum VariableCounter {
     return $;
   }
   
-  static List<Expression> countUses(final ASTNode n, final Expression e, final boolean semantic) {
+  static List<Expression> countUses(final ASTNode where, final Expression what, final boolean semantic) {
     final List<Expression> $ = new ArrayList<Expression>();
-    n.accept(new ASTVisitor() {
+    where.accept(new ASTVisitor() {
+      private boolean count(Expression e) {
+        $.addAll(listSingle(e, what, repeated()));
+        return true;
+      }
+      
+      private boolean count(Object o) {
+        return count((Expression) o);
+      }
+      
+      private boolean count(@SuppressWarnings("rawtypes") List os) {
+        for (final Object o : os)
+          count(o);
+        return true;
+      }
+      
       @Override public boolean visit(final MethodDeclaration node) {
         /*
          * Now: this is a bit complicated. Java allows declaring methods in
          * anonymous classes in which the formal parameters hide variables in
          * the enclosing scope. We don't want to count them as uses of the
-         * varaible
+         * variable
          */
-        for (final Object obj : node.parameters())
-          if (((SingleVariableDeclaration) obj).getName().subtreeMatch(matcher, e))
+        for (final Object o : node.parameters())
+          if (((SingleVariableDeclaration) o).getName().subtreeMatch(matcher, what))
             return false;
         return true;
       }
       
       @Override public boolean visit(final AnonymousClassDeclaration node) {
         for (final VariableDeclarationFragment d : getFieldsOfClass(node))
-          if (d.getName().subtreeMatch(matcher, e))
+          if (d.getName().subtreeMatch(matcher, what))
             return false;
         return true;
       }
       
       @Override public boolean visit(final InfixExpression node) {
-        $.addAll(listSingle(node.getRightOperand(), e, repeated()));
-        $.addAll(listSingle(node.getLeftOperand(), e, repeated()));
-        for (final Object item : node.extendedOperands())
-          $.addAll(listSingle((Expression) item, e, repeated()));
-        return true;
+        count(node.getRightOperand());
+        count(node.getLeftOperand());
+        return count(node.extendedOperands());
       }
       
       @Override public boolean visit(final PrefixExpression node) {
-        $.addAll(listSingle(node.getOperand(), e, repeated()));
-        return true;
+        return count(node.getOperand());
       }
       
       @Override public boolean visit(final PostfixExpression node) {
-        $.addAll(listSingle(node.getOperand(), e, repeated()));
-        return true;
+        return count(node.getOperand());
       }
       
       @Override public boolean visit(final ParenthesizedExpression node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        return count(node.getExpression());
       }
       
       @Override public boolean visit(final Assignment node) {
-        $.addAll(listSingle(node.getRightHandSide(), e, repeated()));
-        return true;
+        return count(node.getRightHandSide());
       }
       
       @Override public boolean visit(final CastExpression node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        return count(node.getExpression());
       }
       
-      @Override public boolean visit(final ArrayAccess node) {
-        $.addAll(listSingle(node.getArray(), e, repeated()));
-        return true;
+      @Override public boolean visit(final ArrayAccess n) {
+        return count(n.getArray());
       }
       
-      @Override public boolean visit(final MethodInvocation node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        for (final Object arg : node.arguments())
-          $.addAll(listSingle((Expression) arg, e, repeated()));
-        return true;
+      @Override public boolean visit(final MethodInvocation n) {
+        count(n.getExpression());
+        return count(n.arguments());
       }
       
       @Override public boolean visit(final ConstructorInvocation node) {
-        for (final Object arg : node.arguments())
-          $.addAll(listSingle((Expression) arg, e, repeated()));
-        return true;
+        return count(node.arguments());
       }
       
       @Override public boolean visit(final ClassInstanceCreation node) {
-        for (final Object arg : node.arguments())
-          $.addAll(listSingle((Expression) arg, e, repeated()));
-        return true;
+        return count(node.arguments());
       }
       
       @Override public boolean visit(final ArrayCreation node) {
-        for (final Object dim : node.dimensions())
-          $.addAll(listSingle((Expression) dim, e, repeated()));
-        return true;
+        return count(node.dimensions());
       }
       
       @Override public boolean visit(final ArrayInitializer node) {
-        for (final Object item : node.expressions())
-          $.addAll(listSingle((Expression) item, e, repeated()));
-        return true;
+        return count(node.expressions());
       }
       
       @Override public boolean visit(final ReturnStatement node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        return count(node.getExpression());
       }
       
       @Override public boolean visit(final FieldAccess node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        return count(node.getExpression());
       }
       
       @Override public boolean visit(final QualifiedName node) {
-        $.addAll(listSingle(node.getQualifier(), e, repeated()));
+        $.addAll(listSingle(node.getQualifier(), what, repeated()));
         return true;
       }
       
       @Override public boolean visit(final VariableDeclarationFragment node) {
-        $.addAll(listSingle(node.getInitializer(), e, repeated()));
-        return true;
+        return count(node.getInitializer());
       }
       
       @Override public boolean visit(final IfStatement node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        return count(node.getExpression());
       }
       
       @Override public boolean visit(final SwitchStatement node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        return count(node.getExpression());
       }
       
       @Override public boolean visit(final ForStatement node) {
-        forNesting += 1;
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        forNesting++;
+        return count(node.getExpression());
       }
       
       /**
@@ -287,13 +280,12 @@ public enum VariableCounter {
        *          ignored
        */
       @Override public void endVisit(final ForStatement _) {
-        forNesting -= 1;
+        forNesting--;
       }
       
       @Override public boolean visit(final EnhancedForStatement node) {
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        foreachNesting += 1;
-        return true;
+        foreachNesting++;
+        return count(node.getExpression());
       }
       
       /**
@@ -302,13 +294,13 @@ public enum VariableCounter {
        *          ignored
        */
       @Override public void endVisit(final EnhancedForStatement _) {
-        foreachNesting -= 1;
+        foreachNesting--;
       }
       
       @Override public boolean visit(final WhileStatement node) {
-        whileNesting += 1;
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        whileNesting++;
+        Expression expression = node.getExpression();
+        return count(expression);
       }
       
       /**
@@ -317,16 +309,15 @@ public enum VariableCounter {
        *          ignored
        */
       @Override public void endVisit(final WhileStatement _) {
-        whileNesting -= 1;
+        whileNesting--;
       }
       
       /**
        * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.DoStatement)
        */
       @Override public boolean visit(final DoStatement node) {
-        doWhileNesting += 1;
-        $.addAll(listSingle(node.getExpression(), e, repeated()));
-        return true;
+        doWhileNesting++;
+        return count(node.getExpression());
       }
       
       /**
@@ -337,12 +328,11 @@ public enum VariableCounter {
        *          ignored
        */
       @Override public void endVisit(final DoStatement _) {
-        doWhileNesting -= 1;
+        doWhileNesting--;
       }
       
       @Override public boolean visit(final InstanceofExpression node) {
-        $.addAll(listSingle(node.getLeftOperand(), e, repeated()));
-        return true;
+        return count(node.getLeftOperand());
       }
       
       private boolean repeated() {
