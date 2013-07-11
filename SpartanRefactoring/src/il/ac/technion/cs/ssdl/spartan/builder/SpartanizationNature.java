@@ -10,13 +10,13 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Eclipse (auto-generated)
- * 
+ * @since 2013/07/01
  */
 public class SpartanizationNature implements IProjectNature {
   /**
    * ID of this project nature
    */
-  public static final String NATURE_ID = "il.ac.technion.cs.ssdl.spartan.spartaNature";
+  public static final String NATURE_ID = "il.ac.technion.cs.ssdl.spartan.SpartanizationNature";
   private IProject project;
   
   /*
@@ -56,7 +56,7 @@ public class SpartanizationNature implements IProjectNature {
       }
   }
   
-  private static ICommand[] make(final ICommand[] cs, int i) {
+  private static ICommand[] make(final ICommand[] cs, final int i) {
     final ICommand[] $ = new ICommand[cs.length - 1];
     System.arraycopy(cs, 0, $, 0, i);
     System.arraycopy(cs, i + 1, $, i, cs.length - i - 1);

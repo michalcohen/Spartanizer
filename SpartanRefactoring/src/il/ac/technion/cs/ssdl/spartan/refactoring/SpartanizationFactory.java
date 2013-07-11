@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * @author Boris van Sosin
  * 
+ * @since 2013/07/01
  */
 public class SpartanizationFactory {
   /**

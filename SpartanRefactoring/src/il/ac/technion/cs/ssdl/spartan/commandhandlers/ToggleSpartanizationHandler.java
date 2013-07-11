@@ -21,9 +21,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * A command handler which toggles the spartanization nature
  * 
- * @author Boris van Sosin
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * 
+ * @since 2013/07/01
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {
   /**
@@ -36,12 +38,12 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
    * the main method of the command handler. runs when the command is called.
    */
   @Override public Object execute(final ExecutionEvent event) throws ExecutionException {
-    String partId = HandlerUtil.getActivePartIdChecked(event);
+    final String partId = HandlerUtil.getActivePartIdChecked(event);
     System.out.println(partId);
     final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
     if (selection instanceof IStructuredSelection)
       for (final Object o : ((IStructuredSelection) selection).toList()) {
-        IProject p = extractProject(o);
+        final IProject p = extractProject(o);
         if (p != null)
           toggleNature(p);
       }

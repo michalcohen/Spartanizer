@@ -37,7 +37,10 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
  * functionality
  * 
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
+ * @author Boris van Sosin (v2) <boris.van.sosin@gmail.com>
+ * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/10)
+ * 
+ * @since 2013/01/01
  */
 public abstract class BaseRefactoring extends Refactoring {
   private ITextSelection selection = null;
@@ -111,7 +114,7 @@ public abstract class BaseRefactoring extends Refactoring {
     return !isSelected(n.getStartPosition());
   }
   
-  private boolean isSelected(int offset) {
+  private boolean isSelected(final int offset) {
     return isTextSelected() && offset >= selection.getOffset() && offset < selection.getOffset() + selection.getLength();
   }
   

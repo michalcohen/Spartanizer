@@ -7,6 +7,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTernaryRefactoring;
  * label relevant for Convert to Ternary
  * 
  * @author Boris van Sosin
+ * a BaseSpartanizationHandler configured to return the
+ *         BaseRefactoring and label relevant for Change Return Variable to $
  */
 public class ConvertToTernaryHandler extends BaseSpartanizationHandler {
   /** Instantiate this class */

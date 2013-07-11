@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
  * 
+ * @since 2013/01/01
  */
 public class InlineSingleUseRefactoring extends BaseRefactoring {
   @Override public String getName() {

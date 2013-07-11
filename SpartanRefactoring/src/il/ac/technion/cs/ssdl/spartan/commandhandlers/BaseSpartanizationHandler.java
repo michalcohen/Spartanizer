@@ -19,8 +19,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * @author Boris van Sosin
- * 
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/11)
+ * @since 2013/07/01
  */
 public abstract class BaseSpartanizationHandler extends AbstractHandler {
   protected final String getDialogTitle() {
@@ -31,14 +32,17 @@ public abstract class BaseSpartanizationHandler extends AbstractHandler {
     return refactoring;
   }
   
-  protected BaseSpartanizationHandler(BaseRefactoring refactoring) {
+  protected BaseSpartanizationHandler(final BaseRefactoring refactoring) {
     this.refactoring = refactoring;
   }
   
   private final BaseRefactoring refactoring;
   
-  @Override public Object execute(ExecutionEvent event) {
-    final ISelection s = HandlerUtil.getCurrentSelection(event);
+  @Override public Object execute(final ExecutionEvent event) {
+    return execute(HandlerUtil.getCurrentSelection(event));
+  }
+  
+  private Object execute(final ISelection s) {
     if (s instanceof ITextSelection)
       execute((ITextSelection) s);
     return null;

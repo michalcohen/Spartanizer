@@ -7,15 +7,16 @@ import org.osgi.framework.BundleContext;
 
 /**
  * @author Artium Nihamkin
- *
+ * 
+ * @since 2013/01/01
  */
 public class RefactoringPlugin extends AbstractUIPlugin {
   private static RefactoringPlugin plugin;
   
   /**
- * an empty c'tor. creates an instance of the plugin.
- */
-public RefactoringPlugin() {
+   * an empty c'tor. creates an instance of the plugin.
+   */
+  public RefactoringPlugin() {
     plugin = this;
     SpartanizationFactory.initialize();
   }
@@ -30,16 +31,17 @@ public RefactoringPlugin() {
   }
   
   /**
-  * @return the (single) instance of the plugin
-  */
+   * @return the (single) instance of the plugin
+   */
   public static RefactoringPlugin getDefault() {
     return plugin;
   }
   
   /**
    * logs an error in the plugin
+   * 
    * @param throwable
-   * 		an error
+   *          an error
    */
   public static void log(final Throwable throwable) {
     getDefault().getLog().log(

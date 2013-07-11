@@ -3,8 +3,11 @@ package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ChangeReturnToDollarRefactoring;
 
 /**
- * @author Boris van Sosin a BaseSpartanizationHandler configured to return the
- *         BaseRefactoring and label relevant for Change Return Variable to $
+ * a BaseSpartanizationHandler configured to return the BaseRefactoring and
+ * label relevant for Change Return Variable to $
+ * 
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * @since July 2013
  */
 public class ChangeReturnToDollarHandler extends BaseSpartanizationHandler {
   /** Instantiate this class */

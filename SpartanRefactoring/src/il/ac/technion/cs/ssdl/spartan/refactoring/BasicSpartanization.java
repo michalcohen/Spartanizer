@@ -11,20 +11,21 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
 
 /**
- * @author Boris van Sosin
- *
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * 
+ * @since 2013/07/01
  */
 public class BasicSpartanization {
   /**
- * @param ref
- * 		an instance of a Spartanization Refactoring
- * @param name
- * 		the name of the Spartanization Refactoring
- * @param message
- * 		the message to display in the quickfix
- */
-public BasicSpartanization(final BaseRefactoring ref, final String name, final String message) {
-    refactoring = ref;
+   * @param refactoring
+   *          an instance of a Spartanization Refactoring
+   * @param name
+   *          the name of the Spartanization Refactoring
+   * @param message
+   *          the message to display in the quickfix
+   */
+  public BasicSpartanization(final BaseRefactoring refactoring, final String name, final String message) {
+    this.refactoring = refactoring;
     this.name = name;
     this.message = message;
   }
@@ -38,37 +39,38 @@ public BasicSpartanization(final BaseRefactoring ref, final String name, final S
   }
   
   /**
-  * @return the message to display in the quickfix
-  */
+   * @return the message to display in the quickfix
+   */
   public String getMessage() {
     return message;
   }
   
   /**
-  * @return a quickfix which automatically performs the spartanization
-  */
+   * @return a quickfix which automatically performs the spartanization
+   */
   public IMarkerResolution getFix() {
     return new SpartanizationResolution();
   }
   
   /**
-  * @return a quickfix which opens a refactoring wizard with the spartanization
-  */
+   * @return a quickfix which opens a refactoring wizard with the spartanization
+   */
   public IMarkerResolution getFixWithPreview() {
     return new SpartanizationResolutionWithPreview();
   }
   
   /**
-  * @return the underlying refactoring object
-  */
+   * @return the underlying refactoring object
+   */
   public BaseRefactoring getRefactoring() {
     return refactoring;
   }
   
   /**
-  * @author Boris van Sosin
-  * a quickfix which automatically performs the spartanization
-  */
+   * a quickfix which automatically performs the spartanization
+   * 
+   * @author Boris van Sosin <boris.van.sosin@gmail.com>
+   */
   public class SpartanizationResolution implements IMarkerResolution {
     @Override public String getLabel() {
       return BasicSpartanization.this.toString() + ": Do it!";
@@ -84,9 +86,9 @@ public BasicSpartanization(final BaseRefactoring ref, final String name, final S
   }
   
   /**
-  * @author Boris van Sosin
-  * a quickfix which opens a refactoring wizard with the spartanization
-  */
+   * @author Boris van Sosin a quickfix which opens a refactoring wizard with
+   *         the spartanization
+   */
   public class SpartanizationResolutionWithPreview implements IMarkerResolution {
     @Override public String getLabel() {
       return BasicSpartanization.this.toString() + ": Show me a preview first";
@@ -104,19 +106,20 @@ public BasicSpartanization(final BaseRefactoring ref, final String name, final S
   }
   
   /**
-  * @param cu
-  * 	the Compilation Unit (outermost ASTNode in the Java Grammar) to check for spartanization
-  * @return a collection of ranges, each representing a spartanization suggestion
-  */
+   * @param cu
+   *          the Compilation Unit (outermost ASTNode in the Java Grammar) to
+   *          check for spartanization
+   * @return a collection of ranges, each representing a spartanization
+   *         suggestion
+   */
   public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
     return refactoring.checkForSpartanization(cu);
   }
   
   /**
-  * @author Boris van Sosin
-  * a range which contains a spartanization siggestion.
-  * used for creating text markers
-  */
+   * @author Boris van Sosin a range which contains a spartanization siggestion.
+   *         used for creating text markers
+   */
   public static class SpartanizationRange {
     /**
      * the beginning of the range
@@ -129,10 +132,11 @@ public BasicSpartanization(final BaseRefactoring ref, final String name, final S
     
     /**
      * creates a SpartanizationRange from beginning and end locations
+     * 
      * @param from
-     * 		the beginning of the range
+     *          the beginning of the range
      * @param to
-     * 		the end of the range
+     *          the end of the range
      */
     public SpartanizationRange(final int from, final int to) {
       this.from = from;
@@ -141,8 +145,9 @@ public BasicSpartanization(final BaseRefactoring ref, final String name, final S
     
     /**
      * creates a SpartanizationRange from a single ASTNode
+     * 
      * @param n
-     * 		the ASTNode
+     *          the ASTNode
      */
     public SpartanizationRange(final ASTNode n) {
       this(n.getStartPosition(), n.getStartPosition() + n.getLength());
@@ -150,10 +155,11 @@ public BasicSpartanization(final BaseRefactoring ref, final String name, final S
     
     /**
      * creates a SpartanizationRange from beginning and end ASTNodes
+     * 
      * @param first
-     * 		the beginning ASTNode (inclusive)
+     *          the beginning ASTNode (inclusive)
      * @param last
-     * 		the end ASTNode (inclusive)
+     *          the end ASTNode (inclusive)
      */
     public SpartanizationRange(final ASTNode first, final ASTNode last) {
       this(first.getStartPosition(), last.getStartPosition() + last.getLength());

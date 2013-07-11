@@ -7,8 +7,8 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 
 /**
- * @author Yossi Gil yossi.gil@gmail.com
- * @since July 10 2013
+ * @author Yossi Gil <yossi.gil@gmail.com>
+ * @since 2013/07/01
  * 
  */
 public enum Utils {
@@ -20,7 +20,7 @@ public enum Utils {
    *          what to parse
    * @return a newly created parser for the parameter
    */
-  public static ASTParser makeParser(ICompilationUnit cu) {
+  public static ASTParser makeParser(final ICompilationUnit cu) {
     final ASTParser $ = makeParser();
     $.setSource(cu);
     return $;
@@ -67,7 +67,7 @@ public enum Utils {
    *          an element
    * @return the newly created array
    */
-  public static <T> T[] append(final T[] ts, T t) {
+  public static <T> T[] append(final T[] ts, final T t) {
     final T[] $ = Arrays.copyOf(ts, ts.length + 1);
     $[ts.length] = t;
     return $;

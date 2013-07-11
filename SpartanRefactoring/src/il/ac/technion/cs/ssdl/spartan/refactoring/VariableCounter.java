@@ -41,7 +41,10 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  * a utility class for counting uses and assignments of expressions in other
  * expressions
  * 
- * @author Boris van Sosin
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/10)
+ * 
+ * @since 2013/07/01
  */
 public enum VariableCounter {
   /**
@@ -154,16 +157,16 @@ public enum VariableCounter {
   static List<Expression> countUses(final ASTNode where, final Expression what, final boolean semantic) {
     final List<Expression> $ = new ArrayList<Expression>();
     where.accept(new ASTVisitor() {
-      private boolean count(Expression e) {
+      private boolean count(final Expression e) {
         $.addAll(listSingle(e, what, repeated()));
         return true;
       }
       
-      private boolean count(Object o) {
+      private boolean count(final Object o) {
         return count((Expression) o);
       }
       
-      private boolean count(@SuppressWarnings("rawtypes") List os) {
+      private boolean count(@SuppressWarnings("rawtypes") final List os) {
         for (final Object o : os)
           count(o);
         return true;
@@ -299,7 +302,7 @@ public enum VariableCounter {
       
       @Override public boolean visit(final WhileStatement node) {
         whileNesting++;
-        Expression expression = node.getExpression();
+        final Expression expression = node.getExpression();
         return count(expression);
       }
       

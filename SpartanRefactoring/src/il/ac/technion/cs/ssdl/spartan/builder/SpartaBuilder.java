@@ -22,8 +22,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
  * @author Eclipse (auto-generated)
- * @author Boris van Sosin (mostly auto-generated)
- * 
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * @since 2013/07/01
  */
 public class SpartaBuilder extends IncrementalProjectBuilder {
   static class SampleDeltaVisitor implements IResourceDeltaVisitor {

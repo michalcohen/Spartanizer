@@ -4,7 +4,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Spartaniza
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -12,7 +11,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -23,6 +21,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin (v2)
  * 
+ * @since 2013/01/01
  */
 public class ForwardDeclarationRefactoring extends BaseRefactoring {
   @Override public String getName() {
@@ -87,12 +86,9 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
   static int findFirstUse(final Block b, final SimpleName var) {
     final ASTNode declarationFragment = var.getParent();
     final ASTNode declarationStmt = declarationFragment.getParent();
-    for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i) {
-      final List<Expression> usesInCurrItem = VariableCounter.BOTH_LEXICAL.list((ASTNode) b.statements().get(i), var);
-      final int usesInBlockItem = usesInCurrItem.size();
-      if (usesInBlockItem > 0)
+    for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i)
+      if (VariableCounter.BOTH_LEXICAL.list((ASTNode) b.statements().get(i), var).size() > 0)
         return i; // first use!
-    }
     return -1; // that means unused
   }
   

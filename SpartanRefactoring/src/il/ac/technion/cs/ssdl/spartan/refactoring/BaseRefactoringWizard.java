@@ -5,14 +5,14 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
  * @author Artium Nihamkin
- *
+ * @since 2013/01/01
  */
 public class BaseRefactoringWizard extends RefactoringWizard {
   /**
- * @param r
- * 		the Rafactoring with with to open the wizard
- */
-public BaseRefactoringWizard(final Refactoring r) {
+   * @param r
+   *          the Rafactoring with with to open the wizard
+   */
+  public BaseRefactoringWizard(final Refactoring r) {
     super(r, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
   }
   

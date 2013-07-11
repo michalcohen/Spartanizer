@@ -8,7 +8,10 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
 /**
- * @author Boris van Sosin a quickfix generator for spartanization refactoring
+ * a quickfix generator for spartanization refactoring
+ * 
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * @since 2013/07/01
  */
 public class SpartanizationQuickfixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker arg0) {
@@ -16,7 +19,7 @@ public class SpartanizationQuickfixer implements IMarkerResolutionGenerator {
       final String spartanizationName = (String) arg0.getAttribute(SpartaBuilder.SPARTANIZATION_TYPE_KEY);
       return new IMarkerResolution[] { SpartanizationFactory.getSpartanizationByName(spartanizationName).getFix(),
           SpartanizationFactory.getSpartanizationByName(spartanizationName).getFixWithPreview() };
-    } catch (CoreException _) {
+    } catch (final CoreException _) {
       return new IMarkerResolution[] {};
     }
   }
