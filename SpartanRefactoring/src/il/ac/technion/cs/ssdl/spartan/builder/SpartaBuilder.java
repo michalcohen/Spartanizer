@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -101,11 +100,8 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   
   private static void checkJava(final IFile f) {
     deleteMarkers(f);
+    final ASTParser p = Utils.makeParser(JavaCore.createCompilationUnitFrom(f));
     try {
-      final ASTParser p = ASTParser.newParser(AST.JLS4);
-      p.setResolveBindings(false);
-      p.setKind(ASTParser.K_COMPILATION_UNIT);
-      p.setSource(JavaCore.createCompilationUnitFrom(f));
       for (final BasicSpartanization currSpartanization : SpartanizationFactory.all())
         for (final SpartanizationRange range : currSpartanization.checkForSpartanization((CompilationUnit) p.createAST(null)))
           if (range != null) {

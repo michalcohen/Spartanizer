@@ -1,5 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
+import static il.ac.technion.cs.ssdl.spartan.builder.Utils.append;
 import il.ac.technion.cs.ssdl.spartan.builder.SpartaBuilder;
 import il.ac.technion.cs.ssdl.spartan.builder.SpartanizationNature;
 
@@ -77,10 +78,7 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
           return;
         }
       // Add the nature
-      final String[] newNatures = new String[natures.length + 1];
-      System.arraycopy(natures, 0, newNatures, 0, natures.length);
-      newNatures[natures.length] = SpartanizationNature.NATURE_ID;
-      description.setNatureIds(newNatures);
+      description.setNatureIds(append(natures, SpartanizationNature.NATURE_ID));
       project.setDescription(description, null);
     } catch (final CoreException e) {
       // we assume that other builder handle cause compilation failure on

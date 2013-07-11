@@ -1,5 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import il.ac.technion.cs.ssdl.spartan.builder.Utils;
 import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
 
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -33,14 +33,16 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 /**
+ * the base class for all Spartanization Refactoring classes, contains common
+ * functionality
+ * 
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2) the base class for all Spartanization
- *         Refactoring classes. contains common functionality
+ * @author Boris van Sosin (v2)
  */
 public abstract class BaseRefactoring extends Refactoring {
   private ITextSelection selection = null;
   private ICompilationUnit compilationUnit = null;
-  IMarker marker = null;
+  private IMarker marker = null;
   final Collection<TextFileChange> changes = new ArrayList<TextFileChange>();
   
   @Override public abstract String getName();
@@ -71,18 +73,14 @@ public abstract class BaseRefactoring extends Refactoring {
    * @return an ASTRewrite which contains the changes
    */
   private final ASTRewrite createRewrite(final SubProgressMonitor pm, final IMarker m) {
-    final ASTParser p = ASTParser.newParser(AST.JLS4);
-    p.setResolveBindings(false);
-    p.setKind(ASTParser.K_COMPILATION_UNIT);
-    p.setSource(getCompilationUnitFromMarker(m));
-    return createRewrite(pm, (CompilationUnit) p.createAST(null), m);
+    return createRewrite(pm, (CompilationUnit) Utils.makeParser(getCompilationUnitFromMarker(m)).createAST(pm), m);
   }
   
-  private ASTRewrite createRewrite(SubProgressMonitor pm, CompilationUnit cu, IMarker m) {
+  private ASTRewrite createRewrite(final SubProgressMonitor pm, final CompilationUnit cu, final IMarker m) {
     return createRewrite(pm, cu.getAST(), cu, m);
   }
   
-  private ASTRewrite createRewrite(SubProgressMonitor pm, AST t, CompilationUnit cu, IMarker m) {
+  private ASTRewrite createRewrite(final SubProgressMonitor pm, final AST t, final CompilationUnit cu, final IMarker m) {
     if (pm != null)
       pm.beginTask("Creating rewrite operation...", 1);
     final ASTRewrite $ = createRewrite(t, cu, m);
@@ -91,8 +89,8 @@ public abstract class BaseRefactoring extends Refactoring {
     return $;
   }
   
-  private ASTRewrite createRewrite(AST ast, CompilationUnit cu, IMarker m) {
-    ASTRewrite $ = ASTRewrite.create(ast);
+  private ASTRewrite createRewrite(final AST ast, final CompilationUnit cu, final IMarker m) {
+    final ASTRewrite $ = ASTRewrite.create(ast);
     fillRewrite($, ast, cu, m);
     return $;
   }
@@ -109,16 +107,18 @@ public abstract class BaseRefactoring extends Refactoring {
    * @return true if the node is not inside selection. If there is no selection
    *         at all will return false.
    */
-  protected boolean isNodeOutsideSelection(final ASTNode node) {
-    return isTextSelected()
-        && (node.getStartPosition() > selection.getOffset() + selection.getLength() || node.getStartPosition() < selection
-            .getOffset());
+  protected boolean isNodeOutsideSelection(final ASTNode n) {
+    return !isSelected(n.getStartPosition());
   }
   
-  protected static boolean isNodeOutsideMarker(final ASTNode node, final IMarker m) {
+  private boolean isSelected(int offset) {
+    return isTextSelected() && offset >= selection.getOffset() && offset < selection.getOffset() + selection.getLength();
+  }
+  
+  protected static boolean isNodeOutsideMarker(final ASTNode n, final IMarker m) {
     try {
-      return node.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue()
-          || node.getStartPosition() + node.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
+      return n.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue()
+          || n.getStartPosition() + n.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
     } catch (final CoreException e) {
       return true;
     }
@@ -132,25 +132,24 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   /**
-   * @param m
+   * @param marker
    *          the marker to set for the refactoring
    */
-  public final void setMarker(final IMarker m) {
-    marker = m;
+  public final void setMarker(final IMarker marker) {
+    this.marker = marker;
   }
   
-  @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor m) throws CoreException,
+  @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
       OperationCanceledException {
-    final RefactoringStatus $ = new RefactoringStatus();
     changes.clear();
     // TODO: Catch exceptions and change status accordingly
     if (marker != null) {
-      innerRunAsMarkerFix(m, marker, true);
+      innerRunAsMarkerFix(pm, marker, true);
       marker = null; // consume marker
     } else
-      runAsManualCall(m);
-    m.done();
-    return $;
+      runAsManualCall(pm);
+    pm.done();
+    return new RefactoringStatus();
   }
   
   private void runAsManualCall(final IProgressMonitor pm) throws JavaModelException, CoreException {
@@ -161,7 +160,7 @@ public abstract class BaseRefactoring extends Refactoring {
   private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
     if (!isTextSelected())
       return getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-    List<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
+    final List<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
     $.add(compilationUnit);
     return $;
   }
@@ -212,11 +211,8 @@ public abstract class BaseRefactoring extends Refactoring {
    */
   protected void scanCompilationUnit(final ICompilationUnit u, final IProgressMonitor pm) throws CoreException {
     pm.beginTask("Creating change for a single compilation unit...", 2);
-    final ASTParser parser = ASTParser.newParser(AST.JLS4);
-    parser.setResolveBindings(false);
-    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-    parser.setSource(u);
-    final CompilationUnit cu = (CompilationUnit) parser.createAST(new SubProgressMonitor(pm, 1,
+    final ASTParser p = Utils.makeParser(u);
+    final CompilationUnit cu = (CompilationUnit) p.createAST(new SubProgressMonitor(pm, 1,
         SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
     textChange.setTextType("java");
@@ -249,11 +245,10 @@ public abstract class BaseRefactoring extends Refactoring {
    * @param units
    * @throws JavaModelException
    */
-  protected ArrayList<ICompilationUnit> getAllProjectCompilationUnits(final IProgressMonitor pm) throws JavaModelException {
+  protected final List<ICompilationUnit> getAllProjectCompilationUnits(final IProgressMonitor pm) throws JavaModelException {
     pm.beginTask("Gathering project information...", 1);
-    final ArrayList<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
-    final IJavaProject proj = compilationUnit.getJavaProject();
-    for (final IPackageFragmentRoot r : proj.getPackageFragmentRoots())
+    final List<ICompilationUnit> $ = new ArrayList<ICompilationUnit>();
+    for (final IPackageFragmentRoot r : compilationUnit.getJavaProject().getPackageFragmentRoots())
       if (r.getKind() == IPackageFragmentRoot.K_SOURCE)
         for (final IJavaElement e : r.getChildren())
           if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
@@ -288,7 +283,7 @@ public abstract class BaseRefactoring extends Refactoring {
    * @param selection
    *          the selection to set
    */
-  public void setSelection(ITextSelection selection) {
+  public void setSelection(final ITextSelection selection) {
     this.selection = selection;
   }
   
@@ -303,7 +298,7 @@ public abstract class BaseRefactoring extends Refactoring {
    * @param compilationUnit
    *          the compilationUnit to set
    */
-  public void setCompilationUnit(ICompilationUnit compilationUnit) {
+  public void setCompilationUnit(final ICompilationUnit compilationUnit) {
     this.compilationUnit = compilationUnit;
   }
   

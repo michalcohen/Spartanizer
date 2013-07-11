@@ -1,5 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -8,7 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Eclipse (auto-generated)
- *
+ * 
  */
 public class SpartanizationNature implements IProjectNature {
   /**
@@ -33,10 +35,8 @@ public class SpartanizationNature implements IProjectNature {
   }
   
   private static ICommand[] make(final IProjectDescription d, final ICommand[] cs) {
-    final ICommand[] $ = new ICommand[cs.length + 1];
-    System.arraycopy(cs, 0, $, 0, cs.length);
-    final ICommand c = $[$.length - 1] = d.newCommand();
-    c.setBuilderName(SpartaBuilder.BUILDER_ID);
+    final ICommand[] $ = Arrays.copyOf(cs, cs.length + 1);
+    ($[$.length - 1] = d.newCommand()).setBuilderName(SpartaBuilder.BUILDER_ID);
     return $;
   }
   
@@ -55,7 +55,7 @@ public class SpartanizationNature implements IProjectNature {
         return;
       }
   }
-
+  
   private static ICommand[] make(final ICommand[] cs, int i) {
     final ICommand[] $ = new ICommand[cs.length - 1];
     System.arraycopy(cs, 0, $, 0, i);

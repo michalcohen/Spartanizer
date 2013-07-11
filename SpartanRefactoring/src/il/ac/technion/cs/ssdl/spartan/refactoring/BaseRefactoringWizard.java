@@ -9,11 +9,11 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
  */
 public class BaseRefactoringWizard extends RefactoringWizard {
   /**
- * @param refactoring
+ * @param r
  * 		the Rafactoring with with to open the wizard
  */
-public BaseRefactoringWizard(final Refactoring refactoring) {
-    super(refactoring, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
+public BaseRefactoringWizard(final Refactoring r) {
+    super(r, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
   }
   
   @Override protected void addUserInputPages() {

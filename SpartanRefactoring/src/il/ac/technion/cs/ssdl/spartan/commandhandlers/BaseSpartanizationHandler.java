@@ -23,9 +23,19 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * 
  */
 public abstract class BaseSpartanizationHandler extends AbstractHandler {
-  protected abstract String getDialogTitle();
+  protected final String getDialogTitle() {
+    return refactoring.getName();
+  }
   
-  protected abstract BaseRefactoring getRefactoring();
+  protected BaseRefactoring getRefactoring() {
+    return refactoring;
+  }
+  
+  protected BaseSpartanizationHandler(BaseRefactoring refactoring) {
+    this.refactoring = refactoring;
+  }
+  
+  private final BaseRefactoring refactoring;
   
   @Override public Object execute(ExecutionEvent event) {
     final ISelection s = HandlerUtil.getCurrentSelection(event);
