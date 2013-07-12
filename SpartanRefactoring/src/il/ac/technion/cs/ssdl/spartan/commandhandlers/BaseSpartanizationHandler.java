@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.BaseRefactoring;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BaseRefactoringWizard;
+import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanRefactoringWizard;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -24,19 +24,19 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @since 2013/07/01
  */
 public abstract class BaseSpartanizationHandler extends AbstractHandler {
-  protected final String getDialogTitle() {
-    return refactoring.getName();
-  }
-  
+  private final BaseRefactoring refactoring;
+
   protected BaseRefactoring getRefactoring() {
     return refactoring;
+  }
+
+  protected final String getDialogTitle() {
+    return refactoring.getName();
   }
   
   protected BaseSpartanizationHandler(final BaseRefactoring refactoring) {
     this.refactoring = refactoring;
   }
-  
-  private final BaseRefactoring refactoring;
   
   @Override public Object execute(final ExecutionEvent event) {
     return execute(HandlerUtil.getCurrentSelection(event));
@@ -65,7 +65,7 @@ public abstract class BaseSpartanizationHandler extends AbstractHandler {
     final BaseRefactoring r = getRefactoring();
     r.setSelection(ts);
     r.setCompilationUnit(cu);
-    return new BaseRefactoringWizard(r);
+    return new SpartanRefactoringWizard(r);
   }
   
   private static ICompilationUnit getCompilationUnit() {

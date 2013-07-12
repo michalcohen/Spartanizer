@@ -37,7 +37,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
  * functionality
  * 
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2) <boris.van.sosin@gmail.com>
+ * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
  * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/10)
  * 
  * @since 2013/01/01

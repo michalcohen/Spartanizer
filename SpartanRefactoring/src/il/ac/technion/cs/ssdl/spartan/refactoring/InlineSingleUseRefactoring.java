@@ -20,13 +20,14 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
+ * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
+ * 
  * 
  * @since 2013/01/01
  */
 public class InlineSingleUseRefactoring extends BaseRefactoring {
   @Override public String getName() {
-    return "Inline single use of variable";
+    return "Inline single use of a variable";
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu,

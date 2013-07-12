@@ -1,6 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
 import static il.ac.technion.cs.ssdl.spartan.builder.Utils.append;
+import static il.ac.technion.cs.ssdl.spartan.builder.Utils.delete;
 import il.ac.technion.cs.ssdl.spartan.builder.SpartaBuilder;
 import il.ac.technion.cs.ssdl.spartan.builder.SpartanizationNature;
 
@@ -37,12 +38,18 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
   /**
    * the main method of the command handler. runs when the command is called.
    */
-  @Override public Object execute(final ExecutionEvent event) throws ExecutionException {
-    final String partId = HandlerUtil.getActivePartIdChecked(event);
+  @Override public Object execute(final ExecutionEvent e) throws ExecutionException {
+    return execute(e, HandlerUtil.getActivePartIdChecked(e));
+  }
+  
+  private static Object execute(final ExecutionEvent e, final String partId) throws ExecutionException {
     System.out.println(partId);
-    final ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
-    if (selection instanceof IStructuredSelection)
-      for (final Object o : ((IStructuredSelection) selection).toList()) {
+    return execute(HandlerUtil.getCurrentSelectionChecked(e));
+  }
+  
+  private static Object execute(final ISelection s) {
+    if (s instanceof IStructuredSelection)
+      for (final Object o : ((IStructuredSelection) s).toList()) {
         final IProject p = extractProject(o);
         if (p != null)
           toggleNature(p);
@@ -58,19 +65,16 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
     return null;
   }
   
-  private static void toggleNature(final IProject project) {
+  private static void toggleNature(final IProject p) {
     try {
-      final IProjectDescription description = project.getDescription();
+      final IProjectDescription description = p.getDescription();
       final String[] natures = description.getNatureIds();
       for (int i = 0; i < natures.length; ++i)
         if (SpartanizationNature.NATURE_ID.equals(natures[i])) {
           // Remove the nature
-          final String[] newNatures = new String[natures.length - 1];
-          System.arraycopy(natures, 0, newNatures, 0, i);
-          System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
-          description.setNatureIds(newNatures);
-          project.setDescription(description, null);
-          project.accept(new IResourceVisitor() {
+          description.setNatureIds(delete(natures, i));
+          p.setDescription(description, null);
+          p.accept(new IResourceVisitor() {
             @Override public boolean visit(final IResource r) {
               if (r instanceof IFile && r.getName().endsWith(".java"))
                 SpartaBuilder.deleteMarkers((IFile) r);
@@ -81,7 +85,7 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
         }
       // Add the nature
       description.setNatureIds(append(natures, SpartanizationNature.NATURE_ID));
-      project.setDescription(description, null);
+      p.setDescription(description, null);
     } catch (final CoreException e) {
       // we assume that other builder handle cause compilation failure on
       // CoreException

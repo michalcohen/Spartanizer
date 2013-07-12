@@ -97,7 +97,7 @@ public class BasicSpartanization {
     @Override public void run(final IMarker arg0) {
       getRefactoring().setMarker(arg0);
       try {
-        new RefactoringWizardOpenOperation(new BaseRefactoringWizard(getRefactoring())).run(Display.getCurrent().getActiveShell(),
+        new RefactoringWizardOpenOperation(new SpartanRefactoringWizard(getRefactoring())).run(Display.getCurrent().getActiveShell(),
             "Spartan Refactoring: " + BasicSpartanization.this.toString());
       } catch (final InterruptedException e) {
         e.printStackTrace();

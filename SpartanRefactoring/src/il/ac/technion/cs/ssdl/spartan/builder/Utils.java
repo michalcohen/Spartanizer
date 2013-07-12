@@ -72,4 +72,32 @@ public enum Utils {
     $[ts.length] = t;
     return $;
   }
+  
+  /**
+   * Deletes a specified element from an array, by reallocating an array whose
+   * size is smaller by one and shifting the other elements down.
+   * 
+   * @param ts
+   *          an arbitrary array
+   * @param i
+   *          position of element to be deleted
+   * @return the newly created array
+   */
+  public static <T> T[] delete(final T[] ts, int i) {
+    final T[] $ = Arrays.copyOf(ts, ts.length - 1);
+    System.arraycopy(ts, i + 1, $, i, $.length - i);
+    return $;
+  }
+  
+  /**
+   * Sorts an array
+   * 
+   * @param is
+   *          what to sort
+   * @return the given array with elements in sorted order
+   */
+  public static int[] sort(int[] is) {
+    Arrays.sort(is);
+    return is;
+  }
 }

@@ -20,36 +20,37 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
+ * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
+ * 
  * 
  */
 public class RedundantEqualityRefactoring extends BaseRefactoring {
   @Override public String getName() {
-    return "Remove Redundant Equality";
+    return "Remove redundant comparison to a boolean literal";
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final InfixExpression node) {
-        if (!inRange(m, node))
+      @Override public boolean visit(final InfixExpression n) {
+        if (!inRange(m, n))
           return true;
-        if (node.getOperator() != Operator.EQUALS && node.getOperator() != Operator.NOT_EQUALS)
+        if (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
           return true;
         ASTNode nonliteral = null;
         BooleanLiteral literal = null;
-        if (node.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-            && node.getLeftOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
-          nonliteral = r.createMoveTarget(node.getLeftOperand());
-          literal = (BooleanLiteral) node.getRightOperand();
-        } else if (node.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-            && node.getRightOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
-          nonliteral = r.createMoveTarget(node.getRightOperand());
-          literal = (BooleanLiteral) node.getLeftOperand();
+        if (n.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
+            && n.getLeftOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
+          nonliteral = r.createMoveTarget(n.getLeftOperand());
+          literal = (BooleanLiteral) n.getRightOperand();
+        } else if (n.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
+            && n.getRightOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
+          nonliteral = r.createMoveTarget(n.getRightOperand());
+          literal = (BooleanLiteral) n.getLeftOperand();
         } else
           return true;
         ASTNode newnode = null;
-        if (literal.booleanValue() && node.getOperator() == Operator.EQUALS || !literal.booleanValue()
-            && node.getOperator() == Operator.NOT_EQUALS)
+        if (literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
+            && n.getOperator() == Operator.NOT_EQUALS)
           newnode = nonliteral;
         else {
           final ParenthesizedExpression paren = t.newParenthesizedExpression();
@@ -58,7 +59,7 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
           ((PrefixExpression) newnode).setOperand(paren);
           ((PrefixExpression) newnode).setOperator(PrefixExpression.Operator.NOT);
         }
-        r.replace(node, newnode, null);
+        r.replace(n, newnode, null);
         return true;
       }
     });

@@ -1,11 +1,11 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.builder.Utils.sort;
 import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,13 +24,13 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
+ * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
  * 
  * @since 2013/01/01
  */
 public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
   @Override public String getName() {
-    return "Convert Return Variable to $";
+    return "Rename the variable returned by a function to '$'";
   }
   
   @Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {
@@ -97,18 +97,18 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
     return $;
   }
   
-  static VariableDeclarationFragment getOnlyReturnVariable(final MethodDeclaration node) {
-    final List<VariableDeclarationFragment> $ = getCandidates(node);
+  static VariableDeclarationFragment getOnlyReturnVariable(final MethodDeclaration n) {
+    final List<VariableDeclarationFragment> $ = getCandidates(n);
     // check if we already have $
     for (final VariableDeclaration d : $)
       if (d.getName().getIdentifier().equals("$"))
         return null;
-    final List<ReturnStatement> returnStatements = getReturnStatements(node);
+    final List<ReturnStatement> returnStatements = getReturnStatements(n);
     int usesOfLastCondidate = 0;
     for (final Iterator<VariableDeclarationFragment> iter = $.iterator(); iter.hasNext();) {
       final VariableDeclarationFragment currDecl = iter.next();
       for (final ReturnStatement returnStmt : returnStatements) {
-        if (literals.contains(Integer.valueOf(returnStmt.getExpression().getNodeType())))
+        if (Arrays.binarySearch(literals, returnStmt.getExpression().getNodeType()) >= 0)
           continue;
         final int nUses = VariableCounter.BOTH_LEXICAL.list(returnStmt, currDecl.getName()).size();
         if (nUses == 0) {
@@ -121,14 +121,19 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
     return $.size() == 1 && returnStatements.size() > 0 && usesOfLastCondidate > 0 ? $.get(0) : null;
   }
   
-  @SuppressWarnings("boxing") private static final Collection<Integer> literals = Collections.unmodifiableCollection(Arrays.asList(
-      ASTNode.NULL_LITERAL, ASTNode.CHARACTER_LITERAL, ASTNode.NUMBER_LITERAL, ASTNode.STRING_LITERAL, ASTNode.BOOLEAN_LITERAL));
+  private static final int[] literals = sort(new int[] { //
+  ASTNode.NULL_LITERAL, //
+      ASTNode.CHARACTER_LITERAL, //
+      ASTNode.NUMBER_LITERAL, //
+      ASTNode.STRING_LITERAL, //
+      ASTNode.BOOLEAN_LITERAL, //
+  });
   
   @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
     final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final MethodDeclaration node) {
-        final VariableDeclarationFragment returnVar = getOnlyReturnVariable(node);
+      @Override public boolean visit(final MethodDeclaration n) {
+        final VariableDeclarationFragment returnVar = getOnlyReturnVariable(n);
         if (returnVar != null)
           $.add(new SpartanizationRange(returnVar));
         return true;

@@ -14,9 +14,9 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
  * @since 2013/07/01
  */
 public class SpartanizationQuickfixer implements IMarkerResolutionGenerator {
-  @Override public IMarkerResolution[] getResolutions(final IMarker arg0) {
+  @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
-      final String spartanizationName = (String) arg0.getAttribute(SpartaBuilder.SPARTANIZATION_TYPE_KEY);
+      final String spartanizationName = (String) m.getAttribute(SpartaBuilder.SPARTANIZATION_TYPE_KEY);
       return new IMarkerResolution[] { SpartanizationFactory.getSpartanizationByName(spartanizationName).getFix(),
           SpartanizationFactory.getSpartanizationByName(spartanizationName).getFixWithPreview() };
     } catch (final CoreException _) {

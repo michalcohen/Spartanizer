@@ -19,26 +19,27 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
+ * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
+ * 
  * 
  * @since 2013/01/01
  */
 public class ForwardDeclarationRefactoring extends BaseRefactoring {
   @Override public String getName() {
-    return "Forward Declaraion of Variable";
+    return "Move forward the declaration of a variable";
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment node) {
-        if (!inRange(m, node))
+      @Override public boolean visit(final VariableDeclarationFragment n) {
+        if (!inRange(m, n))
           return true;
-        final SimpleName varName = node.getName();
-        final ASTNode containingNode = node.getParent().getParent();
+        final SimpleName varName = n.getName();
+        final ASTNode containingNode = n.getParent().getParent();
         if (!(containingNode instanceof Block))
           return true;
         final Block block = (Block) containingNode;
-        final int declaredIdx = block.statements().indexOf(node.getParent());
+        final int declaredIdx = block.statements().indexOf(n.getParent());
         final int firstUseIdx = findFirstUse(block, varName);
         if (firstUseIdx < 0)
           return true;
@@ -51,9 +52,9 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
             lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
           } else {
             r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-                t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, node)),
+                t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
                 beginingOfDeclarationsBlockIdx + 1, null);
-            r.remove(node, null);
+            r.remove(n, null);
           }
         }
         return true;

@@ -77,10 +77,12 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
    * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
    * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
    */
-  @Override @SuppressWarnings("rawtypes")// Auto-generated code. Didn't write
-  // it.
-  protected IProject[] build(final int kind, @SuppressWarnings("unused") final Map args, final IProgressMonitor m)
-      throws CoreException {
+  @Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
+      final IProgressMonitor m) throws CoreException {
+    return build(kind, m);
+  }
+  
+  private IProject[] build(final int kind, final IProgressMonitor m) throws CoreException {
     if (kind == FULL_BUILD)
       fullBuild(m);
     else {
@@ -103,16 +105,16 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     final ASTParser p = Utils.makeParser(JavaCore.createCompilationUnitFrom(f));
     try {
       for (final BasicSpartanization currSpartanization : SpartanizationFactory.all())
-        for (final SpartanizationRange range : currSpartanization.checkForSpartanization((CompilationUnit) p.createAST(null)))
-          if (range != null) {
+        for (final SpartanizationRange r : currSpartanization.checkForSpartanization((CompilationUnit) p.createAST(null)))
+          if (r != null) {
             final IMarker m = f.createMarker(MARKER_TYPE);
-            m.setAttribute(IMarker.CHAR_START, range.from);
-            m.setAttribute(IMarker.CHAR_END, range.to);
+            m.setAttribute(IMarker.CHAR_START, r.from);
+            m.setAttribute(IMarker.CHAR_END, r.to);
             m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
             m.setAttribute(SPARTANIZATION_TYPE_KEY, currSpartanization.toString());
             m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + currSpartanization.getMessage());
           }
-    } catch (final Exception e) {
+    } catch (CoreException e) {
       e.printStackTrace();
     }
   }

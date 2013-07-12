@@ -22,13 +22,13 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin (v2)
+ * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
  * 
  * @since 2013/01/01
  */
 public class ShortestBranchRefactoring extends BaseRefactoring {
   @Override public String getName() {
-    return "Shortest Conditional Branch First";
+    return "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first";
   }
   
   /**

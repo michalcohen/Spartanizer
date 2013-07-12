@@ -126,7 +126,7 @@
             commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.InlineSinleUseHandler"
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.InlineSingleUseHandler"
             commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse">
       </handler>
       <handler
