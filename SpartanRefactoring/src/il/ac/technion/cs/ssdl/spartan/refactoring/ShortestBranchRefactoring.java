@@ -36,7 +36,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
    * 
    * @param n
    *          The node.
-   * @return Number of ast nodes under the node.
+   * @return Number of abstract syntax tree nodes under the node.
    */
   static int countNodes(final ASTNode n) {
     final AtomicInteger $ = new AtomicInteger(0);
