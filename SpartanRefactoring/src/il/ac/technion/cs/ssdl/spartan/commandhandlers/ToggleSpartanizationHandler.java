@@ -30,12 +30,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {
   /**
-   * The constructor. auto-generated
-   */
-  public ToggleSpartanizationHandler() {
-  }
-  
-  /**
    * the main method of the command handler. runs when the command is called.
    */
   @Override public Object execute(final ExecutionEvent e) throws ExecutionException {

@@ -1,9 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -65,18 +64,16 @@ public class RedundantEqualityRefactoring extends BaseRefactoring {
     });
   }
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
-    cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final InfixExpression node) {
-        if (node.getOperator() != Operator.EQUALS && node.getOperator() != Operator.NOT_EQUALS)
+  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+    return new ASTVisitor() {
+      @Override public boolean visit(final InfixExpression n) {
+        if (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
           return true;
-        if (node.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-            || node.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL)
-          $.add(new SpartanizationRange(node));
+        if (n.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
+            || n.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL)
+          opportunities.add(new Range(n));
         return true;
       }
-    });
-    return $;
+    };
   }
 }

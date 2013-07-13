@@ -1,9 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -62,9 +61,8 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
     });
   }
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
-    cu.accept(new ASTVisitor() {
+  @Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
+    return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
         final SimpleName varName = node.getName();
         final ASTNode containingNode = node.getParent().getParent();
@@ -77,11 +75,10 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
           return true;
         final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
         if (beginingOfDeclarationsBlockIdx > declaredIdx)
-          $.add(new SpartanizationRange(node));
+          oppportunities.add(new Range(node));
         return true;
       }
-    });
-    return $;
+    };
   }
   
   static int findFirstUse(final Block b, final SimpleName var) {

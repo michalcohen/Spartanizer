@@ -1,9 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -55,9 +53,8 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
     });
   }
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
-    cu.accept(new ASTVisitor() {
+  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+    return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
         final SimpleName varName = node.getName();
         if (node.getParent() instanceof VariableDeclarationStatement) {
@@ -65,11 +62,10 @@ public class InlineSingleUseRefactoring extends BaseRefactoring {
           final boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
           if (VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName).size() == 1
               && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1))
-            $.add(new SpartanizationRange(node));
+            opportunities.add(new Range(node));
         }
         return true;
       }
-    });
-    return $;
+    };
   }
 }

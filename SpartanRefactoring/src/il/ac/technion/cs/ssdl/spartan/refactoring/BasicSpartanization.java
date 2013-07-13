@@ -1,9 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import java.util.Collection;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
@@ -76,9 +75,9 @@ public class BasicSpartanization {
       return BasicSpartanization.this.toString() + ": Do it!";
     }
     
-    @Override public void run(final IMarker arg0) {
+    @Override public void run(final IMarker m) {
       try {
-        getRefactoring().runAsMarkerFix(new org.eclipse.core.runtime.NullProgressMonitor(), arg0);
+        getRefactoring().runAsMarkerFix(new NullProgressMonitor(), m);
       } catch (final CoreException e) {
         e.printStackTrace();
       }
@@ -86,19 +85,20 @@ public class BasicSpartanization {
   }
   
   /**
-   * @author Boris van Sosin a quickfix which opens a refactoring wizard with
-   *         the spartanization
+   * a quickfix which opens a refactoring wizard with the spartanization
+   * 
+   * @author Boris van Sosin
    */
   public class SpartanizationResolutionWithPreview implements IMarkerResolution {
     @Override public String getLabel() {
       return BasicSpartanization.this.toString() + ": Show me a preview first";
     }
     
-    @Override public void run(final IMarker arg0) {
-      getRefactoring().setMarker(arg0);
+    @Override public void run(final IMarker m) {
+      getRefactoring().setMarker(m);
       try {
-        new RefactoringWizardOpenOperation(new SpartanRefactoringWizard(getRefactoring())).run(Display.getCurrent().getActiveShell(),
-            "Spartan Refactoring: " + BasicSpartanization.this.toString());
+        new RefactoringWizardOpenOperation(new SpartanRefactoringWizard(getRefactoring())).run(Display.getCurrent()
+            .getActiveShell(), "Spartan Refactoring: " + BasicSpartanization.this.toString());
       } catch (final InterruptedException e) {
         e.printStackTrace();
       }
@@ -112,57 +112,59 @@ public class BasicSpartanization {
    * @return a collection of ranges, each representing a spartanization
    *         suggestion
    */
-  public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    return refactoring.checkForSpartanization(cu);
+  public Iterable<Range> checkForSpartanization(final CompilationUnit cu) {
+    return refactoring.findOpportunities(cu);
   }
   
   /**
-   * @author Boris van Sosin a range which contains a spartanization siggestion.
-   *         used for creating text markers
+   * a range which contains a spartanization suggestion. used for creating text
+   * markers
+   * 
+   * @author Boris van Sosin <boris.van.sosin@gmail.com>
    */
-  public static class SpartanizationRange {
+  public static class Range {
     /**
-     * the beginning of the range
+     * the beginning of the range (inclusive)
      */
     public final int from;
     /**
-     * the end of the range
+     * the end of the range (exclusive)
      */
     public final int to;
     
     /**
-     * creates a SpartanizationRange from beginning and end locations
+     * Instantiates from beginning and end locations
      * 
      * @param from
-     *          the beginning of the range
+     *          the beginning of the range (inclusive)
      * @param to
-     *          the end of the range
+     *          the end of the range (exclusive)
      */
-    public SpartanizationRange(final int from, final int to) {
+    public Range(final int from, final int to) {
       this.from = from;
       this.to = to;
     }
     
     /**
-     * creates a SpartanizationRange from a single ASTNode
+     * Instantiates from a single ASTNode
      * 
      * @param n
      *          the ASTNode
      */
-    public SpartanizationRange(final ASTNode n) {
+    public Range(final ASTNode n) {
       this(n.getStartPosition(), n.getStartPosition() + n.getLength());
     }
     
     /**
-     * creates a SpartanizationRange from beginning and end ASTNodes
+     * Instantiates from beginning and end ASTNodes
      * 
-     * @param first
+     * @param from
      *          the beginning ASTNode (inclusive)
-     * @param last
+     * @param to
      *          the end ASTNode (inclusive)
      */
-    public SpartanizationRange(final ASTNode first, final ASTNode last) {
-      this(first.getStartPosition(), last.getStartPosition() + last.getLength());
+    public Range(final ASTNode from, final ASTNode to) {
+      this(from.getStartPosition(), to.getStartPosition() + to.getLength());
     }
   }
 }

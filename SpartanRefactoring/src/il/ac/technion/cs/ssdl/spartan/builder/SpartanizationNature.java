@@ -44,17 +44,10 @@ public class SpartanizationNature implements IProjectNature {
     final ICommand[] cs = description.getBuildSpec();
     for (int i = 0; i < cs.length; ++i)
       if (cs[i].getBuilderName().equals(SpartaBuilder.BUILDER_ID)) {
-        description.setBuildSpec(make(cs, i));
+        description.setBuildSpec(Utils.delete(cs, i));
         project.setDescription(description, null);
         return;
       }
-  }
-  
-  private static ICommand[] make(final ICommand[] cs, final int i) {
-    final ICommand[] $ = new ICommand[cs.length - 1];
-    System.arraycopy(cs, 0, $, 0, i);
-    System.arraycopy(cs, i + 1, $, i, cs.length - i - 1);
-    return $;
   }
   
   /*

@@ -19,17 +19,17 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * @author Boris van Sosin <boris.van.sosin@gmail.com>
- * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/11)
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>: original version
+ * @author Yossi Gil <yossi.gil@gmail.com>: major refactoring 2013/07/11
  * @since 2013/07/01
  */
 public abstract class BaseSpartanizationHandler extends AbstractHandler {
   private final BaseRefactoring refactoring;
-
+  
   protected BaseRefactoring getRefactoring() {
     return refactoring;
   }
-
+  
   protected final String getDialogTitle() {
     return refactoring.getName();
   }
@@ -38,34 +38,33 @@ public abstract class BaseSpartanizationHandler extends AbstractHandler {
     this.refactoring = refactoring;
   }
   
-  @Override public Object execute(final ExecutionEvent event) {
-    return execute(HandlerUtil.getCurrentSelection(event));
+  @Override public Void execute(final ExecutionEvent e) {
+    return execute(HandlerUtil.getCurrentSelection(e));
   }
   
-  private Object execute(final ISelection s) {
-    if (s instanceof ITextSelection)
-      execute((ITextSelection) s);
-    return null;
+  private Void execute(final ISelection s) {
+    return !(s instanceof ITextSelection) ? null : execute((ITextSelection) s);
   }
   
-  private void execute(final ITextSelection textSelect) {
-    execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
+  private Void execute(final ITextSelection textSelect) {
+    return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
   }
   
-  private void execute(final RefactoringWizardOpenOperation wop) {
+  private Void execute(final RefactoringWizardOpenOperation wop) {
     try {
       wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
-    } catch (final InterruptedException e) {
+    } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    return null;
   }
   
   private RefactoringWizard getWizard(final ITextSelection ts, final ICompilationUnit cu) {
-    final BaseRefactoring r = getRefactoring();
-    r.setSelection(ts);
-    r.setCompilationUnit(cu);
-    return new SpartanRefactoringWizard(r);
+    final BaseRefactoring $ = getRefactoring();
+    $.setSelection(ts);
+    $.setCompilationUnit(cu);
+    return new SpartanRefactoringWizard($);
   }
   
   private static ICompilationUnit getCompilationUnit() {

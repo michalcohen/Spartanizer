@@ -7,10 +7,11 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranchRefactoring;
  * label relevant for Shortest Branch First
  * 
  * @author Boris van Sosin <boris.van.sosin@gmail.com>
- * @since 2013/07/01
+ * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/11)
+ * @since 2013/07/011
  */
 public class ShortestBranchFirstHandler extends BaseSpartanizationHandler {
-  /** Instantiate this class */
+  /** Instantiates this class */
   public ShortestBranchFirstHandler() {
     super(new ShortestBranchRefactoring());
   }

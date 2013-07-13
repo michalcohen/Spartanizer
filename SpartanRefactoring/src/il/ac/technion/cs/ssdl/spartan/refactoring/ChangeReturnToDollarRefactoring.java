@@ -1,11 +1,10 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.builder.Utils.sort;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -129,16 +128,14 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
       ASTNode.BOOLEAN_LITERAL, //
   });
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
-    cu.accept(new ASTVisitor() {
+  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+    return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment returnVar = getOnlyReturnVariable(n);
         if (returnVar != null)
-          $.add(new SpartanizationRange(returnVar));
+          opportunities.add(new Range(returnVar));
         return true;
       }
-    });
-    return $;
+    };
   }
 }

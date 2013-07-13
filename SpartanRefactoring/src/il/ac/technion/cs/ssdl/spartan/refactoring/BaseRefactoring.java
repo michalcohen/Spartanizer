@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import il.ac.technion.cs.ssdl.spartan.builder.Utils;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.ITextSelection;
@@ -38,7 +39,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
  * 
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
- * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/10)
+ * @author Yossi Gil <yossi.gil@gmail.com>: major refactoring 2013/07/10
  * 
  * @since 2013/01/01
  */
@@ -269,7 +270,13 @@ public abstract class BaseRefactoring extends Refactoring {
    * @return a collection of SpartanizationRange's, each containing a
    *         spartanization suggestion
    */
-  public abstract Collection<SpartanizationRange> checkForSpartanization(CompilationUnit cu);
+  public final List<Range> findOpportunities(CompilationUnit cu) {
+    final List<Range> $ = new ArrayList<Range>();
+    cu.accept(fillOpportunities($));
+    return $;
+  }
+  
+  protected abstract ASTVisitor fillOpportunities(List<Range> opportunities);
   
   @Override public Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm) throws OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));

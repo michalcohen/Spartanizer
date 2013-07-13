@@ -267,7 +267,7 @@ public class SpartanizationTests {
     final String text = readFile("TestResources" + File.separator + testCaseName + ".before");
     final ASTParser parser = Utils.makeParser(text);
     final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-    assertEquals(1, s.checkForSpartanization(cu).size());
+    assertEquals(1, s.findOpportunities(cu).size());
     final Document doc = new Document(text);
     s.createRewrite(cu, null).rewriteAST(doc, null).apply(doc);
     assertEquals(readFile("TestResources" + File.separator + testCaseName + ".after"), doc.get());
@@ -278,7 +278,7 @@ public class SpartanizationTests {
     final String text = readFile("TestResources" + File.separator + testCaseName + ".before");
     final ASTParser p = Utils.makeParser(text);
     final CompilationUnit cu = (CompilationUnit) p.createAST(null);
-    assertEquals(0, s.checkForSpartanization(cu).size());
+    assertEquals(0, s.findOpportunities(cu).size());
     final Document d = new Document(text);
     s.createRewrite(cu, null).rewriteAST(d, null).apply(d);
     assertEquals(readFile("TestResources" + File.separator + testCaseName + ".before"), d.get());

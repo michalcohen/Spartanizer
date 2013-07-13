@@ -1,9 +1,14 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.resources.IMarker;
@@ -32,11 +37,11 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   }
   
   /**
-   * Count number of nodes in the tree of which node is root.
+   * Counts the number of nodes in the tree of which node is root.
    * 
    * @param n
    *          The node.
-   * @return Number of abstract syntax tree nodes under the node.
+   * @return Number of abstract syntax tree nodes under the parameter.
    */
   static int countNodes(final ASTNode n) {
     final AtomicInteger $ = new AtomicInteger(0);
@@ -108,34 +113,30 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     return neg;
   }
   
-  private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression exp) {
+  private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression e) {
+    final Operator o = invert(e.getOperator());
+    if (o == null)
+      return null;
     final InfixExpression $ = ast.newInfixExpression();
-    $.setRightOperand((Expression) rewrite.createCopyTarget(exp.getRightOperand()));
-    $.setLeftOperand((Expression) rewrite.createCopyTarget(exp.getLeftOperand()));
-    if (exp.getOperator().equals(Operator.EQUALS)) {
-      $.setOperator(Operator.NOT_EQUALS);
-      return $;
-    }
-    if (exp.getOperator().equals(Operator.NOT_EQUALS)) {
-      $.setOperator(Operator.EQUALS);
-      return $;
-    }
-    if (exp.getOperator().equals(Operator.GREATER)) {
-      $.setOperator(Operator.LESS_EQUALS);
-      return $;
-    }
-    if (exp.getOperator().equals(Operator.GREATER_EQUALS)) {
-      $.setOperator(Operator.LESS);
-      return $;
-    }
-    if (exp.getOperator().equals(Operator.LESS)) {
-      $.setOperator(Operator.GREATER_EQUALS);
-      return $;
-    }
-    if (exp.getOperator().equals(Operator.LESS_EQUALS)) {
-      $.setOperator(Operator.GREATER);
-      return $;
-    }
+    $.setRightOperand((Expression) rewrite.createCopyTarget(e.getRightOperand()));
+    $.setLeftOperand((Expression) rewrite.createCopyTarget(e.getLeftOperand()));
+    $.setOperator(o);
+    return $;
+  }
+  
+  private static Operator invert(Operator o) {
+    if (o.equals(EQUALS))
+      return NOT_EQUALS;
+    if (o.equals(NOT_EQUALS))
+      return EQUALS;
+    if (o.equals(LESS))
+      return GREATER_EQUALS;
+    if (o.equals(GREATER))
+      return LESS_EQUALS;
+    if (o.equals(LESS_EQUALS))
+      return GREATER;
+    if (o.equals(GREATER_EQUALS))
+      return LESS;
     return null;
   }
   
@@ -147,25 +148,23 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   
   private static final int threshold = 1;
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
-    cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final IfStatement node) {
-        if (node.getElseStatement() == null)
+  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+    return new ASTVisitor() {
+      @Override public boolean visit(final IfStatement n) {
+        if (n.getElseStatement() == null)
           return true;
-        if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) > threshold)
-          $.add(new SpartanizationRange(node));
+        if (countNodes(n.getThenStatement()) - countNodes(n.getElseStatement()) > threshold)
+          opportunities.add(new Range(n));
         return true;
       }
       
-      @Override public boolean visit(final ConditionalExpression node) {
-        if (node.getElseExpression() == null)
+      @Override public boolean visit(final ConditionalExpression n) {
+        if (n.getElseExpression() == null)
           return true;
-        if (node.getThenExpression().getLength() - node.getElseExpression().getLength() > threshold)
-          $.add(new SpartanizationRange(node));
+        if (n.getThenExpression().getLength() - n.getElseExpression().getLength() > threshold)
+          opportunities.add(new Range(n));
         return true;
       }
-    });
-    return $;
+    };
   }
 }

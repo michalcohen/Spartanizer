@@ -1,9 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -248,22 +246,22 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     rewrite.replace(prevDecl.getInitializer(), newCondExp, null);
   }
   
-  static SpartanizationRange detectAssignment(final IfStatement node) {
+  static Range detectAssignment(final IfStatement node) {
     final Assignment asgnThen = getAssignment(node.getThenStatement());
     final Assignment asgnElse = getAssignment(node.getElseStatement());
     if (asgnThen != null && asgnElse != null && asgnThen.getLeftHandSide().subtreeMatch(matcher, asgnElse.getLeftHandSide())
         && asgnThen.getOperator().equals(asgnElse.getOperator()))
-      return new SpartanizationRange(node);
+      return new Range(node);
     return null;
   }
   
-  static SpartanizationRange detectReturn(final IfStatement node) {
+  static Range detectReturn(final IfStatement node) {
     final ReturnStatement retThen = getReturnStatement(node.getThenStatement());
     final ReturnStatement retElse = getReturnStatement(node.getElseStatement());
-    return retThen == null || retElse == null ? null : new SpartanizationRange(node);
+    return retThen == null || retElse == null ? null : new Range(node);
   }
   
-  static SpartanizationRange detectIfReturn(final IfStatement node) {
+  static Range detectIfReturn(final IfStatement node) {
     final ASTNode parent = node.getParent();
     if (parent.getNodeType() == ASTNode.BLOCK) {
       @SuppressWarnings("rawtypes")
@@ -273,13 +271,13 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
         final ReturnStatement nextReturn = getReturnStatement((Statement) stmts.get(ifIdx + 1));
         final ReturnStatement thenSide = getReturnStatement(node.getThenStatement());
         if (nextReturn != null && thenSide != null)
-          return new SpartanizationRange(node, nextReturn);
+          return new Range(node, nextReturn);
       }
     }
     return null;
   }
   
-  static SpartanizationRange detectAssignIfAssign(final IfStatement node) {
+  static Range detectAssignIfAssign(final IfStatement node) {
     final ASTNode parent = node.getParent();
     if (parent.getNodeType() == ASTNode.BLOCK) {
       @SuppressWarnings("rawtypes")
@@ -294,7 +292,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
         if (possibleAssignment != null && !dependsOn(node.getExpression(), asgnThen.getLeftHandSide())
             && !dependsOn(asgnThen.getRightHandSide(), asgnThen.getLeftHandSide())
             && asgnThen.getOperator().equals(Operator.ASSIGN))
-          return new SpartanizationRange(possibleAssignment, node);
+          return new Range(possibleAssignment, node);
       }
     }
     return null;
@@ -346,31 +344,29 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     return null;
   }
   
-  @Override public Collection<SpartanizationRange> checkForSpartanization(final CompilationUnit cu) {
-    final Collection<SpartanizationRange> $ = new ArrayList<SpartanizationRange>();
-    cu.accept(new ASTVisitor() {
+  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+    return new ASTVisitor() {
       @Override public boolean visit(final IfStatement node) {
-        SpartanizationRange rng;
+        Range rng;
         if ((rng = detectAssignIfAssign(node)) != null) {
-          $.add(rng);
+          opportunities.add(rng);
           return true;
         }
         if ((rng = detectAssignment(node)) != null) {
-          $.add(rng);
+          opportunities.add(rng);
           return true;
         }
         if ((rng = detectReturn(node)) != null) {
-          $.add(rng);
+          opportunities.add(rng);
           return true;
         }
         if ((rng = detectIfReturn(node)) != null) {
-          $.add(rng);
+          opportunities.add(rng);
           return true;
         }
         return true;
       }
-    });
-    return $;
+    };
   }
   
   private static final ASTMatcher matcher = new ASTMatcher();

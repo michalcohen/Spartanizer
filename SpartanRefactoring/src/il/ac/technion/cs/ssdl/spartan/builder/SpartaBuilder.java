@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.SpartanizationRange;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanizationFactory;
 
 import java.util.Map;
@@ -26,45 +26,11 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
  * @since 2013/07/01
  */
 public class SpartaBuilder extends IncrementalProjectBuilder {
-  static class SampleDeltaVisitor implements IResourceDeltaVisitor {
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
-     * .core.resources.IResourceDelta)
-     */
-    @Override public boolean visit(final IResourceDelta delta) {
-      final IResource r = delta.getResource();
-      switch (delta.getKind()) {
-        case IResourceDelta.ADDED:
-        case IResourceDelta.CHANGED:
-          // handle added and changed resource
-          checkJava(r);
-          break;
-        case IResourceDelta.REMOVED:
-          // handle removed resource
-          break;
-        default:
-          break;
-      }
-      // return true to continue visiting children.
-      return true;
-    }
-  }
-  
-  static class Visitor implements IResourceVisitor {
-    @Override public boolean visit(final IResource r) {
-      checkJava(r);
-      // return true to continue visiting children.
-      return true;
-    }
-  }
-  
   /**
-   * the ID which which the builder is registered
+   * the ID under which this builder is registered
    */
-  public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder";
-  private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion";
+  public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
+  private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanization";
   /**
    * the Key in the marker's properties map under which the type of the
    * spartanization is stored
@@ -103,18 +69,22 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   private static void checkJava(final IFile f) {
     deleteMarkers(f);
     final ASTParser p = Utils.makeParser(JavaCore.createCompilationUnitFrom(f));
+    for (final BasicSpartanization s : SpartanizationFactory.all())
+      for (final Range r : s.checkForSpartanization((CompilationUnit) p.createAST(null)))
+        if (r != null)
+          createMarker(f, s, r);
+  }
+  
+  private static void createMarker(final IFile f, final BasicSpartanization s, final Range r) {
     try {
-      for (final BasicSpartanization currSpartanization : SpartanizationFactory.all())
-        for (final SpartanizationRange r : currSpartanization.checkForSpartanization((CompilationUnit) p.createAST(null)))
-          if (r != null) {
-            final IMarker m = f.createMarker(MARKER_TYPE);
-            m.setAttribute(IMarker.CHAR_START, r.from);
-            m.setAttribute(IMarker.CHAR_END, r.to);
-            m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-            m.setAttribute(SPARTANIZATION_TYPE_KEY, currSpartanization.toString());
-            m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + currSpartanization.getMessage());
-          }
+      final IMarker m = f.createMarker(MARKER_TYPE);
+      m.setAttribute(IMarker.CHAR_START, r.from);
+      m.setAttribute(IMarker.CHAR_END, r.to);
+      m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+      m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
+      m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + s.getMessage());
     } catch (CoreException e) {
+      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -138,7 +108,13 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     if (m != null)
       m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
     try {
-      getProject().accept(new Visitor());
+      getProject().accept(new IResourceVisitor() {
+        @Override public boolean visit(final IResource r) {
+          checkJava(r);
+          // return true to continue visiting children.
+          return true;
+        }
+      });
     } catch (final CoreException e) {
       // we assume that other builder handle cause compilation failure on
       // CoreException
@@ -151,7 +127,25 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     // the visitor does the work.
     if (m != null)
       m.beginTask("Running Spartanization Builder", IProgressMonitor.UNKNOWN);
-    delta.accept(new SampleDeltaVisitor());
+    delta.accept(new IResourceDeltaVisitor() {
+      @Override public boolean visit(final IResourceDelta internalDelta) {
+        final IResource r = internalDelta.getResource();
+        switch (internalDelta.getKind()) {
+          case IResourceDelta.ADDED:
+          case IResourceDelta.CHANGED:
+            // handle added and changed resource
+            checkJava(r);
+            break;
+          case IResourceDelta.REMOVED:
+            // handle removed resource
+            break;
+          default:
+            break;
+        }
+        // return true to continue visiting children.
+        return true;
+      }
+    });
     if (m != null)
       m.done();
   }
