@@ -18,7 +18,6 @@ public class RefactoringPlugin extends AbstractUIPlugin {
    */
   public RefactoringPlugin() {
     plugin = this;
-    SpartanizationFactory.initialize();
   }
   
   @Override public void start(final BundleContext context) throws Exception {
