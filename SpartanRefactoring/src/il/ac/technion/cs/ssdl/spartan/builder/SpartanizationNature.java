@@ -14,7 +14,7 @@ public class SpartanizationNature implements IProjectNature {
   /**
    * ID of this project nature
    */
-  public static final String NATURE_ID = "il.ac.technion.cs.ssdl.spartan.SpartanizationNature";
+  public static final String NATURE_ID = "il.ac.technion.cs.ssdl.spartan.spartaNature";
   private IProject project;
   
   /*

@@ -29,8 +29,8 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   /**
    * the ID under which this builder is registered
    */
-  public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
-  private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanization";
+  public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder";
+  private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion";
   /**
    * the Key in the marker's properties map under which the type of the
    * spartanization is stored
@@ -69,8 +69,9 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   private static void checkJava(final IFile f) {
     deleteMarkers(f);
     final ASTParser p = Utils.makeParser(JavaCore.createCompilationUnitFrom(f));
+    final CompilationUnit cu = (CompilationUnit) p.createAST(null); // can only call createAST once per source
     for (final BasicSpartanization s : SpartanizationFactory.all())
-      for (final Range r : s.checkForSpartanization((CompilationUnit) p.createAST(null)))
+      for (final Range r : s.checkForSpartanization(cu))
         if (r != null)
           createMarker(f, s, r);
   }

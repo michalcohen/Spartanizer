@@ -114,7 +114,7 @@ public abstract class BaseRefactoring extends Refactoring {
   protected boolean isNodeOutsideSelection(final ASTNode n) {
     return !isSelected(n.getStartPosition());
   }
-  
+    
   private boolean isSelected(final int offset) {
     return isTextSelected() && offset >= selection.getOffset() && offset < selection.getOffset() + selection.getLength();
   }
@@ -313,7 +313,7 @@ public abstract class BaseRefactoring extends Refactoring {
   }
   
   protected final boolean inRange(final IMarker m, final ASTNode n) {
-    if (m == null && isNodeOutsideSelection(n))
+    if (m == null && isNodeOutsideSelection(n) && isTextSelected())
       return false;
     if (m != null && isNodeOutsideMarker(n, m))
       return false;
