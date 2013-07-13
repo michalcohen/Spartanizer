@@ -111,7 +111,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     $.setOperator(PrefixExpression.Operator.NOT);
     return $;
   }
-
+  
   private static ParenthesizedExpression parenthesize(final AST t, final ASTRewrite r, final Expression e) {
     final ParenthesizedExpression $ = t.newParenthesizedExpression();
     $.setExpression((Expression) r.createCopyTarget(e));

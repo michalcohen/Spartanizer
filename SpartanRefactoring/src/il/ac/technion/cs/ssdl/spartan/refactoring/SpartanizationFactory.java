@@ -12,23 +12,19 @@ public enum SpartanizationFactory {
   ;
   private static final Map<String, BasicSpartanization> all = new HashMap<String, BasicSpartanization>();
   
-  private static void put(BasicSpartanization s) {
+  private static void put(final BasicSpartanization s) {
     all.put(s.toString(), s);
   }
   
   static {
     put(new BasicSpartanization(new RedundantEqualityRefactoring(), "Redundant Equality",
         "Convert reduntant comparison to boolean constant"));
-    put(new BasicSpartanization(new ConvertToTernaryRefactoring(), "Convert to Ternary",
-        "Convert condition to ternary expression"));
-    put(new BasicSpartanization(new ShortestBranchRefactoring(), "Shortest Branch",
-        "Shortest branch in condition first"));
-    put(new BasicSpartanization(new InlineSingleUseRefactoring(), "Inline Single Use",
-        "Inline single use of variable"));
-    put(new BasicSpartanization(new ForwardDeclarationRefactoring(),
-        "Forward Declaration", "Forward declaration of variable to first use"));
-    put(new BasicSpartanization(new ChangeReturnToDollarRefactoring(),
-        "Change Return Variable to $", "Change return variable to $"));
+    put(new BasicSpartanization(new ConvertToTernaryRefactoring(), "Convert to Ternary", "Convert condition to ternary expression"));
+    put(new BasicSpartanization(new ShortestBranchRefactoring(), "Shortest Branch", "Shortest branch in condition first"));
+    put(new BasicSpartanization(new InlineSingleUseRefactoring(), "Inline Single Use", "Inline single use of variable"));
+    put(new BasicSpartanization(new ForwardDeclarationRefactoring(), "Forward Declaration",
+        "Forward declaration of variable to first use"));
+    put(new BasicSpartanization(new ChangeReturnToDollarRefactoring(), "Change Return Variable to $", "Change return variable to $"));
   }
   
   /**

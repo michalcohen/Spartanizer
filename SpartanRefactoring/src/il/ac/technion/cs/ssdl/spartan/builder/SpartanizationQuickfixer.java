@@ -18,11 +18,10 @@ public class SpartanizationQuickfixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
       final String spartanizationName = (String) m.getAttribute(SpartaBuilder.SPARTANIZATION_TYPE_KEY);
-      BasicSpartanization s = SpartanizationFactory.getSpartanizationByName(spartanizationName);
+      final BasicSpartanization s = SpartanizationFactory.getSpartanizationByName(spartanizationName);
       return new IMarkerResolution[] {
           //
-          s.getFix(),
-          s.getFixWithPreview() };
+          s.getFix(), s.getFixWithPreview() };
     } catch (final CoreException _) {
       return new IMarkerResolution[] {};
     }

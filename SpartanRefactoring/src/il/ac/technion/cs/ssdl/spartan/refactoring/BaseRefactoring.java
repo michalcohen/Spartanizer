@@ -270,7 +270,7 @@ public abstract class BaseRefactoring extends Refactoring {
    * @return a collection of {@link Range} objects each containing a
    *         spartanization opportunity
    */
-  public final List<Range> findOpportunities(CompilationUnit cu) {
+  public final List<Range> findOpportunities(final CompilationUnit cu) {
     final List<Range> $ = new ArrayList<Range>();
     cu.accept(fillOpportunities($));
     return $;

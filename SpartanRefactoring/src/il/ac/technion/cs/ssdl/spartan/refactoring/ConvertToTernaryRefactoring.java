@@ -354,11 +354,11 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
             true;
       }
       
-      private boolean perhaps(Range r) {
+      private boolean perhaps(final Range r) {
         return r != null && add(r);
       }
       
-      private boolean add(Range r) {
+      private boolean add(final Range r) {
         opportunities.add(r);
         return true;
       }

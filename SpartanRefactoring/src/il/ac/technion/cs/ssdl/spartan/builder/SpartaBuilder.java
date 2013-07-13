@@ -85,7 +85,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
       m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
       m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
       m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + s.getMessage());
-    } catch (CoreException e) {
+    } catch (final CoreException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }

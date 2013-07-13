@@ -53,7 +53,7 @@ public abstract class BaseSpartanizationHandler extends AbstractHandler {
   private Void execute(final RefactoringWizardOpenOperation wop) {
     try {
       wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
