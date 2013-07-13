@@ -60,21 +60,14 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     return null;
   }
   
-  static void checkJava(final IResource r) {
+  private static void checkJava(final IResource r) {
     if (r instanceof IFile && r.getName().endsWith(".java"))
       checkJava((IFile) r);
   }
   
   private static void checkJava(final IFile f) {
     deleteMarkers(f);
-    final CompilationUnit cu = (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null); // can
-                                                                                                                          // only
-                                                                                                                          // call
-                                                                                                                          // createAST
-                                                                                                                          // once
-                                                                                                                          // per
-                                                                                                                          // source
-    checkJava(f, cu);
+    checkJava(f, (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null));
   }
   
   private static void checkJava(final IFile f, final CompilationUnit cu) {
