@@ -112,7 +112,7 @@ public class BasicSpartanization {
    * @return a collection of ranges, each representing a spartanization
    *         suggestion
    */
-  public Iterable<Range> checkForSpartanization(final CompilationUnit cu) {
+  public Iterable<Range> findOpportunities(final CompilationUnit cu) {
     return refactoring.findOpportunities(cu);
   }
   

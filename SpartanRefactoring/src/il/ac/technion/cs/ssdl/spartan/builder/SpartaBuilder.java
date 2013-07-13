@@ -72,7 +72,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   
   private static void checkJava(final IFile f, final CompilationUnit cu) {
     for (final BasicSpartanization s : SpartanizationFactory.all())
-      for (final Range r : s.checkForSpartanization(cu))
+      for (final Range r : s.findOpportunities(cu))
         if (r != null)
           createMarker(f, s, r);
   }
