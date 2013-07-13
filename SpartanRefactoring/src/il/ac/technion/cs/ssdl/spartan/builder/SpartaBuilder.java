@@ -68,13 +68,16 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   
   private static void checkJava(final IFile f) {
     deleteMarkers(f);
-    final ASTParser p = Utils.makeParser(JavaCore.createCompilationUnitFrom(f));
-    final CompilationUnit cu = (CompilationUnit) p.createAST(null); // can only call createAST once per source
-    for (final BasicSpartanization s : SpartanizationFactory.all())
-      for (final Range r : s.checkForSpartanization(cu))
+    final CompilationUnit cu = (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null); // can only call createAST once per source
+    checkJava(f, cu);
+  }
+
+private static void checkJava(final IFile f, final CompilationUnit cu) {
+	for (final BasicSpartanization s : SpartanizationFactory.all())
+  for (final Range r : s.checkForSpartanization(cu))
         if (r != null)
           createMarker(f, s, r);
-  }
+}
   
   private static void createMarker(final IFile f, final BasicSpartanization s, final Range r) {
     try {
