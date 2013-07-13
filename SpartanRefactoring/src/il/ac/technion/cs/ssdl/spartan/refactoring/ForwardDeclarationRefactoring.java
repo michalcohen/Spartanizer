@@ -20,7 +20,6 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
  * 
- * 
  * @since 2013/01/01
  */
 public class ForwardDeclarationRefactoring extends BaseRefactoring {
@@ -63,29 +62,30 @@ public class ForwardDeclarationRefactoring extends BaseRefactoring {
   
   @Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
     return new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment node) {
-        final SimpleName varName = node.getName();
-        final ASTNode containingNode = node.getParent().getParent();
+      @Override public boolean visit(final VariableDeclarationFragment n) {
+        final ASTNode containingNode = n.getParent().getParent();
         if (!(containingNode instanceof Block))
           return true;
-        final Block block = (Block) containingNode;
-        final int declaredIdx = block.statements().indexOf(node.getParent());
-        final int firstUseIdx = findFirstUse(block, varName);
+        return moverForward(n, (Block) containingNode);
+      }
+      
+      private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
+        final int firstUseIdx = findFirstUse(b, n.getName());
         if (firstUseIdx < 0)
           return true;
-        final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
-        if (beginingOfDeclarationsBlockIdx > declaredIdx)
-          oppportunities.add(new Range(node));
+        final int declaredIdx = b.statements().indexOf(n.getParent());
+        if (findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx) > declaredIdx)
+          oppportunities.add(new Range(n));
         return true;
       }
     };
   }
   
-  static int findFirstUse(final Block b, final SimpleName var) {
-    final ASTNode declarationFragment = var.getParent();
+  static int findFirstUse(final Block b, final SimpleName name) {
+    final ASTNode declarationFragment = name.getParent();
     final ASTNode declarationStmt = declarationFragment.getParent();
     for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i)
-      if (VariableCounter.BOTH_LEXICAL.list((ASTNode) b.statements().get(i), var).size() > 0)
+      if (VariableCounter.BOTH_LEXICAL.list((ASTNode) b.statements().get(i), name).size() > 0)
         return i; // first use!
     return -1; // that means unused
   }

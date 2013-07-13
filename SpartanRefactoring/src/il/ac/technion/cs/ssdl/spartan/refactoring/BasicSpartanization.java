@@ -69,6 +69,7 @@ public class BasicSpartanization {
    * a quickfix which automatically performs the spartanization
    * 
    * @author Boris van Sosin <boris.van.sosin@gmail.com>
+   * @since 2013/07/01
    */
   public class SpartanizationResolution implements IMarkerResolution {
     @Override public String getLabel() {
@@ -91,7 +92,7 @@ public class BasicSpartanization {
    */
   public class SpartanizationResolutionWithPreview implements IMarkerResolution {
     @Override public String getLabel() {
-      return BasicSpartanization.this.toString() + ": Show me a preview first";
+      return BasicSpartanization.this + ": Show me a preview first";
     }
     
     @Override public void run(final IMarker m) {
@@ -145,7 +146,7 @@ public class BasicSpartanization {
      * Instantiates from a single ASTNode
      * 
      * @param n
-     *          the ASTNode
+     *          an arbitrary ASTNode
      */
     public Range(final ASTNode n) {
       this(n.getStartPosition(), n.getStartPosition() + n.getLength());
