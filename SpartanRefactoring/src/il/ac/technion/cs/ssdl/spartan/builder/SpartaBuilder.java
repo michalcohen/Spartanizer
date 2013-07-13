@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
@@ -68,16 +67,22 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   
   private static void checkJava(final IFile f) {
     deleteMarkers(f);
-    final CompilationUnit cu = (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null); // can only call createAST once per source
+    final CompilationUnit cu = (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null); // can
+                                                                                                                          // only
+                                                                                                                          // call
+                                                                                                                          // createAST
+                                                                                                                          // once
+                                                                                                                          // per
+                                                                                                                          // source
     checkJava(f, cu);
   }
-
-private static void checkJava(final IFile f, final CompilationUnit cu) {
-	for (final BasicSpartanization s : SpartanizationFactory.all())
-  for (final Range r : s.checkForSpartanization(cu))
+  
+  private static void checkJava(final IFile f, final CompilationUnit cu) {
+    for (final BasicSpartanization s : SpartanizationFactory.all())
+      for (final Range r : s.checkForSpartanization(cu))
         if (r != null)
           createMarker(f, s, r);
-}
+  }
   
   private static void createMarker(final IFile f, final BasicSpartanization s, final Range r) {
     try {
