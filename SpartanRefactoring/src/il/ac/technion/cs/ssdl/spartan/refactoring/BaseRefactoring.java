@@ -267,8 +267,8 @@ public abstract class BaseRefactoring extends Refactoring {
    * 
    * @param cu
    *          the Compilation Unit
-   * @return a collection of SpartanizationRange's, each containing a
-   *         spartanization suggestion
+   * @return a collection of {@link Range} objects each containing a
+   *         spartanization opportunity
    */
   public final List<Range> findOpportunities(CompilationUnit cu) {
     final List<Range> $ = new ArrayList<Range>();

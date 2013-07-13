@@ -131,9 +131,9 @@ public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
-        final VariableDeclarationFragment returnVar = getOnlyReturnVariable(n);
-        if (returnVar != null)
-          opportunities.add(new Range(returnVar));
+        final VariableDeclarationFragment v = getOnlyReturnVariable(n);
+        if (v != null)
+          opportunities.add(new Range(v));
         return true;
       }
     };

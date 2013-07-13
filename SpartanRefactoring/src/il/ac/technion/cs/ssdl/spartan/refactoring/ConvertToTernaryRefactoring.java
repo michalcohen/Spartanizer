@@ -346,24 +346,20 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
   
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
-      @Override public boolean visit(final IfStatement node) {
-        Range rng;
-        if ((rng = detectAssignIfAssign(node)) != null) {
-          opportunities.add(rng);
-          return true;
-        }
-        if ((rng = detectAssignment(node)) != null) {
-          opportunities.add(rng);
-          return true;
-        }
-        if ((rng = detectReturn(node)) != null) {
-          opportunities.add(rng);
-          return true;
-        }
-        if ((rng = detectIfReturn(node)) != null) {
-          opportunities.add(rng);
-          return true;
-        }
+      @Override public boolean visit(final IfStatement n) {
+        return perhaps(detectAssignIfAssign(n)) || //
+            perhaps(detectAssignment(n)) || //
+            perhaps(detectReturn(n)) || //
+            perhaps(detectIfReturn(n)) || //
+            true;
+      }
+      
+      private boolean perhaps(Range r) {
+        return r != null && add(r);
+      }
+      
+      private boolean add(Range r) {
+        opportunities.add(r);
         return true;
       }
     };
