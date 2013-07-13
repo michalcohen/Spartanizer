@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -60,57 +61,61 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final IfStatement node) {
-        if (!inRange(m, node))
+      @Override public boolean visit(final IfStatement n) {
+        if (!inRange(m, n))
           return true;
-        if (node.getElseStatement() == null)
-          return true;
-        if (countNodes(node.getThenStatement()) - countNodes(node.getElseStatement()) <= -threshold)
-          return true;
-        final IfStatement newnode = t.newIfStatement();
-        final Expression neg = negateExpression(t, r, node.getExpression());
-        newnode.setExpression(neg);
-        newnode.setThenStatement((org.eclipse.jdt.core.dom.Statement) r.createMoveTarget(node.getElseStatement()));
-        newnode.setElseStatement((org.eclipse.jdt.core.dom.Statement) r.createMoveTarget(node.getThenStatement()));
-        r.replace(node, newnode, null);
+        if (longerFirst(n))
+          r.replace(n, transpose(n), null);
         return true;
       }
       
-      @Override public boolean visit(final ConditionalExpression node) {
-        if (!inRange(m, node))
+      @Override public boolean visit(final ConditionalExpression n) {
+        if (!inRange(m, n))
           return true;
-        if (node.getElseExpression() == null)
-          return true;
-        if (node.getThenExpression().getLength() - node.getElseExpression().getLength() <= -threshold)
-          return true;
-        final ConditionalExpression newnode = t.newConditionalExpression();
-        final Expression neg = negateExpression(t, r, node.getExpression());
-        newnode.setExpression(neg);
-        newnode.setThenExpression((Expression) r.createMoveTarget(node.getElseExpression()));
-        newnode.setElseExpression((Expression) r.createMoveTarget(node.getThenExpression()));
-        r.replace(node, newnode, null);
+        if (longerFirst(n))
+          r.replace(n, transpose(n), null);
         return true;
+      }
+      
+      private IfStatement transpose(final IfStatement n) {
+        final IfStatement $ = t.newIfStatement();
+        $.setExpression(negate(t, r, n.getExpression()));
+        $.setThenStatement((Statement) r.createMoveTarget(n.getElseStatement()));
+        $.setElseStatement((Statement) r.createMoveTarget(n.getThenStatement()));
+        return $;
+      }
+      
+      private ConditionalExpression transpose(final ConditionalExpression n) {
+        final ConditionalExpression $ = t.newConditionalExpression();
+        $.setExpression(negate(t, r, n.getExpression()));
+        $.setThenExpression((Expression) r.createMoveTarget(n.getElseExpression()));
+        $.setElseExpression((Expression) r.createMoveTarget(n.getThenExpression()));
+        return $;
       }
     });
   }
   
   /**
-   * @return Returns a prefix expression that is the negation of the provided
+   * @return a prefix expression that is the negation of the provided
    *         expression.
    */
-  static Expression negateExpression(final AST ast, final ASTRewrite rewrite, final Expression exp) {
+  static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
     Expression negatedComparison = null;
-    if (exp instanceof InfixExpression && (negatedComparison = tryNegateComparison(ast, rewrite, (InfixExpression) exp)) != null)
+    if (e instanceof InfixExpression && (negatedComparison = tryNegateComparison(t, r, (InfixExpression) e)) != null)
       return negatedComparison;
     Expression negatedNot = null;
-    if (exp instanceof PrefixExpression && (negatedNot = tryNegatePrefix(rewrite, (PrefixExpression) exp)) != null)
+    if (e instanceof PrefixExpression && (negatedNot = tryNegatePrefix(r, (PrefixExpression) e)) != null)
       return negatedNot;
-    final ParenthesizedExpression paren = ast.newParenthesizedExpression();
-    paren.setExpression((Expression) rewrite.createCopyTarget(exp));
-    final PrefixExpression neg = ast.newPrefixExpression();
-    neg.setOperand(paren);
-    neg.setOperator(PrefixExpression.Operator.NOT);
-    return neg;
+    final PrefixExpression $ = t.newPrefixExpression();
+    $.setOperand(parenthesize(t, r, e));
+    $.setOperator(PrefixExpression.Operator.NOT);
+    return $;
+  }
+
+  private static ParenthesizedExpression parenthesize(final AST t, final ASTRewrite r, final Expression e) {
+    final ParenthesizedExpression $ = t.newParenthesizedExpression();
+    $.setExpression((Expression) r.createCopyTarget(e));
+    return $;
   }
   
   private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression e) {
@@ -124,7 +129,7 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
     return $;
   }
   
-  private static Operator invert(Operator o) {
+  private static Operator invert(final Operator o) {
     if (o.equals(EQUALS))
       return NOT_EQUALS;
     if (o.equals(NOT_EQUALS))
@@ -151,20 +156,24 @@ public class ShortestBranchRefactoring extends BaseRefactoring {
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final IfStatement n) {
-        if (n.getElseStatement() == null)
-          return true;
-        if (countNodes(n.getThenStatement()) - countNodes(n.getElseStatement()) > threshold)
+        if (longerFirst(n))
           opportunities.add(new Range(n));
         return true;
       }
       
       @Override public boolean visit(final ConditionalExpression n) {
-        if (n.getElseExpression() == null)
-          return true;
-        if (n.getThenExpression().getLength() - n.getElseExpression().getLength() > threshold)
+        if (longerFirst(n))
           opportunities.add(new Range(n));
         return true;
       }
     };
+  }
+  
+  static boolean longerFirst(final IfStatement n) {
+    return n.getElseStatement() != null && countNodes(n.getThenStatement()) > countNodes(n.getElseStatement()) + threshold;
+  }
+  
+  static boolean longerFirst(final ConditionalExpression n) {
+    return n.getThenExpression().getLength() > n.getElseExpression().getLength() + threshold;
   }
 }
