@@ -123,13 +123,9 @@ public class BasicSpartanization {
    * @author Boris van Sosin <boris.van.sosin@gmail.com>
    */
   public static class Range {
-    /**
-     * the beginning of the range (inclusive)
-     */
+    /** the beginning of the range (inclusive) */
     public final int from;
-    /**
-     * the end of the range (exclusive)
-     */
+    /** the end of the range (exclusive) */
     public final int to;
     
     /**
@@ -140,7 +136,7 @@ public class BasicSpartanization {
      * @param to
      *          the end of the range (exclusive)
      */
-    public Range(final int from, final int to) {
+    private Range(final int from, final int to) {
       this.from = from;
       this.to = to;
     }
