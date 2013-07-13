@@ -60,7 +60,7 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
     return null;
   }
   
-  private static void checkJava(final IResource r) {
+  static void checkJava(final IResource r) {
     if (r instanceof IFile && r.getName().endsWith(".java"))
       checkJava((IFile) r);
   }

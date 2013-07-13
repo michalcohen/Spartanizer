@@ -8,29 +8,27 @@ import java.util.Map;
  * 
  * @since 2013/07/01
  */
-public class SpartanizationFactory {
-  /**
-   * adds all the spartanization types to the factory
-   */
-  public static void initialize() {
-    final BasicSpartanization redundantEquality = new BasicSpartanization(new RedundantEqualityRefactoring(), "Redundant Equality",
-        "Convert reduntant comparison to boolean constant");
-    spartanizations.put(redundantEquality.toString(), redundantEquality);
-    final BasicSpartanization convertToTernary = new BasicSpartanization(new ConvertToTernaryRefactoring(), "Convert to Ternary",
-        "Convert condition to ternary expression");
-    spartanizations.put(convertToTernary.toString(), convertToTernary);
-    final BasicSpartanization shortestBranchFirst = new BasicSpartanization(new ShortestBranchRefactoring(), "Shortest Branch",
-        "Shortest branch in condition first");
-    spartanizations.put(shortestBranchFirst.toString(), shortestBranchFirst);
-    final BasicSpartanization inlineSinlgeUse = new BasicSpartanization(new InlineSingleUseRefactoring(), "Inline Single Use",
-        "Inline single use of variable");
-    spartanizations.put(inlineSinlgeUse.toString(), inlineSinlgeUse);
-    final BasicSpartanization forwardDeclaration = new BasicSpartanization(new ForwardDeclarationRefactoring(),
-        "Forward Declaration", "Forward declaration of variable to first use");
-    spartanizations.put(forwardDeclaration.toString(), forwardDeclaration);
-    final BasicSpartanization changeReturnToDollar = new BasicSpartanization(new ChangeReturnToDollarRefactoring(),
-        "Change Return Variable to $", "Change return variable to $");
-    spartanizations.put(changeReturnToDollar.toString(), changeReturnToDollar);
+public enum SpartanizationFactory {
+  ;
+  private static final Map<String, BasicSpartanization> all = new HashMap<String, BasicSpartanization>();
+  
+  private static void put(BasicSpartanization s) {
+    all.put(s.toString(), s);
+  }
+  
+  static {
+    put(new BasicSpartanization(new RedundantEqualityRefactoring(), "Redundant Equality",
+        "Convert reduntant comparison to boolean constant"));
+    put(new BasicSpartanization(new ConvertToTernaryRefactoring(), "Convert to Ternary",
+        "Convert condition to ternary expression"));
+    put(new BasicSpartanization(new ShortestBranchRefactoring(), "Shortest Branch",
+        "Shortest branch in condition first"));
+    put(new BasicSpartanization(new InlineSingleUseRefactoring(), "Inline Single Use",
+        "Inline single use of variable"));
+    put(new BasicSpartanization(new ForwardDeclarationRefactoring(),
+        "Forward Declaration", "Forward declaration of variable to first use"));
+    put(new BasicSpartanization(new ChangeReturnToDollarRefactoring(),
+        "Change Return Variable to $", "Change return variable to $"));
   }
   
   /**
@@ -39,15 +37,13 @@ public class SpartanizationFactory {
    * @return an instance of the spartanization
    */
   public static BasicSpartanization getSpartanizationByName(final String SpartanizationName) {
-    return spartanizations.get(SpartanizationName);
+    return all.get(SpartanizationName);
   }
   
   /**
    * @return all the registered spartanization refactoring objects
    */
   public static Iterable<BasicSpartanization> all() {
-    return spartanizations.values();
+    return all.values();
   }
-  
-  private static final Map<String, BasicSpartanization> spartanizations = new HashMap<String, BasicSpartanization>();
 }

@@ -114,7 +114,7 @@ public abstract class BaseRefactoring extends Refactoring {
   protected boolean isNodeOutsideSelection(final ASTNode n) {
     return !isSelected(n.getStartPosition());
   }
-    
+  
   private boolean isSelected(final int offset) {
     return isTextSelected() && offset >= selection.getOffset() && offset < selection.getOffset() + selection.getLength();
   }
@@ -278,7 +278,8 @@ public abstract class BaseRefactoring extends Refactoring {
   
   protected abstract ASTVisitor fillOpportunities(List<Range> opportunities);
   
-  @Override public Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm) throws OperationCanceledException {
+  @Override public final Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm)
+      throws OperationCanceledException {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
   
