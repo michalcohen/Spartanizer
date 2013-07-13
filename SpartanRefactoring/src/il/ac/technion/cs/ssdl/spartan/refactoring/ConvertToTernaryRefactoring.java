@@ -38,16 +38,38 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final IfStatement n) {
-        if (!inRange(m, n))
-          return true;
-        if (treatAssignIfAssign(t, r, n))
-          return true;
-        if (treatAssignment(t, r, n))
-          return true;
-        if (treatReturn(t, r, n))
-          return true;
-        treatIfReturn(t, r, n);
+        return !inRange(m, n) || //
+            treatAssignIfAssign(t, r, n) || //
+            treatAssignment(t, r, n) || //
+            treatReturn(n) || //
+            treatIfReturn(t, r, n) || //
+            true;
+      }
+      
+      /**
+       * If possible rewrite the if statement as return of a ternary operation.
+       * 
+       * @param n
+       *          The root if node.
+       * @return Returns null if it is not possible to rewrite as return.
+       *         Otherwise returns the new node.
+       */
+      private boolean treatReturn(final IfStatement n) {
+        final ReturnStatement thenReturn = getReturnStatement(n.getThenStatement());
+        final ReturnStatement elseReturn = getReturnStatement(n.getElseStatement());
+        if (thenReturn == null || elseReturn == null)
+          return false;
+        r.replace(n, makeReturnStatement(t, makeConditionalExpression(n, thenReturn, elseReturn)), null);
         return true;
+      }
+      
+      private ConditionalExpression makeConditionalExpression(final IfStatement n, final ReturnStatement thenReturn,
+          final ReturnStatement elseReturn) {
+        final ConditionalExpression $ = t.newConditionalExpression();
+        $.setExpression((Expression) r.createMoveTarget(n.getExpression()));
+        $.setThenExpression((Expression) r.createMoveTarget(thenReturn.getExpression()));
+        $.setElseExpression((Expression) r.createMoveTarget(elseReturn.getExpression()));
+        return $;
       }
     });
   }
@@ -108,28 +130,7 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     return (ReturnStatement) s;
   }
   
-  /**
-   * If possible rewrite the if statement as return of a ternary operation.
-   * 
-   * @param n
-   *          The root if node.
-   * @return Returns null if it is not possible to rewrite as return. Otherwise
-   *         returns the new node.
-   */
-  static boolean treatReturn(final AST t, final ASTRewrite r, final IfStatement n) {
-    final ReturnStatement thenReturn = getReturnStatement(n.getThenStatement());
-    final ReturnStatement elseReturn = getReturnStatement(n.getElseStatement());
-    if (thenReturn == null || elseReturn == null)
-      return false;
-    final ConditionalExpression e = t.newConditionalExpression();
-    e.setExpression((Expression) r.createMoveTarget(n.getExpression()));
-    e.setThenExpression((Expression) r.createMoveTarget(thenReturn.getExpression()));
-    e.setElseExpression((Expression) r.createMoveTarget(elseReturn.getExpression()));
-    r.replace(n, makeReturnStatement(t, e), null);
-    return true;
-  }
-
-  private static ReturnStatement makeReturnStatement(final AST t, final ConditionalExpression e) {
+  static ReturnStatement makeReturnStatement(final AST t, final ConditionalExpression e) {
     final ReturnStatement $ = t.newReturnStatement();
     $.setExpression(e);
     return $;
@@ -231,17 +232,17 @@ public class ConvertToTernaryRefactoring extends BaseRefactoring {
     return false;
   }
   
-  private static void rewriteAssignIfAssignToAssignTernary(final AST ast, final ASTRewrite rewrite, final IfStatement node,
+  private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement n,
       final Assignment asgnThen, final Expression prevAsgn) {
-    final ConditionalExpression newCondExp = ast.newConditionalExpression();
-    newCondExp.setExpression((Expression) rewrite.createMoveTarget(node.getExpression()));
-    newCondExp.setThenExpression((Expression) rewrite.createMoveTarget(asgnThen.getRightHandSide()));
-    newCondExp.setElseExpression((Expression) rewrite.createCopyTarget(prevAsgn));
-    final Assignment newAsgn = ast.newAssignment();
+    final ConditionalExpression newCondExp = t.newConditionalExpression();
+    newCondExp.setExpression((Expression) r.createMoveTarget(n.getExpression()));
+    newCondExp.setThenExpression((Expression) r.createMoveTarget(asgnThen.getRightHandSide()));
+    newCondExp.setElseExpression((Expression) r.createCopyTarget(prevAsgn));
+    final Assignment newAsgn = t.newAssignment();
     newAsgn.setOperator(asgnThen.getOperator());
     newAsgn.setRightHandSide(newCondExp);
-    newAsgn.setLeftHandSide((Expression) rewrite.createMoveTarget(asgnThen.getLeftHandSide()));
-    rewrite.replace(node, ast.newExpressionStatement(newAsgn), null);
+    newAsgn.setLeftHandSide((Expression) r.createMoveTarget(asgnThen.getLeftHandSide()));
+    r.replace(n, t.newExpressionStatement(newAsgn), null);
   }
   
   private static void rewriteAssignIfAssignToDeclareTernary(final AST ast, final ASTRewrite rewrite, final IfStatement node,
