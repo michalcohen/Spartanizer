@@ -11,7 +11,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTernaryRefactoring;
  * @since 2013/07/01
  */
 public class ConvertToTernaryHandler extends BaseSpartanizationHandler {
-  /** Instantiate this class */
+  /** Instantiates this class */
   public ConvertToTernaryHandler() {
     super(new ConvertToTernaryRefactoring());
   }

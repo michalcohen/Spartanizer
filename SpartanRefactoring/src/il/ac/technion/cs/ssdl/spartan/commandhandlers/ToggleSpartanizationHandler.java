@@ -32,16 +32,16 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
   /**
    * the main method of the command handler. runs when the command is called.
    */
-  @Override public Object execute(final ExecutionEvent e) throws ExecutionException {
+  @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     return execute(e, HandlerUtil.getActivePartIdChecked(e));
   }
   
-  private static Object execute(final ExecutionEvent e, final String partId) throws ExecutionException {
+  private static Void execute(final ExecutionEvent e, final String partId) throws ExecutionException {
     System.out.println(partId);
     return execute(HandlerUtil.getCurrentSelectionChecked(e));
   }
   
-  private static Object execute(final ISelection s) {
+  private static Void execute(final ISelection s) {
     if (s instanceof IStructuredSelection)
       for (final Object o : ((IStructuredSelection) s).toList()) {
         final IProject p = extractProject(o);
@@ -81,7 +81,7 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
       description.setNatureIds(append(natures, SpartanizationNature.NATURE_ID));
       p.setDescription(description, null);
     } catch (final CoreException e) {
-      // we assume that other builder handle cause compilation failure on
+      // we assume that other builders handle cause compilation failure on
       // CoreException
     }
   }
