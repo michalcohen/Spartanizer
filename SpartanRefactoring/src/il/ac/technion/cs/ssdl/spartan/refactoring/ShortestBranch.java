@@ -7,6 +7,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 

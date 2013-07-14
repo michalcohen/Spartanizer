@@ -1,5 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;

@@ -7,12 +7,12 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
  * @author Artium Nihamkin
  * @since 2013/01/01
  */
-public class SpartanRefactoringWizard extends RefactoringWizard {
+public class Wizard extends RefactoringWizard {
   /**
    * @param r
    *          the refactoring to be used with this wizard
    */
-  public SpartanRefactoringWizard(final Refactoring r) {
+  public Wizard(final Refactoring r) {
     super(r, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
   }
   

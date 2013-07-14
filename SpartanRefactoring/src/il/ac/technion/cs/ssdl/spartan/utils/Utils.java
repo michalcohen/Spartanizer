@@ -1,4 +1,4 @@
-package il.ac.technion.cs.ssdl.spartan.builder;
+package il.ac.technion.cs.ssdl.spartan.utils;
 
 import java.util.Arrays;
 

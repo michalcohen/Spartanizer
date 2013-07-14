@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import static il.ac.technion.cs.ssdl.spartan.builder.Utils.append;
-import static il.ac.technion.cs.ssdl.spartan.builder.Utils.delete;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.append;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.delete;
 import il.ac.technion.cs.ssdl.spartan.builder.SpartaBuilder;
 import il.ac.technion.cs.ssdl.spartan.builder.SpartanizationNature;
 

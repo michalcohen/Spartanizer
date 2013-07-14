@@ -1,5 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -84,7 +87,7 @@ public class ForwardDeclaration extends BaseSpartanization {
     final ASTNode declarationFragment = name.getParent();
     final ASTNode declarationStmt = declarationFragment.getParent();
     for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i)
-      if (VariableCounter.BOTH_LEXICAL.list((ASTNode) b.statements().get(i), name).size() > 0)
+      if (Occurrences.BOTH_LEXICAL.collect((ASTNode) b.statements().get(i), name).size() > 0)
         return i; // first use!
     return -1; // that means unused
   }

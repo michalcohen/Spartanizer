@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static org.junit.Assert.assertEquals;
-import il.ac.technion.cs.ssdl.spartan.builder.Utils;
+import il.ac.technion.cs.ssdl.spartan.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;

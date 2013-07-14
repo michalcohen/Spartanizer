@@ -1,5 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -37,8 +40,8 @@ public class InlineSingleUse extends BaseSpartanization {
         if (n.getParent() instanceof VariableDeclarationStatement) {
           final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
           final boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
-          final List<Expression> uses = VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName);
-          if (uses.size() == 1 && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1)) {
+          final List<Expression> uses = Occurrences.USES_SEMANTIC.collect(parent.getParent(), varName);
+          if (uses.size() == 1 && (isFinal || Occurrences.ASSIGNMENTS.collect(parent.getParent(), varName).size() == 1)) {
             final ASTNode initializerExpr = r.createCopyTarget(n.getInitializer());
             r.replace(uses.get(0), initializerExpr, null);
             if (parent.fragments().size() == 1)
@@ -59,8 +62,8 @@ public class InlineSingleUse extends BaseSpartanization {
         if (node.getParent() instanceof VariableDeclarationStatement) {
           final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
           final boolean isFinal = (parent.getModifiers() & Modifier.FINAL) != 0;
-          if (VariableCounter.USES_SEMANTIC.list(parent.getParent(), varName).size() == 1
-              && (isFinal || VariableCounter.ASSIGNMENTS.list(parent.getParent(), varName).size() == 1))
+          if (Occurrences.USES_SEMANTIC.collect(parent.getParent(), varName).size() == 1
+              && (isFinal || Occurrences.ASSIGNMENTS.collect(parent.getParent(), varName).size() == 1))
             opportunities.add(new Range(node));
         }
         return true;

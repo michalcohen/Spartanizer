@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization;
-import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanRefactoringWizard;
+import il.ac.technion.cs.ssdl.spartan.refactoring.Wizard;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -64,7 +64,7 @@ public abstract class BaseSpartanizationHandler extends AbstractHandler {
     final BaseSpartanization $ = getRefactoring();
     $.setSelection(ts);
     $.setCompilationUnit(cu);
-    return new SpartanRefactoringWizard($);
+    return new Wizard($);
   }
   
   private static ICompilationUnit getCompilationUnit() {

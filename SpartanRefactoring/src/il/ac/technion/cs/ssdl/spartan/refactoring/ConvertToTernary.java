@@ -1,5 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -306,7 +309,7 @@ public class ConvertToTernary extends BaseSpartanization {
   }
   
   private static boolean dependsOn(final Expression e, final Expression leftHandSide) {
-    return VariableCounter.BOTH_SEMANTIC.list(e, leftHandSide).size() > 0;
+    return Occurrences.BOTH_SEMANTIC.collect(e, leftHandSide).size() > 0;
   }
   
   private static ASTNode getAssignmentOrDeclaration(final Statement s, final Expression e) {

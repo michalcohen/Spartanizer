@@ -1,4 +1,4 @@
-package il.ac.technion.cs.ssdl.spartan.refactoring;
+package il.ac.technion.cs.ssdl.spartan.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,36 +38,36 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 /**
- * a utility class for counting uses and assignments of expressions in other
- * expressions
+ * A utility class for finding occurrences of an {@link Expression} in an
+ * {@link ASTNode}.
  * 
  * @author Boris van Sosin <boris.van.sosin@gmail.com>
  * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/10)
  * 
  * @since 2013/07/01
  */
-public enum VariableCounter {
+public enum Occurrences {
   /**
    * counts semantic (multiple uses for loops) uses of an expression
    */
   USES_SEMANTIC {
-    @Override public List<Expression> list(final ASTNode n, final Expression e) {
-      return countUses(n, e, true);
+    @Override public List<Expression> collect(final ASTNode n, final Expression e) {
+      return collect(n, e, true);
     }
   },
   /**
    * counts lexical (single use for loops) uses of an expression
    */
   USES_LEXICAL {
-    @Override public List<Expression> list(final ASTNode n, final Expression e) {
-      return countUses(n, e, false);
+    @Override public List<Expression> collect(final ASTNode n, final Expression e) {
+      return collect(n, e, false);
     }
   },
   /**
    * counts assignments of an expression
    */
   ASSIGNMENTS {
-    @Override public List<Expression> list(final ASTNode n, final Expression e) {
+    @Override public List<Expression> collect(final ASTNode n, final Expression e) {
       final List<Expression> $ = new ArrayList<Expression>();
       n.accept(new ASTVisitor() {
         /**
@@ -97,8 +97,8 @@ public enum VariableCounter {
    * expression
    */
   BOTH_SEMANTIC {
-    @Override public List<Expression> list(final ASTNode n, final Expression e) {
-      final List<Expression> $ = new ArrayList<Expression>(USES_SEMANTIC.list(n, e));
+    @Override public List<Expression> collect(final ASTNode n, final Expression e) {
+      final List<Expression> $ = new ArrayList<Expression>(USES_SEMANTIC.collect(n, e));
       addAssignments($, n, e);
       return $;
     }
@@ -107,8 +107,8 @@ public enum VariableCounter {
    * counts assignments AND lexical (single use for loops) uses of an expression
    */
   BOTH_LEXICAL {
-    @Override public List<Expression> list(final ASTNode n, final Expression e) {
-      final List<Expression> $ = new ArrayList<Expression>(USES_LEXICAL.list(n, e));
+    @Override public List<Expression> collect(final ASTNode n, final Expression e) {
+      final List<Expression> $ = new ArrayList<Expression>(USES_LEXICAL.collect(n, e));
       addAssignments($, n, e);
       return $;
     }
@@ -122,10 +122,10 @@ public enum VariableCounter {
    *          the expression to count
    * @return the list of uses/assignments
    */
-  public abstract List<Expression> list(final ASTNode n, final Expression e);
+  public abstract List<Expression> collect(final ASTNode n, final Expression e);
   
   static void addAssignments(final List<Expression> $, final ASTNode n, final Expression e) {
-    $.addAll(ASSIGNMENTS.list(n, e));
+    $.addAll(ASSIGNMENTS.collect(n, e));
     Collections.sort($, new Comparator<Expression>() {
       @Override public int compare(final Expression e1, final Expression e2) {
         return e1.getStartPosition() - e2.getStartPosition();
@@ -154,7 +154,7 @@ public enum VariableCounter {
     return $;
   }
   
-  static List<Expression> countUses(final ASTNode where, final Expression what, final boolean semantic) {
+  static List<Expression> collect(final ASTNode where, final Expression what, final boolean semantic) {
     final List<Expression> $ = new ArrayList<Expression>();
     where.accept(new ASTVisitor() {
       private boolean count(final Expression e) {

@@ -1,6 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.builder.Utils;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+import il.ac.technion.cs.ssdl.spartan.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -399,59 +400,11 @@ public abstract class BaseSpartanization extends Refactoring {
     @Override public void run(final IMarker m) {
       setMarker(m);
       try {
-        new RefactoringWizardOpenOperation(new SpartanRefactoringWizard(BaseSpartanization.this)).run(Display.getCurrent()
-            .getActiveShell(), "Spartan Refactoring: " + BaseSpartanization.this);
+        new RefactoringWizardOpenOperation(new Wizard(BaseSpartanization.this)).run(Display.getCurrent().getActiveShell(),
+            "Spartan refactoring: " + BaseSpartanization.this);
       } catch (final InterruptedException e) {
         e.printStackTrace();
       }
-    }
-  }
-  
-  /**
-   * a range which contains a spartanization suggestion. used for creating text
-   * markers
-   * 
-   * @author Boris van Sosin <boris.van.sosin@gmail.com>
-   */
-  public static class Range {
-    /** the beginning of the range (inclusive) */
-    public final int from;
-    /** the end of the range (exclusive) */
-    public final int to;
-    
-    /**
-     * Instantiates from beginning and end locations
-     * 
-     * @param from
-     *          the beginning of the range (inclusive)
-     * @param to
-     *          the end of the range (exclusive)
-     */
-    private Range(final int from, final int to) {
-      this.from = from;
-      this.to = to;
-    }
-    
-    /**
-     * Instantiates from a single ASTNode
-     * 
-     * @param n
-     *          an arbitrary ASTNode
-     */
-    public Range(final ASTNode n) {
-      this(n.getStartPosition(), n.getStartPosition() + n.getLength());
-    }
-    
-    /**
-     * Instantiates from beginning and end ASTNodes
-     * 
-     * @param from
-     *          the beginning ASTNode (inclusive)
-     * @param to
-     *          the end ASTNode (inclusive)
-     */
-    public Range(final ASTNode from, final ASTNode to) {
-      this(from.getStartPosition(), to.getStartPosition() + to.getLength());
     }
   }
 }

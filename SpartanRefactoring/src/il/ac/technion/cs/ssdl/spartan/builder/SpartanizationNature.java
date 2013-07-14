@@ -1,5 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Utils;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;

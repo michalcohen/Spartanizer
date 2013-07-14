@@ -1,8 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization.Range;
 import il.ac.technion.cs.ssdl.spartan.refactoring.All;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+import il.ac.technion.cs.ssdl.spartan.utils.Utils;
 
 import java.util.Map;
 
