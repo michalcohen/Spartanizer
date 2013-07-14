@@ -28,14 +28,10 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ConvertToTernaryRefactoring extends SpartanRefactoring {
+public class ConvertToTernaryRefactoring extends BaseSpartanization {
   /** Instantiates this class */
   public ConvertToTernaryRefactoring() {
-    super("Convert to Ternary", "Convert condition to ternary expression");
-  }
-  
-  @Override public String getName() {
-    return "Ternarization: use the ternary (?:) operator instead of a conditional statement";
+    super("Ternarize", "Convert conditional to an expression using the ternary (?:) operator");
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {

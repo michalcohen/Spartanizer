@@ -10,9 +10,9 @@ import java.util.Map;
  */
 public enum All {
   ;
-  private static final Map<String, SpartanRefactoring> all = new HashMap<String, SpartanRefactoring>();
+  private static final Map<String, BaseSpartanization> all = new HashMap<String, BaseSpartanization>();
   
-  private static void put(final SpartanRefactoring s) {
+  private static void put(final BaseSpartanization s) {
     all.put(s.toString(), s);
   }
   
@@ -30,14 +30,14 @@ public enum All {
    *          the name of the spartanization
    * @return an instance of the spartanization
    */
-  public static SpartanRefactoring get(final String name) {
+  public static BaseSpartanization get(final String name) {
     return all.get(name);
   }
   
   /**
    * @return all the registered spartanization refactoring objects
    */
-  public static Iterable<SpartanRefactoring> all() {
+  public static Iterable<BaseSpartanization> all() {
     return all.values();
   }
 }

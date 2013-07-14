@@ -21,14 +21,10 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * 
  */
-public class RedundantEqualityRefactoring extends SpartanRefactoring {
+public class RedundantEqualityRefactoring extends BaseSpartanization {
   /** Instantiates this class */
   public RedundantEqualityRefactoring() {
-    super("Redundant Equality", "Convert reduntant comparison to boolean constant");
-  }
-  
-  @Override public String getName() {
-    return "Remove redundant comparison to a boolean literal";
+    super("Redundant comparison", "Eliminate reduntant comparison to boolean constant");
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {

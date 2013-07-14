@@ -20,14 +20,10 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * 
  * @since 2013/01/01
  */
-public class ForwardDeclarationRefactoring extends SpartanRefactoring {
+public class ForwardDeclarationRefactoring extends BaseSpartanization {
   /** Instantiates this class */
   public ForwardDeclarationRefactoring() {
-    super("Forward Declaration", "Forward declaration of variable to first use");
-  }
-  
-  @Override public String getName() {
-    return "Move forward the declaration of a variable";
+    super("Forward declaration", "Forward declaration of a variable just prior to first use");
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {

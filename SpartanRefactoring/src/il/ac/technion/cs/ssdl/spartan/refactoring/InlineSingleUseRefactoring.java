@@ -21,14 +21,10 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class InlineSingleUseRefactoring extends SpartanRefactoring {
+public class InlineSingleUseRefactoring extends BaseSpartanization {
   /** Instantiates this class */
   public InlineSingleUseRefactoring() {
-    super("Inline Single Use", "Inline single use of variable");
-  }
-  
-  @Override public String getName() {
-    return "Inline single use of a variable";
+    super("Inline variable used once", "Inline variable used once");
   }
   
   @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu,

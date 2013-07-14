@@ -262,7 +262,7 @@ public class SpartanizationTests {
     runTestCaseNoChange(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar9");
   }
   
-  private static void runTestCase(final SpartanRefactoring s, final String testCaseName) throws MalformedTreeException,
+  private static void runTestCase(final BaseSpartanization s, final String testCaseName) throws MalformedTreeException,
       IllegalArgumentException, BadLocationException, IOException {
     final String text = readFile("TestResources" + File.separator + testCaseName + ".before");
     final ASTParser parser = Utils.makeParser(text);
@@ -273,7 +273,7 @@ public class SpartanizationTests {
     assertEquals(readFile("TestResources" + File.separator + testCaseName + ".after"), doc.get());
   }
   
-  private static void runTestCaseNoChange(final SpartanRefactoring s, final String testCaseName) throws MalformedTreeException,
+  private static void runTestCaseNoChange(final BaseSpartanization s, final String testCaseName) throws MalformedTreeException,
       IllegalArgumentException, BadLocationException, IOException {
     final String text = readFile("TestResources" + File.separator + testCaseName + ".before");
     final ASTParser p = Utils.makeParser(text);

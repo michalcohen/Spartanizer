@@ -26,14 +26,10 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ChangeReturnToDollarRefactoring extends SpartanRefactoring {
+public class ChangeReturnToDollarRefactoring extends BaseSpartanization {
   /** Instantiates this class */
   public ChangeReturnToDollarRefactoring() {
-    super("Change Return Variable to $", "Change return variable to $");
-  }
-  
-  @Override public String getName() {
-    return "Rename the variable returned by a function to '$'";
+    super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
   }
   
   @Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {

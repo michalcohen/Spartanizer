@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanRefactoring;
-import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanRefactoring.Range;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization.Range;
 import il.ac.technion.cs.ssdl.spartan.refactoring.All;
 
 import java.util.Map;
@@ -71,13 +71,13 @@ public class SpartaBuilder extends IncrementalProjectBuilder {
   }
   
   private static void checkJava(final IFile f, final CompilationUnit cu) {
-    for (final SpartanRefactoring s : All.all())
+    for (final BaseSpartanization s : All.all())
       for (final Range r : s.findOpportunities(cu))
         if (r != null)
           createMarker(f, s, r);
   }
   
-  private static void createMarker(final IFile f, final SpartanRefactoring s, final Range r) {
+  private static void createMarker(final IFile f, final BaseSpartanization s, final Range r) {
     try {
       final IMarker m = f.createMarker(MARKER_TYPE);
       m.setAttribute(IMarker.CHAR_START, r.from);

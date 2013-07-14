@@ -30,7 +30,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {
   /**
-   * the main method of the command handler. runs when the command is called.
+   * the main method of the command handler, runs when the command is called.
    */
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     return execute(e, HandlerUtil.getActivePartIdChecked(e));

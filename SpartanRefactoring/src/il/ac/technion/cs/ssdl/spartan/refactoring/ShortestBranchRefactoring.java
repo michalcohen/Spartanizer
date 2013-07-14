@@ -31,14 +31,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ShortestBranchRefactoring extends SpartanRefactoring {
+public class ShortestBranchRefactoring extends BaseSpartanization {
   /** Instantiates this class */
   public ShortestBranchRefactoring() {
-    super("Shortest Branch", "Shortest branch in condition first");
-  }
-  
-  @Override public String getName() {
-    return "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first";
+    super("Shortester first",
+        "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
   }
   
   /**
