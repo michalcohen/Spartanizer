@@ -1,7 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
-
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -42,7 +41,7 @@ public class ChangeReturnToDollar extends BaseSpartanization {
         if (returnVar != null) {
           if (!inRange(m, n))
             return true;
-          for (final Expression e : Occurrences.BOTH_LEXICAL.collect(n, returnVar.getName()))
+          for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
             $.replace(e, t.newSimpleName("$"), null);
         }
         return true;
@@ -112,7 +111,7 @@ public class ChangeReturnToDollar extends BaseSpartanization {
       for (final ReturnStatement returnStmt : returnStatements) {
         if (Arrays.binarySearch(literals, returnStmt.getExpression().getNodeType()) >= 0)
           continue;
-        final int nUses = Occurrences.BOTH_LEXICAL.collect(returnStmt, currDecl.getName()).size();
+        final int nUses = Occurrences.BOTH_LEXICAL.of(currDecl.getName()).in(returnStmt).size();
         if (nUses == 0) {
           iter.remove();
           break;

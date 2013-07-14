@@ -87,7 +87,7 @@ public class ForwardDeclaration extends BaseSpartanization {
     final ASTNode declarationFragment = name.getParent();
     final ASTNode declarationStmt = declarationFragment.getParent();
     for (int i = b.statements().indexOf(declarationStmt) + 1; i < b.statements().size(); ++i)
-      if (Occurrences.BOTH_LEXICAL.collect((ASTNode) b.statements().get(i), name).size() > 0)
+      if (Occurrences.BOTH_LEXICAL.of(name).in((ASTNode) b.statements().get(i)).size() > 0)
         return i; // first use!
     return -1; // that means unused
   }

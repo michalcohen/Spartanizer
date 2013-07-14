@@ -100,4 +100,15 @@ public enum Utils {
     Arrays.sort(is);
     return is;
   }
+  
+  /**
+   * Convert multiple arguments into an array
+   * 
+   * @param ts
+   *          a sequence of arguments of the same type
+   * @return an array representation of the parameter
+   */
+  public static <T> T[] asArray(T... ts) {
+    return ts;
+  }
 }

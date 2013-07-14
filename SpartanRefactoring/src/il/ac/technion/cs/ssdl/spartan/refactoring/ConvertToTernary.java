@@ -309,7 +309,7 @@ public class ConvertToTernary extends BaseSpartanization {
   }
   
   private static boolean dependsOn(final Expression e, final Expression leftHandSide) {
-    return Occurrences.BOTH_SEMANTIC.collect(e, leftHandSide).size() > 0;
+    return Occurrences.BOTH_SEMANTIC.of(leftHandSide).in(e).size() > 0;
   }
   
   private static ASTNode getAssignmentOrDeclaration(final Statement s, final Expression e) {
