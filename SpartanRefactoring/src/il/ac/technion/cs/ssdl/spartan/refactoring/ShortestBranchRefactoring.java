@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ShortestBranchRefactoring extends BaseRefactoring {
+public class ShortestBranchRefactoring extends SpartanRefactoring {
   /** Instantiates this class */
   public ShortestBranchRefactoring() {
     super("Shortest Branch", "Shortest branch in condition first");

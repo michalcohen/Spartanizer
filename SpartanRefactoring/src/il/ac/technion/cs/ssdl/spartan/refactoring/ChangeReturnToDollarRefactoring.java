@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
+public class ChangeReturnToDollarRefactoring extends SpartanRefactoring {
   /** Instantiates this class */
   public ChangeReturnToDollarRefactoring() {
     super("Change Return Variable to $", "Change return variable to $");

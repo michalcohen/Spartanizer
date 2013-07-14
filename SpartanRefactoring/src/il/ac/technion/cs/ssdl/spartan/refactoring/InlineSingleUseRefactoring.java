@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class InlineSingleUseRefactoring extends BaseRefactoring {
+public class InlineSingleUseRefactoring extends SpartanRefactoring {
   /** Instantiates this class */
   public InlineSingleUseRefactoring() {
     super("Inline Single Use", "Inline single use of variable");
