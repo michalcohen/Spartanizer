@@ -26,9 +26,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ChangeReturnToDollarRefactoring extends BaseSpartanization {
+public class ChangeReturnToDollar extends BaseSpartanization {
   /** Instantiates this class */
-  public ChangeReturnToDollarRefactoring() {
+  public ChangeReturnToDollar() {
     super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
   }
   

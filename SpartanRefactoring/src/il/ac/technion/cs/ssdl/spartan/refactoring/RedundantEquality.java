@@ -21,9 +21,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * 
  */
-public class RedundantEqualityRefactoring extends BaseSpartanization {
+public class RedundantEquality extends BaseSpartanization {
   /** Instantiates this class */
-  public RedundantEqualityRefactoring() {
+  public RedundantEquality() {
     super("Redundant comparison", "Eliminate reduntant comparison to boolean constant");
   }
   

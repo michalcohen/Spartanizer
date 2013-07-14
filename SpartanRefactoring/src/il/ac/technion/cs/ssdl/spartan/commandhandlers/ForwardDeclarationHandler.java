@@ -1,9 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.ForwardDeclarationRefactoring;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ForwardDeclaration;
 
 /**
- * a handler for {@link ForwardDeclarationRefactoring}
+ * a handler for {@link ForwardDeclaration}
  * 
  * @author Boris van Sosin <boris.van.sosin@gmail.com>
  * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/11)
@@ -12,6 +12,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ForwardDeclarationRefactoring;
 public class ForwardDeclarationHandler extends BaseSpartanizationHandler {
   /** Instantiates this class */
   public ForwardDeclarationHandler() {
-    super(new ForwardDeclarationRefactoring());
+    super(new ForwardDeclaration());
   }
 }

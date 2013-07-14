@@ -1,9 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.InlineSingleUseRefactoring;
+import il.ac.technion.cs.ssdl.spartan.refactoring.InlineSingleUse;
 
 /**
- * a handler for {@link InlineSingleUseRefactoring}
+ * a handler for {@link InlineSingleUse}
  * 
  * @author Boris van Sosin <boris.van.sosin@gmail.com>
  * @author Yossi Gil <yossi.gil@gmail.com> (major refactoring 2013/07/11)
@@ -12,6 +12,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.InlineSingleUseRefactoring;
 public class InlineSingleUseHandler extends BaseSpartanizationHandler {
   /** Instantiates this class */
   public InlineSingleUseHandler() {
-    super(new InlineSingleUseRefactoring());
+    super(new InlineSingleUse());
   }
 }

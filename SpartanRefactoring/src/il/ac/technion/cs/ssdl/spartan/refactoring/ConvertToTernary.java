@@ -28,9 +28,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ConvertToTernaryRefactoring extends BaseSpartanization {
+public class ConvertToTernary extends BaseSpartanization {
   /** Instantiates this class */
-  public ConvertToTernaryRefactoring() {
+  public ConvertToTernary() {
     super("Ternarize", "Convert conditional to an expression using the ternary (?:) operator");
   }
   

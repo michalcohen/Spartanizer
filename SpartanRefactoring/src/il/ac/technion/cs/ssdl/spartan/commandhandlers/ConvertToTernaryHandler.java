@@ -1,6 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTernaryRefactoring;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTernary;
 
 /**
  * a BaseSpartanizationHandler configured to return the BaseRefactoring and
@@ -13,6 +13,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ConvertToTernaryRefactoring;
 public class ConvertToTernaryHandler extends BaseSpartanizationHandler {
   /** Instantiates this class */
   public ConvertToTernaryHandler() {
-    super(new ConvertToTernaryRefactoring());
+    super(new ConvertToTernary());
   }
 }

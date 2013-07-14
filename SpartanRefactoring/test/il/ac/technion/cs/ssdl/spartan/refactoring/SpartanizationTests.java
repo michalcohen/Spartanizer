@@ -24,242 +24,242 @@ import org.junit.Test;
 public class SpartanizationTests {
   @Test public void testConvertToTernary1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary1");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary1");
   }
   
   @Test public void testConvertToTernary2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary2");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary2");
   }
   
   @Test public void testConvertToTernary3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary3");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary3");
   }
   
   @Test public void testConvertToTernary4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary4");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary4");
   }
   
   @Test public void testConvertToTernary5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary5");
+    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary5");
   }
   
   @Test public void testConvertToTernary6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary6");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary6");
   }
   
   @Test public void testConvertToTernary7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary7");
+    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary7");
   }
   
   @Test public void testConvertToTernary8() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary8");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary8");
   }
   
   @Test public void testConvertToTernary9() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary9");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary9");
   }
   
   @Test public void testConvertToTernary10() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary10");
+    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary10");
   }
   
   @Test public void testConvertToTernary11() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernaryRefactoring(), "ConvertToTernary11");
+    runTestCase(new ConvertToTernary(), "ConvertToTernary11");
   }
   
   @Test public void testConvertToTernary12() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernaryRefactoring(), "ConvertToTernary12");
+    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary12");
   }
   
   @Test public void testForwardDeclaration1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration1");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration1");
   }
   
   @Test public void testForwardDeclaration2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration2");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration2");
   }
   
   @Test public void testForwardDeclaration3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration3");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration3");
   }
   
   @Test public void testForwardDeclaration4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration4");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration4");
   }
   
   @Test public void testForwardDeclaration5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration5");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration5");
   }
   
   @Test public void testForwardDeclaration6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration6");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration6");
   }
   
   @Test public void testForwardDeclaration7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ForwardDeclarationRefactoring(), "ForwardDeclaration7");
+    runTestCase(new ForwardDeclaration(), "ForwardDeclaration7");
   }
   
   @Test public void testInlineSingleUse1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse1");
+    runTestCase(new InlineSingleUse(), "InlineSingleUse1");
   }
   
   @Test public void testInlineSingleUse2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse2");
+    runTestCase(new InlineSingleUse(), "InlineSingleUse2");
   }
   
   @Test public void testInlineSingleUse3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse3");
+    runTestCase(new InlineSingleUse(), "InlineSingleUse3");
   }
   
   @Test public void testInlineSingleUse4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse4");
+    runTestCase(new InlineSingleUse(), "InlineSingleUse4");
   }
   
   @Test public void testInlineSingleUse5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new InlineSingleUseRefactoring(), "InlineSingleUse5");
+    runTestCase(new InlineSingleUse(), "InlineSingleUse5");
   }
   
   @Test public void testInlineSingleUse6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new InlineSingleUseRefactoring(), "InlineSingleUse6");
+    runTestCaseNoChange(new InlineSingleUse(), "InlineSingleUse6");
   }
   
   @Test public void testInlineSingleUse7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new InlineSingleUseRefactoring(), "InlineSingleUse7");
+    runTestCaseNoChange(new InlineSingleUse(), "InlineSingleUse7");
   }
   
   @Test public void testInlineSingleUse8() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new InlineSingleUseRefactoring(), "InlineSingleUse8");
+    runTestCaseNoChange(new InlineSingleUse(), "InlineSingleUse8");
   }
   
   @Test public void testRedundantEquality1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality1");
+    runTestCase(new RedundantEquality(), "RedundantEquality1");
   }
   
   @Test public void testRedundantEquality2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality2");
+    runTestCase(new RedundantEquality(), "RedundantEquality2");
   }
   
   @Test public void testRedundantEquality3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new RedundantEqualityRefactoring(), "RedundantEquality3");
+    runTestCase(new RedundantEquality(), "RedundantEquality3");
   }
   
   @Test public void testShortestBranchFirst1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst1");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst1");
   }
   
   @Test public void testShortestBranchFirst2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst2");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst2");
   }
   
   @Test public void testShortestBranchFirst3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst3");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst3");
   }
   
   @Test public void testShortestBranchFirst4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst4");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst4");
   }
   
   @Test public void testShortestBranchFirst5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst5");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst5");
   }
   
   @Test public void testShortestBranchFirst6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst6");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst6");
   }
   
   @Test public void testShortestBranchFirst7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst7");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst7");
   }
   
   @Test public void testShortestBranchFirst8() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst8");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst8");
   }
   
   @Test public void testShortestBranchFirst9() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ShortestBranchRefactoring(), "ShortestBranchFirst9");
+    runTestCase(new ShortestBranch(), "ShortestBranchFirst9");
   }
   
   @Test public void testChangeReturnVariableToDollar1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar1");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar1");
   }
   
   @Test public void testChangeReturnVariableToDollar2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar2");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar2");
   }
   
   @Test public void testChangeReturnVariableToDollar3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar3");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar3");
   }
   
   @Test public void testChangeReturnVariableToDollar4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar4");
+    runTestCaseNoChange(new ChangeReturnToDollar(), "ChangeReturnVarToDollar4");
   }
   
   @Test public void testChangeReturnVariableToDollar5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar5");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar5");
   }
   
   @Test public void testChangeReturnVariableToDollar6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar6");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar6");
   }
   
   @Test public void testChangeReturnVariableToDollar7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar7");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar7");
   }
   
   @Test public void testChangeReturnVariableToDollar8() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar8");
+    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar8");
   }
   
   @Test public void testChangeReturnVariableToDollar9() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ChangeReturnToDollarRefactoring(), "ChangeReturnVarToDollar9");
+    runTestCaseNoChange(new ChangeReturnToDollar(), "ChangeReturnVarToDollar9");
   }
   
   private static void runTestCase(final BaseSpartanization s, final String testCaseName) throws MalformedTreeException,

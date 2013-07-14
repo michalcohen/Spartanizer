@@ -21,9 +21,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class InlineSingleUseRefactoring extends BaseSpartanization {
+public class InlineSingleUse extends BaseSpartanization {
   /** Instantiates this class */
-  public InlineSingleUseRefactoring() {
+  public InlineSingleUse() {
     super("Inline variable used once", "Inline variable used once");
   }
   
