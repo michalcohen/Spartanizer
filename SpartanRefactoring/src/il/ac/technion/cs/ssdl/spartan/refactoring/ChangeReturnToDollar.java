@@ -109,6 +109,11 @@ public class ChangeReturnToDollar extends BaseSpartanization {
     for (final Iterator<VariableDeclarationFragment> iter = $.iterator(); iter.hasNext();) {
       final VariableDeclarationFragment currDecl = iter.next();
       for (final ReturnStatement returnStmt : returnStatements) {
+      	// this demands explanation: returnStmt.getExpression() only if the statement if "return;"
+      	// if such statement exists, then the current method is void, and there can be no return variable.
+      	// in this case we can return null immediately, without checking more return statements
+      	if (returnStmt.getExpression() == null)
+      		return null;
         if (Arrays.binarySearch(literals, returnStmt.getExpression().getNodeType()) >= 0)
           continue;
         final int nUses = Occurrences.BOTH_LEXICAL.of(currDecl.getName()).in(returnStmt).size();
