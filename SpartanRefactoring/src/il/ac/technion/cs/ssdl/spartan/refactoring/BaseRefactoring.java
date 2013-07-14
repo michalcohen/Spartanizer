@@ -1,7 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import il.ac.technion.cs.ssdl.spartan.builder.Utils;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -32,6 +32,9 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IMarkerResolution;
 
 /**
  * the base class for all Spartanization Refactoring classes, contains common
@@ -48,6 +51,21 @@ public abstract class BaseRefactoring extends Refactoring {
   private ICompilationUnit compilationUnit = null;
   private IMarker marker = null;
   final Collection<TextFileChange> changes = new ArrayList<TextFileChange>();
+  private final String name;
+  private final String message;
+  
+  /***
+   * Instantiates this class
+   * 
+   * @param name
+   *          the name of the Spartanization Refactoring
+   * @param message
+   *          the message to display in the quickfix
+   */
+  protected BaseRefactoring(final String name, final String message) {
+    this.name = name;
+    this.message = message;
+  }
   
   @Override public abstract String getName();
   
@@ -319,5 +337,119 @@ public abstract class BaseRefactoring extends Refactoring {
     if (m != null && isNodeOutsideMarker(n, m))
       return false;
     return true;
+  }
+  
+  @Override public String toString() {
+    return name;
+  }
+  
+  /**
+   * @return the message to display in the quickfix
+   */
+  public String getMessage() {
+    return message;
+  }
+  
+  /**
+   * @return a quickfix which automatically performs the spartanization
+   */
+  public IMarkerResolution getFix() {
+    return new SpartanizationResolution();
+  }
+  
+  /**
+   * @return a quickfix which opens a refactoring wizard with the spartanization
+   */
+  public IMarkerResolution getFixWithPreview() {
+    return new SpartanizationResolutionWithPreview();
+  }
+  
+  /**
+   * a quickfix which automatically performs the spartanization
+   * 
+   * @author Boris van Sosin <boris.van.sosin@gmail.com>
+   * @since 2013/07/01
+   */
+  public class SpartanizationResolution implements IMarkerResolution {
+    @Override public String getLabel() {
+      return BaseRefactoring.this.toString() + ": Do it!";
+    }
+    
+    @Override public void run(final IMarker m) {
+      try {
+        runAsMarkerFix(new NullProgressMonitor(), m);
+      } catch (final CoreException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /**
+   * a quickfix which opens a refactoring wizard with the spartanization
+   * 
+   * @author Boris van Sosin
+   */
+  public class SpartanizationResolutionWithPreview implements IMarkerResolution {
+    @Override public String getLabel() {
+      return BaseRefactoring.this + ": Show me a preview first";
+    }
+    
+    @Override public void run(final IMarker m) {
+      setMarker(m);
+      try {
+        new RefactoringWizardOpenOperation(new SpartanRefactoringWizard(BaseRefactoring.this)).run(Display.getCurrent()
+            .getActiveShell(), "Spartan Refactoring: " + BaseRefactoring.this);
+      } catch (final InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /**
+   * a range which contains a spartanization suggestion. used for creating text
+   * markers
+   * 
+   * @author Boris van Sosin <boris.van.sosin@gmail.com>
+   */
+  public static class Range {
+    /** the beginning of the range (inclusive) */
+    public final int from;
+    /** the end of the range (exclusive) */
+    public final int to;
+    
+    /**
+     * Instantiates from beginning and end locations
+     * 
+     * @param from
+     *          the beginning of the range (inclusive)
+     * @param to
+     *          the end of the range (exclusive)
+     */
+    private Range(final int from, final int to) {
+      this.from = from;
+      this.to = to;
+    }
+    
+    /**
+     * Instantiates from a single ASTNode
+     * 
+     * @param n
+     *          an arbitrary ASTNode
+     */
+    public Range(final ASTNode n) {
+      this(n.getStartPosition(), n.getStartPosition() + n.getLength());
+    }
+    
+    /**
+     * Instantiates from beginning and end ASTNodes
+     * 
+     * @param from
+     *          the beginning ASTNode (inclusive)
+     * @param to
+     *          the end ASTNode (inclusive)
+     */
+    public Range(final ASTNode from, final ASTNode to) {
+      this(from.getStartPosition(), to.getStartPosition() + to.getLength());
+    }
   }
 }

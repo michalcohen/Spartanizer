@@ -1,7 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
-
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -24,6 +22,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2013/01/01
  */
 public class InlineSingleUseRefactoring extends BaseRefactoring {
+  /** Instantiates this class */
+  public InlineSingleUseRefactoring() {
+    super("Inline Single Use", "Inline single use of variable");
+  }
+  
   @Override public String getName() {
     return "Inline single use of a variable";
   }

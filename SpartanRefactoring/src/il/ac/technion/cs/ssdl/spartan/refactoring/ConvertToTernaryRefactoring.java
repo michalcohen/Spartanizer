@@ -1,7 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
-
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -31,6 +29,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2013/01/01
  */
 public class ConvertToTernaryRefactoring extends BaseRefactoring {
+  /** Instantiates this class */
+  public ConvertToTernaryRefactoring() {
+    super("Convert to Ternary", "Convert condition to ternary expression");
+  }
+  
   @Override public String getName() {
     return "Ternarization: use the ternary (?:) operator instead of a conditional statement";
   }

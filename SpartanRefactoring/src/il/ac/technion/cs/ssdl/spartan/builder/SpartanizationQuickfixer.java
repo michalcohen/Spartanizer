@@ -1,6 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization;
+import il.ac.technion.cs.ssdl.spartan.refactoring.BaseRefactoring;
 import il.ac.technion.cs.ssdl.spartan.refactoring.SpartanizationFactory;
 
 import org.eclipse.core.resources.IMarker;
@@ -18,7 +18,7 @@ public class SpartanizationQuickfixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
       final String spartanizationName = (String) m.getAttribute(SpartaBuilder.SPARTANIZATION_TYPE_KEY);
-      final BasicSpartanization s = SpartanizationFactory.getSpartanizationByName(spartanizationName);
+      final BaseRefactoring s = SpartanizationFactory.getSpartanizationByName(spartanizationName);
       return new IMarkerResolution[] {
           //
           s.getFix(), s.getFixWithPreview() };

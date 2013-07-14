@@ -1,7 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
-
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -23,6 +21,11 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * @since 2013/01/01
  */
 public class ForwardDeclarationRefactoring extends BaseRefactoring {
+  /** Instantiates this class */
+  public ForwardDeclarationRefactoring() {
+    super("Forward Declaration", "Forward declaration of variable to first use");
+  }
+  
   @Override public String getName() {
     return "Move forward the declaration of a variable";
   }

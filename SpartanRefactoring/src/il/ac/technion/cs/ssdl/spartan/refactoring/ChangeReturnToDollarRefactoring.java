@@ -1,7 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.builder.Utils.sort;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +27,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2013/01/01
  */
 public class ChangeReturnToDollarRefactoring extends BaseRefactoring {
+  /** Instantiates this class */
+  public ChangeReturnToDollarRefactoring() {
+    super("Change Return Variable to $", "Change return variable to $");
+  }
+  
   @Override public String getName() {
     return "Rename the variable returned by a function to '$'";
   }

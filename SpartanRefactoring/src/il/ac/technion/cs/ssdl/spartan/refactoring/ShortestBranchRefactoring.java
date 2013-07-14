@@ -6,7 +6,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,6 +32,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2013/01/01
  */
 public class ShortestBranchRefactoring extends BaseRefactoring {
+  /** Instantiates this class */
+  public ShortestBranchRefactoring() {
+    super("Shortest Branch", "Shortest branch in condition first");
+  }
+  
   @Override public String getName() {
     return "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first";
   }

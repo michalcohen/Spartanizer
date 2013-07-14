@@ -1,7 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BasicSpartanization.Range;
-
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -24,6 +22,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  */
 public class RedundantEqualityRefactoring extends BaseRefactoring {
+  /** Instantiates this class */
+  public RedundantEqualityRefactoring() {
+    super("Redundant Equality", "Convert reduntant comparison to boolean constant");
+  }
+  
   @Override public String getName() {
     return "Remove redundant comparison to a boolean literal";
   }
