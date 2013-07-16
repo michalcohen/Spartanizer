@@ -53,7 +53,7 @@ public enum Occurrences {
    * counts semantic (multiple uses for loops) uses of an expression
    */
   USES_SEMANTIC {
-    @Override ASTVisitor[] collectors(List<Expression> into, Expression e) {
+    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
       return asArray(semanticalUsesCollector(into, e));
     }
   },
@@ -61,7 +61,7 @@ public enum Occurrences {
    * counts lexical (single use for loops) uses of an expression
    */
   USES_LEXICAL {
-    @Override ASTVisitor[] collectors(List<Expression> into, Expression e) {
+    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
       return asArray(lexicalUsesCollector(into, e));
     }
   },
@@ -78,7 +78,7 @@ public enum Occurrences {
    * expression
    */
   BOTH_SEMANTIC {
-    @Override ASTVisitor[] collectors(List<Expression> into, Expression e) {
+    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
       return asArray(semanticalUsesCollector(into, e), definitionsCollector(into, e));
     }
   },
@@ -87,7 +87,7 @@ public enum Occurrences {
    * expression
    */
   BOTH_LEXICAL {
-    @Override ASTVisitor[] collectors(List<Expression> into, Expression e) {
+    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
       return asArray(lexicalUsesCollector(into, e), definitionsCollector(into, e));
     }
   };
@@ -101,7 +101,7 @@ public enum Occurrences {
    */
   public Of of(final Expression e) {
     return new Of() {
-      @Override public List<Expression> in(ASTNode n) {
+      @Override public List<Expression> in(final ASTNode n) {
         return collect(e, n);
       }
     };
@@ -145,7 +145,7 @@ public enum Occurrences {
    * @return the list of uses
    */
   final List<Expression> collect(final Expression what, final ASTNode where) {
-    List<Expression> $ = new ArrayList<Expression>();
+    final List<Expression> $ = new ArrayList<Expression>();
     for (final ASTVisitor v : collectors($, what))
       where.accept(v);
     Collections.sort($, new Comparator<Expression>() {
