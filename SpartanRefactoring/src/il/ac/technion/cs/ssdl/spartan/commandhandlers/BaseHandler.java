@@ -25,7 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  *         2013/07/11
  * @since 2013/07/01
  */
-public abstract class BaseSpartanizationHandler extends AbstractHandler {
+public abstract class BaseHandler extends AbstractHandler {
   private final BaseSpartanization refactoring;
   
   protected BaseSpartanization getRefactoring() {
@@ -36,7 +36,7 @@ public abstract class BaseSpartanizationHandler extends AbstractHandler {
     return refactoring.getName();
   }
   
-  protected BaseSpartanizationHandler(final BaseSpartanization refactoring) {
+  protected BaseHandler(final BaseSpartanization refactoring) {
     this.refactoring = refactoring;
   }
   

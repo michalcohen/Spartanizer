@@ -10,7 +10,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ComparisonWithBoolean;
  *         2013/07/11)
  * @since 2013/07/01
  */
-public class RedundantEqualityHandler extends BaseSpartanizationHandler {
+public class RedundantEqualityHandler extends BaseHandler {
   /** Instantiates this class */
   public RedundantEqualityHandler() {
     super(new ComparisonWithBoolean());

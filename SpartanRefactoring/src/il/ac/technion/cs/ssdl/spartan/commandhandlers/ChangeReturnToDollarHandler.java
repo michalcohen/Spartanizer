@@ -10,7 +10,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.RenameReturnToDollar;
  *         2013/07/11)
  * @since 2013/07/01
  */
-public class ChangeReturnToDollarHandler extends BaseSpartanizationHandler {
+public class ChangeReturnToDollarHandler extends BaseHandler {
   /** Instantiates this class */
   public ChangeReturnToDollarHandler() {
     super(new RenameReturnToDollar());

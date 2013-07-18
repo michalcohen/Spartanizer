@@ -1,4 +1,4 @@
-package il.ac.technion.cs.ssdl.spartan.refactoring;
+package il.ac.technion.cs.ssdl.spartan.builder;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -10,13 +10,13 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 2013/01/01
  */
-public class RefactoringPlugin extends AbstractUIPlugin {
-  private static RefactoringPlugin plugin;
+public class Plugin extends AbstractUIPlugin {
+  private static Plugin plugin;
   
   /**
    * an empty c'tor. creates an instance of the plugin.
    */
-  public RefactoringPlugin() {
+  public Plugin() {
     plugin = this;
   }
   
@@ -32,18 +32,18 @@ public class RefactoringPlugin extends AbstractUIPlugin {
   /**
    * @return the (single) instance of the plugin
    */
-  public static RefactoringPlugin getDefault() {
+  public static Plugin getDefault() {
     return plugin;
   }
   
   /**
    * logs an error in the plugin
    * 
-   * @param throwable
+   * @param t
    *          an error
    */
-  public static void log(final Throwable throwable) {
+  public static void log(final Throwable t) {
     getDefault().getLog().log(
-        new Status(IStatus.ERROR, "il.ac.technion.cs.ssdl.spartan.refactoring", 0, throwable.getMessage(), throwable));
+        new Status(IStatus.ERROR, "il.ac.technion.cs.ssdl.spartan.refactoring", 0, t.getMessage(), t));
   }
 }
