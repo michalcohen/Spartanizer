@@ -17,12 +17,12 @@ public enum All {
   }
   
   static {
-    put(new RedundantEquality());
-    put(new ConvertToTernary());
+    put(new ComparisonWithBoolean());
+    put(new Ternarize());
     put(new ShortestBranch());
     put(new InlineSingleUse());
     put(new ForwardDeclaration());
-    put(new ChangeReturnToDollar());
+    put(new RenameReturnToDollar());
   }
   
   /**

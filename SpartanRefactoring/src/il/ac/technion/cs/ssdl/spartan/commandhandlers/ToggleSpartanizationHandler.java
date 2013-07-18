@@ -2,8 +2,8 @@ package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.append;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.delete;
-import il.ac.technion.cs.ssdl.spartan.builder.SpartaBuilder;
-import il.ac.technion.cs.ssdl.spartan.builder.SpartanizationNature;
+import il.ac.technion.cs.ssdl.spartan.builder.Builder;
+import il.ac.technion.cs.ssdl.spartan.builder.Nature;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -24,7 +24,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * 
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
- * @author Boris van Sosin <boris.van.sosin@gmail.com>
+ * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>
  * 
  * @since 2013/07/01
  */
@@ -64,21 +64,21 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
       final IProjectDescription description = p.getDescription();
       final String[] natures = description.getNatureIds();
       for (int i = 0; i < natures.length; ++i)
-        if (SpartanizationNature.NATURE_ID.equals(natures[i])) {
+        if (Nature.NATURE_ID.equals(natures[i])) {
           // Remove the nature
           description.setNatureIds(delete(natures, i));
           p.setDescription(description, null);
           p.accept(new IResourceVisitor() {
             @Override public boolean visit(final IResource r) {
               if (r instanceof IFile && r.getName().endsWith(".java"))
-                SpartaBuilder.deleteMarkers((IFile) r);
+                Builder.deleteMarkers((IFile) r);
               return true;
             }
           });
           return;
         }
       // Add the nature
-      description.setNatureIds(append(natures, SpartanizationNature.NATURE_ID));
+      description.setNatureIds(append(natures, Nature.NATURE_ID));
       p.setDescription(description, null);
     } catch (final CoreException e) {
       // we assume that other builders handle cause compilation failure on

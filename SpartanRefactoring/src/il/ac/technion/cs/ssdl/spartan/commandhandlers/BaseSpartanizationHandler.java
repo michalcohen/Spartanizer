@@ -19,8 +19,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * @author Boris van Sosin <boris.van.sosin@gmail.com>: original version
- * @author Yossi Gil <yossi.gil@gmail.com>: major refactoring 2013/07/11
+ * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>: original
+ *         version
+ * @author Yossi Gil <code><yossi.gil@gmail.com></code>: major refactoring
+ *         2013/07/11
  * @since 2013/07/01
  */
 public abstract class BaseSpartanizationHandler extends AbstractHandler {

@@ -42,8 +42,9 @@ import org.eclipse.ui.IMarkerResolution;
  * functionality
  * 
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin <boris.van.sosin@gmail.com> (v2)
- * @author Yossi Gil <yossi.gil@gmail.com>: major refactoring 2013/07/10
+ * @author Boris van Sosin <boris.van.sosin@gmail.com>} (v2)
+ * @author Yossi Gil <code><yossi.gil@gmail.com></code>: major refactoring
+ *         2013/07/10
  * 
  * @since 2013/01/01
  */
@@ -370,7 +371,7 @@ public abstract class BaseSpartanization extends Refactoring {
   /**
    * a quickfix which automatically performs the spartanization
    * 
-   * @author Boris van Sosin <boris.van.sosin@gmail.com>
+   * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>
    * @since 2013/07/01
    */
   public class SpartanizationResolution implements IMarkerResolution {

@@ -2,27 +2,27 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder"
+         id="il.ac.technion.cs.ssdl.spartan.builder.Builder"
          name="Spartanization Checker"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">
          <run
-               class="il.ac.technion.cs.ssdl.spartan.builder.SpartaBuilder">
+               class="il.ac.technion.cs.ssdl.spartan.builder.Builder">
          </run>
       </builder>
    </extension>
    <extension
-         id="il.ac.technion.cs.ssdl.spartan.spartaNature"
+         id="il.ac.technion.cs.ssdl.spartan.builder.Nature"
          name="Spartanization Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="il.ac.technion.cs.ssdl.spartan.builder.SpartanizationNature">
+               class="il.ac.technion.cs.ssdl.spartan.builder.Nature">
          </run>
       </runtime>
       <builder
-            id="il.ac.technion.cs.ssdl.spartan.builder.spartaBuilder">
+            id="il.ac.technion.cs.ssdl.spartan.builder.Builder">
       </builder>
    </extension>
    
@@ -37,7 +37,7 @@
    <extension point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
          markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
-         class="il.ac.technion.cs.ssdl.spartan.builder.SpartanizationQuickfixer"/>
+         class="il.ac.technion.cs.ssdl.spartan.builder.QuickFixer"/>
    </extension>
    <extension point="org.eclipse.ui.editors.annotationTypes">
       <type markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion" name="il.ac.technion.cs.ssdl.spartan.spartanizationMarker" />
@@ -118,7 +118,7 @@
             commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ConvertToTernaryHandler"
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.TernarizeHandler"
             commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary">
       </handler>
       <handler

@@ -24,62 +24,62 @@ import org.junit.Test;
 public class SpartanizationTests {
   @Test public void testConvertToTernary1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary1");
+    runTestCase(new Ternarize(), "ConvertToTernary1");
   }
   
   @Test public void testConvertToTernary2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary2");
+    runTestCase(new Ternarize(), "ConvertToTernary2");
   }
   
   @Test public void testConvertToTernary3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary3");
+    runTestCase(new Ternarize(), "ConvertToTernary3");
   }
   
   @Test public void testConvertToTernary4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary4");
+    runTestCase(new Ternarize(), "ConvertToTernary4");
   }
   
   @Test public void testConvertToTernary5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary5");
+    runTestCaseNoChange(new Ternarize(), "ConvertToTernary5");
   }
   
   @Test public void testConvertToTernary6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary6");
+    runTestCase(new Ternarize(), "ConvertToTernary6");
   }
   
   @Test public void testConvertToTernary7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary7");
+    runTestCaseNoChange(new Ternarize(), "ConvertToTernary7");
   }
   
   @Test public void testConvertToTernary8() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary8");
+    runTestCase(new Ternarize(), "ConvertToTernary8");
   }
   
   @Test public void testConvertToTernary9() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary9");
+    runTestCase(new Ternarize(), "ConvertToTernary9");
   }
   
   @Test public void testConvertToTernary10() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary10");
+    runTestCaseNoChange(new Ternarize(), "ConvertToTernary10");
   }
   
   @Test public void testConvertToTernary11() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ConvertToTernary(), "ConvertToTernary11");
+    runTestCase(new Ternarize(), "ConvertToTernary11");
   }
   
   @Test public void testConvertToTernary12() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ConvertToTernary(), "ConvertToTernary12");
+    runTestCaseNoChange(new Ternarize(), "ConvertToTernary12");
   }
   
   @Test public void testForwardDeclaration1() throws IOException, IllegalArgumentException, MalformedTreeException,
@@ -159,17 +159,17 @@ public class SpartanizationTests {
   
   @Test public void testRedundantEquality1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new RedundantEquality(), "RedundantEquality1");
+    runTestCase(new ComparisonWithBoolean(), "RedundantEquality1");
   }
   
   @Test public void testRedundantEquality2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new RedundantEquality(), "RedundantEquality2");
+    runTestCase(new ComparisonWithBoolean(), "RedundantEquality2");
   }
   
   @Test public void testRedundantEquality3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new RedundantEquality(), "RedundantEquality3");
+    runTestCase(new ComparisonWithBoolean(), "RedundantEquality3");
   }
   
   @Test public void testShortestBranchFirst1() throws IOException, IllegalArgumentException, MalformedTreeException,
@@ -219,47 +219,47 @@ public class SpartanizationTests {
   
   @Test public void testChangeReturnVariableToDollar1() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar1");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar1");
   }
   
   @Test public void testChangeReturnVariableToDollar2() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar2");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar2");
   }
   
   @Test public void testChangeReturnVariableToDollar3() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar3");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar3");
   }
   
   @Test public void testChangeReturnVariableToDollar4() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ChangeReturnToDollar(), "ChangeReturnVarToDollar4");
+    runTestCaseNoChange(new RenameReturnToDollar(), "ChangeReturnVarToDollar4");
   }
   
   @Test public void testChangeReturnVariableToDollar5() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar5");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar5");
   }
   
   @Test public void testChangeReturnVariableToDollar6() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar6");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar6");
   }
   
   @Test public void testChangeReturnVariableToDollar7() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar7");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar7");
   }
   
   @Test public void testChangeReturnVariableToDollar8() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCase(new ChangeReturnToDollar(), "ChangeReturnVarToDollar8");
+    runTestCase(new RenameReturnToDollar(), "ChangeReturnVarToDollar8");
   }
   
   @Test public void testChangeReturnVariableToDollar9() throws IOException, IllegalArgumentException, MalformedTreeException,
       BadLocationException {
-    runTestCaseNoChange(new ChangeReturnToDollar(), "ChangeReturnVarToDollar9");
+    runTestCaseNoChange(new RenameReturnToDollar(), "ChangeReturnVarToDollar9");
   }
   
   private static void runTestCase(final BaseSpartanization s, final String testCaseName) throws MalformedTreeException,
