@@ -150,7 +150,42 @@
             <command
                   commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
                   id="il.ac.technion.cs.ssdl.spartan.menus.toggleCommand"
+                  label="Disable Automatic Spartanization Suggestion"
                   mnemonic="S">
+               <visibleWhen>
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="il.ac.technion.cs.ssdl.spartan.Nature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
+                  id="il.ac.technion.cs.ssdl.spartan.menus.toggleCommand"
+                  label="Enable Automatic Spartanization Suggestion"
+                  mnemonic="S">
+               <visibleWhen>
+                  <not>
+                     <iterate
+                           ifEmpty="true"
+                           operator="and">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="il.ac.technion.cs.ssdl.spartan.Nature">
+                           </test>
+                        </adapt>
+                     </iterate>
+                  </not>
+               </visibleWhen>
             </command>
             <visibleWhen>
                <iterate
