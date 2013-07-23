@@ -13,7 +13,7 @@
       </builder>
    </extension>
    <extension
-         id="il.ac.technion.cs.ssdl.spartan.builder.Nature"
+         id="il.ac.technion.cs.ssdl.spartan.Nature"
          name="Spartanization Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
