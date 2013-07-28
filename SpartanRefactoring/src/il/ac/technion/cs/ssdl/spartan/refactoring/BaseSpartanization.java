@@ -42,8 +42,8 @@ import org.eclipse.ui.IMarkerResolution;
  * functionality
  * 
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin <boris.van.sosin@gmail.com>} (v2)
- * @author Yossi Gil <code><yossi.gil@gmail.com></code>: major refactoring
+ * @author Boris van Sosin <boris.van.sosin [at] gmail.com>} (v2)
+ * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/10
  * 
  * @since 2013/01/01
@@ -168,7 +168,6 @@ public abstract class BaseSpartanization extends Refactoring {
   @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
       OperationCanceledException {
     changes.clear();
-    // TODO: Catch exceptions and change status accordingly
     if (marker != null) {
       innerRunAsMarkerFix(pm, marker, true);
       marker = null; // consume marker
@@ -371,7 +370,7 @@ public abstract class BaseSpartanization extends Refactoring {
   /**
    * a quickfix which automatically performs the spartanization
    * 
-   * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>
+   * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
    * @since 2013/07/01
    */
   public class SpartanizationResolution implements IMarkerResolution {
@@ -382,8 +381,8 @@ public abstract class BaseSpartanization extends Refactoring {
     @Override public void run(final IMarker m) {
       try {
         runAsMarkerFix(new NullProgressMonitor(), m);
-      } catch (final CoreException e) {
-        e.printStackTrace();
+      } catch (CoreException e) {
+        throw new RuntimeException(e);
       }
     }
   }

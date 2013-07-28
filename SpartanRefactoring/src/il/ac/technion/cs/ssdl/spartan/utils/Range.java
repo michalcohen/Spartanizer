@@ -6,7 +6,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
  * a range which contains a spartanization suggestion. used for creating text
  * markers
  * 
- * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  */
 public class Range {
   /** the beginning of the range (inclusive) */

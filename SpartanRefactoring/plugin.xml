@@ -150,7 +150,7 @@
             <command
                   commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
                   id="il.ac.technion.cs.ssdl.spartan.menus.toggleCommand"
-                  label="Disable Automatic Spartanization Suggestion"
+                  label="Disable Spartanization Suggestions"
                   mnemonic="S">
                <visibleWhen>
                   <iterate
@@ -169,7 +169,7 @@
             <command
                   commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
                   id="il.ac.technion.cs.ssdl.spartan.menus.toggleCommand"
-                  label="Enable Automatic Spartanization Suggestion"
+                  label="Enable Spartanization Suggestions"
                   mnemonic="S">
                <visibleWhen>
                   <not>

@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 
 /**
- * @author Yossi Gil <code><yossi.gil@gmail.com></code>
+ * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>
  * @since 2013/07/01
  * 
  */

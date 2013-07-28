@@ -11,7 +11,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 /**
  * a quickfix generator for spartanization refactoring
  * 
- * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @since 2013/07/01
  */
 public class QuickFixer implements IMarkerResolutionGenerator {

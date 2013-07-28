@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
 /**
  * @author Artium Nihamkin (original)
- * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code> (v2)
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * 
  * @since 2013/01/01
  */

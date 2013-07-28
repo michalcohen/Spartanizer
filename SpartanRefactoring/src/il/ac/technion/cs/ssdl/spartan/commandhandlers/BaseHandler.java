@@ -5,6 +5,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.Wizard;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -19,9 +20,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>: original
- *         version
- * @author Yossi Gil <code><yossi.gil@gmail.com></code>: major refactoring
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>:
+ *         original version
+ * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/11
  * @since 2013/07/01
  */
@@ -40,25 +41,24 @@ public abstract class BaseHandler extends AbstractHandler {
     this.refactoring = refactoring;
   }
   
-  @Override public Void execute(final ExecutionEvent e) {
-    return execute(HandlerUtil.getCurrentSelection(e));
+  @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
+    try {
+      return execute(HandlerUtil.getCurrentSelection(e));
+    } catch (InterruptedException x) {
+      throw new ExecutionException(x.getMessage());
+    }
   }
   
-  private Void execute(final ISelection s) {
+  private Void execute(final ISelection s) throws InterruptedException {
     return !(s instanceof ITextSelection) ? null : execute((ITextSelection) s);
   }
   
-  private Void execute(final ITextSelection textSelect) {
+  private Void execute(final ITextSelection textSelect) throws InterruptedException {
     return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
   }
   
-  private Void execute(final RefactoringWizardOpenOperation wop) {
-    try {
-      wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
-    } catch (final InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+  private Void execute(final RefactoringWizardOpenOperation wop) throws InterruptedException {
+    wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
     return null;
   }
   

@@ -24,7 +24,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * 
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
- * @author Boris van Sosin <code><boris.van.sosin@gmail.com></code>
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * 
  * @since 2013/07/01
  */
@@ -33,15 +33,19 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
    * the main method of the command handler, runs when the command is called.
    */
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
-    return execute(e, HandlerUtil.getActivePartIdChecked(e));
+    try {
+      return execute(e, HandlerUtil.getActivePartIdChecked(e));
+    } catch (CoreException x) {
+      throw new ExecutionException(x.getMessage());
+    }
   }
   
-  private static Void execute(final ExecutionEvent e, final String partId) throws ExecutionException {
+  private static Void execute(final ExecutionEvent e, final String partId) throws ExecutionException, CoreException {
     System.out.println(partId);
     return execute(HandlerUtil.getCurrentSelectionChecked(e));
   }
   
-  private static Void execute(final ISelection s) {
+  private static Void execute(final ISelection s) throws CoreException {
     if (s instanceof IStructuredSelection)
       for (final Object o : ((IStructuredSelection) s).toList()) {
         final IProject p = extractProject(o);
@@ -59,30 +63,25 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
     return null;
   }
   
-  private static void toggleNature(final IProject p) {
-    try {
-      final IProjectDescription description = p.getDescription();
-      final String[] natures = description.getNatureIds();
-      for (int i = 0; i < natures.length; ++i)
-        if (Nature.NATURE_ID.equals(natures[i])) {
-          // Remove the nature
-          description.setNatureIds(delete(natures, i));
-          p.setDescription(description, null);
-          p.accept(new IResourceVisitor() {
-            @Override public boolean visit(final IResource r) {
-              if (r instanceof IFile && r.getName().endsWith(".java"))
-                Builder.deleteMarkers((IFile) r);
-              return true;
-            }
-          });
-          return;
-        }
-      // Add the nature
-      description.setNatureIds(append(natures, Nature.NATURE_ID));
-      p.setDescription(description, null);
-    } catch (final CoreException e) {
-      // we assume that other builders handle cause compilation failure on
-      // CoreException
-    }
+  private static void toggleNature(final IProject p) throws CoreException {
+    final IProjectDescription description = p.getDescription();
+    final String[] natures = description.getNatureIds();
+    for (int i = 0; i < natures.length; ++i)
+      if (Nature.NATURE_ID.equals(natures[i])) {
+        // Remove the nature
+        description.setNatureIds(delete(natures, i));
+        p.setDescription(description, null);
+        p.accept(new IResourceVisitor() {
+          @Override public boolean visit(final IResource r) throws CoreException {
+            if (r instanceof IFile && r.getName().endsWith(".java"))
+              Builder.deleteMarkers((IFile) r);
+            return true;
+          }
+        });
+        return;
+      }
+    // Add the nature
+    description.setNatureIds(append(natures, Nature.NATURE_ID));
+    p.setDescription(description, null);
   }
 }
