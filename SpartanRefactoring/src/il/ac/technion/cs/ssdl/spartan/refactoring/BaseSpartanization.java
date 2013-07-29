@@ -381,7 +381,7 @@ public abstract class BaseSpartanization extends Refactoring {
     @Override public void run(final IMarker m) {
       try {
         runAsMarkerFix(new NullProgressMonitor(), m);
-      } catch (CoreException e) {
+      } catch (final CoreException e) {
         throw new RuntimeException(e);
       }
     }

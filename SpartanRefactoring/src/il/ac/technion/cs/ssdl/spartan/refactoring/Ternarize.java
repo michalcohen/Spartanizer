@@ -95,11 +95,11 @@ public class Ternarize extends BaseSpartanization {
     if (n == null)
       return null;
     ExpressionStatement expStmnt = null;
-    if (n.getNodeType() == ASTNode.BLOCK) {
-      final Block b = (Block) n;
-      if (b.statements().size() != 1)
+    final List<ASTNode> ss = statements(n);
+    if (ss != null) {
+      if (ss.size() != 1)
         return null;
-      final ASTNode s = (ASTNode) b.statements().get(0);
+      final ASTNode s = ss.get(0);
       if (s.getNodeType() != ASTNode.EXPRESSION_STATEMENT)
         return null;
       expStmnt = (ExpressionStatement) s;
@@ -110,6 +110,14 @@ public class Ternarize extends BaseSpartanization {
     if (expStmnt.getExpression().getNodeType() != ASTNode.ASSIGNMENT)
       return null;
     return (Assignment) expStmnt.getExpression();
+  }
+  
+  static List<ASTNode> statements(final ASTNode n) {
+    return n.getNodeType() != ASTNode.BLOCK ? null : statements((Block) n);
+  }
+  
+  static List<ASTNode> statements(final Block b) {
+    return b.statements();
   }
   
   /**
@@ -131,12 +139,11 @@ public class Ternarize extends BaseSpartanization {
   }
   
   private static ReturnStatement getReturnStatement(final Block b) {
-    if (b.statements().size() != 1)
-      return null;
-    final ASTNode s = (ASTNode) b.statements().get(0);
-    if (s.getNodeType() != ASTNode.RETURN_STATEMENT)
-      return null;
-    return (ReturnStatement) s;
+    return b.statements().size() != 1 ? null : getReturnStatement((ASTNode) b.statements().get(0));
+  }
+  
+  private static ReturnStatement getReturnStatement(final ASTNode s) {
+    return s.getNodeType() != ASTNode.RETURN_STATEMENT ? null : (ReturnStatement) s;
   }
   
   static ReturnStatement makeReturnStatement(final AST t, final ConditionalExpression e) {
@@ -282,18 +289,17 @@ public class Ternarize extends BaseSpartanization {
     return hasNull(retThen, retElse) ? null : new Range(node);
   }
   
-  static Range detectIfReturn(final IfStatement node) {
-    final ASTNode parent = node.getParent();
-    if (parent.getNodeType() == ASTNode.BLOCK) {
-      @SuppressWarnings("rawtypes")
-      final List stmts = ((Block) parent).statements();
-      final int ifIdx = stmts.indexOf(node);
-      if (stmts.size() > ifIdx + 1) {
-        final ReturnStatement nextReturn = getReturnStatement((Statement) stmts.get(ifIdx + 1));
-        final ReturnStatement thenSide = getReturnStatement(node.getThenStatement());
-        if (!hasNull(nextReturn, thenSide))
-          return new Range(node, nextReturn);
-      }
+  static Range detectIfReturn(final IfStatement n) {
+    final ASTNode parent = n.getParent();
+    final List<ASTNode> ss = statements(parent);
+    if (ss == null)
+      return null;
+    final int ifIdx = ss.indexOf(n);
+    if (ss.size() > ifIdx + 1) {
+      final ReturnStatement nextReturn = getReturnStatement((Statement) ss.get(ifIdx + 1));
+      final ReturnStatement thenSide = getReturnStatement(n.getThenStatement());
+      if (!hasNull(nextReturn, thenSide))
+        return new Range(n, nextReturn);
     }
     return null;
   }

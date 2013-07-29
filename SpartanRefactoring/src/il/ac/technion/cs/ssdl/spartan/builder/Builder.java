@@ -55,6 +55,7 @@ public class Builder extends IncrementalProjectBuilder {
   }
   
   private void build(final int kind) throws CoreException {
+    System.err.println("Spartan building");
     if (kind == FULL_BUILD)
       fullBuild();
     else {
@@ -64,6 +65,15 @@ public class Builder extends IncrementalProjectBuilder {
       else
         incrementalBuild(delta);
     }
+  }
+  
+  protected void fullBuild() throws CoreException {
+    getProject().accept(new IResourceVisitor() {
+      @Override public boolean visit(final IResource r) throws CoreException {
+        checkJava(r);
+        return true; // to continue visiting children.
+      }
+    });
   }
   
   static void checkJava(final IResource r) throws CoreException {
@@ -108,15 +118,6 @@ public class Builder extends IncrementalProjectBuilder {
     f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
     // we assume that other builder handle cause compilation failure on
     // CoreException
-  }
-  
-  protected void fullBuild() throws CoreException {
-    getProject().accept(new IResourceVisitor() {
-      @Override public boolean visit(final IResource r) throws CoreException {
-        checkJava(r);
-        return true; // to continue visiting children.
-      }
-    });
   }
   
   protected static void incrementalBuild(final IResourceDelta delta) throws CoreException {

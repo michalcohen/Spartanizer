@@ -35,7 +35,7 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     try {
       return execute(e, HandlerUtil.getActivePartIdChecked(e));
-    } catch (CoreException x) {
+    } catch (final CoreException x) {
       throw new ExecutionException(x.getMessage());
     }
   }
