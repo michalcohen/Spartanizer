@@ -32,7 +32,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class ShortestBranch extends BaseSpartanization {
+public class ShortestBranch extends Spartanization {
   /** Instantiates this class */
   public ShortestBranch() {
     super("Shortester first",

@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * 
  */
-public class ComparisonWithBoolean extends BaseSpartanization {
+public class ComparisonWithBoolean extends Spartanization {
   /** Instantiates this class */
   public ComparisonWithBoolean() {
     super("Redundant comparison", "Eliminate reduntant comparison to boolean constant");

@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  * @since 2013/01/01
  */
-public class Ternarize extends BaseSpartanization {
+public class Ternarize extends Spartanization {
   /** Instantiates this class */
   public Ternarize() {
     super("Ternarize", "Convert conditional to an expression using the ternary (?:) operator");

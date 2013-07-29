@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * 
  * @since 2013/01/01
  */
-public class ForwardDeclaration extends BaseSpartanization {
+public class ForwardDeclaration extends Spartanization {
   /** Instantiates this class */
   public ForwardDeclaration() {
     super("Forward declaration", "Forward declaration of a variable just prior to first use");

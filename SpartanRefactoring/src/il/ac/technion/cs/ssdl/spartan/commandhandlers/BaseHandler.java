@@ -1,6 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization;
+import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
 import il.ac.technion.cs.ssdl.spartan.refactoring.Wizard;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -27,9 +27,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @since 2013/07/01
  */
 public abstract class BaseHandler extends AbstractHandler {
-  private final BaseSpartanization refactoring;
+  private final Spartanization refactoring;
   
-  protected BaseSpartanization getRefactoring() {
+  protected Spartanization getRefactoring() {
     return refactoring;
   }
   
@@ -37,7 +37,7 @@ public abstract class BaseHandler extends AbstractHandler {
     return refactoring.getName();
   }
   
-  protected BaseHandler(final BaseSpartanization refactoring) {
+  protected BaseHandler(final Spartanization refactoring) {
     this.refactoring = refactoring;
   }
   
@@ -63,7 +63,7 @@ public abstract class BaseHandler extends AbstractHandler {
   }
   
   private RefactoringWizard getWizard(final ITextSelection ts, final ICompilationUnit cu) {
-    final BaseSpartanization $ = getRefactoring();
+    final Spartanization $ = getRefactoring();
     $.setSelection(ts);
     $.setCompilationUnit(cu);
     return new Wizard($);

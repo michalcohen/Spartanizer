@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.All;
-import il.ac.technion.cs.ssdl.spartan.refactoring.BaseSpartanization;
+import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -17,7 +17,7 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
 public class QuickFixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
-      final BaseSpartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
+      final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
       return new IMarkerResolution[] { s.getFix(), s.getFixWithPreview() };
     } catch (final CoreException _) {
       return new IMarkerResolution[] {};

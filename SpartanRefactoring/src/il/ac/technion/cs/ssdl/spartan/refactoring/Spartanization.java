@@ -48,7 +48,7 @@ import org.eclipse.ui.IMarkerResolution;
  * 
  * @since 2013/01/01
  */
-public abstract class BaseSpartanization extends Refactoring {
+public abstract class Spartanization extends Refactoring {
   private ITextSelection selection = null;
   private ICompilationUnit compilationUnit = null;
   private IMarker marker = null;
@@ -64,7 +64,7 @@ public abstract class BaseSpartanization extends Refactoring {
    * @param message
    *          the message to display in the quickfix
    */
-  protected BaseSpartanization(final String name, final String message) {
+  protected Spartanization(final String name, final String message) {
     this.name = name;
     this.message = message;
   }
@@ -375,7 +375,7 @@ public abstract class BaseSpartanization extends Refactoring {
    */
   public class SpartanizationResolution implements IMarkerResolution {
     @Override public String getLabel() {
-      return BaseSpartanization.this.toString() + ": Do it!";
+      return Spartanization.this.toString() + ": Do it!";
     }
     
     @Override public void run(final IMarker m) {
@@ -394,14 +394,14 @@ public abstract class BaseSpartanization extends Refactoring {
    */
   public class SpartanizationResolutionWithPreview implements IMarkerResolution {
     @Override public String getLabel() {
-      return BaseSpartanization.this + ": Show me a preview first";
+      return Spartanization.this + ": Show me a preview first";
     }
     
     @Override public void run(final IMarker m) {
       setMarker(m);
       try {
-        new RefactoringWizardOpenOperation(new Wizard(BaseSpartanization.this)).run(Display.getCurrent().getActiveShell(),
-            "Spartan refactoring: " + BaseSpartanization.this);
+        new RefactoringWizardOpenOperation(new Wizard(Spartanization.this)).run(Display.getCurrent().getActiveShell(),
+            "Spartan refactoring: " + Spartanization.this);
       } catch (final InterruptedException e) {
         e.printStackTrace();
       }
