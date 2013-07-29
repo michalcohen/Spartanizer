@@ -313,7 +313,7 @@ public class Ternarize extends BaseSpartanization {
       if (ifIdx >= 1) {
         final Assignment asgnThen = getAssignment(node.getThenStatement());
         final Assignment asgnElse = getAssignment(node.getElseStatement());
-        if (hasNull(asgnThen, asgnElse))
+        if (asgnThen == null || asgnElse != null)
           return null;
         final ASTNode possibleAssignment = getAssignmentOrDeclaration((Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
         if (possibleAssignment != null && !dependsOn(node.getExpression(), asgnThen.getLeftHandSide())
@@ -362,7 +362,7 @@ public class Ternarize extends BaseSpartanization {
   }
   
   private static VariableDeclarationFragment getDeclarationFragment(final VariableDeclarationStatement d, final Expression e) {
-    return e.getNodeType() == ASTNode.SIMPLE_NAME ? null : VariableDeclarationFragment(d, (SimpleName) e);
+    return e.getNodeType() != ASTNode.SIMPLE_NAME ? null : VariableDeclarationFragment(d, (SimpleName) e);
   }
   
   private static VariableDeclarationFragment VariableDeclarationFragment(final VariableDeclarationStatement d, final SimpleName name) {
