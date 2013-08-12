@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="SpartanRefactoringFeature"
-      label="SpartanRefactoringFeature"
+      label="Spartanization Plugin"
       version="1.0.0.qualifier"
       provider-name="ssdl.cs.tachnion.ac.il"
       plugin="il.ac.technion.cs.ssdl.spartan.refactoring">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      A plugin which automatically finds Spartanization opportunities in Java code and offers to perform them.
    </description>
 
    <copyright url="http://www.example.com/copyright">
