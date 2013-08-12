@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/SpartanRefactoringFeature_1.0.0.201308121507.jar" id="SpartanRefactoringFeature" version="1.0.0.201308121507">
+   <feature url="features/SpartanRefactoringFeature_1.0.0.201308121511.jar" id="SpartanRefactoringFeature" version="1.0.0.201308121511">
       <category name="il.ac.technion.cs.ssdl.spartan.FeatureCategory"/>
    </feature>
    <category-def name="il.ac.technion.cs.ssdl.spartan.FeatureCategory" label="Spartanization"/>
