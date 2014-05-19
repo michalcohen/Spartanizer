@@ -1,11 +1,14 @@
-package p;
+package moshe;
 
-public class BlaHD {
-	public void mdm(String mode){
-	String res = mode;
-	if (mode.equals("TEST-MODE")){
-		res = "Crash";
-	}else{
-		
+public class bb{
+	public int a(){
+		boolean t = true;
+		if (t){
+			return 5;
+		}else{
+			int moshe = 6;
+			moshe = 3;
+			return 2;
+		}
 	}
 }

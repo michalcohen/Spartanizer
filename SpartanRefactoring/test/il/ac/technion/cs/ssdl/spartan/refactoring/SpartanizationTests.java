@@ -19,6 +19,7 @@ import org.junit.Test;
 /**
  * @author Boris van Sosin (original)
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code>: test cases 13-17 (2014/05/19)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code>: test cases 13-17 (2014/05/19)
  * @since 2014/05/19
  */
 @SuppressWarnings({ "javadoc", "static-method" })
@@ -90,12 +91,12 @@ public class SpartanizationTests {
   
   @Test public void testConvertToTernary14() throws IOException, IllegalArgumentException, MalformedTreeException,
   BadLocationException {
-	runTestCase(new Ternarize(), "ConvertToTernary14");
+	runTestCaseNoChange(new Ternarize(), "ConvertToTernary14");
   }
   
   @Test public void testConvertToTernary15() throws IOException, IllegalArgumentException, MalformedTreeException,
   BadLocationException {
-	runTestCase(new Ternarize(), "ConvertToTernary15");
+	  runTestCaseNoChange(new Ternarize(), "ConvertToTernary15");
   }
   
   @Test public void testConvertToTernary16() throws IOException, IllegalArgumentException, MalformedTreeException,
