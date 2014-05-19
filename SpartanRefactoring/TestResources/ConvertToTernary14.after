@@ -1,0 +1,11 @@
+package p;
+
+public class Blah {
+	public int mdm(String mode){
+		String res = mode, foo = "Not in test mode";
+		if (res.equals("TEST-MODE")==true)
+			foo = "test-bob";
+		}
+		System.out.println(foo);
+	}
+}

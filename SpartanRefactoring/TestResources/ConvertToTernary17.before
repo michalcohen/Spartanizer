@@ -1,0 +1,11 @@
+package p;
+
+public class BlaHD {
+	public void mdm(String mode){
+	String res = mode;
+	if (mode.equals("TEST-MODE")){
+		res = "Crash";
+	}else{
+		
+	}
+}
