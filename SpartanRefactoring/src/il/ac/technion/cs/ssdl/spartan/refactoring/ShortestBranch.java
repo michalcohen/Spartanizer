@@ -121,7 +121,7 @@ public class ShortestBranch extends Spartanization {
   }
   
   private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression e) {
-    final Operator o = invert(e.getOperator());
+    final Operator o = negate(e.getOperator());
     if (o == null)
       return null;
     final InfixExpression $ = ast.newInfixExpression();
@@ -131,7 +131,7 @@ public class ShortestBranch extends Spartanization {
     return $;
   }
   
-  private static Operator invert(final Operator o) {
+  private static Operator negate(final Operator o) {
     if (o.equals(EQUALS))
       return NOT_EQUALS;
     if (o.equals(NOT_EQUALS))
