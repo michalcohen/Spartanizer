@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 public enum OpCode {
-	PLUS, GT {
+	PLUS, TIMES, GT {
 		@Override OpCode invert() {
 			return LT;
 		}
@@ -10,7 +10,7 @@ public enum OpCode {
 		@Override OpCode invert() {
 			return GT;
 		}
-	}, TIMES;
+	};
 	OpCode invert() {
 		return this;
 	}
