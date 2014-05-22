@@ -2,8 +2,7 @@ package p;
 
 public class Blah {
 	public void yada(final String s) {
-		String res;
-		res = s.equals("yada")==true ? s + " blah" : s;
+		String res = (s.equals("yada")==true ? s + " blah" : s);
 		System.out.println(res);
 	}
 }

@@ -306,9 +306,11 @@ public class SpartanizationTests {
     final ASTParser p = Utils.makeParser(text);
     final CompilationUnit cu = (CompilationUnit) p.createAST(null);
     assertEquals(0, s.findOpportunities(cu).size());
-    final Document d = new Document(text);
-    s.createRewrite(cu, null).rewriteAST(d, null).apply(d);
-    assertEquals(readFile("TestResources" + File.separator + testCaseName + ".before"), d.get());
+    if (s.findOpportunities(cu).size() != 0){
+    	final Document d = new Document(text);
+        s.createRewrite(cu, null).rewriteAST(d, null).apply(d);
+        assertEquals(readFile("TestResources" + File.separator + testCaseName + ".before"), d.get());
+    }
   }
   
   private static String readFile(final String filename) throws IOException {

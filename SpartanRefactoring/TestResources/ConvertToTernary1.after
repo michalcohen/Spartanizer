@@ -3,7 +3,7 @@ package p;
 public class Blah {
 	public void yada(final String s) {
 		String res = s;
-		res = s.equals("yada")==true ? s + " blah" : "spam";
+		res = (s.equals("yada")==true ? s + " blah" : "spam");
 		System.out.println(res);
 	}
 }

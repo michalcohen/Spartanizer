@@ -3,7 +3,7 @@ package p;
 public class Blah {
 	public int yada4(final String s) {
 		int res = 0;
-		res += s.equals("yada") ? 6 : 9;
+		res += (s.equals("yada") ? 6 : 9);
 		//was:
 		/*
 		if (s.equals("yada"))

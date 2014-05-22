@@ -2,6 +2,6 @@ package p;
 
 public class Blah {
 	public int yada2(final String s) {
-		return s.equals("yada") ? 6 : 9;
+		return (s.equals("yada") ? 6 : 9);
 	}
 }
