@@ -1,0 +1,14 @@
+package p;
+
+public class Blah {
+	public int r(){
+		return 2;
+	}
+	public void yada(final String s) {
+		int a, b=0;
+		if (b==3){
+			a+=2+r();
+		}
+		a-=6;
+	}
+}

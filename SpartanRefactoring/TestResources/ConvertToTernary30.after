@@ -1,0 +1,8 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		int a=0, b=0;
+		a = (b==3 ? a+4 : 5);
+	}
+}

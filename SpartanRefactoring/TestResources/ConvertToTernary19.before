@@ -1,0 +1,10 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		if (s.equals("yada"))
+			System.out.close();
+		else
+			System.out.close();
+	}
+}

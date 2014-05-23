@@ -1,0 +1,7 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		boolean c = !(s.equals("yada"));
+	}
+}

@@ -1,0 +1,11 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		if (s.equals("yada")){
+			System.out.println("g");
+		} else {
+			System.out.append("k");
+		}
+	}
+}

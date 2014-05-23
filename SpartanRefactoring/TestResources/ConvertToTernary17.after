@@ -3,9 +3,9 @@ package moshe;
 public class bb{
 	public int a(){
 		boolean t = true;
-		if (t){
+		if (t) {
 			return 5;
-		}else{
+		} else {
 			int moshe = 6;
 			moshe = 3;
 			return 2;

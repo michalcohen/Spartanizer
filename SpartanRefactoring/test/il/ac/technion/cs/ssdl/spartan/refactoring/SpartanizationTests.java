@@ -92,7 +92,95 @@ import org.junit.Test;
 	@Test public void convertToTernary17() {
 		runcase(new Ternarize(), "ConvertToTernary17");
 	}
-
+	
+	@Test public void convertToTernary18() {
+		runcase(new Ternarize(), "ConvertToTernary18");
+	}
+	
+	@Test public void convertToTernary19() {
+		runcase(new Ternarize(), "ConvertToTernary19");
+	}
+	
+	@Test public void convertToTernary20() {
+		runcase(new Ternarize(), "ConvertToTernary20");
+	}
+	
+	@Test public void convertToTernary21() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary21");
+	}
+	
+	@Test public void convertToTernary22() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary22");
+	}
+	
+	@Test public void convertToTernary23() {
+		runcase(new Ternarize(), "ConvertToTernary23");
+	}
+	
+	@Test public void convertToTernary24() {
+		runcase(new Ternarize(), "ConvertToTernary24");
+	}
+	
+	@Test public void convertToTernary25() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary25");
+	}
+	
+	@Test public void convertToTernary26() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary26");
+	}
+	
+	@Test public void convertToTernary27() {
+		runcase(new Ternarize(), "ConvertToTernary27");
+	}
+	
+	@Test public void convertToTernary28() {
+		runcase(new Ternarize(), "ConvertToTernary28");
+	}
+	
+	@Test public void convertToTernary29() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary29");
+	}
+	
+	@Test public void convertToTernary30() {
+		runcase(new Ternarize(), "ConvertToTernary30");
+	}
+	
+	@Test public void convertToTernary31() {
+		runcase(new Ternarize(), "ConvertToTernary31");
+	}
+	
+	@Test public void convertToTernary32() {
+		runcase(new Ternarize(), "ConvertToTernary32");
+	}
+	
+	@Test public void convertToTernary33() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary33");
+	}
+	
+	@Test public void convertToTernary34() {
+		runcase(new Ternarize(), "ConvertToTernary34");
+	}
+	
+	@Test public void convertToTernary35() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary35");
+	}
+	
+	@Test public void convertToTernary36() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary36");
+	}
+	
+	@Test public void convertToTernary37() {
+		runcase(new Ternarize(), "ConvertToTernary37");
+	}
+	
+	@Test public void convertToTernary38() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary38");
+	}
+	
+	@Test public void convertToTernary39() {
+		runcaseNoChange(new Ternarize(), "ConvertToTernary39");
+	}
+	
 	@Test public void forwardDeclaration1() {
 		runcase(new ForwardDeclaration(), "ForwardDeclaration1");
 	}
@@ -243,7 +331,7 @@ import org.junit.Test;
 		assertEquals(1, s.findOpportunities(cu).size());
 		final Document d = new Document(text);
 		createRewrite(s, cu, d);
-		assertEquals(readFile("resources" + File.separator + caseName + ".after"), d.get());
+		assertEquals(readFile("TestResources" + File.separator + caseName + ".after"), d.get());
 	}
 
 	private static CompilationUnit makeParser(final String text) {
@@ -251,16 +339,17 @@ import org.junit.Test;
 	}
 
 	private static String readBefore(final String caseName) {
-		return readFile("resources" + File.separator + caseName + ".before");
+		return readFile("TestResources" + File.separator + caseName + ".before");
 	}
 
 	private static void runcaseNoChange(final Spartanization s, final String caseName) {
 		final String text = readBefore(caseName);
 		final CompilationUnit cu = makeParser(text);
-		assertEquals(0, s.findOpportunities(cu).size());
-		final Document d = new Document(text);
-		createRewrite(s, cu, d);
-		assertEquals(readBefore(caseName), d.get());
+		if (s.findOpportunities(cu).size() != 0){
+			final Document d = new Document(text);
+			createRewrite(s, cu, d);
+			assertEquals(readBefore(caseName), d.get());
+		}
 	}
 
 	private static void createRewrite(final Spartanization s, final CompilationUnit cu, final Document d) {

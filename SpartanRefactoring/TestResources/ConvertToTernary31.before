@@ -1,0 +1,12 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		int a=0;
+		a=5;
+		if (a==3){
+			a=a+4;
+		}
+		a=7;
+	}
+}
