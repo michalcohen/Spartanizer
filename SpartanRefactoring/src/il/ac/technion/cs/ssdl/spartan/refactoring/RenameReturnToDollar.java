@@ -37,7 +37,7 @@ public class RenameReturnToDollar extends Spartanization {
 	@Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
-				final VariableDeclarationFragment returnVar = getOnlyReturnVariable(n);
+				final VariableDeclarationFragment returnVar = selectReturnVariable(n);
 				if (returnVar != null) {
 					if (!inRange(m, n))
 						return true;
@@ -98,50 +98,70 @@ public class RenameReturnToDollar extends Spartanization {
 		return $;
 	}
 
-	static VariableDeclarationFragment getOnlyReturnVariable(final MethodDeclaration n) {
-		final List<VariableDeclarationFragment> $ = getCandidates(n);
-		// check if we already have $
-		for (final VariableDeclaration d : $)
-			if (d.getName().getIdentifier().equals("$"))
-				return null;
-		final List<ReturnStatement> returnStatements = getReturnStatements(n);
-		int usesOfLastCondidate = 0;
-		for (final Iterator<VariableDeclarationFragment> iter = $.iterator(); iter.hasNext();) {
-			final VariableDeclarationFragment currDecl = iter.next();
-			for (final ReturnStatement returnStmt : returnStatements) {
-				// this demands explanation: returnStmt.getExpression() only if the
-				// statement if "return;"
-				// if such statement exists, then the current method is void, and there
-				// can be no return variable.
-				// in this case we can return null immediately, without checking more
-				// return statements
-				if (returnStmt.getExpression() == null)
-					return null;
-				if (Arrays.binarySearch(literals, returnStmt.getExpression().getNodeType()) >= 0)
-					continue;
-				final int nUses = Occurrences.BOTH_LEXICAL.of(currDecl.getName()).in(returnStmt).size();
-				if (nUses == 0) {
-					iter.remove();
-					break;
-				}
-				usesOfLastCondidate = nUses;
-			}
-		}
-		return $.size() == 1 && returnStatements.size() > 0 && usesOfLastCondidate > 0 ? $.get(0) : null;
+	static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
+		final List<VariableDeclarationFragment> vs = getCandidates(m);
+		if (vs.isEmpty() || hasDollar(vs))
+			return null;
+		final List<ReturnStatement> rs = prune(getReturnStatements(m));
+		if (rs == null)
+			return null;
+		return bestCandidate(vs, rs);
 	}
 
-	private static final int[] literals = sort(new int[] { //
-	ASTNode.NULL_LITERAL, //
-	    ASTNode.CHARACTER_LITERAL, //
-	    ASTNode.NUMBER_LITERAL, //
-	    ASTNode.STRING_LITERAL, //
-	    ASTNode.BOOLEAN_LITERAL, //
+	private static boolean hasDollar(final List<VariableDeclarationFragment> vs) {
+		for (final VariableDeclaration v : vs)
+			if (v.getName().getIdentifier().equals("$"))
+				return true;
+		return false;
+	}
+
+	private static List<ReturnStatement> prune(final List<ReturnStatement> $) {
+		if ($ == null || $.isEmpty())
+			return null;
+		for (final Iterator<ReturnStatement> i = $.iterator(); i.hasNext();) {
+			final ReturnStatement r = i.next();
+			// Is enclosing method<code><b>void</b></code>?
+			if (r.getExpression() == null)
+				return null;
+			if (isLiteral(r))
+				i.remove();
+		}
+		return $;
+	}
+
+	private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
+			final List<ReturnStatement> rs) {
+		VariableDeclarationFragment $ = null;
+		int maxOccurrences = 0;
+		for (final VariableDeclarationFragment v : vs) {
+			int occurrences = 0;
+			for (final ReturnStatement r : rs)
+				occurrences += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r).size();
+			if (occurrences > maxOccurrences) {
+				maxOccurrences = occurrences;
+				$ = v;
+			}
+		}
+		return $;
+	}
+
+	private static boolean isLiteral(final ReturnStatement r) {
+		return Arrays.binarySearch(literals, r.getExpression().getNodeType()) >= 0;
+	}
+
+	private static final int[] literals = sort(new int[] {
+			//
+			ASTNode.NULL_LITERAL, //
+			ASTNode.CHARACTER_LITERAL, //
+			ASTNode.NUMBER_LITERAL, //
+			ASTNode.STRING_LITERAL, //
+			ASTNode.BOOLEAN_LITERAL, //
 	});
 
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
-				final VariableDeclarationFragment v = getOnlyReturnVariable(n);
+				final VariableDeclarationFragment v = selectReturnVariable(n);
 				if (v != null)
 					opportunities.add(new Range(v));
 				return true;
