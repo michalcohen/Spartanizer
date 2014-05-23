@@ -12,8 +12,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.Ternarize;
  * @since 2013/07/01
  */
 public class TernarizeHandler extends BaseHandler {
-  /** Instantiates this class */
-  public TernarizeHandler() {
-    super(new Ternarize());
-  }
+	/** Instantiates this class */
+	public TernarizeHandler() {
+		super(new Ternarize());
+	}
 }

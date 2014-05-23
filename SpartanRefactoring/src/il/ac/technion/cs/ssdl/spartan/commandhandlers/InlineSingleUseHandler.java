@@ -11,8 +11,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.InlineSingleUse;
  * @since 2013/07/01
  */
 public class InlineSingleUseHandler extends BaseHandler {
-  /** Instantiates this class */
-  public InlineSingleUseHandler() {
-    super(new InlineSingleUse());
-  }
+	/** Instantiates this class */
+	public InlineSingleUseHandler() {
+		super(new InlineSingleUse());
+	}
 }

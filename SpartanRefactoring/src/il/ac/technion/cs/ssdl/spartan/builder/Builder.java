@@ -44,13 +44,10 @@ public class Builder extends IncrementalProjectBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	@Override
-	protected IProject[] build(final int kind, @SuppressWarnings({ "unused",
-			"rawtypes" }) final Map args, final IProgressMonitor m)
-			throws CoreException {
+	@Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
+	    final IProgressMonitor m) throws CoreException {
 		if (m != null)
-			m.beginTask("Checking for spartanization opportunities",
-					IProgressMonitor.UNKNOWN);
+			m.beginTask("Checking for spartanization opportunities", IProgressMonitor.UNKNOWN);
 		build(kind);
 		if (m != null)
 			m.done();
@@ -72,8 +69,7 @@ public class Builder extends IncrementalProjectBuilder {
 
 	protected void fullBuild() throws CoreException {
 		getProject().accept(new IResourceVisitor() {
-			@Override
-			public boolean visit(final IResource r) throws CoreException {
+			@Override public boolean visit(final IResource r) throws CoreException {
 				addMarkers(r);
 				return true; // to continue visiting children.
 			}
@@ -87,68 +83,56 @@ public class Builder extends IncrementalProjectBuilder {
 
 	private static void addMarkers(final IFile f) throws CoreException {
 		deleteMarkers(f);
-		addMarkers(
-				f,
-				(CompilationUnit) Utils.makeParser(
-						JavaCore.createCompilationUnitFrom(f)).createAST(null));
+		addMarkers(f, (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null));
 	}
 
-	private static void addMarkers(final IFile f, final CompilationUnit cu)
-			throws CoreException {
+	private static void addMarkers(final IFile f, final CompilationUnit cu) throws CoreException {
 		for (final Spartanization s : All.all())
 			for (final Range r : s.findOpportunities(cu))
 				if (r != null)
 					addMarker(f, s, r);
 	}
 
-	private static void addMarker(final IFile f, final Spartanization s,
-			final Range r) throws CoreException {
+	private static void addMarker(final IFile f, final Spartanization s, final Range r) throws CoreException {
 		addMarker(f.createMarker(MARKER_TYPE), s, r);
 
 	}
 
-	private static void addMarker(final IMarker m, final Spartanization s,
-			final Range r) throws CoreException {
+	private static void addMarker(final IMarker m, final Spartanization s, final Range r) throws CoreException {
 		m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 		addMarker(m, s);
 		addMarker(m, r);
 	}
 
-	private static void addMarker(final IMarker m, final Range r)
-			throws CoreException {
+	private static void addMarker(final IMarker m, final Range r) throws CoreException {
 		m.setAttribute(IMarker.CHAR_START, r.from);
 		m.setAttribute(IMarker.CHAR_END, r.to);
 	}
 
-	private static void addMarker(final IMarker m, final Spartanization s)
-			throws CoreException {
+	private static void addMarker(final IMarker m, final Spartanization s) throws CoreException {
 		m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
-		m.setAttribute(IMarker.MESSAGE,
-				"Spartanization suggestion: " + s.getMessage());
+		m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + s.getMessage());
 	}
 
 	/**
 	 * deletes all spartanization suggestion markers
 	 * 
 	 * @param f
-	 *            the file from which to delete the markers
+	 *          the file from which to delete the markers
 	 * @throws CoreException
-	 *             if this method fails. Reasons include: This resource does not
-	 *             exist. This resource is a project that is not open. Resource
-	 *             changes are disallowed during certain types of resource
-	 *             change event notification. See {@link IResourceChangeEvent}
-	 *             for more details.
+	 *           if this method fails. Reasons include: This resource does not
+	 *           exist. This resource is a project that is not open. Resource
+	 *           changes are disallowed during certain types of resource change
+	 *           event notification. See {@link IResourceChangeEvent} for more
+	 *           details.
 	 */
 	public static void deleteMarkers(final IFile f) throws CoreException {
 		f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
 	}
 
-	protected static void incrementalBuild(final IResourceDelta d)
-			throws CoreException {
+	protected static void incrementalBuild(final IResourceDelta d) throws CoreException {
 		d.accept(new IResourceDeltaVisitor() {
-			@Override
-			public boolean visit(final IResourceDelta internalDelta)
-					throws CoreException {
+			@Override public boolean visit(final IResourceDelta internalDelta) throws CoreException {
 				switch (internalDelta.getKind()) {
 				case IResourceDelta.ADDED:
 				case IResourceDelta.CHANGED:

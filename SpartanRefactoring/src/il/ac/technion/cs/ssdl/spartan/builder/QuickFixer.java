@@ -15,12 +15,12 @@ import org.eclipse.ui.IMarkerResolutionGenerator;
  * @since 2013/07/01
  */
 public class QuickFixer implements IMarkerResolutionGenerator {
-  @Override public IMarkerResolution[] getResolutions(final IMarker m) {
-    try {
-      final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
-      return new IMarkerResolution[] { s.getFix(), s.getFixWithPreview() };
-    } catch (final CoreException _) {
-      return new IMarkerResolution[] {};
-    }
-  }
+	@Override public IMarkerResolution[] getResolutions(final IMarker m) {
+		try {
+			final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
+			return new IMarkerResolution[] { s.getFix(), s.getFixWithPreview() };
+		} catch (final CoreException _) {
+			return new IMarkerResolution[] {};
+		}
+	}
 }

@@ -9,35 +9,35 @@ import java.util.Map;
  * @since 2013/07/01
  */
 public enum All {
-  ;
-  private static final Map<String, Spartanization> all = new HashMap<String, Spartanization>();
-  
-  private static void put(final Spartanization s) {
-    all.put(s.toString(), s);
-  }
-  
-  static {
-    put(new ComparisonWithBoolean());
-    put(new Ternarize());
-    put(new ShortestBranch());
-    put(new InlineSingleUse());
-    put(new ForwardDeclaration());
-    put(new RenameReturnToDollar());
-  }
-  
-  /**
-   * @param name
-   *          the name of the spartanization
-   * @return an instance of the spartanization
-   */
-  public static Spartanization get(final String name) {
-    return all.get(name);
-  }
-  
-  /**
-   * @return all the registered spartanization refactoring objects
-   */
-  public static Iterable<Spartanization> all() {
-    return all.values();
-  }
+	;
+	private static final Map<String, Spartanization> all = new HashMap<String, Spartanization>();
+
+	private static void put(final Spartanization s) {
+		all.put(s.toString(), s);
+	}
+
+	static {
+		put(new ComparisonWithBoolean());
+		put(new Ternarize());
+		put(new ShortestBranch());
+		put(new InlineSingleUse());
+		put(new ForwardDeclaration());
+		put(new RenameReturnToDollar());
+	}
+
+	/**
+	 * @param name
+	 *          the name of the spartanization
+	 * @return an instance of the spartanization
+	 */
+	public static Spartanization get(final String name) {
+		return all.get(name);
+	}
+
+	/**
+	 * @return all the registered spartanization refactoring objects
+	 */
+	public static Iterable<Spartanization> all() {
+		return all.values();
+	}
 }
