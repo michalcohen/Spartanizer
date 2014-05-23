@@ -6,6 +6,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ShortestBranch extends Spartanization {
 	/** Instantiates this class */
 	public ShortestBranch() {
 		super("Shortester first",
-		    "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
+				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 
 	/**
@@ -87,12 +88,8 @@ public class ShortestBranch extends Spartanization {
 				return $;
 			}
 
-			private ConditionalExpression transpose(final ConditionalExpression n) {
-				final ConditionalExpression $ = t.newConditionalExpression();
-				$.setExpression(negate(t, r, n.getExpression()));
-				$.setThenExpression((Expression) r.createMoveTarget(n.getElseExpression()));
-				$.setElseExpression((Expression) r.createMoveTarget(n.getThenExpression()));
-				return $;
+			private ParenthesizedExpression transpose(final ConditionalExpression n) {
+				return n!=null ? Funcs.makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression()) : null;
 			}
 		});
 	}
@@ -112,26 +109,12 @@ public class ShortestBranch extends Spartanization {
 			final Expression $ = tryNegatePrefix(r, (PrefixExpression) e);
 			return $ == null ? null : $;
 		}
-		final PrefixExpression $ = t.newPrefixExpression();
-		$.setOperand(parenthesize(t, r, e));
-		$.setOperator(PrefixExpression.Operator.NOT);
-		return $;
-	}
-	private static ParenthesizedExpression parenthesize(final AST t, final ASTRewrite r, final Expression e) {
-		final ParenthesizedExpression $ = t.newParenthesizedExpression();
-		$.setExpression((Expression) r.createCopyTarget(e));
-		return $;
+		return Funcs.makePrefixExpression(t, r, Funcs.makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
 	}
 
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression e) {
 		final Operator o = negate(e.getOperator());
-		if (o == null)
-			return null;
-		final InfixExpression $ = ast.newInfixExpression();
-		$.setRightOperand((Expression) rewrite.createCopyTarget(e.getRightOperand()));
-		$.setLeftOperand((Expression) rewrite.createCopyTarget(e.getLeftOperand()));
-		$.setOperator(o);
-		return $;
+		return o==null ? null : Funcs.makeInfixExpression(ast, rewrite, o, e.getLeftOperand(), e.getRightOperand());
 	}
 
 	private static Operator negate(final Operator o) {

@@ -1,0 +1,80 @@
+package il.ac.technion.cs.ssdl.spartan.utils;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+
+/**
+ * @author Tomer
+ *
+ *	A visitor to replace the proper expression for a conditional expression
+ */
+public class replacerVisitor extends ASTVisitor{
+	  ASTRewrite r = null;
+	  Expression thenExp = null;
+	  ParenthesizedExpression condExp = null;
+	  Expression thenMethod = null;
+	  /**
+	 * @param t  is just in case the ExpressionStatement is a method invocation and it is used
+	 * 			 to prevent the replacer from replacing the entire ExpressionStatement because these might
+	 * 			 be method invocation in the arguments the needs to be replaced by a conditional expression
+	 * @param re  	ASTRewrite in order to place the proper nodes
+	 * @param cExp  	the conditional expression to replace the proper node with
+	 * @param tExp 	 	is the expression to be replaced by the conditional expression
+	 * 
+	 * Instantiates this class.
+	 * 
+	 */
+	public replacerVisitor(Expression t ,ASTRewrite re, final ParenthesizedExpression cExp, final Expression tExp){
+		  super();
+		  condExp = cExp;
+		  thenExp = tExp;
+		  r = re;
+		  thenMethod = t;
+	  }
+	  @Override public void endVisit(final StringLiteral s){
+		  ASTNode temp = s;
+		  while (!temp.equals(thenExp)){
+			  temp=temp.getParent();
+		  }
+		  r.replace(temp, condExp, null);
+	  }
+	  @Override public void endVisit(final NumberLiteral n){
+		  ASTNode temp = n;
+		  while (!temp.equals(thenExp)){
+			  temp=temp.getParent();
+		  }
+		  r.replace(temp, condExp, null);
+	  }
+	  @Override public void endVisit(final BooleanLiteral bool){
+		  ASTNode temp = bool;
+		  while (!temp.equals(thenExp)){
+			  temp=temp.getParent();
+		  }
+		  r.replace(temp, condExp, null);
+	  }
+	  @Override public void endVisit(final InfixExpression ie){
+		  ASTNode temp = ie;
+		  while (!temp.equals(thenExp)){
+			  temp=temp.getParent();
+		  }
+		  r.replace(temp, condExp, null);
+	  }
+	  @Override public boolean visit(final MethodInvocation mi){
+		  if (thenMethod.equals(mi)){
+			  return true;
+		  }
+		  ASTNode temp = mi;
+		  while (!temp.equals(thenExp)){
+			  temp=temp.getParent();
+		  }
+		  r.replace(temp, condExp, null);
+		  return false;
+	  }
+  }
