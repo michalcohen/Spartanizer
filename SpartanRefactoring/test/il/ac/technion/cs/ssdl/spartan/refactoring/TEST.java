@@ -234,13 +234,23 @@ public class TEST {
 		@Parameter(value = 2) public File fIn;
 		/**
 		 * Runs a parameterized test case, based on the instance variables of this
-		 * instance
+		 * instance, and check that no opportunities are found.
 		 */
-		@Test public void go() {
+		@Test public void checkNoOpportunities() {
 			final CompilationUnit cu = makeAST(fIn);
 			assertNotNull("Cannot instantiate Spartanization object", spartanization);
 			assertEquals(0, spartanization.findOpportunities(cu).size());
-				assertEquals(readFile(fIn), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
+			assertEquals(readFile(fIn), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
+		}
+		/**
+		 * Runs a parameterized test case, based on the instance variables of this
+		 * instance, and check that no matter what, even if the number of
+		 * opportunities is zero, the input does not change.
+		 */
+		@Test public void checkNoChange() {
+			final CompilationUnit cu = makeAST(fIn);
+			assertNotNull("Cannot instantiate Spartanization object", spartanization);
+			assertEquals(readFile(fIn), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
 		}
 		/**
 		 * @return a collection of cases, where each cases is an array of three
