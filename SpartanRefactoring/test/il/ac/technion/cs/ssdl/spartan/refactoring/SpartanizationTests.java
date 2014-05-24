@@ -254,75 +254,75 @@ import org.junit.Test;
 	}
 
 	@Test public void shortestBranchFirst1() {
-		runcase(new ShortestBranch(), "ShortestBranchFirst1");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst1");
 	}
 
 	@Test public void shortestBranchFirst2()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst2");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst2");
 	}
 
 	@Test public void shortestBranchFirst3()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst3");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst3");
 	}
 
 	@Test public void shortestBranchFirst4()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst4");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst4");
 	}
 
 	@Test public void shortestBranchFirst5()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst5");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst5");
 	}
 
 	@Test public void shortestBranchFirst6()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst6");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst6");
 	}
 
 	@Test public void shortestBranchFirst7()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst7");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst7");
 	}
 
 	@Test public void shortestBranchFirst8()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst8");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst8");
 	}
 
 	@Test public void shortestBranchFirst9()  {
-		runcase(new ShortestBranch(), "ShortestBranchFirst9");
+		runcase(new ShortestBranchFirst(), "ShortestBranchFirst9");
 	}
 
 	@Test public void changeReturnVariableToDollar1()  {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar1");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar1");
 	}
 
 	@Test public void changeReturnVariableToDollar2()  {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar2");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar2");
 	}
 
 	@Test public void changeReturnVariableToDollar3()  {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar3");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar3");
 	}
 
 	@Test public void changeReturnVariableToDollar4()  {
-		runcaseNoChange(new RenameReturnToDollar(), "ChangeReturnVarToDollar4");
+		runcaseNoChange(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar4");
 	}
 
 	@Test public void changeReturnVariableToDollar5() {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar5");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar5");
 	}
 
 	@Test public void changeReturnVariableToDollar6() {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar6");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar6");
 	}
 
 	@Test public void changeReturnVariableToDollar7() {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar7");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar7");
 	}
 
 	@Test public void changeReturnVariableToDollar8()  {
-		runcase(new RenameReturnToDollar(), "ChangeReturnVarToDollar8");
+		runcase(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar8");
 	}
 
 	@Test public void changeReturnVariableToDollar9() {
-		runcaseNoChange(new RenameReturnToDollar(), "ChangeReturnVarToDollar9");
+		runcaseNoChange(new RenameReturnVariableToDollar(), "ChangeReturnVarToDollar9");
 	}
 
 	private static void runcase(final Spartanization s, final String caseName) {

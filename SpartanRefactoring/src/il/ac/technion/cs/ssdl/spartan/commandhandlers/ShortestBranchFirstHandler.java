@@ -1,9 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranch;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranchFirst;
 
 /**
- * a handler for {@link ShortestBranch}
+ * a handler for {@link ShortestBranchFirst}
  * 
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code> (major refactoring
@@ -13,6 +13,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranch;
 public class ShortestBranchFirstHandler extends BaseHandler {
 	/** Instantiates this class */
 	public ShortestBranchFirstHandler() {
-		super(new ShortestBranch());
+		super(new ShortestBranchFirst());
 	}
 }

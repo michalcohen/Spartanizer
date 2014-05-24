@@ -1,9 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.RenameReturnToDollar;
+import il.ac.technion.cs.ssdl.spartan.refactoring.RenameReturnVariableToDollar;
 
 /**
- * a handler for {@link RenameReturnToDollar}
+ * a handler for {@link RenameReturnVariableToDollar}
  * 
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code> (major refactoring
@@ -13,6 +13,6 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.RenameReturnToDollar;
 public class ChangeReturnToDollarHandler extends BaseHandler {
 	/** Instantiates this class */
 	public ChangeReturnToDollarHandler() {
-		super(new RenameReturnToDollar());
+		super(new RenameReturnVariableToDollar());
 	}
 }

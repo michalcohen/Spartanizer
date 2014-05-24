@@ -19,10 +19,10 @@ public enum All {
 	static {
 		put(new ComparisonWithBoolean());
 		put(new Ternarize());
-		put(new ShortestBranch());
+		put(new ShortestBranchFirst());
 		put(new InlineSingleUse());
 		put(new ForwardDeclaration());
-		put(new RenameReturnToDollar());
+		put(new RenameReturnVariableToDollar());
 	}
 
 	/**
