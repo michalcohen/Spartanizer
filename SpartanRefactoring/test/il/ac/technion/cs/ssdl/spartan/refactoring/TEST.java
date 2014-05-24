@@ -240,7 +240,6 @@ public class TEST {
 			final CompilationUnit cu = makeAST(fIn);
 			assertNotNull("Cannot instantiate Spartanization object", spartanization);
 			assertEquals(0, spartanization.findOpportunities(cu).size());
-			assertEquals(readFile(fIn), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
 		}
 		/**
 		 * Runs a parameterized test case, based on the instance variables of this
