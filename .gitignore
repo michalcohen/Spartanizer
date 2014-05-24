@@ -1,3 +1,4 @@
 *.class
 SpartanRefactoring/bin/
 *.swp
+*.log
