@@ -1,0 +1,9 @@
+#!/usr/bin/gawk -f
+{
+  for (i = 1; i <= NF; i++)
+    p($i)
+}
+function p(s) {
+ if (s ~/^[0-8]\.[a-z]*$/)
+   print "git mv ", s, "0"s;
+}
