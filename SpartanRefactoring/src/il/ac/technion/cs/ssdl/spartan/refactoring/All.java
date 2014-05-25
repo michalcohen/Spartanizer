@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Boris van Sosin
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * 
  * @since 2013/07/01
  */
