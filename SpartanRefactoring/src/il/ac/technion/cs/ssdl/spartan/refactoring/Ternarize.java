@@ -207,8 +207,7 @@ public class Ternarize extends Spartanization {
 							rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, prevAsgn.getRightHandSide());
 							r.remove(prevAsgn.getParent(), null);
 							return true;
-						} else if (!dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())
-								&& !dependsOn(prevAsgn.getRightHandSide(), prevDecl.getName())){
+						} else if (!dependsOn(asgnThen.getRightHandSide(), prevDecl.getName()) && !dependsOn(prevAsgn.getRightHandSide(), prevDecl.getName())){
 							if (asgnThen.getOperator() == Assignment.Operator.ASSIGN){
 								r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, (SimpleName) prevAsgn.getLeftHandSide(),
 										Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), asgnThen.getRightHandSide(), prevAsgn.getRightHandSide())), null);
@@ -222,24 +221,18 @@ public class Ternarize extends Spartanization {
 							return true;
 						}
 				} else if (nextAsgn != null){
-					if (Funcs.cmpAsgns(nextAsgn, asgnThen))
+					if (Funcs.cmpAsgns(nextAsgn, asgnThen)){
 						if (prevDecl == null){
-							if (!Funcs.checkIsAssignment(nextAsgn.getRightHandSide())){
+							if (!Funcs.checkIsAssignment(nextAsgn.getRightHandSide()))
 								rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, nextAsgn.getRightHandSide());
-								r.remove(nextAsgn.getParent(), null);
-								return true;
-							}
-						} else if (!dependsOn(nextAsgn.getRightHandSide(), prevDecl.getName())){
-							if (asgnThen.getOperator() == Assignment.Operator.ASSIGN){
-								r.remove(nextAsgn.getParent(), null);
-								r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, (SimpleName) nextAsgn.getLeftHandSide(), nextAsgn.getRightHandSide()), null);
-								r.remove(node, null);
-							} else {
-								rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, nextAsgn.getRightHandSide());
-								r.remove(nextAsgn.getParent(), null);
-							}
-							return true;
-						}
+						} else if (asgnThen.getOperator() == Assignment.Operator.ASSIGN && !dependsOn(nextAsgn.getRightHandSide(), prevDecl.getName())){
+							r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, (SimpleName) nextAsgn.getLeftHandSide(), nextAsgn.getRightHandSide()), null);
+							r.remove(node, null);
+						} else
+							rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, nextAsgn.getRightHandSide());
+						r.remove(nextAsgn.getParent(), null);
+						return true;
+					}
 				} else if (prevDecl != null && prevDecl.getInitializer() != null && node.getElseStatement() == null)
 					if (!dependsOn(node.getExpression(), prevDecl.getName()) && !dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())){
 						r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, prevDecl.getName(),

@@ -7,8 +7,8 @@ public class Blah {
 	public void yada(final String s) {
 		int a, b=0, c=0;
 		if (b==3){
-			a+=2+r();
+			a+=2+r()+c;
 		}
-		a+=6+c;
+		a+=6;
 	}
 }
