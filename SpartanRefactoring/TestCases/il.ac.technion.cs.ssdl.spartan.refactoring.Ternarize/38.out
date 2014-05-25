@@ -6,7 +6,9 @@ public class Blah {
 	}
 	public void yada(final String s) {
 		int a, b=0;
-    a += (b==3) ? 2 + r() : 0;
+		if (b==3){
+			a+=2+r();
+		}
 		a-=6;
 	}
 }
