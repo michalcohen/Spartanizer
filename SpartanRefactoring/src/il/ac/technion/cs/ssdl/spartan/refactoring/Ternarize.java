@@ -137,6 +137,7 @@ public class Ternarize extends Spartanization {
 			final List<String> elseNames = new ArrayList<String>();
 			if (Funcs.hasNull(thenStmnt, elseStmnt))
 				return false;
+			final ASTRewrite r;
 			if (thenStmnt.subtreeMatch(matcher, elseStmnt)){
 				r.replace(node, Funcs.getStmntFromBlock(node.getThenStatement()), null);
 				return true;
