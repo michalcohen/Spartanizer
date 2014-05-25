@@ -217,6 +217,14 @@ public class Funcs{
 	}
 
 	/**
+	 * @param exp  the expression to check if it is an assignment
+	 * @return  true if it is an assignment or false otherwise
+	 */
+	public static boolean checkIsAssignment(final Expression exp){
+		return exp != null && exp.getNodeType() == ASTNode.ASSIGNMENT;
+	}
+
+	/**
 	 * @param b  the block to check
 	 * @return  true if a return statement exists in the block or false otherwise
 	 */
@@ -235,10 +243,13 @@ public class Funcs{
 	 * and if b is null it returns a null
 	 */
 	public static Statement getStmntFromBlock(final Statement b){
-		Statement temp = b == null ? null : b;
-		if (b!=null && b.getNodeType() == ASTNode.BLOCK && ((Block) b).statements().size() == 1)
-			temp = (Statement) ((Block) b).statements().get(0);
-		return temp;
+		if (b!=null)
+			if (b.getNodeType() == ASTNode.BLOCK){
+				if (((Block) b).statements().size() == 1)
+					return (Statement) ((Block) b).statements().get(0);
+			} else
+				return b;
+		return null;
 	}
 
 	/**

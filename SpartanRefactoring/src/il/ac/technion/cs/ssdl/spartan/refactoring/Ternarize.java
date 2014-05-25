@@ -103,15 +103,22 @@ public class Ternarize extends Spartanization {
 	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement node){
 		final ASTNode parent = node.getParent();
 		if (parent.getNodeType() == ASTNode.BLOCK) {
-			if (node.getThenStatement().subtreeMatch(matcher, node.getElseStatement())){
+			final Statement thenStmnt = Funcs.getStmntFromBlock(node.getThenStatement());
+			final Statement elseStmnt = Funcs.getStmntFromBlock(node.getElseStatement());
+			final List<String> thenNames = new ArrayList<String>();
+			final List<String> elseNames = new ArrayList<String>();
+			if (Funcs.hasNull(thenStmnt, elseStmnt))
+				return false;
+			if (thenStmnt.subtreeMatch(matcher, elseStmnt)){
 				r.replace(node, Funcs.getStmntFromBlock(node.getThenStatement()), null);
 				return true;
-			} else if (Funcs.hasNull(node.getThenStatement(), node.getElseStatement()))
+			}
+			thenStmnt.accept(new nameColctVisitor(thenNames));
+			elseStmnt.accept(new nameColctVisitor(elseNames));
+			if (!thenNames.equals(elseNames))
 				return false;
 			final List<ASTNode> thenExps = new ArrayList<ASTNode>();
 			final List<ASTNode> elseExps = new ArrayList<ASTNode>();
-			final Statement thenStmnt = Funcs.getStmntFromBlock(node.getThenStatement());
-			final Statement elseStmnt = Funcs.getStmntFromBlock(node.getElseStatement());
 			node.getThenStatement().accept(new expColctVisitor(thenExps, thenStmnt));
 			node.getElseStatement().accept(new expColctVisitor(elseExps, elseStmnt));
 			if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT && elseStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT){
@@ -122,7 +129,9 @@ public class Ternarize extends Spartanization {
 				final Expression thenCondSide = thenIndex < 0 ? null : (Expression)thenExps.get(thenIndex);
 				final Expression elseCondSide = elseIndex < 0 ? null : (Expression)elseExps.get(elseIndex);
 				if (thenCondSide != null && elseCondSide != null){
-					if (thenExpStmnt.getExpression().getNodeType() == ASTNode.ASSIGNMENT){
+					if (Funcs.checkIsAssignment(thenExpStmnt) && Funcs.checkIsAssignment(elseExpStmnt)){
+						if (!Funcs.cmpAsgns(Funcs.getAssignment(thenExpStmnt), Funcs.getAssignment(elseExpStmnt)))
+							return false;
 						final Assignment asgnThen = Funcs.getAssignment(thenExpStmnt);
 						final int ifIdx = ((Block)parent).statements().indexOf(node);
 						final int possiblePrevDeclIdx = ifIdx-1 >= 0 ? ifIdx-1 : ifIdx;
@@ -165,23 +174,19 @@ public class Ternarize extends Spartanization {
 			final int ifIdx = stmts.indexOf(node);
 			if (ifIdx >= 1) {
 				final Assignment asgnThen = Funcs.getAssignment(node.getThenStatement());
-				final Assignment asgnElse = Funcs.getAssignment(node.getElseStatement());
-				if (asgnThen == null || asgnElse != null)
+				if (asgnThen == null || node.getElseStatement() != null)
 					return false;
 				final Assignment prevAsgn = Funcs.getAssignment((Statement) stmts.get(ifIdx - 1));
 				final Assignment nextAsgn = stmts .size() > ifIdx + 1 ? Funcs.getAssignment((Statement) stmts.get(ifIdx + 1)) : null;
-				final VariableDeclarationFragment prevDecl;
+				VariableDeclarationFragment prevDecl = null;
 				if (prevAsgn != null){
 					if (ifIdx - 2 >= 0 && Funcs.cmpSimpleNames(asgnThen.getLeftHandSide(),prevAsgn.getLeftHandSide()))
 						prevDecl = Funcs.getVarDeclFrag((Statement) stmts.get(ifIdx - 2), asgnThen.getLeftHandSide());
-					else prevDecl = null;
 				} else if (nextAsgn != null){
 					if (ifIdx - 1 >= 0 && Funcs.cmpSimpleNames(asgnThen.getLeftHandSide(),nextAsgn.getLeftHandSide()))
 						prevDecl = Funcs.getVarDeclFrag((Statement) stmts.get(ifIdx - 1), nextAsgn.getLeftHandSide());
-					else prevDecl = null;
 				} else if (ifIdx - 1 >= 0)
 					prevDecl = Funcs.getVarDeclFrag((Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
-				else prevDecl = null;
 				if (prevAsgn != null && nextAsgn != null){
 					if (Funcs.cmpAsgns(nextAsgn, prevAsgn, asgnThen))
 						if (prevDecl == null){
@@ -196,24 +201,22 @@ public class Ternarize extends Spartanization {
 							r.remove(nextAsgn.getParent(), null);
 							return true;
 						}
-				} else if (prevAsgn != null){
-					if (Funcs.cmpAsgns(prevAsgn, asgnThen) && prevAsgn.getRightHandSide().getNodeType() != ASTNode.ASSIGNMENT)
-						if (prevDecl != null){
-							if (!dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())
-									&& !dependsOn(prevAsgn.getRightHandSide(), prevDecl.getName())){
-								if (asgnThen.getOperator() == Assignment.Operator.ASSIGN){
-									r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, (SimpleName) prevAsgn.getLeftHandSide(),
-											Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), asgnThen.getRightHandSide(), prevAsgn.getRightHandSide())), null);
-									r.remove(node, null);
-									r.remove(prevAsgn.getParent(), null);
-									return true;
-								}
-							} else if (prevDecl.getInitializer() != null){
-								rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, prevAsgn.getRightHandSide());
+				} else if (prevAsgn != null && !dependsOn(node.getExpression(), prevAsgn.getLeftHandSide())){
+					if (Funcs.cmpAsgns(prevAsgn, asgnThen) && !Funcs.checkIsAssignment(prevAsgn.getRightHandSide()))
+						if (prevDecl == null){
+							rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, prevAsgn.getRightHandSide());
+							r.remove(prevAsgn.getParent(), null);
+							return true;
+						} else if (!dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())
+								&& !dependsOn(prevAsgn.getRightHandSide(), prevDecl.getName())){
+							if (asgnThen.getOperator() == Assignment.Operator.ASSIGN){
+								r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, (SimpleName) prevAsgn.getLeftHandSide(),
+										Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), asgnThen.getRightHandSide(), prevAsgn.getRightHandSide())), null);
+								r.remove(node, null);
 								r.remove(prevAsgn.getParent(), null);
 								return true;
 							}
-						} else {
+						} else if (prevDecl.getInitializer() != null){
 							rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, prevAsgn.getRightHandSide());
 							r.remove(prevAsgn.getParent(), null);
 							return true;
@@ -221,12 +224,12 @@ public class Ternarize extends Spartanization {
 				} else if (nextAsgn != null){
 					if (Funcs.cmpAsgns(nextAsgn, asgnThen))
 						if (prevDecl == null){
-							if (nextAsgn.getRightHandSide().getNodeType() != ASTNode.ASSIGNMENT){
+							if (!Funcs.checkIsAssignment(nextAsgn.getRightHandSide())){
 								rewriteAssignIfAssignToAssignTernary(ast, r, node, asgnThen, nextAsgn.getRightHandSide());
 								r.remove(nextAsgn.getParent(), null);
 								return true;
 							}
-						} else {
+						} else if (!dependsOn(nextAsgn.getRightHandSide(), prevDecl.getName())){
 							if (asgnThen.getOperator() == Assignment.Operator.ASSIGN){
 								r.remove(nextAsgn.getParent(), null);
 								r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, (SimpleName) nextAsgn.getLeftHandSide(), nextAsgn.getRightHandSide()), null);
@@ -237,12 +240,13 @@ public class Ternarize extends Spartanization {
 							}
 							return true;
 						}
-				} else if (prevDecl != null && prevDecl.getInitializer() != null && node.getElseStatement() == null){
-					r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, prevDecl.getName(),
-							Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), asgnThen.getRightHandSide(), prevDecl.getInitializer())), null);
-					r.remove(node, null);
-					return true;
-				}
+				} else if (prevDecl != null && prevDecl.getInitializer() != null && node.getElseStatement() == null)
+					if (!dependsOn(node.getExpression(), prevDecl.getName()) && !dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())){
+						r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, prevDecl.getName(),
+								Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), asgnThen.getRightHandSide(), prevDecl.getInitializer())), null);
+						r.remove(node, null);
+						return true;
+					}
 			}
 		}
 		return false;
@@ -292,23 +296,7 @@ public class Ternarize extends Spartanization {
 			final Statement elseStmt = Funcs.getStmntFromBlock(n.getElseStatement());
 			thenStmt.accept(new nameColctVisitor(thenNames));
 			elseStmt.accept(new nameColctVisitor(elseNames));
-			if (Funcs.checkIsAssignment(n.getThenStatement())){
-				final List<String> temp = new ArrayList<String>();
-				temp.add(thenNames.get(0));
-				temp.add(thenNames.get(thenNames.size()-1));
-				thenNames.clear();
-				thenNames.addAll(temp);
-			}
-			if (Funcs.checkIsAssignment(n.getElseStatement())){
-				final List<String> temp = new ArrayList<String>();
-				temp.add(elseNames.get(0));
-				temp.add(elseNames.get(elseNames.size()-1));
-				elseNames.clear();
-				elseNames.addAll(temp);
-			}
-			if (!thenNames.equals(elseNames))
-				return null;
-			return new Range(n);
+			return thenNames.equals(elseNames) ? new Range(n) : null;
 		}
 		return null;
 	}
@@ -321,27 +309,30 @@ public class Ternarize extends Spartanization {
 			final int ifIdx = stmts.indexOf(node);
 			if (ifIdx >= 1 || stmts.size() > ifIdx + 1){
 				final Assignment asgnThen = Funcs.getAssignment(node.getThenStatement());
-				final Assignment asgnElse = Funcs.getAssignment(node.getElseStatement());
-				if (asgnThen == null || asgnElse != null)
+				if (asgnThen == null || node.getElseStatement() != null)
 					return null;
 				final Assignment prevAssignment = Funcs.getAssignment((Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0));
 				final Assignment nextAssignment = Funcs.getAssignment((Statement) stmts.get(ifIdx + 1 > stmts.size()-1 ? stmts.size()-1 : ifIdx + 1));
 				final VariableDeclarationFragment prevDecl = Funcs.getVarDeclFrag(prevAssignment!=null ? (Statement) stmts.get(ifIdx-2) : (Statement) stmts.get(ifIdx-1), asgnThen.getLeftHandSide());
 				if (prevAssignment != null && nextAssignment != null){
-					if (prevDecl != null)
-						return !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl,nextAssignment) : null;
-						return new Range(prevAssignment, nextAssignment);
-				} else if (prevAssignment != null){
-					if (!dependsOn(node.getExpression(), prevAssignment.getLeftHandSide())){
+					if (Funcs.cmpAsgns(nextAssignment, prevAssignment, asgnThen)){
+						if (prevDecl != null)
+							return !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl,nextAssignment) : null;
+							return new Range(prevAssignment, nextAssignment);
+					}
+				} else if (prevAssignment != null && !dependsOn(node.getExpression(), prevAssignment.getLeftHandSide())){
+					if (Funcs.cmpAsgns(prevAssignment, asgnThen)){
 						if (prevDecl != null && prevDecl.getInitializer() == null)
 							return !dependsOn(prevAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl, node) : null;
 							return new Range(prevAssignment,node);
 					}
 				} else if (nextAssignment != null){
-					if (prevDecl != null)
-						return !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl,nextAssignment) : new Range(node,nextAssignment);
+					if (Funcs.cmpAsgns(nextAssignment, asgnThen)){
+						if (prevDecl != null && !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()))
+							return new Range(prevDecl,nextAssignment);
 						return new Range(node,nextAssignment);
-				} else if (prevDecl != null)
+					}
+				} else if (prevDecl != null && prevDecl.getInitializer() != null)
 					return !dependsOn(node.getExpression(), prevDecl.getName())
 							&& !dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())
 							? new Range(prevDecl,node) : null;
