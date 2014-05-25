@@ -115,97 +115,113 @@ public class Ternarize extends Spartanization {
 		return false;
 	}
 
+	/**
+	 * @author Tomer
+	 *
+	 *	contains both sides for the conditional expression
+	 */
 	public static class TwoExpressions {
-		Expression e1;
-		Expression e2;
+		Expression thenExp;
+		Expression elseExp;
+		/**
+		 * Instantiates a then class with the given Expressions
+		 * 
+		 * @param t  then Expression
+		 * @param e  else Expression
+		 */
+		public TwoExpressions(final Expression t, final Expression e){
+			thenExp = t;
+			elseExp = e;
+		}
 	}
-	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStatement){
-		final Statement thenStatment = ifStatement.getThenStatement();
-		final Statement elseStatment =	ifStatement.getElseStatement();
-		final TwoExpressions diff = findSingleDifference(thenStatment, elseStatment);
+	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt){
+		final Statement thenStatment = Funcs.getStmntFromBlock(ifStmt.getThenStatement());
+		final Statement elseStatment =	Funcs.getStmntFromBlock(ifStmt.getElseStatement());
+		final List<String> thenNames = new ArrayList<String>();
+		final List<String> elseNames = new ArrayList<String>();
+		if (Funcs.hasNull(thenStatment, elseStatment))
+			return false;
+		if (thenStatment.subtreeMatch(matcher, elseStatment)){
+			r.replace(ifStmt, thenStatment, null);
+			return true;
+		}
+		thenStatment.accept(new nameColctVisitor(thenNames));
+		elseStatment.accept(new nameColctVisitor(elseNames));
+		if (!thenNames.equals(elseNames) || thenStatment.getNodeType() != elseStatment.getNodeType())
+			return false;
+		if (thenStatment.getNodeType()!=ASTNode.RETURN_STATEMENT && thenStatment.getNodeType()!=ASTNode.EXPRESSION_STATEMENT)
+			return false;
+		final TwoExpressions diff = findSingleDifference1(thenStatment, elseStatment);
 		if (diff == null)
 			return false;
-		return substitute(thenStatment,elseStatment, diff);
+		final int ifIdx = ((Block)ifStmt.getParent()).statements().indexOf(ifStmt);
+		final int possiblePrevDeclIdx = ifIdx-1 >= 0 ? ifIdx-1 : ifIdx;
+		final Statement prevDecl = (Statement) ((Block)ifStmt.getParent()).statements().get(possiblePrevDeclIdx);
+		return substitute(ast, r, ifStmt, diff, prevDecl);
 	}
-	int f() {
-		final IfStatement node;
-		final ASTNode parent = node.getParent();
-		if (parent.getNodeType() == ASTNode.BLOCK) {
-			final Statement thenStmnt = Funcs.getStmntFromBlock(node.getThenStatement());
-			final Statement elseStmnt = Funcs.getStmntFromBlock(node.getElseStatement());
-			final List<String> thenNames = new ArrayList<String>();
-			final List<String> elseNames = new ArrayList<String>();
-			if (Funcs.hasNull(thenStmnt, elseStmnt))
-				return false;
-			final ASTRewrite r;
-			if (thenStmnt.subtreeMatch(matcher, elseStmnt)){
-				r.replace(node, Funcs.getStmntFromBlock(node.getThenStatement()), null);
-				return true;
-			}
-			thenStmnt.accept(new nameColctVisitor(thenNames));
-			elseStmnt.accept(new nameColctVisitor(elseNames));
-			if (!thenNames.equals(elseNames))
-				return false;
-			final List<ASTNode> thenExps = new ArrayList<ASTNode>();
-			final List<ASTNode> elseExps = new ArrayList<ASTNode>();
-			node.getThenStatement().accept(new expColctVisitor(thenExps, thenStmnt));
-			node.getElseStatement().accept(new expColctVisitor(elseExps, elseStmnt));
-			if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT && elseStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT){
-				final ExpressionStatement thenExpStmnt = Funcs.getExpressionStatement(node.getThenStatement());
-				final ExpressionStatement elseExpStmnt = Funcs.getExpressionStatement(node.getElseStatement());
-				final int thenIndex = thenExps.indexOf(thenExpStmnt.getExpression())-1;
-				final int elseIndex = elseExps.indexOf(elseExpStmnt.getExpression())-1;
-				final Expression thenCondSide = thenIndex < 0 ? null : (Expression)thenExps.get(thenIndex);
-				final Expression elseCondSide = elseIndex < 0 ? null : (Expression)elseExps.get(elseIndex);
-				if (thenCondSide != null && elseCondSide != null){
-					if (Funcs.checkIsAssignment(thenExpStmnt) && Funcs.checkIsAssignment(elseExpStmnt)){
-						if (!Funcs.cmpAsgns(Funcs.getAssignment(thenExpStmnt), Funcs.getAssignment(elseExpStmnt)))
-							return false;
-						final Assignment asgnThen = Funcs.getAssignment(thenExpStmnt);
-						final int ifIdx = ((Block)parent).statements().indexOf(node);
-						final int possiblePrevDeclIdx = ifIdx-1 >= 0 ? ifIdx-1 : ifIdx;
-						final VariableDeclarationFragment prevDecl = Funcs.getVarDeclFrag((Statement) ((Block)parent).statements().get(possiblePrevDeclIdx), asgnThen.getLeftHandSide());
-						if (asgnThen.getOperator() == Assignment.Operator.ASSIGN && prevDecl != null){
-							if (asgnThen.getRightHandSide().getNodeType() == ASTNode.BOOLEAN_LITERAL)
-								r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, prevDecl.getName(), Funcs.tryToNegateCond(ast, r, node.getExpression(), ((BooleanLiteral)asgnThen.getRightHandSide()).booleanValue())), null);
-							else
-								r.replace(prevDecl, Funcs.makeVarDeclFrag(ast, r, prevDecl.getName(), Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), thenCondSide, elseCondSide)), null);
-							r.remove(node, null);
-							return true;
-						}
-					}
-					thenExpStmnt.accept(new replacerVisitor(thenExpStmnt.getExpression(), r,
-							Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), thenCondSide, elseCondSide), thenCondSide));
-					final ExpressionStatement es = ast.newExpressionStatement((Expression) r.createCopyTarget(thenExpStmnt.getExpression()));
-					r.replace(node, es, null);
-					return true;
+	private static TwoExpressions findSingleDifference1(final Statement thenStmnt, final Statement elseStmnt) {
+		final List<ASTNode> thenExps = new ArrayList<ASTNode>();
+		final List<ASTNode> elseExps = new ArrayList<ASTNode>();
+		thenStmnt.accept(new expColctVisitor(thenExps, thenStmnt));
+		elseStmnt.accept(new expColctVisitor(elseExps, elseStmnt));
+		if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT){
+			final ExpressionStatement thenExpStmnt = Funcs.getExpressionStatement(thenStmnt);
+			final ExpressionStatement elseExpStmnt = Funcs.getExpressionStatement(elseStmnt);
+			final int thenIndex = thenExps.indexOf(thenExpStmnt.getExpression())-1;
+			final int elseIndex = elseExps.indexOf(elseExpStmnt.getExpression())-1;
+			final Expression thenCondSide = thenIndex < 0 ? null : (Expression)thenExps.get(thenIndex);
+			final Expression elseCondSide = elseIndex < 0 ? null : (Expression)elseExps.get(elseIndex);
+			if (thenCondSide != null && elseCondSide != null){
+				if (Funcs.cmpAsgns(Funcs.getAssignment(thenExpStmnt), Funcs.getAssignment(elseExpStmnt))){
+					final Assignment asgnThen = Funcs.getAssignment(thenExpStmnt);
+					final Assignment asgnElse = Funcs.getAssignment(elseExpStmnt);
+					if (asgnThen.getOperator() == Assignment.Operator.ASSIGN)
+						if (asgnThen.getRightHandSide().getNodeType() == ASTNode.BOOLEAN_LITERAL)
+							return new TwoExpressions(asgnThen.getRightHandSide(), asgnElse.getRightHandSide());
 				}
-			} else if (thenStmnt.getNodeType() == ASTNode.RETURN_STATEMENT){
-				final ReturnStatement thenRet = Funcs.getReturnStatement(node.getThenStatement());
-				final ReturnStatement elseRet = Funcs.getReturnStatement(node.getElseStatement());
-				final ReturnStatement ret = ast.newReturnStatement();
-				if (thenRet.getExpression().getNodeType() == ASTNode.BOOLEAN_LITERAL)
-					ret.setExpression(Funcs.tryToNegateCond(ast, r, node.getExpression(), ((BooleanLiteral)thenRet.getExpression()).booleanValue()));
+				return new TwoExpressions(thenCondSide, elseCondSide);
+			}
+		} else {
+			final ReturnStatement thenRet = Funcs.getReturnStatement(thenStmnt);
+			final ReturnStatement elseRet = Funcs.getReturnStatement(elseStmnt);
+			return new TwoExpressions(thenRet.getExpression(), elseRet.getExpression());
+		}
+		return null;
+	}
+
+	private static boolean substitute(final AST t, final ASTRewrite r, final IfStatement ifStmnt, final TwoExpressions diff,
+			final Statement possiblePrevDecl) {
+		final Statement thenStmnt = Funcs.getStmntFromBlock(ifStmnt.getThenStatement());
+		final Statement elseStmnt = Funcs.getStmntFromBlock(ifStmnt.getElseStatement());
+		if (Funcs.checkIsAssignment(thenStmnt) && Funcs.checkIsAssignment(elseStmnt)){
+			if (!Funcs.cmpAsgns(Funcs.getAssignment(thenStmnt), Funcs.getAssignment(elseStmnt)))
+				return false;
+			final Assignment asgnThen = Funcs.getAssignment(thenStmnt);
+			final VariableDeclarationFragment prevDecl = Funcs.getVarDeclFrag(possiblePrevDecl, asgnThen.getLeftHandSide());
+			if (asgnThen.getOperator() == Assignment.Operator.ASSIGN && prevDecl != null){
+				if (asgnThen.getRightHandSide().getNodeType() == ASTNode.BOOLEAN_LITERAL)
+					r.replace(prevDecl, Funcs.makeVarDeclFrag(t, r, prevDecl.getName(), Funcs.tryToNegateCond(t, r, ifStmnt.getExpression(), ((BooleanLiteral)diff.thenExp).booleanValue())), null);
 				else
-					ret.setExpression(Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), thenRet.getExpression(), elseRet.getExpression()));
-				r.replace(node, ret, null);
+					r.replace(prevDecl, Funcs.makeVarDeclFrag(t, r, prevDecl.getName(), Funcs.makeParenthesizedConditionalExp(t, r, ifStmnt.getExpression(), diff.thenExp, diff.elseExp)), null);
+				r.remove(ifStmnt, null);
 				return true;
 			}
 		}
-		return false;
-	}
-	private static boolean substitute(final Statement thenStatment, final Statement elseStatment, final Expression diff) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	private static TwoExpressions findSingleDifference(final Statement s1, final Statement s2) {
-		if (s1.getNodeType() != s2.getNodeType())
-			return null;
-		switch (s1.getNodeType) {
-		case BLOCK:
-			// TODO Auto-generated method stub
-			return null;
+		if (thenStmnt.getNodeType() == ASTNode.RETURN_STATEMENT){
+			final ReturnStatement ret = t.newReturnStatement();
+			if (diff.thenExp.getNodeType() == ASTNode.BOOLEAN_LITERAL)
+				ret.setExpression(Funcs.tryToNegateCond(t, r, ifStmnt.getExpression(), ((BooleanLiteral)diff.thenExp).booleanValue()));
+			else
+				ret.setExpression(Funcs.makeParenthesizedConditionalExp(t, r, ifStmnt.getExpression(), diff.thenExp, diff.elseExp));
+			r.replace(ifStmnt, ret, null);
+			return true;
 		}
+		final Expression thenExp = ((ExpressionStatement)thenStmnt).getExpression();
+		thenStmnt.accept(new replacerVisitor(thenExp, r,
+				Funcs.makeParenthesizedConditionalExp(t, r, ifStmnt.getExpression(), diff.thenExp, diff.elseExp), diff.thenExp));
+		final ExpressionStatement es = t.newExpressionStatement((Expression) r.createCopyTarget(thenExp));
+		r.replace(ifStmnt, es, null);
+		return true;
 	}
 	static boolean treatAssignIfAssign(final AST ast, final ASTRewrite r, final IfStatement node) {
 		final ASTNode parent = node.getParent();
@@ -287,10 +303,7 @@ public class Ternarize extends Spartanization {
 					if (!dependsOn(node.getExpression(), prevDecl.getName()) && !dependsOn(asgnThen.getRightHandSide(), prevDecl.getName())) {
 						r.replace(
 								prevDecl,
-								Funcs.makeVarDeclFrag(
-										ast,
-										r,
-										prevDecl.getName(),
+								Funcs.makeVarDeclFrag(ast, r, prevDecl.getName(),
 										Funcs.makeParenthesizedConditionalExp(ast, r, node.getExpression(), asgnThen.getRightHandSide(),
 												prevDecl.getInitializer())), null);
 						r.remove(node, null);
