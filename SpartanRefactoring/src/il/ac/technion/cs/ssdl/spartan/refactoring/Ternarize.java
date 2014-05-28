@@ -121,8 +121,8 @@ public class Ternarize extends Spartanization {
 	 *	contains both sides for the conditional expression
 	 */
 	public static class TwoExpressions {
-		Expression thenExp;
-		Expression elseExp;
+		final Expression thenExp;
+		final Expression elseExp;
 		/**
 		 * Instantiates a then class with the given Expressions
 		 * 
