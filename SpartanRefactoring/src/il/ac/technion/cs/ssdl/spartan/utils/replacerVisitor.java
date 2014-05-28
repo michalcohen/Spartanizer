@@ -1,13 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.NumberLiteral;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -32,7 +24,6 @@ public class replacerVisitor extends ASTVisitor{
 	 * 
 	 */
 	public replacerVisitor(final Expression t ,final ASTRewrite re, final ParenthesizedExpression cExp, final Expression tExp){
-		super();
 		condExp = cExp;
 		thenExp = tExp;
 		r = re;

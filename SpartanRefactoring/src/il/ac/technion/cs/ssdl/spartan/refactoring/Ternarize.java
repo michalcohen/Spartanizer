@@ -41,56 +41,55 @@ public class Ternarize extends Spartanization {
 	static List<ASTNode> statements(final Block b) {
 		return b.statements();
 	}
-	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement node) {
-		final ASTNode parent = node.getParent();
-		if (parent.getNodeType() == ASTNode.BLOCK) {
-			@SuppressWarnings("rawtypes")
-			final List stmts = ((Block) parent).statements();
-			final int ifIdx = stmts.indexOf(node);
-			final ReturnStatement nextReturn = stmts.size() > ifIdx + 1 ? getReturnStatement((Statement) stmts.get(ifIdx + 1)) : null;
-			if (nextReturn != null) {
-				final int numOfStmntInThen = getNumOfStmnts(node.getThenStatement());
-				final int numOfStmntInElse = getNumOfStmnts(node.getElseStatement());
-				if (checkReturnStmnt(node.getThenStatement())) {
-					if (numOfStmntInThen == 1 && numOfStmntInElse == 0) {
-						final ReturnStatement thenRet = getReturnStatement(node.getThenStatement());
-						if (thenRet.getExpression().getNodeType() == ASTNode.BOOLEAN_LITERAL)
-							r.replace(
-									node,
-									makeReturnStatement(
-											ast,
-											r,
-											makeParenthesizedExpression(ast, r,
-													tryToNegateCond(ast, r, node.getExpression(), ((BooleanLiteral) thenRet.getExpression()).booleanValue()))),
-													null);
-						else
-							r.replace(
-									node,
-									makeReturnStatement(
-											ast,
-											r,
-											makeParenthesizedConditionalExp(ast, r, node.getExpression(), thenRet.getExpression(),
-													nextReturn.getExpression())), null);
-						r.remove(nextReturn, null);
-					} else
-						addReturnStmntToIf(ast, r, node, nextReturn, false);
-					return true;
-				} else if (checkReturnStmnt(node.getElseStatement())) {
-					if (numOfStmntInThen == 0 && numOfStmntInElse == 1) {
-						final ReturnStatement elseRet = getReturnStatement(node.getElseStatement());
-						r.replace(
-								node,
-								makeReturnStatement(
-										ast,
-										r,
-										makeParenthesizedConditionalExp(ast, r, node.getExpression(), nextReturn.getExpression(),
-												elseRet.getExpression())), null);
-						r.remove(nextReturn, null);
-					} else
-						addReturnStmntToIf(ast, r, node, nextReturn, true);
-					return true;
-				}
-			}
+	// Really unclear
+	public static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement node) {
+		final Block parent = asBlock(node.getParent());
+		if (parent == null)
+			return false;
+		@SuppressWarnings("rawtypes")
+		final List stmts = parent.statements();
+		final int ifIdx = stmts.indexOf(node);
+		final ReturnStatement nextReturn = stmts.size() > ifIdx + 1 ? getReturnStatement((Statement) stmts.get(ifIdx + 1)) : null;
+		if (nextReturn == null)
+			return false;
+		final int numOfStmntInThen = getNumOfStmnts(node.getThenStatement());
+		final int numOfStmntInElse = getNumOfStmnts(node.getElseStatement());
+		if (checkReturnStmnt(node.getThenStatement())) {
+			if (numOfStmntInThen == 1 && numOfStmntInElse == 0) {
+				final ReturnStatement thenRet = getReturnStatement(node.getThenStatement());
+				if (thenRet.getExpression().getNodeType() == ASTNode.BOOLEAN_LITERAL)
+					r.replace(
+							node,
+							makeReturnStatement(
+									ast,
+									r,
+									makeParenthesizedExpression(ast, r,
+											tryToNegateCond(ast, r, node.getExpression(), ((BooleanLiteral) thenRet.getExpression()).booleanValue()))),
+											null);
+				else
+					r.replace(
+							node,
+							makeReturnStatement(
+									ast,
+									r,
+									makeParenthesizedConditionalExp(ast, r, node.getExpression(), thenRet.getExpression(), nextReturn.getExpression())),
+									null);
+				r.remove(nextReturn, null);
+			} else
+				addReturnStmntToIf(ast, r, node, nextReturn, false);
+			return true;
+		} else if (checkReturnStmnt(node.getElseStatement())) {
+			if (numOfStmntInThen == 0 && numOfStmntInElse == 1) {
+				final ReturnStatement elseRet = getReturnStatement(node.getElseStatement());
+				r.replace(
+						node,
+						makeReturnStatement(ast, r,
+								makeParenthesizedConditionalExp(ast, r, node.getExpression(), nextReturn.getExpression(), elseRet.getExpression())),
+								null);
+				r.remove(nextReturn, null);
+			} else
+				addReturnStmntToIf(ast, r, node, nextReturn, true);
+			return true;
 		}
 		return false;
 	}
@@ -115,7 +114,8 @@ public class Ternarize extends Spartanization {
 			elseExp = e;
 		}
 	}
-	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
+	// Really unclear
+	public boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
 		final Statement thenStatment = getStmntFromBlock(ifStmt.getThenStatement());
 		final Statement elseStatment = getStmntFromBlock(ifStmt.getElseStatement());
 		final List<String> thenNames = new ArrayList<String>();
@@ -344,44 +344,49 @@ public class Ternarize extends Spartanization {
 		return null;
 	}
 	static Range detectAssignIfAssign(final IfStatement node) {
-		final ASTNode parent = node.getParent();
-		if (parent.getNodeType() == ASTNode.BLOCK) {
-			@SuppressWarnings("rawtypes")
-			final List stmts = ((Block) parent).statements();
-			final int ifIdx = stmts.indexOf(node);
-			if (ifIdx >= 1 || stmts.size() > ifIdx + 1) {
-				final Assignment asgnThen = getAssignment(node.getThenStatement());
-				if (asgnThen == null || node.getElseStatement() != null)
-					return null;
-				final Assignment prevAssignment = getAssignment((Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0));
-				final Assignment nextAssignment = getAssignment((Statement) stmts.get(ifIdx + 1 > stmts.size() - 1 ? stmts.size() - 1
-						: ifIdx + 1));
-				final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAssignment != null ? (Statement) stmts.get(ifIdx - 2)
-						: (Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
-				if (prevAssignment != null && nextAssignment != null) {
-					if (cmpAsgns(nextAssignment, prevAssignment, asgnThen)) {
-						if (prevDecl != null)
-							return !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl, nextAssignment) : null;
-							return new Range(prevAssignment, nextAssignment);
-					}
-				} else if (prevAssignment != null && !dependsOn(node.getExpression(), prevAssignment.getLeftHandSide())) {
-					if (cmpAsgns(prevAssignment, asgnThen)) {
-						if (prevDecl != null && prevDecl.getInitializer() == null)
-							return !dependsOn(prevAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl, node) : null;
-							return new Range(prevAssignment, node);
-					}
-				} else if (nextAssignment != null) {
-					if (cmpAsgns(nextAssignment, asgnThen)) {
-						if (prevDecl != null && !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()))
-							return new Range(prevDecl, nextAssignment);
-						return new Range(node, nextAssignment);
-					}
-				} else if (prevDecl != null && prevDecl.getInitializer() != null)
-					return !dependsOn(node.getExpression(), prevDecl.getName())
-							&& !dependsOn(asgnThen.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl, node) : null;
+		final Block parent = asBlock(node.getParent());
+		return parent == null ? null : detectAssignIfAssign(node, parent);
+	}
+	private static Block asBlock(final ASTNode n) {
+		return n instanceof Block ? (Block) n : null;
+	}
+	// This function has very unclear semantics
+	public static Range detectAssignIfAssign(final IfStatement node, final Block parent) {
+		@SuppressWarnings("rawtypes")
+		final List stmts = parent.statements();
+		final int ifIdx = stmts.indexOf(node);
+		if (ifIdx < 1 && stmts.size() <= ifIdx + 1)
+			return null;
+		final Assignment asgnThen = getAssignment(node.getThenStatement());
+		if (asgnThen == null || node.getElseStatement() != null)
+			return null;
+		final Assignment prevAssignment = getAssignment((Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0));
+		final Assignment nextAssignment = getAssignment((Statement) stmts.get(ifIdx + 1 > stmts.size() - 1 ? stmts.size() - 1
+				: ifIdx + 1));
+		final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAssignment != null ? (Statement) stmts.get(ifIdx - 2)
+				: (Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
+		if (prevAssignment != null && nextAssignment != null) {
+			if (cmpAsgns(nextAssignment, prevAssignment, asgnThen)) {
+				if (prevDecl != null)
+					return !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl, nextAssignment) : null;
+					return new Range(prevAssignment, nextAssignment);
 			}
-		}
-		return null;
+		} else if (prevAssignment != null && !dependsOn(node.getExpression(), prevAssignment.getLeftHandSide())) {
+			if (cmpAsgns(prevAssignment, asgnThen)) {
+				if (prevDecl != null && prevDecl.getInitializer() == null)
+					return !dependsOn(prevAssignment.getRightHandSide(), prevDecl.getName()) ? new Range(prevDecl, node) : null;
+					return new Range(prevAssignment, node);
+			}
+		} else if (nextAssignment != null) {
+			if (cmpAsgns(nextAssignment, asgnThen)) {
+				if (prevDecl != null && !dependsOn(nextAssignment.getRightHandSide(), prevDecl.getName()))
+					return new Range(prevDecl, nextAssignment);
+				return new Range(node, nextAssignment);
+			}
+		} else if (prevDecl != null && prevDecl.getInitializer() != null)
+			return !dependsOn(node.getExpression(), prevDecl.getName()) && !dependsOn(asgnThen.getRightHandSide(), prevDecl.getName()) ? new Range(
+					prevDecl, node) : null;
+					return null;
 	}
 	private static boolean dependsOn(final Expression e, final Expression leftHandSide) {
 		return Occurrences.BOTH_SEMANTIC.of(leftHandSide).in(e).size() > 0;
