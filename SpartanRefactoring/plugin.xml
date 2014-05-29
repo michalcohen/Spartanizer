@@ -88,6 +88,11 @@
       </command>
       <command
             categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand"
+            name="Shortest operand first">
+      </command>
+      <command
+            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
             id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
             name="Forward declaration">
       </command>
@@ -120,6 +125,10 @@
       <handler
             class="il.ac.technion.cs.ssdl.spartan.commandhandlers.TernarizeHandler"
             commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary">
+      </handler>
+      <handler
+            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ShortestOperandHandler"
+            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand">
       </handler>
       <handler
             class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ForwardDeclarationHandler"
@@ -216,6 +225,11 @@
                      style="push">
                </command>
                <command
+                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand"
+                     id="il.ac.technion.cs.ssdl.spartan.menus.ShortestOperandCommand"
+                     style="push">
+               </command>
+               <command
                      commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
                      id="il.ac.technion.cs.ssdl.spartan.menus.ForwardDeclarationCommand"
                      style="push">
@@ -250,6 +264,10 @@
             </command>
             <command
                   commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
+                  style="push">
+            </command>
+            <command
+                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand"
                   style="push">
             </command>
             <command

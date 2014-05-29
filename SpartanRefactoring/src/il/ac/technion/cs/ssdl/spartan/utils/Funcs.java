@@ -1,7 +1,10 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.Block;
@@ -21,7 +24,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- * 
+ *
  * Useful Functions
  *
  */
@@ -262,7 +265,7 @@ public class Funcs{
 
 	/**
 	 * adds nextReturn to the end of the then block if addToThen is true or to the else block otherwise
-	 * 
+	 *
 	 * @param ast  the AST who is to own the new return statement
 	 * @param r  ASTRewrite for the given AST
 	 * @param node  the if statement to add the return to
@@ -283,7 +286,7 @@ public class Funcs{
 	/**
 	 * Extracts a return statement from a node. Expression, and the Expression
 	 * contains Assignment.
-	 * 
+	 *
 	 * @param s
 	 *          The node from which to return statement assignment.
 	 * @return null if it is not possible to extract the return statement.
@@ -330,7 +333,7 @@ public class Funcs{
 
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 * 
+	 *
 	 * @param cmpTo  a string to compare all names to
 	 * @param name  SimplesNames to compare by their string value to cmpTo
 	 * @return  true if all names are the same (string wise) or false otherwise
@@ -362,7 +365,7 @@ public class Funcs{
 
 	/**
 	 * the function checks if all the given assignments has the same left hand side(variable) and operator
-	 * 
+	 *
 	 * @param cmpTo  The assignment to compare all others to
 	 * @param asgns  The assignments to compare
 	 * @return  true if all assignments has the same left hand side and operator as the first one
@@ -382,7 +385,7 @@ public class Funcs{
 	/**
 	 * the function receives a condition and the then boolean value and returns the proper condition (its negation
 	 * if thenValue is false)
-	 * 
+	 *
 	 * @param t  the AST who is to own the new return statement
 	 * @param r  ASTRewrite for the given AST
 	 * @param cond  the condition to try to negate
@@ -396,5 +399,27 @@ public class Funcs{
 		if (thenValue)
 			return cond;
 		return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
+	}
+
+	/**
+	 * Counts the number of nodes in the tree of which node is root.
+	 *
+	 * @param n
+	 *          The node.
+	 * @return Number of abstract syntax tree nodes under the parameter.
+	 */
+	public static int countNodes(final ASTNode n) {
+		final AtomicInteger $ = new AtomicInteger(0);
+		n.accept(new ASTVisitor() {
+			/**
+			 * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
+			 * @param _
+			 *          ignored
+			 */
+			@Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
+				$.incrementAndGet();
+			}
+		});
+		return $.get();
 	}
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * @author Boris van Sosin
- * 
+ *
  * @since 2013/07/01
  */
 public enum All {
@@ -19,6 +19,7 @@ public enum All {
 	static {
 		put(new ComparisonWithBoolean());
 		put(new Ternarize());
+		put(new ShortestOperand());
 		put(new ShortestBranchFirst());
 		put(new InlineSingleUse());
 		put(new ForwardDeclaration());
