@@ -144,7 +144,7 @@ public abstract class Spartanization extends Refactoring {
 	protected static boolean isNodeOutsideMarker(final ASTNode n, final IMarker m) {
 		try {
 			return n.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue()
-			    || n.getStartPosition() + n.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
+					|| n.getStartPosition() + n.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
 		} catch (final CoreException e) {
 			return true;
 		}
@@ -166,7 +166,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 
 	@Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
-	    OperationCanceledException {
+	OperationCanceledException {
 		changes.clear();
 		if (marker != null) {
 			innerRunAsMarkerFix(pm, marker, true);
@@ -205,7 +205,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 
 	private RefactoringStatus innerRunAsMarkerFix(final IProgressMonitor pm, final IMarker m, final boolean preview)
-	    throws CoreException {
+			throws CoreException {
 		final RefactoringStatus $ = new RefactoringStatus();
 		marker = m;
 		pm.beginTask("Running refactoring...", 2);
@@ -223,7 +223,7 @@ public abstract class Spartanization extends Refactoring {
 	 * @throws CoreException
 	 */
 	protected void scanCompilationUnits(final List<ICompilationUnit> cus, final IProgressMonitor pm) throws IllegalArgumentException,
-	    CoreException {
+	CoreException {
 		pm.beginTask("Iterating over gathered compilation units...", cus.size());
 		for (final ICompilationUnit cu : cus)
 			scanCompilationUnit(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -238,7 +238,7 @@ public abstract class Spartanization extends Refactoring {
 		pm.beginTask("Creating change for a single compilation unit...", 2);
 		final ASTParser p = Utils.makeParser(u);
 		final CompilationUnit cu = (CompilationUnit) p.createAST(new SubProgressMonitor(pm, 1,
-		    SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 		final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
 		textChange.setTextType("java");
 		textChange.setEdit(createRewrite(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
@@ -248,7 +248,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 
 	protected void scanCompilationUnitForMarkerFix(final IMarker m, final IProgressMonitor pm, final boolean preview)
-	    throws CoreException {
+			throws CoreException {
 		pm.beginTask("Creating change for a single compilation unit...", 2);
 		final ICompilationUnit u = getCompilationUnitFromMarker(m);
 		final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
@@ -300,7 +300,7 @@ public abstract class Spartanization extends Refactoring {
 	protected abstract ASTVisitor fillOpportunities(List<Range> opportunities);
 
 	@Override public final Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm)
-	    throws OperationCanceledException {
+			throws OperationCanceledException {
 		return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
 	}
 
@@ -390,7 +390,7 @@ public abstract class Spartanization extends Refactoring {
 	/**
 	 * a quickfix which opens a refactoring wizard with the spartanization
 	 * 
-	 * @author Boris van Sosin
+	 * @author r Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
 	 */
 	public class SpartanizationResolutionWithPreview implements IMarkerResolution {
 		@Override public String getLabel() {
@@ -401,7 +401,7 @@ public abstract class Spartanization extends Refactoring {
 			setMarker(m);
 			try {
 				new RefactoringWizardOpenOperation(new Wizard(Spartanization.this)).run(Display.getCurrent().getActiveShell(),
-				    "Spartan refactoring: " + Spartanization.this);
+						"Spartan refactoring: " + Spartanization.this);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}

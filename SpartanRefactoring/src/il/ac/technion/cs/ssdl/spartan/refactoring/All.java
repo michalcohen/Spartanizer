@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Boris van Sosin
- *
+ * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
+ * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> 	(original / 30.05.2014) (v3)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code>		(original / 30.05.2014) (v3)
  * @since 2013/07/01
  */
 public enum All {

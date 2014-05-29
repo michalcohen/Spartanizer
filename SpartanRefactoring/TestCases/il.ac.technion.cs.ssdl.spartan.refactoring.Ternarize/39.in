@@ -2,11 +2,18 @@ package p;
 
 public class Blah {
 	public void yada(final String s) {
-		int a=0, b=0;
-		if (a==3){
-			a+=4;
-		} else {
-			b+=5;
-		}
+	    int a, b;
+	    a = 3;
+	    b = 5;
+		if (a == 4) 
+		  if (b == 3)
+		     b = 2;
+		   else
+		     b = a;
+		else
+		  if (b == 3)
+		    b = 2;
+		  else
+		    b = a*a; 	
 	}
 }
