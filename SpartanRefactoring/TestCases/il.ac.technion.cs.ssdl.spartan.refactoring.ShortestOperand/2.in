@@ -1,0 +1,8 @@
+package p;
+
+public class SpongeBob {
+	public boolean squarePants(int k) {
+		k = k + 4;
+		if (2 * 6 + 4 == k) return true;
+	}
+}

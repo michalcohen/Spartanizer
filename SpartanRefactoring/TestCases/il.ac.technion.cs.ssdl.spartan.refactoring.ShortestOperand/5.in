@@ -1,0 +1,8 @@
+package p;
+
+public class SpongeBob {
+	public boolean squarePants() {
+		StringBuilder s = "bob";
+		return s.append("-ha").append("-ba").toString() == "bob-ha-banai";
+	}
+}

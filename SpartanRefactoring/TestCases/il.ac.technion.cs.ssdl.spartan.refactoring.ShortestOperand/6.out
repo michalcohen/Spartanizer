@@ -1,0 +1,10 @@
+package p;
+
+public class SpongeBob {
+	public boolean squarePants() {
+		int a,b,c;
+		String t = "eureka!";
+		if (a <= 2 * 3.1415 * 180 || "1984" == t.concat("<!>") && 3 <= t.length())
+			return c > 5;
+	}
+}

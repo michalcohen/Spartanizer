@@ -1,0 +1,8 @@
+package p;
+
+public class SpongeBob {
+	public boolean squarePants() {
+		int y,o,g,i,s;
+		return ( y + o + s > s + i |  g > 42);
+	}
+}
