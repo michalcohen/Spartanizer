@@ -1,20 +1,37 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-
-import org.eclipse.jdt.core.dom.AST;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- * 
+ *
  * Useful Functions
- * 
+ *
  */
 public enum Funcs {
 	;
@@ -342,7 +359,7 @@ public enum Funcs {
 	/**
 	 * adds nextReturn to the end of the then block if addToThen is true or to the
 	 * else block otherwise
-	 * 
+	 *
 	 * @param ast
 	 *          the AST who is to own the new return statement
 	 * @param r
@@ -419,7 +436,7 @@ public enum Funcs {
 	}
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 * 
+	 *
 	 * @param cmpTo
 	 *          a string to compare all names to
 	 * @param name
@@ -453,7 +470,7 @@ public enum Funcs {
 	/**
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
-	 * 
+	 *
 	 * @param cmpTo
 	 *          The assignment to compare all others to
 	 * @param asgns
@@ -473,7 +490,7 @@ public enum Funcs {
 	/**
 	 * the function receives a condition and the then boolean value and returns
 	 * the proper condition (its negation if thenValue is false)
-	 * 
+	 *
 	 * @param t
 	 *          the AST who is to own the new return statement
 	 * @param r
