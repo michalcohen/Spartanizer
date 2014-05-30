@@ -1,10 +1,13 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+
+import org.eclipse.jdt.core.dom.AST;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
