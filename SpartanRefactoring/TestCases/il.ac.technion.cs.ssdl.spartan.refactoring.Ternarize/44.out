@@ -1,0 +1,19 @@
+package p;
+
+public class Blah {
+	public int r(){
+		return 6;
+	}
+	public int y(){
+		return 4;
+	}
+	public void yada(final String s) {
+	    int a, b;
+	    a = 3;
+	    b = 5;
+	    if (b == 3)
+	  	     b = (a == 4 ? r() : y());
+	  	   else
+	  	     b = a;
+	}
+}
