@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
- * 
+ *
  * @since 2013/01/01
  */
 public class Ternarize extends Spartanization {
@@ -95,7 +95,7 @@ public class Ternarize extends Spartanization {
 	}
 	/**
 	 * @author Tomer
-	 * 
+	 *
 	 *         contains both sides for the conditional expression
 	 */
 	public static class TwoExpressions {
@@ -103,7 +103,7 @@ public class Ternarize extends Spartanization {
 		final Expression elseExp;
 		/**
 		 * Instantiates a then class with the given Expressions
-		 * 
+		 *
 		 * @param t
 		 *          then Expression
 		 * @param e
@@ -115,7 +115,7 @@ public class Ternarize extends Spartanization {
 		}
 	}
 	// Really unclear
-	public boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
+	public static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
 		final Statement thenStatment = getStmntFromBlock(ifStmt.getThenStatement());
 		final Statement elseStatment = getStmntFromBlock(ifStmt.getElseStatement());
 		final List<String> thenNames = new ArrayList<String>();

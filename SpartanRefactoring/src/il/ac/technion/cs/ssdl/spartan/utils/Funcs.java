@@ -9,12 +9,57 @@ import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- * 
+ *
  * Useful Functions
- * 
+ *
  */
 public enum Funcs {
 	;
+	// This function has no clear semantics!
+	public static List<ASTNode> collectExpressions(final Statement lookFor) {
+		final List<ASTNode> $ = new ArrayList<ASTNode>();
+		lookFor.accept(new ASTVisitor() {
+			@Override public void endVisit(final StringLiteral l) {
+				collect(l);
+			}
+			private void collect(final ASTNode l) {
+				for (ASTNode n = l; !n.equals(lookFor); n = n.getParent())
+					$.add(n);
+			}
+			@Override public void endVisit(final NumberLiteral l) {
+				collect(l);
+			}
+			@Override public void endVisit(final BooleanLiteral l) {
+				collect(l);
+			}
+			@Override public void endVisit(final InfixExpression l) {
+				collect(l);
+			}
+			@Override public void endVisit(final MethodInvocation l) {
+				collect(l);
+			}
+		});
+		return $;
+	}
+	// This function has no clear semantics!
+	public static List<String> collectNames(final Statement s) {
+		final List<String> $ = new ArrayList<String>();
+		s.accept(new ASTVisitor() {
+			@SuppressWarnings("unused") @Override public boolean visit(final ReturnStatement ret) {
+				$.add("return");
+				return false;
+			}
+			@Override public void endVisit(final SimpleName name) {
+				if (name.getParent().getParent().getNodeType() == ASTNode.EXPRESSION_STATEMENT
+						|| name.getParent().getNodeType() == ASTNode.QUALIFIED_NAME)
+					$.add(name.getIdentifier());
+			}
+			@Override public void endVisit(final Assignment asgn) {
+				$.add(asgn.getOperator().toString());
+			}
+		});
+		return $;
+	}
 	/**
 	 * @param os
 	 *          an unknown number of parameters
@@ -294,7 +339,7 @@ public enum Funcs {
 	/**
 	 * adds nextReturn to the end of the then block if addToThen is true or to the
 	 * else block otherwise
-	 * 
+	 *
 	 * @param ast
 	 *          the AST who is to own the new return statement
 	 * @param r
@@ -320,7 +365,7 @@ public enum Funcs {
 	/**
 	 * Extracts a return statement from a node. Expression, and the Expression
 	 * contains Assignment.
-	 * 
+	 *
 	 * @param s
 	 *          The node from which to return statement assignment.
 	 * @return null if it is not possible to extract the return statement.
@@ -371,7 +416,7 @@ public enum Funcs {
 	}
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 * 
+	 *
 	 * @param cmpTo
 	 *          a string to compare all names to
 	 * @param name
@@ -405,7 +450,7 @@ public enum Funcs {
 	/**
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
-	 * 
+	 *
 	 * @param cmpTo
 	 *          The assignment to compare all others to
 	 * @param asgns
@@ -425,7 +470,7 @@ public enum Funcs {
 	/**
 	 * the function receives a condition and the then boolean value and returns
 	 * the proper condition (its negation if thenValue is false)
-	 * 
+	 *
 	 * @param t
 	 *          the AST who is to own the new return statement
 	 * @param r
@@ -466,7 +511,7 @@ public enum Funcs {
 		});
 		return $.get();
 	}
-	
+
 	/**
 	 * @param root
 	 * 				the node whose children we return
