@@ -51,7 +51,7 @@ public enum Utils {
 	}
 
 	private static ASTParser makeParser() {
-		final ASTParser $ = ASTParser.newParser(AST.JLS8);
+		final ASTParser $ = ASTParser.newParser(AST.JLS4);
 		$.setKind(ASTParser.K_COMPILATION_UNIT);
 		$.setResolveBindings(false);
 		return $;
