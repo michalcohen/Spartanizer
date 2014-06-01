@@ -273,12 +273,23 @@ public enum Funcs {
 	}
 	/**
 	 * @param s
-	 *          the statement to check
-	 * @return true if s is a return statement or false otherwise
+	 *          the statement or block to check
+	 * @return true if s contains a return statement or false otherwise
 	 */
-	public static boolean checkReturnStmnt(final Statement s) {
-		return s != null && s.getNodeType() == ASTNode.BLOCK ? checkReturnStmnt((Block) s) : s != null
-				&& s.getNodeType() == ASTNode.RETURN_STATEMENT;
+	public static boolean checkIfReturnStmntExist(final Statement s) {
+		if (s==null)
+			return false;
+		switch(s.getNodeType()){
+		case ASTNode.RETURN_STATEMENT: return true;
+		case ASTNode.BLOCK: {
+			for (final Object node : ((Block)s).statements())
+				if (((ASTNode)node).getNodeType() == ASTNode.RETURN_STATEMENT)
+					return true;
+			break;
+		}
+		default: break;
+		}
+		return false;
 	}
 	/**
 	 * @param node
@@ -287,7 +298,7 @@ public enum Funcs {
 	 *         the block is s is a block
 	 */
 	public static int getNumOfStmnts(final ASTNode node) {
-		return ((node == null ? 0 : node.getNodeType() != ASTNode.BLOCK ? 1 : ((Block) node).statements().size()));
+		return node == null ? 0 : node.getNodeType() != ASTNode.BLOCK ? 1 : ((Block) node).statements().size();
 	}
 	/**
 	 * adds nextReturn to the end of the then block if addToThen is true or to the
@@ -297,23 +308,37 @@ public enum Funcs {
 	 *          the AST who is to own the new return statement
 	 * @param r
 	 *          ASTRewrite for the given AST
-	 * @param node
+	 * @param ifStmnt
 	 *          the if statement to add the return to
 	 * @param nextReturn
 	 *          the return statement to add
 	 * @param addToThen
 	 *          boolean value to decide on which block to add the return statement
 	 *          to
+	 * @return true if successful or false otherwise
 	 */
-	public static void addReturnStmntToIf(final AST ast, final ASTRewrite r, final IfStatement node,
+	public static boolean addReturnStmntToIf(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final ReturnStatement nextReturn, final boolean addToThen) {
-		if (ast == null || r == null || node == null || nextReturn == null)
-			return;
-		final IfStatement newNode = (IfStatement) ASTNode.copySubtree(ast, node);
+		if (ast == null || r == null || ifStmnt == null || nextReturn == null)
+			return false;
+		final Statement thenStmnt = ifStmnt.getThenStatement();
+		final Statement elseStmnt = ifStmnt.getElseStatement();
+		if (addToThen && !checkIfReturnStmntExist(ifStmnt.getElseStatement())
+				|| !addToThen && !checkIfReturnStmntExist(ifStmnt.getThenStatement()))
+			return false;
+		final IfStatement newIfStmnt = (IfStatement) ASTNode.copySubtree(ast, ifStmnt);
 		final ReturnStatement newReturn = (ReturnStatement) ASTNode.copySubtree(ast, nextReturn);
-		((Block) (addToThen ? newNode.getThenStatement() : newNode.getElseStatement())).statements().add(newReturn);
-		r.replace(node, newNode, null);
+		if (addToThen && thenStmnt != null && thenStmnt.getNodeType() != ASTNode.BLOCK){
+			newIfStmnt.setThenStatement(ast.newBlock());
+			((Block)newIfStmnt.getThenStatement()).statements().add(thenStmnt);
+		} else if (!addToThen && elseStmnt != null && elseStmnt.getNodeType() != ASTNode.BLOCK){
+			newIfStmnt.setElseStatement(ast.newBlock());
+			((Block)newIfStmnt.getElseStatement()).statements().add(elseStmnt);
+		}
+		((Block) (addToThen ? newIfStmnt.getThenStatement() : newIfStmnt.getElseStatement())).statements().add(newReturn);
+		r.replace(ifStmnt, newIfStmnt, null);
 		r.remove(nextReturn, null);
+		return true;
 	}
 	/**
 	 * Extracts a return statement from a node. Expression, and the Expression
