@@ -167,11 +167,12 @@ public abstract class Spartanization extends Refactoring {
 	@Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
 	OperationCanceledException {
 		changes.clear();
-		if (marker != null) {
+		if (marker == null)
+			runAsManualCall(pm);
+		else {
 			innerRunAsMarkerFix(pm, marker, true);
 			marker = null; // consume marker
-		} else
-			runAsManualCall(pm);
+		}
 		pm.done();
 		return new RefactoringStatus();
 	}
@@ -334,11 +335,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 
 	protected final boolean inRange(final IMarker m, final ASTNode n) {
-		if (m == null && isNodeOutsideSelection(n) && isTextSelected())
-			return false;
-		if (m != null && isNodeOutsideMarker(n, m))
-			return false;
-		return true;
+		return m == null && isNodeOutsideSelection(n) && isTextSelected() ? false : m != null && isNodeOutsideMarker(n, m) ? false : true;
 	}
 
 	@Override public String toString() {

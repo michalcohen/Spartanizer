@@ -215,8 +215,8 @@ public enum Funcs {
 	public static ExpressionStatement getExpressionStatement(final Statement n) {
 		if (n == null)
 			return null;
-		final ASTNode $ = n.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock(n) : n;
-		return $ != null && $.getNodeType() == ASTNode.EXPRESSION_STATEMENT ? (ExpressionStatement) $ : null;
+		final ASTNode $ = n.getNodeType() != ASTNode.BLOCK ? n : getStmntFromBlock(n);
+		return !($ != null && $.getNodeType() == ASTNode.EXPRESSION_STATEMENT) ? null : (ExpressionStatement) $;
 	}
 	/**
 	 * @param n
@@ -370,7 +370,7 @@ public enum Funcs {
 	 *         statement otherwise
 	 */
 	public static ReturnStatement getReturnStatement(final Block b) {
-		return b != null && b.statements().size() == 1 ? getReturnStatement((ASTNode) b.statements().get(0)) : null;
+		return !(b != null && b.statements().size() == 1) ? null : getReturnStatement((ASTNode) b.statements().get(0));
 	}
 	/**
 	 * @param s
@@ -467,9 +467,7 @@ public enum Funcs {
 	 *         was false (or null if any of the given parameter were null)
 	 */
 	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
-		if (t == null || cond == null)
-			return null;
-		return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
+		return t == null || cond == null ? null : thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
 	}
 
 	/**

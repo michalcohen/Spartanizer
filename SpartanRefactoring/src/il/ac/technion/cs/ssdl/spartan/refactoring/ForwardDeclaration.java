@@ -34,15 +34,15 @@ public class ForwardDeclaration extends Spartanization {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
 				if (!inRange(m, n))
 					return true;
-				final SimpleName varName = n.getName();
 				final ASTNode containingNode = n.getParent().getParent();
 				if (!(containingNode instanceof Block))
 					return true;
 				final Block block = (Block) containingNode;
-				final int declaredIdx = block.statements().indexOf(n.getParent());
-				final int firstUseIdx = findFirstUse(block, varName);
+				final int firstUseIdx = findFirstUse(block, n.getName());
 				if (firstUseIdx < 0)
 					return true;
+				final int declaredIdx = block.statements().indexOf(
+						n.getParent());
 				final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
 				if (beginingOfDeclarationsBlockIdx > declaredIdx) {
 					final ASTNode declarationNode = (ASTNode) block.statements().get(declaredIdx);
@@ -52,8 +52,8 @@ public class ForwardDeclaration extends Spartanization {
 						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
 					} else {
 						r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-						    t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
-						    beginingOfDeclarationsBlockIdx + 1, null);
+								t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
+								beginingOfDeclarationsBlockIdx + 1, null);
 						r.remove(n, null);
 					}
 				}
@@ -65,8 +65,8 @@ public class ForwardDeclaration extends Spartanization {
 	@Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
-				final ASTNode containingNode = n.getParent().getParent();
-				return !(containingNode instanceof Block) ? true : moverForward(n, (Block) containingNode);
+				final ASTNode $ = n.getParent().getParent();
+				return !($ instanceof Block) ? true : moverForward(n, (Block) $);
 			}
 
 			private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
@@ -91,21 +91,20 @@ public class ForwardDeclaration extends Spartanization {
 	}
 
 	static int findBeginingOfDeclarationBlock(final Block b, final int declaredIdx, final int firstUseIdx) {
-		int beginingOfDeclarationsBlockIdx = firstUseIdx - 1;
+		int $ = firstUseIdx - 1;
 		for (int i = firstUseIdx - 1; i > declaredIdx; --i) {
 			if (!(b.statements().get(i) instanceof VariableDeclarationStatement))
 				break;
 			final VariableDeclarationStatement declarations = (VariableDeclarationStatement) b.statements().get(i);
 			boolean foundUsedVariable = false;
-			for (final Object item : declarations.fragments()) {
+			for (final Object item : declarations.fragments())
 				if (findFirstUse(b, ((VariableDeclarationFragment) item).getName()) == firstUseIdx) {
-					beginingOfDeclarationsBlockIdx = i - 1;
+					$ = i - 1;
 					foundUsedVariable = true;
 				}
-			}
 			if (!foundUsedVariable)
 				break;
 		}
-		return beginingOfDeclarationsBlockIdx;
+		return $;
 	}
 }

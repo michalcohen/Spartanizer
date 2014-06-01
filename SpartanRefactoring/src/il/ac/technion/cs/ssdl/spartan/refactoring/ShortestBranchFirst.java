@@ -118,19 +118,7 @@ public class ShortestBranchFirst extends Spartanization {
 	}
 
 	private static Operator negate(final Operator o) {
-		if (o.equals(EQUALS))
-			return NOT_EQUALS;
-		if (o.equals(NOT_EQUALS))
-			return EQUALS;
-		if (o.equals(LESS))
-			return GREATER_EQUALS;
-		if (o.equals(GREATER))
-			return LESS_EQUALS;
-		if (o.equals(LESS_EQUALS))
-			return GREATER;
-		if (o.equals(GREATER_EQUALS))
-			return LESS;
-		return null;
+		return o.equals(EQUALS) ? NOT_EQUALS : o.equals(NOT_EQUALS) ? EQUALS : o.equals(LESS) ? GREATER_EQUALS : o.equals(GREATER) ? LESS_EQUALS : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER_EQUALS) ? LESS : null;
 	}
 
 	private static Expression tryNegatePrefix(final ASTRewrite rewrite, final PrefixExpression exp) {

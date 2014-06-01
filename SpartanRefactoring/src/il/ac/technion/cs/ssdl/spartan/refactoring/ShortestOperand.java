@@ -49,9 +49,9 @@ public class ShortestOperand extends Spartanization {
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
 	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n) {
-		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
 		final ASTNode newL = ASTNode.copySubtree(ast, n.getLeftOperand());
+		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		if ($.getLeftOperand().getNodeType() == INFIX_EXPRESSION)
 			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) $.getLeftOperand()));
 		if ($.getRightOperand().getNodeType() == INFIX_EXPRESSION)
@@ -79,15 +79,7 @@ public class ShortestOperand extends Spartanization {
 	 *         "+".
 	 */
 	public static Operator flipOperator(final Operator o) {
-		if (o.equals(LESS))
-			return GREATER_EQUALS;
-		if (o.equals(GREATER))
-			return LESS_EQUALS;
-		if (o.equals(LESS_EQUALS))
-			return GREATER;
-		if (o.equals(GREATER_EQUALS))
-			return LESS;
-		return o;
+		return o.equals(LESS) ? GREATER_EQUALS : o.equals(GREATER) ? LESS_EQUALS : o.equals(LESS_EQUALS) ? GREATER : !(o.equals(GREATER_EQUALS)) ? o : LESS;
 	}
 	/**
 	 * @param o
@@ -96,10 +88,8 @@ public class ShortestOperand extends Spartanization {
 	 * @see ShortestOperand
 	 */
 	public static boolean isFlipable(final Operator o) {
-		if (o.equals(EQUALS) || o.equals(NOT_EQUALS) || o.equals(LESS) || o.equals(GREATER) || o.equals(LESS_EQUALS)
-				|| o.equals(GREATER_EQUALS) || o.equals(PLUS) || o.equals(TIMES) || o.equals(XOR) || o.equals(AND) || o.equals(OR))
-			return true;
-		return false;
+		return o.equals(EQUALS) || o.equals(NOT_EQUALS) || o.equals(LESS) || o.equals(GREATER) || o.equals(LESS_EQUALS)
+				|| o.equals(GREATER_EQUALS) || o.equals(PLUS) || o.equals(TIMES) || o.equals(XOR) || o.equals(AND) || o.equals(OR) ? true : false;
 	}
 	private static final int threshold = 1;
 	/**
@@ -150,10 +140,8 @@ public class ShortestOperand extends Spartanization {
 			@Override public boolean visit(final InfixExpression n) {
 				final Range rN = new Range(n.getParent());
 				if (longerFirst(n) && isFlipable(n.getOperator())) { // Check if the
-					// operands can be swapped
-					final boolean overlapFound = unionRangeWithList(opportunities, rN);
 					// Union range results
-					if (!overlapFound)
+					if (!unionRangeWithList(opportunities, rN))
 						opportunities.add(rN);
 				}
 				return true;

@@ -49,9 +49,9 @@ public abstract class TestSuite {
 	static Spartanization makeSpartanizationObject(final String folderForClass) {
 		final Class<?> c = asClass(folderForClass);
 		assertNotNull(c);
-		final Object o = getInstance(c);
-		assertNotNull(o);
-		return (Spartanization) o;
+		final Object $ = getInstance(c);
+		assertNotNull($);
+		return (Spartanization) $;
 	}
 
 	/**
