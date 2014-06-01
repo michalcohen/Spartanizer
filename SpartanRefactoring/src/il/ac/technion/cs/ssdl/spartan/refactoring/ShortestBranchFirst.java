@@ -134,9 +134,7 @@ public class ShortestBranchFirst extends Spartanization {
 	}
 
 	private static Expression tryNegatePrefix(final ASTRewrite rewrite, final PrefixExpression exp) {
-		if (exp.getOperator().equals(PrefixExpression.Operator.NOT))
-			return (Expression) rewrite.createCopyTarget(exp.getOperand());
-		return null;
+		return !(exp.getOperator().equals(PrefixExpression.Operator.NOT)) ? null : (Expression) rewrite.createCopyTarget(exp.getOperand());
 	}
 
 	private static final int threshold = 1;

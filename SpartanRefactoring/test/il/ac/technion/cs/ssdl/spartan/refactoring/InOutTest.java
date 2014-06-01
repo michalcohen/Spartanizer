@@ -65,9 +65,7 @@ public class InOutTest  extends AbstractParametrizedTest{
 				if (!name.endsWith(".in"))
 					return null;
 				final File fOut = new File(d, name.replaceAll("\\.in$", ".out"));
-				if (!fOut.exists())
-					return null;
-				return new Object[] { s, name.replaceAll("\\.in$", ""), f, fOut };
+				return !fOut.exists() ? null : new Object[] { s, name.replaceAll("\\.in$", ""), f, fOut };
 			}
 		}.go();
 	}

@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -236,12 +235,12 @@ public abstract class Spartanization extends Refactoring {
 	 */
 	protected void scanCompilationUnit(final ICompilationUnit u, final IProgressMonitor pm) throws CoreException {
 		pm.beginTask("Creating change for a single compilation unit...", 2);
-		final ASTParser p = Utils.makeParser(u);
-		final CompilationUnit cu = (CompilationUnit) p.createAST(new SubProgressMonitor(pm, 1,
-				SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 		final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
 		textChange.setTextType("java");
-		textChange.setEdit(createRewrite(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
+		textChange.setEdit(createRewrite((CompilationUnit) Utils.makeParser(u)
+				.createAST(
+						new SubProgressMonitor(pm, 1,
+								SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)), new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
 		if (textChange.getEdit().getLength() != 0)
 			changes.add(textChange);
 		pm.done();

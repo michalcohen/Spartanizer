@@ -66,9 +66,7 @@ public class ForwardDeclaration extends Spartanization {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
 				final ASTNode containingNode = n.getParent().getParent();
-				if (!(containingNode instanceof Block))
-					return true;
-				return moverForward(n, (Block) containingNode);
+				return !(containingNode instanceof Block) ? true : moverForward(n, (Block) containingNode);
 			}
 
 			private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
@@ -100,8 +98,7 @@ public class ForwardDeclaration extends Spartanization {
 			final VariableDeclarationStatement declarations = (VariableDeclarationStatement) b.statements().get(i);
 			boolean foundUsedVariable = false;
 			for (final Object item : declarations.fragments()) {
-				final int firstUseOfCurr = findFirstUse(b, ((VariableDeclarationFragment) item).getName());
-				if (firstUseOfCurr == firstUseIdx) {
+				if (findFirstUse(b, ((VariableDeclarationFragment) item).getName()) == firstUseIdx) {
 					beginingOfDeclarationsBlockIdx = i - 1;
 					foundUsedVariable = true;
 				}

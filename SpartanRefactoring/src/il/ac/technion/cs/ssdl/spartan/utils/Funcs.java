@@ -4,8 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -263,11 +280,7 @@ public enum Funcs {
 	 *         b is statement it returns b and if b is null it returns a null
 	 */
 	public static Statement getStmntFromBlock(final Statement b) {
-		if (b == null)
-			return null;
-		if (b.getNodeType() != ASTNode.BLOCK)
-			return b;
-		return ((Block) b).statements().size() == 1 ? (Statement) ((Block) b).statements().get(0) : null;
+		return b == null ? null : b.getNodeType() != ASTNode.BLOCK ? b : ((Block) b).statements().size() != 1 ? null : (Statement) ((Block) b).statements().get(0);
 	}
 	/**
 	 * @param s
@@ -319,13 +332,13 @@ public enum Funcs {
 			final ReturnStatement nextReturn, final boolean addToThen) {
 		if (ast == null || r == null || ifStmnt == null || nextReturn == null)
 			return false;
-		final Statement thenStmnt = ifStmnt.getThenStatement();
-		final Statement elseStmnt = ifStmnt.getElseStatement();
 		if (addToThen && !checkIfReturnStmntExist(ifStmnt.getElseStatement())
 				|| !addToThen && !checkIfReturnStmntExist(ifStmnt.getThenStatement()))
 			return false;
-		final IfStatement newIfStmnt = (IfStatement) ASTNode.copySubtree(ast, ifStmnt);
-		final ReturnStatement newReturn = (ReturnStatement) ASTNode.copySubtree(ast, nextReturn);
+		final IfStatement newIfStmnt = (IfStatement) ASTNode.copySubtree(ast,
+				ifStmnt);
+		final Statement elseStmnt = ifStmnt.getElseStatement();
+		final Statement thenStmnt = ifStmnt.getThenStatement();
 		if (addToThen && thenStmnt != null && thenStmnt.getNodeType() != ASTNode.BLOCK){
 			newIfStmnt.setThenStatement(ast.newBlock());
 			((Block)newIfStmnt.getThenStatement()).statements().add(thenStmnt);
@@ -333,7 +346,8 @@ public enum Funcs {
 			newIfStmnt.setElseStatement(ast.newBlock());
 			((Block)newIfStmnt.getElseStatement()).statements().add(elseStmnt);
 		}
-		((Block) (addToThen ? newIfStmnt.getThenStatement() : newIfStmnt.getElseStatement())).statements().add(newReturn);
+		((Block) (addToThen ? newIfStmnt.getThenStatement() : newIfStmnt.getElseStatement())).statements().add(ASTNode
+				.copySubtree(ast, nextReturn));
 		r.replace(ifStmnt, newIfStmnt, null);
 		r.remove(nextReturn, null);
 		return true;
@@ -347,11 +361,7 @@ public enum Funcs {
 	 * @return null if it is not possible to extract the return statement.
 	 */
 	public static ReturnStatement getReturnStatement(final Statement s) {
-		if (s == null)
-			return null;
-		if (s.getNodeType() == ASTNode.RETURN_STATEMENT)
-			return (ReturnStatement) s;
-		return s.getNodeType() != ASTNode.BLOCK ? null : getReturnStatement((Block) s);
+		return s == null ? null : s.getNodeType() == ASTNode.RETURN_STATEMENT ? (ReturnStatement) s : s.getNodeType() != ASTNode.BLOCK ? null : getReturnStatement((Block) s);
 	}
 	/**
 	 * @param b

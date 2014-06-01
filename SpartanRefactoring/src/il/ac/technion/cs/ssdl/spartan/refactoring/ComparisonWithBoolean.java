@@ -42,18 +42,16 @@ public class ComparisonWithBoolean extends Spartanization {
 						&& n.getLeftOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
 					nonliteral = r.createMoveTarget(n.getLeftOperand());
 					literal = (BooleanLiteral) n.getRightOperand();
-				} else if (n.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-						&& n.getRightOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
-					nonliteral = r.createMoveTarget(n.getRightOperand());
-					literal = (BooleanLiteral) n.getLeftOperand();
-				} else
+				} else if (!(n.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
+						&& n.getRightOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL))
 					return true;
+				else {
+nonliteral = r.createMoveTarget(n.getRightOperand());
+literal = (BooleanLiteral) n.getLeftOperand();
+}
 				ASTNode newnode = null;
-				if (literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
-						&& n.getOperator() == Operator.NOT_EQUALS)
-					newnode = nonliteral;
-				else
-					newnode = Funcs.makePrefixExpression(t, r, Funcs.makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT);
+				newnode = literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
+						&& n.getOperator() == Operator.NOT_EQUALS ? nonliteral : Funcs.makePrefixExpression(t, r, Funcs.makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT);
 				r.replace(n, newnode, null);
 				return true;
 			}
