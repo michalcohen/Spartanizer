@@ -44,8 +44,8 @@ public enum Funcs {
 		if (t == null || r == null || varName == null || initalizer == null)
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
-		$.setInitializer(initalizer.getParent() == null ? initalizer : (Expression) r.createCopyTarget(initalizer));
-		$.setName(varName.getParent() == null ? varName : (SimpleName) r.createCopyTarget(varName));
+		$.setInitializer(null == initalizer.getParent() ? initalizer : (Expression) r.createCopyTarget(initalizer));
+		$.setName(null == varName.getParent() ? varName : (SimpleName) r.createCopyTarget(varName));
 		return $;
 	}
 	/**
@@ -287,9 +287,7 @@ public enum Funcs {
 	 *         the block is s is a block
 	 */
 	public static int getNumOfStmnts(final ASTNode node) {
-		if (node != null)
-			return node.getNodeType() != ASTNode.BLOCK ? 1 : ((Block) node).statements().size();
-		return 0;
+		return ((node == null ? 0 : node.getNodeType() != ASTNode.BLOCK ? 1 : ((Block) node).statements().size()));
 	}
 	/**
 	 * adds nextReturn to the end of the then block if addToThen is true or to the
