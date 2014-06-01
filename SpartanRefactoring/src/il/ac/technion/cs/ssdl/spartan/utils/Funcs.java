@@ -198,8 +198,8 @@ public enum Funcs {
 	public static ExpressionStatement getExpressionStatement(final Statement n) {
 		if (n == null)
 			return null;
-		final ASTNode s = n.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock(n) : n;
-		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT ? (ExpressionStatement) s : null;
+		final ASTNode $ = n.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock(n) : n;
+		return $ != null && $.getNodeType() == ASTNode.EXPRESSION_STATEMENT ? (ExpressionStatement) $ : null;
 	}
 	/**
 	 * @param n
@@ -208,8 +208,8 @@ public enum Funcs {
 	 *         statement is not an assignment or the assignment if it exists
 	 */
 	public static Assignment getAssignment(final Statement n) {
-		final ExpressionStatement expStmnt = getExpressionStatement(n);
-		return expStmnt == null || expStmnt.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) expStmnt
+		final ExpressionStatement $ = getExpressionStatement(n);
+		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $
 				.getExpression();
 	}
 	/**
@@ -219,9 +219,9 @@ public enum Funcs {
 	 *         block contains more than one statement
 	 */
 	public static MethodInvocation getMethodInvocation(final Statement n) {
-		final ExpressionStatement expStmnt = getExpressionStatement(n);
-		return expStmnt == null || expStmnt.getExpression().getNodeType() != ASTNode.METHOD_INVOCATION ? null
-				: (MethodInvocation) expStmnt.getExpression();
+		final ExpressionStatement $ = getExpressionStatement(n);
+		return $ == null || $.getExpression().getNodeType() != ASTNode.METHOD_INVOCATION ? null
+				: (MethodInvocation) $.getExpression();
 	}
 	/**
 	 * @param s
@@ -232,8 +232,8 @@ public enum Funcs {
 	public static boolean checkIsAssignment(final Statement s) {
 		if (s == null || s.getNodeType() == ASTNode.BLOCK && getStmntFromBlock(s) == null)
 			return false;
-		final ExpressionStatement es = Funcs.getExpressionStatement(getStmntFromBlock(s));
-		return es != null && es.getExpression().getNodeType() == ASTNode.ASSIGNMENT;
+		final ExpressionStatement $ = Funcs.getExpressionStatement(getStmntFromBlock(s));
+		return $ != null && $.getExpression().getNodeType() == ASTNode.ASSIGNMENT;
 	}
 	/**
 	 * @param exp
@@ -267,9 +267,7 @@ public enum Funcs {
 			return null;
 		if (b.getNodeType() != ASTNode.BLOCK)
 			return b;
-		if (((Block) b).statements().size() == 1)
-			return (Statement) ((Block) b).statements().get(0);
-		return null;
+		return ((Block) b).statements().size() == 1 ? (Statement) ((Block) b).statements().get(0) : null;
 	}
 	/**
 	 * @param s
@@ -353,9 +351,7 @@ public enum Funcs {
 			return null;
 		if (s.getNodeType() == ASTNode.RETURN_STATEMENT)
 			return (ReturnStatement) s;
-		if (s.getNodeType() != ASTNode.BLOCK)
-			return null;
-		return getReturnStatement((Block) s);
+		return s.getNodeType() != ASTNode.BLOCK ? null : getReturnStatement((Block) s);
 	}
 	/**
 	 * @param b
@@ -463,9 +459,7 @@ public enum Funcs {
 	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
 		if (t == null || cond == null)
 			return null;
-		if (thenValue)
-			return cond;
-		return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
+		return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
 	}
 
 	/**
@@ -498,13 +492,13 @@ public enum Funcs {
 	public static List<ASTNode> getChildren(final ASTNode root) {
 		if (root == null)
 			return null;
-		final List<ASTNode> children = new ArrayList<ASTNode>();
+		final List<ASTNode> $ = new ArrayList<ASTNode>();
 		root.accept(new ASTVisitor() {
 			@Override public void preVisit(final ASTNode node){
-				children.add(node);
+				$.add(node);
 			}
 		});
-		children.remove(0);
-		return children;
+		$.remove(0);
+		return $;
 	}
 }
