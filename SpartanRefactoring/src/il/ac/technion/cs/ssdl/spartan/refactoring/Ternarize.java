@@ -1,13 +1,49 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.addReturnStmntToIf;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIfReturnStmntExist;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIsAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.cmpAsgns;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.cmpSimpleNames;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getChildren;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getNumOfStmnts;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getStmntFromBlock;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeAssigment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.tryToNegateCond;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTMatcher;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -40,23 +76,22 @@ public class Ternarize extends Spartanization {
 		return b.statements();
 	}
 
-	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
-		final Block parent = asBlock(ifStmnt.getParent());
+	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement i) {
+		final Block parent = asBlock(i.getParent());
 		if (parent == null)
 			return false;
-		@SuppressWarnings("rawtypes")
-		final List stmts = parent.statements();
-		final int ifIdx = stmts.indexOf(ifStmnt);
+		final List<ASTNode> stmts = parent.statements();
+		final int ifIdx = stmts.indexOf(i);
 		final ReturnStatement nextRet = stmts.size() > ifIdx + 1 ? getReturnStatement((Statement) stmts.get(ifIdx + 1)) : null;
 		if (nextRet == null || checkIfRetExpIsCondExp(nextRet))
 			return false;
-		final int numOfStmntInThen = getNumOfStmnts(ifStmnt.getThenStatement());
-		final int numOfStmntInElse = getNumOfStmnts(ifStmnt.getElseStatement());
-		if (checkIfReturnStmntExist(ifStmnt.getThenStatement()))
+		final int numOfStmntInThen = getNumOfStmnts(i.getThenStatement());
+		final int numOfStmntInElse = getNumOfStmnts(i.getElseStatement());
+		if (checkIfReturnStmntExist(i.getThenStatement()))
 			if (numOfStmntInThen == 1 && numOfStmntInElse == 0)
-				return rewriteIfToRetStmnt(ast, r, ifStmnt, nextRet);
-			else if (ifStmnt.getElseStatement() != null)
-				return addReturnStmntToIf(ast, r, ifStmnt, nextRet, false);
+				return rewriteIfToRetStmnt(ast, r, i, nextRet);
+			else if (i.getElseStatement() != null)
+				return addReturnStmntToIf(ast, r, i, nextRet, false);
 		return false;
 	}
 	private static boolean rewriteIfToRetStmnt(final AST ast, final ASTRewrite r,
