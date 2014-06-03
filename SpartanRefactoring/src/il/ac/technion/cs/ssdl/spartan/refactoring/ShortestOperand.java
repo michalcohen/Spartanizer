@@ -53,7 +53,8 @@ public class ShortestOperand extends Spartanization {
 				if (!inRange(m, n) || n.getLeftOperand() == null
 						|| n.getRightOperand() == null)
 					return true;
-				r.replace(n, transpose(t, r, n), null); // Replace old tree with
+				if (longerFirst(n) && isFlipable(n.getOperator()))
+					r.replace(n, transpose(t, r, n), null); // Replace old tree with
 				// the new
 				// organized one
 				return true;
@@ -64,7 +65,7 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 * 
+	 *
 	 * @param ast
 	 *            The AST - for copySubTree.
 	 * @param rewrite
@@ -104,7 +105,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 * 
+	 *
 	 * @param o
 	 *            The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
@@ -159,7 +160,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 * 
+	 *
 	 * @param a
 	 *            b Ranges to merge
 	 * @return True - if such an overlap exists
@@ -184,14 +185,14 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 * 
+	 *
 	 * @param rangeList
 	 *            The list of ranges to union with
 	 * @param rNew
 	 *            The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 * 
+	 *
 	 * @see areOverlapped
 	 * @see merge
 	 */
