@@ -17,8 +17,8 @@ public enum Funcs {
 	;
 	/**
 	 * @param os
-	 *          an unknown number of parameters
-	 * @return true if one of the parameters is a null or false otherwise
+	 *          an unknown number of objects
+	 * @return true if one of the objects is a null or false otherwise
 	 */
 	public static boolean hasNull(final Object... os) {
 		for (final Object o : os)
@@ -232,8 +232,7 @@ public enum Funcs {
 	 */
 	public static Assignment getAssignment(final Statement n) {
 		final ExpressionStatement $ = getExpressionStatement(n);
-		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $
-				.getExpression();
+		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $.getExpression();
 	}
 	/**
 	 * @param n
@@ -286,7 +285,10 @@ public enum Funcs {
 	 *         b is statement it returns b and if b is null it returns a null
 	 */
 	public static Statement getStmntFromBlock(final Statement b) {
-		return b == null ? null : b.getNodeType() != ASTNode.BLOCK ? b : ((Block) b).statements().size() != 1 ? null : (Statement) ((Block) b).statements().get(0);
+		return b != null && b.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock((Block)b) : b;
+	}
+	private static Statement getStmntFromBlock(final Block b) {
+		return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
 	}
 	/**
 	 * @param s
@@ -315,77 +317,29 @@ public enum Funcs {
 	 *         the block is s is a block
 	 */
 	public static int getNumOfStmnts(final ASTNode node) {
-		return node == null ? 0 : node.getNodeType() != ASTNode.BLOCK ? 1 : ((Block) node).statements().size();
-	}
-	/**
-	 * adds nextReturn to the end of the then block if addToThen is true or to the
-	 * else block otherwise
-	 * 
-	 * @param ast
-	 *          the AST who is to own the new return statement
-	 * @param r
-	 *          ASTRewrite for the given AST
-	 * @param ifStmnt
-	 *          the if statement to add the return to
-	 * @param nextReturn
-	 *          the return statement to add
-	 * @param addToThen
-	 *          boolean value to decide on which block to add the return statement
-	 *          to
-	 * @return true if successful or false otherwise
-	 */
-	public static boolean addReturnStmntToIf(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
-			final ReturnStatement nextReturn, final boolean addToThen) {
-		if (hasNull(ast,r,ifStmnt,nextReturn))
-			return false;
-		if (addToThen && !checkIfReturnStmntExist(ifStmnt.getElseStatement())
-				|| !addToThen && !checkIfReturnStmntExist(ifStmnt.getThenStatement()))
-			return false;
-		final IfStatement newIfStmnt = (IfStatement) ASTNode.copySubtree(ast,
-				ifStmnt);
-		final Statement elseStmnt = ifStmnt.getElseStatement();
-		final Statement thenStmnt = ifStmnt.getThenStatement();
-		if (addToThen && thenStmnt != null && thenStmnt.getNodeType() != ASTNode.BLOCK){
-			newIfStmnt.setThenStatement(ast.newBlock());
-			statements(newIfStmnt.getThenStatement()).add(r.createCopyTarget(thenStmnt));
-		} else if (!addToThen && elseStmnt != null && elseStmnt.getNodeType() != ASTNode.BLOCK){
-			newIfStmnt.setElseStatement(ast.newBlock());
-			statements(newIfStmnt.getElseStatement()).add(r.createCopyTarget(elseStmnt));
+		if (node == null)
+			return 0;
+		switch(node.getNodeType()){
+		case ASTNode.BLOCK: return statements(node).size();
+		default: return 1;
 		}
-		statements(addToThen ? newIfStmnt.getThenStatement() : newIfStmnt.getElseStatement()).add(ASTNode
-				.copySubtree(ast, nextReturn));
-		r.replace(ifStmnt, newIfStmnt, null);
-		r.remove(nextReturn, null);
-		return true;
 	}
 	/**
-	 * Extracts a return statement from a node. Expression, and the Expression
-	 * contains Assignment.
-	 * 
 	 * @param s
-	 *          The node from which to return statement assignment.
+	 *          The node from which to return statement.
 	 * @return null if it is not possible to extract the return statement.
 	 */
-	public static ReturnStatement getReturnStatement(final Statement s) {
-		return s == null ? null : s.getNodeType() == ASTNode.RETURN_STATEMENT ? (ReturnStatement) s : s.getNodeType() != ASTNode.BLOCK ? null : getReturnStatement((Block) s);
-	}
-	/**
-	 * @param b
-	 *          the block to get the return statement from
-	 * @return null if the block contains more than one statement or the return
-	 *         statement otherwise
-	 */
-	public static ReturnStatement getReturnStatement(final Block b) {
-		return !(b != null && b.statements().size() == 1) ? null : getReturnStatement((ASTNode) b.statements().get(0));
-	}
-	/**
-	 * @param s
-	 *          the ASTNode to extract the return statement from
-	 * @return null if the node is not a return statement or the node if he is a
-	 *         return statement
-	 */
 	public static ReturnStatement getReturnStatement(final ASTNode s) {
-		return s != null && s.getNodeType() != ASTNode.RETURN_STATEMENT ? null : (ReturnStatement) s;
+		if (s == null)
+			return null;
+		switch(s.getNodeType()){
+		case ASTNode.BLOCK: return getReturnStatement((Block) s);
+		case ASTNode.RETURN_STATEMENT: return (ReturnStatement) s;
+		default: return null;
+		}
+	}
+	private static ReturnStatement getReturnStatement(final Block b) {
+		return b.statements().size() != 1 ? null : getReturnStatement((Statement) b.statements().get(0));
 	}
 	/**
 	 * @param s
@@ -397,11 +351,15 @@ public enum Funcs {
 	 *         (or if s or name are null)
 	 */
 	public static VariableDeclarationFragment getVarDeclFrag(final Statement s, final Expression name) {
-		if (!hasNull(s,name) && s.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT
-				&& name.getNodeType() == ASTNode.SIMPLE_NAME)
-			for (final Object o : ((VariableDeclarationStatement) s).fragments())
-				if (((SimpleName) name).toString().equals(((VariableDeclarationFragment) o).getName().toString()))
-					return (VariableDeclarationFragment) o;
+		return hasNull(s,name)
+				|| s.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
+				|| name.getNodeType() != ASTNode.SIMPLE_NAME ?
+						null : getVarDeclFrag(((VariableDeclarationStatement) s).fragments(), (SimpleName) name);
+	}
+	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
+		for (final VariableDeclarationFragment o : frags)
+			if (name.toString().equals(o.getName().toString()))
+				return o;
 		return null;
 	}
 	/**
@@ -409,16 +367,16 @@ public enum Funcs {
 	 * 
 	 * @param cmpTo
 	 *          a string to compare all names to
-	 * @param name
+	 * @param names
 	 *          SimplesNames to compare by their string value to cmpTo
 	 * @return true if all names are the same (string wise) or false otherwise
 	 */
-	public static boolean cmpSimpleNames(final Expression cmpTo, final Expression... name) {
-		if (hasNull(cmpTo,name) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
+	public static boolean cmpSimpleNames(final Expression cmpTo, final Expression... names) {
+		if (hasNull(cmpTo,names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
 			return false;
-		for (final Expression s : name)
-			if (s == null || s.getNodeType() != ASTNode.SIMPLE_NAME
-			|| !((SimpleName) s).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+		for (final Expression name : names)
+			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
+			|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
