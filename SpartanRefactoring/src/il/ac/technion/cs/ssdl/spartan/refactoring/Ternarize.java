@@ -442,6 +442,7 @@ public class Ternarize extends Spartanization {
 		final Assignment prevAssignment = getAssignment((Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0));
 		final Assignment nextAssignment = getAssignment((Statement) stmts.get(ifIdx + 1 > stmts.size() - 1 ? stmts.size() - 1
 				: ifIdx + 1));
+		if (prevAssignment != null && ifIdx <= 1 || ifIdx <= 0) return null;
 		final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAssignment != null ? (Statement) stmts.get(ifIdx - 2)
 				: (Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
 		Range $ = detecPrevAndNextAsgnExist(asgnThen, prevAssignment, nextAssignment, prevDecl);

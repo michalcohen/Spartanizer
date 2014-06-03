@@ -318,7 +318,6 @@ public enum Funcs {
 	 */
 	public static int getNumOfStmnts(final ASTNode node) {
 		if (node == null)
-	 * 
 			return 0;
 		switch(node.getNodeType()){
 		case ASTNode.BLOCK: return statements(node).size();
@@ -326,7 +325,7 @@ public enum Funcs {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param s
 	 *          The node from which to return statement.
 	 * @return null if it is not possible to extract the return statement.
@@ -514,8 +513,6 @@ public enum Funcs {
 	private static List<ASTNode> statements(final Block b) {
 		return b.statements();
 	}
-}
-
 	/**
 	 * Get the containing node by type.
 	 * Say we want to find the first block that wraps our node:
@@ -535,3 +532,5 @@ public enum Funcs {
 		}
 		return parentBlock;
 	}
+}
+
