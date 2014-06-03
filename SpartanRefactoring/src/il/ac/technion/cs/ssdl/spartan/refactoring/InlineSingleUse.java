@@ -6,7 +6,14 @@ import il.ac.technion.cs.ssdl.spartan.utils.Range;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -26,19 +33,14 @@ public class InlineSingleUse extends Spartanization {
 			final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
-				if (!inRange(m, n))
+				if (!inRange(m, n) || !(n.getParent() instanceof VariableDeclarationStatement))
 					return true;
 				final SimpleName varName = n.getName();
-				if (n.getParent() instanceof VariableDeclarationStatement) {
-					final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
-					final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-					if (uses.size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
-						r.replace(uses.get(0), r.createCopyTarget(n.getInitializer()), null);
-						if (parent.fragments().size() == 1)
-							r.remove(parent, null);
-						else
-							r.remove(n, null);
-					}
+				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
+				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
+				if (uses.size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
+					r.replace(uses.get(0), n.getInitializer(), null);
+					r.remove(parent.fragments().size() == 1 ? parent : n, null);
 				}
 				return true;
 			}
