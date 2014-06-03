@@ -1,6 +1,11 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -43,19 +48,19 @@ public class ShortestBranchFirst extends Spartanization {
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final IfStatement n) {
-				final IfStatement newIfStmnt = transpose(n);
-				if (!inRange(m, n) || hasNull(newIfStmnt,n.getThenStatement(),n.getElseStatement()))
+				if (!inRange(m, n) || !longerFirst(n))
 					return true;
-				if (longerFirst(n))
+				final IfStatement newIfStmnt = transpose(n);
+				if (newIfStmnt != null)
 					r.replace(n, newIfStmnt, null);
 				return true;
 			}
 
 			@Override public boolean visit(final ConditionalExpression n) {
-				final ParenthesizedExpression newCondExp = transpose(n);
-				if (!inRange(m, n) || hasNull(newCondExp,n.getThenExpression(),n.getElseExpression()))
+				if (!inRange(m, n) || !longerFirst(n))
 					return true;
-				if (longerFirst(n))
+				final ParenthesizedExpression newCondExp = transpose(n);
+				if (newCondExp != null)
 					r.replace(n, newCondExp, null);
 				return true;
 			}
