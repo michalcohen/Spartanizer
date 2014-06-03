@@ -57,7 +57,7 @@ public class ShortestBranchFirst extends Spartanization {
 			@Override public boolean visit(final ConditionalExpression n) {
 				if (!inRange(m, n))
 					return true;
-				if (longerFirst(n))
+				if (longerFirst(n) && transpose(n) != null)
 					r.replace(n, transpose(n), null);
 				return true;
 			}
