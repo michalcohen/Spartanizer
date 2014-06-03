@@ -45,7 +45,7 @@ public class Ternarize extends Spartanization {
 			return false;
 		final List<ASTNode> stmts = parent.statements();
 		final int ifIdx = stmts.indexOf(i);
-		final ReturnStatement nextRet = stmts.size() > ifIdx + 1 ? getReturnStatement((Statement) stmts.get(ifIdx + 1)) : null;
+		final ReturnStatement nextRet = stmts.size() > ifIdx + 1 ? getReturnStatement(stmts.get(ifIdx + 1)) : null;
 		if (nextRet == null || checkIfRetExpIsCondExp(nextRet))
 			return false;
 		final int numOfStmntInThen = getNumOfStmnts(i.getThenStatement());
@@ -369,7 +369,7 @@ public class Ternarize extends Spartanization {
 			return null;
 		final int ifIdx = ss.indexOf(ifStmnt);
 		if (ss.size() > ifIdx + 1) {
-			final ReturnStatement nextRet = getReturnStatement((Statement) ss.get(ifIdx + 1));
+			final ReturnStatement nextRet = getReturnStatement(ss.get(ifIdx + 1));
 			final ReturnStatement thenSide = getReturnStatement(ifStmnt.getThenStatement());
 			final ReturnStatement elseSide = getReturnStatement(ifStmnt.getElseStatement());
 			if (nextRet != null && (thenSide != null && elseSide == null || thenSide == null && elseSide != null))
