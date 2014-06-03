@@ -4,14 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- *
+ * 
  * Useful Functions
- *
+ * 
  */
 public enum Funcs {
 	;
@@ -28,8 +45,7 @@ public enum Funcs {
 	}
 	/**
 	 * @param t
-	 *          the AST in which to create the new variable declaration fragment
-	 *          in
+	 *          the AST who is to own the new variable declaration fragment
 	 * @param r
 	 *          the ASTRewrite for the given AST
 	 * @param varName
@@ -37,7 +53,7 @@ public enum Funcs {
 	 * @param initalizer
 	 *          the initial value for the new fragment (for the variable)
 	 * @return the new variable declaration fragment or null if one of the given
-	 *         parameter was null
+	 *         parameters was null
 	 */
 	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
 			final Expression initalizer) {
@@ -325,7 +341,6 @@ public enum Funcs {
 		}
 	}
 	/**
-	 *
 	 * @param s
 	 *          The node from which to return statement.
 	 * @return null if it is not possible to extract the return statement.
@@ -365,7 +380,7 @@ public enum Funcs {
 	}
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 *
+	 * 
 	 * @param cmpTo
 	 *          a string to compare all names to
 	 * @param names
@@ -399,7 +414,7 @@ public enum Funcs {
 	/**
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
-	 *
+	 * 
 	 * @param cmpTo
 	 *          The assignment to compare all others to
 	 * @param asgns
@@ -419,7 +434,7 @@ public enum Funcs {
 	/**
 	 * the function receives a condition and the then boolean value and returns
 	 * the proper condition (its negation if thenValue is false)
-	 *
+	 * 
 	 * @param t
 	 *          the AST who is to own the new return statement
 	 * @param r
@@ -479,7 +494,7 @@ public enum Funcs {
 
 	/**
 	 * @param exps
-	 * 				expressions to test
+	 * 				expressions to check
 	 * @return true if one of the expressions is a conditional or parenthesized conditional expression
 	 * 				or false otherwise
 	 */
@@ -503,47 +518,6 @@ public enum Funcs {
 	}
 
 	/**
-	 * adds nextReturn to the end of the then block if addToThen is true or to the
-	 * else block otherwise
-	 *
-	 * @param ast
-	 *          the AST who is to own the new return statement
-	 * @param r
-	 *          ASTRewrite for the given AST
-	 * @param ifStmnt
-	 *          the if statement to add the return to
-	 * @param nextReturn
-	 *          the return statement to add
-	 * @param addToThen
-	 *          boolean value to decide on which block to add the return statement
-	 *          to
-	 * @return true if successful or false otherwise
-	 */
-	public static boolean addReturnStmntToIf(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
-			final ReturnStatement nextReturn, final boolean addToThen) {
-		if (hasNull(ast,r,ifStmnt,nextReturn))
-			return false;
-		if (addToThen && !checkIfReturnStmntExist(ifStmnt.getElseStatement())
-				|| !addToThen && !checkIfReturnStmntExist(ifStmnt.getThenStatement()))
-			return false;
-		final IfStatement newIfStmnt = (IfStatement) ASTNode.copySubtree(ast,
-				ifStmnt);
-		final Statement elseStmnt = ifStmnt.getElseStatement();
-		final Statement thenStmnt = ifStmnt.getThenStatement();
-		if (addToThen && thenStmnt != null && thenStmnt.getNodeType() != ASTNode.BLOCK){
-			newIfStmnt.setThenStatement(ast.newBlock());
-			statements(newIfStmnt.getThenStatement()).add(r.createCopyTarget(thenStmnt));
-		} else if (!addToThen && elseStmnt != null && elseStmnt.getNodeType() != ASTNode.BLOCK){
-			newIfStmnt.setElseStatement(ast.newBlock());
-			statements(newIfStmnt.getElseStatement()).add(r.createCopyTarget(elseStmnt));
-		}
-		statements(addToThen ? newIfStmnt.getThenStatement() : newIfStmnt.getElseStatement()).add(ASTNode
-				.copySubtree(ast, nextReturn));
-		r.replace(ifStmnt, newIfStmnt, null);
-		r.remove(nextReturn, null);
-		return true;
-	}
-	/**
 	 * @param n
 	 * 			the potential block who's statements list we return
 	 * @return  the list of statements in n if it is a block or null otherwise
@@ -554,6 +528,7 @@ public enum Funcs {
 	private static List<ASTNode> statements(final Block b) {
 		return b.statements();
 	}
+
 	/**
 	 * Get the containing node by type.
 	 * Say we want to find the first block that wraps our node:
@@ -574,4 +549,3 @@ public enum Funcs {
 		return parentBlock;
 	}
 }
-
