@@ -1,14 +1,19 @@
-package moshe;
+package p;
 
-public class bb{
-	public int a(){
-		boolean t = true;
-		if (t) {
-			return 5;
-		} else {
-			int moshe = 6;
-			moshe = 3;
-			return 2;
-		}
+public class Blah {
+	public int r(){
+		return 6;
+	}
+	public int y(){
+		return 4;
+	}
+	public void yada(final String s) {
+	    int a, b;
+	    a = 3;
+	    b = 5;
+	    if (b == 3)
+	  	     b = (a == 4 ? r() : y());
+	  	   else
+	  	     b = a;
 	}
 }

@@ -17,8 +17,8 @@ public enum Funcs {
 	;
 	/**
 	 * @param os
-	 *          an unknown number of parameters
-	 * @return true if one of the parameters is a null or false otherwise
+	 *          an unknown number of objects
+	 * @return true if one of the objects is a null or false otherwise
 	 */
 	public static boolean hasNull(final Object... os) {
 		for (final Object o : os)
@@ -41,7 +41,7 @@ public enum Funcs {
 	 */
 	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
 			final Expression initalizer) {
-		if (t == null || r == null || varName == null || initalizer == null)
+		if (hasNull(t,r,varName,initalizer))
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
 		$.setInitializer(null == initalizer.getParent() ? initalizer : (Expression) r.createCopyTarget(initalizer));
@@ -63,13 +63,36 @@ public enum Funcs {
 	 */
 	public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
 			final Expression thenExp, final Expression elseExp) {
-		if (t == null || r == null || cond == null || thenExp == null || elseExp == null)
+		if (hasNull(t,r,cond,thenExp,elseExp))
 			return null;
 		final ConditionalExpression $ = t.newConditionalExpression();
 		$.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
 		$.setThenExpression(thenExp.getParent() == null ? thenExp : (Expression) r.createCopyTarget(thenExp));
 		$.setElseExpression(elseExp.getParent() == null ? elseExp : (Expression) r.createCopyTarget(elseExp));
-		return Funcs.makeParenthesizedExpression(t, r, $);
+		return makeParenthesizedExpression(t, r, $);
+	}
+	/**
+	 * @param t
+	 *          the AST who is to own the new If Statement
+	 * @param r
+	 *          ASTRewrite for the given AST
+	 * @param cond
+	 *          the condition
+	 * @param thenStmnt
+	 *          the then statement to set in the If Statement
+	 * @param elseStmnt
+	 *          the else statement to set in the If Statement
+	 * @return a new if Statement
+	 */
+	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond,
+			final Statement thenStmnt, final Statement elseStmnt) {
+		if (hasNull(t,r,cond,thenStmnt,elseStmnt))
+			return null;
+		final IfStatement $ = t.newIfStatement();
+		$.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
+		$.setThenStatement(thenStmnt.getParent() == null ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
+		$.setElseStatement(elseStmnt.getParent() == null ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
+		return $;
 	}
 	/**
 	 * @param t
@@ -81,7 +104,7 @@ public enum Funcs {
 	 * @return the new return statement
 	 */
 	public static ReturnStatement makeReturnStatement(final AST t, final ASTRewrite r, final Expression e) {
-		if (t == null || r == null)
+		if (hasNull(t,r))
 			return null;
 		final ReturnStatement $ = t.newReturnStatement();
 		$.setExpression(e == null || e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
@@ -102,7 +125,7 @@ public enum Funcs {
 	 */
 	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
 			final Expression left, final Expression right) {
-		if (t == null || r == null || o == null || right == null || left == null)
+		if (hasNull(t,r,o,right,left))
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
 		$.setOperator(o);
@@ -125,7 +148,7 @@ public enum Funcs {
 	 */
 	public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right,
 			final Expression left) {
-		if (t == null || r == null || o == null || right == null || left == null)
+		if (hasNull(t,r,o,right,left))
 			return null;
 		final Assignment $ = t.newAssignment();
 		$.setOperator(o);
@@ -147,7 +170,7 @@ public enum Funcs {
 	 */
 	public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression operand,
 			final PrefixExpression.Operator o) {
-		if (t == null || operand == null || o == null)
+		if (hasNull(t,operand,o))
 			return null;
 		final PrefixExpression $ = t.newPrefixExpression();
 		$.setOperator(o);
@@ -164,7 +187,7 @@ public enum Funcs {
 	 * @return the given expression with parenthesis
 	 */
 	public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r, final Expression exp) {
-		if (t == null || r == null || exp == null)
+		if (hasNull(t,r,exp))
 			return null;
 		final ParenthesizedExpression $ = t.newParenthesizedExpression();
 		$.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
@@ -209,8 +232,7 @@ public enum Funcs {
 	 */
 	public static Assignment getAssignment(final Statement n) {
 		final ExpressionStatement $ = getExpressionStatement(n);
-		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $
-				.getExpression();
+		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $.getExpression();
 	}
 	/**
 	 * @param n
@@ -232,7 +254,7 @@ public enum Funcs {
 	public static boolean checkIsAssignment(final Statement s) {
 		if (s == null || s.getNodeType() == ASTNode.BLOCK && getStmntFromBlock(s) == null)
 			return false;
-		final ExpressionStatement $ = Funcs.getExpressionStatement(getStmntFromBlock(s));
+		final ExpressionStatement $ = getExpressionStatement(getStmntFromBlock(s));
 		return $ != null && $.getExpression().getNodeType() == ASTNode.ASSIGNMENT;
 	}
 	/**
@@ -263,7 +285,10 @@ public enum Funcs {
 	 *         b is statement it returns b and if b is null it returns a null
 	 */
 	public static Statement getStmntFromBlock(final Statement b) {
-		return b == null ? null : b.getNodeType() != ASTNode.BLOCK ? b : ((Block) b).statements().size() != 1 ? null : (Statement) ((Block) b).statements().get(0);
+		return b != null && b.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock((Block)b) : b;
+	}
+	private static Statement getStmntFromBlock(final Block b) {
+		return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
 	}
 	/**
 	 * @param s
@@ -292,77 +317,31 @@ public enum Funcs {
 	 *         the block is s is a block
 	 */
 	public static int getNumOfStmnts(final ASTNode node) {
-		return node == null ? 0 : node.getNodeType() != ASTNode.BLOCK ? 1 : ((Block) node).statements().size();
-	}
-	/**
-	 * adds nextReturn to the end of the then block if addToThen is true or to the
-	 * else block otherwise
-	 *
-	 * @param ast
-	 *          the AST who is to own the new return statement
-	 * @param r
-	 *          ASTRewrite for the given AST
-	 * @param ifStmnt
-	 *          the if statement to add the return to
-	 * @param nextReturn
-	 *          the return statement to add
-	 * @param addToThen
-	 *          boolean value to decide on which block to add the return statement
-	 *          to
-	 * @return true if successful or false otherwise
-	 */
-	public static boolean addReturnStmntToIf(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
-			final ReturnStatement nextReturn, final boolean addToThen) {
-		if (ast == null || r == null || ifStmnt == null || nextReturn == null)
-			return false;
-		if (addToThen && !checkIfReturnStmntExist(ifStmnt.getElseStatement())
-				|| !addToThen && !checkIfReturnStmntExist(ifStmnt.getThenStatement()))
-			return false;
-		final IfStatement newIfStmnt = (IfStatement) ASTNode.copySubtree(ast,
-				ifStmnt);
-		final Statement elseStmnt = ifStmnt.getElseStatement();
-		final Statement thenStmnt = ifStmnt.getThenStatement();
-		if (addToThen && thenStmnt != null && thenStmnt.getNodeType() != ASTNode.BLOCK){
-			newIfStmnt.setThenStatement(ast.newBlock());
-			((Block)newIfStmnt.getThenStatement()).statements().add(thenStmnt);
-		} else if (!addToThen && elseStmnt != null && elseStmnt.getNodeType() != ASTNode.BLOCK){
-			newIfStmnt.setElseStatement(ast.newBlock());
-			((Block)newIfStmnt.getElseStatement()).statements().add(elseStmnt);
+		if (node == null)
+	 * 
+			return 0;
+		switch(node.getNodeType()){
+		case ASTNode.BLOCK: return statements(node).size();
+		default: return 1;
 		}
-		((Block) (addToThen ? newIfStmnt.getThenStatement() : newIfStmnt.getElseStatement())).statements().add(ASTNode
-				.copySubtree(ast, nextReturn));
-		r.replace(ifStmnt, newIfStmnt, null);
-		r.remove(nextReturn, null);
-		return true;
 	}
 	/**
-	 * Extracts a return statement from a node. Expression, and the Expression
-	 * contains Assignment.
-	 *
+	 * 
 	 * @param s
-	 *          The node from which to return statement assignment.
+	 *          The node from which to return statement.
 	 * @return null if it is not possible to extract the return statement.
 	 */
-	public static ReturnStatement getReturnStatement(final Statement s) {
-		return s == null ? null : s.getNodeType() == ASTNode.RETURN_STATEMENT ? (ReturnStatement) s : s.getNodeType() != ASTNode.BLOCK ? null : getReturnStatement((Block) s);
-	}
-	/**
-	 * @param b
-	 *          the block to get the return statement from
-	 * @return null if the block contains more than one statement or the return
-	 *         statement otherwise
-	 */
-	public static ReturnStatement getReturnStatement(final Block b) {
-		return !(b != null && b.statements().size() == 1) ? null : getReturnStatement((ASTNode) b.statements().get(0));
-	}
-	/**
-	 * @param s
-	 *          the ASTNode to extract the return statement from
-	 * @return null if the node is not a return statement or the node if he is a
-	 *         return statement
-	 */
 	public static ReturnStatement getReturnStatement(final ASTNode s) {
-		return s != null && s.getNodeType() != ASTNode.RETURN_STATEMENT ? null : (ReturnStatement) s;
+		if (s == null)
+			return null;
+		switch(s.getNodeType()){
+		case ASTNode.BLOCK: return getReturnStatement((Block) s);
+		case ASTNode.RETURN_STATEMENT: return (ReturnStatement) s;
+		default: return null;
+		}
+	}
+	private static ReturnStatement getReturnStatement(final Block b) {
+		return b.statements().size() != 1 ? null : getReturnStatement((Statement) b.statements().get(0));
 	}
 	/**
 	 * @param s
@@ -374,11 +353,15 @@ public enum Funcs {
 	 *         (or if s or name are null)
 	 */
 	public static VariableDeclarationFragment getVarDeclFrag(final Statement s, final Expression name) {
-		if (s != null && name != null && s.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT
-				&& name.getNodeType() == ASTNode.SIMPLE_NAME)
-			for (final Object o : ((VariableDeclarationStatement) s).fragments())
-				if (((SimpleName) name).toString().equals(((VariableDeclarationFragment) o).getName().toString()))
-					return (VariableDeclarationFragment) o;
+		return hasNull(s,name)
+				|| s.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
+				|| name.getNodeType() != ASTNode.SIMPLE_NAME ?
+						null : getVarDeclFrag(((VariableDeclarationStatement) s).fragments(), (SimpleName) name);
+	}
+	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
+		for (final VariableDeclarationFragment o : frags)
+			if (name.toString().equals(o.getName().toString()))
+				return o;
 		return null;
 	}
 	/**
@@ -386,16 +369,16 @@ public enum Funcs {
 	 *
 	 * @param cmpTo
 	 *          a string to compare all names to
-	 * @param name
+	 * @param names
 	 *          SimplesNames to compare by their string value to cmpTo
 	 * @return true if all names are the same (string wise) or false otherwise
 	 */
-	public static boolean cmpSimpleNames(final Expression cmpTo, final Expression... name) {
-		if (cmpTo == null || name == null || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
+	public static boolean cmpSimpleNames(final Expression cmpTo, final Expression... names) {
+		if (hasNull(cmpTo,names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
 			return false;
-		for (final Expression s : name)
-			if (s == null || s.getNodeType() != ASTNode.SIMPLE_NAME
-			|| !((SimpleName) s).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+		for (final Expression name : names)
+			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
+			|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -407,7 +390,7 @@ public enum Funcs {
 	 * @return true if all the operator are the same or false otherwise
 	 */
 	public static boolean cmpAsgnOps(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
-		if (cmpTo == null || op == null)
+		if (hasNull(cmpTo,op))
 			return false;
 		for (final Assignment.Operator o : op)
 			if (o == null || cmpTo != o)
@@ -426,7 +409,7 @@ public enum Funcs {
 	 *         the first one or false otherwise
 	 */
 	public static boolean cmpAsgns(final Assignment cmpTo, final Assignment... asgns) {
-		if (cmpTo == null || asgns == null)
+		if (hasNull(cmpTo,asgns))
 			return false;
 		for (final Assignment asgn : asgns)
 			if (asgn == null || !cmpAsgnOps(cmpTo.getOperator(), asgn.getOperator())
@@ -450,7 +433,9 @@ public enum Funcs {
 	 *         was false (or null if any of the given parameter were null)
 	 */
 	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
-		return t == null || cond == null ? null : thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
+		if (hasNull(t,cond))
+			return null;
+		return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
 	}
 
 	/**
@@ -500,7 +485,9 @@ public enum Funcs {
 	 * 				or false otherwise
 	 */
 	public static boolean isOneExpCondExp(final Expression ...exps) {
-		for (final Expression e : exps)
+		for (final Expression e : exps){
+			if (e == null)
+				continue;
 			switch (e.getNodeType()) {
 			case ASTNode.CONDITIONAL_EXPRESSION:
 				return true;
@@ -512,8 +499,22 @@ public enum Funcs {
 			}
 			default: break;
 			}
+		}
 		return false;
 	}
+
+	/**
+	 * @param n
+	 * 			the potential block who's statements list we return
+	 * @return  the list of statements in n if it is a block or null otherwise
+	 */
+	public static List<ASTNode> statements(final ASTNode n) {
+		return n.getNodeType() != ASTNode.BLOCK ? null : statements((Block) n);
+	}
+	private static List<ASTNode> statements(final Block b) {
+		return b.statements();
+	}
+}
 
 	/**
 	 * Get the containing node by type.
@@ -534,4 +535,3 @@ public enum Funcs {
 		}
 		return parentBlock;
 	}
-}

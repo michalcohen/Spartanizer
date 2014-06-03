@@ -1,20 +1,24 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
@@ -40,34 +44,12 @@ public class ShortestBranchFirst extends Spartanization {
 				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 
-	/**
-	 * Counts the number of nodes in the tree of which node is root.
-	 * 
-	 * @param n
-	 *          The node.
-	 * @return Number of abstract syntax tree nodes under the parameter.
-	 */
-	static int countNodes(final ASTNode n) {
-		final AtomicInteger $ = new AtomicInteger(0);
-		n.accept(new ASTVisitor() {
-			/**
-			 * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
-			 * @param _
-			 *          ignored
-			 */
-			@Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-				$.incrementAndGet();
-			}
-		});
-		return $.get();
-	}
-
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final IfStatement n) {
 				if (!inRange(m, n))
 					return true;
-				if (longerFirst(n))
+				if (longerFirst(n) && transpose(n) != null)
 					r.replace(n, transpose(n), null);
 				return true;
 			}
@@ -75,21 +57,25 @@ public class ShortestBranchFirst extends Spartanization {
 			@Override public boolean visit(final ConditionalExpression n) {
 				if (!inRange(m, n))
 					return true;
-				if (longerFirst(n))
+				if (longerFirst(n) && transpose(n) != null)
 					r.replace(n, transpose(n), null);
 				return true;
 			}
 
 			private IfStatement transpose(final IfStatement n) {
 				final IfStatement $ = t.newIfStatement();
-				$.setExpression(negate(t, r, n.getExpression()));
+				final Expression negatedOp = negate(t, r, n.getExpression());
+				if (negatedOp == null)
+					return null;
+				$.setExpression(negatedOp);
 				$.setThenStatement((Statement) r.createMoveTarget(n.getElseStatement()));
 				$.setElseStatement((Statement) r.createMoveTarget(n.getThenStatement()));
 				return $;
 			}
 
 			private ParenthesizedExpression transpose(final ConditionalExpression n) {
-				return n!=null ? Funcs.makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression()) : null;
+				return n==null ? null
+						: makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
 			}
 		});
 	}
@@ -109,20 +95,34 @@ public class ShortestBranchFirst extends Spartanization {
 			final Expression $ = tryNegatePrefix(r, (PrefixExpression) e);
 			return $ == null ? null : $;
 		}
-		return Funcs.makePrefixExpression(t, r, Funcs.makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
+		return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
 	}
 
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite rewrite, final InfixExpression e) {
 		final Operator o = negate(e.getOperator());
-		return o==null ? null : Funcs.makeInfixExpression(ast, rewrite, o, e.getLeftOperand(), e.getRightOperand());
+		return o==null ? null : makeInfixExpression(ast, rewrite, o, e.getLeftOperand(), e.getRightOperand());
 	}
 
 	private static Operator negate(final Operator o) {
-		return o.equals(EQUALS) ? NOT_EQUALS : o.equals(NOT_EQUALS) ? EQUALS : o.equals(LESS) ? GREATER_EQUALS : o.equals(GREATER) ? LESS_EQUALS : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER_EQUALS) ? LESS : null;
+		return negate.containsKey(o) ? negate.get(o) : null;
 	}
 
+	private static Map<Operator, Operator> makeNegation() {
+		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
+		$.put(EQUALS, NOT_EQUALS);
+		$.put(NOT_EQUALS, EQUALS);
+		$.put(LESS_EQUALS, GREATER);
+		$.put(GREATER, LESS_EQUALS);
+		$.put(LESS, GREATER_EQUALS);
+		$.put(GREATER_EQUALS, LESS);
+		return $;
+	}
+
+	private static Map<Operator, Operator> negate = makeNegation();
+
 	private static Expression tryNegatePrefix(final ASTRewrite rewrite, final PrefixExpression exp) {
-		return !(exp.getOperator().equals(PrefixExpression.Operator.NOT)) ? null : (Expression) rewrite.createCopyTarget(exp.getOperand());
+		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null
+				: (Expression) rewrite.createCopyTarget(exp.getOperand());
 	}
 
 	private static final int threshold = 1;
