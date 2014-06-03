@@ -1,5 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
@@ -13,7 +14,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
-import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -50,8 +50,7 @@ public class ShortestOperand extends Spartanization {
 		cu.accept(new ASTVisitor() {
 			@Override
 			public boolean visit(final InfixExpression n) {
-				if (!inRange(m, n) || n.getLeftOperand() == null
-						|| n.getRightOperand() == null)
+				if (!inRange(m, n) || n.getLeftOperand() == null || n.getRightOperand() == null)
 					return true;
 				if (longerFirst(n) && isFlipable(n.getOperator()))
 					r.replace(n, transpose(t, r, n), null); // Replace old tree with
@@ -80,17 +79,14 @@ public class ShortestOperand extends Spartanization {
 		final ASTNode newL = ASTNode.copySubtree(ast, n.getLeftOperand());
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		if ($.getLeftOperand().getNodeType() == INFIX_EXPRESSION)
-			$.setLeftOperand(transpose(ast, rewrite,
-					(InfixExpression) $.getLeftOperand()));
+			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) $.getLeftOperand()));
 		if ($.getRightOperand().getNodeType() == INFIX_EXPRESSION)
-			$.setRightOperand(transpose(ast, rewrite,
-					(InfixExpression) $.getRightOperand()));
+			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand()));
 		if (newR.getNodeType() == BOOLEAN_LITERAL)
 			return $; // Prevents the following swap: "(a>0) == true" =>
 		// "true == (a>0)"
 		if (isFlipable(n.getOperator()) && longerFirst(n))
-			set($, (Expression) newL, flipOperator(n.getOperator()),
-					(Expression) newR);
+			set($, (Expression) newL, flipOperator(n.getOperator()), (Expression) newR);
 		return $;
 	}
 
@@ -213,10 +209,10 @@ public class ShortestOperand extends Spartanization {
 			@Override
 			public boolean visit(final InfixExpression n) {
 				final Range rN = new Range(n.getParent());
-				if (longerFirst(n) && isFlipable(n.getOperator()))
-					// Union range results
-					if (!unionRangeWithList(opportunities, rN))
-						opportunities.add(rN);
+				if (!longerFirst(n) || !isFlipable(n.getOperator()))
+					return true;
+				if (!unionRangeWithList(opportunities, rN))
+					opportunities.add(rN);
 				return true;
 			}
 		};
@@ -225,7 +221,6 @@ public class ShortestOperand extends Spartanization {
 	static boolean longerFirst(final InfixExpression n) {
 		return n.getLeftOperand() != null
 				&& n.getRightOperand() != null
-				&& Funcs.countNodes(n.getLeftOperand()) > Funcs.countNodes(n
-						.getRightOperand()) + threshold;
+				&& countNodes(n.getLeftOperand()) > countNodes(n.getRightOperand()) + threshold;
 	}
 }
