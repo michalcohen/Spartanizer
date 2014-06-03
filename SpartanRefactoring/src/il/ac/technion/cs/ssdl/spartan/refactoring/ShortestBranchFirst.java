@@ -13,7 +13,9 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -72,7 +74,8 @@ public class ShortestBranchFirst extends Spartanization {
 			}
 
 			private ParenthesizedExpression transpose(final ConditionalExpression n) {
-				return n!=null ? makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression()) : null;
+				return n==null ? null
+						: makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
 			}
 		});
 	}
@@ -101,11 +104,25 @@ public class ShortestBranchFirst extends Spartanization {
 	}
 
 	private static Operator negate(final Operator o) {
-		return o.equals(EQUALS) ? NOT_EQUALS : o.equals(NOT_EQUALS) ? EQUALS : o.equals(LESS) ? GREATER_EQUALS : o.equals(GREATER) ? LESS_EQUALS : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER_EQUALS) ? LESS : null;
+		return negate.containsKey(o) ? negate.get(o) : null;
 	}
 
+	private static Map<Operator, Operator> makeNegation() {
+		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
+		$.put(EQUALS, NOT_EQUALS);
+		$.put(NOT_EQUALS, EQUALS);
+		$.put(LESS_EQUALS, GREATER);
+		$.put(GREATER, LESS_EQUALS);
+		$.put(LESS, GREATER_EQUALS);
+		$.put(GREATER_EQUALS, LESS);
+		return $;
+	}
+
+	private static Map<Operator, Operator> negate = makeNegation();
+
 	private static Expression tryNegatePrefix(final ASTRewrite rewrite, final PrefixExpression exp) {
-		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null : (Expression) rewrite.createCopyTarget(exp.getOperand());
+		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null
+				: (Expression) rewrite.createCopyTarget(exp.getOperand());
 	}
 
 	private static final int threshold = 1;
