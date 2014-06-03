@@ -1,13 +1,49 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIfReturnStmntExist;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIsAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.cmpAsgns;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.cmpSimpleNames;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getChildren;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getNumOfStmnts;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getStmntFromBlock;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isOneExpCondExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeAssigment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statements;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.tryToNegateCond;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTMatcher;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -418,8 +454,8 @@ public class Ternarize extends Spartanization {
 		final Assignment prevAssignment = getAssignment((Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0));
 		final Assignment nextAssignment = getAssignment((Statement) stmts.get(ifIdx + 1 > stmts.size() - 1 ? stmts.size() - 1
 				: ifIdx + 1));
-		final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAssignment != null ? (Statement) stmts.get(ifIdx - 2)
-				: (Statement) stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
+		final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAssignment != null ? (Statement) stmts.get(ifIdx-2 >= 0 ? ifIdx-2 : 0)
+				: (Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0), asgnThen.getLeftHandSide());
 		Range $ = detecPrevAndNextAsgnExist(asgnThen, prevAssignment, nextAssignment, prevDecl);
 		if ($ != null)
 			return $;
