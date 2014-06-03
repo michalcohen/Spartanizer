@@ -1,6 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
+import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -25,7 +26,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * 
+ *
  * @since 2013/01/01
  */
 public class RenameReturnVariableToDollar extends Spartanization {
@@ -38,8 +39,8 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment returnVar = selectReturnVariable(n);
-				if (returnVar != null) {
-					if (!inRange(m, n))
+				if (returnVar != null){
+					if (!inRange(m, returnVar))
 						return true;
 					for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
 						$.replace(e, t.newSimpleName("$"), null);
@@ -53,10 +54,10 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
 		container.accept(new ASTVisitor() {
 			/**
-			 * 
+			 *
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 			 *      AnonymousClassDeclaration)
-			 * 
+			 *
 			 * @param _
 			 *          ignored, we don't want to visit declarations inside anonymous
 			 *          classes
@@ -77,11 +78,11 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		final List<ReturnStatement> $ = new ArrayList<ReturnStatement>();
 		container.accept(new ASTVisitor() {
 			/**
-			 * 
-			 * 
+			 *
+			 *
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 			 *      AnonymousClassDeclaration)
-			 * 
+			 *
 			 * @param _
 			 *          ignored, we don't want to visit declarations inside anonymous
 			 *          classes
@@ -162,8 +163,9 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment v = selectReturnVariable(n);
-				if (v != null)
-					opportunities.add(new Range(v));
+				if (v == null) return true;
+				final ASTNode containingBlock = Funcs.getContainerByNodeType(v, ASTNode.METHOD_DECLARATION);
+				opportunities.add(new Range(containingBlock));
 				return true;
 			}
 		};

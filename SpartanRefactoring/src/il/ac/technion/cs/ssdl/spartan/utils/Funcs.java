@@ -9,9 +9,9 @@ import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- * 
+ *
  * Useful Functions
- * 
+ *
  */
 public enum Funcs {
 	;
@@ -297,7 +297,7 @@ public enum Funcs {
 	/**
 	 * adds nextReturn to the end of the then block if addToThen is true or to the
 	 * else block otherwise
-	 * 
+	 *
 	 * @param ast
 	 *          the AST who is to own the new return statement
 	 * @param r
@@ -338,7 +338,7 @@ public enum Funcs {
 	/**
 	 * Extracts a return statement from a node. Expression, and the Expression
 	 * contains Assignment.
-	 * 
+	 *
 	 * @param s
 	 *          The node from which to return statement assignment.
 	 * @return null if it is not possible to extract the return statement.
@@ -383,7 +383,7 @@ public enum Funcs {
 	}
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 * 
+	 *
 	 * @param cmpTo
 	 *          a string to compare all names to
 	 * @param name
@@ -417,7 +417,7 @@ public enum Funcs {
 	/**
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
-	 * 
+	 *
 	 * @param cmpTo
 	 *          The assignment to compare all others to
 	 * @param asgns
@@ -437,7 +437,7 @@ public enum Funcs {
 	/**
 	 * the function receives a condition and the then boolean value and returns
 	 * the proper condition (its negation if thenValue is false)
-	 * 
+	 *
 	 * @param t
 	 *          the AST who is to own the new return statement
 	 * @param r
@@ -513,5 +513,25 @@ public enum Funcs {
 			default: break;
 			}
 		return false;
+	}
+
+	/**
+	 * Get the containing node by type.
+	 * Say we want to find the first block that wraps our node:
+	 * getContainerByNodeType(node, ASTNode.BLOCK);
+	 * @param n
+	 * 		Node to find its container
+	 * @param ASTNodeType
+	 * 		The type of the containing node we want to find
+	 * @return
+	 * 		The containing node
+	 */
+	public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
+		ASTNode parentBlock = n.getParent();
+		while (parentBlock.getNodeType() != ASTNodeType){
+			if (parentBlock.getParent() == parentBlock.getRoot()) break;
+			parentBlock = parentBlock.getParent();
+		}
+		return parentBlock;
 	}
 }

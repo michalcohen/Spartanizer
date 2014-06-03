@@ -14,7 +14,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
- * 
+ *
  * @since 2013/01/01
  */
 public class Ternarize extends Spartanization {
@@ -85,7 +85,7 @@ public class Ternarize extends Spartanization {
 	}
 	/**
 	 * @author Tomer Zeltzer
-	 * 
+	 *
 	 *         contains both sides for the conditional expression
 	 */
 	public static class TwoExpressions {
@@ -93,7 +93,7 @@ public class Ternarize extends Spartanization {
 		final Expression elseExp;
 		/**
 		 * Instantiates the class with the given Expressions
-		 * 
+		 *
 		 * @param t
 		 *          then Expression
 		 * @param e
@@ -106,7 +106,7 @@ public class Ternarize extends Spartanization {
 	}
 	/**
 	 * @author Tomer Zeltzer
-	 * 
+	 *
 	 *         contains 2 nodes (used to store the 2 nodes that are different in
 	 *         the then and else tree)
 	 */
@@ -115,7 +115,7 @@ public class Ternarize extends Spartanization {
 		ASTNode elseNode;
 		/**
 		 * Instantiates the class with the given nodes
-		 * 
+		 *
 		 * @param t
 		 *          then node
 		 * @param e
@@ -174,13 +174,12 @@ public class Ternarize extends Spartanization {
 			if (findDiffNodes(tempNodes.thenNode, tempNodes.elseNode) == null)
 				return null;
 			return  new TwoExpressions((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode);
-		} else {
-			if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
-				tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
-			if (tempNodes == null)
-				return null;
-			return  new TwoExpressions((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode);
 		}
+		if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+			tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
+		if (tempNodes == null)
+			return null;
+		return  new TwoExpressions((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode);
 	}
 	private static boolean checkIfItIsTheOnlyDiff(final Statement thenStmnt, final Statement elseStmnt, final TwoNodes diffNodes) {
 		if (thenStmnt == null || elseStmnt == null || diffNodes == null)
