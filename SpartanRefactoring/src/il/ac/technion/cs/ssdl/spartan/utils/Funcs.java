@@ -211,36 +211,36 @@ public enum Funcs {
 		}
 	}
 	/**
-	 * @param n
+	 * @param s
 	 *          a statement or a block to extract the expression statement from
 	 * @return the expression statement if n is a block or an expression statement
 	 *         or null if it not an expression statement or if the block contains
 	 *         more than one statement
 	 */
-	public static ExpressionStatement getExpressionStatement(final Statement n) {
-		if (n == null)
+	public static ExpressionStatement getExpressionStatement(final Statement s) {
+		if (s == null)
 			return null;
-		final ASTNode $ = n.getNodeType() != ASTNode.BLOCK ? n : getStmntFromBlock(n);
+		final ASTNode $ = s.getNodeType() != ASTNode.BLOCK ? s : getStmntFromBlock(s);
 		return !($ != null && $.getNodeType() == ASTNode.EXPRESSION_STATEMENT) ? null : (ExpressionStatement) $;
 	}
 	/**
-	 * @param n
+	 * @param s
 	 *          a statement or block to extract the assignment from
 	 * @return null if the block contains more than one statement or if the
 	 *         statement is not an assignment or the assignment if it exists
 	 */
-	public static Assignment getAssignment(final Statement n) {
-		final ExpressionStatement $ = getExpressionStatement(n);
+	public static Assignment getAssignment(final Statement s) {
+		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $.getExpression();
 	}
 	/**
-	 * @param n
+	 * @param s
 	 *          the statement or block to extract the method invocation from
 	 * @return the method invocation if it exists or null if it doesn't or if the
 	 *         block contains more than one statement
 	 */
-	public static MethodInvocation getMethodInvocation(final Statement n) {
-		final ExpressionStatement $ = getExpressionStatement(n);
+	public static MethodInvocation getMethodInvocation(final Statement s) {
+		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null || $.getExpression().getNodeType() != ASTNode.METHOD_INVOCATION ? null
 				: (MethodInvocation) $.getExpression();
 	}
