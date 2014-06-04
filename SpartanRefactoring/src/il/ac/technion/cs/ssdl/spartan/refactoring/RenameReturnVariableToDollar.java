@@ -11,16 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -52,6 +43,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 
 	static List<VariableDeclarationFragment> getCandidates(final ASTNode container) {
 		final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
+		final Type mthdType = ((MethodDeclaration) container).getReturnType2();
 		container.accept(new ASTVisitor() {
 			/**
 			 *
@@ -66,8 +58,9 @@ public class RenameReturnVariableToDollar extends Spartanization {
 				return false;
 			}
 
-			@Override public boolean visit(final VariableDeclarationFragment node) {
-				$.add(node);
+			@Override public boolean visit(final VariableDeclarationStatement node) {
+				if (node.getType().toString().equals(mthdType.toString()))
+					$.addAll(node.fragments());
 				return true;
 			}
 		});

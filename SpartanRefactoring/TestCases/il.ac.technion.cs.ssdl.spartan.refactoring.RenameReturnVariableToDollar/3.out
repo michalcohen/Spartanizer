@@ -12,11 +12,11 @@ public class Blah {
 	}
 
 	public int yada7(final String blah) {
-		final BlahClass $ = new BlahClass(blah.length());
+		final BlahClass res = new BlahClass(blah.length());
 		if (blah.contains("blah"))
-			return $.j;
-		int x = blah.length()/2;
-		x = yada3($.j - x);
-		return $.j + x;
+			return res.j;
+		int $ = blah.length()/2;
+		$ = yada3(res.j - $);
+		return res.j + $;
 	}
 }
