@@ -2,6 +2,6 @@ package p;
 
 public class SpongeBob {
 	public boolean squarePants(int x, int y, int z) {
-		return z <= x + y;
+		return z < x + y;
 	}
 }

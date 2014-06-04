@@ -138,10 +138,10 @@ public class ShortestOperand extends Spartanization {
 
 	private static Map<Operator, Operator> makeConjeguates() {
 		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
-		$.put(GREATER_EQUALS, LESS);
-		$.put(GREATER, LESS_EQUALS);
-		$.put(LESS_EQUALS, GREATER);
-		$.put(LESS, GREATER_EQUALS);
+		$.put(GREATER, LESS);
+		$.put(LESS, GREATER);
+		$.put(GREATER_EQUALS, LESS_EQUALS);
+		$.put(LESS_EQUALS, GREATER_EQUALS);
 		return $;
 	}
 

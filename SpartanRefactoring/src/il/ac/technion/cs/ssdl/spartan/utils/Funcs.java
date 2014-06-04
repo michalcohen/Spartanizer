@@ -524,11 +524,11 @@ public enum Funcs {
 	 * 		The containing node
 	 */
 	public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
-		ASTNode parentBlock = n.getParent();
-		while (parentBlock.getNodeType() != ASTNodeType){
-			if (parentBlock.getParent() == parentBlock.getRoot()) break;
-			parentBlock = parentBlock.getParent();
+		ASTNode parentContainer = n.getParent();
+		while (parentContainer.getNodeType() != ASTNodeType){
+			if (parentContainer.getParent() == parentContainer.getRoot()) break;
+			parentContainer = parentContainer.getParent();
 		}
-		return parentBlock;
+		return parentContainer;
 	}
 }
