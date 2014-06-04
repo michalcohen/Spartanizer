@@ -8,6 +8,6 @@ public class SpongeBob {
 	}
 	public boolean squarePants() {
 		human bob;
-		if (42 <= bob.father.age && bob.age <= bob.mother.father.age ) return true; 
+		if (42 < bob.father.age && bob.age < bob.mother.father.age ) return true; 
 	}
 }
