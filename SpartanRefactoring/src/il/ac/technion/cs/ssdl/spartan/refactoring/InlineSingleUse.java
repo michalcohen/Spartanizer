@@ -1,5 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -29,7 +30,7 @@ public class InlineSingleUse extends Spartanization {
 		super("Inline variable used once", "Inline variable used once");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu,
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
 			final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
@@ -38,8 +39,9 @@ public class InlineSingleUse extends Spartanization {
 				final SimpleName varName = n.getName();
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
 				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-				if (uses.size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
-					r.replace(uses.get(0), n.getInitializer(), null);
+				if (uses.size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0
+						|| Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
+					r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
 					r.remove(parent.fragments().size() == 1 ? parent : n, null);
 				}
 				return true;
@@ -51,12 +53,12 @@ public class InlineSingleUse extends Spartanization {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment node) {
 				final SimpleName varName = node.getName();
-				if (node.getParent() instanceof VariableDeclarationStatement) {
-					final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
-					if (Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent()).size() == 1
-							&& ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1))
-						opportunities.add(new Range(node));
-				}
+				if (!(node.getParent() instanceof VariableDeclarationStatement))
+					return true;
+				final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
+				if (Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent()).size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0
+						|| Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1))
+					opportunities.add(new Range(node));
 				return true;
 			}
 		};
