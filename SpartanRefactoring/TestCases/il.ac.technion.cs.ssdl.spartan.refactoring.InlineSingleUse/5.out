@@ -5,7 +5,7 @@ public class Blah {
 	
 	public void yada5() {
 		int x = 6;
-		int y = 2+new BlahClass(x).j;
+		int y = 2+(new BlahClass(x)).j;
 		yada3(y+x);
 		yada3(y*x);
 	}

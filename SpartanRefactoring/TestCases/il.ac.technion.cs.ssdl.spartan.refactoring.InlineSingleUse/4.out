@@ -4,7 +4,7 @@ public class Blah {
 	private int yada3(int x) { return x+6; }
 	
 	public void yada5() {
-		final BlahClass b = new BlahClass(6);
+		final BlahClass b = new BlahClass((6));
 		int y = 2+b.j;
 		yada3(y-b.j);
 		yada3(y*2);

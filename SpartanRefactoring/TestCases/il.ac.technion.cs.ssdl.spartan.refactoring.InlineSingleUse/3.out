@@ -11,6 +11,6 @@ public class Blah {
 		int j = 3;
 		int k = j+2;
 		int m = k + j -19;
-		yada3(m*2 - k/m + 5);
+		yada3(m*2 - k/m + (5));
 	}
 }

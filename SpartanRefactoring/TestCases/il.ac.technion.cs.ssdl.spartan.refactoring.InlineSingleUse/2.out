@@ -10,7 +10,7 @@ public class Blah {
 		
 		int j=3;
 		int k = j+2;
-		int m = k + j -19 +5;
+		int m = k + j -19 +(5);
 		yada3(k);
 	}
 }
