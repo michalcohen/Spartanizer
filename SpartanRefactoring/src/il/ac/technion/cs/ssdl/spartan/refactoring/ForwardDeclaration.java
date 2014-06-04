@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * 
+ *
  * @since 2013/01/01
  */
 public class ForwardDeclaration extends Spartanization {
@@ -43,6 +43,9 @@ public class ForwardDeclaration extends Spartanization {
 					return true;
 				final int declaredIdx = block.statements().indexOf(
 						n.getParent());
+
+				if (nextNodeIsAlreadyFixed(block, n, declaredIdx)) return true;
+
 				final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
 				if (beginingOfDeclarationsBlockIdx > declaredIdx) {
 					final ASTNode declarationNode = (ASTNode) block.statements().get(declaredIdx);
@@ -59,9 +62,30 @@ public class ForwardDeclaration extends Spartanization {
 				}
 				return true;
 			}
+
 		});
 	}
 
+	static boolean nextNodeIsAlreadyFixed(final Block block, final VariableDeclarationFragment n,
+			final int declaredIdx) {
+		final int firstUseIdx = findFirstUse(block, n.getName());
+		if (firstUseIdx < 0)
+			return true;
+
+		final int beginingOfDeclarationsIdx = findBeginingOfDeclarationBlock(block, declaredIdx , firstUseIdx);
+
+		final ASTNode nextN = (ASTNode) block.statements().get(declaredIdx + 1);
+		final int nextDeclaredIdx = declaredIdx + 1;
+		if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT){
+			final VariableDeclarationStatement nextNVDS =  (VariableDeclarationStatement) nextN;
+			for (int i = 0; i < nextNVDS.fragments().size(); i++){
+				final VariableDeclarationFragment nextVDF = (VariableDeclarationFragment) nextNVDS.fragments().get(i);
+				if (findFirstUse(block, nextVDF.getName()) == nextDeclaredIdx + 1
+						&& beginingOfDeclarationsIdx == nextDeclaredIdx) return true;
+			}
+		}
+		return false;
+	}
 	@Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
@@ -74,7 +98,12 @@ public class ForwardDeclaration extends Spartanization {
 				if (firstUseIdx < 0)
 					return true;
 				final int declaredIdx = b.statements().indexOf(n.getParent());
-				if (findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx) > declaredIdx)
+
+				final int beginingOfDeclarationsIdx = findBeginingOfDeclarationBlock(b, declaredIdx , firstUseIdx);
+
+				if (nextNodeIsAlreadyFixed(b, n, declaredIdx)) return true;
+
+				if (beginingOfDeclarationsIdx > declaredIdx)
 					oppportunities.add(new Range(n));
 				return true;
 			}

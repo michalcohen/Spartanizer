@@ -196,7 +196,7 @@ public class ShortestOperand extends Spartanization {
 			final Range rNew) {
 		boolean $ = false;
 		for (Range r : rangeList)
-			if (areOverlapped(r, rNew)) { // TODO: Check this.
+			if (areOverlapped(r, rNew)) {
 				r = merge(r, rNew);
 				$ = true;
 			}
