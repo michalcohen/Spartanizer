@@ -29,9 +29,7 @@ public class InlineSingleUse extends Spartanization {
 	public InlineSingleUse() {
 		super("Inline variable used once", "Inline variable used once");
 	}
-
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
-			final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
 				if (!inRange(m, n) || !(n.getParent() instanceof VariableDeclarationStatement))
@@ -39,8 +37,8 @@ public class InlineSingleUse extends Spartanization {
 				final SimpleName varName = n.getName();
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
 				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-				if (uses.size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0
-						|| Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
+				if (uses.size() == 1
+				    && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
 					r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
 					r.remove(parent.fragments().size() == 1 ? parent : n, null);
 				}
@@ -48,7 +46,6 @@ public class InlineSingleUse extends Spartanization {
 			}
 		});
 	}
-
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment node) {
@@ -56,8 +53,8 @@ public class InlineSingleUse extends Spartanization {
 				if (!(node.getParent() instanceof VariableDeclarationStatement))
 					return true;
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
-				if (Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent()).size() == 1 && ((parent.getModifiers() & Modifier.FINAL) != 0
-						|| Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1))
+				if (Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent()).size() == 1
+				    && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1))
 					opportunities.add(new Range(node));
 				return true;
 			}

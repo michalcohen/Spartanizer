@@ -15,13 +15,9 @@ import org.eclipse.text.edits.MalformedTreeException;
  * @since 2014/05/24
  */
 abstract class AbstractParametrizedTest extends TestSuite {
-
-
-
 	static CompilationUnit makeAST(final File f) {
 		return (CompilationUnit) Utils.makeParser(readFile(f)).createAST(null);
 	}
-
 	static Document rewrite(final Spartanization s, final CompilationUnit cu, final Document d) {
 		try {
 			s.createRewrite(cu, null).rewriteAST(d, null).apply(d);
@@ -36,5 +32,3 @@ abstract class AbstractParametrizedTest extends TestSuite {
 		return null;
 	}
 }
-
-

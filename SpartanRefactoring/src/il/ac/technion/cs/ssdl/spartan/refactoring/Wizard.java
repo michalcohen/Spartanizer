@@ -15,7 +15,6 @@ public class Wizard extends RefactoringWizard {
 	public Wizard(final Refactoring r) {
 		super(r, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
 	}
-
 	@Override protected void addUserInputPages() {
 		// No user pages are required
 	}

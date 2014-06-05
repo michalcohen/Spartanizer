@@ -55,8 +55,7 @@ public class Unchanged extends AbstractParametrizedTest {
 	}
 	/**
 	 * @return a collection of cases, where each cases is an array of three
-	 *         objects, the spartanization, the test case name, and the input
-	 *         file
+	 *         objects, the spartanization, the test case name, and the input file
 	 */
 	@Parameters(name = "{index}: {0} {1}")//
 	public static Collection<Object[]> cases() {

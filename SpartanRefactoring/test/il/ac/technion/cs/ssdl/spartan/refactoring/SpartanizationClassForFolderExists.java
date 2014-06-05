@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Yossi Gil
  * @since 2014/05/24
  */
-@RunWith(Parameterized.class) //
+@RunWith(Parameterized.class)//
 public class SpartanizationClassForFolderExists extends TestSuite {
 	/**
 	 * A name of a folder whose name should represent a {@link Spartanization}

@@ -39,8 +39,8 @@ public enum Funcs {
 	 *         parameters was null
 	 */
 	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
-			final Expression initalizer) {
-		if (hasNull(t,r,varName,initalizer))
+	    final Expression initalizer) {
+		if (hasNull(t, r, varName, initalizer))
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
 		$.setInitializer(null == initalizer.getParent() ? initalizer : (Expression) r.createCopyTarget(initalizer));
@@ -61,8 +61,8 @@ public enum Funcs {
 	 * @return a parenthesized conditional expression
 	 */
 	public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
-			final Expression thenExp, final Expression elseExp) {
-		if (hasNull(t,r,cond,thenExp,elseExp))
+	    final Expression thenExp, final Expression elseExp) {
+		if (hasNull(t, r, cond, thenExp, elseExp))
 			return null;
 		final ConditionalExpression $ = t.newConditionalExpression();
 		$.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
@@ -83,9 +83,9 @@ public enum Funcs {
 	 *          the else statement to set in the If Statement
 	 * @return a new if Statement
 	 */
-	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond,
-			final Statement thenStmnt, final Statement elseStmnt) {
-		if (hasNull(t,r,cond,thenStmnt,elseStmnt))
+	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
+	    final Statement elseStmnt) {
+		if (hasNull(t, r, cond, thenStmnt, elseStmnt))
 			return null;
 		final IfStatement $ = t.newIfStatement();
 		$.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
@@ -103,7 +103,7 @@ public enum Funcs {
 	 * @return the new return statement
 	 */
 	public static ReturnStatement makeReturnStatement(final AST t, final ASTRewrite r, final Expression e) {
-		if (hasNull(t,r))
+		if (hasNull(t, r))
 			return null;
 		final ReturnStatement $ = t.newReturnStatement();
 		$.setExpression(e == null || e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
@@ -123,8 +123,8 @@ public enum Funcs {
 	 * @return the new infix expression
 	 */
 	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
-			final Expression left, final Expression right) {
-		if (hasNull(t,r,o,right,left))
+	    final Expression left, final Expression right) {
+		if (hasNull(t, r, o, right, left))
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
 		$.setOperator(o);
@@ -146,8 +146,8 @@ public enum Funcs {
 	 * @return the new assignment
 	 */
 	public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right,
-			final Expression left) {
-		if (hasNull(t,r,o,right,left))
+	    final Expression left) {
+		if (hasNull(t, r, o, right, left))
 			return null;
 		final Assignment $ = t.newAssignment();
 		$.setOperator(o);
@@ -168,8 +168,8 @@ public enum Funcs {
 	 *         was null
 	 */
 	public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression operand,
-			final PrefixExpression.Operator o) {
-		if (hasNull(t,operand,o))
+	    final PrefixExpression.Operator o) {
+		if (hasNull(t, operand, o))
 			return null;
 		final PrefixExpression $ = t.newPrefixExpression();
 		$.setOperator(o);
@@ -186,7 +186,7 @@ public enum Funcs {
 	 * @return the given expression with parenthesis
 	 */
 	public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r, final Expression exp) {
-		if (hasNull(t,r,exp))
+		if (hasNull(t, r, exp))
 			return null;
 		final ParenthesizedExpression $ = t.newParenthesizedExpression();
 		$.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
@@ -241,8 +241,7 @@ public enum Funcs {
 	 */
 	public static MethodInvocation getMethodInvocation(final Statement s) {
 		final ExpressionStatement $ = getExpressionStatement(s);
-		return $ == null || $.getExpression().getNodeType() != ASTNode.METHOD_INVOCATION ? null
-				: (MethodInvocation) $.getExpression();
+		return $ == null || $.getExpression().getNodeType() != ASTNode.METHOD_INVOCATION ? null : (MethodInvocation) $.getExpression();
 	}
 	/**
 	 * @param s
@@ -284,7 +283,7 @@ public enum Funcs {
 	 *         b is statement it returns b and if b is null it returns a null
 	 */
 	public static Statement getStmntFromBlock(final Statement b) {
-		return b != null && b.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock((Block)b) : b;
+		return b != null && b.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock((Block) b) : b;
 	}
 	private static Statement getStmntFromBlock(final Block b) {
 		return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
@@ -295,17 +294,19 @@ public enum Funcs {
 	 * @return true if s contains a return statement or false otherwise
 	 */
 	public static boolean checkIfReturnStmntExist(final Statement s) {
-		if (s==null)
+		if (s == null)
 			return false;
-		switch(s.getNodeType()){
-		case ASTNode.RETURN_STATEMENT: return true;
+		switch (s.getNodeType()) {
+		case ASTNode.RETURN_STATEMENT:
+			return true;
 		case ASTNode.BLOCK: {
-			for (final Object node : ((Block)s).statements())
-				if (((ASTNode)node).getNodeType() == ASTNode.RETURN_STATEMENT)
+			for (final Object node : ((Block) s).statements())
+				if (((ASTNode) node).getNodeType() == ASTNode.RETURN_STATEMENT)
 					return true;
 			break;
 		}
-		default: break;
+		default:
+			break;
 		}
 		return false;
 	}
@@ -318,9 +319,11 @@ public enum Funcs {
 	public static int getNumOfStmnts(final ASTNode node) {
 		if (node == null)
 			return 0;
-		switch(node.getNodeType()){
-		case ASTNode.BLOCK: return statements(node).size();
-		default: return 1;
+		switch (node.getNodeType()) {
+		case ASTNode.BLOCK:
+			return statements(node).size();
+		default:
+			return 1;
 		}
 	}
 	/**
@@ -331,10 +334,13 @@ public enum Funcs {
 	public static ReturnStatement getReturnStatement(final ASTNode s) {
 		if (s == null)
 			return null;
-		switch(s.getNodeType()){
-		case ASTNode.BLOCK: return getReturnStatement((Block) s);
-		case ASTNode.RETURN_STATEMENT: return (ReturnStatement) s;
-		default: return null;
+		switch (s.getNodeType()) {
+		case ASTNode.BLOCK:
+			return getReturnStatement((Block) s);
+		case ASTNode.RETURN_STATEMENT:
+			return (ReturnStatement) s;
+		default:
+			return null;
 		}
 	}
 	private static ReturnStatement getReturnStatement(final Block b) {
@@ -350,10 +356,9 @@ public enum Funcs {
 	 *         (or if s or name are null)
 	 */
 	public static VariableDeclarationFragment getVarDeclFrag(final Statement s, final Expression name) {
-		return hasNull(s,name)
-				|| s.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-				|| name.getNodeType() != ASTNode.SIMPLE_NAME ?
-						null : getVarDeclFrag(((VariableDeclarationStatement) s).fragments(), (SimpleName) name);
+		return hasNull(s, name) || s.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
+		    || name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) s).fragments(),
+		    (SimpleName) name);
 	}
 	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
 		for (final VariableDeclarationFragment o : frags)
@@ -371,11 +376,11 @@ public enum Funcs {
 	 * @return true if all names are the same (string wise) or false otherwise
 	 */
 	public static boolean cmpSimpleNames(final Expression cmpTo, final Expression... names) {
-		if (hasNull(cmpTo,names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
+		if (hasNull(cmpTo, names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
 			return false;
 		for (final Expression name : names)
 			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-			|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+			    || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -387,7 +392,7 @@ public enum Funcs {
 	 * @return true if all the operator are the same or false otherwise
 	 */
 	public static boolean cmpAsgnOps(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
-		if (hasNull(cmpTo,op))
+		if (hasNull(cmpTo, op))
 			return false;
 		for (final Assignment.Operator o : op)
 			if (o == null || cmpTo != o)
@@ -406,11 +411,11 @@ public enum Funcs {
 	 *         the first one or false otherwise
 	 */
 	public static boolean cmpAsgns(final Assignment cmpTo, final Assignment... asgns) {
-		if (hasNull(cmpTo,asgns))
+		if (hasNull(cmpTo, asgns))
 			return false;
 		for (final Assignment asgn : asgns)
 			if (asgn == null || !cmpAsgnOps(cmpTo.getOperator(), asgn.getOperator())
-			|| !cmpSimpleNames(cmpTo.getLeftHandSide(), asgn.getLeftHandSide()))
+			    || !cmpSimpleNames(cmpTo.getLeftHandSide(), asgn.getLeftHandSide()))
 				return false;
 		return true;
 	}
@@ -430,14 +435,13 @@ public enum Funcs {
 	 *         was false (or null if any of the given parameter were null)
 	 */
 	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
-		if (hasNull(t,cond))
+		if (hasNull(t, cond))
 			return null;
 		return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
 	}
-
 	/**
 	 * Counts the number of nodes in the tree of which node is root.
-	 *
+	 * 
 	 * @param n
 	 *          The node.
 	 * @return Number of abstract syntax tree nodes under the parameter.
@@ -456,33 +460,31 @@ public enum Funcs {
 		});
 		return $.get();
 	}
-
 	/**
 	 * @param root
-	 * 				the node whose children we return
-	 * @return  A list containing all the nodes in the given root's sub tree
+	 *          the node whose children we return
+	 * @return A list containing all the nodes in the given root's sub tree
 	 */
 	public static List<ASTNode> getChildren(final ASTNode root) {
 		if (root == null)
 			return null;
 		final List<ASTNode> $ = new ArrayList<ASTNode>();
 		root.accept(new ASTVisitor() {
-			@Override public void preVisit(final ASTNode node){
+			@Override public void preVisit(final ASTNode node) {
 				$.add(node);
 			}
 		});
 		$.remove(0);
 		return $;
 	}
-
 	/**
 	 * @param exps
-	 * 				expressions to check
-	 * @return true if one of the expressions is a conditional or parenthesized conditional expression
-	 * 				or false otherwise
+	 *          expressions to check
+	 * @return true if one of the expressions is a conditional or parenthesized
+	 *         conditional expression or false otherwise
 	 */
-	public static boolean isOneExpCondExp(final Expression ...exps) {
-		for (final Expression e : exps){
+	public static boolean isOneExpCondExp(final Expression... exps) {
+		for (final Expression e : exps) {
 			if (e == null)
 				continue;
 			switch (e.getNodeType()) {
@@ -494,16 +496,16 @@ public enum Funcs {
 					return true;
 				break;
 			}
-			default: break;
+			default:
+				break;
 			}
 		}
 		return false;
 	}
-
 	/**
 	 * @param n
-	 * 			the potential block who's statements list we return
-	 * @return  the list of statements in n if it is a block or null otherwise
+	 *          the potential block who's statements list we return
+	 * @return the list of statements in n if it is a block or null otherwise
 	 */
 	public static List<ASTNode> statements(final ASTNode n) {
 		return n.getNodeType() != ASTNode.BLOCK ? null : statements((Block) n);
@@ -511,22 +513,21 @@ public enum Funcs {
 	private static List<ASTNode> statements(final Block b) {
 		return b.statements();
 	}
-
 	/**
-	 * Get the containing node by type.
-	 * Say we want to find the first block that wraps our node:
-	 * getContainerByNodeType(node, ASTNode.BLOCK);
+	 * Get the containing node by type. Say we want to find the first block that
+	 * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
+	 * 
 	 * @param n
-	 * 		Node to find its container
+	 *          Node to find its container
 	 * @param ASTNodeType
-	 * 		The type of the containing node we want to find
-	 * @return
-	 * 		The containing node
+	 *          The type of the containing node we want to find
+	 * @return The containing node
 	 */
 	public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
 		ASTNode parentContainer = n.getParent();
-		while (parentContainer.getNodeType() != ASTNodeType){
-			if (parentContainer.getParent() == parentContainer.getRoot()) break;
+		while (parentContainer.getNodeType() != ASTNodeType) {
+			if (parentContainer.getParent() == parentContainer.getRoot())
+				break;
 			parentContainer = parentContainer.getParent();
 		}
 		return parentContainer;

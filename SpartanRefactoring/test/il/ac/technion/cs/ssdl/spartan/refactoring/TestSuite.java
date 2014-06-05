@@ -21,7 +21,7 @@ import java.util.List;
  */
 /**
  * @author yogi
- *
+ * 
  */
 public abstract class TestSuite {
 	/**
@@ -45,7 +45,6 @@ public abstract class TestSuite {
 	static Spartanization makeSpartanizationObject(final File f) {
 		return makeSpartanizationObject(f.getName());
 	}
-
 	static Spartanization makeSpartanizationObject(final String folderForClass) {
 		final Class<?> c = asClass(folderForClass);
 		assertNotNull(c);
@@ -53,7 +52,6 @@ public abstract class TestSuite {
 		assertNotNull($);
 		return (Spartanization) $;
 	}
-
 	/**
 	 * Instantiates a {@link Class} object if possible, otherwise generate an
 	 * assertion failure
@@ -76,12 +74,10 @@ public abstract class TestSuite {
 		}
 		return null;
 	}
-
 	private static Spartanization error(final String message, final Class<?> c, final Throwable e) {
 		System.err.println(message + " '" + c.getCanonicalName() + "' " + e.getMessage());
 		return null;
 	}
-
 	/**
 	 * Convert a canonical name of a class into a {@link Class} object, if
 	 * possible, otherwise generate an assertion failure
@@ -99,12 +95,12 @@ public abstract class TestSuite {
 			return null;
 		}
 	}
-
 	/**
-	 * An abstract class representing the concept of traversing the {@link #location}
-	 * while generating test cases.
+	 * An abstract class representing the concept of traversing the
+	 * {@link #location} while generating test cases.
+	 * 
 	 * @see TestSuite.Traverse.Files
-	 * 	  @see TestSuite.Traverse.Directories
+	 * @see TestSuite.Traverse.Directories
 	 * 
 	 * @author Yossi Gil
 	 * @since 2014/05/24
@@ -129,11 +125,11 @@ public abstract class TestSuite {
 		 */
 		public abstract void go(List<Object[]> $, final File f);
 	}
-
 	/**
-	 **
-	 * An abstract class to be extended and implemented by client, while overriding
-	 * {@link #go(List, File)} as per customer's need.
+	 ** 
+	 * An abstract class to be extended and implemented by client, while
+	 * overriding {@link #go(List, File)} as per customer's need.
+	 * 
 	 * @see TestSuite.Traverse.Files
 	 * @see TestSuite.Traverse
 	 * 
@@ -155,9 +151,10 @@ public abstract class TestSuite {
 		abstract Object[] makeCase(File d);
 	}
 	/**
-	 **
-	 * An abstract class to be extended and implemented by client, while overriding
-	 * {@link #go(List, File)} as per customer's need.
+	 ** 
+	 * An abstract class to be extended and implemented by client, while
+	 * overriding {@link #go(List, File)} as per customer's need.
+	 * 
 	 * @see TestSuite.Traverse.Directories
 	 * @see TestSuite.Traverse
 	 * 
@@ -165,9 +162,12 @@ public abstract class TestSuite {
 	 * @since 2014/05/24
 	 */
 	public static abstract class Files extends TestSuite.Traverse {
-
-		/* (non-Javadoc)
-		 * @see il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java.util.List, java.io.File)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
+		 * .util.List, java.io.File)
 		 */
 		@Override public void go(final List<Object[]> $, final File d) {
 			final Spartanization s = makeSpartanizationObject(d);
@@ -178,7 +178,6 @@ public abstract class TestSuite {
 						$.add(c);
 				}
 		}
-
 		abstract Object[] makeCase(final Spartanization s, final File d, final File f, final String name);
 	}
 }

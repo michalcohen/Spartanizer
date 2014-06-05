@@ -40,16 +40,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
 	public ShortestOperand() {
-		super("Shortest operand first",
-				"Make the shortest operand first in an infix expression");
+		super("Shortest operand first", "Make the shortest operand first in an infix expression");
 	}
-
-	@Override
-	protected final void fillRewrite(final ASTRewrite r, final AST t,
-			final CompilationUnit cu, final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
-			@Override
-			public boolean visit(final InfixExpression n) {
+			@Override public boolean visit(final InfixExpression n) {
 				if (!inRange(m, n) || n.getLeftOperand() == null || n.getRightOperand() == null)
 					return true;
 				if (longerFirst(n) && isFlipable(n.getOperator()))
@@ -60,21 +55,19 @@ public class ShortestOperand extends Spartanization {
 			}
 		});
 	}
-
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 *
+	 * 
 	 * @param ast
-	 *            The AST - for copySubTree.
+	 *          The AST - for copySubTree.
 	 * @param rewrite
-	 *            The rewriter - to perform the change.
+	 *          The rewriter - to perform the change.
 	 * @param n
-	 *            The node.
+	 *          The node.
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
-	public static InfixExpression transpose(final AST ast,
-			final ASTRewrite rewrite, final InfixExpression n) {
+	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n) {
 		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
 		final ASTNode newL = ASTNode.copySubtree(ast, n.getLeftOperand());
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
@@ -89,53 +82,46 @@ public class ShortestOperand extends Spartanization {
 			set($, (Expression) newL, flipOperator(n.getOperator()), (Expression) newR);
 		return $;
 	}
-
-	private static void set(final InfixExpression $, final Expression left,
-			final Operator operator, final Expression right) {
+	private static void set(final InfixExpression $, final Expression left, final Operator operator, final Expression right) {
 		$.setRightOperand(left);
 		$.setOperator(operator);
 		$.setLeftOperand(right);
 	}
-
 	/**
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 *
+	 * 
 	 * @param o
-	 *            The operator to flip
-	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
-	 *         stay "+".
+	 *          The operator to flip
+	 * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
+	 *         "+".
 	 */
 	public static Operator flipOperator(final Operator o) {
 		return !conjugate.containsKey(o) ? o : conjugate.get(o);
 	}
-
 	private static Map<Operator, Operator> conjugate = makeConjeguates();
-
 	/**
 	 * @param o
-	 *            The operator to check
-	 * @return True - if the operator have opposite one in terms of operands
-	 *         swap.
+	 *          The operator to check
+	 * @return True - if the operator have opposite one in terms of operands swap.
 	 * @see ShortestOperand
 	 */
 	public static boolean isFlipable(final Operator o) {
 		return in(o, //
-				AND, //
-				EQUALS, //
-				GREATER, //
-				GREATER_EQUALS, //
-				LESS_EQUALS, //
-				LESS, //
-				NOT_EQUALS, //
-				OR, //
-				PLUS, //
-				TIMES, //
-				XOR, //
-				null);
+		    AND, //
+		    EQUALS, //
+		    GREATER, //
+		    GREATER_EQUALS, //
+		    LESS_EQUALS, //
+		    LESS, //
+		    NOT_EQUALS, //
+		    OR, //
+		    PLUS, //
+		    TIMES, //
+		    XOR, //
+		    null);
 	}
-
 	private static Map<Operator, Operator> makeConjeguates() {
 		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
 		$.put(GREATER, LESS);
@@ -144,21 +130,18 @@ public class ShortestOperand extends Spartanization {
 		$.put(LESS_EQUALS, GREATER_EQUALS);
 		return $;
 	}
-
 	private static <T> boolean in(final T candidate, final T... ts) {
 		for (final T t : ts)
 			if (t != null && t.equals(candidate))
 				return true;
 		return false;
 	}
-
 	private static final int threshold = 1;
-
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 *
+	 * 
 	 * @param a
-	 *            b Ranges to merge
+	 *          b Ranges to merge
 	 * @return True - if such an overlap exists
 	 * @see merge
 	 */
@@ -166,34 +149,30 @@ public class ShortestOperand extends Spartanization {
 		return !(a.from > b.to || b.from > a.to); // Negation of
 		// "not overlapped"
 	}
-
 	/**
 	 * @param a
-	 *            b Ranges to merge
+	 *          b Ranges to merge
 	 * @return A new merged range.
 	 * @see areOverlapped
 	 */
 	protected static Range merge(final Range a, final Range b) {
-		return new Range(a.from < b.from ? a.from : b.from, a.to > b.to ? a.to
-				: b.to);
+		return new Range(a.from < b.from ? a.from : b.from, a.to > b.to ? a.to : b.to);
 	}
-
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 *
+	 * 
 	 * @param rangeList
-	 *            The list of ranges to union with
+	 *          The list of ranges to union with
 	 * @param rNew
-	 *            The new range to union
+	 *          The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 *
+	 * 
 	 * @see areOverlapped
 	 * @see merge
 	 */
-	protected static boolean unionRangeWithList(final List<Range> rangeList,
-			final Range rNew) {
+	protected static boolean unionRangeWithList(final List<Range> rangeList, final Range rNew) {
 		boolean $ = false;
 		for (Range r : rangeList)
 			if (areOverlapped(r, rNew)) {
@@ -202,12 +181,9 @@ public class ShortestOperand extends Spartanization {
 			}
 		return $;
 	}
-
-	@Override
-	protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
-			@Override
-			public boolean visit(final InfixExpression n) {
+			@Override public boolean visit(final InfixExpression n) {
 				final Range rN = new Range(n.getParent());
 				if (!longerFirst(n) || !isFlipable(n.getOperator()))
 					return true;
@@ -217,10 +193,8 @@ public class ShortestOperand extends Spartanization {
 			}
 		};
 	}
-
 	static boolean longerFirst(final InfixExpression n) {
-		return n.getLeftOperand() != null
-				&& n.getRightOperand() != null
-				&& countNodes(n.getLeftOperand()) > countNodes(n.getRightOperand()) + threshold;
+		return n.getLeftOperand() != null && n.getRightOperand() != null
+		    && countNodes(n.getLeftOperand()) > countNodes(n.getRightOperand()) + threshold;
 	}
 }

@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 2014/05/24
  */
 @RunWith(Parameterized.class)//
-public class InOutTest  extends AbstractParametrizedTest{
+public class InOutTest extends AbstractParametrizedTest {
 	/**
 	 * An object describing the required transformation
 	 */
@@ -39,7 +39,6 @@ public class InOutTest  extends AbstractParametrizedTest{
 	 * Where the expected output can be found?
 	 */
 	@Parameter(value = 3) public File fOut;
-
 	/**
 	 * Runs a parameterized test case, based on the instance variables of this
 	 * instance
@@ -50,13 +49,12 @@ public class InOutTest  extends AbstractParametrizedTest{
 		assertEquals(1, spartanization.findOpportunities(cu).size());
 		assertEquals(readFile(fOut), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
 	}
-
 	/**
 	 * Generate test cases for this parameterized class.
 	 * 
-	 * @return a collection of cases, where each case is an array of four
-	 *         objects, the spartanization, the test case name, the input file,
-	 *         and the output file.
+	 * @return a collection of cases, where each case is an array of four objects,
+	 *         the spartanization, the test case name, the input file, and the
+	 *         output file.
 	 */
 	@Parameters(name = "{index}: {0} {1}")//
 	public static Collection<Object[]> cases() {

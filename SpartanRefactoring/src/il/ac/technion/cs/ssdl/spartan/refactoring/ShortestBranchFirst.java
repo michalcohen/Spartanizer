@@ -42,9 +42,8 @@ public class ShortestBranchFirst extends Spartanization {
 	/** Instantiates this class */
 	public ShortestBranchFirst() {
 		super("Shortester first",
-				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
+		    "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
-
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final IfStatement n) {
@@ -55,7 +54,6 @@ public class ShortestBranchFirst extends Spartanization {
 					r.replace(n, newIfStmnt, null);
 				return true;
 			}
-
 			@Override public boolean visit(final ConditionalExpression n) {
 				if (!inRange(m, n) || !longerFirst(n))
 					return true;
@@ -64,19 +62,16 @@ public class ShortestBranchFirst extends Spartanization {
 					r.replace(n, newCondExp, null);
 				return true;
 			}
-
 			private IfStatement transpose(final IfStatement n) {
 				final Expression negatedOp = negate(t, r, n.getExpression());
 				return negatedOp == null ? null : makeIfStmnt(t, r, negatedOp, n.getElseStatement(), n.getThenStatement());
 			}
-
 			private ParenthesizedExpression transpose(final ConditionalExpression n) {
-				return n==null ? null
-						: makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
+				return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(),
+				    n.getThenExpression());
 			}
 		});
 	}
-
 	/**
 	 * @return a prefix expression that is the negation of the provided
 	 *         expression.
@@ -88,16 +83,13 @@ public class ShortestBranchFirst extends Spartanization {
 			return tryNegatePrefix(r, (PrefixExpression) e);
 		return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
 	}
-
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
-		return negate(e.getOperator()) == null ? null :
-			makeInfixExpression(ast, r, negate(e.getOperator()), e.getLeftOperand(), e.getRightOperand());
+		return negate(e.getOperator()) == null ? null : makeInfixExpression(ast, r, negate(e.getOperator()), e.getLeftOperand(),
+		    e.getRightOperand());
 	}
-
 	private static Operator negate(final Operator o) {
 		return negate.containsKey(o) ? negate.get(o) : null;
 	}
-
 	private static Map<Operator, Operator> makeNegation() {
 		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
 		$.put(EQUALS, NOT_EQUALS);
@@ -108,16 +100,11 @@ public class ShortestBranchFirst extends Spartanization {
 		$.put(GREATER_EQUALS, LESS);
 		return $;
 	}
-
 	private static Map<Operator, Operator> negate = makeNegation();
-
 	private static Expression tryNegatePrefix(final ASTRewrite r, final PrefixExpression exp) {
-		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null
-				: (Expression) r.createCopyTarget(exp.getOperand());
+		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
 	}
-
 	private static final int threshold = 1;
-
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final IfStatement n) {
@@ -125,7 +112,6 @@ public class ShortestBranchFirst extends Spartanization {
 					opportunities.add(new Range(n));
 				return true;
 			}
-
 			@Override public boolean visit(final ConditionalExpression n) {
 				if (longerFirst(n))
 					opportunities.add(new Range(n));
@@ -133,11 +119,9 @@ public class ShortestBranchFirst extends Spartanization {
 			}
 		};
 	}
-
 	static boolean longerFirst(final IfStatement n) {
 		return n.getElseStatement() != null && countNodes(n.getThenStatement()) > countNodes(n.getElseStatement()) + threshold;
 	}
-
 	static boolean longerFirst(final ConditionalExpression n) {
 		return n.getThenExpression().getLength() > n.getElseExpression().getLength() + threshold;
 	}

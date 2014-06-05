@@ -37,7 +37,6 @@ public class Builder extends IncrementalProjectBuilder {
 	 * spartanization is stored
 	 */
 	public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,7 +52,6 @@ public class Builder extends IncrementalProjectBuilder {
 			m.done();
 		return null;
 	}
-
 	private void build(final int kind) throws CoreException {
 		System.err.println("Spartan building");
 		if (kind == FULL_BUILD)
@@ -66,7 +64,6 @@ public class Builder extends IncrementalProjectBuilder {
 				incrementalBuild(d);
 		}
 	}
-
 	protected void fullBuild() throws CoreException {
 		getProject().accept(new IResourceVisitor() {
 			@Override public boolean visit(final IResource r) throws CoreException {
@@ -75,45 +72,36 @@ public class Builder extends IncrementalProjectBuilder {
 			}
 		});
 	}
-
 	static void addMarkers(final IResource r) throws CoreException {
 		if (r instanceof IFile && r.getName().endsWith(".java"))
 			addMarkers((IFile) r);
 	}
-
 	private static void addMarkers(final IFile f) throws CoreException {
 		deleteMarkers(f);
 		addMarkers(f, (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null));
 	}
-
 	private static void addMarkers(final IFile f, final CompilationUnit cu) throws CoreException {
 		for (final Spartanization s : All.all())
 			for (final Range r : s.findOpportunities(cu))
 				if (r != null)
 					addMarker(f, s, r);
 	}
-
 	private static void addMarker(final IFile f, final Spartanization s, final Range r) throws CoreException {
 		addMarker(f.createMarker(MARKER_TYPE), s, r);
-
 	}
-
 	private static void addMarker(final IMarker m, final Spartanization s, final Range r) throws CoreException {
 		m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 		addMarker(m, s);
 		addMarker(m, r);
 	}
-
 	private static void addMarker(final IMarker m, final Range r) throws CoreException {
 		m.setAttribute(IMarker.CHAR_START, r.from);
 		m.setAttribute(IMarker.CHAR_END, r.to);
 	}
-
 	private static void addMarker(final IMarker m, final Spartanization s) throws CoreException {
 		m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
 		m.setAttribute(IMarker.MESSAGE, "Spartanization suggestion: " + s.getMessage());
 	}
-
 	/**
 	 * deletes all spartanization suggestion markers
 	 * 
@@ -129,7 +117,6 @@ public class Builder extends IncrementalProjectBuilder {
 	public static void deleteMarkers(final IFile f) throws CoreException {
 		f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
 	}
-
 	protected static void incrementalBuild(final IResourceDelta d) throws CoreException {
 		d.accept(new IResourceDeltaVisitor() {
 			@Override public boolean visit(final IResourceDelta internalDelta) throws CoreException {

@@ -5,18 +5,18 @@ import java.util.Map;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> 	(original / 30.05.2014) (v3)
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code>		(original / 30.05.2014) (v3)
+ * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
+ *         30.05.2014) (v3)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
+ *         30.05.2014) (v3)
  * @since 2013/07/01
  */
 public enum All {
 	;
 	private static final Map<String, Spartanization> all = new HashMap<String, Spartanization>();
-
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
 	}
-
 	static {
 		put(new ComparisonWithBoolean());
 		put(new Ternarize());
@@ -26,7 +26,6 @@ public enum All {
 		put(new ForwardDeclaration());
 		put(new RenameReturnVariableToDollar());
 	}
-
 	/**
 	 * @param name
 	 *          the name of the spartanization
@@ -35,7 +34,6 @@ public enum All {
 	public static Spartanization get(final String name) {
 		return all.get(name);
 	}
-
 	/**
 	 * @return all the registered spartanization refactoring objects
 	 */
