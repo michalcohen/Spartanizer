@@ -1,13 +1,48 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIfReturnStmntExist;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIsAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.cmpAsgns;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.cmpSimpleNames;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getChildren;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getNumOfStmnts;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getStmntFromBlock;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isOneExpCondExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeAssigment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statements;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.tryToNegateCond;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTMatcher;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -48,8 +83,8 @@ public class Ternarize extends Spartanization {
 		return getNumOfStmnts(i.getThenStatement()) == 1 && getNumOfStmnts(i.getElseStatement()) == 0 && rewriteIfToRetStmnt(ast, r, i,
 				nextRet);
 	}
-	private static ReturnStatement nextStatement(final List<ASTNode> stmts, final int ns) {
-		return stmts.size() > ns + 1 ? getReturnStatement(stmts.get(ns + 1)) : null;
+	private static ReturnStatement nextStatement(final List<ASTNode> as, final int position) {
+		return as.size() > position + 1 ? getReturnStatement(as.get(position + 1)) : null;
 	}
 	private static boolean rewriteIfToRetStmnt(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final ReturnStatement nextReturn) {
@@ -304,7 +339,7 @@ public class Ternarize extends Spartanization {
 					r.remove(prevAsgn.getParent(), null);
 					return true;
 				}
-			} else if (prevDecl.getInitializer() != null) {
+			} else if (null != prevDecl.getInitializer()) {
 				rewriteAssignIfAssignToAssignTernary(ast, r, ifStmnt, asgnThen, prevAsgn.getRightHandSide());
 				r.remove(prevAsgn.getParent(), null);
 				return true;
@@ -372,24 +407,29 @@ public class Ternarize extends Spartanization {
 		if (hasNull(thenStmnt, elseStmnt, asBlock(ifStmnt.getParent())) || thenStmnt.getNodeType() != elseStmnt.getNodeType())
 			return null;
 		TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
-		if (getNumOfStmnts(diffNodes.elseNode) != 1 || getNumOfStmnts(diffNodes.thenNode) != 1)
+		final ASTNode elseNode = diffNodes.elseNode;
+		final ASTNode thenNode = diffNodes.thenNode;
+		if (isSingletonStatement(elseNode) || isSingletonStatement(thenNode))
 			return null;
-		if (!isExpStmntOrReturn(diffNodes.thenNode)) {
-			diffNodes = findDiffNodes(diffNodes.thenNode, diffNodes.elseNode);
+		if (!isExpStmntOrReturn(thenNode)) {
+			diffNodes = findDiffNodes(thenNode, elseNode);
 			if (!isOnlyDiff(thenStmnt, elseStmnt, diffNodes) || !handleCaseDiffNodesAreBlocks(diffNodes))
 				return null;
 		}
-		if (isOneExpCondExp(getExpression(diffNodes.thenNode), getExpression(diffNodes.elseNode)))
+		if (isOneExpCondExp(getExpression(thenNode), getExpression(elseNode)))
 			return null;
-		switch (diffNodes.thenNode.getNodeType()) {
+		switch (thenNode.getNodeType()) {
 		case ASTNode.RETURN_STATEMENT:
 			return new Range(ifStmnt);
 		case ASTNode.EXPRESSION_STATEMENT:
-			return checkIfOnlyDiffIsExp(diffNodes.thenNode, diffNodes.elseNode) ? new Range(ifStmnt) : null;
+			return checkIfOnlyDiffIsExp(thenNode, elseNode) ? new Range(ifStmnt) : null;
 		default:
 			break;
 		}
 		return null;
+	}
+	private static boolean isSingletonStatement(final ASTNode elseNode) {
+		return getNumOfStmnts(elseNode) != 1;
 	}
 	static boolean checkIfOnlyDiffIsExp(final ASTNode thenStmnt, final ASTNode elseStmnt) {
 		if (thenStmnt.getNodeType() != ASTNode.EXPRESSION_STATEMENT || elseStmnt.getNodeType() != ASTNode.EXPRESSION_STATEMENT)
