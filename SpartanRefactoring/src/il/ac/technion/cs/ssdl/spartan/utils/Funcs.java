@@ -39,7 +39,7 @@ public enum Funcs {
 	 *         parameters was null
 	 */
 	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
-	    final Expression initalizer) {
+			final Expression initalizer) {
 		if (hasNull(t, r, varName, initalizer))
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
@@ -61,7 +61,7 @@ public enum Funcs {
 	 * @return a parenthesized conditional expression
 	 */
 	public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
-	    final Expression thenExp, final Expression elseExp) {
+			final Expression thenExp, final Expression elseExp) {
 		if (hasNull(t, r, cond, thenExp, elseExp))
 			return null;
 		final ConditionalExpression $ = t.newConditionalExpression();
@@ -84,7 +84,7 @@ public enum Funcs {
 	 * @return a new if Statement
 	 */
 	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
-	    final Statement elseStmnt) {
+			final Statement elseStmnt) {
 		if (hasNull(t, r, cond, thenStmnt, elseStmnt))
 			return null;
 		final IfStatement $ = t.newIfStatement();
@@ -123,7 +123,7 @@ public enum Funcs {
 	 * @return the new infix expression
 	 */
 	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
-	    final Expression left, final Expression right) {
+			final Expression left, final Expression right) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
@@ -146,7 +146,7 @@ public enum Funcs {
 	 * @return the new assignment
 	 */
 	public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right,
-	    final Expression left) {
+			final Expression left) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final Assignment $ = t.newAssignment();
@@ -168,7 +168,7 @@ public enum Funcs {
 	 *         was null
 	 */
 	public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression operand,
-	    final PrefixExpression.Operator o) {
+			final PrefixExpression.Operator o) {
 		if (hasNull(t, operand, o))
 			return null;
 		final PrefixExpression $ = t.newPrefixExpression();
@@ -347,18 +347,18 @@ public enum Funcs {
 		return b.statements().size() != 1 ? null : getReturnStatement((Statement) b.statements().get(0));
 	}
 	/**
-	 * @param s
-	 *          the variable/s declaration from which to extract the proper
-	 *          fragment
+	 * @param n
+	 *          the node from which to extract the proper fragment
 	 * @param name
 	 *          the name by which to look for the fragment
 	 * @return the fragment if such with the given name exists or null otherwise
 	 *         (or if s or name are null)
 	 */
-	public static VariableDeclarationFragment getVarDeclFrag(final Statement s, final Expression name) {
-		return hasNull(s, name) || s.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-		    || name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) s).fragments(),
-		    (SimpleName) name);
+	public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
+		return hasNull(n, name)
+				|| n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
+				|| name.getNodeType() != ASTNode.SIMPLE_NAME ? null
+						: getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),(SimpleName) name);
 	}
 	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
 		for (final VariableDeclarationFragment o : frags)
@@ -380,7 +380,7 @@ public enum Funcs {
 			return false;
 		for (final Expression name : names)
 			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-			    || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+			|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -415,7 +415,7 @@ public enum Funcs {
 			return false;
 		for (final Assignment asgn : asgns)
 			if (asgn == null || !cmpAsgnOps(cmpTo.getOperator(), asgn.getOperator())
-			    || !cmpSimpleNames(cmpTo.getLeftHandSide(), asgn.getLeftHandSide()))
+			|| !cmpSimpleNames(cmpTo.getLeftHandSide(), asgn.getLeftHandSide()))
 				return false;
 		return true;
 	}
