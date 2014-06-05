@@ -35,15 +35,21 @@ public class Ternarize extends Spartanization {
 	}
 	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement i) {
 		final Block parent = asBlock(i.getParent());
-		if (parent == null)
+		return parent != null && treatIfReturn(ast, r, i, parent);
+	}
+	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement i, final Block parent) {
+		if (!checkIfReturnStmntExist(i.getThenStatement()))
 			return false;
-		final List<ASTNode> stmts = parent.statements();
-		final int ifIdx = stmts.indexOf(i);
-		final ReturnStatement nextRet = stmts.size() > ifIdx + 1 ? getReturnStatement(stmts.get(ifIdx + 1)) : null;
-		if (nextRet == null || isOneExpCondExp(nextRet.getExpression()) || !checkIfReturnStmntExist(i.getThenStatement()))
+		final List<ASTNode> siblings = parent.statements();
+		final int position = siblings.indexOf(i);
+		final ReturnStatement nextRet = nextStatement(siblings, position);
+		if (nextRet == null || isOneExpCondExp(nextRet.getExpression()) )
 			return false;
-		return getNumOfStmnts(i.getThenStatement()) == 1 && getNumOfStmnts(i.getElseStatement()) == 0 ? rewriteIfToRetStmnt(ast, r, i,
-				nextRet) : false;
+		return getNumOfStmnts(i.getThenStatement()) == 1 && getNumOfStmnts(i.getElseStatement()) == 0 && rewriteIfToRetStmnt(ast, r, i,
+				nextRet);
+	}
+	private static ReturnStatement nextStatement(final List<ASTNode> stmts, final int ns) {
+		return stmts.size() > ns + 1 ? getReturnStatement(stmts.get(ns + 1)) : null;
 	}
 	private static boolean rewriteIfToRetStmnt(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final ReturnStatement nextReturn) {
@@ -473,10 +479,11 @@ public class Ternarize extends Spartanization {
 	}
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
-			@Override public boolean visit(final IfStatement ifStmnt) {
-				return perhaps(detectAssignIfAssign(ifStmnt)) || //
-						perhaps(detectIfReturn(ifStmnt)) || //
-						perhaps(detectIfSameExpStmntOrRet(ifStmnt)) || //
+			@Override public boolean visit(final IfStatement i) {
+				return //
+						perhaps(detectAssignIfAssign(i)) || //
+						perhaps(detectIfReturn(i)) || //
+						perhaps(detectIfSameExpStmntOrRet(i)) || //
 						true;
 			}
 			private boolean perhaps(final Range r) {
