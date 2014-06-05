@@ -19,16 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -42,7 +34,7 @@ public class ShortestBranchFirst extends Spartanization {
 	/** Instantiates this class */
 	public ShortestBranchFirst() {
 		super("Shortester first",
-		    "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
+				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
@@ -64,11 +56,16 @@ public class ShortestBranchFirst extends Spartanization {
 			}
 			private IfStatement transpose(final IfStatement n) {
 				final Expression negatedOp = negate(t, r, n.getExpression());
-				return negatedOp == null ? null : makeIfStmnt(t, r, negatedOp, n.getElseStatement(), n.getThenStatement());
+				if (negatedOp != null){
+					final Block newElseBlock = t.newBlock();
+					newElseBlock.statements().add(r.createCopyTarget(n.getElseStatement()));
+					return makeIfStmnt(t, r, negatedOp, newElseBlock, n.getThenStatement());
+				}
+				return null;
 			}
 			private ParenthesizedExpression transpose(final ConditionalExpression n) {
 				return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(),
-				    n.getThenExpression());
+						n.getThenExpression());
 			}
 		});
 	}
@@ -85,7 +82,7 @@ public class ShortestBranchFirst extends Spartanization {
 	}
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
 		return negate(e.getOperator()) == null ? null : makeInfixExpression(ast, r, negate(e.getOperator()), e.getLeftOperand(),
-		    e.getRightOperand());
+				e.getRightOperand());
 	}
 	private static Operator negate(final Operator o) {
 		return negate.containsKey(o) ? negate.get(o) : null;
