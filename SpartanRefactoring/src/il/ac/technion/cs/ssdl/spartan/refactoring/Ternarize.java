@@ -33,20 +33,20 @@ public class Ternarize extends Spartanization {
 			}
 		});
 	}
-	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement i) {
-		final Block parent = asBlock(i.getParent());
-		return parent != null && treatIfReturn(ast, r, i, parent);
+	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
+		final Block parent = asBlock(ifStmnt.getParent());
+		return parent != null && treatIfReturn(ast, r, ifStmnt, parent);
 	}
-	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement i, final Block parent) {
-		if (!checkIfReturnStmntExist(i.getThenStatement()))
+	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt, final Block parent) {
+		if (!checkIfReturnStmntExist(ifStmnt.getThenStatement()))
 			return false;
 		final List<ASTNode> siblings = parent.statements();
-		final int position = siblings.indexOf(i);
+		final int position = siblings.indexOf(ifStmnt);
 		final ReturnStatement nextRet = nextStatement(siblings, position);
-		if (nextRet == null || isOneExpCondExp(nextRet.getExpression()) )
-			return false;
-		return getNumOfStmnts(i.getThenStatement()) == 1 && getNumOfStmnts(i.getElseStatement()) == 0 && rewriteIfToRetStmnt(ast, r, i,
-				nextRet);
+		return nextRet != null
+				&& getNumOfStmnts(ifStmnt.getThenStatement()) == 1
+				&& getNumOfStmnts(ifStmnt.getElseStatement()) == 0
+				&& rewriteIfToRetStmnt(ast, r, ifStmnt, nextRet);
 	}
 	private static ReturnStatement nextStatement(final List<ASTNode> stmts, final int ns) {
 		return stmts.size() > ns + 1 ? getReturnStatement(stmts.get(ns + 1)) : null;
@@ -54,7 +54,7 @@ public class Ternarize extends Spartanization {
 	private static boolean rewriteIfToRetStmnt(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final ReturnStatement nextReturn) {
 		final ReturnStatement thenRet = getReturnStatement(ifStmnt.getThenStatement());
-		if (isOneExpCondExp(thenRet.getExpression()))
+		if (isOneExpCondExp(thenRet.getExpression(), nextReturn.getExpression()))
 			return false;
 		final Expression newExp = determineNewExp(ast, r, ifStmnt.getExpression(), thenRet.getExpression(), nextReturn.getExpression());
 		final ReturnStatement newRet = makeReturnStatement(ast, r, newExp);
@@ -229,7 +229,8 @@ public class Ternarize extends Spartanization {
 	}
 	private static Expression determineNewExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp,
 			final Expression elseExp) {
-		return thenExp.getNodeType() == ASTNode.BOOLEAN_LITERAL ? tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue())
+		return thenExp.getNodeType() == ASTNode.BOOLEAN_LITERAL && elseExp.getNodeType() == ASTNode.BOOLEAN_LITERAL ?
+				tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue())
 				: makeParenthesizedConditionalExp(t, r, cond, thenExp, elseExp);
 	}
 	static boolean treatAssignIfAssign(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
@@ -386,9 +387,8 @@ public class Ternarize extends Spartanization {
 		final ReturnStatement nextRet = getReturnStatement(ss.get(ifIdx + 1));
 		final ReturnStatement thenSide = getReturnStatement(ifStmnt.getThenStatement());
 		final ReturnStatement elseSide = getReturnStatement(ifStmnt.getElseStatement());
-		if (nextRet != null && (thenSide != null && elseSide == null || thenSide == null && elseSide != null))
-			return new Range(ifStmnt, nextRet);
-		return null;
+		return nextRet != null && (thenSide != null && elseSide == null || thenSide == null && elseSide != null) ?
+				new Range(ifStmnt, nextRet) : null;
 	}
 	static Range detectIfSameExpStmntOrRet(final IfStatement ifStmnt) {
 		final Statement thenStmnt = getStmntFromBlock(ifStmnt.getThenStatement());
