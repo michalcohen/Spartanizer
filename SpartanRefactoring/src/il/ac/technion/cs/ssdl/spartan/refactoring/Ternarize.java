@@ -376,10 +376,13 @@ public class Ternarize extends Spartanization {
 		if (ss.size() <= ifIdx + 1)
 			return null;
 		final ReturnStatement nextRet = getReturnStatement(ss.get(ifIdx + 1));
+		if (nextRet == null || isOneExpCondExp(nextRet.getExpression()))
+			return null;
 		final ReturnStatement thenSide = getReturnStatement(ifStmnt.getThenStatement());
 		final ReturnStatement elseSide = getReturnStatement(ifStmnt.getElseStatement());
-		return nextRet != null && (thenSide != null && elseSide == null || thenSide == null && elseSide != null) ?
-				new Range(ifStmnt, nextRet) : null;
+		return thenSide != null && elseSide == null && !isOneExpCondExp(thenSide.getExpression())
+				|| thenSide == null && elseSide != null && !isOneExpCondExp(elseSide.getExpression()) ?
+						new Range(ifStmnt, nextRet) : null;
 	}
 	static Range detectIfSameExpStmntOrRet(final IfStatement ifStmnt) {
 		final Statement thenStmnt = getStmntFromBlock(ifStmnt.getThenStatement());
