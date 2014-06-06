@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  * 
  * 
  * @since 2013/01/01
@@ -37,10 +39,11 @@ public class InlineSingleUse extends Spartanization {
 				final SimpleName varName = n.getName();
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
 				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-				if (uses.size() == 1
-				    && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1)) {
+				if (1 == uses.size()
+						&& (0 != (parent.getModifiers() & Modifier.FINAL)
+						|| 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()))) {
 					r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
-					r.remove(parent.fragments().size() == 1 ? parent : n, null);
+					r.remove(1 != parent.fragments().size() ? n : parent, null);
 				}
 				return true;
 			}
@@ -49,15 +52,18 @@ public class InlineSingleUse extends Spartanization {
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment node) {
-				final SimpleName varName = node.getName();
 				if (!(node.getParent() instanceof VariableDeclarationStatement))
 					return true;
+				final SimpleName varName = node.getName();
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
-				if (Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent()).size() == 1
-				    && ((parent.getModifiers() & Modifier.FINAL) != 0 || Occurrences.ASSIGNMENTS.of(varName).in(parent.getParent()).size() == 1))
+				if (1 == numOfOccur(Occurrences.USES_SEMANTIC, varName, parent.getParent())
+						&& (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent())))
 					opportunities.add(new Range(node));
 				return true;
 			}
 		};
+	}
+	static int numOfOccur(final Occurrences typeOfOccur, final Expression of, final ASTNode in){
+		return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
 	}
 }

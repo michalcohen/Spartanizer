@@ -3,17 +3,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -45,7 +35,7 @@ public class ShortestOperand extends Spartanization {
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
-				if (!inRange(m, n) || n.getLeftOperand() == null || n.getRightOperand() == null)
+				if (!inRange(m, n) || null == n.getLeftOperand() || null == n.getRightOperand())
 					return true;
 				if (longerFirst(n) && isFlipable(n.getOperator()))
 					r.replace(n, transpose(t, r, n), null); // Replace old tree with
@@ -68,18 +58,17 @@ public class ShortestOperand extends Spartanization {
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
 	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n) {
-		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
-		final ASTNode newL = ASTNode.copySubtree(ast, n.getLeftOperand());
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
-		if ($.getLeftOperand().getNodeType() == INFIX_EXPRESSION)
+		if (INFIX_EXPRESSION == $.getLeftOperand().getNodeType())
 			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) $.getLeftOperand()));
-		if ($.getRightOperand().getNodeType() == INFIX_EXPRESSION)
+		if (INFIX_EXPRESSION == $.getRightOperand().getNodeType())
 			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand()));
-		if (newR.getNodeType() == BOOLEAN_LITERAL)
+		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
+		if (BOOLEAN_LITERAL == newR.getNodeType())
 			return $; // Prevents the following swap: "(a>0) == true" =>
 		// "true == (a>0)"
 		if (isFlipable(n.getOperator()) && longerFirst(n))
-			set($, (Expression) newL, flipOperator(n.getOperator()), (Expression) newR);
+			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()), flipOperator(n.getOperator()), (Expression) newR);
 		return $;
 	}
 	private static void set(final InfixExpression $, final Expression left, final Operator operator, final Expression right) {
@@ -109,18 +98,18 @@ public class ShortestOperand extends Spartanization {
 	 */
 	public static boolean isFlipable(final Operator o) {
 		return in(o, //
-		    AND, //
-		    EQUALS, //
-		    GREATER, //
-		    GREATER_EQUALS, //
-		    LESS_EQUALS, //
-		    LESS, //
-		    NOT_EQUALS, //
-		    OR, //
-		    PLUS, //
-		    TIMES, //
-		    XOR, //
-		    null);
+				AND, //
+				EQUALS, //
+				GREATER, //
+				GREATER_EQUALS, //
+				LESS_EQUALS, //
+				LESS, //
+				NOT_EQUALS, //
+				OR, //
+				PLUS, //
+				TIMES, //
+				XOR, //
+				null);
 	}
 	private static Map<Operator, Operator> makeConjeguates() {
 		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
@@ -184,9 +173,9 @@ public class ShortestOperand extends Spartanization {
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
-				final Range rN = new Range(n.getParent());
 				if (!longerFirst(n) || !isFlipable(n.getOperator()))
 					return true;
+				final Range rN = new Range(n.getParent());
 				if (!unionRangeWithList(opportunities, rN))
 					opportunities.add(rN);
 				return true;
@@ -194,7 +183,7 @@ public class ShortestOperand extends Spartanization {
 		};
 	}
 	static boolean longerFirst(final InfixExpression n) {
-		return n.getLeftOperand() != null && n.getRightOperand() != null
-		    && countNodes(n.getLeftOperand()) > countNodes(n.getRightOperand()) + threshold;
+		return null != n.getLeftOperand() && null != n.getRightOperand()
+				&& countNodes(n.getLeftOperand()) > threshold + countNodes(n.getRightOperand());
 	}
 }

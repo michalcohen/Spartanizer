@@ -58,10 +58,10 @@ public class ShortestBranchFirst extends Spartanization {
 			}
 			private IfStatement transpose(final IfStatement n) {
 				final Expression negatedOp = negate(t, r, n.getExpression());
-				final Statement elseStmnt = n.getElseStatement();
 				if (negatedOp == null)
 					return null;
-				if (getNumOfStmnts(elseStmnt) != 1 || getStmntFromBlock(elseStmnt).getNodeType() == ASTNode.IF_STATEMENT){
+				final Statement elseStmnt = n.getElseStatement();
+				if (1 != getNumOfStmnts(elseStmnt) || ASTNode.IF_STATEMENT == getStmntFromBlock(elseStmnt).getNodeType()){
 					final Block newElseBlock = t.newBlock();
 					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
 					return makeIfStmnt(t, r, negatedOp, newElseBlock, n.getThenStatement());
@@ -85,11 +85,11 @@ public class ShortestBranchFirst extends Spartanization {
 				: makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
 	}
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
-		return negate(e.getOperator()) == null ? null
+		return null == negate(e.getOperator()) ? null
 				: makeInfixExpression(ast, r, negate(e.getOperator()), e.getLeftOperand(), e.getRightOperand());
 	}
 	private static Operator negate(final Operator o) {
-		return negate.containsKey(o) ? negate.get(o) : null;
+		return !negate.containsKey(o) ? null : negate.get(o);
 	}
 	private static Map<Operator, Operator> makeNegation() {
 		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
@@ -122,9 +122,9 @@ public class ShortestBranchFirst extends Spartanization {
 		};
 	}
 	static boolean longerFirst(final IfStatement n) {
-		return n.getElseStatement() != null && countNodes(n.getThenStatement()) > countNodes(n.getElseStatement()) + threshold;
+		return null != n.getElseStatement() && countNodes(n.getThenStatement()) > threshold + countNodes(n.getElseStatement());
 	}
 	static boolean longerFirst(final ConditionalExpression n) {
-		return n.getThenExpression().getLength() > n.getElseExpression().getLength() + threshold;
+		return n.getThenExpression().getLength() > threshold + n.getElseExpression().getLength();
 	}
 }

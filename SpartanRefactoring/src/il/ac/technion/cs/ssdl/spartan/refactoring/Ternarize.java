@@ -42,21 +42,19 @@ public class Ternarize extends Spartanization {
 			return false;
 		final ReturnStatement nextRet = nextStatement(statements(parent), statements(parent).indexOf(ifStmnt));
 		return nextRet != null
-				&& getNumOfStmnts(ifStmnt.getThenStatement()) == 1
-				&& getNumOfStmnts(ifStmnt.getElseStatement()) == 0
+				&& 1 == getNumOfStmnts(ifStmnt.getThenStatement())
+				&& 0 == getNumOfStmnts(ifStmnt.getElseStatement())
 				&& rewriteIfToRetStmnt(ast, r, ifStmnt, nextRet);
 	}
 	private static ReturnStatement nextStatement(final List<ASTNode> stmts, final int ns) {
-		return stmts.size() > ns + 1 ? getReturnStatement(stmts.get(ns + 1)) : null;
+		return stmts.size() <= ns + 1 ? null : getReturnStatement(stmts.get(ns + 1));
 	}
 	private static boolean rewriteIfToRetStmnt(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final ReturnStatement nextReturn) {
 		final ReturnStatement thenRet = getReturnStatement(ifStmnt.getThenStatement());
 		if (isOneExpCondExp(thenRet.getExpression(), nextReturn.getExpression()))
 			return false;
-		final Expression newExp = determineNewExp(ast, r, ifStmnt.getExpression(), thenRet.getExpression(), nextReturn.getExpression());
-		final ReturnStatement newRet = makeReturnStatement(ast, r, newExp);
-		r.replace(ifStmnt, newRet, null);
+		r.replace(ifStmnt, makeReturnStatement(ast, r, determineNewExp(ast, r, ifStmnt.getExpression(), thenRet.getExpression(), nextReturn.getExpression())), null);
 		r.remove(nextReturn, null);
 		return true;
 	}
@@ -104,7 +102,7 @@ public class Ternarize extends Spartanization {
 		}
 	}
 	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
-		if (asBlock(ifStmt.getParent()) == null)
+		if (null == asBlock(ifStmt.getParent()))
 			return false;
 		final Statement thenStatment = getStmntFromBlock(ifStmt.getThenStatement());
 		final Statement elseStatment = getStmntFromBlock(ifStmt.getElseStatement());
@@ -118,13 +116,12 @@ public class Ternarize extends Spartanization {
 		if (diffExp == null)
 			return false;
 		final int ifIdx = statements(ifStmt.getParent()).indexOf(ifStmt);
-		final Statement prevDecl = (Statement) statements(ifStmt.getParent()).get(ifIdx - 1 >= 0 ? ifIdx - 1 : ifIdx);
-		return substitute(ast, r, ifStmt, diffExp, prevDecl);
+		return substitute(ast, r, ifStmt, diffExp, (Statement) statements(ifStmt.getParent()).get(0 > ifIdx - 1 ? ifIdx : ifIdx - 1));
 	}
 	private static TwoExpressions findSingleDifference(final Statement thenStmnt, final Statement elseStmnt) {
 		TwoNodes diffNodes = findDiffNodes(thenStmnt, elseStmnt);
-		final TwoExpressions diffExps = findDiffExps(thenStmnt, elseStmnt, diffNodes);
-		if (diffExps == null)
+		final TwoExpressions $ = findDiffExps(thenStmnt, elseStmnt, diffNodes);
+		if ($ == null)
 			return null;
 		if (!isExpStmntOrReturn(thenStmnt))
 			handleCaseDiffNodesAreBlocks(diffNodes);
@@ -132,20 +129,19 @@ public class Ternarize extends Spartanization {
 			diffNodes = new TwoNodes(thenStmnt, elseStmnt);
 		if (diffNodes.thenNode.getNodeType() != diffNodes.elseNode.getNodeType() || !isExpStmntOrReturn(diffNodes.thenNode))
 			return null;
-		if (diffNodes.thenNode.getNodeType() == ASTNode.EXPRESSION_STATEMENT
-				&& checkIfOnlyDiffIsExp(diffNodes.thenNode, diffNodes.elseNode))
-			return diffExps;
-		return diffNodes.thenNode.getNodeType() != ASTNode.RETURN_STATEMENT ? null : new TwoExpressions(
-				getExpression(diffNodes.thenNode), getExpression(diffNodes.elseNode));
+		if (ASTNode.EXPRESSION_STATEMENT == diffNodes.thenNode.getNodeType() && checkIfOnlyDiffIsExp(diffNodes.thenNode, diffNodes.elseNode))
+			return $;
+		return ASTNode.RETURN_STATEMENT != diffNodes.thenNode.getNodeType() ? null :
+			new TwoExpressions(getExpression(diffNodes.thenNode), getExpression(diffNodes.elseNode));
 	}
 	private static TwoExpressions findDiffExps(final Statement thenStmnt, final Statement elseStmnt, final TwoNodes diffNodes) {
 		TwoNodes tempNodes = diffNodes;
 		if (!isExpStmntOrReturn(thenStmnt)) {
 			if (!isOnlyDiff(thenStmnt, elseStmnt, tempNodes) || !handleCaseDiffNodesAreBlocks(tempNodes))
 				return null;
-			if (tempNodes.thenNode.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+			if (ASTNode.EXPRESSION_STATEMENT == tempNodes.thenNode.getNodeType())
 				tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
-			if (findDiffNodes(tempNodes.thenNode, tempNodes.elseNode) == null
+			if (null == findDiffNodes(tempNodes.thenNode, tempNodes.elseNode)
 					|| isOneExpCondExp((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode))
 				return null;
 			tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
@@ -174,11 +170,11 @@ public class Ternarize extends Spartanization {
 		return nodeType == ASTNode.EXPRESSION_STATEMENT || nodeType == ASTNode.RETURN_STATEMENT;
 	}
 	private static boolean handleCaseDiffNodesAreBlocks(final TwoNodes diffNodes) {
-		if (getNumOfStmnts(diffNodes.thenNode) != 1 && getNumOfStmnts(diffNodes.elseNode) != 1)
+		if (1 != getNumOfStmnts(diffNodes.thenNode) && 1 != getNumOfStmnts(diffNodes.elseNode))
 			return false;
-		if (diffNodes.thenNode.getNodeType() == ASTNode.BLOCK)
+		if (ASTNode.BLOCK == diffNodes.thenNode.getNodeType())
 			diffNodes.thenNode = getStmntFromBlock((Block) diffNodes.thenNode);
-		if (diffNodes.elseNode.getNodeType() == ASTNode.BLOCK)
+		if (ASTNode.BLOCK == diffNodes.elseNode.getNodeType())
 			diffNodes.elseNode = getStmntFromBlock((Block) diffNodes.elseNode);
 		return true;
 	}
@@ -209,13 +205,13 @@ public class Ternarize extends Spartanization {
 		r.replace(ifStmnt, r.createCopyTarget(thenStmnt), null);
 		return true;
 	}
-	private static boolean handleSubIfDiffAreAsgns(final AST t, final ASTRewrite r, final IfStatement ifStmnt,
-			final Expression thenExp, final Statement possiblePrevDecl, final Statement thenStmnt, final ASTNode thenNode,
-			final Expression newExp) {
+	private static boolean handleSubIfDiffAreAsgns(final AST t, final ASTRewrite r, final IfStatement ifStmnt, final Expression thenExp,
+			final Statement possiblePrevDecl, final Statement thenStmnt, final ASTNode thenNode, final Expression newExp) {
 		final Assignment asgnThen = getAssignment((Statement) thenNode);
-		final VariableDeclarationFragment prevDecl = getVarDeclFrag(possiblePrevDecl, asgnThen.getLeftHandSide());
 		if (asgnThen.getOperator() != Assignment.Operator.ASSIGN)
 			return false;
+		final VariableDeclarationFragment prevDecl = getVarDeclFrag(
+				possiblePrevDecl, asgnThen.getLeftHandSide());
 		if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT && prevDecl != null) {
 			r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), newExp), null);
 			r.remove(ifStmnt, null);
@@ -238,10 +234,10 @@ public class Ternarize extends Spartanization {
 		final List<ASTNode> stmts = ((Block) parent).statements();
 		final int ifIdx = stmts.indexOf(ifStmnt);
 		final Assignment asgnThen = getAssignment(ifStmnt.getThenStatement());
-		if (asgnThen == null || ifStmnt.getElseStatement() != null || ifIdx < 1)
+		if (asgnThen == null || null != ifStmnt.getElseStatement() || ifIdx < 1)
 			return false;
 		final Assignment prevAsgn = getAssignment((Statement) stmts.get(ifIdx - 1));
-		final Assignment nextAsgn = stmts.size() > ifIdx + 1 ? getAssignment((Statement) stmts.get(ifIdx + 1)) : null;
+		final Assignment nextAsgn = stmts.size() <= ifIdx + 1 ? null : getAssignment((Statement) stmts.get(ifIdx + 1));
 		final VariableDeclarationFragment prevDecl = findPrevDecl(stmts, ifIdx, asgnThen, prevAsgn, nextAsgn);
 		return tryHandleNextAndPrevAsgnExist(r, ifStmnt, asgnThen, prevAsgn, nextAsgn, prevDecl) //
 				|| tryHandleOnlyPrevAsgnExist(ast, r, ifStmnt, asgnThen, prevAsgn, prevDecl) //
@@ -252,9 +248,8 @@ public class Ternarize extends Spartanization {
 			final Assignment asgnThen, final Assignment prevAsgn, final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
 		if (!isNoNextNoPrevAsgnPossible(ifStmnt, asgnThen, prevAsgn, nextAsgn,prevDecl))
 			return false;
-		final Expression newInitalizer = makeParenthesizedConditionalExp(ast, r, ifStmnt.getExpression(),
-				asgnThen.getRightHandSide(), prevDecl.getInitializer());
-		r.replace(prevDecl, makeVarDeclFrag(ast, r, prevDecl.getName(), newInitalizer), null);
+		r.replace(prevDecl, makeVarDeclFrag(ast, r, prevDecl.getName(), makeParenthesizedConditionalExp(ast, r, ifStmnt.getExpression(),
+				asgnThen.getRightHandSide(), prevDecl.getInitializer())), null);
 		r.remove(ifStmnt, null);
 		return true;
 	}
@@ -264,8 +259,8 @@ public class Ternarize extends Spartanization {
 				&& nextAsgn == null //
 				&& !isOneExpCondExp(asgnThen.getRightHandSide()) //
 				&& prevDecl != null //
-				&& prevDecl.getInitializer() != null //
-				&& ifStmnt.getElseStatement() == null //
+				&& null != prevDecl.getInitializer() //
+				&& null == ifStmnt.getElseStatement() //
 				&& !isOneExpCondExp(prevDecl.getInitializer()) //
 				&& !dependsOn(prevDecl.getName(), ifStmnt.getExpression(), asgnThen.getRightHandSide()); //
 	}
@@ -316,14 +311,13 @@ public class Ternarize extends Spartanization {
 			final Assignment asgnThen, final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
 		if (!dependsOn(prevDecl.getName(), asgnThen.getRightHandSide(), prevAsgn.getRightHandSide())
 				&& asgnThen.getOperator() == Assignment.Operator.ASSIGN){
-			final Expression newInitalizer = makeParenthesizedConditionalExp(ast, r, ifStmnt.getExpression(),
-					asgnThen.getRightHandSide(), prevAsgn.getRightHandSide());
-			r.replace(prevDecl, makeVarDeclFrag(ast, r, (SimpleName) prevAsgn.getLeftHandSide(), newInitalizer), null);
+			r.replace(prevDecl, makeVarDeclFrag(ast, r, (SimpleName) prevAsgn.getLeftHandSide(), makeParenthesizedConditionalExp(ast, r, ifStmnt.getExpression(),
+					asgnThen.getRightHandSide(), prevAsgn.getRightHandSide())), null);
 			r.remove(ifStmnt, null);
 			r.remove(prevAsgn.getParent(), null);
 			return true;
 		}
-		else if (prevDecl.getInitializer() != null) {
+		else if (null != prevDecl.getInitializer()) {
 			handleNoPrevDecl(ast, r, ifStmnt, asgnThen, prevAsgn);
 			return true;
 		}
@@ -357,13 +351,13 @@ public class Ternarize extends Spartanization {
 			final Assignment prevAsgn, final Assignment nextAsgn) {
 		VariableDeclarationFragment $ = null;
 		if (prevAsgn != null) {
-			if (ifIdx - 2 >= 0 && cmpSimpleNames(asgnThen.getLeftHandSide(), prevAsgn.getLeftHandSide()))
+			if (0 <= ifIdx - 2 && cmpSimpleNames(asgnThen.getLeftHandSide(), prevAsgn.getLeftHandSide()))
 				$ = getVarDeclFrag(stmts.get(ifIdx - 2), asgnThen.getLeftHandSide());
-		} else if (nextAsgn != null) {
-			if (ifIdx - 1 >= 0 && cmpSimpleNames(asgnThen.getLeftHandSide(), nextAsgn.getLeftHandSide()))
-				$ = getVarDeclFrag(stmts.get(ifIdx - 1), nextAsgn.getLeftHandSide());
-		} else if (ifIdx - 1 >= 0)
-			$ = getVarDeclFrag(stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
+		} else if (nextAsgn == null) {
+			if (0 <= ifIdx - 1)
+				$ = getVarDeclFrag(stmts.get(ifIdx - 1), asgnThen.getLeftHandSide());
+		} else if (0 <= ifIdx - 1 && cmpSimpleNames(asgnThen.getLeftHandSide(), nextAsgn.getLeftHandSide()))
+			$ = getVarDeclFrag(stmts.get(ifIdx - 1), nextAsgn.getLeftHandSide());
 		return $;
 	}
 	private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement ifStmnt,
@@ -375,7 +369,7 @@ public class Ternarize extends Spartanization {
 		r.replace(ifStmnt, t.newExpressionStatement(newAsgn), null);
 	}
 	static Range detectIfReturn(final IfStatement ifStmnt) {
-		return statements(ifStmnt.getParent()) == null ? null : detectIfReturn(ifStmnt, statements(ifStmnt.getParent()));
+		return null == statements(ifStmnt.getParent()) ? null : detectIfReturn(ifStmnt, statements(ifStmnt.getParent()));
 	}
 	private static Range detectIfReturn(final IfStatement ifStmnt, final List<ASTNode> ss) {
 		final int ifIdx = ss.indexOf(ifStmnt);
@@ -393,7 +387,7 @@ public class Ternarize extends Spartanization {
 		if (hasNull(thenStmnt, elseStmnt, asBlock(ifStmnt.getParent())) || thenStmnt.getNodeType() != elseStmnt.getNodeType())
 			return null;
 		TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
-		if (getNumOfStmnts(diffNodes.elseNode) != 1 || getNumOfStmnts(diffNodes.thenNode) != 1)
+		if (1 != getNumOfStmnts(diffNodes.elseNode) || 1 != getNumOfStmnts(diffNodes.thenNode))
 			return null;
 		if (!isExpStmntOrReturn(diffNodes.thenNode)) {
 			diffNodes = findDiffNodes(diffNodes.thenNode, diffNodes.elseNode);
@@ -406,7 +400,7 @@ public class Ternarize extends Spartanization {
 		case ASTNode.RETURN_STATEMENT:
 			return new Range(ifStmnt);
 		case ASTNode.EXPRESSION_STATEMENT:
-			return checkIfOnlyDiffIsExp(diffNodes.thenNode, diffNodes.elseNode) ? new Range(ifStmnt) : null;
+			return !checkIfOnlyDiffIsExp(diffNodes.thenNode, diffNodes.elseNode) ? null : new Range(ifStmnt);
 		default:
 			break;
 		}
@@ -436,7 +430,7 @@ public class Ternarize extends Spartanization {
 		return parent == null ? null : detectAssignIfAssign(ifStmnt, parent);
 	}
 	private static Block asBlock(final ASTNode n) {
-		return n instanceof Block ? (Block) n : null;
+		return !(n instanceof Block) ? null : (Block) n;
 	}
 	private static Range detectAssignIfAssign(final IfStatement ifStmnt, final Block parent) {
 		final List<ASTNode> stmts = parent.statements();
@@ -444,12 +438,13 @@ public class Ternarize extends Spartanization {
 		if (ifIdx < 1 && stmts.size() <= ifIdx + 1)
 			return null;
 		final Assignment asgnThen = getAssignment(ifStmnt.getThenStatement());
-		if (asgnThen == null || ifStmnt.getElseStatement() != null)
+		if (asgnThen == null || null != ifStmnt.getElseStatement())
 			return null;
-		final Assignment prevAsgn = getAssignment((Statement) stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0));
-		final Assignment nextAsgn = getAssignment((Statement) stmts.get(ifIdx + 1 > stmts.size() - 1 ? stmts.size() - 1 : ifIdx + 1));
-		final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn != null ? stmts.get(ifIdx - 2 >= 0 ? ifIdx - 2 : 0)
-				: stmts.get(ifIdx - 1 >= 0 ? ifIdx - 1 : 0), asgnThen.getLeftHandSide());
+		final Assignment nextAsgn = getAssignment((Statement) stmts.get(ifIdx + 1 <= stmts.size() - 1 ? ifIdx + 1 : stmts.size() - 1));
+		final Assignment prevAsgn = getAssignment((Statement) stmts
+				.get(0 > ifIdx - 1 ? 0 : ifIdx - 1));
+		final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn != null ? stmts.get(0 > ifIdx - 2 ? 0 : ifIdx - 2)
+				: stmts.get(0 > ifIdx - 1 ? 0 : ifIdx - 1), asgnThen.getLeftHandSide());
 		Range $ = detecPrevAndNextAsgnExist(asgnThen, prevAsgn, nextAsgn, prevDecl);
 		if ($ != null)
 			return $;
@@ -467,7 +462,7 @@ public class Ternarize extends Spartanization {
 		return prevAsgn == null
 				&& nextAsgn == null
 				&& prevDecl != null
-				&& prevDecl.getInitializer() != null
+				&& null != prevDecl.getInitializer()
 				&& !dependsOn(prevDecl.getName(), ifStmnt.getExpression(), asgnThen.getRightHandSide()) ?
 						new Range(prevDecl, ifStmnt) : null;
 	}
@@ -482,21 +477,21 @@ public class Ternarize extends Spartanization {
 			final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
 		if (prevAsgn == null || dependsOn(prevAsgn.getLeftHandSide(), ifStmnt.getExpression()) || !cmpAsgns(prevAsgn, asgnThen))
 			return null;
-		if (prevDecl != null && prevDecl.getInitializer() == null)
-			return !dependsOn(prevDecl.getName(), prevAsgn.getRightHandSide()) ? new Range(prevDecl, ifStmnt) : null;
-			return new Range(prevAsgn, ifStmnt);
+		if (prevDecl != null && null == prevDecl.getInitializer())
+			return dependsOn(prevDecl.getName(), prevAsgn.getRightHandSide()) ? null : new Range(prevDecl, ifStmnt);
+		return new Range(prevAsgn, ifStmnt);
 	}
 	private static Range detecPrevAndNextAsgnExist(final Assignment asgnThen, final Assignment prevAsgn,
 			final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
 		if (hasNull(prevAsgn, nextAsgn) || !cmpAsgns(nextAsgn, prevAsgn, asgnThen))
 			return null;
 		if (prevDecl != null)
-			return !dependsOn(prevDecl.getName(), nextAsgn.getRightHandSide()) ? new Range(prevDecl, nextAsgn) : null;
-			return new Range(prevAsgn, nextAsgn);
+			return dependsOn(prevDecl.getName(), nextAsgn.getRightHandSide()) ? null : new Range(prevDecl, nextAsgn);
+		return new Range(prevAsgn, nextAsgn);
 	}
 	private static boolean dependsOn(final Expression expToCheck, final Expression... possiblyDependentExps) {
 		for (final Expression pde : possiblyDependentExps)
-			if (Occurrences.BOTH_SEMANTIC.of(expToCheck).in(pde).size() > 0)
+			if (0 < Occurrences.BOTH_SEMANTIC.of(expToCheck).in(pde).size())
 				return true;
 		return false;
 	}

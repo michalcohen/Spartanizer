@@ -33,7 +33,7 @@ public abstract class TestSuite {
 			final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 			String line;
 			final StringBuilder $ = new StringBuilder();
-			while ((line = r.readLine()) != null)
+			while (null != (line = r.readLine()))
 				$.append(line).append(System.lineSeparator());
 			r.close();
 			return $.toString();
@@ -126,7 +126,7 @@ public abstract class TestSuite {
 		public abstract void go(List<Object[]> $, final File f);
 	}
 	/**
-	 ** 
+	 **
 	 * An abstract class to be extended and implemented by client, while
 	 * overriding {@link #go(List, File)} as per customer's need.
 	 * 
@@ -151,7 +151,7 @@ public abstract class TestSuite {
 		abstract Object[] makeCase(File d);
 	}
 	/**
-	 ** 
+	 **
 	 * An abstract class to be extended and implemented by client, while
 	 * overriding {@link #go(List, File)} as per customer's need.
 	 * 

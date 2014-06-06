@@ -65,9 +65,9 @@ public enum Funcs {
 		if (hasNull(t, r, cond, thenExp, elseExp))
 			return null;
 		final ConditionalExpression $ = t.newConditionalExpression();
-		$.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
-		$.setThenExpression(thenExp.getParent() == null ? thenExp : (Expression) r.createCopyTarget(thenExp));
-		$.setElseExpression(elseExp.getParent() == null ? elseExp : (Expression) r.createCopyTarget(elseExp));
+		$.setExpression(null == cond.getParent() ? cond : (Expression) r.createCopyTarget(cond));
+		$.setThenExpression(null == thenExp.getParent() ? thenExp : (Expression) r.createCopyTarget(thenExp));
+		$.setElseExpression(null == elseExp.getParent() ? elseExp : (Expression) r.createCopyTarget(elseExp));
 		return makeParenthesizedExpression(t, r, $);
 	}
 	/**
@@ -88,9 +88,9 @@ public enum Funcs {
 		if (hasNull(t, r, cond, thenStmnt, elseStmnt))
 			return null;
 		final IfStatement $ = t.newIfStatement();
-		$.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
-		$.setThenStatement(thenStmnt.getParent() == null ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
-		$.setElseStatement(elseStmnt.getParent() == null ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
+		$.setExpression(null == cond.getParent() ? cond : (Expression) r.createCopyTarget(cond));
+		$.setThenStatement(null == thenStmnt.getParent() ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
+		$.setElseStatement(null == elseStmnt.getParent() ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
 		return $;
 	}
 	/**
@@ -106,7 +106,7 @@ public enum Funcs {
 		if (hasNull(t, r))
 			return null;
 		final ReturnStatement $ = t.newReturnStatement();
-		$.setExpression(e == null || e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
+		$.setExpression(e == null || null == e.getParent() ? e : (Expression) r.createCopyTarget(e));
 		return $;
 	}
 	/**
@@ -128,8 +128,8 @@ public enum Funcs {
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
 		$.setOperator(o);
-		$.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
-		$.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+		$.setRightOperand(null == right.getParent() ? right : (Expression) r.createCopyTarget(right));
+		$.setLeftOperand(null == left.getParent() ? left : (Expression) r.createCopyTarget(left));
 		return $;
 	}
 	/**
@@ -151,8 +151,8 @@ public enum Funcs {
 			return null;
 		final Assignment $ = t.newAssignment();
 		$.setOperator(o);
-		$.setRightHandSide(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
-		$.setLeftHandSide(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+		$.setRightHandSide(null == right.getParent() ? right : (Expression) r.createCopyTarget(right));
+		$.setLeftHandSide(null == left.getParent() ? left : (Expression) r.createCopyTarget(left));
 		return $;
 	}
 	/**
@@ -173,7 +173,7 @@ public enum Funcs {
 			return null;
 		final PrefixExpression $ = t.newPrefixExpression();
 		$.setOperator(o);
-		$.setOperand(operand.getParent() == null ? operand : (Expression) r.createCopyTarget(operand));
+		$.setOperand(null == operand.getParent() ? operand : (Expression) r.createCopyTarget(operand));
 		return $;
 	}
 	/**
@@ -189,7 +189,7 @@ public enum Funcs {
 		if (hasNull(t, r, exp))
 			return null;
 		final ParenthesizedExpression $ = t.newParenthesizedExpression();
-		$.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
+		$.setExpression(null == exp.getParent() ? exp : (Expression) r.createCopyTarget(exp));
 		return $;
 	}
 	/**
@@ -231,7 +231,7 @@ public enum Funcs {
 	 */
 	public static Assignment getAssignment(final Statement s) {
 		final ExpressionStatement $ = getExpressionStatement(s);
-		return $ == null || $.getExpression().getNodeType() != ASTNode.ASSIGNMENT ? null : (Assignment) $.getExpression();
+		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
 	}
 	/**
 	 * @param s
@@ -241,7 +241,7 @@ public enum Funcs {
 	 */
 	public static MethodInvocation getMethodInvocation(final Statement s) {
 		final ExpressionStatement $ = getExpressionStatement(s);
-		return $ == null || $.getExpression().getNodeType() != ASTNode.METHOD_INVOCATION ? null : (MethodInvocation) $.getExpression();
+		return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
 	}
 	/**
 	 * @param s
@@ -250,10 +250,10 @@ public enum Funcs {
 	 *         Contains more than one statement
 	 */
 	public static boolean checkIsAssignment(final Statement s) {
-		if (s == null || s.getNodeType() == ASTNode.BLOCK && getStmntFromBlock(s) == null)
+		if (s == null || s.getNodeType() == ASTNode.BLOCK && null == getStmntFromBlock(s))
 			return false;
 		final ExpressionStatement $ = getExpressionStatement(getStmntFromBlock(s));
-		return $ != null && $.getExpression().getNodeType() == ASTNode.ASSIGNMENT;
+		return $ != null && ASTNode.ASSIGNMENT == $.getExpression().getNodeType();
 	}
 	/**
 	 * @param exp
@@ -272,7 +272,8 @@ public enum Funcs {
 		if (b == null)
 			return false;
 		for (int i = 0; i < b.statements().size(); i++)
-			if (((ASTNode) b.statements().get(i)).getNodeType() == ASTNode.RETURN_STATEMENT)
+			if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i))
+			.getNodeType())
 				return true;
 		return false;
 	}
@@ -286,7 +287,7 @@ public enum Funcs {
 		return b != null && b.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock((Block) b) : b;
 	}
 	private static Statement getStmntFromBlock(final Block b) {
-		return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
+		return 1 != b.statements().size() ? null : (Statement) b.statements().get(0);
 	}
 	/**
 	 * @param s
@@ -301,7 +302,7 @@ public enum Funcs {
 			return true;
 		case ASTNode.BLOCK: {
 			for (final Object node : ((Block) s).statements())
-				if (((ASTNode) node).getNodeType() == ASTNode.RETURN_STATEMENT)
+				if (ASTNode.RETURN_STATEMENT == ((ASTNode) node).getNodeType())
 					return true;
 			break;
 		}
@@ -344,7 +345,7 @@ public enum Funcs {
 		}
 	}
 	private static ReturnStatement getReturnStatement(final Block b) {
-		return b.statements().size() != 1 ? null : getReturnStatement((Statement) b.statements().get(0));
+		return 1 != b.statements().size() ? null : getReturnStatement((Statement) b.statements().get(0));
 	}
 	/**
 	 * @param n
@@ -491,8 +492,8 @@ public enum Funcs {
 			case ASTNode.CONDITIONAL_EXPRESSION:
 				return true;
 			case ASTNode.PARENTHESIZED_EXPRESSION: {
-				final Expression parenthsizedExp = ((ParenthesizedExpression) e).getExpression();
-				if (parenthsizedExp.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION)
+				if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e)
+						.getExpression().getNodeType())
 					return true;
 				break;
 			}
@@ -524,12 +525,12 @@ public enum Funcs {
 	 * @return The containing node
 	 */
 	public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
-		ASTNode parentContainer = n.getParent();
-		while (parentContainer.getNodeType() != ASTNodeType) {
-			if (parentContainer.getParent() == parentContainer.getRoot())
+		ASTNode $ = n.getParent();
+		while (ASTNodeType != $.getNodeType()) {
+			if ($.getParent() == $.getRoot())
 				break;
-			parentContainer = parentContainer.getParent();
+			$ = $.getParent();
 		}
-		return parentContainer;
+		return $;
 	}
 }

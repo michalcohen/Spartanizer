@@ -41,7 +41,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
 	}
 	static List<VariableDeclarationFragment> getCandidates(final ASTNode container) {
 		final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
-		final Type mthdType = ((MethodDeclaration) container).getReturnType2();
 		container.accept(new ASTVisitor() {
 			/**
 			 * 
@@ -56,7 +55,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 				return false;
 			}
 			@Override public boolean visit(final VariableDeclarationStatement node) {
-				if (node.getType().toString().equals(mthdType.toString()))
+				if (node.getType().toString().equals(((MethodDeclaration) container).getReturnType2().toString()))
 					$.addAll(node.fragments());
 				return true;
 			}
@@ -91,9 +90,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		if (vs.isEmpty() || hasDollar(vs))
 			return null;
 		final List<ReturnStatement> rs = prune(getReturnStatements(m));
-		if (rs == null)
-			return null;
-		return bestCandidate(vs, rs);
+		return rs == null ? null : bestCandidate(vs, rs);
 	}
 	private static boolean hasDollar(final List<VariableDeclarationFragment> vs) {
 		for (final VariableDeclaration v : vs)
@@ -107,7 +104,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		for (final Iterator<ReturnStatement> i = $.iterator(); i.hasNext();) {
 			final ReturnStatement r = i.next();
 			// Is enclosing method<code><b>void</b></code>?
-			if (r.getExpression() == null)
+			if (null == r.getExpression())
 				return null;
 			if (isLiteral(r))
 				i.remove();
@@ -115,7 +112,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return $;
 	}
 	private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
-	    final List<ReturnStatement> rs) {
+			final List<ReturnStatement> rs) {
 		VariableDeclarationFragment $ = null;
 		int maxOccurrences = 0;
 		for (final VariableDeclarationFragment v : vs) {
@@ -130,15 +127,15 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return $;
 	}
 	private static boolean isLiteral(final ReturnStatement r) {
-		return Arrays.binarySearch(literals, r.getExpression().getNodeType()) >= 0;
+		return 0 <= Arrays.binarySearch(literals, r.getExpression().getNodeType());
 	}
 	private static final int[] literals = sort(new int[] {
-	    //
-	    ASTNode.NULL_LITERAL, //
-	    ASTNode.CHARACTER_LITERAL, //
-	    ASTNode.NUMBER_LITERAL, //
-	    ASTNode.STRING_LITERAL, //
-	    ASTNode.BOOLEAN_LITERAL, //
+			//
+			ASTNode.NULL_LITERAL, //
+			ASTNode.CHARACTER_LITERAL, //
+			ASTNode.NUMBER_LITERAL, //
+			ASTNode.STRING_LITERAL, //
+			ASTNode.BOOLEAN_LITERAL, //
 	});
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
@@ -146,8 +143,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 				final VariableDeclarationFragment v = selectReturnVariable(n);
 				if (v == null)
 					return true;
-				final ASTNode containingBlock = Funcs.getContainerByNodeType(v, ASTNode.METHOD_DECLARATION);
-				opportunities.add(new Range(containingBlock));
+				opportunities.add(new Range(Funcs.getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
 				return true;
 			}
 		};
