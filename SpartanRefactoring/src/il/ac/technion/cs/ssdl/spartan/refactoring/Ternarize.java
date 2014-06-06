@@ -40,9 +40,7 @@ public class Ternarize extends Spartanization {
 	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt, final Block parent) {
 		if (!checkIfReturnStmntExist(ifStmnt.getThenStatement()))
 			return false;
-		final List<ASTNode> siblings = parent.statements();
-		final int position = siblings.indexOf(ifStmnt);
-		final ReturnStatement nextRet = nextStatement(siblings, position);
+		final ReturnStatement nextRet = nextStatement(statements(parent), statements(parent).indexOf(ifStmnt));
 		return nextRet != null
 				&& getNumOfStmnts(ifStmnt.getThenStatement()) == 1
 				&& getNumOfStmnts(ifStmnt.getElseStatement()) == 0
@@ -162,9 +160,9 @@ public class Ternarize extends Spartanization {
 		if (hasNull(thenStmnt, elseStmnt, diffNodes))
 			return false;
 		final List<ASTNode> thenNodes = getChildren(thenStmnt);
-		final List<ASTNode> elseNodes = getChildren(elseStmnt);
 		thenNodes.remove(diffNodes.thenNode);
 		thenNodes.removeAll(getChildren(diffNodes.thenNode));
+		final List<ASTNode> elseNodes = getChildren(elseStmnt);
 		elseNodes.remove(diffNodes.elseNode);
 		elseNodes.removeAll(getChildren(diffNodes.elseNode));
 		return thenNodes.toString().equals(elseNodes.toString());
@@ -377,8 +375,7 @@ public class Ternarize extends Spartanization {
 		r.replace(ifStmnt, t.newExpressionStatement(newAsgn), null);
 	}
 	static Range detectIfReturn(final IfStatement ifStmnt) {
-		return statements(ifStmnt.getParent()) == null ? null
-				: detectIfReturn(ifStmnt, statements(ifStmnt.getParent()));
+		return statements(ifStmnt.getParent()) == null ? null : detectIfReturn(ifStmnt, statements(ifStmnt.getParent()));
 	}
 	private static Range detectIfReturn(final IfStatement ifStmnt, final List<ASTNode> ss) {
 		final int ifIdx = ss.indexOf(ifStmnt);

@@ -1,6 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getNumOfStmnts;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getStmntFromBlock;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
@@ -56,12 +58,15 @@ public class ShortestBranchFirst extends Spartanization {
 			}
 			private IfStatement transpose(final IfStatement n) {
 				final Expression negatedOp = negate(t, r, n.getExpression());
-				if (negatedOp != null){
+				final Statement elseStmnt = n.getElseStatement();
+				if (negatedOp == null)
+					return null;
+				if (getNumOfStmnts(elseStmnt) != 1 || getStmntFromBlock(elseStmnt).getNodeType() == ASTNode.IF_STATEMENT){
 					final Block newElseBlock = t.newBlock();
-					newElseBlock.statements().add(r.createCopyTarget(n.getElseStatement()));
+					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
 					return makeIfStmnt(t, r, negatedOp, newElseBlock, n.getThenStatement());
 				}
-				return null;
+				return makeIfStmnt(t, r, negatedOp, elseStmnt, n.getThenStatement());
 			}
 			private ParenthesizedExpression transpose(final ConditionalExpression n) {
 				return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(),
@@ -76,13 +81,12 @@ public class ShortestBranchFirst extends Spartanization {
 	static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
 		if (e instanceof InfixExpression)
 			return tryNegateComparison(t, r, (InfixExpression) e);
-		if (e instanceof PrefixExpression)
-			return tryNegatePrefix(r, (PrefixExpression) e);
-		return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
+		return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e)
+				: makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
 	}
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
-		return negate(e.getOperator()) == null ? null : makeInfixExpression(ast, r, negate(e.getOperator()), e.getLeftOperand(),
-				e.getRightOperand());
+		return negate(e.getOperator()) == null ? null
+				: makeInfixExpression(ast, r, negate(e.getOperator()), e.getLeftOperand(), e.getRightOperand());
 	}
 	private static Operator negate(final Operator o) {
 		return negate.containsKey(o) ? negate.get(o) : null;
@@ -98,6 +102,7 @@ public class ShortestBranchFirst extends Spartanization {
 		return $;
 	}
 	private static Map<Operator, Operator> negate = makeNegation();
+
 	private static Expression tryNegatePrefix(final ASTRewrite r, final PrefixExpression exp) {
 		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
 	}
