@@ -272,8 +272,7 @@ public enum Funcs {
 		if (b == null)
 			return false;
 		for (int i = 0; i < b.statements().size(); i++)
-			if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i))
-			.getNodeType())
+			if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i)).getNodeType())
 				return true;
 		return false;
 	}
@@ -492,8 +491,7 @@ public enum Funcs {
 			case ASTNode.CONDITIONAL_EXPRESSION:
 				return true;
 			case ASTNode.PARENTHESIZED_EXPRESSION: {
-				if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e)
-						.getExpression().getNodeType())
+				if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
 					return true;
 				break;
 			}

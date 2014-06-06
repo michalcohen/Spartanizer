@@ -39,8 +39,7 @@ public class InlineSingleUse extends Spartanization {
 				final SimpleName varName = n.getName();
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
 				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-				if (1 == uses.size()
-						&& (0 != (parent.getModifiers() & Modifier.FINAL)
+				if (1 == uses.size() && (0 != (parent.getModifiers() & Modifier.FINAL)
 						|| 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()))) {
 					r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
 					r.remove(1 != parent.fragments().size() ? n : parent, null);

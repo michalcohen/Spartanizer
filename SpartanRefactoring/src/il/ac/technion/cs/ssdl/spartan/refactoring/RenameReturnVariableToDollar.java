@@ -1,7 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getContainerByNodeType;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
-import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -143,7 +143,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 				final VariableDeclarationFragment v = selectReturnVariable(n);
 				if (v == null)
 					return true;
-				opportunities.add(new Range(Funcs.getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
+				opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
 				return true;
 			}
 		};
