@@ -141,13 +141,8 @@ public class Ternarize extends Spartanization {
 				return null;
 			if (ASTNode.EXPRESSION_STATEMENT == tempNodes.thenNode.getNodeType())
 				tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
-			if (null == findDiffNodes(tempNodes.thenNode, tempNodes.elseNode)
-					|| isOneExpCondExp((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode))
-				return null;
 			tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
-			return new TwoExpressions((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode);
-		}
-		if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+		} else if (thenStmnt.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
 			tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
 		return tempNodes == null || isOneExpCondExp((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode) ? null
 				: new TwoExpressions((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode);
@@ -266,7 +261,8 @@ public class Ternarize extends Spartanization {
 	}
 	private static boolean tryHandleOnlyNextAsgnExist(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final Assignment asgnThen, final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
-		if (!isOnlyNextAsgnPossible(asgnThen, nextAsgn))
+		if (!isOnlyNextAsgnPossible(asgnThen, nextAsgn)
+				|| nextAsgn.getRightHandSide().toString().equals(asgnThen.getRightHandSide().toString()))
 			return false;
 		if (prevDecl == null) {
 			if (!checkIsAssignment(nextAsgn.getRightHandSide()))
@@ -287,12 +283,9 @@ public class Ternarize extends Spartanization {
 	}
 	private static boolean tryHandleOnlyPrevAsgnExist(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final Assignment asgnThen, final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
-		if (!isOnlyPrevAsgnPossible(ifStmnt, asgnThen, prevAsgn))
+		if (!isOnlyPrevAsgnPossible(ifStmnt, asgnThen, prevAsgn)
+				|| prevAsgn.getRightHandSide().toString().equals(asgnThen.getRightHandSide().toString()))
 			return false;
-		if (prevAsgn.getRightHandSide().toString().equals(asgnThen.getRightHandSide().toString())){
-			r.remove(ifStmnt, null);
-			return true;
-		}
 		if (prevDecl == null) {
 			handleNoPrevDecl(ast, r, ifStmnt, asgnThen, prevAsgn);
 			return true;
