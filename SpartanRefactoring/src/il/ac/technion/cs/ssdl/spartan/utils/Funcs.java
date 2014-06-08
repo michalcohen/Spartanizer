@@ -4,9 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+
+import com.sun.istack.internal.Nullable;
 
 /**
  * 
@@ -240,7 +259,7 @@ public enum Funcs {
 	}
 
 	private static Block  asBlock(final Statement b) {
-		return isBlock(b) ? null : (Block)b;
+		return !isBlock(b) ? null : (Block)b;
 	}
 
 	/**
@@ -300,30 +319,55 @@ public enum Funcs {
 		}
 		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT && ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType();
 	}
+
+	public static boolean isExpressionOrReturn(final ASTNode n) {
+		return n != null && isExpressionOrReturn(n.getNodeType());
+	}
+	private static boolean isExpressionOrReturn(final int nodeType) {
+		return nodeType == ASTNode.EXPRESSION_STATEMENT || nodeType == ASTNode.RETURN_STATEMENT;
+	}
+	public static boolean isExpression(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
+	}
+	public static @Nullable Expression asExpression(final @Nullable ASTNode n) {
+		return !isExpression(n) ? null : asExpression((ExpressionStatement) n);
+	}
+	private static Expression asExpression(final ExpressionStatement soe) {
+		return soe.getExpression();
+	}
 	/**
-	 * @param exps
-	 *          expressions to check
+	 * @param ns
+	 *          nodes to be examined
 	 * @return true if one of the expressions is a conditional or parenthesized
 	 *         conditional expression or false otherwise
 	 */
-	public static boolean isConditional(final Expression... exps) {
-		for (final Expression e : exps) {
-			if (e == null)
-				continue;
-			switch (e.getNodeType()) {
-			case ASTNode.CONDITIONAL_EXPRESSION:
-				return true;
-			case ASTNode.PARENTHESIZED_EXPRESSION: {
-				if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
-					return true;
-				break;
-			}
-			default:
-				break;
-			}
-		}
-		return false;
+	public static boolean isConditional(final ASTNode... ns) {
+		for (final ASTNode n:ns)
+			if (!isConditional(asExpression(n)))
+				return false;
+		return true;
 	}
+
+
+	/** Determine if an expression is a conditional or parenthesized conditional
+	 * @param e
+	 *  what needs to be examined
+	 * @return true iff the parameter is a conditional or a or parenthesized conditional
+	 */
+	public static boolean isConditional(final Expression e) {
+		return e != null &&  (e.getNodeType() == ASTNode.CONDITIONAL_EXPRESSION ||  isParenthesizeCoditional(e));
+	}
+
+
+	/** Determine if an expression is parenthesized (of any level) conditional
+	 * @param e
+	 *  what needs to be examined
+	 * @return true iff the parameter is a conditional or a or parenthesized conditional
+	 */
+	public static boolean isParenthesizeCoditional(final Expression e) {
+		return e != null &&( e.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION || isConditional(((ParenthesizedExpression) e).getExpression()));
+	}
+
 	/**
 	 * @param t
 	 *          the AST who is to own the new return statement

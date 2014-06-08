@@ -54,9 +54,10 @@ public class RenameReturnVariableToDollar extends Spartanization {
 			@Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
 				return false;
 			}
-			@Override public boolean visit(final VariableDeclarationStatement node) {
-				if (node.getType().toString().equals(((MethodDeclaration) container).getReturnType2().toString()))
-					$.addAll(node.fragments());
+			@Override public boolean visit(final VariableDeclarationStatement n) {
+				assert n != null;
+				if (n.getType().toString().equals(((MethodDeclaration) container).getReturnType2().toString()))
+					$.addAll(n.fragments());
 				return true;
 			}
 		});
