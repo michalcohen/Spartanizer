@@ -1,19 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getBlockSingleStmnt;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statementsCount;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
