@@ -1,0 +1,12 @@
+package p;
+
+public class Blah {
+	public void mdm(String mode){
+		String res = mode, foo = "Not in test mode"; int k;
+		k = 1984;
+		int size = 0;
+		for (int i=0; i < size; i++){
+			a+=(mode.equals("TEST-MODE")==true ? 7 : 8);
+		}
+	}
+}
