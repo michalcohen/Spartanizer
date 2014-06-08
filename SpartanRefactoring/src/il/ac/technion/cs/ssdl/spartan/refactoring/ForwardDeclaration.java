@@ -55,8 +55,8 @@ public class ForwardDeclaration extends Spartanization {
 						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
 					} else {
 						r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-						    t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
-						    beginingOfDeclarationsBlockIdx + 1, null);
+								t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
+								beginingOfDeclarationsBlockIdx + 1, null);
 						r.remove(n, null);
 					}
 				}
@@ -73,11 +73,10 @@ public class ForwardDeclaration extends Spartanization {
 		final int nextDeclaredIdx = declaredIdx + 1;
 		if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
 			final VariableDeclarationStatement nextNVDS = (VariableDeclarationStatement) nextN;
-			for (int i = 0; i < nextNVDS.fragments().size(); i++) {
-				final VariableDeclarationFragment nextVDF = (VariableDeclarationFragment) nextNVDS.fragments().get(i);
-				if (nextDeclaredIdx + 1 == findFirstUse(block, nextVDF.getName()) && beginingOfDeclarationsIdx == nextDeclaredIdx)
+			for (int i = 0; i < nextNVDS.fragments().size(); i++)
+				if (nextDeclaredIdx + 1 == findFirstUse(block, ((VariableDeclarationFragment) nextNVDS.fragments().get(i)).getName())
+				&& beginingOfDeclarationsIdx == nextDeclaredIdx)
 					return true;
-			}
 		}
 		return false;
 	}

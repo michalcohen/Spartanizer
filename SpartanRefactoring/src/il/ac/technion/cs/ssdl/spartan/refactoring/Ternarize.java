@@ -423,7 +423,7 @@ public class Ternarize extends Spartanization {
 	}
 	static boolean checkIfOnlyDiffIsExp(final ASTNode thenStmnt, final ASTNode elseStmnt) {
 		final Expression thenExp = asExpression(thenStmnt);
-		final Expression elseExp = asExpression(thenStmnt);
+		final Expression elseExp = asExpression(elseStmnt);
 		if (thenExp == null || elseExp == null || thenExp.getNodeType() != elseExp.getNodeType())
 			return false;
 		switch (thenExp.getNodeType()) {

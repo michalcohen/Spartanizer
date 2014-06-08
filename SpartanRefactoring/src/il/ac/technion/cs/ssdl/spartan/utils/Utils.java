@@ -64,7 +64,7 @@ public enum Utils {
 	 * @return the newly created array
 	 */
 	public static <T> T[] append(final T[] ts, final T t) {
-		final T[] $ = Arrays.copyOf(ts, ts.length + 1);
+		final T[] $ = Arrays.copyOf(ts, 1 + ts.length);
 		$[ts.length] = t;
 		return $;
 	}

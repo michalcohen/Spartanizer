@@ -1,0 +1,13 @@
+package p;
+
+public class Blah {
+	public void mdm(String mode){
+		String res = mode, foo = "Not in test mode"; int k;
+		k = 1984;
+		if (b==3){
+			return (mode.equals("TEST-MODE")==true ? 3 : 2);
+		} else {
+			return 7;
+		}
+	}
+}

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,8 +39,7 @@ public class Unchanged extends AbstractParametrizedTest {
 	 */
 	@Test public void checkNoOpportunities() {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
-		final CompilationUnit cu = AbstractParametrizedTest.makeAST(fIn);
-		assertEquals(0, spartanization.findOpportunities(cu).size());
+		assertEquals(0, spartanization.findOpportunities(AbstractParametrizedTest.makeAST(fIn)).size());
 	}
 	/**
 	 * Runs a parameterized test case, based on the instance variables of this
@@ -50,8 +48,7 @@ public class Unchanged extends AbstractParametrizedTest {
 	 */
 	@Test public void checkNoChange() {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
-		final CompilationUnit cu = makeAST(fIn);
-		assertEquals(readFile(fIn), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
+		assertEquals(readFile(fIn), rewrite(spartanization, makeAST(fIn), new Document(readFile(fIn))).get());
 	}
 	/**
 	 * @return a collection of cases, where each cases is an array of three
@@ -63,9 +60,7 @@ public class Unchanged extends AbstractParametrizedTest {
 			@Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
 				if (!name.endsWith(".in"))
 					return null;
-				if (new File(d, name.replaceAll("\\.in$", ".out")).exists())
-					return null;
-				return new Object[] { s, name.replaceAll("\\.in$", ""), f };
+				return new File(d, name.replaceAll("\\.in$", ".out")).exists() ? null : new Object[] { s, name.replaceAll("\\.in$", ""), f };
 			}
 		}.go();
 	}

@@ -1,6 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
@@ -37,11 +38,11 @@ public class ComparisonWithBoolean extends Spartanization {
 					return true;
 				ASTNode nonliteral = null;
 				BooleanLiteral literal = null;
-				if (n.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-				    && n.getLeftOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL) {
+				if (ASTNode.BOOLEAN_LITERAL == n.getRightOperand().getNodeType()
+						&& ASTNode.BOOLEAN_LITERAL != n.getLeftOperand().getNodeType()) {
 					nonliteral = r.createMoveTarget(n.getLeftOperand());
 					literal = (BooleanLiteral) n.getRightOperand();
-				} else if (!(n.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL && n.getRightOperand().getNodeType() != ASTNode.BOOLEAN_LITERAL))
+				} else if (!(ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType() && ASTNode.BOOLEAN_LITERAL != n.getRightOperand().getNodeType()))
 					return true;
 				else {
 					nonliteral = r.createMoveTarget(n.getRightOperand());
@@ -49,8 +50,8 @@ public class ComparisonWithBoolean extends Spartanization {
 				}
 				ASTNode newnode = null;
 				newnode = literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
-				    && n.getOperator() == Operator.NOT_EQUALS ? nonliteral : Funcs.makePrefixExpression(t, r,
-				    Funcs.makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT);
+						&& n.getOperator() == Operator.NOT_EQUALS ? nonliteral : makePrefixExpression(t, r,
+								makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT);
 				r.replace(n, newnode, null);
 				return true;
 			}
@@ -61,8 +62,7 @@ public class ComparisonWithBoolean extends Spartanization {
 			@Override public boolean visit(final InfixExpression n) {
 				if (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
 					return true;
-				if (n.getRightOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL
-				    || n.getLeftOperand().getNodeType() == ASTNode.BOOLEAN_LITERAL)
+				if (ASTNode.BOOLEAN_LITERAL == n.getRightOperand().getNodeType() || ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType())
 					opportunities.add(new Range(n));
 				return true;
 			}

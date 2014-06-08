@@ -102,10 +102,9 @@ public abstract class Spartanization extends Refactoring {
 	private ASTRewrite createRewrite(final SubProgressMonitor pm, final AST t, final CompilationUnit cu, final IMarker m) {
 		if (pm != null)
 			pm.beginTask("Creating rewrite operation...", 1);
-		final ASTRewrite $ = createRewrite(t, cu, m);
 		if (pm != null)
 			pm.done();
-		return $;
+		return createRewrite(t, cu, m);
 	}
 	private ASTRewrite createRewrite(final AST ast, final CompilationUnit cu, final IMarker m) {
 		final ASTRewrite $ = ASTRewrite.create(ast);
@@ -114,7 +113,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 	protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
 	private final boolean isTextSelected() {
-		return selection != null && !selection.isEmpty() && selection.getLength() != 0;
+		return selection != null && !selection.isEmpty() && 0 != selection.getLength();
 	}
 	/**
 	 * Determines if the node is outside of the selected text.
@@ -131,7 +130,7 @@ public abstract class Spartanization extends Refactoring {
 	protected static boolean isNodeOutsideMarker(final ASTNode n, final IMarker m) {
 		try {
 			return n.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue()
-			    || n.getStartPosition() + n.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
+					|| n.getStartPosition() + n.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
 		} catch (final CoreException e) {
 			return true;
 		}
@@ -150,7 +149,7 @@ public abstract class Spartanization extends Refactoring {
 		this.marker = marker;
 	}
 	@Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
-	    OperationCanceledException {
+	OperationCanceledException {
 		changes.clear();
 		if (marker == null)
 			runAsManualCall(pm);
@@ -186,14 +185,13 @@ public abstract class Spartanization extends Refactoring {
 		return innerRunAsMarkerFix(pm, m, false);
 	}
 	private RefactoringStatus innerRunAsMarkerFix(final IProgressMonitor pm, final IMarker m, final boolean preview)
-	    throws CoreException {
-		final RefactoringStatus $ = new RefactoringStatus();
+			throws CoreException {
 		marker = m;
 		pm.beginTask("Running refactoring...", 2);
 		scanCompilationUnitForMarkerFix(m, pm, preview);
 		marker = null;
 		pm.done();
-		return $;
+		return new RefactoringStatus();
 	}
 	/**
 	 * Creates a change from each compilation unit and stores it in the changes
@@ -203,7 +201,7 @@ public abstract class Spartanization extends Refactoring {
 	 * @throws CoreException
 	 */
 	protected void scanCompilationUnits(final List<ICompilationUnit> cus, final IProgressMonitor pm) throws IllegalArgumentException,
-	    CoreException {
+	CoreException {
 		pm.beginTask("Iterating over gathered compilation units...", cus.size());
 		for (final ICompilationUnit cu : cus)
 			scanCompilationUnit(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -218,20 +216,20 @@ public abstract class Spartanization extends Refactoring {
 		final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
 		textChange.setTextType("java");
 		textChange.setEdit(createRewrite(
-		    (CompilationUnit) Utils.makeParser(u).createAST(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)),
-		    new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
-		if (textChange.getEdit().getLength() != 0)
+				(CompilationUnit) Utils.makeParser(u).createAST(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)),
+				new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
+		if (0 != textChange.getEdit().getLength())
 			changes.add(textChange);
 		pm.done();
 	}
 	protected void scanCompilationUnitForMarkerFix(final IMarker m, final IProgressMonitor pm, final boolean preview)
-	    throws CoreException {
+			throws CoreException {
 		pm.beginTask("Creating change for a single compilation unit...", 2);
 		final ICompilationUnit u = getCompilationUnitFromMarker(m);
 		final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
 		textChange.setTextType("java");
 		textChange.setEdit(createRewrite(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m).rewriteAST());
-		if (textChange.getEdit().getLength() != 0)
+		if (0 != textChange.getEdit().getLength())
 			if (preview)
 				changes.add(textChange);
 			else
@@ -272,7 +270,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 	protected abstract ASTVisitor fillOpportunities(List<Range> opportunities);
 	@Override public final Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm)
-	    throws OperationCanceledException {
+			throws OperationCanceledException {
 		return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
 	}
 	/**
@@ -303,7 +301,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 	protected final boolean inRange(final IMarker m, final ASTNode n) {
 		return m == null && isNodeOutsideSelection(n) && isTextSelected() ? false : m != null && isNodeOutsideMarker(n, m) ? false
-		    : true;
+				: true;
 	}
 	@Override public String toString() {
 		return name;
@@ -334,7 +332,7 @@ public abstract class Spartanization extends Refactoring {
 	 */
 	public class SpartanizationResolution implements IMarkerResolution {
 		@Override public String getLabel() {
-			return Spartanization.this.toString() + ": Do it!";
+			return ": Do it!" + Spartanization.this.toString();
 		}
 		@Override public void run(final IMarker m) {
 			try {
@@ -358,7 +356,7 @@ public abstract class Spartanization extends Refactoring {
 			setMarker(m);
 			try {
 				new RefactoringWizardOpenOperation(new Wizard(Spartanization.this)).run(Display.getCurrent().getActiveShell(),
-				    "Spartan refactoring: " + Spartanization.this);
+						"Spartan refactoring: " + Spartanization.this);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
