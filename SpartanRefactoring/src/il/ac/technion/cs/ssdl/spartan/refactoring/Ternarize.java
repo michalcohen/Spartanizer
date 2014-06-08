@@ -84,8 +84,8 @@ public class Ternarize extends Spartanization {
 		return nextRet != null && 1 == statementsCount(ifStmnt.getThenStatement()) && 0 == statementsCount(ifStmnt.getElseStatement())
 				&& rewriteIfToRetStmnt(ast, r, ifStmnt, nextRet);
 	}
-	private static ReturnStatement nextStatement(final List<ASTNode> stmts, final int ns) {
-		return stmts.size() <= ns + 1 ? null : asReturn(stmts.get(ns + 1));
+	private static ReturnStatement nextStatement(final List<ASTNode> ns, final int n) {
+		return ns.size() <= n + 1 ? null : asReturn(ns.get(n + 1));
 	}
 	private static boolean rewriteIfToRetStmnt(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final ReturnStatement nextReturn) {
