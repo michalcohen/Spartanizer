@@ -205,7 +205,7 @@ public enum Funcs {
 	public static ExpressionStatement getExpressionStatement(final Statement s) {
 		if (s == null)
 			return null;
-		final ASTNode $ = s.getNodeType() != ASTNode.BLOCK ? s : getStmntFromBlock(s);
+		final ASTNode $ = s.getNodeType() != ASTNode.BLOCK ? s : getBlockSingleStatement(s);
 		return !($ != null && $.getNodeType() == ASTNode.EXPRESSION_STATEMENT) ? null : (ExpressionStatement) $;
 	}
 	/**
@@ -218,10 +218,12 @@ public enum Funcs {
 		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
 	}
-	private static Statement getStmntFromBlock(final Block b) {
-		return 1 != b.statements().size() ? null : (Statement) b.statements().get(0);
+
+
+	private static Statement getBlockSingleStatement(final Block b) {
+		return b == null || 1 != b.statements().size() ? null : (Statement) b.statements().get(0);
 	}
-	
+
 
 	/**
 	 * @param b
@@ -229,9 +231,18 @@ public enum Funcs {
 	 * @return if b is a block with just 1 statement it returns that statement, if
 	 *         b is statement it returns b and if b is null it returns a null
 	 */
-	public static Statement getStmntFromBlock(final Statement b) {
-		return b != null && b.getNodeType() == ASTNode.BLOCK ? getStmntFromBlock((Block) b) : b;
+	public static Statement getBlockSingleStatement(final Statement b) {
+		return getBlockSingleStatement(asBlock(b));
 	}
+
+	private static boolean isBlock(final Statement b) {
+		return b != null && b.getNodeType() == ASTNode.BLOCK && b instanceof Block;
+	}
+
+	private static Block  asBlock(final Statement b) {
+		return isBlock(b) ? null : (Block)b;
+	}
+
 	/**
 	 * @param n
 	 *          the node from which to extract the proper fragment
@@ -284,7 +295,7 @@ public enum Funcs {
 	 */
 	public static boolean isAssignment(final ASTNode s) {
 		if (s != null && s.getNodeType() == ASTNode.BLOCK){
-			final ExpressionStatement es = getExpressionStatement(getStmntFromBlock((Block)s));
+			final ExpressionStatement es = getExpressionStatement(getBlockSingleStatement((Block)s));
 			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
 		}
 		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT && ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType();

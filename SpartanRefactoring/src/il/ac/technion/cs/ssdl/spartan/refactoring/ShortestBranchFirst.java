@@ -49,7 +49,7 @@ public class ShortestBranchFirst extends Spartanization {
 				if (negatedOp == null)
 					return null;
 				final Statement elseStmnt = n.getElseStatement();
-				if (1 != statementsCount(elseStmnt) || ASTNode.IF_STATEMENT == getStmntFromBlock(elseStmnt).getNodeType()){
+				if (1 != statementsCount(elseStmnt) || ASTNode.IF_STATEMENT == getBlockSingleStatement(elseStmnt).getNodeType()){
 					final Block newElseBlock = t.newBlock();
 					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
 					return makeIfStmnt(t, r, negatedOp, newElseBlock, n.getThenStatement());

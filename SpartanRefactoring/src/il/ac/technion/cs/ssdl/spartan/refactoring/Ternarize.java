@@ -107,8 +107,8 @@ public class Ternarize extends Spartanization {
 	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
 		if (null == asBlock(ifStmt.getParent()))
 			return false;
-		final Statement thenStatment = getStmntFromBlock(ifStmt.getThenStatement());
-		final Statement elseStatment = getStmntFromBlock(ifStmt.getElseStatement());
+		final Statement thenStatment = getBlockSingleStatement(ifStmt.getThenStatement());
+		final Statement elseStatment = getBlockSingleStatement(ifStmt.getElseStatement());
 		if (hasNull(thenStatment, elseStatment) || thenStatment.getNodeType() != elseStatment.getNodeType())
 			return false;
 		if (thenStatment.subtreeMatch(matcher, elseStatment)) {
@@ -179,8 +179,8 @@ public class Ternarize extends Spartanization {
 	private static boolean handleCaseDiffNodesAreBlocks(final TwoNodes diffNodes) {
 		if (1 != statementsCount(diffNodes.thenNode) && 1 != statementsCount(diffNodes.elseNode))
 			return false;
-		diffNodes.thenNode = getStmntFromBlock(asBlock(diffNodes.thenNode));
-		diffNodes.elseNode = getStmntFromBlock(asBlock(diffNodes.elseNode));
+		diffNodes.thenNode = getBlockSingleStatement(asBlock(diffNodes.thenNode));
+		diffNodes.elseNode = getBlockSingleStatement(asBlock(diffNodes.elseNode));
 		return true;
 	}
 	private static TwoNodes findDiffNodes(final ASTNode thenNode, final ASTNode elseNode) {
@@ -195,8 +195,8 @@ public class Ternarize extends Spartanization {
 	}
 	private static boolean substitute(final AST t, final ASTRewrite r, final IfStatement ifStmnt, final TwoExpressions diff,
 			final Statement possiblePrevDecl) {
-		final Statement thenStmnt = getStmntFromBlock(ifStmnt.getThenStatement());
-		final Statement elseStmnt = getStmntFromBlock(ifStmnt.getElseStatement());
+		final Statement thenStmnt = getBlockSingleStatement(ifStmnt.getThenStatement());
+		final Statement elseStmnt = getBlockSingleStatement(ifStmnt.getElseStatement());
 		TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
 		final Expression newExp = determineNewExp(t, r, ifStmnt.getExpression(), diff.thenExp, diff.elseExp);
 		if (!isExpressionOrReturn(thenStmnt))
@@ -397,8 +397,8 @@ public class Ternarize extends Spartanization {
 				&& !isConditional(elseSide.getExpression()) ? new Range(ifStmnt, nextRet) : null;
 	}
 	static Range detectIfSameExpStmntOrRet(final IfStatement ifStmnt) {
-		final Statement thenStmnt = getStmntFromBlock(ifStmnt.getThenStatement());
-		final Statement elseStmnt = getStmntFromBlock(ifStmnt.getElseStatement());
+		final Statement thenStmnt = getBlockSingleStatement(ifStmnt.getThenStatement());
+		final Statement elseStmnt = getBlockSingleStatement(ifStmnt.getElseStatement());
 		if (hasNull(thenStmnt, elseStmnt, asBlock(ifStmnt.getParent())) || thenStmnt.getNodeType() != elseStmnt.getNodeType())
 			return null;
 		TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
