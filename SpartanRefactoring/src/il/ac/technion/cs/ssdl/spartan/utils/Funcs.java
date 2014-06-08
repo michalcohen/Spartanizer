@@ -249,19 +249,13 @@ public enum Funcs {
 	 * @return true if it is an assignment or false if it is not or if the block
 	 *         Contains more than one statement
 	 */
-	public static boolean checkIsAssignment(final Statement s) {
-		if (s == null || s.getNodeType() == ASTNode.BLOCK && null == getStmntFromBlock(s))
-			return false;
-		final ExpressionStatement $ = getExpressionStatement(getStmntFromBlock(s));
-		return $ != null && ASTNode.ASSIGNMENT == $.getExpression().getNodeType();
-	}
-	/**
-	 * @param exp
-	 *          the expression to check if it is an assignment
-	 * @return true if it is an assignment or false otherwise
-	 */
-	public static boolean checkIsAssignment(final Expression exp) {
-		return exp != null && exp.getNodeType() == ASTNode.ASSIGNMENT;
+	public static boolean checkIsAsgn(final ASTNode s) {
+		if (s != null && s.getNodeType() == ASTNode.BLOCK){
+			final ExpressionStatement es = getExpressionStatement(getStmntFromBlock((Block)s));
+			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
+		}
+		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT ?
+				ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType() : false;
 	}
 	/**
 	 * @param b
