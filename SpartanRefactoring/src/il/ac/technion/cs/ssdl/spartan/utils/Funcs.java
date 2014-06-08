@@ -34,6 +34,15 @@ import com.sun.istack.internal.Nullable;
  */
 public enum Funcs {
 	;
+	public static Block  asBlock(final ASTNode n) {
+		return !isBlock(n) ? null : (Block)n;
+	}
+	public static @Nullable Expression asExpression(final @Nullable ASTNode n) {
+		return !isExpression(n) ? null : asExpression((ExpressionStatement) n);
+	}
+	private static Expression asExpression(final ExpressionStatement soe) {
+		return soe.getExpression();
+	}
 	/**
 	 * @param s
 	 *          The node from which to return statement.
@@ -160,6 +169,22 @@ public enum Funcs {
 		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
 	}
+	private static Statement getBlockSingleStatement(final Block b) {
+		return b == null || 1 != b.statements().size() ? null : (Statement) b.statements().get(0);
+	}
+
+
+	/**
+	 * @param b
+	 *          the block to get the statement from
+	 * @return if b is a block with just 1 statement it returns that statement, if
+	 *         b is statement it returns b and if b is null it returns a null
+	 */
+	public static Statement getBlockSingleStatement(final Statement b) {
+		return getBlockSingleStatement(asBlock(b));
+	}
+
+
 	/**
 	 * @param root
 	 *          the node whose children we return
@@ -177,6 +202,7 @@ public enum Funcs {
 		$.remove(0);
 		return $;
 	}
+
 	/**
 	 * Get the containing node by type. Say we want to find the first block that
 	 * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
@@ -196,6 +222,7 @@ public enum Funcs {
 		}
 		return $;
 	}
+
 	/**
 	 * @param node
 	 *          a node to extract an expression from
@@ -214,6 +241,7 @@ public enum Funcs {
 			return null;
 		}
 	}
+
 	/**
 	 * @param s
 	 *          a statement or a block to extract the expression statement from
@@ -237,31 +265,6 @@ public enum Funcs {
 		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
 	}
-
-
-	private static Statement getBlockSingleStatement(final Block b) {
-		return b == null || 1 != b.statements().size() ? null : (Statement) b.statements().get(0);
-	}
-
-
-	/**
-	 * @param b
-	 *          the block to get the statement from
-	 * @return if b is a block with just 1 statement it returns that statement, if
-	 *         b is statement it returns b and if b is null it returns a null
-	 */
-	public static Statement getBlockSingleStatement(final Statement b) {
-		return getBlockSingleStatement(asBlock(b));
-	}
-
-	private static boolean isBlock(final Statement b) {
-		return b != null && b.getNodeType() == ASTNode.BLOCK && b instanceof Block;
-	}
-
-	private static Block  asBlock(final Statement b) {
-		return !isBlock(b) ? null : (Block)b;
-	}
-
 	/**
 	 * @param n
 	 *          the node from which to extract the proper fragment
@@ -293,6 +296,7 @@ public enum Funcs {
 				return true;
 		return false;
 	}
+
 	/**
 	 * @param b
 	 *          the block to check
@@ -319,21 +323,8 @@ public enum Funcs {
 		}
 		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT && ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType();
 	}
-
-	public static boolean isExpressionOrReturn(final ASTNode n) {
-		return n != null && isExpressionOrReturn(n.getNodeType());
-	}
-	private static boolean isExpressionOrReturn(final int nodeType) {
-		return nodeType == ASTNode.EXPRESSION_STATEMENT || nodeType == ASTNode.RETURN_STATEMENT;
-	}
-	public static boolean isExpression(final ASTNode n) {
-		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
-	}
-	public static @Nullable Expression asExpression(final @Nullable ASTNode n) {
-		return !isExpression(n) ? null : asExpression((ExpressionStatement) n);
-	}
-	private static Expression asExpression(final ExpressionStatement soe) {
-		return soe.getExpression();
+	public static boolean isBlock(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.BLOCK && n instanceof Block;
 	}
 	/**
 	 * @param ns
@@ -347,8 +338,6 @@ public enum Funcs {
 				return false;
 		return true;
 	}
-
-
 	/** Determine if an expression is a conditional or parenthesized conditional
 	 * @param e
 	 *  what needs to be examined
@@ -359,15 +348,26 @@ public enum Funcs {
 	}
 
 
+	public static boolean isExpression(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
+	}
+
+
+	public static boolean isExpressionOrReturn(final ASTNode n) {
+		return n != null && isExpressionOrReturn(n.getNodeType());
+	}
+
+	private static boolean isExpressionOrReturn(final int nodeType) {
+		return nodeType == ASTNode.EXPRESSION_STATEMENT || nodeType == ASTNode.RETURN_STATEMENT;
+	}
 	/** Determine if an expression is parenthesized (of any level) conditional
 	 * @param e
 	 *  what needs to be examined
 	 * @return true iff the parameter is a conditional or a or parenthesized conditional
 	 */
 	public static boolean isParenthesizeCoditional(final Expression e) {
-		return e != null &&( e.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION || isConditional(((ParenthesizedExpression) e).getExpression()));
+		return e != null && e.getNodeType() == ASTNode.PARENTHESIZED_EXPRESSION && isConditional(((ParenthesizedExpression) e).getExpression());
 	}
-
 	/**
 	 * @param t
 	 *          the AST who is to own the new return statement

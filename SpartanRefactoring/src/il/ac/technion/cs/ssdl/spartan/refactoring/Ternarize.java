@@ -1,13 +1,53 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.asBlock;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.asExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.asReturn;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.checkIfReturnStmntExist;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.compatabileName;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.compatible;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getBlockSingleStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getChildren;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isAssignment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isBlock;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isConditional;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isExpressionOrReturn;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeAssigment;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeReturnStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeVarDeclFrag;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statements;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statementsCount;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.tryToNegateCond;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTMatcher;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -140,6 +180,7 @@ public class Ternarize extends Spartanization {
 		if (!isExpressionOrReturn(thenStmnt)) {
 			if (!isOnlyDiff(thenStmnt, elseStmnt, tempNodes) || !handleCaseDiffNodesAreBlocks(tempNodes))
 				return null;
+			// TODO: This does not look right. Same is executed regardless of the condition.
 			if (isExpression(tempNodes.thenNode))
 				tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
 			tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
@@ -407,9 +448,9 @@ public class Ternarize extends Spartanization {
 		final Statement elseStmnt = getBlockSingleStatement(ifStmnt.getElseStatement());
 		if (hasNull(thenStmnt, elseStmnt, asBlock(ifStmnt.getParent())) || thenStmnt.getNodeType() != elseStmnt.getNodeType())
 			return null;
-		TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
-		if (1 != statementsCount(diffNodes.elseNode) || 1 != statementsCount(diffNodes.thenNode))
+		if (1 != statementsCount(thenStmnt) || 1 != statementsCount(elseStmnt))
 			return null;
+		TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
 		if (!isExpressionOrReturn(diffNodes.thenNode)) {
 			diffNodes = findDiffNodes(diffNodes.thenNode, diffNodes.elseNode);
 			if (!isOnlyDiff(thenStmnt, elseStmnt, diffNodes) || !handleCaseDiffNodesAreBlocks(diffNodes))
@@ -447,12 +488,6 @@ public class Ternarize extends Spartanization {
 	static Range detectAssignIfAssign(final IfStatement i) {
 		final Block parent = asBlock(i.getParent());
 		return parent == null ? null : detectAssignIfAssign(i, parent);
-	}
-	private static boolean isBlock(final ASTNode n) {
-		return n != null && n.getNodeType() == ASTNode.BLOCK;
-	}
-	private static Block asBlock(final ASTNode $) {
-		return isBlock($) ? (Block) $ : null;
 	}
 	private static Range detectAssignIfAssign(final IfStatement ifStmnt, final Block parent) {
 		final List<ASTNode> stmts = parent.statements();
