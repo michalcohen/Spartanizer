@@ -49,12 +49,13 @@ public class ShortestBranchFirst extends Spartanization {
 				if (negatedOp == null)
 					return null;
 				final Statement elseStmnt = n.getElseStatement();
+				final Statement thenStatement = n.getThenStatement();
 				if (1 != statementsCount(elseStmnt) || ASTNode.IF_STATEMENT == getBlockSingleStatement(elseStmnt).getNodeType()){
 					final Block newElseBlock = t.newBlock();
 					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
-					return makeIfStmnt(t, r, negatedOp, newElseBlock, n.getThenStatement());
+					return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStatement);
 				}
-				return makeIfStmnt(t, r, negatedOp, elseStmnt, n.getThenStatement());
+				return makeIfStmnt(t, r, negatedOp, elseStmnt, thenStatement);
 			}
 			private ParenthesizedExpression transpose(final ConditionalExpression n) {
 				return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(),
