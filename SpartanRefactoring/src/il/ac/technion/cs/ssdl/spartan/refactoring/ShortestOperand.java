@@ -11,12 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
@@ -35,13 +30,16 @@ public class ShortestOperand extends Spartanization {
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
-				if (!inRange(m, n) || null == n.getLeftOperand() || null == n.getRightOperand())
+				if (invalid( n))
 					return true;
 				if (longerFirst(n) && isFlipable(n.getOperator()))
 					r.replace(n, transpose(t, r, n), null); // Replace old tree with
-				// the new
-				// organized one
+				// the new organized one
 				return true;
+			}
+
+			private boolean invalid(final InfixExpression n) {
+				return !inRange(m, n) || null == n.getLeftOperand() || null == n.getRightOperand();
 			}
 		});
 	}
