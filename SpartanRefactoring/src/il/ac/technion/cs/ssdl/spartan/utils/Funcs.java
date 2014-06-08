@@ -249,7 +249,7 @@ public enum Funcs {
 	 * @return true if it is an assignment or false if it is not or if the block
 	 *         Contains more than one statement
 	 */
-	public static boolean checkIsAsgn(final ASTNode s) {
+	public static boolean isAssignment(final ASTNode s) {
 		if (s != null && s.getNodeType() == ASTNode.BLOCK){
 			final ExpressionStatement es = getExpressionStatement(getStmntFromBlock((Block)s));
 			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
@@ -261,7 +261,7 @@ public enum Funcs {
 	 *          the block to check
 	 * @return true if a return statement exists in the block or false otherwise
 	 */
-	public static boolean checkReturnStmnt(final Block b) {
+	public static boolean hasReturn(final Block b) {
 		if (b == null)
 			return false;
 		for (int i = 0; i < b.statements().size(); i++)
@@ -309,7 +309,7 @@ public enum Funcs {
 	 * @return 0 is s is null, 1 if s is a statement or the number of statement in
 	 *         the block is s is a block
 	 */
-	public static int getNumOfStmnts(final ASTNode node) {
+	public static int statementsCount(final ASTNode node) {
 		if (node == null)
 			return 0;
 		switch (node.getNodeType()) {
@@ -324,20 +324,20 @@ public enum Funcs {
 	 *          The node from which to return statement.
 	 * @return null if it is not possible to extract the return statement.
 	 */
-	public static ReturnStatement getReturnStatement(final ASTNode s) {
+	public static ReturnStatement asReturn(final ASTNode s) {
 		if (s == null)
 			return null;
 		switch (s.getNodeType()) {
 		case ASTNode.BLOCK:
-			return getReturnStatement((Block) s);
+			return asReturn((Block) s);
 		case ASTNode.RETURN_STATEMENT:
 			return (ReturnStatement) s;
 		default:
 			return null;
 		}
 	}
-	private static ReturnStatement getReturnStatement(final Block b) {
-		return 1 != b.statements().size() ? null : getReturnStatement((Statement) b.statements().get(0));
+	private static ReturnStatement asReturn(final Block b) {
+		return 1 != b.statements().size() ? null : asReturn((Statement) b.statements().get(0));
 	}
 	/**
 	 * @param n
@@ -368,7 +368,7 @@ public enum Funcs {
 	 *          SimplesNames to compare by their string value to cmpTo
 	 * @return true if all names are the same (string wise) or false otherwise
 	 */
-	public static boolean cmpSimpleNames(final Expression cmpTo, final Expression... names) {
+	public static boolean compatabileName(final Expression cmpTo, final Expression... names) {
 		if (hasNull(cmpTo, names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
 			return false;
 		for (final Expression name : names)
@@ -384,7 +384,7 @@ public enum Funcs {
 	 *          A unknown number of assignments operators
 	 * @return true if all the operator are the same or false otherwise
 	 */
-	public static boolean cmpAsgnOps(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
+	public static boolean compatibleOperator(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
 		if (hasNull(cmpTo, op))
 			return false;
 		for (final Assignment.Operator o : op)
@@ -396,19 +396,19 @@ public enum Funcs {
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
 	 * 
-	 * @param cmpTo
+	 * @param base
 	 *          The assignment to compare all others to
-	 * @param asgns
+	 * @param as
 	 *          The assignments to compare
 	 * @return true if all assignments has the same left hand side and operator as
 	 *         the first one or false otherwise
 	 */
-	public static boolean cmpAsgns(final Assignment cmpTo, final Assignment... asgns) {
-		if (hasNull(cmpTo, asgns))
+	public static boolean compatible(final Assignment base, final Assignment... as) {
+		if (hasNull(base, as))
 			return false;
-		for (final Assignment asgn : asgns)
-			if (asgn == null || !cmpAsgnOps(cmpTo.getOperator(), asgn.getOperator())
-			|| !cmpSimpleNames(cmpTo.getLeftHandSide(), asgn.getLeftHandSide()))
+		for (final Assignment a : as)
+			if (a == null || !compatibleOperator(base.getOperator(), a.getOperator())
+			|| !compatabileName(base.getLeftHandSide(), a.getLeftHandSide()))
 				return false;
 		return true;
 	}
@@ -476,7 +476,7 @@ public enum Funcs {
 	 * @return true if one of the expressions is a conditional or parenthesized
 	 *         conditional expression or false otherwise
 	 */
-	public static boolean isOneExpCondExp(final Expression... exps) {
+	public static boolean isConditional(final Expression... exps) {
 		for (final Expression e : exps) {
 			if (e == null)
 				continue;
