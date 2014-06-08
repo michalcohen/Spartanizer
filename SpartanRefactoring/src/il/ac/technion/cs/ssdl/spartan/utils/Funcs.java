@@ -254,8 +254,7 @@ public enum Funcs {
 			final ExpressionStatement es = getExpressionStatement(getStmntFromBlock((Block)s));
 			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
 		}
-		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT ?
-				ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType() : false;
+		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT && ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType();
 	}
 	/**
 	 * @param b
