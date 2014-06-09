@@ -194,8 +194,12 @@ public abstract class TestSuite {
 		abstract Object[] makeCase(final Spartanization s, final File d, final File f, final String name);
 	}
 
-
+	/* Auxiliary function for test suite inherited classes */
 	enum TestDirection {In, Out}
+
+	/**
+	 * Makes an Input file out of a Test file
+	 */
 	static File makeInFile(final File file){
 		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
 		final int testMarker = str.indexOf(testKeyword);
@@ -203,6 +207,10 @@ public abstract class TestSuite {
 			str.delete(str.indexOf(testKeyword), str.length());
 		return createTempFile(str, TestDirection.In, file);
 	}
+
+	/**
+	 * Makes an Output file out of a Test file
+	 */
 	static File makeOutFile(final File file){
 		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
 		final int testMarker = str.indexOf(testKeyword);
@@ -212,6 +220,9 @@ public abstract class TestSuite {
 		return createTempFile(str, TestDirection.Out, file);
 	}
 
+	/**
+	 * Creates a temporary file - including lazy deletion.
+	 */
 	static File createTempFile (final StringBuilder str, final TestDirection direction, final File file){
 		File $;
 		try {
@@ -231,6 +242,9 @@ public abstract class TestSuite {
 		return $;
 	}
 
+	/**
+	 * Creates a StringBuilder object out of a file object.
+	 */
 	static StringBuilder fileToStringBuilder(final File file){
 		try {
 			return new StringBuilder( new Scanner(file).useDelimiter("\\Z").next());

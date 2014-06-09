@@ -77,7 +77,4 @@ public class InOutTest extends AbstractParametrizedTest {
 			}
 		}.go();
 	}
-
-
-
 }
