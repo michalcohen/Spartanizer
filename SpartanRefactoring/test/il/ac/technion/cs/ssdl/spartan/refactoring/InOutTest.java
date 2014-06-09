@@ -4,10 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Collection;
-import java.util.Scanner;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
@@ -26,15 +23,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)//
 public class InOutTest extends AbstractParametrizedTest {
-	/**
-	 * A String determines whereas we are at the IN or OUT side of the test
-	 * See TestCases test files for reference.
-	 */
-	final static String testKeyword = "<Test Result>";
-	/**
-	 * Suffix for test files.
-	 */
-	final static String testSuffix = ".test";
+
 	/**
 	 * An object describing the required transformation
 	 */
@@ -63,7 +52,7 @@ public class InOutTest extends AbstractParametrizedTest {
 		final StringBuilder str = new StringBuilder(fIn.getName());
 		final int testMarker = str.indexOf(testSuffix);
 		if (testMarker > 0)
-			assertEquals(readFile(makeOutFile(fOut)), rewrite(spartanization, cu, new Document(readFile(makeInFile(fIn)))).get());
+			assertEquals(readFile(TestSuite.makeOutFile(fOut)), rewrite(spartanization, cu, new Document(readFile(TestSuite.makeInFile(fIn)))).get());
 		else
 			assertEquals(readFile(fOut), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
 
@@ -93,48 +82,5 @@ public class InOutTest extends AbstractParametrizedTest {
 	}
 
 
-	enum TestDirection {In, Out}
-	static File makeInFile(final File file){
-		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
-		final int testMarker = str.indexOf(testKeyword);
-		if (testMarker > 0)
-			str.delete(str.indexOf(testKeyword), str.length());
-		return createTempFile(str, TestDirection.In, file);
-	}
-	static File makeOutFile(final File file){
-		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
-		final int testMarker = str.indexOf(testKeyword);
-		if (testMarker > 0)
-			str.delete(0, str.indexOf(testKeyword) + testKeyword.length() + (str.indexOf("\r\n") > 0 ? 2 : 1));
-
-		return createTempFile(str, TestDirection.Out, file);
-	}
-
-	static File createTempFile (final StringBuilder str, final TestDirection direction, final File file){
-		File $;
-		try {
-			if ( direction == TestDirection.In)
-				$ = File.createTempFile(file.getName().replace(".", ""), ".in");
-			else
-				$ = File.createTempFile(file.getName().replace(".", ""), ".out");
-
-			final RandomAccessFile fh = new RandomAccessFile ($, "rw");
-			fh.writeBytes(str.toString());
-			fh.close();
-			$.deleteOnExit();
-
-		} catch (final IOException e) {
-			$ = file;
-		}
-		return $;
-	}
-
-	static StringBuilder fileToStringBuilder(final File file){
-		try {
-			return new StringBuilder( new Scanner(file).useDelimiter("\\Z").next());
-		} catch (final Exception e) {
-			return new StringBuilder("");
-		}
-	}
 
 }

@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test cases in which the transformation should not do anything
- * 
+ *
  * @author Yossi Gil
  * @since 2014/05/24
  */
@@ -48,7 +48,13 @@ public class Unchanged extends AbstractParametrizedTest {
 	 */
 	@Test public void checkNoChange() {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
-		assertEquals(readFile(fIn), rewrite(spartanization, makeAST(fIn), new Document(readFile(fIn))).get());
+		final StringBuilder str = new StringBuilder(fIn.getName());
+		final int testMarker = str.indexOf(testSuffix);
+		if (testMarker > 0)
+			assertEquals(readFile(makeInFile(fIn)), rewrite(spartanization, makeAST(fIn), new Document(readFile(makeInFile(fIn)))).get());
+		else
+			assertEquals(readFile(fIn), rewrite(spartanization, makeAST(fIn), new Document(readFile(fIn))).get());
+
 	}
 	/**
 	 * @return a collection of cases, where each cases is an array of three
@@ -58,6 +64,9 @@ public class Unchanged extends AbstractParametrizedTest {
 	public static Collection<Object[]> cases() {
 		return new TestSuite.Files() {
 			@Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
+				if (name.endsWith(testSuffix) && fileToStringBuilder(f).indexOf(testKeyword) == -1)
+					return  new Object[] { s, name, makeInFile(f) };
+
 				if (!name.endsWith(".in"))
 					return null;
 				return new File(d, name.replaceAll("\\.in$", ".out")).exists() ? null : new Object[] { s, name.replaceAll("\\.in$", ""), f };

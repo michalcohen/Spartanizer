@@ -8,22 +8,35 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * An abstract representation of our test suite, which is represented in
  * directory tree.
- * 
+ *
  * @author Yossi Gil
  * @since 2014/05/24
  */
 /**
  * @author yogi
- * 
+ *
  */
 public abstract class TestSuite {
+
+	/**
+	 * A String determines whereas we are at the IN or OUT side of the test
+	 * See TestCases test files for reference.
+	 */
+	final static String testKeyword = "<Test Result>";
+	/**
+	 * Suffix for test files.
+	 */
+	final static String testSuffix = ".test";
+
 	/**
 	 * Folder in which all test cases are found
 	 */
@@ -55,7 +68,7 @@ public abstract class TestSuite {
 	/**
 	 * Instantiates a {@link Class} object if possible, otherwise generate an
 	 * assertion failure
-	 * 
+	 *
 	 * @param c
 	 *          an arbitrary class object
 	 * @return an instance of the parameter
@@ -81,7 +94,7 @@ public abstract class TestSuite {
 	/**
 	 * Convert a canonical name of a class into a {@link Class} object, if
 	 * possible, otherwise generate an assertion failure
-	 * 
+	 *
 	 * @param name
 	 *          the canonical name of some class
 	 * @return the object representing this class
@@ -98,10 +111,10 @@ public abstract class TestSuite {
 	/**
 	 * An abstract class representing the concept of traversing the
 	 * {@link #location} while generating test cases.
-	 * 
+	 *
 	 * @see TestSuite.Traverse.Files
 	 * @see TestSuite.Traverse.Directories
-	 * 
+	 *
 	 * @author Yossi Gil
 	 * @since 2014/05/24
 	 */
@@ -117,7 +130,7 @@ public abstract class TestSuite {
 		}
 		/**
 		 * Collect test cases from each file in {@link #location}
-		 * 
+		 *
 		 * @param $
 		 *          where to save the collected test cases
 		 * @param f
@@ -129,10 +142,10 @@ public abstract class TestSuite {
 	 **
 	 * An abstract class to be extended and implemented by client, while
 	 * overriding {@link #go(List, File)} as per customer's need.
-	 * 
+	 *
 	 * @see TestSuite.Traverse.Files
 	 * @see TestSuite.Traverse
-	 * 
+	 *
 	 * @author Yossi Gil
 	 * @since 2014/05/24
 	 */
@@ -154,17 +167,17 @@ public abstract class TestSuite {
 	 **
 	 * An abstract class to be extended and implemented by client, while
 	 * overriding {@link #go(List, File)} as per customer's need.
-	 * 
+	 *
 	 * @see TestSuite.Traverse.Directories
 	 * @see TestSuite.Traverse
-	 * 
+	 *
 	 * @author Yossi Gil
 	 * @since 2014/05/24
 	 */
 	public static abstract class Files extends TestSuite.Traverse {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
 		 * .util.List, java.io.File)
@@ -179,5 +192,50 @@ public abstract class TestSuite {
 				}
 		}
 		abstract Object[] makeCase(final Spartanization s, final File d, final File f, final String name);
+	}
+
+
+	enum TestDirection {In, Out}
+	static File makeInFile(final File file){
+		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
+		final int testMarker = str.indexOf(testKeyword);
+		if (testMarker > 0)
+			str.delete(str.indexOf(testKeyword), str.length());
+		return createTempFile(str, TestDirection.In, file);
+	}
+	static File makeOutFile(final File file){
+		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
+		final int testMarker = str.indexOf(testKeyword);
+		if (testMarker > 0)
+			str.delete(0, str.indexOf(testKeyword) + testKeyword.length() + (str.indexOf("\r\n") > 0 ? 2 : 1));
+
+		return createTempFile(str, TestDirection.Out, file);
+	}
+
+	static File createTempFile (final StringBuilder str, final TestDirection direction, final File file){
+		File $;
+		try {
+			if ( direction == TestDirection.In)
+				$ = File.createTempFile(file.getName().replace(".", ""), ".in");
+			else
+				$ = File.createTempFile(file.getName().replace(".", ""), ".out");
+
+			final RandomAccessFile fh = new RandomAccessFile ($, "rw");
+			fh.writeBytes(str.toString());
+			fh.close();
+			$.deleteOnExit();
+
+		} catch (final IOException e) {
+			$ = file;
+		}
+		return $;
+	}
+
+	static StringBuilder fileToStringBuilder(final File file){
+		try {
+			return new StringBuilder( new Scanner(file).useDelimiter("\\Z").next());
+		} catch (final Exception e) {
+			return new StringBuilder("");
+		}
 	}
 }
