@@ -1,0 +1,19 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		String res = s, foo = "bar";
+		if (s.equals("yada")==true)
+			res = s + " blah";
+		System.out.println(res);
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		String res = (s.equals("yada")==true ? s + " blah" : s), foo = "bar";
+		System.out.println(res);
+	}
+}

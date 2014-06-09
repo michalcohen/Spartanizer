@@ -1,0 +1,15 @@
+package p;
+
+public class SpongeBob {
+	public boolean squarePants(int x, int y, int z) {
+		return x + y > z;
+	}
+}
+<Test Result>
+package p;
+
+public class SpongeBob {
+	public boolean squarePants(int x, int y, int z) {
+		return z < x + y;
+	}
+}

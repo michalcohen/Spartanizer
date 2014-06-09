@@ -1,0 +1,36 @@
+package p;
+
+public class Blah {
+	public int yada3(final String s) {
+		if (!s.equals("blah")) {
+			int res=0;
+			for (int i=0; i<s.length(); ++i)
+				if (s.charAt(i)=='a')
+					res += 2;
+				else if (s.charAt(i)=='d')
+					res -= 1;
+			return res;
+		}
+		else {
+			return 8;
+		}
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public int yada3(final String s) {
+		if (s.equals("blah")) {
+			return 8;
+		} else {
+			int res=0;
+			for (int i=0; i<s.length(); ++i)
+				if (s.charAt(i)=='a')
+					res += 2;
+				else if (s.charAt(i)=='d')
+					res -= 1;
+			return res;
+		}
+	}
+}

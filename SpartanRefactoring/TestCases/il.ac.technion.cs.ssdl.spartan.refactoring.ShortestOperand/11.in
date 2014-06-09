@@ -1,8 +1,0 @@
-package p;
-
-public class SpongeBob {
-	public boolean squarePants(boolean b) {
-	int h,u,m,a,n;
-		return b == true && n + a > m - u || h > u;
-	}
-}

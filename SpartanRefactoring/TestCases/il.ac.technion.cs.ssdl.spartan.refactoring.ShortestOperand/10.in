@@ -1,7 +1,0 @@
-package p;
-
-public class SpongeBob {
-	public boolean squarePants(boolean b) {
-		return b == true;
-	}
-}

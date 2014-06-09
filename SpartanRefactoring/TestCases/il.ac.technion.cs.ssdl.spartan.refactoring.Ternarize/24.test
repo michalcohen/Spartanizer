@@ -1,0 +1,20 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		boolean c;
+		if (s.equals("yada")){
+			c=false;
+		} else {
+			c=true;
+		}
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		boolean c = !(s.equals("yada"));
+	}
+}

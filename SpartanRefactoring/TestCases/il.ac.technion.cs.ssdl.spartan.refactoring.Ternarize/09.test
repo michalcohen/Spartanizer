@@ -1,0 +1,20 @@
+package p;
+
+public class Blah {
+	public int yada4(final String s) {
+		if (s.equals("yada")) {
+			return 6;
+		}
+		else {
+			return 9;
+		}
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public int yada4(final String s) {
+		return (s.equals("yada") ? 6 : 9);
+	}
+}

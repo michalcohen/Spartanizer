@@ -1,9 +1,0 @@
-package p;
-
-public class Blah {
-	public int yada2(final String s) {
-		if (s.equals("yada"))
-			return 6;
-		return 9;
-	}
-}

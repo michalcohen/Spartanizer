@@ -1,0 +1,10 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		int a, b=0;
+		if (b==3){
+			a=4;
+		}
+	}
+}

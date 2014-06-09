@@ -1,0 +1,19 @@
+package p;
+
+public class Blah {
+	public int yada4(final String s) {
+		int res = 0;
+		if (s.equals("yada"))
+			res += 6;
+		else
+			res -= 9;
+		//was:
+		/*
+		if (s.equals("yada"))
+			res += 6;
+		else
+			res += 9;
+		 */
+		return res;
+	}
+}

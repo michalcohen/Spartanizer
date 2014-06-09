@@ -46,7 +46,7 @@ public class InOutTest extends AbstractParametrizedTest {
 	 */
 	@Test public void go() {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
-		final CompilationUnit cu = makeAST(fIn);
+		final CompilationUnit cu = makeAST(makeInFile(fIn));
 		assertEquals(1, spartanization.findOpportunities(cu).size());
 
 		final StringBuilder str = new StringBuilder(fIn.getName());
@@ -55,9 +55,6 @@ public class InOutTest extends AbstractParametrizedTest {
 			assertEquals(readFile(TestSuite.makeOutFile(fOut)), rewrite(spartanization, cu, new Document(readFile(TestSuite.makeInFile(fIn)))).get());
 		else
 			assertEquals(readFile(fOut), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
-
-
-
 	}
 	/**
 	 * Generate test cases for this parameterized class.

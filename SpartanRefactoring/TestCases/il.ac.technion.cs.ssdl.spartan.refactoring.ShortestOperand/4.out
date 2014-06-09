@@ -1,7 +1,0 @@
-package p;
-
-public class SpongeBob {
-	public boolean squarePants() {
-		return (3 > 1 + 2 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);
-	}
-}

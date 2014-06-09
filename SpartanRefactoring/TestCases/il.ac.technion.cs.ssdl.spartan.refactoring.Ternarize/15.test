@@ -1,0 +1,21 @@
+package p;
+
+public class Blah {
+	public void mdm(String mode){
+		String res = mode, foo = "Not in test mode"; int k;
+		k = 1984;
+		if (mode.equals("TEST-MODE")==true)
+			foo = "test-bob";
+		foo = "sponge-bob";
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public void mdm(String mode){
+		String res = mode, foo = "Not in test mode"; int k;
+		k = 1984;
+		foo = "sponge-bob";
+	}
+}

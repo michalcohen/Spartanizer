@@ -1,0 +1,18 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		int a=0, b=0;
+		if (b==3){
+			a=4;
+		}
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		int a = (b==3 ? 4 : 0), b=0;
+	}
+}

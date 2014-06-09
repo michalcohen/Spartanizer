@@ -1,8 +1,0 @@
-package p;
-
-public class Blah {
-	public void yada(final String s) {
-		int b=0;
-		return b==3;
-	}
-}

@@ -1,0 +1,23 @@
+package p;
+
+public class Blah {
+	public void mdm(String mode){
+		int a, b;
+	    a = 3;
+	    b = 5;
+	    if (a == 4) 
+	  	  if (b == 3)
+	  	     b = 2;
+	  	   else{
+	  	     b = a;
+	  	     b=3;
+	  	   }
+	  	else
+	  	  if (b == 3)
+	  	    b = 2;
+	  	  else{
+	  	    b = a*a;
+	  	    b=3;
+	  	  }
+	}
+}

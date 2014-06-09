@@ -1,7 +1,0 @@
-package p;
-
-public class Blah {
-	public int yada4(final String s) {
-		return (s.equals("yada") ? 6 : 9);
-	}
-}
