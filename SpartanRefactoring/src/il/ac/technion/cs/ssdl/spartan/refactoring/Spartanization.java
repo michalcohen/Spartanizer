@@ -331,6 +331,7 @@ public abstract class Spartanization extends Refactoring {
 	 * @since 2013/07/01
 	 */
 	public class SpartanizationResolution implements IMarkerResolution {
+		// Todo: There is a missing space here
 		@Override public String getLabel() {
 			return ": Do it!" + Spartanization.this.toString();
 		}

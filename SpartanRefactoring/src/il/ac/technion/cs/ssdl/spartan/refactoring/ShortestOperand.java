@@ -40,7 +40,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
 	public ShortestOperand() {
-		super("Shortest operand first", "Make the shortest operand first in an infix expression");
+		super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
 	}
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
@@ -112,6 +112,7 @@ public class ShortestOperand extends Spartanization {
 	public static boolean isFlipable(final Operator o) {
 		// TODO: add bit wise or and bit wise not
 		// TODO: add testing for XOR; it does not show up right.
+		// TODO: add test case for string concatenation which uses "+" as well.
 		return in(o, //
 				AND, //
 				EQUALS, //
