@@ -56,8 +56,13 @@ public class RenameReturnVariableToDollar extends Spartanization {
 			}
 			@Override public boolean visit(final VariableDeclarationStatement n) {
 				assert n != null;
-				if (n.getType().toString().equals(((MethodDeclaration) container).getReturnType2().toString()))
-					$.addAll(n.fragments());
+				// TODO: the next line throws null pointer exception, please test thoroughly.
+				try {
+					if (n.getType().toString().equals(((MethodDeclaration) container).getReturnType2().toString()))
+						$.addAll(n.fragments());
+				} catch(final NullPointerException e) {
+					return false;
+				}
 				return true;
 			}
 		});
