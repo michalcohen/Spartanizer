@@ -21,12 +21,16 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3) TODO: This
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
+ * TODO: This
  *         examples triggers with no justified reason:
  * <pre>
  * final int p = s.indexOf(c);
  * return s.substring(0, p &gt;= 0 ? p : s.length());
  * </pre>
+ * 
+ * <Answer>
+ * Added your examples as Unchanged tests and all tests pass, cant seem to find a bug here...
  * 
  * @since 2013/01/01
  */

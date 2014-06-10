@@ -39,9 +39,9 @@ public class RenameReturnVariableToDollar extends Spartanization {
 			}
 		});
 	}
-	static List<VariableDeclarationFragment> getCandidates(final ASTNode container) {
+	static List<VariableDeclarationFragment> getCandidates(final MethodDeclaration mthdDecl) {
 		final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
-		container.accept(new ASTVisitor() {
+		mthdDecl.accept(new ASTVisitor() {
 			/**
 			 * 
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
@@ -55,10 +55,12 @@ public class RenameReturnVariableToDollar extends Spartanization {
 				return false;
 			}
 			@Override public boolean visit(final VariableDeclarationStatement n) {
-				assert n != null;
 				// TODO: the next line throws null pointer exception, please test thoroughly.
+				//
+				// Seems like you fixed it properly, when does it throw a null pointer exception(test case)?
+				// Also, what is left for us to test here?
 				try {
-					if (n.getType().toString().equals(((MethodDeclaration) container).getReturnType2().toString()))
+					if (n.getType().toString().equals(mthdDecl.getReturnType2().toString()))
 						$.addAll(n.fragments());
 				} catch(final NullPointerException e) {
 					return false;
