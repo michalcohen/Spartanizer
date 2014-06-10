@@ -21,12 +21,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3) TODO: This
- *         examples triggers with no justified reason:
- * <pre>
- * final int p = s.indexOf(c);
- * return s.substring(0, p &gt;= 0 ? p : s.length());
- * </pre>
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  * 
  * @since 2013/01/01
  */
@@ -46,10 +41,8 @@ public class InlineSingleUse extends Spartanization {
 						|| !(n.getParent() instanceof VariableDeclarationStatement))
 					return true;
 				final SimpleName varName = n.getName();
-				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n
-						.getParent();
-				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(
-						varName).in(parent.getParent());
+				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
+				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
 				if (1 == uses.size()
 						&& (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(
 								Occurrences.ASSIGNMENTS, varName,
