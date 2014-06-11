@@ -29,12 +29,10 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment returnVar = selectReturnVariable(n);
-				if (returnVar != null) {
-					if (!inRange(m, returnVar))
-						return true;
-					for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
-						$.replace(e, t.newSimpleName("$"), null);
-				}
+				if (returnVar == null || !inRange(m, returnVar))
+					return true;
+				for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
+					$.replace(e, t.newSimpleName("$"), null);
 				return true;
 			}
 		});
@@ -149,9 +147,10 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment v = selectReturnVariable(n);
-				if (v == null)
-					return true;
-				opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
+				if (v != null){
+					opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
+					System.out.println("Added\n");
+				}
 				return true;
 			}
 		};
