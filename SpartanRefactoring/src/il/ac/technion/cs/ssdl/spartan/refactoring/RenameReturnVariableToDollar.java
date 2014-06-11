@@ -147,10 +147,8 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment v = selectReturnVariable(n);
-				if (v != null){
+				if (v != null)
 					opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
-					System.out.println("Added\n");
-				}
 				return true;
 			}
 		};
