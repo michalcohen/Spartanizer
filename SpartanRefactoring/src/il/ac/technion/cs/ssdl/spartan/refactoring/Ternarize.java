@@ -57,6 +57,16 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 				else
 					$--;
 </pre>
+TODO: Another bug. DO NOT ERASE BUG REPORTS EVEN IF YOU DID WERE NOT ABLE TO REPRODUCE THE BUG.
+
+<pre>
+if (a < b) {
+	c = d;
+else {
+  c = e;
+}
+</pre>
+
  */
 public class Ternarize extends Spartanization {
 	/** Instantiates this class */
