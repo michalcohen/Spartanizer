@@ -1,0 +1,21 @@
+package p;
+
+public class Main {
+	public void yada(final String s) {
+		int a=0,b = 0,c,d = 0,e = 0;
+		if (a < b) {
+			c = d;
+		}else {
+		  c = e;
+		}
+	}
+}
+<Test Result>
+package p;
+
+public class Main {
+	public void yada(final String s) {
+		int a=0,b = 0,c,d = 0,e = 0;
+		c = (a < b ? d : e);
+	}
+}
