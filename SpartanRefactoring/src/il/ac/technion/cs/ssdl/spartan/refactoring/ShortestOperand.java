@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
  * @since 2014/05/24
+ * * TODO: Bug. Highlight should be on operator only. Otherwise it is too messy.
  */
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
@@ -72,11 +73,14 @@ public class ShortestOperand extends Spartanization {
 	 */
 	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
-		if (INFIX_EXPRESSION == $.getLeftOperand().getNodeType())
-			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) $.getLeftOperand()));
+		final Expression leftOperand = $.getLeftOperand();
+		// TODO: create Method for checking if Infix.
+		if (INFIX_EXPRESSION == leftOperand.getNodeType())
+			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) leftOperand));
 		if (INFIX_EXPRESSION == $.getRightOperand().getNodeType())
 			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand()));
 		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
+		// TODO: Howcome this is not symmetric? Add a test case, and do not remove error until test case demonstrating this workd.
 		if (BOOLEAN_LITERAL == newR.getNodeType())
 			return $; // Prevents the following swap: "(a>0) == true" =>
 		// "true == (a>0)"
