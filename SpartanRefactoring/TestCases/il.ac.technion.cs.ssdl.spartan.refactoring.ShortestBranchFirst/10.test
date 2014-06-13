@@ -1,0 +1,34 @@
+package p;
+
+public class Main {
+		private static String fixClassNameAndPackage(final String contents, final String className, final String newClassName,
+				final String folderName, final String imports) {
+			final StringBuilder $ = new StringBuilder();
+			boolean foundPackage = false;
+			for (final String s : contents.split("\n"))
+				if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {
+					$.append(s.replace(";", "." + folderName + ";") + "\n" + imports);
+					foundPackage = true;
+				} else
+					$.append(replaceClassName(s, className, newClassName) + "\n");
+			return asString($);
+		}
+	}
+<Test Result>
+package p;
+
+public class Main {
+		private static String fixClassNameAndPackage(final String contents, final String className, final String newClassName,
+				final String folderName, final String imports) {
+			final StringBuilder $ = new StringBuilder();
+			boolean foundPackage = false;
+			for (final String s : contents.split("\n"))
+				if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))
+					$.append(replaceClassName(s, className, newClassName) + "\n");
+				else {
+					$.append(s.replace(";", "." + folderName + ";") + "\n" + imports);
+					foundPackage = true;
+				}
+			return asString($);
+		}
+	}

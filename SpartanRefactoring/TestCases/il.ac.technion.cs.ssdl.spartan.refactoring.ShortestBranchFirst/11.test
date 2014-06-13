@@ -1,0 +1,15 @@
+package p;
+
+public class Main {
+		public static Statement getBlockSingleStmnt(final Statement b) {
+		return b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b;
+	}
+}
+<Test Result>
+package p;
+
+public class Main {
+		public static Statement getBlockSingleStmnt(final Statement b) {
+		return (!(b != null) || !(b.getNodeType() == ASTNode.BLOCK) ? b : getBlockSingleStmnt((Block) b));
+	}
+}
