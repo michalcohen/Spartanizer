@@ -135,12 +135,16 @@ public class Ternarize extends Spartanization {
 					diffList.get(i).elseNode = diffList.get(i).elseNode.getParent();
 				} else
 					return false;
-			if (isConditional(getExpression(diffList.get(i).thenNode), getExpression(diffList.get(i).elseNode))
-					|| !isExpOnlyDiff(diffList.get(i), findDiffExps(diffList.get(i)))
-					|| diffList.get(i).thenNode.getNodeType() != diffList.get(i).elseNode.getNodeType())
+			if (!areExpsValid(diffList.get(i)))
 				return false;
 		}
 		return true;
+	}
+	private static boolean areExpsValid(final TwoNodes diffNodes) {
+		return !isConditional(getExpression(diffNodes.thenNode), getExpression(diffNodes.elseNode))
+				&& !containIncOrDecExp(diffNodes.thenNode, diffNodes.elseNode)
+				&& isExpOnlyDiff(diffNodes, findDiffExps(diffNodes))
+				&& diffNodes.thenNode.getNodeType() == diffNodes.elseNode.getNodeType();
 	}
 	private static TwoExpressions findSingleDifference(final ASTNode thenStmnt, final ASTNode elseStmnt) {
 		final TwoNodes diffNodes = new TwoNodes(thenStmnt, elseStmnt);
