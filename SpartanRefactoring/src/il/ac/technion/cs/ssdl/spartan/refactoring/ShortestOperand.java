@@ -3,6 +3,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
@@ -19,6 +20,7 @@ import il.ac.technion.cs.ssdl.spartan.utils.Range;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -46,11 +48,12 @@ public class ShortestOperand extends Spartanization {
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
-				if (invalid( n))
+				if (invalid(n))
 					return true;
-				if (longerFirst(n) && isFlipable(n.getOperator()))
-					r.replace(n, transpose(t, r, n), null); // Replace old tree with
-				// the new organized one
+				final AtomicBoolean hasChanged = new AtomicBoolean(false) ;
+				final InfixExpression newNode = transpose(t, r, n, hasChanged);
+				if (hasChanged.get())
+					r.replace(n, newNode, null); // Replace old tree with
 				return true;
 			}
 
@@ -59,35 +62,57 @@ public class ShortestOperand extends Spartanization {
 			}
 		});
 	}
+	/*public static InfixExpression commitTranspose(final AST ast, final ASTRewrite rewrite, final InfixExpression n){
+		return transpose(ast, rewrite, n, new Boolean(true));
+	}*/
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 * 
+	 *
 	 * @param ast
 	 *          The AST - for copySubTree.
 	 * @param rewrite
 	 *          The rewriter - to perform the change.
 	 * @param n
 	 *          The node.
+	 * @param hasChanged
+	 *          Indicates weather a change occurred.
+	 *          reference to the passed value might be changed.
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
-	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n) {
+	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n, final AtomicBoolean hasChanged) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		final Expression leftOperand = $.getLeftOperand();
-		// TODO: create Method for checking if Infix.
-		if (INFIX_EXPRESSION == leftOperand.getNodeType())
-			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) leftOperand));
-		if (INFIX_EXPRESSION == $.getRightOperand().getNodeType())
-			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand()));
+		if (isInfix(leftOperand))
+			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) leftOperand, hasChanged));
+		if (isInfix($.getRightOperand()))
+			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand(), hasChanged));
 		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
-		// TODO: Howcome this is not symmetric? Add a test case, and do not remove error until test case demonstrating this workd.
-		if (BOOLEAN_LITERAL == newR.getNodeType())
-			return $; // Prevents the following swap: "(a>0) == true" =>
+		// TODO: How come this is not symmetric? Add a test case, and do not remove error until test case demonstrating this worked.
+		//if (inRightOperandExceptions(newR))
+		//	return $; // Prevents the following swap: "(a>0) == true" =>
 		// "true == (a>0)"
-		if (isFlipable(n.getOperator()) && longerFirst(n))
+		if (isFlipable(n.getOperator()) && longerFirst(n)){
 			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()), flipOperator(n.getOperator()), (Expression) newR);
+			hasChanged.set(true);
+		}
 		return $;
 	}
+
+	@SuppressWarnings("boxing") // Justification: because ASTNode is a primitive int we can't use the generic "in" function on it without boxing into Integer. Any other solution will cause less readable/maintainable code.
+	private static boolean inRightOperandExceptions (final ASTNode n){
+		final Integer t = new Integer(n.getNodeType()) ;
+		return  in(t, //
+				BOOLEAN_LITERAL, //
+				NULL_LITERAL, //
+				null);
+
+	}
+
+	private static boolean isInfix(final Expression e){
+		return INFIX_EXPRESSION == e.getNodeType();
+	}
+
 	private static void set(final InfixExpression $, final Expression left, final Operator operator, final Expression right) {
 		$.setRightOperand(left);
 		$.setOperator(operator);
@@ -97,7 +122,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 * 
+	 *
 	 * @param o
 	 *          The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
@@ -148,7 +173,7 @@ public class ShortestOperand extends Spartanization {
 	private static final int threshold = 1;
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 * 
+	 *
 	 * @param a
 	 *          b Ranges to merge
 	 * @return True - if such an overlap exists
@@ -170,14 +195,14 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 * 
+	 *
 	 * @param rangeList
 	 *          The list of ranges to union with
 	 * @param rNew
 	 *          The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 * 
+	 *
 	 * @see areOverlapped
 	 * @see merge
 	 */
@@ -193,7 +218,11 @@ public class ShortestOperand extends Spartanization {
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
-				if (!longerFirst(n) || !isFlipable(n.getOperator()))
+				final AtomicBoolean hasChanged = new AtomicBoolean(false) ;
+				final AST t = AST.newAST(AST.JLS4);
+				transpose(t, ASTRewrite.create(t), n, hasChanged);
+				//if (!longerFirst(n) || !isFlipable(n.getOperator()))
+				if (!hasChanged.get())
 					return true;
 				final Range rN = new Range(n.getParent());
 				if (!unionRangeWithList(opportunities, rN))
