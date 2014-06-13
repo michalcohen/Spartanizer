@@ -88,10 +88,9 @@ public class ShortestOperand extends Spartanization {
 		if (isInfix($.getRightOperand()))
 			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand(), hasChanged));
 		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
-		// TODO: How come this is not symmetric? Add a test case, and do not remove error until test case demonstrating this worked.
-		//if (inRightOperandExceptions(newR))
-		//	return $; // Prevents the following swap: "(a>0) == true" =>
-		// "true == (a>0)"
+		if (inRightOperandExceptions(newR))
+			return $; 	// Prevents the following kind of swap:
+		// "(a>0) == true" => "true == (a>0)"
 		if (isFlipable(n.getOperator()) && longerFirst(n)){
 			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()), flipOperator(n.getOperator()), (Expression) newR);
 			hasChanged.set(true);
