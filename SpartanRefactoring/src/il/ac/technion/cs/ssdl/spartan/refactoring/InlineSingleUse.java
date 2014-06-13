@@ -21,8 +21,25 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3) TODO: Bug,
+ *         makes suggestion to inline 'a' in the following code:
  * 
+ *         <pre>
+ * &#064;Test
+ * public void duplicateCurrentImmutables() {
+ * 	final Application a = new DuplicateCurrent().new Application(
+ * 			&quot;{\nABRA\n{\nCADABRA\n{&quot;);
+ * 	assertEquals(5, a.new Context().lineCount());
+ * 	final PureIterable&lt;Mutant&gt; ms = a.generateMutants();
+ * 	assertEquals(2, count(ms));
+ * 	final PureIterator&lt;Mutant&gt; i = ms.iterator();
+ * 	assertTrue(i.hasNext());
+ * 	assertEquals(&quot;{\nABRA\nABRA\n{\nCADABRA\n{\n&quot;, i.next().text);
+ * 	assertTrue(i.hasNext());
+ * 	assertEquals(&quot;{\nABRA\n{\nCADABRA\nCADABRA\n{\n&quot;, i.next().text);
+ * 	assertFalse(i.hasNext());
+ * }
+ * </pre>
  * @since 2013/01/01
  */
 public class InlineSingleUse extends Spartanization {
@@ -41,8 +58,10 @@ public class InlineSingleUse extends Spartanization {
 						|| !(n.getParent() instanceof VariableDeclarationStatement))
 					return true;
 				final SimpleName varName = n.getName();
-				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
-				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
+				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n
+						.getParent();
+				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(
+						varName).in(parent.getParent());
 				if (1 == uses.size()
 						&& (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(
 								Occurrences.ASSIGNMENTS, varName,

@@ -35,7 +35,7 @@ public class Ternarize extends Spartanization {
 		});
 	}
 	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
-		return asBlock(ifStmnt.getParent()) != null && treatIfReturn(ast, r, ifStmnt, asBlock(ifStmnt.getParent()));
+		return null != asBlock(ifStmnt.getParent()) && treatIfReturn(ast, r, ifStmnt, asBlock(ifStmnt.getParent()));
 	}
 	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt, final Block parent) {
 		if (!checkIfReturnStmntExist(ifStmnt.getThenStatement()))
