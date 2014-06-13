@@ -42,6 +42,25 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
 
  * @since 2013/01/01
+ * TODO: Cannot handle this code <pre>
+   private static String fixClassNameAndPackage(final String contents, final String className, final String newClassName,
+      final String folderName, final String imports) {
+    final StringBuilder $ = new StringBuilder();
+    boolean foundPackage = false;
+    for (final String s : contents.split("\n"))
+      if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {
+        $.append(s.replace(";", "." + folderName + ";") + "\n" + imports);
+        foundPackage = true;
+      } else
+        $.append(replaceClassName(s, className, newClassName) + "\n");
+    return asString($);
+  }
+ * </pre>
+ * TODO: Bug, cannot deal with this code <pre>
+ 	public static Statement getBlockSingleStmnt(final Statement b) {
+		return b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b;
+	}
+	</pre>
  */
 public class ShortestBranchFirst extends Spartanization {
 	/** Instantiates this class */
