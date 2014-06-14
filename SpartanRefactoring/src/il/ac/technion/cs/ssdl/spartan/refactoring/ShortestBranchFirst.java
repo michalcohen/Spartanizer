@@ -23,19 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -51,8 +40,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class ShortestBranchFirst extends Spartanization {
 	/** Instantiates this class */
 	public ShortestBranchFirst() {
-		super(
-				"Shortester first",
+		super("Shortester first",
 				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 
