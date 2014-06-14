@@ -31,6 +31,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2014/05/24
  * TODO: Bug. Highlight should be on operator only. Otherwise it is too messy.
  * TODO: Bug. It supposes to switch concatenated strings, e.g., System.prinln("Value is "+ v)
+ * TODO: it reports also on String concatenation, please add a test case
+ *         to demonstrate this, fix the problem as per the test case, then
+ *         remove this comment, comment, but do not remove the test case!
  */
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */

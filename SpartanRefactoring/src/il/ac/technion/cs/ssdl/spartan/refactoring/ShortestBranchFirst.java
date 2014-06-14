@@ -1,7 +1,21 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getBlockSingleStmnt;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statementsCount;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -18,10 +32,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  *         <P>
- *         TODO: it reports also on String concatenation, please add a test case
- *         to demonstrate this, fix the problem as per the test case, then
- *         remove this comment, comment, but do not remove the test case! TODO:
- *         The code looks as if it might try to change the order in "||" and
+ *         TODO: The code looks as if it might try to change the order in "||" and
  *         "&&"; add test cases to make sure this never happens and correct the
  *         code if necessary.
  * @since 2013/01/01
