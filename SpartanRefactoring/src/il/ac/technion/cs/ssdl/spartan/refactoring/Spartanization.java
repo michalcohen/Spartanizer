@@ -55,6 +55,15 @@ public abstract class Spartanization extends Refactoring {
 	private final String name;
 	private final String message;
 	/***
+	 * Instantiates this class, with message identical to name
+	 * 
+	 * @param name
+	 *          a short name of this refactoring
+	 */
+	protected Spartanization(final String name) {
+		this(name,name);
+	}
+	/***
 	 * Instantiates this class
 	 * 
 	 * @param name

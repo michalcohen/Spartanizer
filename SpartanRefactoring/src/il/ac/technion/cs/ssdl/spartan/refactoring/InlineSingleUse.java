@@ -79,7 +79,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class InlineSingleUse extends Spartanization {
 	/** Instantiates this class */
 	public InlineSingleUse() {
-		super("Inline variable used once", "Inline variable used once");
+		super("Inline variable used once");
 	}
 
 	@Override
