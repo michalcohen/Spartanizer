@@ -1,21 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getBlockSingleStmnt;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.statementsCount;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -115,7 +101,7 @@ public class ShortestBranchFirst extends Spartanization {
 		$.put(GREATER, LESS_EQUALS);
 		$.put(LESS, GREATER_EQUALS);
 		$.put(GREATER_EQUALS, LESS);
-		// TODO: Why do we need these two?
+		// TODO: Why do we need these two? This seems like a BUG!
 		$.put(CONDITIONAL_AND, CONDITIONAL_OR);
 		$.put(CONDITIONAL_OR, CONDITIONAL_AND);
 		return $;

@@ -268,7 +268,7 @@ public abstract class Spartanization extends Refactoring {
 	 * spartanization suggestions
 	 * 
 	 * @param cu
-	 *          the Compilation Unit
+	 *          what to check
 	 * @return a collection of {@link Range} objects each containing a
 	 *         spartanization opportunity
 	 */
