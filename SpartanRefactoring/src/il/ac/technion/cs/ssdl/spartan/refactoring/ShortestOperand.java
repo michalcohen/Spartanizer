@@ -5,17 +5,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -41,6 +31,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2014/05/24
  * TODO: Bug. Highlight should be on operator only. Otherwise it is too messy.
  * TODO: Bug. It supposes to switch concatenated strings, e.g., System.prinln("Value is "+ v)
+ * TODO: it reports also on String concatenation, please add a test case
+ *         to demonstrate this, fix the problem as per the test case, then
+ *         remove this comment, comment, but do not remove the test case!
  */
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
