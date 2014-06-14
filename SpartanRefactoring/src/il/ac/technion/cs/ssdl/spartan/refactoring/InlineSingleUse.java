@@ -41,7 +41,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * }
  * </pre>
  * 
- * TOOD: There <b>must</b> be an option to disable this warning in selected places. Consider this example:
+ * TODO: There <b>must</b> be an option to disable this warning in selected places. Consider this example:
  * <pre>
  * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
  * 	final T t = ts[i];

@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3 /
  *         04.06.2014)
  * @since 2013/01/01
- * TOOD: There <b>must</b> be an option to disable this warning in selected places. Consider this example:
+ * TODO: There <b>must</b> be an option to disable this warning in selected places. Consider this example:
  * <pre>
  * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
  * 	final T t = ts[i];
