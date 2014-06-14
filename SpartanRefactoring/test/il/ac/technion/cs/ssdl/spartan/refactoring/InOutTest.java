@@ -1,7 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
-
+import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.util.Collection;
@@ -48,13 +49,11 @@ public class InOutTest extends AbstractParametrizedTest {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
 		final CompilationUnit cu = makeAST(makeInFile(fIn));
 		assertEquals(1, spartanization.findOpportunities(cu).size());
-
 		final StringBuilder str = new StringBuilder(fIn.getName());
 		final int testMarker = str.indexOf(testSuffix);
-		if (testMarker > 0)
-			assertEquals(readFile(TestSuite.makeOutFile(fOut)), rewrite(spartanization, cu, new Document(readFile(TestSuite.makeInFile(fIn)))).get());
-		else
-			assertEquals(readFile(fOut), rewrite(spartanization, cu, new Document(readFile(fIn))).get());
+		final String expected = testMarker > 0 ? readFile(TestSuite.makeOutFile(fOut)): readFile(fOut);
+		final Document d = new Document(testMarker > 0 ? readFile(TestSuite.makeInFile(fIn)) : readFile(fIn));
+		assertThat(rewrite(spartanization, cu, d ).get(), equalToIgnoringWhiteSpace(expected));
 	}
 	/**
 	 * Generate test cases for this parameterized class.

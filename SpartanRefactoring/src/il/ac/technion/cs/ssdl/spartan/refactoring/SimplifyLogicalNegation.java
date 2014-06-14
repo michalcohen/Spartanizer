@@ -4,6 +4,12 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
@@ -12,6 +18,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Simplifies a negated boolean expression using De-Morgan laws and laws of
@@ -59,7 +68,6 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return replace(e, parenthesize(makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
 			}
 			private boolean perhapsComparison(final Expression e, final Expression inner) {
-				System.err.println("Dcoing comparison of " + inner);
 				return perhapsComparison(e, asComparison(inner));
 			}
 			private boolean perhapsComparison(final Expression e, final InfixExpression inner) {
@@ -75,7 +83,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 				if (e == null)
 					return null;
 				final ParenthesizedExpression $ = t.newParenthesizedExpression();
-				$.setExpression((Expression) ASTNode.copySubtree(t,getCore(e)));
+				$.setExpression((Expression) ASTNode.copySubtree(t, getCore(e)));
 				return $;
 			}
 			private PrefixExpression not(final Expression e) {
@@ -86,9 +94,9 @@ public class SimplifyLogicalNegation extends Spartanization {
 			}
 			private InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
 				final InfixExpression $ = t.newInfixExpression();
-				$.setLeftOperand( (Expression) ASTNode.copySubtree(t,left));
+				$.setLeftOperand((Expression) ASTNode.copySubtree(t, left));
 				$.setOperator(o);
-				$.setRightOperand((Expression) ASTNode.copySubtree(t,right));
+				$.setRightOperand((Expression) ASTNode.copySubtree(t, right));
 				return $;
 			}
 			private boolean replace(final ASTNode original, final ASTNode replacement) {
@@ -120,8 +128,8 @@ public class SimplifyLogicalNegation extends Spartanization {
 	static InfixExpression asAndOrOr(final InfixExpression e) {
 		return isDeMorgan(e.getOperator()) ? e : null;
 	}
-	private static boolean isDeMorgan(final Operator operator) {
-		return in(operator, CONDITIONAL_AND, CONDITIONAL_OR);
+	static boolean isDeMorgan(final Operator o) {
+		return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
 	}
 	static InfixExpression asAndOrOr(final Expression e) {
 		return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
@@ -137,7 +145,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 				) ? e : null;
 	}
 	static InfixExpression asComparison(final Expression e) {
-		return !(e instanceof PrefixExpression) ? null : asComparison(e);
+		return !(e instanceof InfixExpression) ? null : asComparison(( InfixExpression)e);
 	}
 	/**
 	 * Check if a value is found among a list of other values of the same type.
@@ -150,7 +158,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 	 */
 	public static <T> boolean in(final T t, final T... ts) {
 		for (final T candidate : ts)
-			if (candidate != null || t.equals(candidate))
+			if (candidate != null && t.equals(candidate))
 				return true;
 		return false;
 	}
@@ -168,5 +176,64 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
 			}
 		};
+	}
+	/**
+	 * A static nested class hosting unit tests for the nesting class Unit test
+	 * for the containing class. Note our naming convention: a) test methods do
+	 * not use the redundant "test" prefix. b) test methods begin with the name of
+	 * the method they check.
+	 * 
+	 * @author Yossi Gil
+	 * @since 2014-06-14
+	 */
+	@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+	@SuppressWarnings({ "static-method" })//
+	public static class TEST {
+		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfix() {
+			final InfixExpression i = mock(InfixExpression.class);
+			doReturn(GREATER).when(i).getOperator();
+			assertNotNull(asComparison(i));
+		}
+		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalExpression() {
+			final InfixExpression i = mock(InfixExpression.class);
+			doReturn(GREATER).when(i).getOperator();
+			final Expression e = i;
+			assertNotNull(asComparison(e));
+		}
+		@SuppressWarnings("javadoc") @Test public void asComparisonPrefixlExpression() {
+			final PrefixExpression p = mock(PrefixExpression.class);
+			doReturn(NOT).when(p).getOperator();
+			final Expression e = p;
+			assertNull(asComparison(e));
+		}
+		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixFalse() {
+			final InfixExpression i = mock(InfixExpression.class);
+			doReturn(CONDITIONAL_AND).when(i).getOperator();
+			assertNull(asComparison(i));
+		}
+		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalExpressionFalse() {
+			final InfixExpression i = mock(InfixExpression.class);
+			doReturn(CONDITIONAL_OR).when(i).getOperator();
+			final Expression e = i;
+			assertNull(asComparison(e));
+		}
+		@SuppressWarnings("javadoc") @Test public void isDeMorganAND() {
+			assertTrue(isDeMorgan(CONDITIONAL_AND));
+		}
+		@SuppressWarnings("javadoc") @Test public void isDeMorganOR() {
+			assertTrue(isDeMorgan(CONDITIONAL_OR));
+		}
+		@SuppressWarnings("javadoc") @Test public void isDeMorganGreater() {
+			assertFalse(isDeMorgan(GREATER));
+		}
+		@SuppressWarnings("javadoc") @Test public void isDeMorganGreaterEuals() {
+			assertFalse(isDeMorgan(GREATER_EQUALS));
+		}
+		@SuppressWarnings("javadoc") @Test public void inTypicalTrue() {
+			assertTrue(in("A", "A", "B", "C"));
+		}
+		@SuppressWarnings("javadoc") @Test public void inTypicalFalse() {
+			assertFalse(in("X", "A", "B", "C"));
+		}
 	}
 }
