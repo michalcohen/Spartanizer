@@ -3,6 +3,6 @@ package p;
 public class SpongeBob {
 	public String squarePants() {
 	String t = "Bob " + "Wants " + "To " + "Sleep ";
-		return (t + "right now...");   
+		return ("right now..." + t);   
 	}
 }
