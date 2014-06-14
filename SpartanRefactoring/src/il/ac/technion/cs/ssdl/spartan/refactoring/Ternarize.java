@@ -17,6 +17,18 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  * 
  * @since 2013/01/01
+ * TODO: Bug - transformation on the following code should not be called
+ * "ternarize", but something else, maybe, I have no good sense at the moment,
+ * "convert to boolean":
+ * <pre>
+       if (Modifier.toString(classFile.getModifiers()).contains("public"))
+        return true;
+      return false;
+  </pre>
+  The code correctly converts to but the warning message is confusing.
+   <pre>
+   return Modifier.toString(classFile.getModifiers()).contains("public");
+   </pre>
  */
 public class Ternarize extends Spartanization {
 	/** Instantiates this class */
