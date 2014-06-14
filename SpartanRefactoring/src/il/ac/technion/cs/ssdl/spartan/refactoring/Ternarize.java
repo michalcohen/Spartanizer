@@ -17,23 +17,12 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  * 
  * @since 2013/01/01
- * TODO: Bug - transformation on the following code should not be called
- * "ternarize", but something else, maybe, I have no good sense at the moment,
- * "convert to boolean":
- * <pre>
-       if (Modifier.toString(classFile.getModifiers()).contains("public"))
-        return true;
-      return false;
-  </pre>
-  The code correctly converts to but the warning message is confusing.
-   <pre>
-   return Modifier.toString(classFile.getModifiers()).contains("public");
-   </pre>
  */
 public class Ternarize extends Spartanization {
 	/** Instantiates this class */
 	public Ternarize() {
-		super("Ternarize", "Convert conditional to an expression using the ternary (?:) operator");
+		super("Ternarize", "Convert conditional to an expression using the ternary (?:) operator"
+				+ "or to a return condition statement");
 	}
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
