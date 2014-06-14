@@ -40,6 +40,40 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 	assertFalse(i.hasNext());
  * }
  * </pre>
+ * 
+ * TOOD: There <b>must</b> be an option to disable this warning in selected places. Consider this example:
+ * <pre>
+ * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
+ * 	final T t = ts[i];
+ * 	ts[i] = ts[j];
+ * 	ts[j] = t;
+ * }
+ * </pre>
+ * You should not inline the variable t, and you should not move forward its declaration! Some alternatives for disabling the warning are:
+ * First, a dedicated annotation of name such as $Resident or @Unmovable, or some other word that is single, and easy to understand.
+ * <pre>
+ * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
+ * 	@Resident final T t = ts[i];
+ * 	ts[i] = ts[j];
+ * 	ts[j] = t;
+ * }
+ * </pre>
+ * Augment the @SuppressWarning annotation
+ * <pre>
+ * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
+ * 	 @SuppressWarning("unmovable") final T t = ts[i];
+ * 	ts[i] = ts[j];
+ * 	ts[j] = t;
+ * }
+ * </pre>
+ * Require comment
+ * <pre>
+ * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
+ *  final T t = ts[i]; // Don't move!
+ * 	ts[i] = ts[j];
+ * 	ts[j] = t;
+ * }
+ * </pre>
  * @since 2013/01/01
  */
 public class InlineSingleUse extends Spartanization {
