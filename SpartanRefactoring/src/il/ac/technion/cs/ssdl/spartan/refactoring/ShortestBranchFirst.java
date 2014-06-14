@@ -54,6 +54,7 @@ public class ShortestBranchFirst extends Spartanization {
 				final Statement elseStmnt = n.getElseStatement();
 				final Statement thenStatement = n.getThenStatement();
 				if (1 != statementsCount(elseStmnt) || ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
+					// TODO: Make sure that you have a test case that covers this block.
 					final Block newElseBlock = t.newBlock();
 					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
 					return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStatement);
@@ -119,6 +120,8 @@ public class ShortestBranchFirst extends Spartanization {
 				return true;
 			}
 			@Override public boolean visit(final ConditionalExpression n) {
+				//TODO: make sure you have a test case to cover both cases, i.e.,
+				// that longerFirst returns both True and False.
 				if (longerFirst(n))
 					opportunities.add(new Range(n));
 				return true;

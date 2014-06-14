@@ -92,8 +92,6 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
 			}
 			Expression parenthesize(final Expression e) {
-				if (e == null)
-					return null;
 				if (isSimple(e))
 					return (Expression) ASTNode.copySubtree(t, e);
 				final ParenthesizedExpression $ = t.newParenthesizedExpression();
