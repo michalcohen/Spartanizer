@@ -48,43 +48,80 @@ public class SimplifyLogicalNegation extends Spartanization {
 						|| perhapsComparison(e, inner) //
 						|| true;
 			}
-			private boolean perhapsDoubleNegation(final Expression e, final Expression inner) {
+			boolean perhapsDoubleNegation(final Expression e, final Expression inner) {
 				return perhapsDoubleNegation(e, asNot(inner));
 			}
-			private boolean perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
+			boolean perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
 				return inner != null && replace(e, inner.getOperand());
 			}
-			private boolean perhapsDeMorgan(final Expression e, final Expression inner) {
+			boolean perhapsDeMorgan(final Expression e, final Expression inner) {
 				return perhapsDeMorgan(e, asAndOrOr(inner));
 			}
-			private boolean perhapsDeMorgan(final Expression e, final InfixExpression inner) {
+			boolean perhapsDeMorgan(final Expression e, final InfixExpression inner) {
 				return inner != null && deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
 			}
-			private boolean deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
-				return deMorgan(e, inner, parenthesize(left), parenthesize(right));
+			boolean deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
+				return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
 			}
-			private boolean deMorgan(final Expression e, final InfixExpression inner, final ParenthesizedExpression left,
-					final ParenthesizedExpression right) {
-				return replace(e, parenthesize(makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
+			boolean deMorgan1(final Expression e, final InfixExpression inner, final Expression left,
+					final Expression right) {
+				return replace(e, //
+						parenthesize( //
+								addExtendedOperands(inner, //
+										makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right)))));
 			}
-			private boolean perhapsComparison(final Expression e, final Expression inner) {
+			InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
+				if (from.hasExtendedOperands())
+					addExtendedOperands(from.extendedOperands(), $.extendedOperands());
+				return $;
+			}
+			void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
+				for (final Expression e : from)
+					to.add(not(e));
+			}
+			boolean perhapsComparison(final Expression e, final Expression inner) {
 				return perhapsComparison(e, asComparison(inner));
 			}
-			private boolean perhapsComparison(final Expression e, final InfixExpression inner) {
+			boolean perhapsComparison(final Expression e, final InfixExpression inner) {
 				return inner != null && comparison(e, inner);
 			}
-			private boolean comparison(final Expression e, final InfixExpression inner) {
+			boolean comparison(final Expression e, final InfixExpression inner) {
 				return replace(e, cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator())));
 			}
-			private InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
+			InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
 				return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
 			}
-			private ParenthesizedExpression parenthesize(final Expression e) {
+			Expression parenthesize(final Expression e) {
 				if (e == null)
 					return null;
+				if (isSimple(e))
+					return (Expression) ASTNode.copySubtree(t, e);
 				final ParenthesizedExpression $ = t.newParenthesizedExpression();
 				$.setExpression((Expression) ASTNode.copySubtree(t, getCore(e)));
 				return $;
+			}
+			boolean isSimple(final Expression e) {
+				return isSimple(e.getClass());
+			}
+			@SuppressWarnings("unchecked") boolean isSimple(final Class<? extends Expression> c) {
+				return in(c,
+						BooleanLiteral.class, //
+						CharacterLiteral.class, //
+						NullLiteral.class, //
+						NumberLiteral.class, //
+						StringLiteral.class, //
+						TypeLiteral.class, //
+						Name.class, //
+						QualifiedName.class, //
+						SimpleName.class, //
+						ParenthesizedExpression.class, //
+						SuperMethodInvocation.class, //
+						MethodInvocation.class, //
+						ClassInstanceCreation.class, //
+						SuperFieldAccess.class, //
+						FieldAccess.class, //
+						ThisExpression.class, //
+						null);
 			}
 			private PrefixExpression not(final Expression e) {
 				final PrefixExpression $ = t.newPrefixExpression();
@@ -145,7 +182,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 				) ? e : null;
 	}
 	static InfixExpression asComparison(final Expression e) {
-		return !(e instanceof InfixExpression) ? null : asComparison(( InfixExpression)e);
+		return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
 	}
 	/**
 	 * Check if a value is found among a list of other values of the same type.
@@ -156,7 +193,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 	 *          candidates for equality; null values in list are ignored
 	 * @return true if the given value is found among the candidates
 	 */
-	public static <T> boolean in(final T t, final T... ts) {
+	@SafeVarargs public static <T> boolean in(final T t, final T... ts) {
 		for (final T candidate : ts)
 			if (candidate != null && t.equals(candidate))
 				return true;
@@ -186,8 +223,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 	 * @author Yossi Gil
 	 * @since 2014-06-14
 	 */
-	@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-	@SuppressWarnings({ "static-method" })//
+	@FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method" })//
 	public static class TEST {
 		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfix() {
 			final InfixExpression i = mock(InfixExpression.class);

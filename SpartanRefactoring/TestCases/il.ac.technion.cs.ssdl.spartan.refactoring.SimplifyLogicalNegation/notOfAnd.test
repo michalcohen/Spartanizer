@@ -8,6 +8,6 @@ public class X {
 package p;
 public class X {
   public boolean f() {
-   return (!(f()) || !(f(5)));
+   return (!f() || !f(5));
   }
 }
