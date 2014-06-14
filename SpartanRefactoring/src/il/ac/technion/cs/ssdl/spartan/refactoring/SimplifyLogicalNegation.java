@@ -43,13 +43,13 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return perhapsDoubleNegation(e, asNot(inner));
 			}
 			private boolean perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
-				return inner != null && replace(e, getCore(inner));
+				return inner != null && replace(e, inner.getOperand());
 			}
 			private boolean perhapsDeMorgan(final Expression e, final Expression inner) {
 				return perhapsDeMorgan(e, asAndOrOr(inner));
 			}
 			private boolean perhapsDeMorgan(final Expression e, final InfixExpression inner) {
-				return e != null && deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
+				return inner != null && deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
 			}
 			private boolean deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
 				return deMorgan(e, inner, parenthesize(left), parenthesize(right));

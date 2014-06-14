@@ -191,6 +191,7 @@ public class ShortestOperand extends Spartanization {
 	 * @return True - if such an overlap exists
 	 * @see merge
 	 */
+
 	protected static boolean areOverlapped(final Range a, final Range b) {
 		return !(a.from > b.to || b.from > a.to); // Negation of
 		// "not overlapped"
