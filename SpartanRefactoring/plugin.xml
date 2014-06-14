@@ -313,5 +313,32 @@
          </menu>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
+            name="Spartanization"
+            category="org.eclipse.jdt.ui.preferences.CompliancePreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.core.resources.markers">
+   </extension>
+   <extension point="org.eclipse.jdt.core.compilationParticipant">
+      <compilationParticipant
+            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.compilerNotificator"
+            createsProblems="true"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.compilerNotificator"
+            modifiesEnvironment="false">
+      </compilationParticipant>
+   </extension>
    
 </plugin>

@@ -39,7 +39,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
  * @since 2014/05/24
- * * TODO: Bug. Highlight should be on operator only. Otherwise it is too messy.
+ * TODO: Bug. Highlight should be on operator only. Otherwise it is too messy.
+ * TODO: Bug. It supposes to switch concatenated strings, e.g., System.prinln("Value is "+ v)
  */
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */

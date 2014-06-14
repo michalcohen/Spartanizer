@@ -524,4 +524,38 @@ public enum Funcs {
 		}
 		return $;
 	}
+	/**
+	 * @param nodes unknown number of nodes to check
+	 * @return true if one of the nodes is an Expression Statement of type Post or Pre Expression with ++ or -- operator.
+	 * false if none of them are or if the given parameter is null.
+	 */
+	public static boolean containIncOrDecExp(final ASTNode... nodes) {
+		if (nodes == null)
+			return false;
+		for (final ASTNode n : nodes)
+			if (n != null && isNodeIncOrDecExp(n))
+				return true;
+		return false;
+	}
+	/**
+	 * @param n node to check
+	 * @return true if node is an Expression Statement of type Post or Pre Expression with ++ or -- operator
+	 * false if node is not an Expression Statement or its a Post or Pre fix expression that
+	 * its operator is not ++ or --
+	 */
+	public static boolean isNodeIncOrDecExp(final ASTNode n) {
+		switch(n.getNodeType()){
+		case ASTNode.EXPRESSION_STATEMENT: return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
+		case ASTNode.POSTFIX_EXPRESSION: {
+			final PostfixExpression.Operator op = ((PostfixExpression) n).getOperator();
+			return op == PostfixExpression.Operator.INCREMENT || op == PostfixExpression.Operator.DECREMENT;
+		}
+		case ASTNode.PREFIX_EXPRESSION: {
+			final PrefixExpression.Operator op = ((PrefixExpression) n).getOperator();
+			return op == PrefixExpression.Operator.INCREMENT || op == PrefixExpression.Operator.DECREMENT;
+		}
+		default:
+			return false;
+		}
+	}
 }

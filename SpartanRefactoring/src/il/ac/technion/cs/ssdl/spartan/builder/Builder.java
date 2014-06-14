@@ -44,7 +44,7 @@ public class Builder extends IncrementalProjectBuilder {
 	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
-	    final IProgressMonitor m) throws CoreException {
+			final IProgressMonitor m) throws CoreException {
 		if (m != null)
 			m.beginTask("Checking for spartanization opportunities", IProgressMonitor.UNKNOWN);
 		build(kind);
@@ -64,13 +64,19 @@ public class Builder extends IncrementalProjectBuilder {
 				incrementalBuild(d);
 		}
 	}
-	protected void fullBuild() throws CoreException {
-		getProject().accept(new IResourceVisitor() {
-			@Override public boolean visit(final IResource r) throws CoreException {
-				addMarkers(r);
-				return true; // to continue visiting children.
-			}
-		});
+	protected void fullBuild() {
+		System.err.println("Running full Spartan Build");
+		try {
+			getProject().accept(new IResourceVisitor() {
+				@Override public boolean visit(final IResource r) throws CoreException {
+					addMarkers(r);
+					return true; // to continue visiting children.
+				}
+			});
+		} catch (final CoreException e) {
+			e.printStackTrace();
+		}
+		System.err.println("Done running full Spartan Build");
 	}
 	static void addMarkers(final IResource r) throws CoreException {
 		if (r instanceof IFile && r.getName().endsWith(".java"))
