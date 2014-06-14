@@ -45,7 +45,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *         <P>
  *         TODO: it reports also on String concatenation, please add a test case
  *         to demonstrate this, fix the problem as per the test case, then remove this comment,
- *         leaving the test in the test suite.
+ *        comment, but do not remove the test case!
  * @since 2013/01/01
  */
 public class ShortestBranchFirst extends Spartanization {
