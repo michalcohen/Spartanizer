@@ -558,4 +558,32 @@ public enum Funcs {
 			return false;
 		}
 	}
+	/**
+	 * @param n node to check
+	 * @return true if the given node is a boolean literal or false otherwise
+	 */
+	public static boolean isBoolLitrl(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.BOOLEAN_LITERAL;
+	}
+	/**
+	 * @param n node to check
+	 * @return true if the given node is an expression statement or false otherwise
+	 */
+	public static boolean isExpStmt(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
+	}
+	/**
+	 * @param n node to check
+	 * @return true if the given node is a return statement or false otherwise
+	 */
+	public static boolean isReturn(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.RETURN_STATEMENT;
+	}
+	/**
+	 * @param n node to check
+	 * @return true if the given node is a variable declaration statement or false otherwise
+	 */
+	public static boolean isVarDeclStmt(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT;
+	}
 }

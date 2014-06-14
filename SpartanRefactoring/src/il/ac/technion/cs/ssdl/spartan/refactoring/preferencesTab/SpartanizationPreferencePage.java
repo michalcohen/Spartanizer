@@ -9,21 +9,24 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * This class represents a preference page that is contributed to the
- * Preferences dialog. By subclassing <samp>FieldEditorPreferencePage</samp>, we
- * can use the field support built into {@link JFace} that allows us to create a page
+ * Preferences dialog. By sub classing <sample>FieldEditorPreferencePage</sample>, we
+ * can use the field support built into {@link org.eclipse.jface} that allows us to create a page
  * that is small and knows how to save, restore and apply itself.
  * <p>
  * This page is used to modify preferences only. They are stored in the
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
- * TODO: Author?
- * TODO: Since?
- * TODO: Congratulations and good job for starting this.
+ * 
+ * @author Tomer Zeltzer  <code><tomerr90 [at] gmail.com></code> (original)
+ * @since 10/06/2014
  */
 
 public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 implements IWorkbenchPreferencePage {
 
+	/**
+	 * Instantiates the page and sets its default values
+	 */
 	public SpartanizationPreferencePage() {
 		super(GRID);
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());
