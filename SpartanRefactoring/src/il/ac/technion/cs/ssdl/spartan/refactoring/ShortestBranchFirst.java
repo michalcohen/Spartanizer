@@ -2,6 +2,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public class ShortestBranchFirst extends Spartanization {
 		if (e instanceof InfixExpression)
 			return tryNegateComparison(t, r, (InfixExpression) e);
 		return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e) : makePrefixExpression(t, r,
-				makeParenthesizedExpression(t, r, e), PrefixExpression.Operator.NOT);
+				makeParenthesizedExpression(t, r, e), NOT);
 	}
 	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
 		final Operator op = negate(e.getOperator());
@@ -85,11 +86,10 @@ public class ShortestBranchFirst extends Spartanization {
 				negateExp(ast, r, e.getRightOperand())) : makeInfixExpression(ast, r, op, e.getLeftOperand(), e.getRightOperand());
 	}
 	private static Expression negateExp(final AST t, final ASTRewrite r, final Expression exp) {
-		if (exp.getNodeType() == ASTNode.INFIX_EXPRESSION)
-			return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, exp), PrefixExpression.Operator.NOT);
-		return exp.getNodeType() == ASTNode.PREFIX_EXPRESSION
-				&& ((PrefixExpression) exp).getOperator().equals(PrefixExpression.Operator.NOT) ? (Expression) r
-						.createCopyTarget(((PrefixExpression) exp).getOperand()) : makePrefixExpression(t, r, exp, PrefixExpression.Operator.NOT);
+		if (isInfix(exp))
+			return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, exp), NOT);
+		return isPrefix(exp) && ((PrefixExpression) exp).getOperator().equals(NOT) ? (Expression) r.createCopyTarget(((PrefixExpression) exp).getOperand())
+				: makePrefixExpression(t, r, exp, NOT);
 	}
 	static Operator negate(final Operator o) {
 		return !negate.containsKey(o) ? null : negate.get(o);
@@ -109,7 +109,7 @@ public class ShortestBranchFirst extends Spartanization {
 	}
 	private static Map<Operator, Operator> negate = makeNegation();
 	private static Expression tryNegatePrefix(final ASTRewrite r, final PrefixExpression exp) {
-		return !exp.getOperator().equals(PrefixExpression.Operator.NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
+		return !exp.getOperator().equals(NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
 	}
 	private static final int threshold = 1;
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
