@@ -221,8 +221,9 @@ public enum Funcs {
 		if (s == null)
 			return null;
 		final ASTNode $ = s.getNodeType() != ASTNode.BLOCK ? s : getBlockSingleStmnt(s);
-		return !($ != null && $.getNodeType() == ASTNode.EXPRESSION_STATEMENT) ? null : (ExpressionStatement) $;
+		return !($ != null) || !($.getNodeType() == ASTNode.EXPRESSION_STATEMENT) ? null : (ExpressionStatement) $;
 	}
+
 	/**
 	 * @param s
 	 *          a statement or block to extract the assignment from

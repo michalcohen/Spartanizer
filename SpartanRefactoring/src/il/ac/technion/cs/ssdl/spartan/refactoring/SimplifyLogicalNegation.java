@@ -59,6 +59,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return replace(e, parenthesize(makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
 			}
 			private boolean perhapsComparison(final Expression e, final Expression inner) {
+				System.err.println("Dcoing comparison of " + inner);
 				return perhapsComparison(e, asComparison(inner));
 			}
 			private boolean perhapsComparison(final Expression e, final InfixExpression inner) {
@@ -74,25 +75,25 @@ public class SimplifyLogicalNegation extends Spartanization {
 				if (e == null)
 					return null;
 				final ParenthesizedExpression $ = t.newParenthesizedExpression();
-				$.setExpression((Expression)r.createCopyTarget(getCore(e)));
+				$.setExpression((Expression) ASTNode.copySubtree(t,getCore(e)));
 				return $;
 			}
 			private PrefixExpression not(final Expression e) {
 				final PrefixExpression $ = t.newPrefixExpression();
 				$.setOperator(NOT);
-				$.setOperand(parenthesize((Expression)r.createCopyTarget(getCore(e))));
+				$.setOperand(parenthesize(e));
 				return $;
 			}
 			private InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
 				final InfixExpression $ = t.newInfixExpression();
-				$.setLeftOperand(left);
+				$.setLeftOperand( (Expression) ASTNode.copySubtree(t,left));
 				$.setOperator(o);
-				$.setRightOperand(right);
+				$.setRightOperand((Expression) ASTNode.copySubtree(t,right));
 				return $;
 			}
 			private boolean replace(final ASTNode original, final ASTNode replacement) {
 				if (!hasNull(original, replacement))
-					r.replace(original, r.createCopyTarget(replacement), null);
+					r.replace(original, replacement, null);
 				return true;
 			}
 		});
