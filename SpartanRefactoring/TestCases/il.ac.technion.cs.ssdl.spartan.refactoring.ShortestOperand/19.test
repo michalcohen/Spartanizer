@@ -1,0 +1,17 @@
+package p;
+
+public class SpongeBob {
+	public int squarePants(Class k) {
+		SomeClass a;
+		return k.get().operand() ^ a.get();
+	}
+}
+<Test Result>
+package p;
+
+public class SpongeBob {
+	public int squarePants(Class k) {
+		SomeClass a;
+		return a.get() ^ k.get().operand();
+	}
+}

@@ -3,6 +3,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
@@ -83,24 +84,29 @@ public class ShortestOperand extends Spartanization {
 	public static InfixExpression transpose(final AST ast, final ASTRewrite rewrite, final InfixExpression n, final AtomicBoolean hasChanged) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		final Expression leftOperand = $.getLeftOperand();
+		final Operator o = n.getOperator();
 		if (isInfix(leftOperand))
 			$.setLeftOperand(transpose(ast, rewrite, (InfixExpression) leftOperand, hasChanged));
 		if (isInfix($.getRightOperand()))
 			$.setRightOperand(transpose(ast, rewrite, (InfixExpression) $.getRightOperand(), hasChanged));
 		final ASTNode newR = ASTNode.copySubtree(ast, n.getRightOperand());
-		if (inRightOperandExceptions(newR))
+		if (inRightOperandExceptions(newR, o))
 			return $; 	// Prevents the following kind of swap:
 		// "(a>0) == true" => "true == (a>0)"
-		if (isFlipable(n.getOperator()) && longerFirst(n)){
-			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()), flipOperator(n.getOperator()), (Expression) newR);
+		if (isFlipable(o) && longerFirst(n)){
+			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()), flipOperator(o), (Expression) newR);
 			hasChanged.set(true);
 		}
+
 		return $;
 	}
 
 	@SuppressWarnings("boxing") // Justification: because ASTNode is a primitive int we can't use the generic "in" function on it without boxing into Integer. Any other solution will cause less readable/maintainable code.
-	private static boolean inRightOperandExceptions (final ASTNode n){
-		final Integer t = new Integer(n.getNodeType()) ;
+	private static boolean inRightOperandExceptions (final ASTNode rN, final Operator o){
+		final Integer t = new Integer(rN.getNodeType());
+		if (isMethodInvocation(rN) && o == PLUS)
+			return true;
+
 		return  in(t, //
 				BOOLEAN_LITERAL, //
 				NULL_LITERAL, //
@@ -108,10 +114,12 @@ public class ShortestOperand extends Spartanization {
 
 	}
 
-	private static boolean isInfix(final Expression e){
+	private static boolean isInfix(final ASTNode e){
 		return INFIX_EXPRESSION == e.getNodeType();
 	}
-
+	private static boolean isMethodInvocation(final ASTNode e){
+		return METHOD_INVOCATION == e.getNodeType();
+	}
 	private static void set(final InfixExpression $, final Expression left, final Operator operator, final Expression right) {
 		$.setRightOperand(left);
 		$.setOperator(operator);
@@ -138,9 +146,10 @@ public class ShortestOperand extends Spartanization {
 	 * @see ShortestOperand
 	 */
 	public static boolean isFlipable(final Operator o) {
-		// TODO: add bit wise or and bit wise not
-		// TODO: add testing for XOR; it does not show up right.
-		// TODO: add test case for string concatenation which uses "+" as well.
+		// TODO: - Check Fixed Bugs -
+		// Done: add bit wise or and bit wise not | I believe you meant to "|" and "&" (because "bitwise not" is unary). if that's the case they are already implemented here as "OR" and "AND" (presented at test 7) - there are also CONDITINAL versions of them but they are not commutative - therefore not applicable for this list
+		// Done: add testing for XOR; it does not show up right. | I'm sure that there are some problems, but it's hard to reproduce them as "1 test case" test due to the fact that they might occur on more complex trees.
+		// Done: add test case for string concatenation which uses "+" as well. | Added them, and even found and treated an hidden bug.
 		return in(o, //
 				AND, //
 				EQUALS, //
@@ -219,10 +228,12 @@ public class ShortestOperand extends Spartanization {
 			@Override public boolean visit(final InfixExpression n) {
 				final AtomicBoolean hasChanged = new AtomicBoolean(false) ;
 				final AST t = AST.newAST(AST.JLS4);
+
 				transpose(t, ASTRewrite.create(t), n, hasChanged);
-				//if (!longerFirst(n) || !isFlipable(n.getOperator()))
+
 				if (!hasChanged.get())
 					return true;
+
 				final Range rN = new Range(n.getParent());
 				if (!unionRangeWithList(opportunities, rN))
 					opportunities.add(rN);
@@ -234,4 +245,8 @@ public class ShortestOperand extends Spartanization {
 		return null != n.getLeftOperand() && null != n.getRightOperand()
 				&& countNodes(n.getLeftOperand()) > threshold + countNodes(n.getRightOperand());
 	}
+
+
 }
+
+
