@@ -152,16 +152,15 @@ public class Ternarize extends Spartanization {
 		if (!handleCaseDiffNodesAreBlocks(diffNodes))
 			return null;
 		final TwoExpressions $ = findDiffExps(diffNodes);
-		if (ASTNode.EXPRESSION_STATEMENT == diffNodes.thenNode.getNodeType())
+		if (isExpStmt(diffNodes.thenNode))
 			return $;
-		return $ == null || ASTNode.RETURN_STATEMENT != diffNodes.thenNode.getNodeType() ? null
+		return $ == null || !isReturn(diffNodes.thenNode) ? null
 				: new TwoExpressions(getExpression(diffNodes.thenNode), getExpression(diffNodes.elseNode));
 	}
 	private static TwoExpressions findDiffExps(final TwoNodes diffNodes) {
-		TwoNodes tempNodes = diffNodes;
-		if (ASTNode.EXPRESSION_STATEMENT == tempNodes.thenNode.getNodeType())
+		TwoNodes tempNodes = findDiffNodes(diffNodes.thenNode, diffNodes.elseNode);
+		if (isExpStmt(diffNodes.thenNode))
 			tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
-		tempNodes = findDiffNodes(tempNodes.thenNode, tempNodes.elseNode);
 		return tempNodes == null || isConditional((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode) ? null
 				: new TwoExpressions((Expression) tempNodes.thenNode, (Expression) tempNodes.elseNode);
 	}
@@ -179,17 +178,14 @@ public class Ternarize extends Spartanization {
 	}
 	private static List<ASTNode> prepareSubTree(final ASTNode node, final Expression exp) {
 		final List<ASTNode> nodeSubTree = getChildren(node);
-		if (node.getNodeType() == ASTNode.EXPRESSION_STATEMENT)
+		if (isExpStmt(node))
 			nodeSubTree.remove(((ExpressionStatement)node).getExpression());
 		nodeSubTree.remove(exp);
 		nodeSubTree.removeAll(getChildren(exp));
 		return nodeSubTree;
 	}
 	private static boolean isExpStmntOrRet(final ASTNode n) {
-		return n != null && isExpStmntOrRet(n.getNodeType());
-	}
-	private static boolean isExpStmntOrRet(final int nodeType) {
-		return nodeType == ASTNode.EXPRESSION_STATEMENT || nodeType == ASTNode.RETURN_STATEMENT;
+		return n != null && (isExpStmt(n) || isReturn(n));
 	}
 	private static boolean handleCaseDiffNodesAreBlocks(final TwoNodes diffNodes) {
 		if (1 != statementsCount(diffNodes.thenNode) || 1 != statementsCount(diffNodes.elseNode))
@@ -240,13 +236,12 @@ public class Ternarize extends Spartanization {
 		return true;
 	}
 	private static boolean canReplacePrevDecl(final Statement possiblePrevDecl, final TwoNodes diffNodes) {
-		return diffNodes.thenNode.getNodeType() != ASTNode.EXPRESSION_STATEMENT || diffNodes.thenNode.getNodeType() != diffNodes.elseNode.getNodeType() ? false
+		return !isExpStmt(diffNodes.thenNode) || diffNodes.thenNode.getNodeType() != diffNodes.elseNode.getNodeType() ? false
 				: canReplacePrevDecl(possiblePrevDecl, (ExpressionStatement)diffNodes.thenNode, (ExpressionStatement)diffNodes.elseNode);
 	}
 	private static boolean canReplacePrevDecl(final Statement possiblePrevDecl, final ExpressionStatement thenExpStmt,
 			final ExpressionStatement elseExpStmt) {
-		final List<VariableDeclarationFragment> frags = possiblePrevDecl.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT ? null
-				: ((VariableDeclarationStatement) possiblePrevDecl).fragments();
+		final List<VariableDeclarationFragment> frags = !isVarDeclStmt(possiblePrevDecl) ? null : ((VariableDeclarationStatement) possiblePrevDecl).fragments();
 		final Assignment asgnThen = getAssignment(thenExpStmt);
 		final Assignment asgnElse = getAssignment(elseExpStmt);
 		if (hasNull(asgnThen, asgnElse, frags)
@@ -264,8 +259,7 @@ public class Ternarize extends Spartanization {
 		return true;
 	}
 	private static Expression determineNewExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
-		return thenExp.getNodeType() == ASTNode.BOOLEAN_LITERAL && elseExp.getNodeType() == ASTNode.BOOLEAN_LITERAL ?
-				tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue())
+		return isBoolLitrl(thenExp) && isBoolLitrl(elseExp) ? tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue())
 				: makeParenthesizedConditionalExp(t, r, cond, thenExp, elseExp);
 	}
 	static boolean treatAssignIfAssign(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
