@@ -4,26 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -544,7 +526,8 @@ public enum Funcs {
 		return $;
 	}
 	/**
-	 * @param nodes unknown number of nodes to check
+	 * @param nodes
+	 * 				unknown number of nodes to check
 	 * @return true if one of the nodes is an Expression Statement of type Post or Pre Expression with ++ or -- operator.
 	 * false if none of them are or if the given parameter is null.
 	 */
@@ -557,7 +540,8 @@ public enum Funcs {
 		return false;
 	}
 	/**
-	 * @param n node to check
+	 * @param n
+	 * 			node to check
 	 * @return true if node is an Expression Statement of type Post or Pre Expression with ++ or -- operator
 	 * false if node is not an Expression Statement or its a Post or Pre fix expression that
 	 * its operator is not ++ or --
@@ -578,31 +562,59 @@ public enum Funcs {
 		}
 	}
 	/**
-	 * @param n node to check
+	 * @param n
+	 * 			node to check
 	 * @return true if the given node is a boolean literal or false otherwise
 	 */
 	public static boolean isBoolLitrl(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.BOOLEAN_LITERAL;
 	}
 	/**
-	 * @param n node to check
+	 * @param n
+	 * 			node to check
 	 * @return true if the given node is an expression statement or false otherwise
 	 */
 	public static boolean isExpStmt(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
 	}
 	/**
-	 * @param n node to check
+	 * @param n
+	 * 			node to check
 	 * @return true if the given node is a return statement or false otherwise
 	 */
 	public static boolean isReturn(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.RETURN_STATEMENT;
 	}
 	/**
-	 * @param n node to check
+	 * @param n
+	 * 			node to check
 	 * @return true if the given node is a variable declaration statement or false otherwise
 	 */
 	public static boolean isVarDeclStmt(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT;
+	}
+	/**
+	 * @param n
+	 * 			node to check
+	 * @return true if the given node is an infix expression or false otherwise
+	 */
+	public static boolean isInfix(final ASTNode n){
+		return n != null && ASTNode.INFIX_EXPRESSION == n.getNodeType();
+	}
+	/**
+	 * @param n
+	 * 			node to check
+	 * @return true if the given node is a method invocation or false otherwise
+	 */
+	public static boolean isMethodInvocation(final ASTNode n){
+		return n != null && ASTNode.METHOD_INVOCATION == n.getNodeType();
+	}
+	/**
+	 * @param n
+	 * 			node to check
+	 * @return true if the given node is a prefix expression or false otherwise
+	 */
+	public static boolean isPrefix(final ASTNode n){
+		return n != null && ASTNode.PREFIX_EXPRESSION == n.getNodeType();
 	}
 }
