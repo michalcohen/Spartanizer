@@ -336,7 +336,7 @@
       <compilationParticipant
             class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.CompilerNotificator"
             createsProblems="true"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.compilerNotificator"
+            id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.CompilerNotificator"
             modifiesEnvironment="false">
       </compilationParticipant>
    </extension>
