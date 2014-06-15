@@ -27,7 +27,6 @@ public class Builder extends IncrementalProjectBuilder {
 	 * Empty prefix for brevity
 	 */
 	public static final String EMPTY_PREFIX = "";
-
 	private static String prefix() {
 		return EMPTY_PREFIX;
 	}
@@ -41,9 +40,8 @@ public class Builder extends IncrementalProjectBuilder {
 	 * spartanization is stored
 	 */
 	public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
-
 	@Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
-			final IProgressMonitor m) throws CoreException {
+	    final IProgressMonitor m) throws CoreException {
 		if (m != null)
 			m.beginTask("Checking for spartanization opportunities", IProgressMonitor.UNKNOWN);
 		build(kind);

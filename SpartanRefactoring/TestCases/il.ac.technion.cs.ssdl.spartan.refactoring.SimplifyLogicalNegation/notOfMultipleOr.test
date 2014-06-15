@@ -1,0 +1,15 @@
+package p;
+public class X {
+  public boolean f() {
+   return !(a || b || c);
+   
+   
+  }
+}
+<Test Result>
+package p;
+public class X {
+  public boolean f() {
+   return (!a && !b && !c);
+  }
+}

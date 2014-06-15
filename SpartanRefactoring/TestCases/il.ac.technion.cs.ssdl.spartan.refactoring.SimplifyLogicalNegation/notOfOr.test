@@ -1,0 +1,13 @@
+package p;
+public class X {
+  public boolean f() {
+   return !(f() || f(5));
+  }
+}
+<Test Result>
+package p;
+public class X {
+  public boolean f() {
+   return (!f() && !f(5));
+  }
+}

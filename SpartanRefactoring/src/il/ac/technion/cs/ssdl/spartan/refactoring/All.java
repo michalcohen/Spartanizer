@@ -25,7 +25,7 @@ public enum All {
 		put(new InlineSingleUse());
 		put(new ForwardDeclaration());
 		put(new RenameReturnVariableToDollar());
-		put(new SimplifyBooleanExpression());
+		put(new SimplifyLogicalNegation());
 	}
 	/**
 	 * @param name

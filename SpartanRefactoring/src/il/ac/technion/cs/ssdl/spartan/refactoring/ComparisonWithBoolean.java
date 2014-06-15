@@ -40,9 +40,11 @@ public class ComparisonWithBoolean extends Spartanization {
 					nonliteral = r.createMoveTarget(n.getRightOperand());
 					literal = (BooleanLiteral) n.getLeftOperand();
 				}
-				r.replace(n, literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
-						&& n.getOperator() == Operator.NOT_EQUALS ? nonliteral : makePrefixExpression(t, r,
-								makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT), null);
+				r.replace(
+				    n,
+				    literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
+				        && n.getOperator() == Operator.NOT_EQUALS ? nonliteral : makePrefixExpression(t, r,
+				        makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT), null);
 				return true;
 			}
 			private boolean isBooleanLiteral(final Expression e) {
@@ -56,7 +58,7 @@ public class ComparisonWithBoolean extends Spartanization {
 				if (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
 					return true;
 				if (ASTNode.BOOLEAN_LITERAL == n.getRightOperand().getNodeType()
-						|| ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType())
+				    || ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType())
 					opportunities.add(new Range(n));
 				return true;
 			}

@@ -1,0 +1,11 @@
+public class X {
+  public String f() {
+    return f(a,b,c,d) | ".";
+    }
+}
+<Test Result>
+public class X {
+  public String f() {
+ return "." | f(a,b,c,d);
+ }
+}
