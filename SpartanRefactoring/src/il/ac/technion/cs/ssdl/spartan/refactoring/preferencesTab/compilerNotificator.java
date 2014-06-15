@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.compiler.ReconcileContext;
 /**
  * TODO: Document
  * <p>
- * TODO: Change to compilerNotificator
+ * TODO: Change to CompilerNotificator; class name should start with upper case.
  * 
  */
 public class compilerNotificator extends CompilationParticipant {
@@ -17,7 +17,7 @@ public class compilerNotificator extends CompilationParticipant {
 	@Override public boolean isActive(@SuppressWarnings("unused") final IJavaProject project) {
 		return true;
 	}
-	@Override public void reconcile(final ReconcileContext context) {
+	@Override public void reconcile(@SuppressWarnings("unused") final ReconcileContext context) {
 		// context.putProblems("test", problems);
 	}
 }

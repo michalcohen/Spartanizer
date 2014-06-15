@@ -17,6 +17,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
+		// TODO: Convert this into a loop or something.
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		store.setDefault("Comparison With Boolean", "Warning");
 		store.setDefault("Forward Declaration", "Warning");

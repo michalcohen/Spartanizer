@@ -1,0 +1,11 @@
+public class X {
+	public double f() {
+    return f(a,b,c,d) + f(a,b,c);
+    }
+}
+<Test Result>
+public class X {
+  public double f() {
+    return f(a,b,c) + f(a,b,c,d);
+   }
+}

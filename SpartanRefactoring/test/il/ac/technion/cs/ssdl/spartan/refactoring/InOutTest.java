@@ -1,8 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
-import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Collection;
@@ -18,13 +18,12 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Run tests in which a specific transformation is not supposed to change the
  * input text
- *
+ * 
  * @author Yossi Gil
  * @since 2014/05/24
  */
 @RunWith(Parameterized.class)//
 public class InOutTest extends AbstractParametrizedTest {
-
 	/**
 	 * An object describing the required transformation
 	 */
@@ -48,16 +47,31 @@ public class InOutTest extends AbstractParametrizedTest {
 	@Test public void go() {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
 		final CompilationUnit cu = makeAST(makeInFile(fIn));
-		assertEquals(1, spartanization.findOpportunities(cu).size());
+		assertEquals(cu.toString(), 1, spartanization.findOpportunities(cu).size());
 		final StringBuilder str = new StringBuilder(fIn.getName());
 		final int testMarker = str.indexOf(testSuffix);
-		final String expected = testMarker > 0 ? readFile(TestSuite.makeOutFile(fOut)): readFile(fOut);
+		final String expected = testMarker > 0 ? readFile(TestSuite.makeOutFile(fOut)) : readFile(fOut);
 		final Document d = new Document(testMarker > 0 ? readFile(TestSuite.makeInFile(fIn)) : readFile(fIn));
-		assertThat(rewrite(spartanization, cu, d ).get(), equalToIgnoringWhiteSpace(expected));
+		assertTrue(similar(expected, rewrite(spartanization, cu, d).get()));
+	}
+	private static boolean similar(final String expected, final String actual) {
+		return expected.equals(actual) || almostSame(expected, actual);
+	}
+	private static boolean almostSame(final String expected, final String actual) {
+		assertEquals(compressSpaces(expected), compressSpaces(actual));
+		return true;
+	}
+	private static String compressSpaces(final String s) {
+		String $ = s.replaceAll("^[ \t]\n","").replaceAll("[ \t]+", " ").replaceAll("[ \t]+$", "").replaceAll("^[ \t]+$", " ");
+		for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" }) {
+			$ = $.replaceAll("\\s+" + operator, operator);
+			$ = $.replaceAll(operator + "\\s+", operator);
+		}
+		return $;
 	}
 	/**
 	 * Generate test cases for this parameterized class.
-	 *
+	 * 
 	 * @return a collection of cases, where each case is an array of four objects,
 	 *         the spartanization, the test case name, the input file, and the
 	 *         output file.
@@ -67,8 +81,7 @@ public class InOutTest extends AbstractParametrizedTest {
 		return new TestSuite.Files() {
 			@Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
 				if (name.endsWith(testSuffix) && 0 < fileToStringBuilder(f).indexOf(testKeyword))
-					return  new Object[] { s, name, f, makeOutFile(f) };
-
+					return new Object[] { s, name, f, makeOutFile(f) };
 				if (!name.endsWith(".in"))
 					return null;
 				final File fOut = new File(d, name.replaceAll("\\.in$", ".out"));
