@@ -4,13 +4,16 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.compiler.CompilationParticipant;
 import org.eclipse.jdt.core.compiler.ReconcileContext;
 
+
 /**
- * TODO: Document
- * <p>
- * TODO: Change to CompilerNotificator; class name should start with upper case.
+ * This class notifies the Java compiler of a warning or an error in the build process
+ * according to the preferences set in the spartanization preferences page for each
+ * transformation suggestion
  * 
+ * @author Tomer Zeltzer (original)
+ * @since 10/06/2014
  */
-public class compilerNotificator extends CompilationParticipant {
+public class CompilerNotificator extends CompilationParticipant {
 	@Override public int aboutToBuild(@SuppressWarnings("unused") final IJavaProject project) {
 		return 0;
 	}
