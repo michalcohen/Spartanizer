@@ -62,11 +62,17 @@ public class InOutTest extends AbstractParametrizedTest {
 		return true;
 	}
 	private static String compressSpaces(final String s) {
-		String $ = s.replaceAll("^[ \t]\n","").replaceAll("[ \t]+", " ").replaceAll("[ \t]+$", "").replaceAll("^[ \t]+$", " ");
-		for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" }) {
-			$ = $.replaceAll("\\s+" + operator, operator);
-			$ = $.replaceAll(operator + "\\s+", operator);
-		}
+		String $ = s//
+		    .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
+		    .replaceAll("[ \t]+", " ") // Squeeze whites
+		    .replaceAll("[ \t]+$", "") // Remove trailing spaces
+		    .replaceAll("^[ \t]+$", " ") // On space at line beginnings
+		;
+		for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
+			$ = $ //
+			    .replaceAll("\\s+" + operator, operator) // Preceding whites
+			    .replaceAll(operator + "\\s+", operator) // Succeeding whites
+		;
 		return $;
 	}
 	/**

@@ -44,9 +44,9 @@ public class SimplifyLogicalNegation extends Spartanization {
 			}
 			private boolean simplifyNot(final PrefixExpression e, final Expression inner) {
 				return perhapsDoubleNegation(e, inner) //
-						|| perhapsDeMorgan(e, inner) //
-						|| perhapsComparison(e, inner) //
-						|| true;
+				    || perhapsDeMorgan(e, inner) //
+				    || perhapsComparison(e, inner) //
+				    || true;
 			}
 			boolean perhapsDoubleNegation(final Expression e, final Expression inner) {
 				return perhapsDoubleNegation(e, asNot(inner));
@@ -63,12 +63,11 @@ public class SimplifyLogicalNegation extends Spartanization {
 			boolean deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
 				return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
 			}
-			boolean deMorgan1(final Expression e, final InfixExpression inner, final Expression left,
-					final Expression right) {
+			boolean deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
 				return replace(e, //
-						parenthesize( //
-								addExtendedOperands(inner, //
-										makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right)))));
+				    parenthesize( //
+				    addExtendedOperands(inner, //
+				        makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right)))));
 			}
 			InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
 				if (from.hasExtendedOperands())
@@ -102,24 +101,23 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return isSimple(e.getClass());
 			}
 			@SuppressWarnings("unchecked") boolean isSimple(final Class<? extends Expression> c) {
-				return in(c,
-						BooleanLiteral.class, //
-						CharacterLiteral.class, //
-						NullLiteral.class, //
-						NumberLiteral.class, //
-						StringLiteral.class, //
-						TypeLiteral.class, //
-						Name.class, //
-						QualifiedName.class, //
-						SimpleName.class, //
-						ParenthesizedExpression.class, //
-						SuperMethodInvocation.class, //
-						MethodInvocation.class, //
-						ClassInstanceCreation.class, //
-						SuperFieldAccess.class, //
-						FieldAccess.class, //
-						ThisExpression.class, //
-						null);
+				return in(c, BooleanLiteral.class, //
+				    CharacterLiteral.class, //
+				    NullLiteral.class, //
+				    NumberLiteral.class, //
+				    StringLiteral.class, //
+				    TypeLiteral.class, //
+				    Name.class, //
+				    QualifiedName.class, //
+				    SimpleName.class, //
+				    ParenthesizedExpression.class, //
+				    SuperMethodInvocation.class, //
+				    MethodInvocation.class, //
+				    ClassInstanceCreation.class, //
+				    SuperFieldAccess.class, //
+				    FieldAccess.class, //
+				    ThisExpression.class, //
+				    null);
 			}
 			private PrefixExpression not(final Expression e) {
 				final PrefixExpression $ = t.newPrefixExpression();
@@ -171,13 +169,13 @@ public class SimplifyLogicalNegation extends Spartanization {
 	}
 	static InfixExpression asComparison(final InfixExpression e) {
 		return in(e.getOperator(), //
-				GREATER, //
-				GREATER_EQUALS, //
-				LESS, //
-				LESS_EQUALS, //
-				EQUALS, //
-				NOT_EQUALS //
-				) ? e : null;
+		    GREATER, //
+		    GREATER_EQUALS, //
+		    LESS, //
+		    LESS_EQUALS, //
+		    EQUALS, //
+		    NOT_EQUALS //
+		) ? e : null;
 	}
 	static InfixExpression asComparison(final Expression e) {
 		return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
