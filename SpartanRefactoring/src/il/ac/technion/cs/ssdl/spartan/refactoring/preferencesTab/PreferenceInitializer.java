@@ -9,14 +9,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * Class used to initialize default preference values.
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
+	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
+	 * initializeDefaultPreferences()
 	 */
-	@Override
-	public void initializeDefaultPreferences() {
+	@Override public void initializeDefaultPreferences() {
 		// TODO: Convert this into a loop or something.
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		store.setDefault("Comparison With Boolean", "Warning");

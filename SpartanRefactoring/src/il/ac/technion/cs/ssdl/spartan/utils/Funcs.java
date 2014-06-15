@@ -39,7 +39,7 @@ public enum Funcs {
 	 *         parameters was null
 	 */
 	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
-			final Expression initalizer) {
+	    final Expression initalizer) {
 		if (hasNull(t, r, varName, initalizer))
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
@@ -61,7 +61,7 @@ public enum Funcs {
 	 * @return a parenthesized conditional expression
 	 */
 	public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
-			final Expression thenExp, final Expression elseExp) {
+	    final Expression thenExp, final Expression elseExp) {
 		if (hasNull(t, r, cond, thenExp, elseExp))
 			return null;
 		final ConditionalExpression $ = t.newConditionalExpression();
@@ -84,7 +84,7 @@ public enum Funcs {
 	 * @return a new if Statement
 	 */
 	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
-			final Statement elseStmnt) {
+	    final Statement elseStmnt) {
 		if (hasNull(t, r, cond, thenStmnt, elseStmnt))
 			return null;
 		final IfStatement $ = t.newIfStatement();
@@ -123,7 +123,7 @@ public enum Funcs {
 	 * @return the new infix expression
 	 */
 	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
-			final Expression left, final Expression right) {
+	    final Expression left, final Expression right) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
@@ -146,7 +146,7 @@ public enum Funcs {
 	 * @return the new assignment
 	 */
 	public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right,
-			final Expression left) {
+	    final Expression left) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final Assignment $ = t.newAssignment();
@@ -168,7 +168,7 @@ public enum Funcs {
 	 *         was null
 	 */
 	public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression operand,
-			final PrefixExpression.Operator o) {
+	    final PrefixExpression.Operator o) {
 		if (hasNull(t, operand, o))
 			return null;
 		final PrefixExpression $ = t.newPrefixExpression();
@@ -223,7 +223,6 @@ public enum Funcs {
 		final ASTNode $ = s.getNodeType() != ASTNode.BLOCK ? s : getBlockSingleStmnt(s);
 		return $ == null || $.getNodeType() != ASTNode.EXPRESSION_STATEMENT ? null : (ExpressionStatement) $;
 	}
-
 	/**
 	 * @param s
 	 *          a statement or block to extract the assignment from
@@ -251,11 +250,12 @@ public enum Funcs {
 	 *         Contains more than one statement
 	 */
 	public static boolean isAssignment(final ASTNode s) {
-		if (s != null && s.getNodeType() == ASTNode.BLOCK){
-			final ExpressionStatement es = getExpressionStatement(getBlockSingleStmnt((Block)s));
+		if (s != null && s.getNodeType() == ASTNode.BLOCK) {
+			final ExpressionStatement es = getExpressionStatement(getBlockSingleStmnt((Block) s));
 			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
 		}
-		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT && ASTNode.ASSIGNMENT == ((ExpressionStatement)s).getExpression().getNodeType();
+		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT
+		    && ASTNode.ASSIGNMENT == ((ExpressionStatement) s).getExpression().getNodeType();
 	}
 	/**
 	 * @param b
@@ -349,10 +349,9 @@ public enum Funcs {
 	 *         (or if s or name are null)
 	 */
 	public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
-		return hasNull(n, name)
-				|| n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-				|| name.getNodeType() != ASTNode.SIMPLE_NAME ? null
-						: getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),(SimpleName) name);
+		return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
+		    || name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),
+		    (SimpleName) name);
 	}
 	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
 		for (final VariableDeclarationFragment o : frags)
@@ -374,7 +373,7 @@ public enum Funcs {
 			return false;
 		for (final Expression name : names)
 			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-			|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+			    || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -409,7 +408,7 @@ public enum Funcs {
 			return false;
 		for (final Assignment asgn : as)
 			if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
-			|| !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
+			    || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
 				return false;
 		return true;
 	}
@@ -527,9 +526,10 @@ public enum Funcs {
 	}
 	/**
 	 * @param nodes
-	 * 				unknown number of nodes to check
-	 * @return true if one of the nodes is an Expression Statement of type Post or Pre Expression with ++ or -- operator.
-	 * false if none of them are or if the given parameter is null.
+	 *          unknown number of nodes to check
+	 * @return true if one of the nodes is an Expression Statement of type Post or
+	 *         Pre Expression with ++ or -- operator. false if none of them are or
+	 *         if the given parameter is null.
 	 */
 	public static boolean containIncOrDecExp(final ASTNode... nodes) {
 		if (nodes == null)
@@ -541,14 +541,16 @@ public enum Funcs {
 	}
 	/**
 	 * @param n
-	 * 			node to check
-	 * @return true if node is an Expression Statement of type Post or Pre Expression with ++ or -- operator
-	 * false if node is not an Expression Statement or its a Post or Pre fix expression that
-	 * its operator is not ++ or --
+	 *          node to check
+	 * @return true if node is an Expression Statement of type Post or Pre
+	 *         Expression with ++ or -- operator false if node is not an
+	 *         Expression Statement or its a Post or Pre fix expression that its
+	 *         operator is not ++ or --
 	 */
 	public static boolean isNodeIncOrDecExp(final ASTNode n) {
-		switch(n.getNodeType()){
-		case ASTNode.EXPRESSION_STATEMENT: return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
+		switch (n.getNodeType()) {
+		case ASTNode.EXPRESSION_STATEMENT:
+			return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
 		case ASTNode.POSTFIX_EXPRESSION: {
 			final PostfixExpression.Operator op = ((PostfixExpression) n).getOperator();
 			return op == PostfixExpression.Operator.INCREMENT || op == PostfixExpression.Operator.DECREMENT;
@@ -563,7 +565,7 @@ public enum Funcs {
 	}
 	/**
 	 * @param n
-	 * 			node to check
+	 *          node to check
 	 * @return true if the given node is a boolean literal or false otherwise
 	 */
 	public static boolean isBoolLitrl(final ASTNode n) {
@@ -571,15 +573,16 @@ public enum Funcs {
 	}
 	/**
 	 * @param n
-	 * 			node to check
-	 * @return true if the given node is an expression statement or false otherwise
+	 *          node to check
+	 * @return true if the given node is an expression statement or false
+	 *         otherwise
 	 */
 	public static boolean isExpStmt(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
 	}
 	/**
 	 * @param n
-	 * 			node to check
+	 *          node to check
 	 * @return true if the given node is a return statement or false otherwise
 	 */
 	public static boolean isReturn(final ASTNode n) {
@@ -587,34 +590,35 @@ public enum Funcs {
 	}
 	/**
 	 * @param n
-	 * 			node to check
-	 * @return true if the given node is a variable declaration statement or false otherwise
+	 *          node to check
+	 * @return true if the given node is a variable declaration statement or false
+	 *         otherwise
 	 */
 	public static boolean isVarDeclStmt(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT;
 	}
 	/**
 	 * @param n
-	 * 			node to check
+	 *          node to check
 	 * @return true if the given node is an infix expression or false otherwise
 	 */
-	public static boolean isInfix(final ASTNode n){
+	public static boolean isInfix(final ASTNode n) {
 		return n != null && ASTNode.INFIX_EXPRESSION == n.getNodeType();
 	}
 	/**
 	 * @param n
-	 * 			node to check
+	 *          node to check
 	 * @return true if the given node is a method invocation or false otherwise
 	 */
-	public static boolean isMethodInvocation(final ASTNode n){
+	public static boolean isMethodInvocation(final ASTNode n) {
 		return n != null && ASTNode.METHOD_INVOCATION == n.getNodeType();
 	}
 	/**
 	 * @param n
-	 * 			node to check
+	 *          node to check
 	 * @return true if the given node is a prefix expression or false otherwise
 	 */
-	public static boolean isPrefix(final ASTNode n){
+	public static boolean isPrefix(final ASTNode n) {
 		return n != null && ASTNode.PREFIX_EXPRESSION == n.getNodeType();
 	}
 }

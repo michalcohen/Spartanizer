@@ -4,11 +4,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.compiler.CompilationParticipant;
 import org.eclipse.jdt.core.compiler.ReconcileContext;
 
-
 /**
- * This class notifies the Java compiler of a warning or an error in the build process
- * according to the preferences set in the spartanization preferences page for each
- * transformation suggestion
+ * This class notifies the Java compiler of a warning or an error in the build
+ * process according to the preferences set in the spartanization preferences
+ * page for each transformation suggestion
  * 
  * @author Tomer Zeltzer (original)
  * @since 10/06/2014

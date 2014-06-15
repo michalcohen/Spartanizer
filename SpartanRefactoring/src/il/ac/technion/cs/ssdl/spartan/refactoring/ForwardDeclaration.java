@@ -6,14 +6,7 @@ import il.ac.technion.cs.ssdl.spartan.utils.Range;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
@@ -24,20 +17,22 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  *         04.06.2014)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3 /
  *         04.06.2014)
- * @since 2013/01/01
- * TODO: There <b>must</b> be an option to disable this warning in selected places. Consider this example:
- * <pre>
+ * @since 2013/01/01 TODO: There <b>must</b> be an option to disable this
+ *        warning in selected places. Consider this example:
+ * 
+ *        <pre>
  * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
  * 	final T t = ts[i];
  * 	ts[i] = ts[j];
  * 	ts[j] = t;
  * }
  * </pre>
-
- * Require comment
- * <pre>
+ * 
+ *        Require comment
+ * 
+ *        <pre>
  * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
- *  final T t = ts[i]; // Don't move!
+ * 	final T t = ts[i]; // Don't move!
  * 	ts[i] = ts[j];
  * 	ts[j] = t;
  * }
@@ -72,8 +67,8 @@ public class ForwardDeclaration extends Spartanization {
 						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
 					} else {
 						r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-								t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
-								beginingOfDeclarationsBlockIdx + 1, null);
+						    t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
+						    beginingOfDeclarationsBlockIdx + 1, null);
 						r.remove(n, null);
 					}
 				}
@@ -92,7 +87,7 @@ public class ForwardDeclaration extends Spartanization {
 			final VariableDeclarationStatement nextNVDS = (VariableDeclarationStatement) nextN;
 			for (int i = 0; i < nextNVDS.fragments().size(); i++)
 				if (nextDeclaredIdx + 1 == findFirstUse(block, ((VariableDeclarationFragment) nextNVDS.fragments().get(i)).getName())
-				&& beginingOfDeclarationsIdx == nextDeclaredIdx)
+				    && beginingOfDeclarationsIdx == nextDeclaredIdx)
 					return true;
 		}
 		return false;
