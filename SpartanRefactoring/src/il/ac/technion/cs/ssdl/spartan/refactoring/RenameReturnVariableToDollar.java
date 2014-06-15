@@ -53,14 +53,16 @@ public class RenameReturnVariableToDollar extends Spartanization {
 				return false;
 			}
 			@Override public boolean visit(final VariableDeclarationStatement n) {
-				// TODO: the next line throws null pointer exception, please test thoroughly.
+				// TODO: the next line throws null pointer exception, please test
+				// thoroughly.
 				//
-				// Seems like you fixed it properly, when does it throw a null pointer exception(test case)?
+				// Seems like you fixed it properly, when does it throw a null pointer
+				// exception(test case)?
 				// Also, what is left for us to test here?
 				try {
 					if (n.getType().toString().equals(mthdDecl.getReturnType2().toString()))
 						$.addAll(n.fragments());
-				} catch(final NullPointerException e) {
+				} catch (final NullPointerException e) {
 					return false;
 				}
 				return true;
@@ -118,7 +120,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return $;
 	}
 	private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
-			final List<ReturnStatement> rs) {
+	    final List<ReturnStatement> rs) {
 		VariableDeclarationFragment $ = null;
 		int maxOccurrences = 0;
 		for (final VariableDeclarationFragment v : vs) {
@@ -136,12 +138,12 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return 0 <= Arrays.binarySearch(literals, r.getExpression().getNodeType());
 	}
 	private static final int[] literals = sort(new int[] {
-			//
-			ASTNode.NULL_LITERAL, //
-			ASTNode.CHARACTER_LITERAL, //
-			ASTNode.NUMBER_LITERAL, //
-			ASTNode.STRING_LITERAL, //
-			ASTNode.BOOLEAN_LITERAL, //
+	    //
+	    ASTNode.NULL_LITERAL, //
+	    ASTNode.CHARACTER_LITERAL, //
+	    ASTNode.NUMBER_LITERAL, //
+	    ASTNode.STRING_LITERAL, //
+	    ASTNode.BOOLEAN_LITERAL, //
 	});
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
