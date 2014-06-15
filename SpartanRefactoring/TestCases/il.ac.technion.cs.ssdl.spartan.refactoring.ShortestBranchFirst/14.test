@@ -1,0 +1,31 @@
+package p;
+
+public class Main {
+		public static Statement getBlockSingleStmnt(final Statement s) {
+		int a=0;
+		if (a > 0){
+			int b=9;
+			b*=b;
+			return 6;
+		} else {
+			a = 5;
+			return b;
+		}
+	}
+}
+<Test Result>
+package p;
+
+public class Main {
+		public static Statement getBlockSingleStmnt(final Statement s) {
+		int a=0;
+		if (a <= 0){
+			a = 5;
+			return b;
+		} else {
+			int b=9;
+			b*=b;
+			return 6;
+		}
+	}
+}
