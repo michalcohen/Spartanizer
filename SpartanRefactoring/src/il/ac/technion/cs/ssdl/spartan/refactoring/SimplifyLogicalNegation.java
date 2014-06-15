@@ -4,10 +4,7 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
@@ -221,10 +218,15 @@ public class SimplifyLogicalNegation extends Spartanization {
 	 */
 	@FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method" })//
 	public static class TEST {
-		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfix() {
+		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsNotNull() {
 			final InfixExpression i = mock(InfixExpression.class);
 			doReturn(GREATER).when(i).getOperator();
 			assertNotNull(asComparison(i));
+		}
+		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsCorrect() {
+			final InfixExpression i = mock(InfixExpression.class);
+			doReturn(GREATER).when(i).getOperator();
+			assertEquals(i, asComparison(i));
 		}
 		@SuppressWarnings("javadoc") @Test public void asComparisonTypicalExpression() {
 			final InfixExpression i = mock(InfixExpression.class);
