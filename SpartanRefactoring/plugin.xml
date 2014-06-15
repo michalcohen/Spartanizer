@@ -334,7 +334,7 @@
    </extension>
    <extension point="org.eclipse.jdt.core.compilationParticipant">
       <compilationParticipant
-            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.compilerNotificator"
+            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.CompilerNotificator"
             createsProblems="true"
             id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.compilerNotificator"
             modifiesEnvironment="false">
