@@ -31,8 +31,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
  * @since 2014/05/24 TODO: Bug. Highlight should be on operator only. Otherwise
- *        it is too messy. TODO: Bug. It supposes to switch concatenated
- *        strings, e.g., System.prinln("Value is "+ v)
+ *        it is too messy. TODO <Resolved>: Bug. It supposes to switch
+ *        concatenated strings, e.g., System.prinln("Value is "+ v) - <see test
+ *        15>.
+ * 
+ *        TODO: Add options for 1 right literal swap and 2 literals swap.
  */
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
@@ -166,23 +169,6 @@ public class ShortestOperand extends Spartanization {
 	 * @see ShortestOperand
 	 */
 	public static boolean isFlipable(final Operator o) {
-		// TODO: - Check Fixed Bugs -
-		// Done: add bit wise or and bit wise not | I believe you meant to "|"
-		// and
-		// "&" (because "bitwise not" is unary). if that's the case they are
-		// already
-		// implemented here as "OR" and "AND" (presented at test 7) - there are
-		// also
-		// CONDITINAL versions of them but they are not commutative - therefore
-		// not
-		// applicable for this list
-		// Done: add testing for XOR; it does not show up right. | I'm sure that
-		// there are some problems, but it's hard to reproduce them as
-		// "1 test case"
-		// test due to the fact that they might occur on more complex trees.
-		// Done: add test case for string concatenation which uses "+" as well.
-		// |
-		// Added them, and even found and treated an hidden bug.
 		return in(o, //
 				AND, //
 				EQUALS, //
