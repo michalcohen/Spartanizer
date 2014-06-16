@@ -67,7 +67,17 @@ public abstract class Spartanization extends Refactoring {
 		return name;
 	}
 	/**
-	 * @return Spartanization rules in the conventional order
+	 * TODO: It has truly bad smell (and do read about code smells!!! this is not
+	 * just a project in which you slaves work for me; you are really supposed to
+	 * learn, and more importantly learn to learn, and even more importantly,
+	 * especially for you Tomer, learn to accept that you have to learn.)
+	 * 
+	 * Anyway, I was going to say that hard-coding (another phrase for you guys to
+	 * learn), something as you did below looks awful, and smells really bad. One
+	 * quick, but not optimal, way of fixing this, is by iterating over what class
+	 * All has to provide.
+	 * 
+	 * @return Spartanization rules
 	 */
 	public static String[] getSpartaRules() {
 		return new String[] { //
@@ -80,6 +90,8 @@ public abstract class Spartanization extends Refactoring {
 		    "Ternarize" };
 	}
 	/**
+	 * TODO: I have no idea what a function like this could be used for.
+	 * 
 	 * @return Spartanization ASCII header
 	 */
 	public static String[] getSpartanTitle() {

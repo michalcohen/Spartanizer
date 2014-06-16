@@ -26,16 +26,18 @@ public class Ternarize extends Spartanization {
 	}
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
-			@Override public boolean visit(final IfStatement ifStmnt) {
-				return !inRange(m, ifStmnt) || //
-				    treatAssignIfAssign(t, r, ifStmnt) || //
-				    treatIfReturn(t, r, ifStmnt) || //
-				    treatIfSameExpStmntOrRet(t, r, ifStmnt) || //
-				    true;
+			@Override public boolean visit(final IfStatement i) {
+				return // try lot's of options, but finally return true.
+				!inRange(m, i) // Stop here
+				    || perhapsAssignIfAssign(t, r, i) //
+				    || perhapsIfReturn(t, r, i) //
+				    || perhapsIfSameExpStmntOrRet(t, r, i) //
+				    || true // "i" is beyond hope, perhaps its children
+				;
 			}
 		});
 	}
-	static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
+	static boolean perhapsIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
 		return null != asBlock(ifStmnt.getParent()) && treatIfReturn(ast, r, ifStmnt, asBlock(ifStmnt.getParent()));
 	}
 	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt, final Block parent) {
@@ -103,7 +105,7 @@ public class Ternarize extends Spartanization {
 			elseNode = e;
 		}
 	}
-	static boolean treatIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
+	static boolean perhapsIfSameExpStmntOrRet(final AST ast, final ASTRewrite r, final IfStatement ifStmt) {
 		final Statement thenStmt = getBlockSingleStmnt(ifStmt.getThenStatement());
 		final Statement elseStmt = getBlockSingleStmnt(ifStmt.getElseStatement());
 		return !hasNull(asBlock(ifStmt.getParent()), thenStmt, elseStmt)
@@ -267,7 +269,7 @@ public class Ternarize extends Spartanization {
 		return isBoolLitrl(thenExp) && isBoolLitrl(elseExp) ? tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue())
 		    : makeParenthesizedConditionalExp(t, r, cond, thenExp, elseExp);
 	}
-	static boolean treatAssignIfAssign(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
+	static boolean perhapsAssignIfAssign(final AST ast, final ASTRewrite r, final IfStatement ifStmnt) {
 		return asBlock(ifStmnt.getParent()) != null && treatAssignIfAssign(ast, r, ifStmnt, statements(asBlock(ifStmnt.getParent())));
 	}
 	private static boolean treatAssignIfAssign(final AST ast, final ASTRewrite r, final IfStatement ifStmnt, final List<ASTNode> stmts) {
@@ -307,7 +309,8 @@ public class Ternarize extends Spartanization {
 		    && null != prevDecl.getInitializer() //
 		    && null == ifStmnt.getElseStatement() //
 		    && !isConditional(prevDecl.getInitializer()) //
-		    && !dependsOn(prevDecl.getName(), ifStmnt.getExpression(), asgnThen.getRightHandSide()); //
+		    && !dependsOn(prevDecl.getName(), ifStmnt.getExpression(), asgnThen.getRightHandSide())//
+		;
 	}
 	private static boolean tryHandleOnlyNextAsgnExist(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 	    final Assignment asgnThen, final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
