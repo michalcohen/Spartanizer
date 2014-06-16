@@ -66,7 +66,6 @@ public abstract class Spartanization extends Refactoring {
 	@Override public final String getName() {
 		return name;
 	}
-<<<<<<< HEAD
 	/**
 	 * @return Spartanization rules in the conventional order
 	 */
@@ -80,11 +79,8 @@ public abstract class Spartanization extends Refactoring {
 		    "Shortest Operand First", //
 		    "Ternarize" };
 	}
-	public static String[] title() {
-=======
-
 	/**
-	 * @return Spartanization ascii header
+	 * @return Spartanization ASCII header
 	 */
 	public static String[] getSpartanTitle() {
 		return new String[] { //
@@ -100,18 +96,18 @@ public abstract class Spartanization extends Refactoring {
 		    "                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
 		    "                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
 		    "", //
-				"               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
-				"                 TTT   HH   HH  III  SS            III  SS      ", //
-				"                 TTT   HHHHHHH  III   SSSSS        III   SSSSS  ", //
-				"                 TTT   HH   HH  III       SS       III       SS ", //
-				"                 TTT   HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
-				"                                                                ", //
-				"                 SSSSS  PPPPPP    AAA   RRRRRR  TTTTTTT   AAA   ", //
-				"                SS      PP   PP  AAAAA  RR   RR   TTT    AAAAA  ", //
-				"                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA ", //
-				"                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
-				"                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
-				"" };
+		    "               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
+		    "                 TTT   HH   HH  III  SS            III  SS      ", //
+		    "                 TTT   HHHHHHH  III   SSSSS        III   SSSSS  ", //
+		    "                 TTT   HH   HH  III       SS       III       SS ", //
+		    "                 TTT   HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
+		    "                                                                ", //
+		    "                 SSSSS  PPPPPP    AAA   RRRRRR  TTTTTTT   AAA   ", //
+		    "                SS      PP   PP  AAAAA  RR   RR   TTT    AAAAA  ", //
+		    "                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA ", //
+		    "                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
+		    "                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
+		    "" };
 	}
 	/**
 	 * @return Spartanization rules preferences file path.
@@ -172,8 +168,6 @@ public abstract class Spartanization extends Refactoring {
 	 * 
 	 * @return true if the node is not inside selection. If there is no selection
 	 *         at all will return false.
-	 * @return true if the node is not inside selection. If there is no
-	 *         selection at all will return false.
 	 */
 	protected boolean isNodeOutsideSelection(final ASTNode n) {
 		return !isSelected(n.getStartPosition());
