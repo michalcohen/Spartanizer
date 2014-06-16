@@ -55,27 +55,26 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public boolean performOk() {
-		// TODO: Convert to StringBuilder
 		super.performOk();
 		SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
-		String s = "";
+		final StringBuilder s = new StringBuilder("");
 		final String[] title = Spartanization.getSpartanTitle();
 		for (final String str : title)
-			s = s + str + "\n";
+			s.append(str + "\n");
 		for (final String str : allRulesNames())
-			s = s + store.getString(str) + "\n";
+			s.append(store.getString(str) + "\n");
 		PrintWriter print;
 		// TODO: Use the new syntax of "try" with arguments.
 		try {
 			print = new PrintWriter(Spartanization.getPrefFilePath());
-			print.write(s);
+			print.write(s.toString());
 			print.close();
 		} catch (final FileNotFoundException e) {
 			// TODO Treat it like a gentleman
 			e.printStackTrace();
 		}
-		return s != "bb";
+		return s.toString().equals("bb");
 	}
 
 	/*
