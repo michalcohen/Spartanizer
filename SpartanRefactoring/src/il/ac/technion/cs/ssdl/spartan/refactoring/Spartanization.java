@@ -40,12 +40,12 @@ import org.eclipse.ui.IMarkerResolution;
 /**
  * the base class for all Spartanization Refactoring classes, contains common
  * functionality
- *
+ * 
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <boris.van.sosin [at] gmail.com>} (v2)
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/10
- *
+ * 
  * @since 2013/01/01
  */
 public abstract class Spartanization extends Refactoring {
@@ -58,7 +58,7 @@ public abstract class Spartanization extends Refactoring {
 
 	/***
 	 * Instantiates this class, with message identical to name
-	 *
+	 * 
 	 * @param name
 	 *            a short name of this refactoring
 	 */
@@ -68,7 +68,7 @@ public abstract class Spartanization extends Refactoring {
 
 	/***
 	 * Instantiates this class
-	 *
+	 * 
 	 * @param name
 	 *            a short name of this refactoring
 	 * @param message
@@ -84,20 +84,6 @@ public abstract class Spartanization extends Refactoring {
 		return name;
 	}
 
-	/**
-	 * @return Spartanization rules in the conventional order
-	 */
-	public static String[] getSpartaRules() {
-		return new String[] { //
-		"Comparison With Boolean", //
-				"Forward Declaration", //
-				"Inline Single Use", //
-				"Rename Return Variable to $", //
-				"Shortest Branch First", //
-				"Shortest Operand First", //
-				"Ternarize" };
-	}
-
 	public static String[] getSpartanTitle() {
 		return new String[] { //
 				"               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
@@ -111,7 +97,7 @@ public abstract class Spartanization extends Refactoring {
 				"                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA ", //
 				"                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
 				"                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
-		"" };
+				"" };
 	}
 
 	/**
@@ -126,7 +112,7 @@ public abstract class Spartanization extends Refactoring {
 
 	/**
 	 * creates an ASTRewrite which contains the changes
-	 *
+	 * 
 	 * @param cu
 	 *            the Compilation Unit (outermost ASTNode in the Java Grammar)
 	 * @param pm
@@ -142,7 +128,7 @@ public abstract class Spartanization extends Refactoring {
 	/**
 	 * creates an ASTRewrite, under the context of a text marker, which contains
 	 * the changes
-	 *
+	 * 
 	 * @param pm
 	 *            a progress monitor in which to display the progress of the
 	 *            refactoring
@@ -189,7 +175,7 @@ public abstract class Spartanization extends Refactoring {
 
 	/**
 	 * Determines if the node is outside of the selected text.
-	 *
+	 * 
 	 * @return true if the node is not inside selection. If there is no
 	 *         selection at all will return false.
 	 */
@@ -291,7 +277,7 @@ public abstract class Spartanization extends Refactoring {
 	/**
 	 * Creates a change from each compilation unit and stores it in the changes
 	 * array
-	 *
+	 * 
 	 * @throws IllegalArgumentException
 	 * @throws CoreException
 	 */
@@ -373,7 +359,7 @@ public abstract class Spartanization extends Refactoring {
 	/**
 	 * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
 	 * spartanization suggestions
-	 *
+	 * 
 	 * @param cu
 	 *            what to check
 	 * @return a collection of {@link Range} objects each containing a
@@ -459,7 +445,7 @@ public abstract class Spartanization extends Refactoring {
 
 	/**
 	 * a quickfix which automatically performs the spartanization
-	 *
+	 * 
 	 * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
 	 * @since 2013/07/01
 	 */
@@ -481,7 +467,7 @@ public abstract class Spartanization extends Refactoring {
 
 	/**
 	 * a quickfix which opens a refactoring wizard with the spartanization
-	 *
+	 * 
 	 * @author r Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
 	 *         (v2)
 	 */
