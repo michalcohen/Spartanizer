@@ -1,9 +1,14 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
+import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
+
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -17,11 +22,16 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * This page is used to modify preferences only. They are stored in the
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
- * 
+ *
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original)
+ * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
+ *         2014/6/16 (v2)
  * @since 10/06/2014
  */
-public class SpartanizationPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class SpartanizationPreferencePage extends FieldEditorPreferencePage
+		implements IWorkbenchPreferencePage {
+	String[] sparta = Spartanization.getSpartaRules();
+
 	/**
 	 * Instantiates the page and sets its default values
 	 */
@@ -30,28 +40,67 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());
 		setDescription("Select how the compiler will regard each tranformation suggestion\n\n");
 	}
+
 	/**
-	 * Creates the field editors. Field editors are abstractions of the common GUI
-	 * blocks needed to manipulate various types of preferences. Each field editor
-	 * knows how to save and restore itself.
+	 * Creates the field editors. Field editors are abstractions of the common
+	 * GUI blocks needed to manipulate various types of preferences. Each field
+	 * editor knows how to save and restore itself.
 	 */
-	@Override public void createFieldEditors() {
-		addField(new ComboFieldEditor("Comparison With Boolean", "Comparison With Boolean:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor("Forward Declaration", "Forward Declaration:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor("Inline Single Use", "Inline Single Use:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor("Rename Return Variable to $", "Rename Return Variable to $:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor("Shortest Branch First", "Shortest Branch First:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor("Shortest Operand First", "Shortest Operand First:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor("Ternarize", "Ternarize:", options, getFieldEditorParent()));
+	@Override
+	public void createFieldEditors() {
+		addField(new ComboFieldEditor(sparta[0], "Comparison With Boolean:",
+				options, getFieldEditorParent()));
+		addField(new ComboFieldEditor(sparta[1], "Forward Declaration:",
+				options, getFieldEditorParent()));
+		addField(new ComboFieldEditor(sparta[2], "Inline Single Use:", options,
+				getFieldEditorParent()));
+		addField(new ComboFieldEditor(sparta[3],
+				"Rename Return Variable to $:", options, getFieldEditorParent()));
+		addField(new ComboFieldEditor(sparta[4], "Shortest Branch First:",
+				options, getFieldEditorParent()));
+		addField(new ComboFieldEditor(sparta[5], "Shortest Operand First:",
+				options, getFieldEditorParent()));
+		addField(new ComboFieldEditor(sparta[6], "Ternarize:", options,
+				getFieldEditorParent()));
 	}
+
+	@Override
+	public boolean performOk() {
+		super.performOk();
+		SpartanizationPreferencePage.class.getProtectionDomain()
+				.getCodeSource().getLocation().getPath();
+
+		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
+		String s = "";
+		final String[] title = Spartanization.getSpartanTitle();
+		for (final String str : title)
+			s = s + str + "\n";
+		for (final String str : sparta)
+			s = s + store.getString(str) + "\n";
+		PrintWriter print;
+		try {
+			print = new PrintWriter(Spartanization.getPrefFilePath());
+			print.write(s);
+			print.close();
+		} catch (final FileNotFoundException e) {
+			// TODO Treat it like a gentleman
+			e.printStackTrace();
+		}
+
+		return s != "bb";
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	@Override public void init(@SuppressWarnings("unused") final IWorkbench workbench) {
+	@Override
+	public void init(@SuppressWarnings("unused") final IWorkbench workbench) {
 		super.initialize();
 	}
-	private static String[][] options = new String[][] { { "Error", "Error" }, { "Warning", "Warning" }, { "Ignore", "Ignore" } };
+
+	private static String[][] options = new String[][] { { "Apply", "Apply" },
+			{ "Ignore", "Ignore" } };
 }

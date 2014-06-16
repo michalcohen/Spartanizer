@@ -7,7 +7,15 @@ import il.ac.technion.cs.ssdl.spartan.utils.Utils;
 
 import java.util.Map;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
@@ -16,6 +24,9 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 /**
  * @author Eclipse (auto-generated)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
+ * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
+ *         2014/6/16 (v3)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code>
  * @since 2013/07/01
  */
 public class Builder extends IncrementalProjectBuilder {
@@ -27,9 +38,11 @@ public class Builder extends IncrementalProjectBuilder {
 	 * Empty prefix for brevity
 	 */
 	public static final String EMPTY_PREFIX = "";
+
 	private static String prefix() {
 		return EMPTY_PREFIX;
 	}
+
 	/**
 	 * the ID under which this builder is registered
 	 */
@@ -40,15 +53,20 @@ public class Builder extends IncrementalProjectBuilder {
 	 * spartanization is stored
 	 */
 	public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
-	@Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
-	    final IProgressMonitor m) throws CoreException {
+
+	@Override
+	protected IProject[] build(final int kind, @SuppressWarnings({ "unused",
+	"rawtypes" }) final Map args, final IProgressMonitor m)
+			throws CoreException {
 		if (m != null)
-			m.beginTask("Checking for spartanization opportunities", IProgressMonitor.UNKNOWN);
+			m.beginTask("Checking for spartanization opportunities",
+					IProgressMonitor.UNKNOWN);
 		build(kind);
 		if (m != null)
 			m.done();
 		return null;
 	}
+
 	private void build(final int kind) throws CoreException {
 		if (kind == FULL_BUILD)
 			fullBuild();
@@ -60,10 +78,12 @@ public class Builder extends IncrementalProjectBuilder {
 				incrementalBuild(d);
 		}
 	}
+
 	protected void fullBuild() {
 		try {
 			getProject().accept(new IResourceVisitor() {
-				@Override public boolean visit(final IResource r) throws CoreException {
+				@Override
+				public boolean visit(final IResource r) throws CoreException {
 					addMarkers(r);
 					return true; // to continue visiting children.
 				}
@@ -72,54 +92,75 @@ public class Builder extends IncrementalProjectBuilder {
 			e.printStackTrace();
 		}
 	}
+
 	static void addMarkers(final IResource r) throws CoreException {
 		if (r instanceof IFile && r.getName().endsWith(".java"))
 			addMarkers((IFile) r);
 	}
+
 	private static void addMarkers(final IFile f) throws CoreException {
 		deleteMarkers(f);
-		addMarkers(f, (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null));
+		addMarkers(
+				f,
+				(CompilationUnit) Utils.makeParser(
+						JavaCore.createCompilationUnitFrom(f)).createAST(null));
 	}
-	private static void addMarkers(final IFile f, final CompilationUnit cu) throws CoreException {
+
+	private static void addMarkers(final IFile f, final CompilationUnit cu)
+			throws CoreException {
+		All.reset();
 		for (final Spartanization s : All.all())
 			for (final Range r : s.findOpportunities(cu))
 				if (r != null)
 					addMarker(f, s, r);
 	}
-	private static void addMarker(final IFile f, final Spartanization s, final Range r) throws CoreException {
+
+	private static void addMarker(final IFile f, final Spartanization s,
+			final Range r) throws CoreException {
 		addMarker(f.createMarker(MARKER_TYPE), s, r);
 	}
-	private static void addMarker(final IMarker m, final Spartanization s, final Range r) throws CoreException {
+
+	private static void addMarker(final IMarker m, final Spartanization s,
+			final Range r) throws CoreException {
 		m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 		addMarker(m, s);
 		addMarker(m, r);
 	}
-	private static void addMarker(final IMarker m, final Range r) throws CoreException {
+
+	private static void addMarker(final IMarker m, final Range r)
+			throws CoreException {
 		m.setAttribute(IMarker.CHAR_START, r.from);
 		m.setAttribute(IMarker.CHAR_END, r.to);
 	}
-	private static void addMarker(final IMarker m, final Spartanization s) throws CoreException {
+
+	private static void addMarker(final IMarker m, final Spartanization s)
+			throws CoreException {
 		m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
 		m.setAttribute(IMarker.MESSAGE, prefix() + s.getMessage());
 	}
+
 	/**
 	 * deletes all spartanization suggestion markers
-	 * 
+	 *
 	 * @param f
-	 *          the file from which to delete the markers
+	 *            the file from which to delete the markers
 	 * @throws CoreException
-	 *           if this method fails. Reasons include: This resource does not
-	 *           exist. This resource is a project that is not open. Resource
-	 *           changes are disallowed during certain types of resource change
-	 *           event notification. See {@link IResourceChangeEvent} for more
-	 *           details.
+	 *             if this method fails. Reasons include: This resource does not
+	 *             exist. This resource is a project that is not open. Resource
+	 *             changes are disallowed during certain types of resource
+	 *             change event notification. See {@link IResourceChangeEvent}
+	 *             for more details.
 	 */
 	public static void deleteMarkers(final IFile f) throws CoreException {
 		f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
 	}
-	protected static void incrementalBuild(final IResourceDelta d) throws CoreException {
+
+	protected static void incrementalBuild(final IResourceDelta d)
+			throws CoreException {
 		d.accept(new IResourceDeltaVisitor() {
-			@Override public boolean visit(final IResourceDelta internalDelta) throws CoreException {
+			@Override
+			public boolean visit(final IResourceDelta internalDelta)
+					throws CoreException {
 				switch (internalDelta.getKind()) {
 				case IResourceDelta.ADDED:
 				case IResourceDelta.CHANGED:
