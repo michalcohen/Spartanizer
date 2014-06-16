@@ -24,8 +24,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class ShortestBranchFirst extends Spartanization {
 	/** Instantiates this class */
 	public ShortestBranchFirst() {
-		super(
-				"Shortester first",
+		super("Shortest Branch First",
 				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 

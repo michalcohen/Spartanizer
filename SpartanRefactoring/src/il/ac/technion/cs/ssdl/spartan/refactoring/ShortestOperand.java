@@ -40,8 +40,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
 	public ShortestOperand() {
-		super(
-				"Shortest operand first",
+		super("Shortest operand first",
 				"Make the shortest operand first in a binary commutative or semi-commutative operator");
 	}
 

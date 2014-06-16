@@ -81,7 +81,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class InlineSingleUse extends Spartanization {
 	/** Instantiates this class */
 	public InlineSingleUse() {
-		super("Inline variable used once");
+		super("Inline Single Use", "Inline variable used once");
 	}
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {

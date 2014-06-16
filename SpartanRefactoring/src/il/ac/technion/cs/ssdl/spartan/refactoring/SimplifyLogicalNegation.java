@@ -29,7 +29,7 @@ import org.junit.runners.MethodSorters;
 public class SimplifyLogicalNegation extends Spartanization {
 	/** Instantiates this class */
 	public SimplifyLogicalNegation() {
-		super("Simplify logical negation");
+		super("Simplify logical negation", "Simplify logical negation");
 	}
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
