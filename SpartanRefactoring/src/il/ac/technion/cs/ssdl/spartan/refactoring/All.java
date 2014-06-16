@@ -57,12 +57,8 @@ import java.util.*;
 	public static void reset() {
 		final String[] str = phrasePrefFile();
 		final int offset = Spartanization.getSpartanTitle().length;
-		// TODO: Replace with final useAll = (str == null);
-		// You may need to think a bit before you see why this is true.
-		boolean useAll = false;
 		all.clear();
-		if (str == null)
-			useAll = true;
+		final boolean useAll = (str == null);
 		for (int i = 0; i < rules.length - 1; i++)
 			if (useAll || !ignored(str[i + offset]))
 				put(rules[i]);
