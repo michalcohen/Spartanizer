@@ -7,5 +7,5 @@ public class X {
 public class X {
   public double f() {
     return 0 | f() | f(a,b,c,d);
-}
+    }
 }

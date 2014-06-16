@@ -6,6 +6,6 @@ public class X {
 <Test Result>
 public class X {
   public String f() {
- return "." | f(a,b,c,d);
- }
+    return "." | f(a,b,c,d);
+    }
 }

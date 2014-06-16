@@ -1,0 +1,13 @@
+public class X {
+	public double f() {
+		// This test is so beautiful...
+    	return f(a, b, c, d, e) + 3333 + 222 + a + spongeBob + f(g, c, d) + f(a) + tt;
+    }
+}
+<Test Result>
+public class X {
+	public double f(){
+		// This test is so beautiful...
+		return a+tt+222+3333+spongeBob+f(a,b,c,d,e)+f(g,c,d)+f(a);
+	}
+}
