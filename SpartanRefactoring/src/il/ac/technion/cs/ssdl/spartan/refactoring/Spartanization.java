@@ -89,15 +89,18 @@ public abstract class Spartanization extends Refactoring {
 	 */
 	public static String[] getSpartaRules() {
 		return new String[] { //
-		"Comparison With Boolean", //
+				"Comparison With Boolean", //
 				"Forward Declaration", //
 				"Inline Single Use", //
 				"Rename Return Variable to $", //
 				"Shortest Branch First", //
 				"Shortest Operand First", //
-				"Ternarize" };
+		"Ternarize" };
 	}
 
+	/**
+	 * @return Spartanization ascii header
+	 */
 	public static String[] getSpartanTitle() {
 		return new String[] { //
 				"               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
@@ -111,7 +114,7 @@ public abstract class Spartanization extends Refactoring {
 				"                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA ", //
 				"                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
 				"                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
-		"" };
+				"" };
 	}
 
 	/**
@@ -319,9 +322,9 @@ public abstract class Spartanization extends Refactoring {
 				(CompilationUnit) Utils.makeParser(u).createAST(
 						new SubProgressMonitor(pm, 1,
 								SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)),
-				new SubProgressMonitor(pm, 1,
-						SubProgressMonitor.SUPPRESS_SUBTASK_LABEL))
-				.rewriteAST());
+								new SubProgressMonitor(pm, 1,
+										SubProgressMonitor.SUPPRESS_SUBTASK_LABEL))
+										.rewriteAST());
 		if (0 != textChange.getEdit().getLength())
 			changes.add(textChange);
 		pm.done();
@@ -329,7 +332,7 @@ public abstract class Spartanization extends Refactoring {
 
 	protected void scanCompilationUnitForMarkerFix(final IMarker m,
 			final IProgressMonitor pm, final boolean preview)
-			throws CoreException {
+					throws CoreException {
 		pm.beginTask("Creating change for a single compilation unit...", 2);
 		final ICompilationUnit u = getCompilationUnitFromMarker(m);
 		final TextFileChange textChange = new TextFileChange(
@@ -338,7 +341,7 @@ public abstract class Spartanization extends Refactoring {
 		textChange.setEdit(createRewrite(
 				new SubProgressMonitor(pm, 1,
 						SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m)
-				.rewriteAST());
+						.rewriteAST());
 		if (0 != textChange.getEdit().getLength())
 			if (preview)
 				changes.add(textChange);
@@ -390,7 +393,7 @@ public abstract class Spartanization extends Refactoring {
 	@Override
 	public final Change createChange(
 			@SuppressWarnings("unused") final IProgressMonitor pm)
-			throws OperationCanceledException {
+					throws OperationCanceledException {
 		return new CompositeChange(getName(),
 				changes.toArray(new Change[changes.size()]));
 	}
@@ -486,7 +489,7 @@ public abstract class Spartanization extends Refactoring {
 	 *         (v2)
 	 */
 	public class SpartanizationResolutionWithPreview implements
-			IMarkerResolution {
+	IMarkerResolution {
 		@Override
 		public String getLabel() {
 			return Spartanization.this + ": Show me a preview first";
@@ -498,8 +501,8 @@ public abstract class Spartanization extends Refactoring {
 			try {
 				new RefactoringWizardOpenOperation(new Wizard(
 						Spartanization.this)).run(Display.getCurrent()
-						.getActiveShell(), "Spartan refactoring: "
-						+ Spartanization.this);
+								.getActiveShell(), "Spartan refactoring: "
+										+ Spartanization.this);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
