@@ -116,17 +116,20 @@ public class Ternarize extends Spartanization {
 		final List<TwoNodes> diffList = findDiffList(thenStmnt, elseStmnt);
 		if (!isDiffListValid(diffList))
 			return false;
-		r.replace(ifStmt, r.createCopyTarget(thenStmnt), null);
 		final int ifIdx = statements(ifStmt.getParent()).indexOf(ifStmt);
+		final Statement possiblePrevDecl = (Statement) statements(ifStmt.getParent()).get(0 > ifIdx - 1 ? ifIdx : ifIdx - 1);
+		boolean wasPrevDeclReplaced = false;
 		for (int i = 0; i < diffList.size(); i++) {
 			final TwoExpressions diffExps = findSingleDifference(diffList.get(i).thenNode, diffList.get(i).elseNode);
 			if (diffExps == null)
 				continue;
-			if (!isExpOnlyDiff(diffList.get(i), diffExps)
-			    || !substitute(ast, r, ifStmt, diffExps, (Statement) statements(ifStmt.getParent())
-			        .get(0 > ifIdx - 1 ? ifIdx : ifIdx - 1)))
+			if (canReplacePrevDecl(possiblePrevDecl, diffList.get(i)))
+				wasPrevDeclReplaced = true;
+			if (!isExpOnlyDiff(diffList.get(i), diffExps) || !substitute(ast, r, ifStmt, diffExps, possiblePrevDecl))
 				return false;
 		}
+		if (!wasPrevDeclReplaced)
+			r.replace(ifStmt, r.createCopyTarget(thenStmnt), null);
 		return true;
 	}
 	private static boolean isDiffListValid(final List<TwoNodes> diffList) {
