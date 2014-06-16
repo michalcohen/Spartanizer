@@ -78,4 +78,14 @@ import java.util.*;
 	public static Iterable<Spartanization> all() {
 		return all.values();
 	}
+	/**
+	 * @return all the registered spartanization refactoring objects names
+	 */
+	public static List<String> allRulesNames() {
+		final List<String> names = new ArrayList<String>();
+		for (final Spartanization rule : rules)
+			if (rule != null)
+				names.add(rule.getName());
+		return names;
+	}
 }

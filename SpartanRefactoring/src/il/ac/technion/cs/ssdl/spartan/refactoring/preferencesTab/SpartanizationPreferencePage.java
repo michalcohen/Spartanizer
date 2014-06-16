@@ -2,6 +2,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
 import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -48,7 +49,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	public void createFieldEditors() {
 		// TODO: There must be a way to make this initialization work from the
 		// current list of Spartanization objects.
-		for (final String rule : getSpartanRulesNames())
+		for (final String rule : allRulesNames())
 			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
 	}
 
@@ -62,7 +63,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		final String[] title = Spartanization.getSpartanTitle();
 		for (final String str : title)
 			s = s + str + "\n";
-		for (final String str : getSpartanRulesNames())
+		for (final String str : allRulesNames())
 			s = s + store.getString(str) + "\n";
 		PrintWriter print;
 		// TODO: Use the new syntax of "try" with arguments.
@@ -86,19 +87,5 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	@Override
 	public void init(@SuppressWarnings("unused") final IWorkbench workbench) {
 		super.initialize();
-	}
-
-	/**
-	 * @return Spartanization rules in the conventional order
-	 */
-	public static String[] getSpartanRulesNames() {
-		return new String[] { //
-		"Comparison With Boolean", //
-				"Forward Declaration", //
-				"Inline Single Use", //
-				"Rename Return Variable to $", //
-				"Shortest Branch First", //
-				"Shortest Operand First", //
-				"Ternarize" };
 	}
 }

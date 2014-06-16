@@ -1,6 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.SpartanizationPreferencePage.getSpartanRulesNames;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -24,7 +24,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
-		for (final String rule : getSpartanRulesNames())
+		for (final String rule : allRulesNames())
 			store.setDefault(rule, true);
 	}
 }

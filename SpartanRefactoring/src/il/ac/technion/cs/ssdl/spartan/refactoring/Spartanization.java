@@ -67,29 +67,6 @@ public abstract class Spartanization extends Refactoring {
 		return name;
 	}
 	/**
-	 * TODO: It has truly bad smell (and do read about code smells!!! this is not
-	 * just a project in which you slaves work for me; you are really supposed to
-	 * learn, and more importantly learn to learn, and even more importantly,
-	 * especially for you Tomer, learn to accept that you have to learn.)
-	 * 
-	 * Anyway, I was going to say that hard-coding (another phrase for you guys to
-	 * learn), something as you did below looks awful, and smells really bad. One
-	 * quick, but not optimal, way of fixing this, is by iterating over what class
-	 * All has to provide.
-	 * 
-	 * @return Spartanization rules
-	 */
-	public static String[] getSpartaRules() {
-		return new String[] { //
-		"Comparison With Boolean", //
-		    "Forward Declaration", //
-		    "Inline Single Use", //
-		    "Rename Return Variable to $", //
-		    "Shortest Branch First", //
-		    "Shortest Operand First", //
-		    "Ternarize" };
-	}
-	/**
 	 * TODO: I have no idea what a function like this could be used for.
 	 * 
 	 * @return Spartanization ASCII header
@@ -107,19 +84,7 @@ public abstract class Spartanization extends Refactoring {
 		    "                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA ", //
 		    "                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
 		    "                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
-		    "", //
-		    "               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
-		    "                 TTT   HH   HH  III  SS            III  SS      ", //
-		    "                 TTT   HHHHHHH  III   SSSSS        III   SSSSS  ", //
-		    "                 TTT   HH   HH  III       SS       III       SS ", //
-		    "                 TTT   HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //
-		    "                                                                ", //
-		    "                 SSSSS  PPPPPP    AAA   RRRRRR  TTTTTTT   AAA   ", //
-		    "                SS      PP   PP  AAAAA  RR   RR   TTT    AAAAA  ", //
-		    "                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA ", //
-		    "                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA ", //
-		    "                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA ", //
-		    "" };
+		    ""};
 	}
 	/**
 	 * @return Spartanization rules preferences file path.
