@@ -6,7 +6,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-import org.eclipse.jface.preference.ComboFieldEditor;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
@@ -22,23 +22,22 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * This page is used to modify preferences only. They are stored in the
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
- *
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original)
+ * <p>
+ * 
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original) @since
+ *         10/06/2014
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
  *         2014/6/16 (v2)
- * @since 10/06/2014
  */
 public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
-	String[] sparta = Spartanization.getSpartaRules();
-
 	/**
 	 * Instantiates the page and sets its default values
 	 */
 	public SpartanizationPreferencePage() {
 		super(GRID);
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());
-		setDescription("Select how the compiler will regard each tranformation suggestion\n\n");
+		setDescription("Select for each tranformation suggestion if they will be shown\n\n");
 	}
 
 	/**
@@ -48,36 +47,26 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	 */
 	@Override
 	public void createFieldEditors() {
-		addField(new ComboFieldEditor(sparta[0], "Comparison With Boolean:",
-				options, getFieldEditorParent()));
-		addField(new ComboFieldEditor(sparta[1], "Forward Declaration:",
-				options, getFieldEditorParent()));
-		addField(new ComboFieldEditor(sparta[2], "Inline Single Use:", options,
-				getFieldEditorParent()));
-		addField(new ComboFieldEditor(sparta[3],
-				"Rename Return Variable to $:", options, getFieldEditorParent()));
-		addField(new ComboFieldEditor(sparta[4], "Shortest Branch First:",
-				options, getFieldEditorParent()));
-		addField(new ComboFieldEditor(sparta[5], "Shortest Operand First:",
-				options, getFieldEditorParent()));
-		addField(new ComboFieldEditor(sparta[6], "Ternarize:", options,
-				getFieldEditorParent()));
+		// TODO: There must be a way to make this initialization work from the
+		// current list of Spartanization objects.
+		for (final String rule : getSpartanRulesNames())
+			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
 	}
 
 	@Override
 	public boolean performOk() {
+		// TODO: Convert to StringBuilder
 		super.performOk();
-		SpartanizationPreferencePage.class.getProtectionDomain()
-				.getCodeSource().getLocation().getPath();
-
+		SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		String s = "";
 		final String[] title = Spartanization.getSpartanTitle();
 		for (final String str : title)
 			s = s + str + "\n";
-		for (final String str : sparta)
+		for (final String str : getSpartanRulesNames())
 			s = s + store.getString(str) + "\n";
 		PrintWriter print;
+		// TODO: Use the new syntax of "try" with arguments.
 		try {
 			print = new PrintWriter(Spartanization.getPrefFilePath());
 			print.write(s);
@@ -86,13 +75,12 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 			// TODO Treat it like a gentleman
 			e.printStackTrace();
 		}
-
 		return s != "bb";
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
@@ -101,6 +89,17 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		super.initialize();
 	}
 
-	private static String[][] options = new String[][] { { "Apply", "Apply" },
-			{ "Ignore", "Ignore" } };
+	/**
+	 * @return Spartanization rules in the conventional order
+	 */
+	public static String[] getSpartanRulesNames() {
+		return new String[] { //
+		"Comparison With Boolean", //
+				"Forward Declaration", //
+				"Inline Single Use", //
+				"Rename Return Variable to $", //
+				"Shortest Branch First", //
+				"Shortest Operand First", //
+				"Ternarize" };
+	}
 }
