@@ -332,13 +332,5 @@
          id="id1"
          point="org.eclipse.core.resources.markers">
    </extension>
-   <extension point="org.eclipse.jdt.core.compilationParticipant">
-      <compilationParticipant
-            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.CompilerNotificator"
-            createsProblems="true"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.CompilerNotificator"
-            modifiesEnvironment="false">
-      </compilationParticipant>
-   </extension>
    
 </plugin>
