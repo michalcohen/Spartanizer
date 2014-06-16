@@ -319,7 +319,7 @@ public class ShortestOperand extends Spartanization {
 		eo.add(0, (Expression) ASTNode.copySubtree(ast, l));
 		eo.add(1, (Expression) ASTNode.copySubtree(ast, r));
 		// | a, e, d, b, c, f
-		sortExpressionList(eo, ast);
+		changed = changed | sortExpressionList(eo, ast, o);
 		// | a, b, c, d, e, f
 		ie.setRightOperand((Expression) ASTNode.copySubtree(ast, eo.get(1)));
 		ie.setLeftOperand((Expression) ASTNode.copySubtree(ast, eo.get(0)));
@@ -337,16 +337,19 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private static boolean moveMethodsToTheBack(final List<Expression> eList,
-			final AST ast) {
+			final AST ast, final Operator o) {
 		boolean changed = false;
 		int i = 0;
 		final int size = eList.size();
+		// Selective bubble sort
 		while (i < size) {
 			int j = 0;
 			while (j + 1 < size) {
 				final Expression l = eList.get(j);
 				final Expression s = eList.get(j + 1);
-				if (isMethodInvocation(l) && !isMethodInvocation(s)) {
+				if (isMethodInvocation(l) && !isMethodInvocation(s)
+						&& !inOperandExceptions(l, o)
+						&& !inOperandExceptions(s, o)) {
 					eList.remove(j);
 					eList.add(j + 1, (Expression) ASTNode.copySubtree(ast, l));
 					changed = true;
@@ -359,18 +362,22 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private static boolean sortOperandList(final List<Expression> eList,
-			final AST ast) {
+			final AST ast, final Operator o) {
 		boolean changed = false;
 		int i = 0;
 		final int size = eList.size();
 		i = 0;
+		// Bubble sort
+		// We cannot use overridden version of Comparator due to the copy
+		// ASTNode.copySubtree necessity
 		while (i < size) {
 			int j = 0;
 			while (j + 1 < size) {
 				final Expression l = eList.get(j);
 				final Expression s = eList.get(j + 1);
 				if (isLarger(l, s) && !isMethodInvocation(l)
-						&& !isMethodInvocation(s)) {
+						&& !isMethodInvocation(s) && !inOperandExceptions(l, o)
+						&& !inOperandExceptions(s, o)) {
 
 					eList.remove(j);
 					eList.add(j + 1, (Expression) ASTNode.copySubtree(ast, l));
@@ -384,8 +391,9 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private static boolean sortExpressionList(final List<Expression> eList,
-			final AST ast) {
-		return moveMethodsToTheBack(eList, ast) | sortOperandList(eList, ast);
+			final AST ast, final Operator o) {
+		return moveMethodsToTheBack(eList, ast, o)
+				| sortOperandList(eList, ast, o);
 	}
 
 }

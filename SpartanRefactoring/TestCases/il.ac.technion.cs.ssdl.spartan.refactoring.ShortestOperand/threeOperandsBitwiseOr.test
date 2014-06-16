@@ -6,6 +6,6 @@ public class X {
 <Test Result>
 public class X {
   public double f() {
-    return 0 | f() | f(a,b,c,d);
+    return 0 | f(a,b,c,d) | f();
     }
 }

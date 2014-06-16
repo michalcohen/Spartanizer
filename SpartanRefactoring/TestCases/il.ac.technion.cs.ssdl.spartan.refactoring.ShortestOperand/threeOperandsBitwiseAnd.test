@@ -1,11 +1,11 @@
 public class X {
   public double f() {
-    return f(a,b,c,d) & f() & 0;
+    return f(a,b,c,d) & bob & 0;
   }
 }
 <Test Result>
 public class X {
   public double f() {
-    return 0 & f() & f(a,b,c,d);
+    return 0 & bob & f(a,b,c,d);
   }
 }

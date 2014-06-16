@@ -3,9 +3,3 @@ public class X {
     return f(a,b,c,d) & f();
     }
 }
-<Test Result>
-public class X {
-  public double f() {
-    return f() & f(a,b,c,d);
-    }
-}

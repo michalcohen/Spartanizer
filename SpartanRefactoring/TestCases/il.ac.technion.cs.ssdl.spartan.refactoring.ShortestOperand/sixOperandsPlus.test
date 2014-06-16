@@ -6,7 +6,7 @@ public class X {
 <Test Result>
 public class X {
   public double f() {
-    return f() + f(a) + f(a,b) + f(a,b,c) + f(a,b,c,d) + + f(a,b,c,d,e);
+    return f() + f(a) + f(a,b) + f(a,b,c) + f(a,b,c,d) + f(a,b,c,d,e);
 }
 }
 
