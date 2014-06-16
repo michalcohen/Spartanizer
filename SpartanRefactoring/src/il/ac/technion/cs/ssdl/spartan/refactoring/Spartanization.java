@@ -83,6 +83,9 @@ public abstract class Spartanization extends Refactoring {
 	public static String[] title() {
 =======
 
+	/**
+	 * @return Spartanization ascii header
+	 */
 	public static String[] getSpartanTitle() {
 		return new String[] { //
 		"               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  ", //

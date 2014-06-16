@@ -21,14 +21,14 @@ public enum All {
 	;
 	private static final Map<String, Spartanization> all = new HashMap<String, Spartanization>();
 	private static final Spartanization[] rules = { //
-	new ComparisonWithBoolean(), //
-		new ForwardDeclaration(), //
-		new InlineSingleUse(), //
-		new RenameReturnVariableToDollar(), //
-		new ShortestBranchFirst(), //
-		new ShortestOperand(), //
-		new Ternarize(), //
-		null };
+		new ComparisonWithBoolean(), //
+			new ForwardDeclaration(), //
+			new InlineSingleUse(), //
+			new RenameReturnVariableToDollar(), //
+			new ShortestBranchFirst(), //
+			new ShortestOperand(), //
+			new Ternarize(), //
+			null };
 
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
@@ -52,7 +52,7 @@ public enum All {
 	}
 
 	private static boolean ignored(final String sparta) {
-		return sparta.indexOf("Ignore") >= 0;
+		return sparta.indexOf("false") >= 0;
 	}
 
 	static {
