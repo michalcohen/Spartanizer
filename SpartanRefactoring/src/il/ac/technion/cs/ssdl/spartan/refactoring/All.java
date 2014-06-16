@@ -66,7 +66,7 @@ public enum All {
 	 */
 	public static void reset() {
 		final String[] str = phrasePrefFile();
-		final int offset = Spartanization.getSpartanTitle().length;
+		final int offset = Spartanization.title().length;
 		boolean useAll = false;
 		all.clear();
 

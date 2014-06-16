@@ -64,7 +64,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 		SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		String s = "";
-		final String[] title = Spartanization.getSpartanTitle();
+		final String[] title = Spartanization.title();
 		for (final String str : title)
 			s = s + str + "\n";
 		for (final String str : sparta)
