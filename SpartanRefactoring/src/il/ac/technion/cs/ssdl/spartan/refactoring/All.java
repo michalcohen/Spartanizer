@@ -2,7 +2,11 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -12,27 +16,33 @@ import java.util.*;
  *         30.05.2014) (v3)
  * @since 2013/07/01
  */
-@SuppressWarnings("null") public enum All {
+@SuppressWarnings("null")
+public enum All {
 	;
-	private static final Map<String, Spartanization> all = new HashMap<String, Spartanization>();
+	private static String ignoreRuleStr = "false";
+
+	private static final Map<String, Spartanization> all = new HashMap<>();
+
 	private static final Spartanization[] rules = { //
-	new ComparisonWithBoolean(), //
-	    new ForwardDeclaration(), //
-	    new InlineSingleUse(), //
-	    new RenameReturnVariableToDollar(), //
-	    new ShortestBranchFirst(), //
-	    new ShortestOperand(), //
-	    new Ternarize(), //
-	    null };
+		new ComparisonWithBoolean(), //
+			new ForwardDeclaration(), //
+			new InlineSingleUse(), //
+			new RenameReturnVariableToDollar(), //
+			new ShortestBranchFirst(), //
+			new ShortestOperand(), //
+			new Ternarize(), //
+			null };
+
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
 	}
+
 	private static String[] phrasePrefFile() {
 		Scanner sc;
 		String[] arr = null;
 		try {
 			sc = new Scanner(new File(Spartanization.getPrefFilePath()));
-			final List<String> lines = new ArrayList<String>();
+			final List<String> lines = new ArrayList<>();
 			while (sc.hasNextLine())
 				lines.add(sc.nextLine());
 			arr = lines.toArray(new String[0]);
@@ -43,12 +53,15 @@ import java.util.*;
 		}
 		return arr;
 	}
+
 	private static boolean ignored(final String sparta) {
-		return sparta.indexOf("false") >= 0;
+		return sparta.indexOf(ignoreRuleStr) >= 0;
 	}
+
 	static {
 		reset();
 	}
+
 	/**
 	 * Resets the enumeration with the current values from the preferences file.
 	 * Letting the rules notification decisions be updated without restarting
@@ -58,31 +71,34 @@ import java.util.*;
 		final String[] str = phrasePrefFile();
 		final int offset = Spartanization.getSpartanTitle().length;
 		all.clear();
-		final boolean useAll = (str == null);
+		final boolean useAll = str == null;
 		for (int i = 0; i < rules.length - 1; i++)
 			if (useAll || !ignored(str[i + offset]))
 				put(rules[i]);
 		put(new SimplifyLogicalNegation());
 	}
+
 	/**
 	 * @param name
-	 *          the name of the spartanization
+	 *            the name of the spartanization
 	 * @return an instance of the spartanization
 	 */
 	public static Spartanization get(final String name) {
 		return all.get(name);
 	}
+
 	/**
 	 * @return all the registered spartanization refactoring objects
 	 */
 	public static Iterable<Spartanization> all() {
 		return all.values();
 	}
+
 	/**
 	 * @return all the registered spartanization refactoring objects names
 	 */
 	public static List<String> allRulesNames() {
-		final List<String> names = new ArrayList<String>();
+		final List<String> names = new ArrayList<>();
 		for (final Spartanization rule : rules)
 			if (rule != null)
 				names.add(rule.getName());

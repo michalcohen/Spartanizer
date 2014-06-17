@@ -271,7 +271,7 @@ public enum Funcs {
 		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null
 				|| ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null
-				: (Assignment) $.getExpression();
+						: (Assignment) $.getExpression();
 	}
 
 	/**
@@ -284,7 +284,7 @@ public enum Funcs {
 		final ExpressionStatement $ = getExpressionStatement(s);
 		return $ == null
 				|| ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null
-				: (MethodInvocation) $.getExpression();
+						: (MethodInvocation) $.getExpression();
 	}
 
 	/**
@@ -301,7 +301,7 @@ public enum Funcs {
 		return s != null
 				&& s.getNodeType() == ASTNode.EXPRESSION_STATEMENT
 				&& ASTNode.ASSIGNMENT == ((ExpressionStatement) s)
-						.getExpression().getNodeType();
+				.getExpression().getNodeType();
 	}
 
 	/**
@@ -314,7 +314,7 @@ public enum Funcs {
 			return false;
 		for (int i = 0; i < b.statements().size(); i++)
 			if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i))
-					.getNodeType())
+			.getNodeType())
 				return true;
 		return false;
 	}
@@ -411,9 +411,9 @@ public enum Funcs {
 		return hasNull(n, name)
 				|| n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
 				|| name.getNodeType() != ASTNode.SIMPLE_NAME ? null
-				: getVarDeclFrag(
-						((VariableDeclarationStatement) n).fragments(),
-						(SimpleName) name);
+						: getVarDeclFrag(
+								((VariableDeclarationStatement) n).fragments(),
+								(SimpleName) name);
 	}
 
 	private static VariableDeclarationFragment getVarDeclFrag(
@@ -439,9 +439,9 @@ public enum Funcs {
 			return false;
 		for (final Expression name : names)
 			if (name == null
-					|| name.getNodeType() != ASTNode.SIMPLE_NAME
-					|| !((SimpleName) name).getIdentifier().equals(
-							((SimpleName) cmpTo).getIdentifier()))
+			|| name.getNodeType() != ASTNode.SIMPLE_NAME
+			|| !((SimpleName) name).getIdentifier().equals(
+					((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -480,9 +480,9 @@ public enum Funcs {
 			return false;
 		for (final Assignment asgn : as)
 			if (asgn == null
-					|| !compatibleOps(base.getOperator(), asgn.getOperator())
-					|| !compatibleNames(base.getLeftHandSide(),
-							asgn.getLeftHandSide()))
+			|| !compatibleOps(base.getOperator(), asgn.getOperator())
+			|| !compatibleNames(base.getLeftHandSide(),
+					asgn.getLeftHandSide()))
 				return false;
 		return true;
 	}
@@ -542,7 +542,7 @@ public enum Funcs {
 	public static List<ASTNode> getChildren(final ASTNode root) {
 		if (root == null)
 			return null;
-		final List<ASTNode> $ = new ArrayList<ASTNode>();
+		final List<ASTNode> $ = new ArrayList<>();
 		root.accept(new ASTVisitor() {
 			@Override
 			public void preVisit(final ASTNode node) {

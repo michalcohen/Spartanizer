@@ -1,15 +1,6 @@
-               TTTTTTT HH   HH IIIII  SSSSS       IIIII  SSSSS  
-                 TTT   HH   HH  III  SS            III  SS      
-                 TTT   HHHHHHH  III   SSSSS        III   SSSSS  
-                 TTT   HH   HH  III       SS       III       SS 
-                 TTT   HH   HH IIIII  SSSSS       IIIII  SSSSS  
-                                                                
-                 SSSSS  PPPPPP    AAA   RRRRRR  TTTTTTT   AAA   
-                SS      PP   PP  AAAAA  RR   RR   TTT    AAAAA  
-                 SSSSS  PPPPPP  AA   AA RRRRRR    TTT   AA   AA 
-                     SS PP      AAAAAAA RR  RR    TTT   AAAAAAA 
-                 SSSSS  PP      AA   AA RR   RR   TTT   AA   AA 
-
+Preferences file for Spartanization rules profiles
+Please avoid editing the file manually 
+--------------------------------------------------
 true
 true
 true

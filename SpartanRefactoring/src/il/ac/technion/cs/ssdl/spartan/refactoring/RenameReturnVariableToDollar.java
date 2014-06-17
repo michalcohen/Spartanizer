@@ -11,13 +11,23 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * 
+ *
  * @since 2013/01/01
  */
 public class RenameReturnVariableToDollar extends Spartanization {
@@ -44,17 +54,18 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		});
 	}
 
-	static List<VariableDeclarationFragment> getCandidates(final MethodDeclaration mthdDecl) {
+	static List<VariableDeclarationFragment> getCandidates(
+			final MethodDeclaration mthdDecl) {
 		if (mthdDecl == null || mthdDecl.getReturnType2() == null)
 			return null;
 		final String mthdRetType = mthdDecl.getReturnType2().toString();
-		final List<VariableDeclarationFragment> $ = new ArrayList<VariableDeclarationFragment>();
+		final List<VariableDeclarationFragment> $ = new ArrayList<>();
 		mthdDecl.accept(new ASTVisitor() {
 			/**
-			 * 
+			 *
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 			 *      AnonymousClassDeclaration)
-			 * 
+			 *
 			 * @param _
 			 *            ignored, we don't want to visit declarations inside
 			 *            anonymous classes
@@ -67,7 +78,8 @@ public class RenameReturnVariableToDollar extends Spartanization {
 
 			@Override
 			public boolean visit(final VariableDeclarationStatement n) {
-				if (n.getType() != null && n.getType().toString().equals(mthdRetType))
+				if (n.getType() != null
+						&& n.getType().toString().equals(mthdRetType))
 					$.addAll(n.fragments());
 				return true;
 			}
@@ -76,14 +88,14 @@ public class RenameReturnVariableToDollar extends Spartanization {
 	}
 
 	static List<ReturnStatement> getReturnStatements(final ASTNode container) {
-		final List<ReturnStatement> $ = new ArrayList<ReturnStatement>();
+		final List<ReturnStatement> $ = new ArrayList<>();
 		container.accept(new ASTVisitor() {
 			/**
-			 * 
-			 * 
+			 *
+			 *
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 			 *      AnonymousClassDeclaration)
-			 * 
+			 *
 			 * @param _
 			 *            ignored, we don't want to visit declarations inside
 			 *            anonymous classes
@@ -142,7 +154,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 			int occurrences = 0;
 			for (final ReturnStatement r : rs)
 				occurrences += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r)
-						.size();
+				.size();
 			if (occurrences > maxOccurrences) {
 				maxOccurrences = occurrences;
 				$ = v;

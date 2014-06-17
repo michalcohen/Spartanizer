@@ -34,13 +34,14 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *        it is too messy. TODO <Resolved>: Bug. It supposes to switch
  *        concatenated strings, e.g., System.prinln("Value is "+ v) - <see test
  *        15>.
- * 
+ *
  *        TODO: Add options for 1 right literal swap and 2 literals swap.
  */
 public class ShortestOperand extends Spartanization {
 	/** Instantiates this class */
 	public ShortestOperand() {
-		super("Shortest operand first",
+		super(
+				"Shortest operand first",
 				"Make the shortest operand first in a binary commutative or semi-commutative operator");
 	}
 
@@ -184,7 +185,7 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private static Map<Operator, Operator> makeConjeguates() {
-		final Map<Operator, Operator> $ = new HashMap<Operator, Operator>();
+		final Map<Operator, Operator> $ = new HashMap<>();
 		$.put(GREATER, LESS);
 		$.put(LESS, GREATER);
 		$.put(GREATER_EQUALS, LESS_EQUALS);

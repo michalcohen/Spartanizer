@@ -1,8 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
+import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
 import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -15,20 +15,20 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * This class represents a preference page that is contributed to the
- * Preferences dialog. By sub classing {@link FieldEditorPreferencePage}
- * built into {@link org.eclipse.jface} that allows us to create a page that is
- * small and knows how to save, restore and apply itself.
+ * Preferences dialog. By sub classing {@link FieldEditorPreferencePage} built
+ * into {@link org.eclipse.jface} that allows us to create a page that is small
+ * and knows how to save, restore and apply itself.
  * <p>
  * This page is used to modify preferences only. They are stored in the
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
  * <p>
- * 
+ *
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original) @since
  *         10/06/2014
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
  *         2014/6/16 (v2)
-     */
+ */
 public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 	/**
@@ -50,13 +50,15 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		// TODO: There must be a way to make this initialization work from the
 		// current list of Spartanization objects.
 		for (final String rule : allRulesNames())
-			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
+			addField(new BooleanFieldEditor(rule, rule + ":",
+					getFieldEditorParent()));
 	}
 
 	@Override
 	public boolean performOk() {
 		super.performOk();
-		SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		SpartanizationPreferencePage.class.getProtectionDomain()
+		.getCodeSource().getLocation().getPath();
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		final StringBuilder s = new StringBuilder("");
 		final String[] title = Spartanization.getSpartanTitle();
@@ -64,17 +66,16 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 			s.append(str + "\n");
 		for (final String str : allRulesNames())
 			s.append(store.getString(str) + "\n");
-		PrintWriter print;
+
 		// TODO: Use the new syntax of "try" with arguments.
-		try {
-			print = new PrintWriter(Spartanization.getPrefFilePath());
+		try (PrintWriter print = new PrintWriter(
+				Spartanization.getPrefFilePath())) {
 			print.write(s.toString());
-			print.close();
 		} catch (final FileNotFoundException e) {
 			// TODO Treat it like a gentleman
 			e.printStackTrace();
 		}
-		return s.toString().equals("bb");
+		return true;
 	}
 
 	/*
