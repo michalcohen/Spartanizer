@@ -47,8 +47,6 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	 */
 	@Override
 	public void createFieldEditors() {
-		// TODO: There must be a way to make this initialization work from the
-		// current list of Spartanization objects.
 		for (final String rule : allRulesNames())
 			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
 	}
