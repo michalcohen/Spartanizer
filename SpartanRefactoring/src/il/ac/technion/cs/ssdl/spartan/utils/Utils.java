@@ -101,7 +101,7 @@ public enum Utils {
 	 *          a sequence of arguments of the same type
 	 * @return an array representation of the parameter
 	 */
-	public static <T> T[] asArray(final T... ts) {
+	@SafeVarargs public static <T> T[] asArray(final T... ts) {
 		return ts;
 	}
 }

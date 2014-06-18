@@ -193,7 +193,7 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private static <T> boolean in(final T candidate, final T... ts) {
+	@SafeVarargs private static <T> boolean in(final T candidate, final T... ts) {
 		for (final T t : ts)
 			if (t != null && t.equals(candidate))
 				return true;

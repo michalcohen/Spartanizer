@@ -219,7 +219,7 @@ public class Ternarize extends Spartanization {
 		return hasNull(thenNode, elseNode) ? null : findDiffList(getChildren(thenNode), getChildren(elseNode));
 	}
 	private static List<TwoNodes> findDiffList(final List<ASTNode> thenList, final List<ASTNode> elseList) {
-		final List<TwoNodes> $ = new ArrayList<TwoNodes>();
+		final List<TwoNodes> $ = new ArrayList<>();
 		for (int idx = 0; idx < thenList.size() && idx < elseList.size(); idx++)
 			if (!thenList.get(idx).toString().equals(elseList.get(idx).toString())) {
 				$.add(new TwoNodes(thenList.get(idx), elseList.get(idx)));
