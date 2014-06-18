@@ -9,11 +9,11 @@ class X {
  }
  }
  <Test Result>
- class X {  
+class X {  
 @Override String makeField(final String s) {
         if (s == null)
           return "";
-          return  (!s.contains(delimiter())) ? s : s.replaceAll(delimiter(), "\\" + delimiter());
+          return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), "\\" + delimiter()));
       }
  }
  }
