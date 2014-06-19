@@ -1,12 +1,11 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getContainerByNodeType;
-import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isLiteral;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -154,7 +153,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 			int occurrences = 0;
 			for (final ReturnStatement r : rs)
 				occurrences += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r)
-				.size();
+						.size();
 			if (occurrences > maxOccurrences) {
 				maxOccurrences = occurrences;
 				$ = v;
@@ -162,20 +161,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		}
 		return $;
 	}
-
-	private static boolean isLiteral(final ReturnStatement r) {
-		return 0 <= Arrays.binarySearch(literals, r.getExpression()
-				.getNodeType());
-	}
-
-	private static final int[] literals = sort(new int[] {
-			//
-			ASTNode.NULL_LITERAL, //
-			ASTNode.CHARACTER_LITERAL, //
-			ASTNode.NUMBER_LITERAL, //
-			ASTNode.STRING_LITERAL, //
-			ASTNode.BOOLEAN_LITERAL, //
-	});
 
 	@Override
 	protected ASTVisitor fillOpportunities(final List<Range> opportunities) {

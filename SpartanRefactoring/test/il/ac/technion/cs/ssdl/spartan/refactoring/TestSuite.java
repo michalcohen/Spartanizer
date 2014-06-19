@@ -43,9 +43,8 @@ public abstract class TestSuite {
 	public static final File location = new File("TestCases");
 
 	static String readFile(final File f) {
-		try {
-			final BufferedReader r = new BufferedReader(new InputStreamReader(
-					new FileInputStream(f)));
+		try (final BufferedReader r = new BufferedReader(new InputStreamReader(
+				new FileInputStream(f)))) {
 			String line;
 			final StringBuilder $ = new StringBuilder();
 			while (null != (line = r.readLine()))
@@ -192,7 +191,7 @@ public abstract class TestSuite {
 	public static abstract class Files extends TestSuite.Traverse {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
 		 * .util.List, java.io.File)
@@ -252,14 +251,17 @@ public abstract class TestSuite {
 				$ = File.createTempFile(file.getName().replace(".", ""), ".in");
 			else
 				$ = File.createTempFile(file.getName().replace(".", ""), ".out");
+		} catch (final IOException e) {
+			$ = null; // Failed to create temporary file
+		}
 
-			final RandomAccessFile fh = new RandomAccessFile($, "rw");
+		try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
 			fh.writeBytes(str.toString());
-			fh.close();
-			$.deleteOnExit();
+			if ($ != null)
+				$.deleteOnExit();
 
 		} catch (final IOException e) {
-			$ = file;
+			e.printStackTrace(); // Probably permissions problem
 		}
 		return $;
 	}
