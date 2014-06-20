@@ -31,25 +31,45 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *         24.05.2014)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
- * @since 2014/05/24 TODO: Bug. Highlight should be on operator only. Otherwise
- *        it is too messy. TODO <Resolved>: Bug. It supposes to switch
- *        concatenated strings, e.g., System.prinln("Value is "+ v) - <see test
- *        15>.
- *
- *        TODO: Add options for 1 right literal swap and 2 literals swap.
+ * @since 2014/05/24 TODO|Justification ahead|: Bug. Highlight should be on
+ *        operator only. Otherwise it is too messy. | There are two main reasons
+ *        not to do so: (1) We want the interface to be both intuitive and
+ *        non-exhausting for the user to use - using operator only notation
+ *        might lead to one of those cases: (a) Multiple clicks on single
+ *        expression for even simple swaps: Consider cccc + yyy + bb + a - in
+ *        one-operator approach the user will have to click more than five time
+ *        (kind of manual bubble sort) (b) Say we do not want to exhaust the
+ *        user - on which operator should we put it? maybe all of them? so we
+ *        damage the simplicity of "what you click is what you change". Tell us
+ *        it's still OK and we will change it. Done: Add options for 1 right
+ *        literal swap and 2 literals swap.
  */
 public class ShortestOperand extends Spartanization {
 	// Option flags
-	enum RepositionRightLiteral {
-		All, AllButBooleanAndNull, None
+	/**
+	 * Enumeration for right literal rule options
+	 */
+	public static enum RepositionRightLiteral {
+		/** When right can be swapped - do it */
+		All,
+		/** Swap literal only when it is not boolean or null */
+		AllButBooleanAndNull,
+		/** When the literal appears to the right - do not swap */
+		None
 	}
 
-	enum RepositionLiterals {
-		All, None
+	/**
+	 * Enumeration for both side literals rule options
+	 */
+	public static enum RepositionLiterals {
+		/** Swap literals */
+		All,
+		/** Do not swap literals */
+		None
 	}
 
-	static RepositionRightLiteral rightLiteralOption = RepositionRightLiteral.AllButBooleanAndNull;
-	static RepositionLiterals bothLiteralsOption = RepositionLiterals.All;
+	RepositionRightLiteral rightLiteralOption = RepositionRightLiteral.AllButBooleanAndNull;
+	RepositionLiterals bothLiteralsOption = RepositionLiterals.All;
 
 	/** Instantiates this class */
 	public ShortestOperand() {
@@ -93,8 +113,8 @@ public class ShortestOperand extends Spartanization {
 	 *            value might be changed.
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
-	public static InfixExpression transpose(final AST ast,
-			final InfixExpression n, final AtomicBoolean hasChanged) {
+	public InfixExpression transpose(final AST ast, final InfixExpression n,
+			final AtomicBoolean hasChanged) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		transposeOperands($, ast, hasChanged);
 
@@ -112,8 +132,28 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private static void transposeOperands(final InfixExpression ie,
-			final AST ast, final AtomicBoolean hasChanged) {
+	/**
+	 * Sets rule option
+	 *
+	 * @param op
+	 *            Select specific option from RepositionRightLiteral enumeration
+	 */
+	public void setRightLiteralRule(final RepositionRightLiteral op) {
+		rightLiteralOption = op;
+	}
+
+	/**
+	 * Sets rule option
+	 *
+	 * @param op
+	 *            Select specific option from RepositionRightLiteral enumeration
+	 */
+	public void setBothLiteralsRule(final RepositionLiterals op) {
+		bothLiteralsOption = op;
+	}
+
+	private void transposeOperands(final InfixExpression ie, final AST ast,
+			final AtomicBoolean hasChanged) {
 
 		final Expression l = ie.getLeftOperand();
 		final Expression r = ie.getRightOperand();
@@ -130,8 +170,7 @@ public class ShortestOperand extends Spartanization {
 	// int we can't use the generic "in" function on it
 	// without boxing into Integer. Any other solution
 	// will cause less readable/maintainable code.
-	private static boolean inRightOperandExceptions(final ASTNode rN,
-			final Operator o) {
+	private boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
 		final Integer t = new Integer(rN.getNodeType());
 		if (isMethodInvocation(rN))
 			return true;
@@ -155,7 +194,7 @@ public class ShortestOperand extends Spartanization {
 
 	}
 
-	private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
+	private boolean inOperandExceptions(final ASTNode n, final Operator o) {
 		if (bothLiteralsOption == RepositionLiterals.None && isLiteral(n))
 			return true;
 		return o == PLUS && isStringLitrl(n);
@@ -318,7 +357,7 @@ public class ShortestOperand extends Spartanization {
 		return a.getLength() > b.getLength();
 	}
 
-	static boolean sortInfix(final InfixExpression ie, final AST ast) {
+	boolean sortInfix(final InfixExpression ie, final AST ast) {
 		boolean changed = false;
 		if (ie == null || !isFlipable(ie.getOperator())
 				|| !ie.hasExtendedOperands())
@@ -353,7 +392,7 @@ public class ShortestOperand extends Spartanization {
 		return changed;
 	}
 
-	private static boolean moveMethodsToTheBack(final List<Expression> eList,
+	private boolean moveMethodsToTheBack(final List<Expression> eList,
 			final AST ast, final Operator o) {
 		boolean changed = false;
 		int i = 0;
@@ -378,7 +417,7 @@ public class ShortestOperand extends Spartanization {
 		return changed;
 	}
 
-	private static boolean sortOperandList(final List<Expression> eList,
+	private boolean sortOperandList(final List<Expression> eList,
 			final AST ast, final Operator o) {
 		boolean changed = false;
 		int i = 0;
@@ -407,7 +446,7 @@ public class ShortestOperand extends Spartanization {
 		return changed;
 	}
 
-	private static boolean sortExpressionList(final List<Expression> eList,
+	private boolean sortExpressionList(final List<Expression> eList,
 			final AST ast, final Operator o) {
 		return moveMethodsToTheBack(eList, ast, o)
 				| sortOperandList(eList, ast, o);
