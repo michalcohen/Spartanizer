@@ -9,4 +9,4 @@ true
 true
 true
 Reposition literals
-Do not reposition right operand literals
+Reposition all except boolean and null literals

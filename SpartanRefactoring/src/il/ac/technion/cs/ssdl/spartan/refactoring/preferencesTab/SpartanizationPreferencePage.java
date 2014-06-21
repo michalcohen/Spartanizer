@@ -2,7 +2,6 @@ package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
 import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
-import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Layout;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Strings;
@@ -72,7 +71,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		.getCodeSource().getLocation().getPath();
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		final StringBuilder s = new StringBuilder("");
-		final String[] title = Spartanization.getSpartanTitle();
+		final String[] title = PreferencesFile.getSpartanTitle();
 		for (final String str : title)
 			s.append(str + "\n");
 		for (final String str : allRulesNames())
@@ -81,7 +80,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		s.append(store.getString(Options.ComboRightLiterals) + "\n");
 
 		try (PrintWriter print = new PrintWriter(
-				Spartanization.getPrefFilePath())) {
+				PreferencesFile.getPrefFilePath())) {
 			print.write(s.toString());
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace(); // Might be permissions problem

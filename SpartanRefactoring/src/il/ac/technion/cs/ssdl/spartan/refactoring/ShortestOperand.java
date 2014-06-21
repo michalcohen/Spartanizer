@@ -32,17 +32,16 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
  * @since 2014/05/24 TODO|Justification ahead|: Bug. Highlight should be on
- *        operator only. Otherwise it is too messy. | There are two main reasons
- *        not to do so: (1) We want the interface to be both intuitive and
- *        non-exhausting for the user to use - using operator only notation
+ *        operator only. Otherwise it is too messy. |> There are two main
+ *        reasons not to do so: (1) We want the interface to be both intuitive
+ *        and non-exhausting for the user to use - using operator only notation
  *        might lead to one of those cases: (a) Multiple clicks on single
- *        expression for even simple swaps: Consider cccc + yyy + bb + a - in
+ *        expression for even simple swaps: Consider "cccc + yyy + bb + a" - in
  *        one-operator approach the user will have to click more than five time
  *        (kind of manual bubble sort) (b) Say we do not want to exhaust the
  *        user - on which operator should we put it? maybe all of them? so we
  *        damage the simplicity of "what you click is what you change". Tell us
- *        it's still OK and we will change it. Done: Add options for 1 right
- *        literal swap and 2 literals swap.
+ *        it's still OK and we will change it.
  */
 public class ShortestOperand extends Spartanization {
 	// Option flags
@@ -122,8 +121,7 @@ public class ShortestOperand extends Spartanization {
 		final ASTNode newL = ASTNode.copySubtree(ast, n.getLeftOperand());
 		final Operator o = n.getOperator();
 
-		if (isFlipable(o) && longerFirst(n) && !inOperandExceptions(newL, o)
-				&& !inRightOperandExceptions(newR, o) && !inInfixExceptions($)) {
+		if (isFlipable(o) && longerFirst(n) && !inInfixExceptions($)) {
 			set($, (Expression) newL, flipOperator(o), (Expression) newR);
 			hasChanged.set(true);
 		}
@@ -200,9 +198,13 @@ public class ShortestOperand extends Spartanization {
 		return o == PLUS && isStringLitrl(n);
 	}
 
-	private static boolean inInfixExceptions(final InfixExpression ie) {
+	private boolean inInfixExceptions(final InfixExpression ie) {
+		final Operator o = ie.getOperator();
 		return isMethodInvocation(ie.getLeftOperand())
-				&& isMethodInvocation(ie.getRightOperand());
+				&& isMethodInvocation(ie.getRightOperand())
+				|| inOperandExceptions(ie.getLeftOperand(), o)
+				|| inOperandExceptions(ie.getRightOperand(), o)
+				|| inRightOperandExceptions(ie.getRightOperand(), o);
 	}
 
 	private static void set(final InfixExpression $, final Expression left,
@@ -362,28 +364,28 @@ public class ShortestOperand extends Spartanization {
 		if (ie == null || !isFlipable(ie.getOperator())
 				|| !ie.hasExtendedOperands())
 			return changed;
+
 		final Operator o = ie.getOperator();
 
 		final Expression r = ie.getRightOperand();
 		final Expression l = ie.getLeftOperand();
 		final List<Expression> eo = ie.extendedOperands();
+		// The algorithm is described as line-by-line example
 		// Say we have infix expression with (Left operand) (Right operand) and
 		// list of extended operands | e1, e2 ,e3...
 		// Infix: (Left = a) (Right = e) | d, b, c, f
 		eo.add(0, (Expression) ASTNode.copySubtree(ast, l));
 		eo.add(1, (Expression) ASTNode.copySubtree(ast, r));
-		// | a, e, d, b, c, f
+		// | a, e, d, b, c, f - is the list with the operands
 		changed = changed | sortExpressionList(eo, ast, o);
-		// | a, b, c, d, e, f
+		// | a, b, c, d, e, f - is the list after sorting
 		ie.setRightOperand((Expression) ASTNode.copySubtree(ast, eo.get(1)));
 		ie.setLeftOperand((Expression) ASTNode.copySubtree(ast, eo.get(0)));
-		// (Left = a) (Right = b) | a, b, c, d, e, f
+		// (Left = a) (Right = b) | a, b, c, d, e, f - retrieve the operands
 		eo.remove(1);
 		eo.remove(0);
 		// (Left = a) (Right = b) | c, d, e, f
-		if (longerFirst(ie)
-				&& !inRightOperandExceptions(ie.getRightOperand(), o)
-				&& !inInfixExceptions(ie)) {
+		if (longerFirst(ie) && !inInfixExceptions(ie)) {
 			set(ie, (Expression) ASTNode.copySubtree(ast, ie.getLeftOperand()),
 					flipOperator(o),
 					(Expression) ASTNode.copySubtree(ast, ie.getRightOperand()));
@@ -433,7 +435,9 @@ public class ShortestOperand extends Spartanization {
 				final Expression s = eList.get(j + 1);
 				if (isLarger(l, s) && !isMethodInvocation(l)
 						&& !isMethodInvocation(s) && !inOperandExceptions(l, o)
-						&& !inOperandExceptions(s, o)) {
+						&& !inOperandExceptions(s, o)
+						&& !inRightOperandExceptions(l, o)
+						&& !inRightOperandExceptions(s, o)) {
 
 					eList.remove(j);
 					eList.add(j + 1, (Expression) ASTNode.copySubtree(ast, l));

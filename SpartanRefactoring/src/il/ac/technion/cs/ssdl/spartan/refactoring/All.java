@@ -2,15 +2,13 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -47,36 +45,17 @@ public enum All {
 	}
 
 	private static final Spartanization[] rules = { //
-	new ComparisonWithBoolean(), //
-		new ForwardDeclaration(), //
-		new InlineSingleUse(), //
-		new RenameReturnVariableToDollar(), //
-		new ShortestBranchFirst(), //
-		new ShortestOperand(), //
-		new Ternarize(), //
-		null };
+		new ComparisonWithBoolean(), //
+			new ForwardDeclaration(), //
+			new InlineSingleUse(), //
+			new RenameReturnVariableToDollar(), //
+			new ShortestBranchFirst(), //
+			new ShortestOperand(), //
+			new Ternarize(), //
+			null };
 
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
-	}
-
-	private static String[] phrasePrefFile() {
-		final String path = Spartanization.getPrefFilePath();
-		if (!new File(path).exists())
-			return null;
-		Scanner sc;
-		String[] arr = null;
-		try {
-			sc = new Scanner(new File(path));
-			final List<String> lines = new ArrayList<>();
-			while (sc.hasNextLine())
-				lines.add(sc.nextLine());
-			arr = lines.toArray(new String[0]);
-			sc.close();
-		} catch (final FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return arr;
 	}
 
 	private static boolean ignored(final String sparta) {
@@ -89,26 +68,26 @@ public enum All {
 
 	private static void assignRulesOptions(final String[] str) {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) rules[rulesE.ShortestOperand
-		                                                                        .index()];
+				.index()];
 		for (final String line : str) {
 			// There must be a way to make it looks good, it's looks similar to
 			// the case with o.equals() and the in() function but it's not the
 			// same case...
 			if (line.contains(Options.RepositionAllRightLiterals))
 				shortestOperandInstance
-				.setRightLiteralRule(RepositionRightLiteral.All);
+						.setRightLiteralRule(RepositionRightLiteral.All);
 			if (line.contains(Options.RepositionAllButBoolAndNull))
 				shortestOperandInstance
-						.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
+				.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
 			if (line.contains(Options.DoNotRepositionRightLiterals))
 				shortestOperandInstance
-						.setRightLiteralRule(RepositionRightLiteral.None);
+				.setRightLiteralRule(RepositionRightLiteral.None);
 			if (line.contains(Options.RepositionLiterals))
 				shortestOperandInstance
-						.setBothLiteralsRule(RepositionLiterals.All);
+				.setBothLiteralsRule(RepositionLiterals.All);
 			if (line.contains(Options.DoNotRepositionLiterals))
 				shortestOperandInstance
-						.setBothLiteralsRule(RepositionLiterals.None);
+				.setBothLiteralsRule(RepositionLiterals.None);
 
 		}
 	}
@@ -119,13 +98,13 @@ public enum All {
 	 * eclipse.
 	 */
 	public static void reset() {
-		final String[] str = phrasePrefFile();
-		final int offset = Spartanization.getSpartanTitle().length;
+		final String[] str = PreferencesFile.phrasePrefFile();
+		final int offset = PreferencesFile.getSpartanTitle().length;
 		all.clear();
 		final boolean useAll = str == null;
 		for (int i = 0; i < rules.length - 1; i++)
 			if (useAll || str != null && str.length >= i + offset
-			&& !ignored(str[i + offset]))
+					&& !ignored(str[i + offset]))
 				put(rules[i]);
 		assignRulesOptions(str);
 		put(new SimplifyLogicalNegation());

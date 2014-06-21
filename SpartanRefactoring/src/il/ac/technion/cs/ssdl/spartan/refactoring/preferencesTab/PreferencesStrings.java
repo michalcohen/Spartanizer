@@ -1,9 +1,13 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
 /**
- * @author OFIR
+ * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
+ *         2014/6/21)
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
+ *         2014/6/21)
+ * @since 2014/6/21
  *
- *         Manages strings for preferences page
+ *        Manages strings for preferences page
  */
 public final class PreferencesStrings {
 	/**
