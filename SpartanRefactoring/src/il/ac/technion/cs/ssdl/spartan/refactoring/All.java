@@ -2,7 +2,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
-import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,11 +68,11 @@ public enum All {
 	private static void assignRulesOptions(final String[] str) {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) rules[rulesE.ShortestOperand.index()];
 		for (final String line : str) {
-			setIfContains(shortestOperandInstance, line, Options.RepositionAllRightLiterals);
-			setIfContains(shortestOperandInstance, line, Options.RepositionAllButBoolAndNull);
-			setIfContains(shortestOperandInstance, line, Options.DoNotRepositionRightLiterals);
-			setIfContains(shortestOperandInstance, line, Options.RepositionLiterals);
-			setIfContains(shortestOperandInstance, line, Options.DoNotRepositionLiterals);
+			setIfContains(shortestOperandInstance, line, RepositionAllRightLiterals);
+			setIfContains(shortestOperandInstance, line, RepositionAllButBoolAndNull);
+			setIfContains(shortestOperandInstance, line, DoNotRepositionRightLiterals);
+			setIfContains(shortestOperandInstance, line, RepositionLiterals);
+			setIfContains(shortestOperandInstance, line, DoNotRepositionLiterals);
 		}
 	}
 

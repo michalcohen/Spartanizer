@@ -6,7 +6,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         2014/6/21)
  * @since 2014/6/21
- *
+ * 
  *        Manages strings for preferences page
  */
 public final class PreferencesStrings {
@@ -15,7 +15,7 @@ public final class PreferencesStrings {
 	 */
 	@SuppressWarnings("javadoc")
 	public static class Strings {
-		public static final String description = "Select for each tranformation suggestion if they will be shown\n\n";
+		public static final String description = "Select for each type of tranformation suggestion if it will be shown\n\n";
 	}
 
 	/**
@@ -24,31 +24,28 @@ public final class PreferencesStrings {
 	@SuppressWarnings("javadoc")
 	public static class Layout {
 		public static final String[][] optBothLiterals = {
-			{ Options.RepositionLiterals, Options.RepositionLiterals },
-			{ Options.DoNotRepositionLiterals,
-				Options.DoNotRepositionLiterals } };
+				{ RepositionLiterals, RepositionLiterals },
+				{ DoNotRepositionLiterals, DoNotRepositionLiterals } };
 
 		public static final String[][] optRightLiteral = {
-			{ Options.RepositionAllRightLiterals,
-				Options.RepositionAllRightLiterals },
-				{ Options.RepositionAllButBoolAndNull,
-					Options.RepositionAllButBoolAndNull },
-					{ Options.DoNotRepositionRightLiterals,
-						Options.DoNotRepositionRightLiterals } };
+				{ RepositionAllRightLiterals, RepositionAllRightLiterals },
+				{ RepositionAllButBoolAndNull, RepositionAllButBoolAndNull },
+				{ DoNotRepositionRightLiterals, DoNotRepositionRightLiterals } };
 
 	}
 
-	/**
-	 * Option strings for preferences page
-	 */
 	@SuppressWarnings("javadoc")
-	public static class Options {
-		public static final String ComboBothLiterals = "Reposition operand literals";
-		public static final String ComboRightLiterals = "Reposition right-operand literals";
-		public static final String RepositionAllRightLiterals = "Reposition all right literals";
-		public static final String RepositionAllButBoolAndNull = "Reposition all except boolean and null literals";
-		public static final String DoNotRepositionRightLiterals = "Do not reposition right operand literals";
-		public static final String RepositionLiterals = "Reposition literals";
-		public static final String DoNotRepositionLiterals = "Do not reposition literals at all";
-	}
+	public static final String ComboBothLiterals = "Reposition operand literals";
+	@SuppressWarnings("javadoc")
+	public static final String ComboRightLiterals = "Reposition right-operand literals";
+	@SuppressWarnings("javadoc")
+	public static final String RepositionAllRightLiterals = "Reposition all right literals";
+	@SuppressWarnings("javadoc")
+	public static final String RepositionAllButBoolAndNull = "Reposition all except boolean and null literals";
+	@SuppressWarnings("javadoc")
+	public static final String DoNotRepositionRightLiterals = "Do not reposition right operand literals";
+	@SuppressWarnings("javadoc")
+	public static final String RepositionLiterals = "Reposition literals";
+	@SuppressWarnings("javadoc")
+	public static final String DoNotRepositionLiterals = "Do not reposition literals at all";
 }
