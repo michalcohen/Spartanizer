@@ -34,7 +34,9 @@ public final class PreferencesStrings {
 
 	}
 
-	@SuppressWarnings("javadoc")
+	/**
+	 * Strings that represent the chosen option for each repositioning option of ShortestOperandFirst
+	 */
 	public static final String ComboBothLiterals = "Reposition operand literals";
 	@SuppressWarnings("javadoc")
 	public static final String ComboRightLiterals = "Reposition right-operand literals";
