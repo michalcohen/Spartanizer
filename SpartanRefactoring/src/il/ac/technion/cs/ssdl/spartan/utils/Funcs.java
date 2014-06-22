@@ -1,6 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -732,4 +735,32 @@ public enum Funcs {
 	public static boolean isPrefix(final ASTNode n) {
 		return n != null && ASTNode.PREFIX_EXPRESSION == n.getNodeType();
 	}
+
+	private static final int[] literals = sort(new int[] {
+			//
+			ASTNode.NULL_LITERAL, //
+			ASTNode.CHARACTER_LITERAL, //
+			ASTNode.NUMBER_LITERAL, //
+			ASTNode.STRING_LITERAL, //
+			ASTNode.BOOLEAN_LITERAL, //
+	});
+
+	/**
+	 * @param r
+	 *            Return Statement node
+	 * @return true if the ReturnStatement is of literal type
+	 */
+	public static boolean isLiteral(final ReturnStatement r) {
+		return isLiteral(r.getExpression());
+	}
+
+	/**
+	 * @param n
+	 *            Expression node
+	 * @return true if the Expression is literal
+	 */
+	public static boolean isLiteral(final ASTNode n) {
+		return 0 <= Arrays.binarySearch(literals, n.getNodeType());
+	}
+
 }

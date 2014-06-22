@@ -2,6 +2,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isInfix;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isLiteral;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isMethodInvocation;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isStringLitrl;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
@@ -38,6 +39,18 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *        TODO: Add options for 1 right literal swap and 2 literals swap.
  */
 public class ShortestOperand extends Spartanization {
+	// Option flags
+	enum RepositionRightLiteral {
+		All, AllButBooleanAndNull, None
+	}
+
+	enum RepositionLiterals {
+		All, None
+	}
+
+	static RepositionRightLiteral rightLiteralOption = RepositionRightLiteral.AllButBooleanAndNull;
+	static RepositionLiterals bothLiteralsOption = RepositionLiterals.All;
+
 	/** Instantiates this class */
 	public ShortestOperand() {
 		super(
@@ -120,16 +133,31 @@ public class ShortestOperand extends Spartanization {
 	private static boolean inRightOperandExceptions(final ASTNode rN,
 			final Operator o) {
 		final Integer t = new Integer(rN.getNodeType());
+		if (isMethodInvocation(rN))
+			return true;
 		if (inOperandExceptions(rN, o) || //
 				o == PLUS && (isMethodInvocation(rN) || isStringLitrl(rN)))
 			return true;
-		return in(t, //
-				BOOLEAN_LITERAL, //
-				NULL_LITERAL, //
-				null);
+		switch (rightLiteralOption) {
+		case All:
+			return false;
+		case AllButBooleanAndNull:
+			return in(t, //
+					BOOLEAN_LITERAL, //
+					NULL_LITERAL, //
+					null);
+		case None:
+			return isLiteral(rN);
+		default:
+			return false; // All
+
+		}
+
 	}
 
 	private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
+		if (bothLiteralsOption == RepositionLiterals.None && isLiteral(n))
+			return true;
 		return o == PLUS && isStringLitrl(n);
 	}
 
@@ -193,7 +221,8 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	@SafeVarargs private static <T> boolean in(final T candidate, final T... ts) {
+	@SafeVarargs
+	private static <T> boolean in(final T candidate, final T... ts) {
 		for (final T t : ts)
 			if (t != null && t.equals(candidate))
 				return true;
@@ -313,7 +342,9 @@ public class ShortestOperand extends Spartanization {
 		eo.remove(1);
 		eo.remove(0);
 		// (Left = a) (Right = b) | c, d, e, f
-		if (longerFirst(ie)) {
+		if (longerFirst(ie)
+				&& !inRightOperandExceptions(ie.getRightOperand(), o)
+				&& !inInfixExceptions(ie)) {
 			set(ie, (Expression) ASTNode.copySubtree(ast, ie.getLeftOperand()),
 					flipOperator(o),
 					(Expression) ASTNode.copySubtree(ast, ie.getRightOperand()));

@@ -35,8 +35,13 @@ public abstract class TestSuite {
 	 */
 	public static final File location = new File("TestCases");
 	static String readFile(final File f) {
+<<<<<<< HEAD
 		try (final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f)))) {
 			// TODO: Convert into a simple 3-condition for loop
+=======
+		try (final BufferedReader r = new BufferedReader(new InputStreamReader(
+				new FileInputStream(f)))) {
+>>>>>>> ea1285446c015a34c681a316c6e8c0d7aef46b30
 			String line;
 			final StringBuilder $ = new StringBuilder();
 			while (null != (line = r.readLine()))
@@ -170,7 +175,7 @@ public abstract class TestSuite {
 	public static abstract class Files extends TestSuite.Traverse {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
 		 * .util.List, java.io.File)
@@ -220,12 +225,24 @@ public abstract class TestSuite {
 				$ = File.createTempFile(file.getName().replace(".", ""), ".in");
 			else
 				$ = File.createTempFile(file.getName().replace(".", ""), ".out");
+<<<<<<< HEAD
 			final RandomAccessFile fh = new RandomAccessFile($, "rw");
 			fh.writeBytes(str.toString());
 			fh.close();
 			$.deleteOnExit();
+=======
 		} catch (final IOException e) {
-			$ = file;
+			$ = null; // Failed to create temporary file
+		}
+
+		try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
+			fh.writeBytes(str.toString());
+			if ($ != null)
+				$.deleteOnExit();
+
+>>>>>>> ea1285446c015a34c681a316c6e8c0d7aef46b30
+		} catch (final IOException e) {
+			e.printStackTrace(); // Probably permissions problem
 		}
 		return $;
 	}
