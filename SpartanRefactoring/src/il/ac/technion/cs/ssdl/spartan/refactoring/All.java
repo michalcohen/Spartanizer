@@ -1,6 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
@@ -67,29 +66,20 @@ public enum All {
 	}
 
 	private static void assignRulesOptions(final String[] str) {
-		final ShortestOperand shortestOperandInstance = (ShortestOperand) rules[rulesE.ShortestOperand
-				.index()];
+		final ShortestOperand shortestOperandInstance = (ShortestOperand) rules[rulesE.ShortestOperand.index()];
 		for (final String line : str) {
-			// There must be a way to make it looks good, it's looks similar to
-			// the case with o.equals() and the in() function but it's not the
-			// same case...
-			if (line.contains(Options.RepositionAllRightLiterals))
-				shortestOperandInstance
-						.setRightLiteralRule(RepositionRightLiteral.All);
-			if (line.contains(Options.RepositionAllButBoolAndNull))
-				shortestOperandInstance
-				.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
-			if (line.contains(Options.DoNotRepositionRightLiterals))
-				shortestOperandInstance
-				.setRightLiteralRule(RepositionRightLiteral.None);
-			if (line.contains(Options.RepositionLiterals))
-				shortestOperandInstance
-				.setBothLiteralsRule(RepositionLiterals.All);
-			if (line.contains(Options.DoNotRepositionLiterals))
-				shortestOperandInstance
-				.setBothLiteralsRule(RepositionLiterals.None);
-
+			setIfContains(shortestOperandInstance, line, Options.RepositionAllRightLiterals);
+			setIfContains(shortestOperandInstance, line, Options.RepositionAllButBoolAndNull);
+			setIfContains(shortestOperandInstance, line, Options.DoNotRepositionRightLiterals);
+			setIfContains(shortestOperandInstance, line, Options.RepositionLiterals);
+			setIfContains(shortestOperandInstance, line, Options.DoNotRepositionLiterals);
 		}
+	}
+
+	private static void setIfContains(final ShortestOperand shortestOperandInstance, final String line, 
+			final String option) {
+		if (line.contains(option))
+			shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
 	}
 
 	/**
