@@ -2,12 +2,15 @@ package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
 import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
-import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Layout;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Strings;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
@@ -37,7 +40,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	public SpartanizationPreferencePage() {
 		super(GRID);
 		setPreferenceStore(Plugin.getDefault().getPreferenceStore());
-		setDescription("Select for each tranformation suggestion if they will be shown\n\n");
+		setDescription(Strings.description);
 	}
 
 	/**
@@ -50,6 +53,15 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		for (final String rule : allRulesNames())
 			addField(new BooleanFieldEditor(rule, rule + ":",
 					getFieldEditorParent()));
+
+		addField(new ComboFieldEditor(Options.ComboBothLiterals,
+				Options.ComboBothLiterals, Layout.optBothLiterals,
+				getFieldEditorParent()));
+
+		addField(new ComboFieldEditor(Options.ComboRightLiterals,
+				Options.ComboRightLiterals, Layout.optRightLiteral,
+				getFieldEditorParent()));
+
 	}
 
 	@Override
@@ -59,19 +71,19 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		.getCodeSource().getLocation().getPath();
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		final StringBuilder s = new StringBuilder("");
-		final String[] title = Spartanization.getSpartanTitle();
+		final String[] title = PreferencesFile.getSpartanTitle();
 		for (final String str : title)
 			s.append(str + "\n");
 		for (final String str : allRulesNames())
 			s.append(store.getString(str) + "\n");
+		s.append(store.getString(Options.ComboBothLiterals) + "\n");
+		s.append(store.getString(Options.ComboRightLiterals) + "\n");
 
-		// TODO: Use the new syntax of "try" with arguments.
 		try (PrintWriter print = new PrintWriter(
-				Spartanization.getPrefFilePath())) {
+				PreferencesFile.getPrefFilePath())) {
 			print.write(s.toString());
 		} catch (final FileNotFoundException e) {
-			// TODO Treat it like a gentleman
-			e.printStackTrace();
+			e.printStackTrace(); // Might be permissions problem
 		}
 		return true;
 	}

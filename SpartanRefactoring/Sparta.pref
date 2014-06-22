@@ -8,3 +8,5 @@ true
 true
 true
 true
+Reposition literals
+Reposition all except boolean and null literals

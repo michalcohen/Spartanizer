@@ -31,25 +31,44 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *         24.05.2014)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
- * @since 2014/05/24 TODO: Bug. Highlight should be on operator only. Otherwise
- *        it is too messy. TODO <Resolved>: Bug. It supposes to switch
- *        concatenated strings, e.g., System.prinln("Value is "+ v) - <see test
- *        15>.
- *
- *        TODO: Add options for 1 right literal swap and 2 literals swap.
+ * @since 2014/05/24 TODO|Justification ahead|: Bug. Highlight should be on
+ *        operator only. Otherwise it is too messy. |> There are two main
+ *        reasons not to do so: (1) We want the interface to be both intuitive
+ *        and non-exhausting for the user to use - using operator only notation
+ *        might lead to one of those cases: (a) Multiple clicks on single
+ *        expression for even simple swaps: Consider "cccc + yyy + bb + a" - in
+ *        one-operator approach the user will have to click more than five time
+ *        (kind of manual bubble sort) (b) Say we do not want to exhaust the
+ *        user - on which operator should we put it? maybe all of them? so we
+ *        damage the simplicity of "what you click is what you change". Tell us
+ *        it's still OK and we will change it.
  */
 public class ShortestOperand extends Spartanization {
 	// Option flags
-	enum RepositionRightLiteral {
-		All, AllButBooleanAndNull, None
+	/**
+	 * Enumeration for right literal rule options
+	 */
+	public static enum RepositionRightLiteral {
+		/** When right can be swapped - do it */
+		All,
+		/** Swap literal only when it is not boolean or null */
+		AllButBooleanAndNull,
+		/** When the literal appears to the right - do not swap */
+		None
 	}
 
-	enum RepositionLiterals {
-		All, None
+	/**
+	 * Enumeration for both side literals rule options
+	 */
+	public static enum RepositionLiterals {
+		/** Swap literals */
+		All,
+		/** Do not swap literals */
+		None
 	}
 
-	static RepositionRightLiteral rightLiteralOption = RepositionRightLiteral.AllButBooleanAndNull;
-	static RepositionLiterals bothLiteralsOption = RepositionLiterals.All;
+	RepositionRightLiteral rightLiteralOption = RepositionRightLiteral.AllButBooleanAndNull;
+	RepositionLiterals bothLiteralsOption = RepositionLiterals.All;
 
 	/** Instantiates this class */
 	public ShortestOperand() {
@@ -93,8 +112,8 @@ public class ShortestOperand extends Spartanization {
 	 *            value might be changed.
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
-	public static InfixExpression transpose(final AST ast,
-			final InfixExpression n, final AtomicBoolean hasChanged) {
+	public InfixExpression transpose(final AST ast, final InfixExpression n,
+			final AtomicBoolean hasChanged) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		transposeOperands($, ast, hasChanged);
 
@@ -102,8 +121,7 @@ public class ShortestOperand extends Spartanization {
 		final ASTNode newL = ASTNode.copySubtree(ast, n.getLeftOperand());
 		final Operator o = n.getOperator();
 
-		if (isFlipable(o) && longerFirst(n) && !inOperandExceptions(newL, o)
-				&& !inRightOperandExceptions(newR, o) && !inInfixExceptions($)) {
+		if (isFlipable(o) && longerFirst(n) && !inInfixExceptions($)) {
 			set($, (Expression) newL, flipOperator(o), (Expression) newR);
 			hasChanged.set(true);
 		}
@@ -112,8 +130,28 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private static void transposeOperands(final InfixExpression ie,
-			final AST ast, final AtomicBoolean hasChanged) {
+	/**
+	 * Sets rule option
+	 *
+	 * @param op
+	 *            Select specific option from RepositionRightLiteral enumeration
+	 */
+	public void setRightLiteralRule(final RepositionRightLiteral op) {
+		rightLiteralOption = op;
+	}
+
+	/**
+	 * Sets rule option
+	 *
+	 * @param op
+	 *            Select specific option from RepositionRightLiteral enumeration
+	 */
+	public void setBothLiteralsRule(final RepositionLiterals op) {
+		bothLiteralsOption = op;
+	}
+
+	private void transposeOperands(final InfixExpression ie, final AST ast,
+			final AtomicBoolean hasChanged) {
 
 		final Expression l = ie.getLeftOperand();
 		final Expression r = ie.getRightOperand();
@@ -130,8 +168,7 @@ public class ShortestOperand extends Spartanization {
 	// int we can't use the generic "in" function on it
 	// without boxing into Integer. Any other solution
 	// will cause less readable/maintainable code.
-	private static boolean inRightOperandExceptions(final ASTNode rN,
-			final Operator o) {
+	private boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
 		final Integer t = new Integer(rN.getNodeType());
 		if (isMethodInvocation(rN))
 			return true;
@@ -155,15 +192,19 @@ public class ShortestOperand extends Spartanization {
 
 	}
 
-	private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
+	private boolean inOperandExceptions(final ASTNode n, final Operator o) {
 		if (bothLiteralsOption == RepositionLiterals.None && isLiteral(n))
 			return true;
 		return o == PLUS && isStringLitrl(n);
 	}
 
-	private static boolean inInfixExceptions(final InfixExpression ie) {
+	private boolean inInfixExceptions(final InfixExpression ie) {
+		final Operator o = ie.getOperator();
 		return isMethodInvocation(ie.getLeftOperand())
-				&& isMethodInvocation(ie.getRightOperand());
+				&& isMethodInvocation(ie.getRightOperand())
+				|| inOperandExceptions(ie.getLeftOperand(), o)
+				|| inOperandExceptions(ie.getRightOperand(), o)
+				|| inRightOperandExceptions(ie.getRightOperand(), o);
 	}
 
 	private static void set(final InfixExpression $, final Expression left,
@@ -318,33 +359,33 @@ public class ShortestOperand extends Spartanization {
 		return a.getLength() > b.getLength();
 	}
 
-	static boolean sortInfix(final InfixExpression ie, final AST ast) {
+	boolean sortInfix(final InfixExpression ie, final AST ast) {
 		boolean changed = false;
 		if (ie == null || !isFlipable(ie.getOperator())
 				|| !ie.hasExtendedOperands())
 			return changed;
+
 		final Operator o = ie.getOperator();
 
 		final Expression r = ie.getRightOperand();
 		final Expression l = ie.getLeftOperand();
 		final List<Expression> eo = ie.extendedOperands();
+		// The algorithm is described as line-by-line example
 		// Say we have infix expression with (Left operand) (Right operand) and
 		// list of extended operands | e1, e2 ,e3...
 		// Infix: (Left = a) (Right = e) | d, b, c, f
 		eo.add(0, (Expression) ASTNode.copySubtree(ast, l));
 		eo.add(1, (Expression) ASTNode.copySubtree(ast, r));
-		// | a, e, d, b, c, f
+		// | a, e, d, b, c, f - is the list with the operands
 		changed = changed | sortExpressionList(eo, ast, o);
-		// | a, b, c, d, e, f
+		// | a, b, c, d, e, f - is the list after sorting
 		ie.setRightOperand((Expression) ASTNode.copySubtree(ast, eo.get(1)));
 		ie.setLeftOperand((Expression) ASTNode.copySubtree(ast, eo.get(0)));
-		// (Left = a) (Right = b) | a, b, c, d, e, f
+		// (Left = a) (Right = b) | a, b, c, d, e, f - retrieve the operands
 		eo.remove(1);
 		eo.remove(0);
 		// (Left = a) (Right = b) | c, d, e, f
-		if (longerFirst(ie)
-				&& !inRightOperandExceptions(ie.getRightOperand(), o)
-				&& !inInfixExceptions(ie)) {
+		if (longerFirst(ie) && !inInfixExceptions(ie)) {
 			set(ie, (Expression) ASTNode.copySubtree(ast, ie.getLeftOperand()),
 					flipOperator(o),
 					(Expression) ASTNode.copySubtree(ast, ie.getRightOperand()));
@@ -353,7 +394,7 @@ public class ShortestOperand extends Spartanization {
 		return changed;
 	}
 
-	private static boolean moveMethodsToTheBack(final List<Expression> eList,
+	private boolean moveMethodsToTheBack(final List<Expression> eList,
 			final AST ast, final Operator o) {
 		boolean changed = false;
 		int i = 0;
@@ -378,7 +419,7 @@ public class ShortestOperand extends Spartanization {
 		return changed;
 	}
 
-	private static boolean sortOperandList(final List<Expression> eList,
+	private boolean sortOperandList(final List<Expression> eList,
 			final AST ast, final Operator o) {
 		boolean changed = false;
 		int i = 0;
@@ -394,7 +435,9 @@ public class ShortestOperand extends Spartanization {
 				final Expression s = eList.get(j + 1);
 				if (isLarger(l, s) && !isMethodInvocation(l)
 						&& !isMethodInvocation(s) && !inOperandExceptions(l, o)
-						&& !inOperandExceptions(s, o)) {
+						&& !inOperandExceptions(s, o)
+						&& !inRightOperandExceptions(l, o)
+						&& !inRightOperandExceptions(s, o)) {
 
 					eList.remove(j);
 					eList.add(j + 1, (Expression) ASTNode.copySubtree(ast, l));
@@ -407,7 +450,7 @@ public class ShortestOperand extends Spartanization {
 		return changed;
 	}
 
-	private static boolean sortExpressionList(final List<Expression> eList,
+	private boolean sortExpressionList(final List<Expression> eList,
 			final AST ast, final Operator o) {
 		return moveMethodsToTheBack(eList, ast, o)
 				| sortOperandList(eList, ast, o);
