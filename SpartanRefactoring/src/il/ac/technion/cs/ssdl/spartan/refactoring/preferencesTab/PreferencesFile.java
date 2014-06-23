@@ -30,10 +30,8 @@ public class PreferencesFile {
 	 * @return Spartanization rules preferences file path.
 	 */
 	public static String getPrefFilePath() {
-		final String p = SpartanizationPreferencePage.class
-				.getProtectionDomain().getCodeSource().getLocation().getPath();
-		final String f = "Sparta.pref";
-		return p + f;
+		final String p = SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		return p + ("Sparta.pref");
 	}
 
 	/**
@@ -44,17 +42,17 @@ public class PreferencesFile {
 		if (!new File(path).exists())
 			return null;
 		Scanner sc;
-		String[] arr = null;
+		String[] $ = null;
 		try {
 			sc = new Scanner(new File(path));
 			final List<String> lines = new ArrayList<>();
 			while (sc.hasNextLine())
 				lines.add(sc.nextLine());
-			arr = lines.toArray(new String[0]);
+			$ = lines.toArray(new String[0]);
 			sc.close();
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return arr;
+		return $;
 	}
 }

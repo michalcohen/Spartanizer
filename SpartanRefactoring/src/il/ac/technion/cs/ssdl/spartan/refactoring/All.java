@@ -58,7 +58,7 @@ public enum All {
 	}
 
 	private static boolean ignored(final String sparta) {
-		return sparta.indexOf(ignoreRuleStr) >= 0;
+		return 0 <= sparta.indexOf(ignoreRuleStr);
 	}
 
 	static {
@@ -88,9 +88,9 @@ public enum All {
 	 * eclipse.
 	 */
 	public static void reset() {
-		final String[] str = PreferencesFile.phrasePrefFile();
-		final int offset = PreferencesFile.getSpartanTitle().length;
 		all.clear();
+		final int offset = PreferencesFile.getSpartanTitle().length;
+		final String[] str = PreferencesFile.phrasePrefFile();
 		final boolean useAll = str == null;
 		for (int i = 0; i < rules.length - 1; i++)
 			if (useAll || str != null && str.length >= i + offset
@@ -120,10 +120,10 @@ public enum All {
 	 * @return all the registered spartanization refactoring objects names
 	 */
 	public static List<String> allRulesNames() {
-		final List<String> names = new ArrayList<>();
+		final List<String> $ = new ArrayList<>();
 		for (final Spartanization rule : rules)
 			if (rule != null)
-				names.add(rule.getName());
-		return names;
+				$.add(rule.getName());
+		return $;
 	}
 }

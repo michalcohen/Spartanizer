@@ -68,10 +68,10 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	public boolean performOk() {
 		super.performOk();
 		SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		final StringBuilder s = new StringBuilder("");
 		for (final String str : PreferencesFile.getSpartanTitle())
 			s.append(str + "\n");
+		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		for (final String str : allRulesNames())
 			s.append(store.getString(str) + "\n");
 		s.append(store.getString(ComboBothLiterals) + "\n");

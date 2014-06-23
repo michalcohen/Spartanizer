@@ -55,9 +55,8 @@ public class RenameReturnVariableToDollar extends Spartanization {
 
 	static List<VariableDeclarationFragment> getCandidates(
 			final MethodDeclaration mthdDecl) {
-		if (mthdDecl == null || mthdDecl.getReturnType2() == null)
+		if (mthdDecl == null || null == mthdDecl.getReturnType2())
 			return null;
-		final String mthdRetType = mthdDecl.getReturnType2().toString();
 		final List<VariableDeclarationFragment> $ = new ArrayList<>();
 		mthdDecl.accept(new ASTVisitor() {
 			/**
@@ -77,8 +76,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 
 			@Override
 			public boolean visit(final VariableDeclarationStatement n) {
-				if (n.getType() != null
-						&& n.getType().toString().equals(mthdRetType))
+				if (null != n.getType() && n.getType().toString().equals((mthdDecl.getReturnType2().toString())))
 					$.addAll(n.fragments());
 				return true;
 			}

@@ -204,7 +204,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 	}
 
 	static Expression getCore(final Expression $) {
-		return $.getNodeType() != PARENTHESIZED_EXPRESSION ? $
+		return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $
 				: getCore(((ParenthesizedExpression) $).getExpression());
 	}
 
@@ -279,8 +279,8 @@ public class SimplifyLogicalNegation extends Spartanization {
 			}
 
 			private boolean hasOpportunity(final Expression inner) {
-				return asNot(inner) != null || asAndOrOr(inner) != null
-						|| asComparison(inner) != null;
+				return null != asNot(inner) || null != asAndOrOr(inner)
+						|| null != asComparison(inner);
 			}
 		};
 	}
@@ -319,8 +319,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 		public void asComparisonTypicalExpression() {
 			final InfixExpression i = mock(InfixExpression.class);
 			doReturn(GREATER).when(i).getOperator();
-			final Expression e = i;
-			assertNotNull(asComparison(e));
+			assertNotNull(asComparison(i));
 		}
 
 		@SuppressWarnings("javadoc")
@@ -328,8 +327,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 		public void asComparisonPrefixlExpression() {
 			final PrefixExpression p = mock(PrefixExpression.class);
 			doReturn(NOT).when(p).getOperator();
-			final Expression e = p;
-			assertNull(asComparison(e));
+			assertNull(asComparison(p));
 		}
 
 		@SuppressWarnings("javadoc")
@@ -345,8 +343,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 		public void asComparisonTypicalExpressionFalse() {
 			final InfixExpression i = mock(InfixExpression.class);
 			doReturn(CONDITIONAL_OR).when(i).getOperator();
-			final Expression e = i;
-			assertNull(asComparison(e));
+			assertNull(asComparison(i));
 		}
 
 		@SuppressWarnings("javadoc")
