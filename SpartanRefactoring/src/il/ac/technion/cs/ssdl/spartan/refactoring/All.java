@@ -1,12 +1,9 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.DoNotRepositionLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.DoNotRepositionRightLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.RepositionAllButBoolAndNull;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.RepositionAllRightLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.RepositionLiterals;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,13 +37,13 @@ public enum All {
 
 	private static final Spartanization[] rules = { //
 	new ComparisonWithBoolean(), //
-		new ForwardDeclaration(), //
-		new InlineSingleUse(), //
-		new RenameReturnVariableToDollar(), //
-		new ShortestBranchFirst(), //
-		new ShortestOperand(), //
-		new Ternarize(), //
-		null };
+			new ForwardDeclaration(), //
+			new InlineSingleUse(), //
+			new RenameReturnVariableToDollar(), //
+			new ShortestBranchFirst(), //
+			new ShortestOperand(), //
+			new Ternarize(), //
+			null };
 
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
@@ -64,24 +61,20 @@ public enum All {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) rules[rulesE.ShortestOperand
 				.ordinal()];
 		for (final String line : str) {
-			setIfContains(shortestOperandInstance, line,
-					RepositionAllRightLiterals);
-			setIfContains(shortestOperandInstance, line,
-					RepositionAllButBoolAndNull);
-			setIfContains(shortestOperandInstance, line,
-					DoNotRepositionRightLiterals);
-			setIfContains(shortestOperandInstance, line, RepositionLiterals);
-			setIfContains(shortestOperandInstance, line,
-					DoNotRepositionLiterals);
+			// There must be a way to make it looks good, it's looks similar to
+			// the case with o.equals() and the in() function but it's not the
+			// same case...
+			if (line.contains(Options.RepositionAllRightLiterals))
+				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
+			if (line.contains(Options.RepositionAllButBoolAndNull))
+				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
+			if (line.contains(Options.DoNotRepositionRightLiterals))
+				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
+			if (line.contains(Options.RepositionLiterals))
+				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
+			if (line.contains(Options.DoNotRepositionLiterals))
+				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
 		}
-	}
-
-	private static void setIfContains(
-			final ShortestOperand shortestOperandInstance, final String line,
-			final String option) {
-		if (line.contains(option))
-			shortestOperandInstance
-					.setRightLiteralRule(RepositionRightLiteral.All);
 	}
 
 	/**
@@ -95,8 +88,7 @@ public enum All {
 		final String[] str = PreferencesFile.phrasePrefFile();
 		final boolean useAll = str == null;
 		for (int i = 0; i < rules.length - 1; i++)
-			if (useAll || str != null && str.length >= i + offset
-			&& !ignored(str[i + offset]))
+			if (useAll || str != null && str.length >= i + offset && !ignored(str[i + offset]))
 				put(rules[i]);
 		assignRulesOptions(str);
 		put(new SimplifyLogicalNegation());

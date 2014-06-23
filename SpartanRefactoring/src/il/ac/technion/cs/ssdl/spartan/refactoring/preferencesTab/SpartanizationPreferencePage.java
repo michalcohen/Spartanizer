@@ -3,7 +3,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Layout;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.*;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Strings;
 
 import java.io.FileNotFoundException;
@@ -54,12 +54,12 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 			addField(new BooleanFieldEditor(rule, rule + ":",
 					getFieldEditorParent()));
 
-		addField(new ComboFieldEditor(ComboBothLiterals,
-				ComboBothLiterals, Layout.optBothLiterals,
+		addField(new ComboFieldEditor(Options.ComboBothLiterals,
+				Options.ComboBothLiterals, Layout.optBothLiterals,
 				getFieldEditorParent()));
 
-		addField(new ComboFieldEditor(ComboRightLiterals,
-				ComboRightLiterals, Layout.optRightLiteral,
+		addField(new ComboFieldEditor(Options.ComboRightLiterals,
+				Options.ComboRightLiterals, Layout.optRightLiteral,
 				getFieldEditorParent()));
 
 	}
@@ -74,8 +74,8 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		for (final String str : allRulesNames())
 			s.append(store.getString(str) + "\n");
-		s.append(store.getString(ComboBothLiterals) + "\n");
-		s.append(store.getString(ComboRightLiterals) + "\n");
+		s.append(store.getString(Options.ComboBothLiterals) + "\n");
+		s.append(store.getString(Options.ComboRightLiterals) + "\n");
 
 		try (PrintWriter print = new PrintWriter(
 				PreferencesFile.getPrefFilePath())) {
