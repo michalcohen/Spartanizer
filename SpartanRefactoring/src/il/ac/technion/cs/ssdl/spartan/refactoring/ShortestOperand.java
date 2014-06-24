@@ -7,7 +7,17 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isMethodInvocation;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isStringLitrl;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -31,17 +41,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *         24.05.2014)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         24.05.2014)
- * @since 2014/05/24 TODO|Justification ahead|: Bug. Highlight should be on
- *        operator only. Otherwise it is too messy. |> There are two main
- *        reasons not to do so: (1) We want the interface to be both intuitive
- *        and non-exhausting for the user to use - using operator only notation
- *        might lead to one of those cases: (a) Multiple clicks on single
- *        expression for even simple swaps: Consider "cccc + yyy + bb + a" - in
- *        one-operator approach the user will have to click more than five time
- *        (kind of manual bubble sort) (b) Say we do not want to exhaust the
- *        user - on which operator should we put it? maybe all of them? so we
- *        damage the simplicity of "what you click is what you change". Tell us
- *        it's still OK and we will change it.
+ * @since 2014/05/24
  */
 public class ShortestOperand extends Spartanization {
 	// Option flags
@@ -102,7 +102,7 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 * 
+	 *
 	 * @param ast
 	 *            The AST - for copySubTree.
 	 * @param n
@@ -120,10 +120,9 @@ public class ShortestOperand extends Spartanization {
 		final Operator o = n.getOperator();
 
 		if (isFlipable(o) && longerFirst(n) && !inInfixExceptions($)) {
-			set($, 
-					(Expression) (ASTNode.copySubtree(ast, n.getLeftOperand())), 
-					flipOperator(o), 
-					(Expression) (ASTNode.copySubtree(ast, n.getRightOperand())));
+			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()),
+					flipOperator(o),
+					(Expression) ASTNode.copySubtree(ast, n.getRightOperand()));
 			hasChanged.set(true);
 		}
 		if (sortInfix($, ast))
@@ -133,7 +132,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -143,7 +142,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -193,7 +192,8 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private boolean inOperandExceptions(final ASTNode n, final Operator o) {
-		return (bothLiteralsOption == RepositionLiterals.None && isLiteral(n) ? true : o == PLUS && isStringLitrl(n));
+		return bothLiteralsOption == RepositionLiterals.None && isLiteral(n) ? true
+				: o == PLUS && isStringLitrl(n);
 	}
 
 	private boolean inInfixExceptions(final InfixExpression ie) {
@@ -216,7 +216,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 * 
+	 *
 	 * @param o
 	 *            The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
@@ -272,7 +272,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 * 
+	 *
 	 * @param a
 	 *            b Ranges to merge
 	 * @return True - if such an overlap exists
@@ -296,14 +296,14 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 * 
+	 *
 	 * @param rangeList
 	 *            The list of ranges to union with
 	 * @param rNew
 	 *            The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 * 
+	 *
 	 * @see areOverlapped
 	 * @see merge
 	 */
@@ -327,7 +327,8 @@ public class ShortestOperand extends Spartanization {
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
 				if (!hasChanged.get())
 					return true;
-				final Range rN = new Range(n.getParent());
+				final Range rN = new Range(!isInfix(n.getParent()) ? n
+						: n.getParent());
 				if (!unionRangeWithList(opportunities, rN))
 					opportunities.add(rN);
 				return true;
@@ -349,8 +350,9 @@ public class ShortestOperand extends Spartanization {
 			return false;
 		if (countNodes(a) > threshold + countNodes(b))
 			return true;
-		return (isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a, (MethodInvocation) b) 
-				: a.getLength() > b.getLength());
+		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum(
+				(MethodInvocation) a, (MethodInvocation) b) : a.getLength() > b
+				.getLength();
 	}
 
 	boolean sortInfix(final InfixExpression ie, final AST ast) {
@@ -385,7 +387,8 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private boolean moveMethodsToTheBack(final List<Expression> eList, final AST ast, final Operator o) {
+	private boolean moveMethodsToTheBack(final List<Expression> eList,
+			final AST ast, final Operator o) {
 		boolean $ = false;
 		int i = 0;
 		final int size = eList.size();
@@ -409,7 +412,8 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private boolean sortOperandList(final List<Expression> eList, final AST ast, final Operator o) {
+	private boolean sortOperandList(final List<Expression> eList,
+			final AST ast, final Operator o) {
 		boolean $ = false;
 		int i = 0;
 		final int size = eList.size();

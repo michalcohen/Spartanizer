@@ -87,7 +87,12 @@ public enum All {
 					}
 
 					@Override
+					/**
+					 * Should not be used! Only one active instance of any Spartan rules should exists.
+					 * Removing one could be a design flaw and therefore will ignored.
+					 */
 					public void remove() {
+						// Ignore request
 						return;
 					}
 				};
