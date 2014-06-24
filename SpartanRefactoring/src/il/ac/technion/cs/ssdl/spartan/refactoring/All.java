@@ -7,6 +7,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStri
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,31 +20,73 @@ import java.util.Map;
  * @since 2013/07/01
  */
 public enum All {
+	@SuppressWarnings("javadoc")
+	ComparisonWithBoolean(new ComparisonWithBoolean()), //
+	@SuppressWarnings("javadoc")
+	ForwardDeclaration(new ForwardDeclaration()), //
+	@SuppressWarnings("javadoc")
+	InlineSingleUse(new InlineSingleUse()), //
+	@SuppressWarnings("javadoc")
+	RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+	@SuppressWarnings("javadoc")
+	ShortestBranchFirst(new ShortestBranchFirst()), //
+	@SuppressWarnings("javadoc")
+	ShortestOperand(new ShortestOperand()), //
+	@SuppressWarnings("javadoc")
+	Ternarize(new Ternarize()), //
 	;
+
+	private final Spartanization value;
+
+	private All(final Spartanization value) {
+		this.value = value;
+	}
+
+	public Spartanization value() {
+		return value;
+	}
+
+	@SuppressWarnings("unchecked")
+	//
+	public static <T extends Spartanization> T findInstance(
+			final Class<? extends T> c) {
+		for (final All a : All.values()) {
+			final Spartanization $ = a.value();
+			if ($.getClass().equals(c))
+				return (T) $;
+		}
+		return null;
+	}
+
+	public static Iterable<Spartanization> allAvailableSpartanizations() {
+		return new Iterable<Spartanization>() {
+			@Override
+			public Iterator<Spartanization> iterator() {
+				return new Iterator<Spartanization>() {
+					int next;
+
+					@Override
+					public boolean hasNext() {
+						return next < values().length;
+					}
+
+					@Override
+					public Spartanization next() {
+						return values()[next++].value();
+					}
+
+					@Override
+					public void remove() {
+						// TODO Auto-generated method stub
+					}
+				};
+			}
+		};
+	}
+
 	private static String ignoreRuleStr = "false";
 
 	private static final Map<String, Spartanization> all = new HashMap<>();
-
-	private static enum rulesE { // Converts rule-name to rule array-position
-		ComparisonWithBoolean, //
-		ForwardDeclaration, //
-		InlineSingleUse, //
-		RenameReturnVariableToDollar, //
-		ShortestBranchFirst, //
-		ShortestOperand, //
-		Ternarize, //
-		;
-	}
-
-	private static final Spartanization[] rules = { //
-	new ComparisonWithBoolean(), //
-			new ForwardDeclaration(), //
-			new InlineSingleUse(), //
-			new RenameReturnVariableToDollar(), //
-			new ShortestBranchFirst(), //
-			new ShortestOperand(), //
-			new Ternarize(), //
-			null };
 
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
@@ -53,27 +96,27 @@ public enum All {
 		return 0 <= sparta.indexOf(ignoreRuleStr);
 	}
 
-	static {
-		reset();
-	}
-
 	private static void assignRulesOptions(final String[] str) {
-		final ShortestOperand shortestOperandInstance = (ShortestOperand) rules[rulesE.ShortestOperand
-				.ordinal()];
+		final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
 		for (final String line : str) {
 			// There must be a way to make it looks good, it's looks similar to
 			// the case with o.equals() and the in() function but it's not the
 			// same case...
 			if (line.contains(Options.RepositionAllRightLiterals))
-				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
+				shortestOperandInstance
+				.setRightLiteralRule(RepositionRightLiteral.All);
 			if (line.contains(Options.RepositionAllButBoolAndNull))
-				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
+				shortestOperandInstance
+				.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
 			if (line.contains(Options.DoNotRepositionRightLiterals))
-				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
+				shortestOperandInstance
+				.setRightLiteralRule(RepositionRightLiteral.None);
 			if (line.contains(Options.RepositionLiterals))
-				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
+				shortestOperandInstance
+				.setBothLiteralsRule(RepositionLiterals.All);
 			if (line.contains(Options.DoNotRepositionLiterals))
-				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
+				shortestOperandInstance
+				.setBothLiteralsRule(RepositionLiterals.None);
 		}
 	}
 
@@ -87,9 +130,14 @@ public enum All {
 		final int offset = PreferencesFile.getSpartanTitle().length;
 		final String[] str = PreferencesFile.phrasePrefFile();
 		final boolean useAll = str == null;
-		for (int i = 0; i < rules.length - 1; i++)
-			if (useAll || str != null && str.length >= i + offset && !ignored(str[i + offset]))
-				put(rules[i]);
+		int i = 0;
+		for (final Spartanization rule : allAvailableSpartanizations()) {
+			if (useAll || str != null && str.length >= i + offset
+					&& !ignored(str[i + offset]))
+				put(rule);
+			i++;
+		}
+
 		assignRulesOptions(str);
 		put(new SimplifyLogicalNegation());
 	}
@@ -115,7 +163,7 @@ public enum All {
 	 */
 	public static List<String> allRulesNames() {
 		final List<String> $ = new ArrayList<>();
-		for (final Spartanization rule : rules)
+		for (final Spartanization rule : allAvailableSpartanizations())
 			if (rule != null)
 				$.add(rule.getName());
 		return $;
