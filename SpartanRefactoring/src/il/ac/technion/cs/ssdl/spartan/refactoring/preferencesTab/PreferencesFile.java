@@ -11,9 +11,8 @@ import java.util.Scanner;
  *         2014/6/21)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         2014/6/21)
- * @since 2014/6/21
- *
- *        Preferences file handler. Getting file path, phrasing it, etc...
+ * @since 2014/6/21 Preferences file handler. Getting file path, phrasing it,
+ *        etc...
  */
 public class PreferencesFile {
 	/**
@@ -22,18 +21,15 @@ public class PreferencesFile {
 	public static String[] getSpartanTitle() {
 		return new String[] { //
 		"Preferences file for Spartanization rules profiles", //
-				"Please avoid editing the file manually ", //
-		"--------------------------------------------------" };
+		    "Please avoid editing the file manually ", //
+		    "--------------------------------------------------" };
 	}
-
 	/**
 	 * @return Spartanization rules preferences file path.
 	 */
 	public static String getPrefFilePath() {
-		final String p = SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		return p + ("Sparta.pref");
+		return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "Sparta.pref";
 	}
-
 	/**
 	 * @return Preferences file as lines array
 	 */

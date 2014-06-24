@@ -173,7 +173,7 @@ public class Ternarize extends Spartanization {
 	}
 	private static boolean isExpOnlyDiff(final TwoNodes diffNodes, final TwoExpressions diffExps) {
 		if (diffExps == null)
-			return !(isAssignment(diffNodes.thenNode) && isAssignment(diffNodes.elseNode))
+			return (!isAssignment(diffNodes.thenNode) || !isAssignment(diffNodes.elseNode))
 			    || compatible(getAssignment((ExpressionStatement) diffNodes.thenNode), getAssignment((ExpressionStatement) diffNodes.elseNode));
 		if (hasNull(diffNodes.thenNode, diffNodes.elseNode))
 			return false;
@@ -202,8 +202,8 @@ public class Ternarize extends Spartanization {
 		diffNodes.elseNode = getStmntIfBlock(diffNodes.elseNode);
 		return true;
 	}
-	private static ASTNode getStmntIfBlock(final ASTNode node) {
-		return node != null && node.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) node) : node;
+	private static ASTNode getStmntIfBlock(final ASTNode n) {
+		return n != null && n.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) n) : n;
 	}
 	private static TwoNodes findDiffNodes(final ASTNode thenNode, final ASTNode elseNode) {
 		return hasNull(thenNode, elseNode) ? null : findDiffNodes(getChildren(thenNode), getChildren(elseNode));
