@@ -42,10 +42,18 @@ public enum All {
 		this.value = value;
 	}
 
+	/**
+	 * @return Spartanization class rule instance
+	 */
 	public Spartanization value() {
 		return value;
 	}
 
+	/**
+	 * @param c
+	 *            Spartanization rule
+	 * @return Spartanization class rule instance
+	 */
 	@SuppressWarnings("unchecked")
 	//
 	public static <T extends Spartanization> T findInstance(
@@ -58,6 +66,9 @@ public enum All {
 		return null;
 	}
 
+	/**
+	 * @return Iteration over all Spartanization class instances
+	 */
 	public static Iterable<Spartanization> allAvailableSpartanizations() {
 		return new Iterable<Spartanization>() {
 			@Override
@@ -98,25 +109,29 @@ public enum All {
 
 	private static void assignRulesOptions(final String[] str) {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
+		if (str == null || shortestOperandInstance == null)
+			return;
 		for (final String line : str) {
 			// There must be a way to make it looks good, it's looks similar to
 			// the case with o.equals() and the in() function but it's not the
 			// same case...
+			if (line == null)
+				continue;
 			if (line.contains(Options.RepositionAllRightLiterals))
 				shortestOperandInstance
-				.setRightLiteralRule(RepositionRightLiteral.All);
+						.setRightLiteralRule(RepositionRightLiteral.All);
 			if (line.contains(Options.RepositionAllButBoolAndNull))
 				shortestOperandInstance
-				.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
+						.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
 			if (line.contains(Options.DoNotRepositionRightLiterals))
 				shortestOperandInstance
-				.setRightLiteralRule(RepositionRightLiteral.None);
+						.setRightLiteralRule(RepositionRightLiteral.None);
 			if (line.contains(Options.RepositionLiterals))
 				shortestOperandInstance
-				.setBothLiteralsRule(RepositionLiterals.All);
+						.setBothLiteralsRule(RepositionLiterals.All);
 			if (line.contains(Options.DoNotRepositionLiterals))
 				shortestOperandInstance
-				.setBothLiteralsRule(RepositionLiterals.None);
+						.setBothLiteralsRule(RepositionLiterals.None);
 		}
 	}
 
