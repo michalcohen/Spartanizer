@@ -86,11 +86,8 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	/**
+	 * Initializes the workbench
 	 */
 	@Override
 	public void init(@SuppressWarnings("unused") final IWorkbench workbench) {

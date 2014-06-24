@@ -13,11 +13,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
  *         2014/6/16 Class used to initialize default preference values.
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
-	/*
-	 * TODO: remove automatic comments like this one, they provide no information
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
-	 * initializeDefaultPreferences()
+	/**
+	 * Initialize preferences to default values
 	 */
 	@Override public void initializeDefaultPreferences() {
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();

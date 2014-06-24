@@ -88,7 +88,7 @@ public enum All {
 
 					@Override
 					public void remove() {
-						// TODO Auto-generated method stub
+						return;
 					}
 				};
 			}
