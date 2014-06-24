@@ -26,56 +26,48 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- *
+ * 
  * @since 2013/01/01
  */
 public class RenameReturnVariableToDollar extends Spartanization {
 	/** Instantiates this class */
 	public RenameReturnVariableToDollar() {
-		super("Rename returned variable to '$'",
-				"Rename the variable returned by a function to '$'");
+		super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
 	}
 
-	@Override
-	protected final void fillRewrite(final ASTRewrite $, final AST t,
-			final CompilationUnit cu, final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu,
+			final IMarker m) {
 		cu.accept(new ASTVisitor() {
-			@Override
-			public boolean visit(final MethodDeclaration n) {
+			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment returnVar = selectReturnVariable(n);
 				if (returnVar == null || !inRange(m, returnVar))
 					return true;
-				for (final Expression e : Occurrences.BOTH_LEXICAL.of(
-						returnVar.getName()).in(n))
+				for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
 					$.replace(e, t.newSimpleName("$"), null);
 				return true;
 			}
 		});
 	}
 
-	static List<VariableDeclarationFragment> getCandidates(
-			final MethodDeclaration mthdDecl) {
+	static List<VariableDeclarationFragment> getCandidates(final MethodDeclaration mthdDecl) {
 		if (mthdDecl == null || null == mthdDecl.getReturnType2())
 			return null;
 		final List<VariableDeclarationFragment> $ = new ArrayList<>();
 		mthdDecl.accept(new ASTVisitor() {
 			/**
-			 *
+			 * 
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 			 *      AnonymousClassDeclaration)
-			 *
+			 * 
 			 * @param _
 			 *            ignored, we don't want to visit declarations inside
 			 *            anonymous classes
 			 */
-			@Override
-			public boolean visit(
-					@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
+			@Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
 				return false;
 			}
 
-			@Override
-			public boolean visit(final VariableDeclarationStatement n) {
+			@Override public boolean visit(final VariableDeclarationStatement n) {
 				if (null != n.getType() && n.getType().toString().equals((mthdDecl.getReturnType2().toString())))
 					$.addAll(n.fragments());
 				return true;
@@ -88,23 +80,20 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		final List<ReturnStatement> $ = new ArrayList<>();
 		container.accept(new ASTVisitor() {
 			/**
-			 *
-			 *
+			 * 
+			 * 
 			 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
 			 *      AnonymousClassDeclaration)
-			 *
+			 * 
 			 * @param _
 			 *            ignored, we don't want to visit declarations inside
 			 *            anonymous classes
 			 */
-			@Override
-			public boolean visit(
-					@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
+			@Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
 				return false;
 			}
 
-			@Override
-			public boolean visit(final ReturnStatement node) {
+			@Override public boolean visit(final ReturnStatement node) {
 				$.add(node);
 				return true;
 			}
@@ -112,8 +101,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return $;
 	}
 
-	static VariableDeclarationFragment selectReturnVariable(
-			final MethodDeclaration m) {
+	static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
 		final List<VariableDeclarationFragment> vs = getCandidates(m);
 		if (vs == null || vs.isEmpty() || hasDollar(vs))
 			return null;
@@ -142,16 +130,14 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return $;
 	}
 
-	private static VariableDeclarationFragment bestCandidate(
-			final List<VariableDeclarationFragment> vs,
+	private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
 			final List<ReturnStatement> rs) {
 		VariableDeclarationFragment $ = null;
 		int maxOccurrences = 0;
 		for (final VariableDeclarationFragment v : vs) {
 			int occurrences = 0;
 			for (final ReturnStatement r : rs)
-				occurrences += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r)
-						.size();
+				occurrences += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r).size();
 			if (occurrences > maxOccurrences) {
 				maxOccurrences = occurrences;
 				$ = v;
@@ -160,15 +146,12 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		return $;
 	}
 
-	@Override
-	protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
-			@Override
-			public boolean visit(final MethodDeclaration n) {
+			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment v = selectReturnVariable(n);
 				if (v != null)
-					opportunities.add(new Range(getContainerByNodeType(v,
-							ASTNode.METHOD_DECLARATION)));
+					opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
 				return true;
 			}
 		};

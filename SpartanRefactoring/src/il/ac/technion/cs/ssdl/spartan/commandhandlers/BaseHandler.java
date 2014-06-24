@@ -28,15 +28,19 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public abstract class BaseHandler extends AbstractHandler {
 	private final Spartanization refactoring;
+
 	protected Spartanization getRefactoring() {
 		return refactoring;
 	}
+
 	protected final String getDialogTitle() {
 		return refactoring.getName();
 	}
+
 	protected BaseHandler(final Spartanization refactoring) {
 		this.refactoring = refactoring;
 	}
+
 	@Override public Void execute(final ExecutionEvent e) throws ExecutionException {
 		try {
 			return execute(HandlerUtil.getCurrentSelection(e));
@@ -44,31 +48,39 @@ public abstract class BaseHandler extends AbstractHandler {
 			throw new ExecutionException(x.getMessage());
 		}
 	}
+
 	private Void execute(final ISelection s) throws InterruptedException {
 		return !(s instanceof ITextSelection) ? null : execute((ITextSelection) s);
 	}
+
 	private Void execute(final ITextSelection textSelect) throws InterruptedException {
 		return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
 	}
+
 	private Void execute(final RefactoringWizardOpenOperation wop) throws InterruptedException {
 		wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
 		return null;
 	}
+
 	private RefactoringWizard getWizard(final ITextSelection ts, final ICompilationUnit cu) {
 		final Spartanization $ = getRefactoring();
 		$.setSelection(ts);
 		$.setCompilationUnit(cu);
 		return new Wizard($);
 	}
+
 	private static ICompilationUnit getCompilationUnit() {
 		return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
 	}
+
 	private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
 		return ep == null ? null : getCompilationUnit((IResource) ep.getEditorInput().getAdapter(IResource.class));
 	}
+
 	private static ICompilationUnit getCompilationUnit(final IResource r) {
 		return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
 	}
+
 	private static IWorkbenchWindow getCurrentWorkbenchWindow() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}

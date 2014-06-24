@@ -26,14 +26,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
  * <p>
- *
+ * 
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original) @since
  *         10/06/2014
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
  *         2014/6/16 (v2)
  */
-public class SpartanizationPreferencePage extends FieldEditorPreferencePage
-		implements IWorkbenchPreferencePage {
+public class SpartanizationPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	/**
 	 * Instantiates the page and sets its default values
 	 */
@@ -48,24 +47,19 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	 * GUI blocks needed to manipulate various types of preferences. Each field
 	 * editor knows how to save and restore itself.
 	 */
-	@Override
-	public void createFieldEditors() {
+	@Override public void createFieldEditors() {
 		for (final String rule : allRulesNames())
-			addField(new BooleanFieldEditor(rule, rule + ":",
-					getFieldEditorParent()));
+			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
 
-		addField(new ComboFieldEditor(Options.ComboBothLiterals,
-				Options.ComboBothLiterals, Layout.optBothLiterals,
+		addField(new ComboFieldEditor(Options.ComboBothLiterals, Options.ComboBothLiterals, Layout.optBothLiterals,
 				getFieldEditorParent()));
 
-		addField(new ComboFieldEditor(Options.ComboRightLiterals,
-				Options.ComboRightLiterals, Layout.optRightLiteral,
+		addField(new ComboFieldEditor(Options.ComboRightLiterals, Options.ComboRightLiterals, Layout.optRightLiteral,
 				getFieldEditorParent()));
 
 	}
 
-	@Override
-	public boolean performOk() {
+	@Override public boolean performOk() {
 		super.performOk();
 		SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		final StringBuilder s = new StringBuilder("");
@@ -77,8 +71,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 		s.append(store.getString(Options.ComboBothLiterals) + "\n");
 		s.append(store.getString(Options.ComboRightLiterals) + "\n");
 
-		try (PrintWriter print = new PrintWriter(
-				PreferencesFile.getPrefFilePath())) {
+		try (PrintWriter print = new PrintWriter(PreferencesFile.getPrefFilePath())) {
 			print.write(s.toString());
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace(); // Might be permissions problem
@@ -89,8 +82,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage
 	/**
 	 * Initializes the workbench
 	 */
-	@Override
-	public void init(@SuppressWarnings("unused") final IWorkbench workbench) {
+	@Override public void init(@SuppressWarnings("unused") final IWorkbench workbench) {
 		super.initialize();
 	}
 }

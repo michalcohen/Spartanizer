@@ -23,12 +23,14 @@ public class SpartanizationClassForFolderExists extends TestSuite {
 	 * class
 	 */
 	@Parameter(value = 0) public String folderForClass;
+
 	/**
 	 * Tests that {@link #folderForClass} is a valid class name
 	 */
 	@Test public void validClassName() {
 		makeSpartanizationObject(folderForClass);
 	}
+
 	/**
 	 * @return a collection of cases, where each case is an array of length 1
 	 *         containing the name of a in the test suite

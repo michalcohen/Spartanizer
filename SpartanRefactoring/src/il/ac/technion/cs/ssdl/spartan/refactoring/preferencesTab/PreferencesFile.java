@@ -21,15 +21,18 @@ public class PreferencesFile {
 	public static String[] getSpartanTitle() {
 		return new String[] { //
 		"Preferences file for Spartanization rules profiles", //
-		    "Please avoid editing the file manually ", //
-		    "--------------------------------------------------" };
+				"Please avoid editing the file manually ", //
+				"--------------------------------------------------" };
 	}
+
 	/**
 	 * @return Spartanization rules preferences file path.
 	 */
 	public static String getPrefFilePath() {
-		return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "Sparta.pref";
+		return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath()
+				+ "Sparta.pref";
 	}
+
 	/**
 	 * @return Preferences file as lines array
 	 */

@@ -72,17 +72,14 @@ public class ShortestOperand extends Spartanization {
 
 	/** Instantiates this class */
 	public ShortestOperand() {
-		super(
-				"Shortest operand first",
+		super("Shortest operand first",
 				"Make the shortest operand first in a binary commutative or semi-commutative operator");
 	}
 
-	@Override
-	protected final void fillRewrite(final ASTRewrite r, final AST t,
-			final CompilationUnit cu, final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
+			final IMarker m) {
 		cu.accept(new ASTVisitor() {
-			@Override
-			public boolean visit(final InfixExpression n) {
+			@Override public boolean visit(final InfixExpression n) {
 				if (invalid(n))
 					return true;
 				final AtomicBoolean hasChanged = new AtomicBoolean(false);
@@ -93,8 +90,7 @@ public class ShortestOperand extends Spartanization {
 			}
 
 			private boolean invalid(final InfixExpression n) {
-				return !inRange(m, n) || null == n.getLeftOperand()
-						|| null == n.getRightOperand();
+				return !inRange(m, n) || null == n.getLeftOperand() || null == n.getRightOperand();
 			}
 		});
 	}
@@ -102,7 +98,7 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 *
+	 * 
 	 * @param ast
 	 *            The AST - for copySubTree.
 	 * @param n
@@ -112,16 +108,14 @@ public class ShortestOperand extends Spartanization {
 	 *            value might be changed.
 	 * @return Number of abstract syntax tree nodes under the parameter.
 	 */
-	public InfixExpression transpose(final AST ast, final InfixExpression n,
-			final AtomicBoolean hasChanged) {
+	public InfixExpression transpose(final AST ast, final InfixExpression n, final AtomicBoolean hasChanged) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
 		transposeOperands($, ast, hasChanged);
 
 		final Operator o = n.getOperator();
 
 		if (isFlipable(o) && longerFirst(n) && !inInfixExceptions($)) {
-			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()),
-					flipOperator(o),
+			set($, (Expression) ASTNode.copySubtree(ast, n.getLeftOperand()), flipOperator(o),
 					(Expression) ASTNode.copySubtree(ast, n.getRightOperand()));
 			hasChanged.set(true);
 		}
@@ -132,7 +126,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 *
+	 * 
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -142,7 +136,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 *
+	 * 
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -150,8 +144,7 @@ public class ShortestOperand extends Spartanization {
 		bothLiteralsOption = op;
 	}
 
-	private void transposeOperands(final InfixExpression ie, final AST ast,
-			final AtomicBoolean hasChanged) {
+	private void transposeOperands(final InfixExpression ie, final AST ast, final AtomicBoolean hasChanged) {
 
 		final Expression l = ie.getLeftOperand();
 
@@ -163,11 +156,12 @@ public class ShortestOperand extends Spartanization {
 			ie.setRightOperand(transpose(ast, (InfixExpression) r, hasChanged));
 	}
 
-	@SuppressWarnings("boxing")
-	// Justification: because ASTNode is a primitive
-	// int we can't use the generic "in" function on it
-	// without boxing into Integer. Any other solution
-	// will cause less readable/maintainable code.
+	@SuppressWarnings("boxing")// Justification: because ASTNode is a primitive
+								// int we can't use the generic "in" function on
+								// it
+								// without boxing into Integer. Any other
+								// solution
+								// will cause less readable/maintainable code.
 	private boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
 		if (isMethodInvocation(rN))
 			return true;
@@ -192,21 +186,18 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private boolean inOperandExceptions(final ASTNode n, final Operator o) {
-		return bothLiteralsOption == RepositionLiterals.None && isLiteral(n) ? true
-				: o == PLUS && isStringLitrl(n);
+		return bothLiteralsOption == RepositionLiterals.None && isLiteral(n) ? true : o == PLUS && isStringLitrl(n);
 	}
 
 	private boolean inInfixExceptions(final InfixExpression ie) {
 		final Operator o = ie.getOperator();
-		return isMethodInvocation(ie.getLeftOperand())
-				&& isMethodInvocation(ie.getRightOperand())
-				|| inOperandExceptions(ie.getLeftOperand(), o)
-				|| inOperandExceptions(ie.getRightOperand(), o)
+		return isMethodInvocation(ie.getLeftOperand()) && isMethodInvocation(ie.getRightOperand())
+				|| inOperandExceptions(ie.getLeftOperand(), o) || inOperandExceptions(ie.getRightOperand(), o)
 				|| inRightOperandExceptions(ie.getRightOperand(), o);
 	}
 
-	private static void set(final InfixExpression $, final Expression left,
-			final Operator operator, final Expression right) {
+	private static void set(final InfixExpression $, final Expression left, final Operator operator,
+			final Expression right) {
 		$.setRightOperand(left);
 		$.setOperator(operator);
 		$.setLeftOperand(right);
@@ -216,7 +207,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 *
+	 * 
 	 * @param o
 	 *            The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
@@ -260,8 +251,7 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	@SafeVarargs
-	private static <T> boolean in(final T candidate, final T... ts) {
+	@SafeVarargs private static <T> boolean in(final T candidate, final T... ts) {
 		for (final T t : ts)
 			if (t != null && t.equals(candidate))
 				return true;
@@ -272,7 +262,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 *
+	 * 
 	 * @param a
 	 *            b Ranges to merge
 	 * @return True - if such an overlap exists
@@ -289,26 +279,24 @@ public class ShortestOperand extends Spartanization {
 	 * @see areOverlapped
 	 */
 	protected static Range merge(final Range a, final Range b) {
-		return new Range(a.from < b.from ? a.from : b.from, a.to > b.to ? a.to
-				: b.to);
+		return new Range(a.from < b.from ? a.from : b.from, a.to > b.to ? a.to : b.to);
 	}
 
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 *
+	 * 
 	 * @param rangeList
 	 *            The list of ranges to union with
 	 * @param rNew
 	 *            The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 *
+	 * 
 	 * @see areOverlapped
 	 * @see merge
 	 */
-	protected static boolean unionRangeWithList(final List<Range> rangeList,
-			final Range rNew) {
+	protected static boolean unionRangeWithList(final List<Range> rangeList, final Range rNew) {
 		boolean $ = false;
 		for (Range r : rangeList)
 			if (areOverlapped(r, rNew)) {
@@ -318,17 +306,14 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	@Override
-	protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
-			@Override
-			public boolean visit(final InfixExpression n) {
+			@Override public boolean visit(final InfixExpression n) {
 				final AtomicBoolean hasChanged = new AtomicBoolean(false);
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
 				if (!hasChanged.get())
 					return true;
-				final Range rN = new Range(!isInfix(n.getParent()) ? n
-						: n.getParent());
+				final Range rN = new Range(!isInfix(n.getParent()) ? n : n.getParent());
 				if (!unionRangeWithList(opportunities, rN))
 					opportunities.add(rN);
 				return true;
@@ -340,8 +325,7 @@ public class ShortestOperand extends Spartanization {
 		return isLarger(n.getLeftOperand(), n.getRightOperand());
 	}
 
-	static boolean largerArgsNum(final MethodInvocation a,
-			final MethodInvocation b) {
+	static boolean largerArgsNum(final MethodInvocation a, final MethodInvocation b) {
 		return a.arguments().size() > b.arguments().size();
 	}
 
@@ -350,15 +334,13 @@ public class ShortestOperand extends Spartanization {
 			return false;
 		if (countNodes(a) > threshold + countNodes(b))
 			return true;
-		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum(
-				(MethodInvocation) a, (MethodInvocation) b) : a.getLength() > b
-				.getLength();
+		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a,
+				(MethodInvocation) b) : a.getLength() > b.getLength();
 	}
 
 	boolean sortInfix(final InfixExpression ie, final AST ast) {
 		boolean $ = false;
-		if (ie == null || !isFlipable(ie.getOperator())
-				|| !ie.hasExtendedOperands())
+		if (ie == null || !isFlipable(ie.getOperator()) || !ie.hasExtendedOperands())
 			return $;
 
 		final List<Expression> eo = ie.extendedOperands();
@@ -379,16 +361,14 @@ public class ShortestOperand extends Spartanization {
 		eo.remove(0);
 		// (Left = a) (Right = b) | c, d, e, f
 		if (longerFirst(ie) && !inInfixExceptions(ie)) {
-			set(ie, (Expression) ASTNode.copySubtree(ast, ie.getLeftOperand()),
-					flipOperator(o),
+			set(ie, (Expression) ASTNode.copySubtree(ast, ie.getLeftOperand()), flipOperator(o),
 					(Expression) ASTNode.copySubtree(ast, ie.getRightOperand()));
 			$ = true;
 		}
 		return $;
 	}
 
-	private boolean moveMethodsToTheBack(final List<Expression> eList,
-			final AST ast, final Operator o) {
+	private boolean moveMethodsToTheBack(final List<Expression> eList, final AST ast, final Operator o) {
 		boolean $ = false;
 		int i = 0;
 		final int size = eList.size();
@@ -398,8 +378,7 @@ public class ShortestOperand extends Spartanization {
 			while (size > j + 1) {
 				final Expression l = eList.get(j);
 				final Expression s = eList.get(j + 1);
-				if (isMethodInvocation(l) && !isMethodInvocation(s)
-						&& !inOperandExceptions(l, o)
+				if (isMethodInvocation(l) && !isMethodInvocation(s) && !inOperandExceptions(l, o)
 						&& !inOperandExceptions(s, o)) {
 					eList.remove(j);
 					eList.add(j + 1, (Expression) ASTNode.copySubtree(ast, l));
@@ -412,8 +391,7 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private boolean sortOperandList(final List<Expression> eList,
-			final AST ast, final Operator o) {
+	private boolean sortOperandList(final List<Expression> eList, final AST ast, final Operator o) {
 		boolean $ = false;
 		int i = 0;
 		final int size = eList.size();
@@ -425,10 +403,8 @@ public class ShortestOperand extends Spartanization {
 			while (size > j + 1) {
 				final Expression l = eList.get(j);
 				final Expression s = eList.get(j + 1);
-				if (isLarger(l, s) && !isMethodInvocation(l)
-						&& !isMethodInvocation(s) && !inOperandExceptions(l, o)
-						&& !inOperandExceptions(s, o)
-						&& !inRightOperandExceptions(l, o)
+				if (isLarger(l, s) && !isMethodInvocation(l) && !isMethodInvocation(s) && !inOperandExceptions(l, o)
+						&& !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o)
 						&& !inRightOperandExceptions(s, o)) {
 
 					eList.remove(j);
@@ -442,10 +418,8 @@ public class ShortestOperand extends Spartanization {
 		return $;
 	}
 
-	private boolean sortExpressionList(final List<Expression> eList,
-			final AST ast, final Operator o) {
-		return moveMethodsToTheBack(eList, ast, o)
-				| sortOperandList(eList, ast, o);
+	private boolean sortExpressionList(final List<Expression> eList, final AST ast, final Operator o) {
+		return moveMethodsToTheBack(eList, ast, o) | sortOperandList(eList, ast, o);
 	}
 
 }

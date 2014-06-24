@@ -43,7 +43,9 @@ public class ForwardDeclaration extends Spartanization {
 	public ForwardDeclaration() {
 		super("Forward declaration", "Forward declaration of a variable just prior to first use");
 	}
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
+			final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
 				if (!inRange(m, n))
@@ -58,17 +60,19 @@ public class ForwardDeclaration extends Spartanization {
 				final int declaredIdx = block.statements().indexOf(n.getParent());
 				if (nextNodeIsAlreadyFixed(block, n, declaredIdx))
 					return true;
-				final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
+				final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx,
+						firstUseIdx);
 				if (beginingOfDeclarationsBlockIdx > declaredIdx) {
 					final ASTNode declarationNode = (ASTNode) block.statements().get(declaredIdx);
 					if (1 == ((VariableDeclarationStatement) declarationNode).fragments().size()) {
 						final ListRewrite lstRewrite = r.getListRewrite(block, Block.STATEMENTS_PROPERTY);
 						lstRewrite.remove(declarationNode, null);
-						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1, null);
+						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode),
+								beginingOfDeclarationsBlockIdx + 1, null);
 					} else {
 						r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-						    t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
-						    beginingOfDeclarationsBlockIdx + 1, null);
+								t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t,
+										n)), beginingOfDeclarationsBlockIdx + 1, null);
 						r.remove(n, null);
 					}
 				}
@@ -76,6 +80,7 @@ public class ForwardDeclaration extends Spartanization {
 			}
 		});
 	}
+
 	static boolean nextNodeIsAlreadyFixed(final Block block, final VariableDeclarationFragment n, final int declaredIdx) {
 		final int firstUseIdx = findFirstUse(block, n.getName());
 		if (firstUseIdx < 0)
@@ -86,18 +91,21 @@ public class ForwardDeclaration extends Spartanization {
 		if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
 			final VariableDeclarationStatement nextNVDS = (VariableDeclarationStatement) nextN;
 			for (int i = 0; i < nextNVDS.fragments().size(); i++)
-				if (nextDeclaredIdx + 1 == findFirstUse(block, ((VariableDeclarationFragment) nextNVDS.fragments().get(i)).getName())
-				    && beginingOfDeclarationsIdx == nextDeclaredIdx)
+				if (nextDeclaredIdx + 1 == findFirstUse(block,
+						((VariableDeclarationFragment) nextNVDS.fragments().get(i)).getName())
+						&& beginingOfDeclarationsIdx == nextDeclaredIdx)
 					return true;
 		}
 		return false;
 	}
+
 	@Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
 				final ASTNode $ = n.getParent().getParent();
 				return !($ instanceof Block) ? true : moverForward(n, (Block) $);
 			}
+
 			private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
 				final int firstUseIdx = findFirstUse(b, n.getName());
 				if (firstUseIdx < 0)
@@ -111,6 +119,7 @@ public class ForwardDeclaration extends Spartanization {
 			}
 		};
 	}
+
 	static int findFirstUse(final Block b, final SimpleName name) {
 		final ASTNode declarationStmt = name.getParent().getParent();
 		for (int $ = 1 + b.statements().indexOf(declarationStmt); $ < b.statements().size(); ++$)
@@ -118,6 +127,7 @@ public class ForwardDeclaration extends Spartanization {
 				return $; // first use!
 		return -1; // that means unused
 	}
+
 	static int findBeginingOfDeclarationBlock(final Block b, final int declaredIdx, final int firstUseIdx) {
 		int $ = firstUseIdx - 1;
 		for (int i = firstUseIdx - 1; i > declaredIdx; --i) {

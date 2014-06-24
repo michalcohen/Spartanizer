@@ -18,23 +18,20 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
- *
+ * 
  * @since 2013/01/01
  */
 public class ShortestBranchFirst extends Spartanization {
 	/** Instantiates this class */
 	public ShortestBranchFirst() {
-		super(
-				"Shortest Branch First",
+		super("Shortest Branch First",
 				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 
-	@Override
-	protected final void fillRewrite(final ASTRewrite r, final AST t,
-			final CompilationUnit cu, final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
+			final IMarker m) {
 		cu.accept(new ASTVisitor() {
-			@Override
-			public boolean visit(final IfStatement n) {
+			@Override public boolean visit(final IfStatement n) {
 				if (!inRange(m, n) || !longerFirst(n))
 					return true;
 				final IfStatement newIfStmnt = transpose(n);
@@ -43,8 +40,7 @@ public class ShortestBranchFirst extends Spartanization {
 				return true;
 			}
 
-			@Override
-			public boolean visit(final ConditionalExpression n) {
+			@Override public boolean visit(final ConditionalExpression n) {
 				if (!inRange(m, n) || !longerFirst(n))
 					return true;
 				final ParenthesizedExpression newCondExp = transpose(n);
@@ -60,21 +56,17 @@ public class ShortestBranchFirst extends Spartanization {
 				final Statement elseStmnt = n.getElseStatement();
 				final Statement thenStmnt = n.getThenStatement();
 				if (1 == statementsCount(elseStmnt)
-						&& ASTNode.IF_STATEMENT == getBlockSingleStmnt(
-								elseStmnt).getNodeType()) {
+						&& ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
 					final Block newElseBlock = t.newBlock();
-					newElseBlock.statements()
-							.add(r.createCopyTarget(elseStmnt));
+					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
 					return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStmnt);
 				}
 				return makeIfStmnt(t, r, negatedOp, elseStmnt, thenStmnt);
 			}
 
-			private ParenthesizedExpression transpose(
-					final ConditionalExpression n) {
-				return n == null ? null : makeParenthesizedConditionalExp(t, r,
-						negate(t, r, n.getExpression()), n.getElseExpression(),
-						n.getThenExpression());
+			private ParenthesizedExpression transpose(final ConditionalExpression n) {
+				return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()),
+						n.getElseExpression(), n.getThenExpression());
 			}
 		});
 	}
@@ -86,31 +78,24 @@ public class ShortestBranchFirst extends Spartanization {
 	static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
 		if (e instanceof InfixExpression)
 			return tryNegateComparison(t, r, (InfixExpression) e);
-		return e instanceof PrefixExpression ? tryNegatePrefix(r,
-				(PrefixExpression) e) : makePrefixExpression(t, r,
-						makeParenthesizedExpression(t, r, e), NOT);
+		return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e) : makePrefixExpression(t, r,
+				makeParenthesizedExpression(t, r, e), NOT);
 	}
 
-	private static Expression tryNegateComparison(final AST ast,
-			final ASTRewrite r, final InfixExpression e) {
+	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
 		final Operator op = negate(e.getOperator());
 		if (op == null)
 			return null;
-		return op == CONDITIONAL_AND || op == CONDITIONAL_OR ? makeInfixExpression(
-				ast, r, op, negateExp(ast, r, e.getLeftOperand()),
-				negateExp(ast, r, e.getRightOperand())) : makeInfixExpression(
-						ast, r, op, e.getLeftOperand(), e.getRightOperand());
+		return op == CONDITIONAL_AND || op == CONDITIONAL_OR ? makeInfixExpression(ast, r, op,
+				negateExp(ast, r, e.getLeftOperand()), negateExp(ast, r, e.getRightOperand())) : makeInfixExpression(
+				ast, r, op, e.getLeftOperand(), e.getRightOperand());
 	}
 
-	private static Expression negateExp(final AST t, final ASTRewrite r,
-			final Expression exp) {
+	private static Expression negateExp(final AST t, final ASTRewrite r, final Expression exp) {
 		if (isInfix(exp))
-			return makePrefixExpression(t, r,
-					makeParenthesizedExpression(t, r, exp), NOT);
-		return isPrefix(exp)
-				&& ((PrefixExpression) exp).getOperator().equals(NOT) ? (Expression) r
-				.createCopyTarget(((PrefixExpression) exp).getOperand())
-				: makePrefixExpression(t, r, exp, NOT);
+			return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, exp), NOT);
+		return isPrefix(exp) && ((PrefixExpression) exp).getOperator().equals(NOT) ? (Expression) r
+				.createCopyTarget(((PrefixExpression) exp).getOperand()) : makePrefixExpression(t, r, exp, NOT);
 	}
 
 	static Operator negate(final Operator o) {
@@ -132,26 +117,21 @@ public class ShortestBranchFirst extends Spartanization {
 
 	private static Map<Operator, Operator> negate = makeNegation();
 
-	private static Expression tryNegatePrefix(final ASTRewrite r,
-			final PrefixExpression exp) {
-		return !exp.getOperator().equals(NOT) ? null : (Expression) r
-				.createCopyTarget(exp.getOperand());
+	private static Expression tryNegatePrefix(final ASTRewrite r, final PrefixExpression exp) {
+		return !exp.getOperator().equals(NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
 	}
 
 	private static final int threshold = 1;
 
-	@Override
-	protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
-			@Override
-			public boolean visit(final IfStatement n) {
+			@Override public boolean visit(final IfStatement n) {
 				if (longerFirst(n))
 					opportunities.add(new Range(n));
 				return true;
 			}
 
-			@Override
-			public boolean visit(final ConditionalExpression n) {
+			@Override public boolean visit(final ConditionalExpression n) {
 				if (longerFirst(n))
 					opportunities.add(new Range(n));
 				return true;
@@ -161,12 +141,10 @@ public class ShortestBranchFirst extends Spartanization {
 
 	static boolean longerFirst(final IfStatement n) {
 		return null != n.getElseStatement()
-				&& countNodes(n.getThenStatement()) > threshold
-						+ countNodes(n.getElseStatement());
+				&& countNodes(n.getThenStatement()) > threshold + countNodes(n.getElseStatement());
 	}
 
 	static boolean longerFirst(final ConditionalExpression n) {
-		return n.getThenExpression().getLength() > threshold
-				+ n.getElseExpression().getLength();
+		return n.getThenExpression().getLength() > threshold + n.getElseExpression().getLength();
 	}
 }

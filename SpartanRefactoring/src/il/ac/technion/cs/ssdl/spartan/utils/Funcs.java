@@ -12,9 +12,9 @@ import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- *
+ * 
  * Useful Functions
- *
+ * 
  */
 public enum Funcs {
 	;
@@ -42,9 +42,8 @@ public enum Funcs {
 	 * @return the new variable declaration fragment or null if one of the given
 	 *         parameters was null
 	 */
-	public static VariableDeclarationFragment makeVarDeclFrag(final AST t,
-			final ASTRewrite r, final SimpleName varName,
-			final Expression initalizer) {
+	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r,
+			final SimpleName varName, final Expression initalizer) {
 		if (hasNull(t, r, varName, initalizer))
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
@@ -67,8 +66,8 @@ public enum Funcs {
 	 *            the else statement to set in the conditional
 	 * @return a parenthesized conditional expression
 	 */
-	public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
-			final Expression thenExp, final Expression elseExp) {
+	public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r,
+			final Expression cond, final Expression thenExp, final Expression elseExp) {
 		if (hasNull(t, r, cond, thenExp, elseExp))
 			return null;
 		final ConditionalExpression $ = t.newConditionalExpression();
@@ -91,8 +90,8 @@ public enum Funcs {
 	 *            the else statement to set in the If Statement
 	 * @return a new if Statement
 	 */
-	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
-			final Statement elseStmnt) {
+	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond,
+			final Statement thenStmnt, final Statement elseStmnt) {
 		if (hasNull(t, r, cond, thenStmnt, elseStmnt))
 			return null;
 		final IfStatement $ = t.newIfStatement();
@@ -132,8 +131,8 @@ public enum Funcs {
 	 *            the right expression
 	 * @return the new infix expression
 	 */
-	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
-			final Expression left, final Expression right) {
+	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r,
+			final InfixExpression.Operator o, final Expression left, final Expression right) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
@@ -156,7 +155,8 @@ public enum Funcs {
 	 *            left side of the assignment, usually a variable name
 	 * @return the new assignment
 	 */
-	public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right, final Expression left) {
+	public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right,
+			final Expression left) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final Assignment $ = t.newAssignment();
@@ -197,7 +197,8 @@ public enum Funcs {
 	 *            the expression to put in parenthesis
 	 * @return the given expression with parenthesis
 	 */
-	public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r, final Expression exp) {
+	public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r,
+			final Expression exp) {
 		if (hasNull(t, r, exp))
 			return null;
 		final ParenthesizedExpression $ = t.newParenthesizedExpression();
@@ -247,7 +248,8 @@ public enum Funcs {
 	 */
 	public static Assignment getAssignment(final Statement s) {
 		final ExpressionStatement $ = getExpressionStatement(s);
-		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
+		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $
+				.getExpression();
 	}
 
 	/**
@@ -258,7 +260,8 @@ public enum Funcs {
 	 */
 	public static MethodInvocation getMethodInvocation(final Statement s) {
 		final ExpressionStatement $ = getExpressionStatement(s);
-		return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
+		return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $
+				.getExpression();
 	}
 
 	/**
@@ -272,8 +275,7 @@ public enum Funcs {
 			final ExpressionStatement es = getExpressionStatement(getBlockSingleStmnt((Block) s));
 			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
 		}
-		return s != null
-				&& s.getNodeType() == ASTNode.EXPRESSION_STATEMENT
+		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT
 				&& ASTNode.ASSIGNMENT == ((ExpressionStatement) s).getExpression().getNodeType();
 	}
 
@@ -364,8 +366,7 @@ public enum Funcs {
 	}
 
 	private static ReturnStatement asReturn(final Block b) {
-		return 1 != b.statements().size() ? null : asReturn((Statement) b
-				.statements().get(0));
+		return 1 != b.statements().size() ? null : asReturn((Statement) b.statements().get(0));
 	}
 
 	/**
@@ -376,18 +377,14 @@ public enum Funcs {
 	 * @return the fragment if such with the given name exists or null otherwise
 	 *         (or if s or name are null)
 	 */
-	public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n,
-			final Expression name) {
-		return hasNull(n, name)
-				|| n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-				|| name.getNodeType() != ASTNode.SIMPLE_NAME ? null
-						: getVarDeclFrag(
-								((VariableDeclarationStatement) n).fragments(),
-								(SimpleName) name);
+	public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
+		return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
+				|| name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(
+				((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
 	}
 
-	private static VariableDeclarationFragment getVarDeclFrag(
-			final List<VariableDeclarationFragment> frags, final SimpleName name) {
+	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags,
+			final SimpleName name) {
 		for (final VariableDeclarationFragment o : frags)
 			if (name.toString().equals(o.getName().toString()))
 				return o;
@@ -396,22 +393,19 @@ public enum Funcs {
 
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 *
+	 * 
 	 * @param cmpTo
 	 *            a string to compare all names to
 	 * @param names
 	 *            SimplesNames to compare by their string value to cmpTo
 	 * @return true if all names are the same (string wise) or false otherwise
 	 */
-	public static boolean compatibleNames(final Expression cmpTo,
-			final Expression... names) {
+	public static boolean compatibleNames(final Expression cmpTo, final Expression... names) {
 		if (hasNull(cmpTo, names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
 			return false;
 		for (final Expression name : names)
-			if (name == null
-			|| name.getNodeType() != ASTNode.SIMPLE_NAME
-			|| !((SimpleName) name).getIdentifier().equals(
-					((SimpleName) cmpTo).getIdentifier()))
+			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
+					|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -423,8 +417,7 @@ public enum Funcs {
 	 *            A unknown number of assignments operators
 	 * @return true if all the operator are the same or false otherwise
 	 */
-	public static boolean compatibleOps(final Assignment.Operator cmpTo,
-			final Assignment.Operator... op) {
+	public static boolean compatibleOps(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
 		if (hasNull(cmpTo, op))
 			return false;
 		for (final Assignment.Operator o : op)
@@ -436,7 +429,7 @@ public enum Funcs {
 	/**
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
-	 *
+	 * 
 	 * @param base
 	 *            The assignment to compare all others to
 	 * @param asgns
@@ -448,9 +441,8 @@ public enum Funcs {
 		if (hasNull(base, asgns))
 			return false;
 		for (final Assignment asgn : asgns)
-			if (asgn == null
-			|| !compatibleOps(base.getOperator(), asgn.getOperator())
-			|| !compatibleNames(base.getLeftHandSide(),asgn.getLeftHandSide()))
+			if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
+					|| !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
 				return false;
 		return true;
 	}
@@ -458,7 +450,7 @@ public enum Funcs {
 	/**
 	 * the function receives a condition and the then boolean value and returns
 	 * the proper condition (its negation if thenValue is false)
-	 *
+	 * 
 	 * @param t
 	 *            the AST who is to own the new return statement
 	 * @param r
@@ -470,18 +462,17 @@ public enum Funcs {
 	 * @return the original condition if thenValue was true or its negation if
 	 *         it was false (or null if any of the given parameter were null)
 	 */
-	public static Expression tryToNegateCond(final AST t, final ASTRewrite r,
-			final Expression cond, final boolean thenValue) {
+	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond,
+			final boolean thenValue) {
 		if (hasNull(t, cond))
 			return null;
-		return thenValue ? cond : makePrefixExpression(t, r,
-				makeParenthesizedExpression(t, r, cond),
+		return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond),
 				PrefixExpression.Operator.NOT);
 	}
 
 	/**
 	 * Counts the number of nodes in the tree of which node is root.
-	 *
+	 * 
 	 * @param n
 	 *            The node.
 	 * @return Number of abstract syntax tree nodes under the parameter.
@@ -494,8 +485,7 @@ public enum Funcs {
 			 * @param _
 			 *            ignored
 			 */
-			@Override
-			public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
+			@Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
 				$.incrementAndGet();
 			}
 		});
@@ -512,8 +502,7 @@ public enum Funcs {
 			return null;
 		final List<ASTNode> $ = new ArrayList<>();
 		root.accept(new ASTVisitor() {
-			@Override
-			public void preVisit(final ASTNode node) {
+			@Override public void preVisit(final ASTNode node) {
 				$.add(node);
 			}
 		});
@@ -562,15 +551,14 @@ public enum Funcs {
 	/**
 	 * Get the containing node by type. Say we want to find the first block that
 	 * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
-	 *
+	 * 
 	 * @param n
 	 *            Node to find its container
 	 * @param ASTNodeType
 	 *            The type of the containing node we want to find
 	 * @return The containing node
 	 */
-	public static ASTNode getContainerByNodeType(final ASTNode n,
-			final int ASTNodeType) {
+	public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
 		ASTNode $ = n.getParent();
 		while (ASTNodeType != $.getNodeType()) {
 			if ($.getParent() == $.getRoot())
@@ -609,16 +597,12 @@ public enum Funcs {
 		case ASTNode.EXPRESSION_STATEMENT:
 			return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
 		case ASTNode.POSTFIX_EXPRESSION: {
-			final PostfixExpression.Operator op = ((PostfixExpression) n)
-					.getOperator();
-			return op == PostfixExpression.Operator.INCREMENT
-					|| op == PostfixExpression.Operator.DECREMENT;
+			final PostfixExpression.Operator op = ((PostfixExpression) n).getOperator();
+			return op == PostfixExpression.Operator.INCREMENT || op == PostfixExpression.Operator.DECREMENT;
 		}
 		case ASTNode.PREFIX_EXPRESSION: {
-			final PrefixExpression.Operator op = ((PrefixExpression) n)
-					.getOperator();
-			return op == PrefixExpression.Operator.INCREMENT
-					|| op == PrefixExpression.Operator.DECREMENT;
+			final PrefixExpression.Operator op = ((PrefixExpression) n).getOperator();
+			return op == PrefixExpression.Operator.INCREMENT || op == PrefixExpression.Operator.DECREMENT;
 		}
 		default:
 			return false;
@@ -669,8 +653,7 @@ public enum Funcs {
 	 *         false otherwise
 	 */
 	public static boolean isVarDeclStmt(final ASTNode n) {
-		return n != null
-				&& n.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT;
+		return n != null && n.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT;
 	}
 
 	/**
@@ -726,9 +709,10 @@ public enum Funcs {
 	public static boolean isLiteral(final ASTNode n) {
 		return 0 <= Arrays.binarySearch(literals, n.getNodeType());
 	}
+
 	/**
-	 * @param asgn 
-	 * 			  the assignment who's operator we want to check
+	 * @param asgn
+	 *            the assignment who's operator we want to check
 	 * @return true is the assignment's operator is assign
 	 */
 	public static boolean isOpAssign(final Assignment asgn) {

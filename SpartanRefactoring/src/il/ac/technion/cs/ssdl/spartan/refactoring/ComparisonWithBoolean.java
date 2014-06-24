@@ -22,7 +22,9 @@ public class ComparisonWithBoolean extends Spartanization {
 	public ComparisonWithBoolean() {
 		super("Comparison With Boolean", "Eliminate reduntant comparison to boolean constant");
 	}
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
+			final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
 				if (!inRange(m, n))
@@ -41,24 +43,27 @@ public class ComparisonWithBoolean extends Spartanization {
 					literal = (BooleanLiteral) n.getLeftOperand();
 				}
 				r.replace(
-				    n,
-				    literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
-				        && n.getOperator() == Operator.NOT_EQUALS ? nonliteral : makePrefixExpression(t, r,
-				        makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT), null);
+						n,
+						literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
+								&& n.getOperator() == Operator.NOT_EQUALS ? nonliteral : makePrefixExpression(t, r,
+								makeParenthesizedExpression(t, r, (Expression) nonliteral),
+								PrefixExpression.Operator.NOT), null);
 				return true;
 			}
+
 			private boolean isBooleanLiteral(final Expression e) {
 				return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
 			}
 		});
 	}
+
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
 				if (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
 					return true;
 				if (ASTNode.BOOLEAN_LITERAL == n.getRightOperand().getNodeType()
-				    || ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType())
+						|| ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType())
 					opportunities.add(new Range(n));
 				return true;
 			}

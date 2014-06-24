@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test cases in which the transformation should not do anything
- *
+ * 
  * @author Yossi Gil
  * @since 2014/05/24
  */
@@ -33,6 +33,7 @@ public class Unchanged extends AbstractParametrizedTest {
 	 * Where the input text can be found
 	 */
 	@Parameter(value = 2) public File fIn;
+
 	/**
 	 * Runs a parameterized test case, based on the instance variables of this
 	 * instance, and check that no opportunities are found.
@@ -41,6 +42,7 @@ public class Unchanged extends AbstractParametrizedTest {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
 		assertEquals(0, spartanization.findOpportunities(AbstractParametrizedTest.makeAST(fIn)).size());
 	}
+
 	/**
 	 * Runs a parameterized test case, based on the instance variables of this
 	 * instance, and check that no matter what, even if the number of
@@ -51,25 +53,29 @@ public class Unchanged extends AbstractParametrizedTest {
 		final StringBuilder str = new StringBuilder(fIn.getName());
 		final int testMarker = str.indexOf(testSuffix);
 		if (testMarker > 0)
-			assertEquals(readFile(makeInFile(fIn)), rewrite(spartanization, makeAST(fIn), new Document(readFile(makeInFile(fIn)))).get());
+			assertEquals(readFile(makeInFile(fIn)),
+					rewrite(spartanization, makeAST(fIn), new Document(readFile(makeInFile(fIn)))).get());
 		else
 			assertEquals(readFile(fIn), rewrite(spartanization, makeAST(fIn), new Document(readFile(fIn))).get());
 
 	}
+
 	/**
 	 * @return a collection of cases, where each cases is an array of three
-	 *         objects, the spartanization, the test case name, and the input file
+	 *         objects, the spartanization, the test case name, and the input
+	 *         file
 	 */
 	@Parameters(name = "{index}: {0} {1}")//
 	public static Collection<Object[]> cases() {
 		return new TestSuite.Files() {
 			@Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
 				if (name.endsWith(testSuffix) && fileToStringBuilder(f).indexOf(testKeyword) == -1)
-					return  new Object[] { s, name, makeInFile(f) };
+					return new Object[] { s, name, makeInFile(f) };
 
 				if (!name.endsWith(".in"))
 					return null;
-				return new File(d, name.replaceAll("\\.in$", ".out")).exists() ? null : new Object[] { s, name.replaceAll("\\.in$", ""), f };
+				return new File(d, name.replaceAll("\\.in$", ".out")).exists() ? null : new Object[] { s,
+						name.replaceAll("\\.in$", ""), f };
 			}
 		}.go();
 	}

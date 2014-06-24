@@ -20,20 +20,13 @@ import java.util.Map;
  * @since 2013/07/01
  */
 public enum All {
-	@SuppressWarnings("javadoc")
-	ComparisonWithBoolean(new ComparisonWithBoolean()), //
-	@SuppressWarnings("javadoc")
-	ForwardDeclaration(new ForwardDeclaration()), //
-	@SuppressWarnings("javadoc")
-	InlineSingleUse(new InlineSingleUse()), //
-	@SuppressWarnings("javadoc")
-	RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-	@SuppressWarnings("javadoc")
-	ShortestBranchFirst(new ShortestBranchFirst()), //
-	@SuppressWarnings("javadoc")
-	ShortestOperand(new ShortestOperand()), //
-	@SuppressWarnings("javadoc")
-	Ternarize(new Ternarize()), //
+	@SuppressWarnings("javadoc") ComparisonWithBoolean(new ComparisonWithBoolean()), //
+	@SuppressWarnings("javadoc") ForwardDeclaration(new ForwardDeclaration()), //
+	@SuppressWarnings("javadoc") InlineSingleUse(new InlineSingleUse()), //
+	@SuppressWarnings("javadoc") RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+	@SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
+	@SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
+	@SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
 	;
 
 	private final Spartanization value;
@@ -54,10 +47,8 @@ public enum All {
 	 *            Spartanization rule
 	 * @return Spartanization class rule instance
 	 */
-	@SuppressWarnings("unchecked")
-	//
-	public static <T extends Spartanization> T findInstance(
-			final Class<? extends T> c) {
+	@SuppressWarnings("unchecked")//
+	public static <T extends Spartanization> T findInstance(final Class<? extends T> c) {
 		for (final All a : All.values()) {
 			final Spartanization $ = a.value();
 			if ($.getClass().equals(c))
@@ -71,26 +62,22 @@ public enum All {
 	 */
 	public static Iterable<Spartanization> allAvailableSpartanizations() {
 		return new Iterable<Spartanization>() {
-			@Override
-			public Iterator<Spartanization> iterator() {
+			@Override public Iterator<Spartanization> iterator() {
 				return new Iterator<Spartanization>() {
 					int next;
 
-					@Override
-					public boolean hasNext() {
+					@Override public boolean hasNext() {
 						return next < values().length;
 					}
 
-					@Override
-					public Spartanization next() {
+					@Override public Spartanization next() {
 						return values()[next++].value();
 					}
 
-					@Override
-					/**
-					 * Should not be used! Only one active instance of any Spartan rules should exists.
-					 * Removing one could be a design flaw and therefore will ignored.
-					 */
+					@Override/**
+								 * Should not be used! Only one active instance of any Spartan rules should exists.
+								 * Removing one could be a design flaw and therefore will ignored.
+								 */
 					public void remove() {
 						// Ignore request
 						return;
@@ -123,20 +110,15 @@ public enum All {
 			if (line == null)
 				continue;
 			if (line.contains(Options.RepositionAllRightLiterals))
-				shortestOperandInstance
-						.setRightLiteralRule(RepositionRightLiteral.All);
+				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
 			if (line.contains(Options.RepositionAllButBoolAndNull))
-				shortestOperandInstance
-						.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
+				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
 			if (line.contains(Options.DoNotRepositionRightLiterals))
-				shortestOperandInstance
-						.setRightLiteralRule(RepositionRightLiteral.None);
+				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
 			if (line.contains(Options.RepositionLiterals))
-				shortestOperandInstance
-						.setBothLiteralsRule(RepositionLiterals.All);
+				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
 			if (line.contains(Options.DoNotRepositionLiterals))
-				shortestOperandInstance
-						.setBothLiteralsRule(RepositionLiterals.None);
+				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
 		}
 	}
 
@@ -152,8 +134,7 @@ public enum All {
 		final boolean useAll = str == null;
 		int i = 0;
 		for (final Spartanization rule : allAvailableSpartanizations()) {
-			if (useAll || str != null && str.length >= i + offset
-					&& !ignored(str[i + offset]))
+			if (useAll || str != null && str.length >= i + offset && !ignored(str[i + offset]))
 				put(rule);
 			i++;
 		}

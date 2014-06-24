@@ -17,6 +17,7 @@ public class Nature implements IProjectNature {
 	public static final String NATURE_ID = "il.ac.technion.cs.ssdl.spartan.Nature";
 	/** The project to which we relate */
 	private IProject project;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -33,6 +34,7 @@ public class Nature implements IProjectNature {
 		d.setBuildSpec(Utils.append(cs, c));
 		project.setDescription(d, null);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -48,9 +50,11 @@ public class Nature implements IProjectNature {
 				return;
 			}
 	}
+
 	@Override public IProject getProject() {
 		return project;
 	}
+
 	@Override public void setProject(final IProject project) {
 		this.project = project;
 	}
