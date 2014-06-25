@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
  * <p>
- *
+ * 
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original) @since
  *         10/06/2014
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
@@ -52,7 +52,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 	@Override public void createFieldEditors() {
 		for (final String rule : allRulesNames())
 			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor("Null & Boolean Positioning", "Null & Boolean Positioning", 1,
+		addField(new RadioGroupFieldEditor("Null And Boolean Positioning", "Null And Boolean Positioning", 1,
 				NullAndBoolOptions, getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor("Allow Literals Repositioning", "Allow Literals Repositioning", 1,
 				BothLiteralsOptions, getFieldEditorParent()));
@@ -71,7 +71,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		for (final String str : allRulesNames())
 			s.append(store.getString(str) + "\n");
-		s.append(store.getString("Null & Boolean Positioning") + "\n");
+		s.append(store.getString("Null And Boolean Positioning") + "\n");
 		s.append(store.getString("Allow Literals Repositioning") + "\n");
 		s.append(store.getString("Numeric Literals Positioning") + "\n");
 		s.append(store.getString("Operand Swap Messages") + "\n");
