@@ -4,11 +4,7 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLite
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -27,23 +23,19 @@ public enum All {
 	@SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
 	@SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
 	;
-
 	private final Spartanization value;
-
 	private All(final Spartanization value) {
 		this.value = value;
 	}
-
 	/**
 	 * @return Spartanization class rule instance
 	 */
 	public Spartanization value() {
 		return value;
 	}
-
 	/**
 	 * @param c
-	 *            Spartanization rule
+	 *          Spartanization rule
 	 * @return Spartanization class rule instance
 	 */
 	@SuppressWarnings("unchecked")//
@@ -55,7 +47,6 @@ public enum All {
 		}
 		return null;
 	}
-
 	/**
 	 * @return Iteration over all Spartanization class instances
 	 */
@@ -64,40 +55,27 @@ public enum All {
 			@Override public Iterator<Spartanization> iterator() {
 				return new Iterator<Spartanization>() {
 					int next;
-
 					@Override public boolean hasNext() {
 						return next < values().length;
 					}
-
 					@Override public Spartanization next() {
 						return values()[next++].value();
 					}
-
-					@Override/**
-								 * Should not be used! Only one active instance of any Spartan rules should exists.
-								 * Removing one could be a design flaw and therefore will ignored.
-								 */
-					public void remove() {
-						// Ignore request
-						return;
+					@Override public final void remove() {
+						throw new IllegalArgumentException();
 					}
 				};
 			}
 		};
 	}
-
 	private static String ignoreRuleStr = "false";
-
 	private static final Map<String, Spartanization> all = new HashMap<>();
-
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
 	}
-
 	private static boolean ignored(final String sparta) {
 		return 0 <= sparta.indexOf(ignoreRuleStr);
 	}
-
 	private static void assignRulesOptions(final String[] str) {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
 		if (str == null || shortestOperandInstance == null)
@@ -120,7 +98,6 @@ public enum All {
 				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
 		}
 	}
-
 	/**
 	 * Resets the enumeration with the current values from the preferences file.
 	 * Letting the rules notification decisions be updated without restarting
@@ -137,27 +114,23 @@ public enum All {
 				put(rule);
 			i++;
 		}
-
 		assignRulesOptions(str);
 		put(new SimplifyLogicalNegation());
 	}
-
 	/**
 	 * @param name
-	 *            the name of the spartanization
+	 *          the name of the spartanization
 	 * @return an instance of the spartanization
 	 */
 	public static Spartanization get(final String name) {
 		return all.get(name);
 	}
-
 	/**
 	 * @return all the registered spartanization refactoring objects
 	 */
 	public static Iterable<Spartanization> all() {
 		return all.values();
 	}
-
 	/**
 	 * @return all the registered spartanization refactoring objects names
 	 */
