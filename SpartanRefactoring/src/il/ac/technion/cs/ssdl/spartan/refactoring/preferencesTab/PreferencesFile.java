@@ -11,7 +11,7 @@ import java.util.Scanner;
  *         2014/6/21)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         2014/6/21)
- * @since 2014/6/21 Preferences file handler. Getting file path, phrasing it,
+ * @since 2014/6/21 Preferences file handler. Getting file path, parsing it,
  *        etc...
  */
 public class PreferencesFile {
@@ -36,7 +36,7 @@ public class PreferencesFile {
 	/**
 	 * @return Preferences file as lines array
 	 */
-	public static String[] phrasePrefFile() {
+	public static String[] parsePrefFile() {
 		final String path = getPrefFilePath();
 		if (!new File(path).exists())
 			return null;

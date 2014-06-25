@@ -8,5 +8,6 @@ true
 true
 true
 true
-Reposition literals
-Reposition all right literals
+Null at Start
+Boolean Literal at End
+By Shortest Length

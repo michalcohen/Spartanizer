@@ -3,7 +3,6 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
-import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Options;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +24,8 @@ public enum All {
 	@SuppressWarnings("javadoc") InlineSingleUse(new InlineSingleUse()), //
 	@SuppressWarnings("javadoc") RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
 	@SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
-	@SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
 	@SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
+	@SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
 	;
 
 	private final Spartanization value;
@@ -130,7 +129,7 @@ public enum All {
 	public static void reset() {
 		all.clear();
 		final int offset = PreferencesFile.getSpartanTitle().length;
-		final String[] str = PreferencesFile.phrasePrefFile();
+		final String[] str = PreferencesFile.parsePrefFile();
 		final boolean useAll = str == null;
 		int i = 0;
 		for (final Spartanization rule : allAvailableSpartanizations()) {
