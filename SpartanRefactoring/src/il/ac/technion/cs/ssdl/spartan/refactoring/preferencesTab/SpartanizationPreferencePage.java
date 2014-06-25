@@ -52,12 +52,12 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 	@Override public void createFieldEditors() {
 		for (final String rule : allRulesNames())
 			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor("Null & Boolean Positioning", "Null & Boolean Positioning", 1,
-				NullAndBoolOptions, getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor("Allow Literals Repositioning", "Allow Literals Repositioning", 1,
 				BothLiteralsOptions, getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor("Behavior On Right Operand Literals", "Behavior On Right Operand Literals",
 				1, rightLiteralOptions, getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor("Null & Boolean Positioning", "Null & Boolean Positioning", 1,
+				NullAndBoolOptions, getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor("Operand Swap Messages", "Operand Swap Messages", 1, swapMessageOptions,
 				getFieldEditorParent()));
 	}
@@ -73,7 +73,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 			s.append(store.getString(str) + "\n");
 		s.append(store.getString("Null & Boolean Positioning") + "\n");
 		s.append(store.getString("Allow Literals Repositioning") + "\n");
-		s.append(store.getString("Numeric Literals Positioning") + "\n");
+		s.append(store.getString("Behavior On Right Operand Literals") + "\n");
 		s.append(store.getString("Operand Swap Messages") + "\n");
 		try (PrintWriter print = new PrintWriter(PreferencesFile.getPrefFilePath())) {
 			print.write(s.toString());

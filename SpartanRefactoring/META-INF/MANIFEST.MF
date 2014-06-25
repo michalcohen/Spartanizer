@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Spartan Refactoring Plugin
 Bundle-SymbolicName: il.ac.technion.cs.ssdl.spartan.refactoring;singleton:=true
-Bundle-Version: 2.0.0
+Bundle-Version: 2.1.0
 Bundle-Activator: il.ac.technion.cs.ssdl.spartan.builder.Plugin
 Bundle-Vendor: Boris van Sosin
 Require-Bundle: org.eclipse.ui,
