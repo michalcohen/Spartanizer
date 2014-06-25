@@ -1,11 +1,11 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.*;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.MessagingOptions;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionBoolAndNull;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
-import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,25 +104,25 @@ public enum All {
 			// same case...
 			if (line == null)
 				continue;
-			if (line.contains(PreferencesStrings.repositionRightLiterals))
+			if (line.contains(repositionRightLiterals))
 				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
-			if (line.contains(PreferencesStrings.repositionRightException))
+			if (line.contains(repositionRightException))
 				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
-			if (line.contains(PreferencesStrings.doNotRepositionRightLiterals))
+			if (line.contains(doNotRepositionRightLiterals))
 				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
-			if (line.contains(PreferencesStrings.repositionAllLiterals))
+			if (line.contains(repositionAllLiterals))
 				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
-			if (line.contains(PreferencesStrings.doNotRepositionLiterals))
+			if (line.contains(doNotRepositionLiterals))
 				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
-			if (line.contains(PreferencesStrings.NullAndBoolAtStart))
+			if (line.contains(NullAndBoolAtStart))
 				shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveLeft);
-			if (line.contains(PreferencesStrings.NullAndBoolAtEnd))
+			if (line.contains(NullAndBoolAtEnd))
 				shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveRight);
-			if (line.contains(PreferencesStrings.NullAndBoolAtNone))
+			if (line.contains(NullAndBoolAtNone))
 				shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.None);
-			if (line.contains(PreferencesStrings.showOneSwap))
+			if (line.contains(showOneSwap))
 				shortestOperandInstance.setMessagingOption(MessagingOptions.Union);
-			if (line.contains(PreferencesStrings.showEverySwap))
+			if (line.contains(showEverySwap))
 				shortestOperandInstance.setMessagingOption(MessagingOptions.ShowAll);
 		}
 	}
