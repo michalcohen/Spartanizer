@@ -1,0 +1,10 @@
+package p;
+
+public class Blah {
+	private void addAggregate(final String key, final AbstractStringProperties to, final Aggregation a) {
+		if (key.equals(markColumn))
+			to.put(key, a.toString());
+		else
+			to.put(key, missing(key, a) ? "" : get(key, a));
+	}
+}
