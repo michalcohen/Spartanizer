@@ -1,9 +1,10 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
 
 import static il.ac.technion.cs.ssdl.spartan.refactoring.All.allRulesNames;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.BoolOptions;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.NullOptions;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.NumOptions;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.BothLiteralsOptions;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.NullAndBoolOptions;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.rightLiteralOptions;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageOptions;
 import il.ac.technion.cs.ssdl.spartan.builder.Plugin;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.Strings;
 
@@ -27,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
  * <p>
- * 
+ *
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original) @since
  *         10/06/2014
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
@@ -51,13 +52,14 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 	@Override public void createFieldEditors() {
 		for (final String rule : allRulesNames())
 			addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor("Null Positioning", "Null Positioning", 3, NullOptions,
+		addField(new RadioGroupFieldEditor("Null & Boolean Positioning", "Null & Boolean Positioning", 1,
+				NullAndBoolOptions, getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor("Allow Literals Repositioning", "Allow Literals Repositioning", 1,
+				BothLiteralsOptions, getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor("Behavior On Right Operand Literals", "Behavior On Right Operand Literals",
+				1, rightLiteralOptions, getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor("Operand Swap Messages", "Operand Swap Messages", 1, swapMessageOptions,
 				getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor("Boolean Literals Positioning", "Boolean Literals Positioning", 3,
-				BoolOptions, getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor("Numeric Literals Positioning", "Numeric Literals Positioning", 3,
-				NumOptions, getFieldEditorParent()));
-
 	}
 
 	@Override public boolean performOk() {
@@ -69,10 +71,10 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
 		final IPreferenceStore store = Plugin.getDefault().getPreferenceStore();
 		for (final String str : allRulesNames())
 			s.append(store.getString(str) + "\n");
-		s.append(store.getString("Null Positioning") + "\n");
-		s.append(store.getString("Boolean Literals Positioning") + "\n");
+		s.append(store.getString("Null & Boolean Positioning") + "\n");
+		s.append(store.getString("Allow Literals Repositioning") + "\n");
 		s.append(store.getString("Numeric Literals Positioning") + "\n");
-
+		s.append(store.getString("Operand Swap Messages") + "\n");
 		try (PrintWriter print = new PrintWriter(PreferencesFile.getPrefFilePath())) {
 			print.write(s.toString());
 		} catch (final FileNotFoundException e) {

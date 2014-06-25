@@ -8,6 +8,7 @@ true
 true
 true
 true
-Null at Start
-Boolean Literal at End
-By Shortest Length
+Null and Boolean at End
+Reposition Literals
+Reposition right literals
+Show message for every operand swap

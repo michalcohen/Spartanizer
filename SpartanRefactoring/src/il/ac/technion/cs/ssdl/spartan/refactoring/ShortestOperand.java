@@ -1,6 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isBoolOrNull;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isInfix;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isLiteral;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isMethodInvocation;
@@ -21,8 +22,10 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IMarker;
@@ -46,6 +49,18 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class ShortestOperand extends Spartanization {
 	// Option flags
 	/**
+	 * Enumeration for null and boolean swap
+	 */
+	public static enum RepositionBoolAndNull {
+		/** a == null */
+		MoveRight,
+		/** null == a */
+		MoveLeft,
+		/** Don't interrupt user choice */
+		None
+	}
+
+	/**
 	 * Enumeration for right literal rule options
 	 */
 	public static enum RepositionRightLiteral {
@@ -67,8 +82,21 @@ public class ShortestOperand extends Spartanization {
 		None
 	}
 
-	RepositionRightLiteral rightLiteralOption = RepositionRightLiteral.AllButBooleanAndNull;
-	RepositionLiterals bothLiteralsOption = RepositionLiterals.All;
+	/**
+	 * Enumeration for ranges of messages
+	 */
+	public static enum MessagingOptions {
+		/** Swap literals */
+		Union,
+		/** Do not swap literals */
+		ShowAll
+	}
+
+	RepositionRightLiteral optionRightLiteral = RepositionRightLiteral.AllButBooleanAndNull;
+	RepositionLiterals optionBothLiterals = RepositionLiterals.All;
+	RepositionBoolAndNull optionBoolNull = RepositionBoolAndNull.MoveRight;
+
+	MessagingOptions optionUnionOpportunities = MessagingOptions.Union;
 
 	/** Instantiates this class */
 	public ShortestOperand() {
@@ -98,7 +126,7 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 * 
+	 *
 	 * @param ast
 	 *            The AST - for copySubTree.
 	 * @param n
@@ -110,7 +138,7 @@ public class ShortestOperand extends Spartanization {
 	 */
 	public InfixExpression transpose(final AST ast, final InfixExpression n, final AtomicBoolean hasChanged) {
 		final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(ast, n);
-		transposeOperands($, ast, hasChanged);
+		transposeOperands($, ast, new AtomicBoolean());
 
 		final Operator o = n.getOperator();
 
@@ -126,22 +154,42 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
 	public void setRightLiteralRule(final RepositionRightLiteral op) {
-		rightLiteralOption = op;
+		optionRightLiteral = op;
 	}
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
 	public void setBothLiteralsRule(final RepositionLiterals op) {
-		bothLiteralsOption = op;
+		optionBothLiterals = op;
+	}
+
+	/**
+	 * Sets rule option
+	 *
+	 * @param op
+	 *            Select specific option from RepositionBoolAndNull enumeration
+	 */
+	public void setBoolNullLiteralsRule(final RepositionBoolAndNull op) {
+		optionBoolNull = op;
+	}
+
+	/**
+	 * Sets rule option
+	 *
+	 * @param op
+	 *            Select specific option from MessagingOptions enumeration
+	 */
+	public void setMessagingOption(final MessagingOptions op) {
+		optionUnionOpportunities = op;
 	}
 
 	private void transposeOperands(final InfixExpression ie, final AST ast, final AtomicBoolean hasChanged) {
@@ -157,18 +205,18 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	@SuppressWarnings("boxing")// Justification: because ASTNode is a primitive
-								// int we can't use the generic "in" function on
-								// it
-								// without boxing into Integer. Any other
-								// solution
-								// will cause less readable/maintainable code.
+	// int we can't use the generic "in" function on
+	// it
+	// without boxing into Integer. Any other
+	// solution
+	// will cause less readable/maintainable code.
 	private boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
 		if (isMethodInvocation(rN))
 			return true;
 		if (inOperandExceptions(rN, o) || //
 				o == PLUS && (isMethodInvocation(rN) || isStringLitrl(rN)))
 			return true;
-		switch (rightLiteralOption) {
+		switch (optionRightLiteral) {
 		case All:
 			return false;
 		case AllButBooleanAndNull:
@@ -186,7 +234,7 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private boolean inOperandExceptions(final ASTNode n, final Operator o) {
-		return bothLiteralsOption == RepositionLiterals.None && isLiteral(n) ? true : o == PLUS && isStringLitrl(n);
+		return optionBothLiterals == RepositionLiterals.None && isLiteral(n) ? true : o == PLUS && isStringLitrl(n);
 	}
 
 	private boolean inInfixExceptions(final InfixExpression ie) {
@@ -207,7 +255,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 * 
+	 *
 	 * @param o
 	 *            The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
@@ -260,16 +308,20 @@ public class ShortestOperand extends Spartanization {
 
 	private static final int threshold = 1;
 
+	protected static boolean includeEachOther(final Range a, final Range b) {
+		return a.from < b.from && a.to > b.to || b.from < a.from && b.to > a.to;
+	}
+
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 * 
+	 *
 	 * @param a
 	 *            b Ranges to merge
 	 * @return True - if such an overlap exists
 	 * @see merge
 	 */
 	protected static boolean areOverlapped(final Range a, final Range b) {
-		return a.from <= b.to && b.from <= a.to; // Negation of "not overlapped"
+		return !(a.from > b.to || b.from > a.to) || includeEachOther(a, b);
 	}
 
 	/**
@@ -285,25 +337,42 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 * 
+	 *
 	 * @param rangeList
 	 *            The list of ranges to union with
 	 * @param rNew
 	 *            The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 * 
+	 *
 	 * @see areOverlapped
 	 * @see merge
 	 */
-	protected static boolean unionRangeWithList(final List<Range> rangeList, final Range rNew) {
+	protected boolean unionRangeWithList(final List<Range> rangeList, final Range rNew) {
 		boolean $ = false;
-		for (Range r : rangeList)
+		for (final Range r : rangeList)
 			if (areOverlapped(r, rNew)) {
-				r = merge(r, rNew);
+				final Range newR = merge(r, rNew);
+
+				if (optionUnionOpportunities == MessagingOptions.ShowAll)
+					rangeList.add(r);
+				else {
+					rangeList.remove(r);
+					rangeList.add(newR);
+				}
 				$ = true;
+				break;
 			}
+
+		if (optionUnionOpportunities == MessagingOptions.ShowAll)
+			cleanDuplicates(rangeList);
 		return $;
+	}
+
+	protected static <T> void cleanDuplicates(final List<T> list) {
+		final Set<T> noDuplicates = new LinkedHashSet<>(list);
+		list.clear();
+		list.addAll(noDuplicates);
 	}
 
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
@@ -313,15 +382,21 @@ public class ShortestOperand extends Spartanization {
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
 				if (!hasChanged.get())
 					return true;
-				final Range rN = new Range(!isInfix(n.getParent()) ? n : n.getParent());
-				if (!unionRangeWithList(opportunities, rN))
-					opportunities.add(rN);
+
+				ASTNode k = n;
+				while (isInfix(k)) {
+					unionRangeWithList(opportunities, new Range(k));
+					k = k.getParent();
+				}
+				if (!unionRangeWithList(opportunities, new Range(n)))
+					opportunities.add(new Range(n));
+
 				return true;
 			}
 		};
 	}
 
-	static boolean longerFirst(final InfixExpression n) {
+	boolean longerFirst(final InfixExpression n) {
 		return isLarger(n.getLeftOperand(), n.getRightOperand());
 	}
 
@@ -329,9 +404,18 @@ public class ShortestOperand extends Spartanization {
 		return a.arguments().size() > b.arguments().size();
 	}
 
-	static boolean isLarger(final Expression a, final Expression b) {
+	boolean isLarger(final Expression a, final Expression b) {
 		if (a == null || b == null)
 			return false;
+		if (optionBoolNull == RepositionBoolAndNull.MoveRight && isBoolOrNull(a)
+				|| optionBoolNull == RepositionBoolAndNull.MoveLeft && isBoolOrNull(b))
+			return true;
+		// Nothing to change check
+		if (optionBoolNull == RepositionBoolAndNull.MoveRight && isBoolOrNull(b)
+				|| optionBoolNull == RepositionBoolAndNull.MoveLeft && isBoolOrNull(a)
+				|| optionBoolNull == RepositionBoolAndNull.None && (isBoolOrNull(b) || isBoolOrNull(a)))
+			return false;
+
 		if (countNodes(a) > threshold + countNodes(b))
 			return true;
 		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a,

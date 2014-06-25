@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 /**
  * a range which contains a spartanization suggestion. used for creating text
  * markers
- * 
+ *
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  */
 public class Range {
@@ -16,7 +16,7 @@ public class Range {
 
 	/**
 	 * Instantiates from beginning and end locations
-	 * 
+	 *
 	 * @param from
 	 *            the beginning of the range (inclusive)
 	 * @param to
@@ -29,7 +29,7 @@ public class Range {
 
 	/**
 	 * Instantiates from a single ASTNode
-	 * 
+	 *
 	 * @param n
 	 *            an arbitrary ASTNode
 	 */
@@ -39,7 +39,7 @@ public class Range {
 
 	/**
 	 * Instantiates from beginning and end ASTNodes
-	 * 
+	 *
 	 * @param from
 	 *            the beginning ASTNode (inclusive)
 	 * @param to
@@ -47,5 +47,21 @@ public class Range {
 	 */
 	public Range(final ASTNode from, final ASTNode to) {
 		this(from.getStartPosition(), to.getStartPosition() + to.getLength());
+	}
+
+	@Override public int hashCode() {
+		final int $ = from;
+		final int $$ = to;
+		// Cantor pairing function
+		return (int) ($ + 0.5 * ($ + $$) * ($ + 1 + $$));
+	}
+
+	@Override public boolean equals(final Object o) {
+		boolean $ = false;
+		if (o instanceof Range) {
+			final Range r = (Range) o;
+			$ = from == r.from && to == r.to;
+		}
+		return $;
 	}
 }

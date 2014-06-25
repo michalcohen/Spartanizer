@@ -1,10 +1,17 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.MessagingOptions;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionBoolAndNull;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -24,18 +31,21 @@ public enum All {
 	@SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
 	;
 	private final Spartanization value;
+
 	private All(final Spartanization value) {
 		this.value = value;
 	}
+
 	/**
 	 * @return Spartanization class rule instance
 	 */
 	public Spartanization value() {
 		return value;
 	}
+
 	/**
 	 * @param c
-	 *          Spartanization rule
+	 *            Spartanization rule
 	 * @return Spartanization class rule instance
 	 */
 	@SuppressWarnings("unchecked")//
@@ -47,6 +57,7 @@ public enum All {
 		}
 		return null;
 	}
+
 	/**
 	 * @return Iteration over all Spartanization class instances
 	 */
@@ -55,12 +66,15 @@ public enum All {
 			@Override public Iterator<Spartanization> iterator() {
 				return new Iterator<Spartanization>() {
 					int next;
+
 					@Override public boolean hasNext() {
 						return next < values().length;
 					}
+
 					@Override public Spartanization next() {
 						return values()[next++].value();
 					}
+
 					@Override public final void remove() {
 						throw new IllegalArgumentException();
 					}
@@ -68,14 +82,18 @@ public enum All {
 			}
 		};
 	}
+
 	private static String ignoreRuleStr = "false";
 	private static final Map<String, Spartanization> all = new HashMap<>();
+
 	private static void put(final Spartanization s) {
 		all.put(s.toString(), s);
 	}
+
 	private static boolean ignored(final String sparta) {
 		return 0 <= sparta.indexOf(ignoreRuleStr);
 	}
+
 	private static void assignRulesOptions(final String[] str) {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
 		if (str == null || shortestOperandInstance == null)
@@ -86,18 +104,29 @@ public enum All {
 			// same case...
 			if (line == null)
 				continue;
-			if (line.contains(Options.RepositionAllRightLiterals))
+			if (line.contains(PreferencesStrings.repositionRightLiterals))
 				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
-			if (line.contains(Options.RepositionAllButBoolAndNull))
+			if (line.contains(PreferencesStrings.repositionRightException))
 				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
-			if (line.contains(Options.DoNotRepositionRightLiterals))
+			if (line.contains(PreferencesStrings.doNotRepositionRightLiterals))
 				shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
-			if (line.contains(Options.RepositionLiterals))
+			if (line.contains(PreferencesStrings.repositionAllLiterals))
 				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
-			if (line.contains(Options.DoNotRepositionLiterals))
+			if (line.contains(PreferencesStrings.doNotRepositionLiterals))
 				shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
+			if (line.contains(PreferencesStrings.NullAndBoolAtStart))
+				shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveLeft);
+			if (line.contains(PreferencesStrings.NullAndBoolAtEnd))
+				shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveRight);
+			if (line.contains(PreferencesStrings.NullAndBoolAtNone))
+				shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.None);
+			if (line.contains(PreferencesStrings.showOneSwap))
+				shortestOperandInstance.setMessagingOption(MessagingOptions.Union);
+			if (line.contains(PreferencesStrings.showEverySwap))
+				shortestOperandInstance.setMessagingOption(MessagingOptions.ShowAll);
 		}
 	}
+
 	/**
 	 * Resets the enumeration with the current values from the preferences file.
 	 * Letting the rules notification decisions be updated without restarting
@@ -117,20 +146,23 @@ public enum All {
 		assignRulesOptions(str);
 		put(new SimplifyLogicalNegation());
 	}
+
 	/**
 	 * @param name
-	 *          the name of the spartanization
+	 *            the name of the spartanization
 	 * @return an instance of the spartanization
 	 */
 	public static Spartanization get(final String name) {
 		return all.get(name);
 	}
+
 	/**
 	 * @return all the registered spartanization refactoring objects
 	 */
 	public static Iterable<Spartanization> all() {
 		return all.values();
 	}
+
 	/**
 	 * @return all the registered spartanization refactoring objects names
 	 */

@@ -7,14 +7,32 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
- * 
+ *
  * Useful Functions
- * 
+ *
  */
 public enum Funcs {
 	;
@@ -380,7 +398,7 @@ public enum Funcs {
 	public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
 		return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
 				|| name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(
-				((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
+						((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
 	}
 
 	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags,
@@ -393,7 +411,7 @@ public enum Funcs {
 
 	/**
 	 * String wise comparison of all the given SimpleNames
-	 * 
+	 *
 	 * @param cmpTo
 	 *            a string to compare all names to
 	 * @param names
@@ -405,7 +423,7 @@ public enum Funcs {
 			return false;
 		for (final Expression name : names)
 			if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-					|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+			|| !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
 				return false;
 		return true;
 	}
@@ -429,7 +447,7 @@ public enum Funcs {
 	/**
 	 * the function checks if all the given assignments has the same left hand
 	 * side(variable) and operator
-	 * 
+	 *
 	 * @param base
 	 *            The assignment to compare all others to
 	 * @param asgns
@@ -442,7 +460,7 @@ public enum Funcs {
 			return false;
 		for (final Assignment asgn : asgns)
 			if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
-					|| !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
+			|| !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
 				return false;
 		return true;
 	}
@@ -450,7 +468,7 @@ public enum Funcs {
 	/**
 	 * the function receives a condition and the then boolean value and returns
 	 * the proper condition (its negation if thenValue is false)
-	 * 
+	 *
 	 * @param t
 	 *            the AST who is to own the new return statement
 	 * @param r
@@ -472,7 +490,7 @@ public enum Funcs {
 
 	/**
 	 * Counts the number of nodes in the tree of which node is root.
-	 * 
+	 *
 	 * @param n
 	 *            The node.
 	 * @return Number of abstract syntax tree nodes under the parameter.
@@ -551,7 +569,7 @@ public enum Funcs {
 	/**
 	 * Get the containing node by type. Say we want to find the first block that
 	 * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
-	 * 
+	 *
 	 * @param n
 	 *            Node to find its container
 	 * @param ASTNodeType
@@ -625,6 +643,16 @@ public enum Funcs {
 	 */
 	public static boolean isStringLitrl(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
+	}
+
+	/**
+	 * @param n
+	 *            node to check
+	 * @return true if the given node is a boolean or null literal or false
+	 *         otherwise
+	 */
+	public static boolean isBoolOrNull(final ASTNode n) {
+		return n != null && (n.getNodeType() == ASTNode.BOOLEAN_LITERAL || n.getNodeType() == ASTNode.NULL_LITERAL);
 	}
 
 	/**
