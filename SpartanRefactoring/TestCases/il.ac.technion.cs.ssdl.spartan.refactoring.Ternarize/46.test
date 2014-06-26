@@ -2,8 +2,7 @@ package p;
 
 public class Blah {
 	public void mdm(String mode){
-		String res = mode, foo = "Not in test mode"; int k;
-		k = 1984;
+		int a , b=0;
 		if (mode.equals("TEST-MODE")==true)
 			if (b==3){
 				return 3;
