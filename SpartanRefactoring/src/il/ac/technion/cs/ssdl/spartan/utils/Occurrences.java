@@ -244,6 +244,7 @@ public enum Occurrences {
 			}
 
 			@Override public boolean visit(final ClassInstanceCreation n) {
+				collect(n.getExpression());
 				return collect(n.arguments());
 			}
 
