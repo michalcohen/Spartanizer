@@ -5,20 +5,11 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isBoolOrNull;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isInfix;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isLiteral;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isMethodInvocation;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isReturn;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isStringLitrl;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -36,6 +27,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
@@ -112,7 +104,7 @@ public class ShortestOperand extends Spartanization {
 					return true;
 				final AtomicBoolean hasChanged = new AtomicBoolean(false);
 				final InfixExpression newNode = transpose(t, n, hasChanged);
-				if (hasChanged.get())
+				if (hasChanged.get() && !stringReturningMethod(n))
 					r.replace(n, newNode, null); // Replace old tree with
 				return true;
 			}
@@ -126,7 +118,7 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 *
+	 * 
 	 * @param ast
 	 *            The AST - for copySubTree.
 	 * @param n
@@ -154,7 +146,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 *
+	 * 
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -164,7 +156,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 *
+	 * 
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -174,7 +166,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 *
+	 * 
 	 * @param op
 	 *            Select specific option from RepositionBoolAndNull enumeration
 	 */
@@ -184,7 +176,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 *
+	 * 
 	 * @param op
 	 *            Select specific option from MessagingOptions enumeration
 	 */
@@ -255,7 +247,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 *
+	 * 
 	 * @param o
 	 *            The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
@@ -314,7 +306,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 *
+	 * 
 	 * @param a
 	 *            b Ranges to merge
 	 * @return True - if such an overlap exists
@@ -337,14 +329,14 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 *
+	 * 
 	 * @param rangeList
 	 *            The list of ranges to union with
 	 * @param rNew
 	 *            The new range to union
 	 * @return True - if the list updated and the new range consumed False - the
 	 *         list remained intact
-	 *
+	 * 
 	 * @see areOverlapped
 	 * @see merge
 	 */
@@ -380,7 +372,7 @@ public class ShortestOperand extends Spartanization {
 			@Override public boolean visit(final InfixExpression n) {
 				final AtomicBoolean hasChanged = new AtomicBoolean(false);
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
-				if (!hasChanged.get())
+				if (!hasChanged.get() || stringReturningMethod(n))
 					return true;
 
 				ASTNode k = n;
@@ -394,6 +386,28 @@ public class ShortestOperand extends Spartanization {
 				return true;
 			}
 		};
+	}
+
+	static boolean stringReturningMethod(final InfixExpression n) {
+		ASTNode parent = n.getParent();
+		while (parent != null) {
+			if (isReturn(parent) && doesMthdRetString(parent))
+				return true;
+			parent = parent.getParent();
+		}
+		return false;
+	}
+
+	private static boolean doesMthdRetString(final ASTNode n) {
+		ASTNode parent = n.getParent();
+		while (parent != null) {
+			if (parent.getNodeType() == ASTNode.METHOD_DECLARATION) {
+				final MethodDeclaration mthd = (MethodDeclaration) parent;
+				return mthd.getReturnType2().toString().equals("String");
+			}
+			parent = parent.getParent();
+		}
+		return false;
 	}
 
 	boolean longerFirst(final InfixExpression n) {

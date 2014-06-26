@@ -1,0 +1,3 @@
+private static String appendToBaseName(final IFile f, final int n) {
+    return sansJavaExtension(f) + n + "." + extension(f);
+  }
