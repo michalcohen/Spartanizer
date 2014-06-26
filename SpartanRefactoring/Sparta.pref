@@ -10,5 +10,5 @@ true
 true
 Null and Boolean at End
 Reposition Literals
-Reposition right literals
-Show message for every operand swap
+Reposition right literals except boolean and null (Overrides Null and Boolean option)
+One message per expression that contains operand swap
