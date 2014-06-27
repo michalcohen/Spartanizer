@@ -13,7 +13,7 @@ public class Wizard extends RefactoringWizard {
 	 *            the refactoring to be used with this wizard
 	 */
 	public Wizard(final Refactoring r) {
-		super(r, DIALOG_BASED_USER_INTERFACE | PREVIEW_EXPAND_FIRST_NODE);
+		super(r, PREVIEW_EXPAND_FIRST_NODE | DIALOG_BASED_USER_INTERFACE);
 	}
 
 	@Override protected void addUserInputPages() {
