@@ -28,8 +28,7 @@ public class ShortestBranchFirst extends Spartanization {
 				"Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
-			final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final IfStatement n) {
 				if (!inRange(m, n) || !longerFirst(n))
@@ -55,8 +54,7 @@ public class ShortestBranchFirst extends Spartanization {
 					return null;
 				final Statement elseStmnt = n.getElseStatement();
 				final Statement thenStmnt = n.getThenStatement();
-				if (1 == statementsCount(elseStmnt)
-						&& ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
+				if (1 == statementsCount(elseStmnt) && ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
 					final Block newElseBlock = t.newBlock();
 					newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
 					return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStmnt);
@@ -87,8 +85,8 @@ public class ShortestBranchFirst extends Spartanization {
 		if (op == null)
 			return null;
 		return op == CONDITIONAL_AND || op == CONDITIONAL_OR ? makeInfixExpression(ast, r, op,
-				negateExp(ast, r, e.getLeftOperand()), negateExp(ast, r, e.getRightOperand())) : makeInfixExpression(
-				ast, r, op, e.getLeftOperand(), e.getRightOperand());
+				negateExp(ast, r, e.getLeftOperand()), negateExp(ast, r, e.getRightOperand())) : makeInfixExpression(ast, r,
+				op, e.getLeftOperand(), e.getRightOperand());
 	}
 
 	private static Expression negateExp(final AST t, final ASTRewrite r, final Expression exp) {

@@ -36,8 +36,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 		super("Simplify logical negation", "Simplify logical negation");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
-			final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final PrefixExpression e) {
 				return !inRange(m, e) ? true : simplifyNot(asNot(e));
@@ -70,13 +69,11 @@ public class SimplifyLogicalNegation extends Spartanization {
 				return inner != null && deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
 			}
 
-			boolean deMorgan(final Expression e, final InfixExpression inner, final Expression left,
-					final Expression right) {
+			boolean deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
 				return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
 			}
 
-			boolean deMorgan1(final Expression e, final InfixExpression inner, final Expression left,
-					final Expression right) {
+			boolean deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
 				return replace(e, //
 						parenthesize( //
 						addExtendedOperands(inner, //

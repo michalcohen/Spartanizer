@@ -95,8 +95,7 @@ public class ShortestOperand extends Spartanization {
 				"Make the shortest operand first in a binary commutative or semi-commutative operator");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
-			final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
 				if (!inRange(m, n) || invalid(n))
@@ -229,8 +228,7 @@ public class ShortestOperand extends Spartanization {
 				|| inRightOperandExceptions(ie.getRightOperand(), o);
 	}
 
-	private static void set(final InfixExpression $, final Expression left, final Operator operator,
-			final Expression right) {
+	private static void set(final InfixExpression $, final Expression left, final Operator operator, final Expression right) {
 		$.setRightOperand(left);
 		$.setOperator(operator);
 		$.setLeftOperand(right);
@@ -416,8 +414,8 @@ public class ShortestOperand extends Spartanization {
 			return false;
 		if (countNodes(a) > threshold + countNodes(b))
 			return true;
-		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a,
-				(MethodInvocation) b) : a.getLength() > b.getLength();
+		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a, (MethodInvocation) b)
+				: a.getLength() > b.getLength();
 	}
 
 	boolean sortInfix(final InfixExpression ie, final AST ast) {
@@ -487,11 +485,8 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	private boolean areExpsValid(final Operator o, final Expression l, final Expression s) {
-		return isLarger(l, s) && !isMethodInvocation(l) 
-				&& !isMethodInvocation(s) 
-				&& !inOperandExceptions(l, o)
-				&& !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o)
-				&& !inRightOperandExceptions(s, o);
+		return isLarger(l, s) && !isMethodInvocation(l) && !isMethodInvocation(s) && !inOperandExceptions(l, o)
+				&& !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o) && !inRightOperandExceptions(s, o);
 	}
 
 	private boolean sortExpressionList(final List<Expression> es, final AST ast, final Operator o) {

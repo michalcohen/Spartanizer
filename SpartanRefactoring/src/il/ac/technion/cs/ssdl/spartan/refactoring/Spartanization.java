@@ -146,8 +146,7 @@ public abstract class Spartanization extends Refactoring {
 	}
 
 	private boolean isSelected(final int offset) {
-		return isTextSelected() && offset >= selection.getOffset()
-				&& offset < selection.getOffset() + selection.getLength();
+		return isTextSelected() && offset >= selection.getOffset() && offset < selection.getOffset() + selection.getLength();
 	}
 
 	protected static boolean isNodeOutsideMarker(final ASTNode n, final IMarker m) {
@@ -194,8 +193,7 @@ public abstract class Spartanization extends Refactoring {
 
 	private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
 		if (!isTextSelected())
-			return getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1,
-					SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+			return getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 		final List<ICompilationUnit> $ = new ArrayList<>();
 		$.add(compilationUnit);
 		return $;
@@ -347,8 +345,8 @@ public abstract class Spartanization extends Refactoring {
 	}
 
 	protected final boolean inRange(final IMarker m, final ASTNode n) {
-		return m == null && isNodeOutsideSelection(n) && isTextSelected() ? false : m != null
-				&& isNodeOutsideMarker(n, m) ? false : true;
+		return m == null && isNodeOutsideSelection(n) && isTextSelected() ? false
+				: m != null && isNodeOutsideMarker(n, m) ? false : true;
 	}
 
 	@Override public String toString() {

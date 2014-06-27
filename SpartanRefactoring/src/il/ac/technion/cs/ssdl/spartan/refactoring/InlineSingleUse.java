@@ -49,8 +49,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  *             <pre>
  * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
- * 	&#064;Resident
- * 	final T t = ts[i];
+ * 	&#064;Resident final T t = ts[i];
  * 	ts[i] = ts[j];
  * 	ts[j] = t;
  * }
@@ -60,8 +59,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * 
  *             <pre>
  * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
- * 	&#064;SuppressWarning(&quot;unmovable&quot;)
- * 	final T t = ts[i];
+ * 	&#064;SuppressWarning(&quot;unmovable&quot;) final T t = ts[i];
  * 	ts[i] = ts[j];
  * 	ts[j] = t;
  * }
@@ -83,6 +81,7 @@ public class InlineSingleUse extends Spartanization {
 	public InlineSingleUse() {
 		super("Inline Single Use", "Inline variable used once");
 	}
+
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
@@ -92,8 +91,8 @@ public class InlineSingleUse extends Spartanization {
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
 				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
 				if (1 == uses.size()
-				    && (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName,
-				        parent.getParent()))) {
+						&& (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(Occurrences.ASSIGNMENTS,
+								varName, parent.getParent()))) {
 					r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
 					r.remove(1 != parent.fragments().size() ? n : parent, null);
 				}
@@ -101,20 +100,24 @@ public class InlineSingleUse extends Spartanization {
 			}
 		});
 	}
+
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment node) {
 				return !(node.getParent() instanceof VariableDeclarationStatement) ? true : go(node, node.getName());
 			}
+
 			private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
 				if (1 == numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent())
-				    && (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent())))
+						&& (0 != (parent.getModifiers() & Modifier.FINAL) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, n,
+								parent.getParent())))
 					opportunities.add(new Range(v));
 				return true;
 			}
 		};
 	}
+
 	static int numOfOccur(final Occurrences typeOfOccur, final Expression of, final ASTNode in) {
 		return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
 	}

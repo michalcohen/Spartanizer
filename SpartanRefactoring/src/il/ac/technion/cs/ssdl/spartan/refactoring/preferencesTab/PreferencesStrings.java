@@ -6,7 +6,7 @@ package il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
  *         2014/6/21)
  * @since 2014/6/21
- *
+ * 
  *        Manages strings for preferences page
  */
 public final class PreferencesStrings {
@@ -43,8 +43,7 @@ public final class PreferencesStrings {
 			+ " except boolean and null (Overrides Null and Boolean option)";
 	@SuppressWarnings("javadoc") public static final String doNotRepositionRightLiterals = "Do not reposition right literals";
 	@SuppressWarnings("javadoc") public static final String[][] rightLiteralOptions = {
-			{ repositionRightLiterals, repositionRightLiterals },
-			{ repositionRightException, repositionRightException },
+			{ repositionRightLiterals, repositionRightLiterals }, { repositionRightException, repositionRightException },
 			{ doNotRepositionRightLiterals, doNotRepositionRightLiterals } };
 
 	/**

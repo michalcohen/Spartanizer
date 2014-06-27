@@ -44,8 +44,7 @@ public class ForwardDeclaration extends Spartanization {
 		super("Forward declaration", "Forward declaration of a variable just prior to first use");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
-			final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
 				if (!inRange(m, n))
@@ -60,19 +59,18 @@ public class ForwardDeclaration extends Spartanization {
 				final int declaredIdx = block.statements().indexOf(n.getParent());
 				if (nextNodeIsAlreadyFixed(block, n, declaredIdx))
 					return true;
-				final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx,
-						firstUseIdx);
+				final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
 				if (beginingOfDeclarationsBlockIdx > declaredIdx) {
 					final ASTNode declarationNode = (ASTNode) block.statements().get(declaredIdx);
 					if (1 == ((VariableDeclarationStatement) declarationNode).fragments().size()) {
 						final ListRewrite lstRewrite = r.getListRewrite(block, Block.STATEMENTS_PROPERTY);
 						lstRewrite.remove(declarationNode, null);
-						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode),
-								beginingOfDeclarationsBlockIdx + 1, null);
+						lstRewrite.insertAt(ASTNode.copySubtree(t, declarationNode), beginingOfDeclarationsBlockIdx + 1,
+								null);
 					} else {
 						r.getListRewrite(block, Block.STATEMENTS_PROPERTY).insertAt(
-								t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t,
-										n)), beginingOfDeclarationsBlockIdx + 1, null);
+								t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, n)),
+								beginingOfDeclarationsBlockIdx + 1, null);
 						r.remove(n, null);
 					}
 				}

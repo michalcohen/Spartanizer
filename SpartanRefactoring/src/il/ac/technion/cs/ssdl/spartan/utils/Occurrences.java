@@ -145,8 +145,7 @@ public enum Occurrences {
 			}
 
 			void collectExpression(final Expression candidate) {
-				if (candidate != null && candidate.getNodeType() == e.getNodeType()
-						&& candidate.subtreeMatch(matcher, e))
+				if (candidate != null && candidate.getNodeType() == e.getNodeType() && candidate.subtreeMatch(matcher, e))
 					into.add(candidate);
 			}
 		};
@@ -160,8 +159,7 @@ public enum Occurrences {
 		return usesCollector(into, what, false);
 	}
 
-	private static ASTVisitor usesCollector(final List<Expression> into, final Expression what,
-			final boolean lexicalOnly) {
+	private static ASTVisitor usesCollector(final List<Expression> into, final Expression what, final boolean lexicalOnly) {
 		return new ASTVisitor() {
 			private boolean collect(final Expression e) {
 				collectExpression(what, e);
@@ -322,8 +320,7 @@ public enum Occurrences {
 			}
 
 			void collectExpression(final Expression e, final Expression candidate) {
-				if (candidate != null && candidate.getNodeType() == e.getNodeType()
-						&& candidate.subtreeMatch(matcher, e)) {
+				if (candidate != null && candidate.getNodeType() == e.getNodeType() && candidate.subtreeMatch(matcher, e)) {
 					into.add(candidate);
 					if (repeated())
 						into.add(candidate);

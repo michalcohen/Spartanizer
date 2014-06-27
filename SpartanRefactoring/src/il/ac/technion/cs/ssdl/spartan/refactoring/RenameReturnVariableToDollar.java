@@ -25,8 +25,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 		super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu,
-			final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final MethodDeclaration n) {
 				final VariableDeclarationFragment returnVar = selectReturnVariable(n);

@@ -40,8 +40,8 @@ public enum Funcs {
 	 * @return the new variable declaration fragment or null if one of the given
 	 *         parameters was null
 	 */
-	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r,
-			final SimpleName varName, final Expression initalizer) {
+	public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
+			final Expression initalizer) {
 		if (hasNull(t, r, varName, initalizer))
 			return null;
 		final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
@@ -88,8 +88,8 @@ public enum Funcs {
 	 *            the else statement to set in the If Statement
 	 * @return a new if Statement
 	 */
-	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond,
-			final Statement thenStmnt, final Statement elseStmnt) {
+	public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
+			final Statement elseStmnt) {
 		if (hasNull(t, r, cond, thenStmnt, elseStmnt))
 			return null;
 		final IfStatement $ = t.newIfStatement();
@@ -129,8 +129,8 @@ public enum Funcs {
 	 *            the right expression
 	 * @return the new infix expression
 	 */
-	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r,
-			final InfixExpression.Operator o, final Expression left, final Expression right) {
+	public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
+			final Expression left, final Expression right) {
 		if (hasNull(t, r, o, right, left))
 			return null;
 		final InfixExpression $ = t.newInfixExpression();
@@ -195,8 +195,7 @@ public enum Funcs {
 	 *            the expression to put in parenthesis
 	 * @return the given expression with parenthesis
 	 */
-	public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r,
-			final Expression exp) {
+	public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r, final Expression exp) {
 		if (hasNull(t, r, exp))
 			return null;
 		final ParenthesizedExpression $ = t.newParenthesizedExpression();
@@ -246,8 +245,7 @@ public enum Funcs {
 	 */
 	public static Assignment getAssignment(final Statement s) {
 		final ExpressionStatement $ = getExpressionStatement(s);
-		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $
-				.getExpression();
+		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
 	}
 
 	/**
@@ -462,8 +460,7 @@ public enum Funcs {
 	 * @return the original condition if thenValue was true or its negation if
 	 *         it was false (or null if any of the given parameter were null)
 	 */
-	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond,
-			final boolean thenValue) {
+	public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
 		if (hasNull(t, cond))
 			return null;
 		return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond),
