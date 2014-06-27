@@ -21,18 +21,15 @@ public class PreferencesFile {
 	public static String[] getSpartanTitle() {
 		return new String[] { //
 		"Preferences file for Spartanization rules profiles", //
-				"Please avoid editing the file manually ", //
-				"--------------------------------------------------" };
+		    "Please avoid editing the file manually ", //
+		    "--------------------------------------------------" };
 	}
-
 	/**
 	 * @return Spartanization rules preferences file path.
 	 */
 	public static String getPrefFilePath() {
-		return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath()
-				+ "Sparta.pref";
+		return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "Sparta.pref";
 	}
-
 	/**
 	 * @return Preferences file as lines array
 	 */
@@ -40,18 +37,14 @@ public class PreferencesFile {
 		final String path = getPrefFilePath();
 		if (!new File(path).exists())
 			return null;
-		Scanner sc;
-		String[] $ = null;
-		try {
-			sc = new Scanner(new File(path));
-			final List<String> lines = new ArrayList<>();
+		try (final Scanner sc = new Scanner(new File(path))) {
+			final List<String> $ = new ArrayList<>();
 			while (sc.hasNextLine())
-				lines.add(sc.nextLine());
-			$ = lines.toArray(new String[0]);
-			sc.close();
+				$.add(sc.nextLine());
+			return $.toArray(new String[0]);
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return $;
 	}
 }

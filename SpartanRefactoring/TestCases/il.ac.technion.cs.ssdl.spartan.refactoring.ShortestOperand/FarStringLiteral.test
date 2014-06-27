@@ -1,0 +1,10 @@
+package p;
+
+public class SpongeBob {
+	private static int appendToBaseName(final IFile f, final int n) {
+	    String a = "Catch me if you can";
+	    String b,bb,bbb;
+	    a =  bbb + bb + b + "moshe";
+	    return 5;
+	  }
+}
