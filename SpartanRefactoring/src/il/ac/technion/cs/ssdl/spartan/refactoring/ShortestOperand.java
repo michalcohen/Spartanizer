@@ -100,19 +100,19 @@ public class ShortestOperand extends Spartanization {
 			final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
-				if (invalid(n))
+				if (!inRange(m, n) || invalid(n))
 					return true;
 				final AtomicBoolean hasChanged = new AtomicBoolean(false);
 				final InfixExpression newNode = transpose(t, n, hasChanged);
-				if (hasChanged.get() && !stringReturningMethod(n))
+				if (hasChanged.get())
 					r.replace(n, newNode, null); // Replace old tree with
 				return true;
 			}
-
-			private boolean invalid(final InfixExpression n) {
-				return !inRange(m, n) || null == n.getLeftOperand() || null == n.getRightOperand();
-			}
 		});
+	}
+
+	static boolean invalid(final InfixExpression n) {
+		return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n);
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class ShortestOperand extends Spartanization {
 			@Override public boolean visit(final InfixExpression n) {
 				final AtomicBoolean hasChanged = new AtomicBoolean(false);
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
-				if (!hasChanged.get() || stringReturningMethod(n))
+				if (!hasChanged.get() || invalid(n))
 					return true;
 
 				ASTNode k = n;
