@@ -9,7 +9,17 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isReturn;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isStringLitrl;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
@@ -95,7 +105,8 @@ public class ShortestOperand extends Spartanization {
 				"Make the shortest operand first in a binary commutative or semi-commutative operator");
 	}
 
-	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu,
+			final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final InfixExpression n) {
 				if (!inRange(m, n) || invalid(n))
@@ -110,13 +121,31 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	static boolean invalid(final InfixExpression n) {
-		return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n);
+		return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n)
+				|| containsStringLiteral(n);
+	}
+
+	static boolean containsStringLiteral(final ASTNode node) {
+		if (node == null || !isInfix(node))
+			return false;
+		final InfixExpression n = (InfixExpression) node;
+		if (EQUALS == n.getOperator()) // The only permitted operator on strings
+			return false;
+		final ASTNode l = n.getLeftOperand();
+		final ASTNode r = n.getRightOperand();
+		if (isStringLitrl(l) || isStringLitrl(r))
+			return true;
+		for (final Object listN : n.extendedOperands())
+			if (listN instanceof ASTNode)
+				if (isStringLitrl((ASTNode) listN))
+					return true;
+		return containsStringLiteral(l) || containsStringLiteral(r);
 	}
 
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
 	 * on every subtree of the node.
-	 * 
+	 *
 	 * @param ast
 	 *            The AST - for copySubTree.
 	 * @param n
@@ -142,7 +171,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -152,7 +181,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionRightLiteral enumeration
 	 */
@@ -162,7 +191,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from RepositionBoolAndNull enumeration
 	 */
@@ -172,7 +201,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Sets rule option
-	 * 
+	 *
 	 * @param op
 	 *            Select specific option from MessagingOptions enumeration
 	 */
@@ -228,7 +257,8 @@ public class ShortestOperand extends Spartanization {
 				|| inRightOperandExceptions(ie.getRightOperand(), o);
 	}
 
-	private static void set(final InfixExpression $, final Expression left, final Operator operator, final Expression right) {
+	private static void set(final InfixExpression $, final Expression left, final Operator operator,
+			final Expression right) {
 		$.setRightOperand(left);
 		$.setOperator(operator);
 		$.setLeftOperand(right);
@@ -238,7 +268,7 @@ public class ShortestOperand extends Spartanization {
 	 * Makes an opposite operator from a given one, which keeps its logical
 	 * operation after the node swapping. e.g. "&" is commutative, therefore no
 	 * change needed. "<" isn't commutative, but it has its opposite: ">=".
-	 * 
+	 *
 	 * @param o
 	 *            The operator to flip
 	 * @return The correspond operator - e.g. "<=" will become ">", "+" will
@@ -297,7 +327,7 @@ public class ShortestOperand extends Spartanization {
 
 	/**
 	 * Determine if the ranges are overlapping in a part of their range
-	 * 
+	 *
 	 * @param a
 	 *            b Ranges to merge
 	 * @return True - if such an overlap exists
@@ -320,7 +350,7 @@ public class ShortestOperand extends Spartanization {
 	/**
 	 * Tries to union the given range with one of the elements inside the given
 	 * list.
-	 * 
+	 *
 	 * @param rs
 	 *            The list of ranges to union with
 	 * @param rNew
@@ -414,8 +444,8 @@ public class ShortestOperand extends Spartanization {
 			return false;
 		if (countNodes(a) > threshold + countNodes(b))
 			return true;
-		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a, (MethodInvocation) b)
-				: a.getLength() > b.getLength();
+		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a,
+				(MethodInvocation) b) : a.getLength() > b.getLength();
 	}
 
 	boolean sortInfix(final InfixExpression ie, final AST ast) {
