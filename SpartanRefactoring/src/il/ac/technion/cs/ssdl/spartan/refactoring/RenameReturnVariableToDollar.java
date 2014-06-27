@@ -10,17 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.VariableDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -50,7 +40,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 	}
 
 	static List<VariableDeclarationFragment> getCandidates(final MethodDeclaration mthdDecl) {
-		if (mthdDecl == null || null == mthdDecl.getReturnType2())
+		if (mthdDecl == null)
 			return null;
 		final List<VariableDeclarationFragment> $ = new ArrayList<>();
 		mthdDecl.accept(new ASTVisitor() {
@@ -68,8 +58,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
 			}
 
 			@Override public boolean visit(final VariableDeclarationStatement n) {
-				if (null != n.getType() && n.getType().toString().equals((mthdDecl.getReturnType2().toString())))
-					$.addAll(n.fragments());
+				$.addAll(n.fragments());
 				return true;
 			}
 		});

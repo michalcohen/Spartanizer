@@ -16,8 +16,10 @@ public class Blah {
 		if (blah.contains("blah"))
 			return res.j;
 		int x = blah.length()/2;
+		if (x==3)
+			return x;
 		x = yada3(res.j - x);
-		return res.j + x;
+		return x;
 	}
 }
 <Test Result>
@@ -39,7 +41,9 @@ public class Blah {
 		if (blah.contains("blah"))
 			return res.j;
 		int $ = blah.length()/2;
+		if ($==3)
+			return $;
 		$ = yada3(res.j - $);
-		return res.j + $;
+		return $;
 	}
 }
