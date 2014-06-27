@@ -46,7 +46,7 @@ public class Ternarize extends Spartanization {
 
 	private static boolean treatIfReturn(final AST ast, final ASTRewrite r, final IfStatement ifStmnt,
 			final Block parent) {
-		if (!checkIfReturnStmntExist(ifStmnt.getThenStatement()))
+		if (!hasReturn(ifStmnt.getThenStatement()))
 			return false;
 		final ReturnStatement nextRet = nextStatement(statements(parent), statements(parent).indexOf(ifStmnt));
 		return nextRet != null && 1 == statementsCount(ifStmnt.getThenStatement())
