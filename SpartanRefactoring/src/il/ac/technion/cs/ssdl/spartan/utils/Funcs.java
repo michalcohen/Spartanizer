@@ -7,26 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -376,7 +358,7 @@ public enum Funcs {
 	}
 	private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
 		for (final VariableDeclarationFragment o : frags)
-			if (name.toString().equals(o.getName().toString()))
+			if (same(name, o.getName()))
 				return o;
 		return null;
 	}
@@ -537,6 +519,7 @@ public enum Funcs {
 	 * @return The containing node
 	 */
 	public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
+		// TOOD: Convert to FOR LOOP
 		ASTNode $ = n.getParent();
 		while (ASTNodeType != $.getNodeType()) {
 			if ($.getParent() == $.getRoot())
@@ -690,5 +673,11 @@ public enum Funcs {
 	 */
 	public static boolean isOpAssign(final Assignment asgn) {
 		return asgn != null && asgn.getOperator() == Assignment.Operator.ASSIGN;
+	}
+	public static boolean same(final ASTNode n1, final ASTNode n2) {
+		return n1.toString().equals(n2.toString());
+	}
+	public static boolean same(final List<ASTNode> n1, final List<ASTNode> n2) {
+		return n1.toString().equals(n2.toString());
 	}
 }
