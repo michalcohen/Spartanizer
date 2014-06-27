@@ -1,34 +1,17 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isBoolOrNull;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isInfix;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isLiteral;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isMethodInvocation;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isReturn;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isStringLitrl;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.*;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
@@ -362,12 +345,8 @@ public class ShortestOperand extends Spartanization {
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
 				if (!hasChanged.get() || invalid(n))
 					return true;
-				// TOOD: Convert to FOR LOOP
-				ASTNode k = n;
-				while (isInfix(k)) {
+				for (ASTNode k = n; isInfix(k); k = k.getParent())
 					unionRangeWithList(opportunities, new Range(k));
-					k = k.getParent();
-				}
 				if (!unionRangeWithList(opportunities, new Range(n)))
 					opportunities.add(new Range(n));
 				return true;
@@ -376,13 +355,9 @@ public class ShortestOperand extends Spartanization {
 	}
 
 	static boolean stringReturningMethod(final InfixExpression n) {
-		// TOOD: Convert to FOR LOOP
-		ASTNode parent = n.getParent();
-		while (parent != null) {
+		for (ASTNode parent = n.getParent(); parent != null; parent = parent.getParent())
 			if (isReturn(parent) && doesMthdRetString(parent))
 				return true;
-			parent = parent.getParent();
-		}
 		return false;
 	}
 
