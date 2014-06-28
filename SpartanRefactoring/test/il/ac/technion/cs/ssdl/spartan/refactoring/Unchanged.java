@@ -47,11 +47,12 @@ public class Unchanged extends AbstractParametrizedTest {
 	 * opportunities is zero, the input does not change.
 	 */
 	@Test public void checkNoChange() {
+		// TODO: Why do you use StringBuilder?
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
-		if (new StringBuilder(fIn.getName()).indexOf(testSuffix) > 0)
-			assertEquals(readFile(makeInFile(fIn)), rewrite(spartanization, makeAST(fIn), new Document(readFile(makeInFile(fIn)))).get());
-		else
-			assertEquals(readFile(fIn), rewrite(spartanization, makeAST(fIn), new Document(readFile(fIn))).get());
+		if (new StringBuilder(fIn.getName()).indexOf(testSuffix) <= 0)
+	    assertEquals(readFile(fIn), rewrite(spartanization, makeAST(fIn), new Document(readFile(fIn))).get());
+    else
+	    assertEquals(readFile(makeInFile(fIn)), rewrite(spartanization, makeAST(fIn), new Document(readFile(makeInFile(fIn)))).get());
 	}
 	/**
 	 * @return a collection of cases, where each cases is an array of three
@@ -61,7 +62,7 @@ public class Unchanged extends AbstractParametrizedTest {
 	public static Collection<Object[]> cases() {
 		return new TestSuite.Files() {
 			@Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
-				if (name.endsWith(testSuffix) && fileToStringBuilder(f).indexOf(testKeyword) == -1)
+				if (name.endsWith(testSuffix) && -1 == fileToStringBuilder(f).indexOf(testKeyword))
 					return new Object[] { s, name, makeInFile(f) };
 				if (!name.endsWith(".in"))
 					return null;
