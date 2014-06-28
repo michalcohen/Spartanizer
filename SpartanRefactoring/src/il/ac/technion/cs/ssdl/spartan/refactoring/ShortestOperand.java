@@ -85,7 +85,24 @@ public class ShortestOperand extends Spartanization {
 		});
 	}
 	static boolean invalid(final InfixExpression n) {
-		return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n);
+		return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n)
+		    || containsStringLiteral(n);
+	}
+	static boolean containsStringLiteral(final ASTNode node) {
+		if (node == null || !isInfix(node))
+			return false;
+		final InfixExpression n = (InfixExpression) node;
+		if (EQUALS == n.getOperator()) // The only permitted operator on strings
+			return false;
+		final ASTNode l = n.getLeftOperand();
+		final ASTNode r = n.getRightOperand();
+		if (isStringLitrl(l) || isStringLitrl(r))
+			return true;
+		for (final Object listN : n.extendedOperands())
+			if (listN instanceof ASTNode)
+				if (isStringLitrl((ASTNode) listN))
+					return true;
+		return containsStringLiteral(l) || containsStringLiteral(r);
 	}
 	/**
 	 * Transpose infix expressions recursively. Makes the shortest operand first
@@ -314,12 +331,8 @@ public class ShortestOperand extends Spartanization {
 				transpose(AST.newAST(AST.JLS4), n, hasChanged);
 				if (!hasChanged.get() || invalid(n))
 					return true;
-				// TOOD: Convert to FOR LOOP
-				ASTNode k = n;
-				while (isInfix(k)) {
+				for (ASTNode k = n; isInfix(k); k = k.getParent())
 					unionRangeWithList(opportunities, new Range(k));
-					k = k.getParent();
-				}
 				if (!unionRangeWithList(opportunities, new Range(n)))
 					opportunities.add(new Range(n));
 				return true;
@@ -327,13 +340,9 @@ public class ShortestOperand extends Spartanization {
 		};
 	}
 	static boolean stringReturningMethod(final InfixExpression n) {
-		// TOOD: Convert to FOR LOOP
-		ASTNode parent = n.getParent();
-		while (parent != null) {
+		for (ASTNode parent = n.getParent(); parent != null; parent = parent.getParent())
 			if (isReturn(parent) && doesMthdRetString(parent))
 				return true;
-			parent = parent.getParent();
-		}
 		return false;
 	}
 	private static boolean doesMthdRetString(final ASTNode n) {
