@@ -363,8 +363,9 @@ public class ShortestOperand extends Spartanization {
 			return false;
 		if (countNodes(a) > THRESHOLD + countNodes(b))
 			return true;
-		return isMethodInvocation(a) && isMethodInvocation(b) ? largerArgsNum((MethodInvocation) a, (MethodInvocation) b) : a
-		    .getLength() > b.getLength();
+		return !isMethodInvocation(a) || !isMethodInvocation(b) //
+		? a.getLength() > b.getLength()//
+		    : largerArgsNum((MethodInvocation) a, (MethodInvocation) b);
 	}
 	boolean sortInfix(final InfixExpression ie, final AST ast) {
 		boolean $ = false;
@@ -415,7 +416,7 @@ public class ShortestOperand extends Spartanization {
 		// We cannot use overridden version of Comparator due to the copy
 		// ASTNode.copySubtree necessity
 		for (int i = 0, size = es.size(); i < size; i++)
-			for (int j = 0; j + 1 < size; j++) {
+			for (int j = 0; j < size - 1; j++) {
 				final Expression l = es.get(j);
 				final Expression s = es.get(j + 1);
 				if (areExpsValid(o, l, s)) {

@@ -388,7 +388,7 @@ public enum Funcs {
 		if (hasNull(cmpTo, op))
 			return false;
 		for (final Assignment.Operator o : op)
-			if (o == null || cmpTo != o)
+			if (o == null || o != cmpTo)
 				return false;
 		return true;
 	}
@@ -500,10 +500,21 @@ public enum Funcs {
 	 * @return the list of statements in n if it is a block or null otherwise
 	 */
 	public static List<ASTNode> statements(final ASTNode n) {
-		return n.getNodeType() != ASTNode.BLOCK ? null : statements((Block) n);
+		return statements(asBlock(n));
+	}
+	/**
+	 * Convert, is possible, an {@link ASTNode} to a {@link Block}
+	 * 
+	 * @param n
+	 *          what to convert
+	 * @return the argument, but downcasted to a {@link Block}, or
+	 *         <code><b>null</b></code> otherwise.
+	 */
+	public static Block asBlock(final ASTNode n) {
+		return !(n instanceof Block) ? null : (Block) n;
 	}
 	private static List<ASTNode> statements(final Block b) {
-		return b.statements();
+		return b == null ? null : b.statements();
 	}
 	/**
 	 * Get the containing node by type. Say we want to find the first block that
@@ -551,14 +562,10 @@ public enum Funcs {
 		switch (n.getNodeType()) {
 		case ASTNode.EXPRESSION_STATEMENT:
 			return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
-		case ASTNode.POSTFIX_EXPRESSION: {
-			final PostfixExpression.Operator op = ((PostfixExpression) n).getOperator();
-			return op == PostfixExpression.Operator.INCREMENT || op == PostfixExpression.Operator.DECREMENT;
-		}
-		case ASTNode.PREFIX_EXPRESSION: {
-			final PrefixExpression.Operator op = ((PrefixExpression) n).getOperator();
-			return op == PrefixExpression.Operator.INCREMENT || op == PrefixExpression.Operator.DECREMENT;
-		}
+		case ASTNode.POSTFIX_EXPRESSION:
+			return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT);
+		case ASTNode.PREFIX_EXPRESSION:
+			return in(((PrefixExpression) n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
 		default:
 			return false;
 		}

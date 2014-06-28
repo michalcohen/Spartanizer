@@ -103,7 +103,7 @@ public class ForwardDeclaration extends Spartanization {
 			}
 			private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
 				final int firstUseIdx = findFirstUse(b, n.getName());
-				if (firstUseIdx < 0)
+				if (0 > firstUseIdx)
 					return true;
 				final int declaredIdx = b.statements().indexOf(n.getParent());
 				if (nextNodeIsAlreadyFixed(b, n, declaredIdx))
