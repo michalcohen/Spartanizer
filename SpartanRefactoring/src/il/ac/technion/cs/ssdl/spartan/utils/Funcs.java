@@ -218,11 +218,11 @@ public enum Funcs {
 	 *         or null if it not an expression statement or if the block contains
 	 *         more than one statement
 	 */
-	public static ExpressionStatement getExpressionStatement(final Statement s) {
+	public static ExpressionStatement asExpressionStatement(final Statement s) {
 		if (s == null)
 			return null;
-		final ASTNode $ = s.getNodeType() != ASTNode.BLOCK ? s : getBlockSingleStmnt(s);
-		return $ == null || $.getNodeType() != ASTNode.EXPRESSION_STATEMENT ? null : (ExpressionStatement) $;
+		final ASTNode $ = isBlock(s) ? s : getBlockSingleStmnt(s);
+		return !isExpressionStatement($) ? null : (ExpressionStatement) $;
 	}
 	/**
 	 * @param s
@@ -231,7 +231,7 @@ public enum Funcs {
 	 *         statement is not an assignment or the assignment if it exists
 	 */
 	public static Assignment getAssignment(final Statement s) {
-		final ExpressionStatement $ = getExpressionStatement(s);
+		final ExpressionStatement $ = asExpressionStatement(s);
 		return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
 	}
 	/**
@@ -241,22 +241,19 @@ public enum Funcs {
 	 *         block contains more than one statement
 	 */
 	public static MethodInvocation getMethodInvocation(final Statement s) {
-		final ExpressionStatement $ = getExpressionStatement(s);
+		final ExpressionStatement $ = asExpressionStatement(s);
 		return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
 	}
 	/**
-	 * @param s
+	 * @param n
 	 *          the statement or block to check if it is an assignment
 	 * @return true if it is an assignment or false if it is not or if the block
 	 *         Contains more than one statement
 	 */
-	public static boolean isAssignment(final ASTNode s) {
-		if (s != null && s.getNodeType() == ASTNode.BLOCK) {
-			final ExpressionStatement es = getExpressionStatement(getBlockSingleStmnt((Block) s));
-			return es != null && ASTNode.ASSIGNMENT == es.getNodeType();
-		}
-		return s != null && s.getNodeType() == ASTNode.EXPRESSION_STATEMENT
-		    && ASTNode.ASSIGNMENT == ((ExpressionStatement) s).getExpression().getNodeType();
+	public static boolean isAssignment(final ASTNode n) {
+		if (isBlock(n))
+			return isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n)));
+		return isExpressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
 	}
 	/**
 	 * @param b
@@ -592,13 +589,14 @@ public enum Funcs {
 		return is(n, ASTNode.BOOLEAN_LITERAL) || is(n, ASTNode.NULL_LITERAL);
 	}
 	/**
+	 * Determined if a node is an "expression statement"
+	 * 
 	 * @param n
 	 *          node to check
-	 * @return true if the given node is an expression statement or false
-	 *         otherwise
+	 * @return true if the given node is expression statement
 	 */
-	public static boolean isExpStmt(final ASTNode n) {
-		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
+	public static boolean isExpressionStatement(final ASTNode n) {
+		return is(n, ASTNode.EXPRESSION_STATEMENT);
 	}
 	/**
 	 * Determine if an item can be found in a list of values
@@ -631,6 +629,8 @@ public enum Funcs {
 		return false;
 	}
 	/**
+	 * Determined if a node is a return statement
+	 * 
 	 * @param n
 	 *          node to check
 	 * @return true if the given node is a return statement or false otherwise
@@ -638,8 +638,18 @@ public enum Funcs {
 	public static boolean isReturn(final ASTNode n) {
 		return is(n, ASTNode.RETURN_STATEMENT);
 	}
+	/**
+	 * Determined if a node is a return statement
+	 * 
+	 * @param n
+	 *          node to check
+	 * @return true if the given node is a block statement
+	 */
+	public static boolean isBlock(final ASTNode n) {
+		return is(n, ASTNode.BLOCK);
+	}
 	private static boolean is(final ASTNode n, final int type) {
-		return n != null && n.getNodeType() == type;
+		return n != null && type == n.getNodeType();
 	}
 	/**
 	 * @param n
