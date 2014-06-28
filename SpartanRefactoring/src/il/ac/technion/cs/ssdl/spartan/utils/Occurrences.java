@@ -328,7 +328,7 @@ public enum Occurrences {
 			}
 
 			private boolean repeated() {
-				return !lexicalOnly && loopDepth > 0;
+				return !lexicalOnly && 0 < loopDepth;
 			}
 
 			private int loopDepth = 0;

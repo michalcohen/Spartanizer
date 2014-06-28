@@ -571,12 +571,24 @@ public enum Funcs {
 		}
 	}
 	/**
+	 * Determine if a given node is a boolean literal
+	 * 
 	 * @param n
 	 *          node to check
 	 * @return true if the given node is a boolean literal or false otherwise
 	 */
 	public static boolean isBooleanLiteral(final ASTNode n) {
-		return n != null && n.getNodeType() == ASTNode.BOOLEAN_LITERAL;
+		return is(n, ASTNode.BOOLEAN_LITERAL);
+	}
+	/**
+	 * Determine whether a variable declaration is final or not
+	 * 
+	 * @param v
+	 *          some declaration
+	 * @return true if the variable is declared as final
+	 */
+	public static boolean isFinal(final VariableDeclarationStatement v) {
+		return 0 != (Modifier.FINAL & v.getModifiers());
 	}
 	/**
 	 * @param n
