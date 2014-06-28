@@ -571,7 +571,7 @@ public enum Funcs {
 	 *          node to check
 	 * @return true if the given node is a boolean literal or false otherwise
 	 */
-	public static boolean isBoolLitrl(final ASTNode n) {
+	public static boolean isBooleanLiteral(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.BOOLEAN_LITERAL;
 	}
 	/**
@@ -579,7 +579,7 @@ public enum Funcs {
 	 *          node to check
 	 * @return true if the given node is a string literal or false otherwise
 	 */
-	public static boolean isStringLitrl(final ASTNode n) {
+	public static boolean isStringLiteral(final ASTNode n) {
 		return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
 	}
 	/**
@@ -589,7 +589,7 @@ public enum Funcs {
 	 *         otherwise
 	 */
 	public static boolean isBoolOrNull(final ASTNode n) {
-		return n != null && (n.getNodeType() == ASTNode.BOOLEAN_LITERAL || n.getNodeType() == ASTNode.NULL_LITERAL);
+		return is(n, ASTNode.BOOLEAN_LITERAL) || is(n, ASTNode.NULL_LITERAL);
 	}
 	/**
 	 * @param n
@@ -601,12 +601,45 @@ public enum Funcs {
 		return n != null && n.getNodeType() == ASTNode.EXPRESSION_STATEMENT;
 	}
 	/**
+	 * Determine if an item can be found in a list of values
+	 * 
+	 * @param candidate
+	 *          what to search for
+	 * @param ts
+	 *          where to search
+	 * @return true if the the item is found in the list
+	 */
+	@SafeVarargs public static <T> boolean in(final T candidate, final T... ts) {
+		for (final T t : ts)
+			if (t != null && t.equals(candidate))
+				return true;
+		return false;
+	}
+	/**
+	 * Determine if an integer can be found in a list of values
+	 * 
+	 * @param candidate
+	 *          what to search for
+	 * @param is
+	 *          where to search
+	 * @return true if the the item is found in the list
+	 */
+	@SafeVarargs public static boolean in(final int candidate, final int... is) {
+		for (final int i : is)
+			if (i == candidate)
+				return true;
+		return false;
+	}
+	/**
 	 * @param n
 	 *          node to check
 	 * @return true if the given node is a return statement or false otherwise
 	 */
 	public static boolean isReturn(final ASTNode n) {
-		return n != null && n.getNodeType() == ASTNode.RETURN_STATEMENT;
+		return is(n, ASTNode.RETURN_STATEMENT);
+	}
+	private static boolean is(final ASTNode n, final int type) {
+		return n != null && n.getNodeType() == type;
 	}
 	/**
 	 * @param n
@@ -615,7 +648,7 @@ public enum Funcs {
 	 *         otherwise
 	 */
 	public static boolean isVarDeclStmt(final ASTNode n) {
-		return n != null && n.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT;
+		return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
 	}
 	/**
 	 * @param n
@@ -623,7 +656,7 @@ public enum Funcs {
 	 * @return true if the given node is an infix expression or false otherwise
 	 */
 	public static boolean isInfix(final ASTNode n) {
-		return n != null && ASTNode.INFIX_EXPRESSION == n.getNodeType();
+		return is(n, ASTNode.INFIX_EXPRESSION);
 	}
 	/**
 	 * @param n
@@ -631,7 +664,7 @@ public enum Funcs {
 	 * @return true if the given node is a method invocation or false otherwise
 	 */
 	public static boolean isMethodInvocation(final ASTNode n) {
-		return n != null && ASTNode.METHOD_INVOCATION == n.getNodeType();
+		return is(n, ASTNode.METHOD_INVOCATION);
 	}
 	/**
 	 * @param n
@@ -639,7 +672,7 @@ public enum Funcs {
 	 * @return true if the given node is a prefix expression or false otherwise
 	 */
 	public static boolean isPrefix(final ASTNode n) {
-		return n != null && ASTNode.PREFIX_EXPRESSION == n.getNodeType();
+		return is(n, ASTNode.PREFIX_EXPRESSION);
 	}
 	private static final int[] literals = sort(new int[] {
 	    //
@@ -666,16 +699,19 @@ public enum Funcs {
 		return 0 <= Arrays.binarySearch(literals, n.getNodeType());
 	}
 	/**
-	 * @param asgn
+	 * @param a
 	 *          the assignment who's operator we want to check
 	 * @return true is the assignment's operator is assign
 	 */
-	public static boolean isOpAssign(final Assignment asgn) {
-		return asgn != null && asgn.getOperator() == Assignment.Operator.ASSIGN;
+	public static boolean isOpAssign(final Assignment a) {
+		return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
 	}
 	/**
+	 * Determine whether two nodes are the same, in the sense that their textual
+	 * representations is identical.
+	 * 
 	 * @param n1
-	 *          first node to compare
+	 *          an arbitrary node
 	 * @param n2
 	 *          second node to compare
 	 * @return are the nodes equal string-wise
@@ -684,6 +720,9 @@ public enum Funcs {
 		return n1.toString().equals(n2.toString());
 	}
 	/**
+	 * Determine whether two nodes are the same, in the sense that their textual
+	 * representations is identical.
+	 * 
 	 * @param n1
 	 *          first list to compare
 	 * @param n2

@@ -94,11 +94,11 @@ public enum All {
 		return 0 <= sparta.indexOf(ignoreRuleStr);
 	}
 
-	private static void assignRulesOptions(final String[] str) {
+	private static void assignRulesOptions(final String[] lines) {
 		final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
-		if (str == null || shortestOperandInstance == null)
+		if (lines == null || shortestOperandInstance == null)
 			return;
-		for (final String line : str) {
+		for (final String line : lines) {
 			// There must be a way to make it looks good, it's looks similar to
 			// the case with o.equals() and the in() function but it's not the
 			// same case...

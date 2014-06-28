@@ -123,9 +123,9 @@ public abstract class Spartanization extends Refactoring {
 		return createRewrite(t, cu, m);
 	}
 
-	private ASTRewrite createRewrite(final AST ast, final CompilationUnit cu, final IMarker m) {
-		final ASTRewrite $ = ASTRewrite.create(ast);
-		fillRewrite($, ast, cu, m);
+	private ASTRewrite createRewrite(final AST t, final CompilationUnit cu, final IMarker m) {
+		final ASTRewrite $ = ASTRewrite.create(t);
+		fillRewrite($, t, cu, m);
 		return $;
 	}
 

@@ -80,12 +80,12 @@ public class ShortestBranchFirst extends Spartanization {
 				makeParenthesizedExpression(t, r, e), NOT);
 	}
 
-	private static Expression tryNegateComparison(final AST ast, final ASTRewrite r, final InfixExpression e) {
+	private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
 		final Operator op = negate(e.getOperator());
 		if (op == null)
 			return null;
-		return op == CONDITIONAL_AND || op == CONDITIONAL_OR ? makeInfixExpression(ast, r, op,
-				negateExp(ast, r, e.getLeftOperand()), negateExp(ast, r, e.getRightOperand())) : makeInfixExpression(ast, r,
+		return op == CONDITIONAL_AND || op == CONDITIONAL_OR ? makeInfixExpression(t, r, op,
+				negateExp(t, r, e.getLeftOperand()), negateExp(t, r, e.getRightOperand())) : makeInfixExpression(t, r,
 				op, e.getLeftOperand(), e.getRightOperand());
 	}
 
