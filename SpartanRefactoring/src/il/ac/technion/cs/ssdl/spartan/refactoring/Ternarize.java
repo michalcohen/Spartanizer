@@ -39,13 +39,13 @@ public class Ternarize extends Spartanization {
 	}
 
 	static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
-		return null != asBlock(i.getParent()) && treatIfReturn(t, r, i, asBlock(i.getParent()));
+		return null != asBlock(i.getParent()) && treatIfReturn(t, r, i, statements(asBlock(i.getParent())));
 	}
 
-	private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final Block parent) {
+	private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<ASTNode> stmts) {
 		if (!hasReturn(i.getThenStatement()))
 			return false;
-		final ReturnStatement nextRet = nextStatement(statements(parent), statements(parent).indexOf(i));
+		final ReturnStatement nextRet = nextStatement(stmts, stmts.indexOf(i));
 		return nextRet != null && 1 == statementsCount(i.getThenStatement()) && 0 == statementsCount(i.getElseStatement())
 				&& rewriteIfToRetStmnt(t, r, i, nextRet);
 	}
@@ -494,11 +494,10 @@ public class Ternarize extends Spartanization {
 	}
 
 	static Range detectAssignIfAssign(final IfStatement i) {
-		return null == asBlock(i.getParent()) ? null : detectAssignIfAssign(i, asBlock(i.getParent()));
+		return null == asBlock(i.getParent()) ? null : detectAssignIfAssign(i, statements(asBlock(i.getParent())));
 	}
 
-	private static Range detectAssignIfAssign(final IfStatement i, final Block parent) {
-		final List<ASTNode> stmts = parent.statements();
+	private static Range detectAssignIfAssign(final IfStatement i, final List<ASTNode> stmts) {
 		final int ifIdx = stmts.indexOf(i);
 		final Assignment then = getAssignment(i.getThenStatement());
 		if (then == null || null != i.getElseStatement())
