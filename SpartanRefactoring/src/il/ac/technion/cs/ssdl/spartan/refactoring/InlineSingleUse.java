@@ -16,17 +16,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  */
-// TODO: Bug, makes suggestion to inline 'a' in the following code: <pre>
-// * &#064;Test public void duplicateCurrentImmutables() { final Application a =
-// * new DuplicateCurrent().new Application(&quot;{\nABRA\n{\nCADABRA\n{&quot;);
-// * assertEquals(5, a.new Context().lineCount()); final
-// * PureIterable&lt;Mutant&gt; ms = a.generateMutants(); assertEquals(2,
-// * count(ms)); final PureIterator&lt;Mutant&gt; i = ms.iterator();
-// * assertTrue(i.hasNext());
-// * assertEquals(&quot;{\nABRA\nABRA\n{\nCADABRA\n{\n&quot;, i.next().text);
-// * assertTrue(i.hasNext());
-// * assertEquals(&quot;{\nABRA\n{\nCADABRA\nCADABRA\n{\n&quot;, i.next().text);
-// * assertFalse(i.hasNext()); } </pre> TODO: There <b>must</b> be an option to
+// TODO: There <b>must</b> be an option to
 // * disable this warning in selected places. Consider this example: <pre>
 // public
 // * static &lt;T&gt; void swap(final T[] ts, final int i, final int j) { final
@@ -56,6 +46,7 @@ public class InlineSingleUse extends Spartanization {
 	public InlineSingleUse() {
 		super("Inline Single Use", "Inline variable used once");
 	}
+
 	@Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
 		cu.accept(new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment n) {
@@ -64,7 +55,8 @@ public class InlineSingleUse extends Spartanization {
 				final SimpleName varName = n.getName();
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
 				final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-				if (1 == uses.size() && (isFinal(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()))) {
+				if (1 == uses.size()
+						&& (isFinal(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()))) {
 					r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
 					r.remove(1 != parent.fragments().size() ? n : parent, null);
 				}
@@ -72,20 +64,23 @@ public class InlineSingleUse extends Spartanization {
 			}
 		});
 	}
+
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
 			@Override public boolean visit(final VariableDeclarationFragment node) {
 				return !(node.getParent() instanceof VariableDeclarationStatement) ? true : go(node, node.getName());
 			}
+
 			private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
 				final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
 				if (1 == numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent())
-				    && (isFinal(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent())))
+						&& (isFinal(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent())))
 					opportunities.add(new Range(v));
 				return true;
 			}
 		};
 	}
+
 	static int numOfOccur(final Occurrences typeOfOccur, final Expression of, final ASTNode in) {
 		return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
 	}

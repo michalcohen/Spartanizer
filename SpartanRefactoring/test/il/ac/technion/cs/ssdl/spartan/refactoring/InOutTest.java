@@ -41,6 +41,7 @@ public class InOutTest extends AbstractParametrizedTest {
 	 * Where the expected output can be found?
 	 */
 	@Parameter(value = 3) public File fOut;
+
 	/**
 	 * Runs a parameterized test case, based on the instance variables of this
 	 * instance
@@ -49,41 +50,48 @@ public class InOutTest extends AbstractParametrizedTest {
 		assertNotNull("Cannot instantiate Spartanization object", spartanization);
 		final CompilationUnit cu = makeAST(makeInFile(fIn));
 		assertEquals(cu.toString(), 1, spartanization.findOpportunities(cu).size());
-		// TODO: why stringBuilder? Isn't it enough to do s.endsWith(something)?
-		final StringBuilder str = new StringBuilder(fIn.getName());
-		final int testMarker = str.indexOf(testSuffix);
-		final String expected = testMarker <= 0 ? readFile(fOut) : readFile(TestSuite.makeOutFile(fOut));
-		final Document d = new Document(testMarker <= 0 ? readFile(fIn) : readFile(TestSuite.makeInFile(fIn)));
-		assertTrue(similar(expected, rewrite(spartanization, cu, d).get()));
+		final boolean properSuffix = fIn.getName().endsWith(testSuffix);
+		if (properSuffix)
+			readFile(TestSuite.makeOutFile(fOut));
+		else
+			readFile(fOut);
+		final Document d = new Document(!properSuffix ? readFile(fIn) : readFile(TestSuite.makeInFile(fIn)));
+		assertTrue(similar(!properSuffix ? readFile(fOut) : readFile(TestSuite.makeOutFile(fOut)),
+				rewrite(spartanization, cu, d).get()));
 	}
+
 	private static boolean similar(final String expected, final String actual) {
 		return expected.equals(actual) || almostSame(expected, actual);
 	}
+
 	private static boolean almostSame(final String expected, final String actual) {
 		assertEquals(compressSpaces(expected), compressSpaces(actual));
 		return true;
 	}
+
 	private static String compressSpaces(final String s) {
 		String $ = s//
-		    .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
-		    .replaceAll("[ \t]+", " ") // Squeeze whites
-		    .replaceAll("[ \t]+$", "") // Remove trailing spaces
-		    .replaceAll("^[ \t]+$", " ") // On space at line beginnings
+				.replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
+				.replaceAll("[ \t]+", " ") // Squeeze whites
+				.replaceAll("[ \t]+$", "") // Remove trailing spaces
+				.replaceAll("^[ \t]+$", " ") // On space at line beginnings
 		;
 		for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
 			$ = $ //
-			    .replaceAll(WHITES + operator, operator) // Preceding whites
-			    .replaceAll(operator + WHITES, operator) // Succeeding whites
+			.replaceAll(WHITES + operator, operator) // Preceding whites
+					.replaceAll(operator + WHITES, operator) // Succeeding
+																// whites
 		// whites
 		;
 		return $;
 	}
+
 	/**
 	 * Generate test cases for this parameterized class.
 	 * 
-	 * @return a collection of cases, where each case is an array of four objects,
-	 *         the spartanization, the test case name, the input file, and the
-	 *         output file.
+	 * @return a collection of cases, where each case is an array of four
+	 *         objects, the spartanization, the test case name, the input file,
+	 *         and the output file.
 	 */
 	@Parameters(name = "{index}: {0} {1}")//
 	public static Collection<Object[]> cases() {
