@@ -519,7 +519,6 @@ public class Ternarize extends Spartanization {
 		Range $ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl);
 		$ = $ != null ? $ : detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl);
 		$ = $ != null ? $ : detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
-		$ = $ != null ? $ : detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
 		return $ != null ? $ : detecNoPrevNoNextAsgn(i, then, prevAsgn, nextAsgn, prevDecl);
 	}
 
