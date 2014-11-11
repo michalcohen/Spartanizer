@@ -174,8 +174,8 @@ public class Ternarize extends Spartanization {
 		final TwoExpressions $ = findDiffExps(diffNodes);
 		if (isExpressionStatement(diffNodes.then))
 			return $;
-		return $ == null || !isReturn(diffNodes.then) ? null : new TwoExpressions(getExpression(diffNodes.then),
-				getExpression(diffNodes.elze));
+		return $ == null || !isReturn(diffNodes.then) ? null //
+				: new TwoExpressions(getExpression(diffNodes.then), getExpression(diffNodes.elze));
 	}
 
 	private static TwoExpressions findDiffExps(final TwoNodes diffNodes) {
@@ -186,17 +186,23 @@ public class Ternarize extends Spartanization {
 	}
 
 	private static boolean isExpOnlyDiff(final TwoNodes diffNodes, final TwoExpressions diffExps) {
+		return hasNull(diffNodes, diffNodes.then, diffNodes.elze) ? false //
+				: isExpOnlyDiff(diffNodes.then, diffNodes.elze, diffExps);
+	}
+
+	private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final TwoExpressions diffExps) {
 		if (diffExps == null)
-			return !isAssignment(diffNodes.then)
-					|| !isAssignment(diffNodes.elze)
-					|| compatible(getAssignment((ExpressionStatement) diffNodes.then),
-							getAssignment((ExpressionStatement) diffNodes.elze));
-		if (hasNull(diffNodes.then, diffNodes.elze))
-			return false;
-		return !isAssignment(diffNodes.then) || !isAssignment(diffNodes.elze)//
-		? same(prepareSubTree(diffNodes.then, diffExps.then), prepareSubTree(diffNodes.elze, diffExps.elze)) //
-				: compatible(getAssignment((ExpressionStatement) diffNodes.then),
-						getAssignment((ExpressionStatement) diffNodes.elze));
+			return !isAssignment(then) //
+					|| !isAssignment(elze) //
+					|| compatible(getAssignment((ExpressionStatement) then), getAssignment((ExpressionStatement) elze));
+		return isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze);
+	}
+
+	private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final Expression thenExp,
+			final Expression elseExp) {
+		return !isAssignment(then) || !isAssignment(elze)//
+		? same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp)) //
+				: compatible(getAssignment((ExpressionStatement) then), getAssignment((ExpressionStatement) elze));
 	}
 
 	private static List<ASTNode> prepareSubTree(final ASTNode n, final Expression e) {
@@ -283,7 +289,9 @@ public class Ternarize extends Spartanization {
 				: ((VariableDeclarationStatement) possiblePrevDecl).fragments();
 		final Assignment then = getAssignment(thenExpStmt);
 		final Assignment elze = getAssignment(elseExpStmt);
-		return hasNull(then, elze, frags) || !isOpAssign(then) || !compatibleOps(then.getOperator(), elze.getOperator()) ? false
+		return hasNull(then, elze, frags) //
+				|| !isOpAssign(then) //
+				|| !compatibleOps(then.getOperator(), elze.getOperator()) ? false //
 				: possibleToReplace(then, frags) && possibleToReplace(elze, frags);
 	}
 
@@ -380,8 +388,8 @@ public class Ternarize extends Spartanization {
 			final Assignment then, final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
 		if (!isOnlyPrevAsgnPossible(i, then, prevAsgn))
 			return false;
-		return prevDecl == null ? handleNoPrevDecl(t, r, i, then, prevAsgn) : handlePrevDeclExist(t, r, i, then, prevAsgn,
-				prevDecl);
+		return prevDecl == null ? handleNoPrevDecl(t, r, i, then, prevAsgn) //
+				: handlePrevDeclExist(t, r, i, then, prevAsgn, prevDecl);
 	}
 
 	private static boolean isOnlyPrevAsgnPossible(final IfStatement i, final Assignment then, final Assignment prevAsgn) {
@@ -509,12 +517,9 @@ public class Ternarize extends Spartanization {
 				prevAsgn != null ? stmts.get(0 > ifIdx - 2 ? 0 : ifIdx - 2) : stmts.get(0 > ifIdx - 1 ? 0 : ifIdx - 1),
 				then.getLeftHandSide());
 		Range $ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl);
-		if ($ != null)
-			return $;
-		$ = detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl);
-		if ($ != null)
-			return $;
-		$ = detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
+		$ = $ != null ? $ : detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl);
+		$ = $ != null ? $ : detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
+		$ = $ != null ? $ : detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
 		return $ != null ? $ : detecNoPrevNoNextAsgn(i, then, prevAsgn, nextAsgn, prevDecl);
 	}
 
