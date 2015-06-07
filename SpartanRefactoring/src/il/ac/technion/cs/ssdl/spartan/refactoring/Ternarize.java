@@ -468,8 +468,7 @@ public class Ternarize extends Spartanization {
 		final Expression thenSideExp = isOpAssign(then) ? then.getRightHandSide() : makeInfixExpression(t, r,
 				InfixExpression.Operator.PLUS, then.getRightHandSide(), otherAsgnExp);
 		final Expression newCond = makeParenthesizedConditionalExp(t, r, i.getExpression(), thenSideExp, otherAsgnExp);
-		final Assignment newAsgn = makeAssigment(t, r, then.getOperator(), newCond, then.getLeftHandSide());
-		r.replace(i, t.newExpressionStatement(newAsgn), null);
+		r.replace(i, t.newExpressionStatement((makeAssigment(t, r, then.getOperator(), newCond, then.getLeftHandSide()))), null);
 	}
 
 	static Range detectIfReturn(final IfStatement i) {
@@ -494,9 +493,7 @@ public class Ternarize extends Spartanization {
 	}
 
 	static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-		final Statement then = getBlockSingleStmnt(i.getThenStatement());
-		final Statement elze = getBlockSingleStmnt(i.getElseStatement());
-		if (hasNull(then, elze, asBlock(i.getParent())))
+		if (hasNull((getBlockSingleStmnt(i.getThenStatement())), (getBlockSingleStmnt(i.getElseStatement())), asBlock(i.getParent())))
 			return null;
 		return !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
 	}
@@ -506,20 +503,20 @@ public class Ternarize extends Spartanization {
 	}
 
 	private static Range detectAssignIfAssign(final IfStatement i, final List<ASTNode> stmts) {
-		final int ifIdx = stmts.indexOf(i);
 		final Assignment then = getAssignment(i.getThenStatement());
-		if (then == null || null != i.getElseStatement())
+		if (null == then || null != i.getElseStatement())
 			return null;
+    final int ifIdx = stmts.indexOf(i);
 		final Assignment nextAsgn = getAssignment((Statement) stmts.get(1 + ifIdx < stmts.size() - 1 ? 1 + ifIdx : stmts
 				.size() - 1));
 		final Assignment prevAsgn = getAssignment((Statement) stmts.get(0 > ifIdx - 1 ? 0 : ifIdx - 1));
 		final VariableDeclarationFragment prevDecl = getVarDeclFrag(
-				prevAsgn != null ? stmts.get(0 > ifIdx - 2 ? 0 : ifIdx - 2) : stmts.get(0 > ifIdx - 1 ? 0 : ifIdx - 1),
+				null != prevAsgn ? stmts.get(0 > ifIdx - 2 ? 0 : ifIdx - 2) : stmts.get(0 > ifIdx - 1 ? 0 : ifIdx - 1),
 				then.getLeftHandSide());
 		Range $ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl);
-		$ = $ != null ? $ : detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl);
-		$ = $ != null ? $ : detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
-		return $ != null ? $ : detecNoPrevNoNextAsgn(i, then, prevAsgn, nextAsgn, prevDecl);
+		$ = null != $ ? $ : detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl);
+		$ = null != $ ? $ : detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl);
+		return null != $ ? $ : detecNoPrevNoNextAsgn(i, then, prevAsgn, nextAsgn, prevDecl);
 	}
 
 	private static Range detecNoPrevNoNextAsgn(final IfStatement i, final Assignment then, final Assignment prevAsgn,

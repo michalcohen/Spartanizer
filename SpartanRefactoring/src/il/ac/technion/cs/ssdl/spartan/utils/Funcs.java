@@ -267,9 +267,7 @@ public enum Funcs {
 	 *         Contains more than one statement
 	 */
 	public static boolean isAssignment(final ASTNode n) {
-		if (isBlock(n))
-			return isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n)));
-		return isExpressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
+		return (isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n))) : isExpressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType());
 	}
 
 	/**
@@ -278,7 +276,7 @@ public enum Funcs {
 	 * @return true if a return statement exists in the block or false otherwise
 	 */
 	public static boolean hasReturn(final Block b) {
-		if (b == null)
+		if (null == b)
 			return false;
 		for (int i = 0; i < b.statements().size(); i++)
 			if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i)).getNodeType())

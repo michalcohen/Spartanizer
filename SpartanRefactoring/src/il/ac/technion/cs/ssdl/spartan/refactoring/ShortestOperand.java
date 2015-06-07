@@ -313,10 +313,10 @@ public class ShortestOperand extends Spartanization {
 			cleanDuplicates(rs);
 		return $;
 	}
-	protected static <T> void cleanDuplicates(final List<T> list) {
-		final Set<T> noDuplicates = new LinkedHashSet<>(list);
-		list.clear();
-		list.addAll(noDuplicates);
+	protected static <T> void cleanDuplicates(final List<T> ts) {
+		final Set<T> noDuplicates = new LinkedHashSet<>(ts);
+		ts.clear();
+		ts.addAll(noDuplicates);
 	}
 	@Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
 		return new ASTVisitor() {
