@@ -51,9 +51,8 @@ public class InOutTest extends AbstractParametrizedTest {
 		final CompilationUnit cu = makeAST(makeInFile(fIn));
 		assertEquals(cu.toString(), 1, spartanization.findOpportunities(cu).size());
 		final boolean properSuffix = fIn.getName().endsWith(testSuffix);
-		final Document d = new Document(!properSuffix ? readFile(fIn) : readFile(TestSuite.makeInFile(fIn)));
 		assertTrue(similar(!properSuffix ? readFile(fOut) : readFile(TestSuite.makeOutFile(fOut)),
-				rewrite(spartanization, cu, d).get()));
+				rewrite(spartanization, cu, (new Document(!properSuffix ? readFile(fIn) : readFile(TestSuite.makeInFile(fIn))))).get()));
 	}
 
 	private static boolean similar(final String expected, final String actual) {

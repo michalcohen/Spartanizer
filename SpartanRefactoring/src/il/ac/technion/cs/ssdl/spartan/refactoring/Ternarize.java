@@ -191,11 +191,9 @@ public class Ternarize extends Spartanization {
 	}
 
 	private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final TwoExpressions diffExps) {
-		if (diffExps == null)
-			return !isAssignment(then) //
-					|| !isAssignment(elze) //
-					|| compatible(getAssignment((ExpressionStatement) then), getAssignment((ExpressionStatement) elze));
-		return isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze);
+		return ((diffExps != null ? isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze) : !isAssignment(then) //
+    		|| !isAssignment(elze) //
+    		|| compatible(getAssignment((ExpressionStatement) then), getAssignment((ExpressionStatement) elze))));
 	}
 
 	private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final Expression thenExp,

@@ -20,3 +20,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
  lib/hamcrest-all-1.3.jar,
  lib/mockito-all-1.9.5.jar
+Export-Package: il.ac.technion.cs.ssdl.spartan.builder
