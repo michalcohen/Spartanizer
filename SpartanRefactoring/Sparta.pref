@@ -10,5 +10,5 @@ true
 true
 Null and Boolean at End
 Reposition Literals
-Reposition right literals
+Do not reposition right literals
 One message per expression that contains operand swap
