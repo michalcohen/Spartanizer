@@ -36,6 +36,17 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public enum Funcs {
   ;
   /**
+   * Convert variadic list into an array
+   *
+   * @param os
+   *          an unknown number of objects
+   * @return the parameter, as an array.
+   */
+  public static Object[] objects(final Object... os) {
+    return os;
+  }
+
+  /**
    * @param os
    *          an unknown number of objects
    * @return true if one of the objects is a null or false otherwise
@@ -45,6 +56,75 @@ public enum Funcs {
       if (o == null)
         return true;
     return false;
+  }
+
+  /**
+   * Determine whether an item is the last one in a list
+   *
+   * @param t
+   *          a list item
+   * @param ts
+   *          a list
+   *
+   * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
+   *         and it is the last one in it.
+   */
+  public static <T> boolean isLast(final T t, final List<T> ts) {
+    return ts.indexOf(t) == ts.size() - 1;
+  }
+
+  /**
+   * Retrieve previous item in a list
+   *
+   * @param i
+   *          an index of specific item in a list
+   * @param ts
+   *          the indexed list
+   *
+   * @return the previous item in the list, if such an item exists, otherwise,
+   *         the last node
+   */
+  public static <T> T prev(final int i, final List<T> ts) {
+    return ts.get(i < 1 ? 0 : i - 1);
+  }
+
+  /**
+   * Retrieve next item in a list
+   *
+   * @param i
+   *          an index of specific item in a list
+   * @param ts
+   *          the indexed list
+   *
+   *
+   * @return the following item in the list, if such such an item exists,
+   *         otherwise, the last node
+   */
+  public static <T> T next(final int i, final List<T> ts) {
+    return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
+  }
+
+  /**
+   * @param ts
+   *          a list
+   * @return the last item in a list
+   */
+  public static <T> T last(final List<T> ts) {
+    return ts.get(ts.size() - 1);
+  }
+
+  /**
+   * Determine whether an integer is a valid list index
+   *
+   * @param i
+   *          some integer
+   * @param ts
+   *          a list of things
+   * @return <code><b>true</b></code> <i>iff</i> the index is valid index into
+   *         the list. and it is the last one in it.
+   */
+  public static <T> boolean inRange(final int i, final List<T> ts) {
+    return i >= 0 && i < ts.size();
   }
 
   /**
@@ -283,8 +363,8 @@ public enum Funcs {
    *         Contains more than one statement
    */
   public static boolean isAssignment(final ASTNode n) {
-    return (isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n))) : isExpressionStatement(n)
-        && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType());
+    return isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n))) : isExpressionStatement(n)
+        && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
 
   /**
@@ -317,7 +397,7 @@ public enum Funcs {
 
   /**
    * Determine whether a given statement is return or has return in it.
-   * 
+   *
    * @param s
    *          the statement or block to check
    * @return true iff s contains a return statement
@@ -390,7 +470,7 @@ public enum Funcs {
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
     return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
         || name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),
-        (SimpleName) name);
+            (SimpleName) name);
   }
 
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
@@ -402,7 +482,7 @@ public enum Funcs {
 
   /**
    * String wise comparison of all the given SimpleNames
-   * 
+   *
    * @param cmpTo
    *          a string to compare all names to
    * @param names
@@ -414,7 +494,7 @@ public enum Funcs {
       return false;
     for (final Expression name : names)
       if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-          || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+      || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
         return false;
     return true;
   }
@@ -438,7 +518,7 @@ public enum Funcs {
   /**
    * the function checks if all the given assignments has the same left hand
    * side(variable) and operator
-   * 
+   *
    * @param base
    *          The assignment to compare all others to
    * @param asgns
@@ -451,7 +531,7 @@ public enum Funcs {
       return false;
     for (final Assignment asgn : asgns)
       if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
-          || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
+      || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
         return false;
     return true;
   }
@@ -459,7 +539,7 @@ public enum Funcs {
   /**
    * the function receives a condition and the then boolean value and returns
    * the proper condition (its negation if thenValue is false)
-   * 
+   *
    * @param t
    *          the AST who is to own the new return statement
    * @param r
@@ -479,7 +559,7 @@ public enum Funcs {
 
   /**
    * Counts the number of nodes in the tree of which node is root.
-   * 
+   *
    * @param n
    *          The node.
    * @return Number of abstract syntax tree nodes under the parameter.
@@ -518,25 +598,23 @@ public enum Funcs {
   }
 
   /**
-   * @param exps
+   * @param es
    *          expressions to check
    * @return true if one of the expressions is a conditional or parenthesized
    *         conditional expression or false otherwise
    */
-  public static boolean isConditional(final Expression... exps) {
-    for (final Expression e : exps) {
+  public static boolean isConditional(final Expression... es) {
+    for (final Expression e : es) {
       if (e == null)
         continue;
       switch (e.getNodeType()) {
-        case ASTNode.CONDITIONAL_EXPRESSION:
-          return true;
-        case ASTNode.PARENTHESIZED_EXPRESSION: {
-          if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
-            return true;
-          break;
-        }
         default:
           break;
+        case ASTNode.CONDITIONAL_EXPRESSION:
+          return true;
+        case ASTNode.PARENTHESIZED_EXPRESSION:
+          if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
+            return true;
       }
     }
     return false;
@@ -553,7 +631,7 @@ public enum Funcs {
 
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link Block}
-   * 
+   *
    * @param n
    *          what to convert
    * @return the argument, but downcasted to a {@link Block}, or
@@ -570,7 +648,7 @@ public enum Funcs {
   /**
    * Get the containing node by type. Say we want to find the first block that
    * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
-   * 
+   *
    * @param n
    *          Node to find its container
    * @param ASTNodeType
@@ -626,7 +704,7 @@ public enum Funcs {
 
   /**
    * Determine if a given node is a boolean literal
-   * 
+   *
    * @param n
    *          node to check
    * @return true if the given node is a boolean literal or false otherwise
@@ -637,7 +715,7 @@ public enum Funcs {
 
   /**
    * Determine whether a variable declaration is final or not
-   * 
+   *
    * @param v
    *          some declaration
    * @return true if the variable is declared as final
@@ -667,7 +745,7 @@ public enum Funcs {
 
   /**
    * Determined if a node is an "expression statement"
-   * 
+   *
    * @param n
    *          node to check
    * @return true if the given node is expression statement
@@ -678,7 +756,7 @@ public enum Funcs {
 
   /**
    * Determine if an item can be found in a list of values
-   * 
+   *
    * @param candidate
    *          what to search for
    * @param ts
@@ -694,7 +772,7 @@ public enum Funcs {
 
   /**
    * Determine if an integer can be found in a list of values
-   * 
+   *
    * @param candidate
    *          what to search for
    * @param is
@@ -710,7 +788,7 @@ public enum Funcs {
 
   /**
    * Determined if a node is a return statement
-   * 
+   *
    * @param n
    *          node to check
    * @return true if the given node is a return statement or false otherwise
@@ -721,7 +799,7 @@ public enum Funcs {
 
   /**
    * Determined if a node is a return statement
-   * 
+   *
    * @param n
    *          node to check
    * @return true if the given node is a block statement
@@ -810,7 +888,7 @@ public enum Funcs {
   /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
-   * 
+   *
    * @param n1
    *          an arbitrary node
    * @param n2
@@ -824,7 +902,7 @@ public enum Funcs {
   /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
-   * 
+   *
    * @param n1
    *          first list to compare
    * @param n2

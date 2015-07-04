@@ -1,5 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.objects;
+
 import java.io.File;
 import java.util.Collection;
 
@@ -12,7 +14,7 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Tests that each directory in our test suite is a name of valid
  * {@link Spartanization} class.
- * 
+ *
  * @author Yossi Gil
  * @since 2014/05/24
  */
@@ -38,8 +40,8 @@ public class SpartanizationClassForFolderExists extends TestSuite {
   @Parameters(name = "{index}: {0}")//
   public static Collection<Object[]> cases() {
     return new TestSuite.Directories() {
-      @Override Object[] makeCase(final File d) {
-        return new Object[] { d.getName() };
+      @Override Object[] makeCase(final File folder) {
+        return objects(folder.getName());
       }
     }.go();
   }

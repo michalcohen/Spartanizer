@@ -1,5 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.objects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -18,7 +19,7 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Run tests in which a specific transformation is not supposed to change the
  * input text
- * 
+ *
  * @author Yossi Gil
  * @since 2014/05/24
  */
@@ -36,11 +37,11 @@ public class InOutTest extends AbstractParametrizedTest {
   /**
    * Where the input text can be found
    */
-  @Parameter(value = 2) public File fIn;
+  @Parameter(value = 2) public File input;
   /**
    * Where the expected output can be found?
    */
-  @Parameter(value = 3) public File fOut;
+  @Parameter(value = 3) public File output;
 
   /**
    * Runs a parameterized test case, based on the instance variables of this
@@ -48,11 +49,11 @@ public class InOutTest extends AbstractParametrizedTest {
    */
   @Test public void go() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    final CompilationUnit cu = makeAST(makeInFile(fIn));
+    final CompilationUnit cu = makeAST(makeInFile(input));
     assertEquals(cu.toString(), 1, spartanization.findOpportunities(cu).size());
-    final boolean properSuffix = fIn.getName().endsWith(testSuffix);
-    assertTrue(similar(!properSuffix ? readFile(fOut) : readFile(TestSuite.makeOutFile(fOut)),
-        rewrite(spartanization, cu, (new Document(!properSuffix ? readFile(fIn) : readFile(TestSuite.makeInFile(fIn))))).get()));
+    final boolean properSuffix = input.getName().endsWith(testSuffix);
+    assertTrue(similar(!properSuffix ? readFile(output) : readFile(TestSuite.makeOutFile(output)),
+        rewrite(spartanization, cu, new Document(!properSuffix ? readFile(input) : readFile(TestSuite.makeInFile(input)))).get()));
   }
 
   private static boolean similar(final String expected, final String actual) {
@@ -69,21 +70,19 @@ public class InOutTest extends AbstractParametrizedTest {
         .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
         .replaceAll("[ \t]+", " ") // Squeeze whites
         .replaceAll("[ \t]+$", "") // Remove trailing spaces
-        .replaceAll("^[ \t]+$", " ") // On space at line beginnings
-    ;
+        .replaceAll("^[ \t]+$", "") // No space at line beginnings
+        ;
     for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
       $ = $ //
-          .replaceAll(WHITES + operator, operator) // Preceding whites
-          .replaceAll(operator + WHITES, operator) // Succeeding
-    // whites
-    // whites
-    ;
+      .replaceAll(WHITES + operator, operator) // Preceding whites
+      .replaceAll(operator + WHITES, operator) // Trailing whites
+      ;
     return $;
   }
 
   /**
    * Generate test cases for this parameterized class.
-   * 
+   *
    * @return a collection of cases, where each case is an array of four objects,
    *         the spartanization, the test case name, the input file, and the
    *         output file.
@@ -91,13 +90,13 @@ public class InOutTest extends AbstractParametrizedTest {
   @Parameters(name = "{index}: {0} {1}")//
   public static Collection<Object[]> cases() {
     return new TestSuite.Files() {
-      @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
-        if (name.endsWith(testSuffix) && 0 < fileToStringBuilder(f).indexOf(testKeyword))
-          return new Object[] { s, name, f, makeOutFile(f) };
+      @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
+        if (name.endsWith(testSuffix) && 0 < fileToStringBuilder(input).indexOf(testKeyword))
+          return objects(s, name, input, makeOutFile(input));
         if (!name.endsWith(".in"))
           return null;
-        final File fOut = new File(d, name.replaceAll("\\.in$", ".out"));
-        return !fOut.exists() ? null : new Object[] { s, name.replaceAll("\\.in$", ""), f, fOut };
+        final File output = new File(folder, name.replaceAll("\\.in$", ".out"));
+        return !output.exists() ? null : objects(s, name.replaceAll("\\.in$", ""), input, output);
       }
     }.go();
   }

@@ -151,7 +151,7 @@ public abstract class TestSuite {
    */
   public static abstract class Directories extends TestSuite.Traverse {
     /**
-     * Adds a test case to the a collection of all test cases generated in the
+     * Adds a test case to the collection of all test cases generated in the
      * traversal
      */
     @Override public final void go(final List<Object[]> $, final File f) {

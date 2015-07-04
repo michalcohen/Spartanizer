@@ -144,7 +144,7 @@ public class ShortestOperand extends Spartanization {
   /**
    * Transpose infix expressions recursively. Makes the shortest operand first
    * on every subtree of the node.
-   * 
+   *
    * @param t
    *          The AST - for copySubTree.
    * @param n
@@ -170,7 +170,7 @@ public class ShortestOperand extends Spartanization {
 
   /**
    * Sets rule option
-   * 
+   *
    * @param op
    *          Select specific option from RepositionRightLiteral enumeration
    */
@@ -180,7 +180,7 @@ public class ShortestOperand extends Spartanization {
 
   /**
    * Sets rule option
-   * 
+   *
    * @param op
    *          Select specific option from RepositionRightLiteral enumeration
    */
@@ -190,7 +190,7 @@ public class ShortestOperand extends Spartanization {
 
   /**
    * Sets rule option
-   * 
+   *
    * @param op
    *          Select specific option from RepositionBoolAndNull enumeration
    */
@@ -200,7 +200,7 @@ public class ShortestOperand extends Spartanization {
 
   /**
    * Sets rule option
-   * 
+   *
    * @param op
    *          Select specific option from MessagingOptions enumeration
    */
@@ -266,7 +266,7 @@ public class ShortestOperand extends Spartanization {
    * Makes an opposite operator from a given one, which keeps its logical
    * operation after the node swapping. e.g. "&" is commutative, therefore no
    * change needed. "<" isn't commutative, but it has its opposite: ">=".
-   * 
+   *
    * @param o
    *          The operator to flip
    * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
@@ -317,7 +317,7 @@ public class ShortestOperand extends Spartanization {
 
   /**
    * Determine if the ranges are overlapping in a part of their range
-   * 
+   *
    * @param a
    *          b Ranges to merge
    * @return true - if such an overlap exists
@@ -340,7 +340,7 @@ public class ShortestOperand extends Spartanization {
   /**
    * Tries to union the given range with one of the elements inside the given
    * list.
-   * 
+   *
    * @param rs
    *          The list of ranges to union with
    * @param rNew
@@ -409,7 +409,7 @@ public class ShortestOperand extends Spartanization {
     return isLarger(n.getLeftOperand(), n.getRightOperand());
   }
 
-  static boolean largerArgsNum(final MethodInvocation a, final MethodInvocation b) {
+  static boolean moreArguments(final MethodInvocation a, final MethodInvocation b) {
     return a.arguments().size() > b.arguments().size();
   }
 
@@ -427,7 +427,7 @@ public class ShortestOperand extends Spartanization {
       return true;
     return !isMethodInvocation(a) || !isMethodInvocation(b) //
     ? a.getLength() > b.getLength()//
-        : largerArgsNum((MethodInvocation) a, (MethodInvocation) b);
+        : moreArguments((MethodInvocation) a, (MethodInvocation) b);
   }
 
   boolean sortInfix(final InfixExpression ie, final AST ast) {
