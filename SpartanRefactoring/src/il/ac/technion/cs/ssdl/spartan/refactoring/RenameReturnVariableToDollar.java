@@ -166,8 +166,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
         final VariableDeclarationFragment v = selectReturnVariable(n);
         if (v != null)
           opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
-        if (v != null)
-          System.out.println(v);
         return true;
       }
     };
