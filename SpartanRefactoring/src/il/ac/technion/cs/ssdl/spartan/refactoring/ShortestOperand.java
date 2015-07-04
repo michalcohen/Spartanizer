@@ -365,11 +365,11 @@ public class ShortestOperand extends Spartanization {
         break;
       }
     if (optionUnionOpportunities == MessagingOptions.ShowAll)
-      cleanDuplicates(rs);
+      removeDuplicates(rs);
     return $;
   }
 
-  protected static <T> void cleanDuplicates(final List<T> ts) {
+  protected static <T> void removeDuplicates(final List<T> ts) {
     final Set<T> noDuplicates = new LinkedHashSet<>(ts);
     ts.clear();
     ts.addAll(noDuplicates);
