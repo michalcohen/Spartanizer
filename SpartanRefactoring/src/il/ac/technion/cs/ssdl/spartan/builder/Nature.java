@@ -9,7 +9,7 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Eclipse (auto-generated)
+ * @author Artium Nihamkin
  * @since 2013/07/01
  */
 public class Nature implements IProjectNature {
@@ -19,7 +19,7 @@ public class Nature implements IProjectNature {
   private IProject project;
 
   /* (non-Javadoc)
-   * 
+   *
    * @see org.eclipse.core.resources.IProjectNature#configure() */
   @Override public void configure() throws CoreException {
     final IProjectDescription d = project.getDescription();
@@ -34,7 +34,7 @@ public class Nature implements IProjectNature {
   }
 
   /* (non-Javadoc)
-   * 
+   *
    * @see org.eclipse.core.resources.IProjectNature#deconfigure() */
   @Override public void deconfigure() throws CoreException {
     final IProjectDescription description = getProject().getDescription();
