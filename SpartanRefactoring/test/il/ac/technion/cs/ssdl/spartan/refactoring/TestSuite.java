@@ -175,13 +175,11 @@ public abstract class TestSuite {
    * @since 2014/05/24
    */
   public static abstract class Files extends TestSuite.Traverse {
-    /*
-     * (non-Javadoc)
+    /* (non-Javadoc)
      * 
      * @see
      * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
-     * .util.List, java.io.File)
-     */
+     * .util.List, java.io.File) */
     @Override public void go(final List<Object[]> $, final File d) {
       final Spartanization s = makeSpartanizationObject(d);
       for (final File f : d.listFiles())

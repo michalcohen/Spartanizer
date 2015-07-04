@@ -11,8 +11,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestBranchFirst;
  * @since 2013/07/011
  */
 public class ShortestBranchFirstHandler extends BaseHandler {
-	/** Instantiates this class */
-	public ShortestBranchFirstHandler() {
-		super(new ShortestBranchFirst());
-	}
+  /** Instantiates this class */
+  public ShortestBranchFirstHandler() {
+    super(new ShortestBranchFirst());
+  }
 }

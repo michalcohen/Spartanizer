@@ -12,8 +12,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.SimplifyLogicalNegation;
  * @since 2013/07/01
  */
 public class SimplifyLogicalNegationHandler extends BaseHandler {
-	/** Instantiates this class */
-	public SimplifyLogicalNegationHandler() {
-		super(new SimplifyLogicalNegation());
-	}
+  /** Instantiates this class */
+  public SimplifyLogicalNegationHandler() {
+    super(new SimplifyLogicalNegation());
+  }
 }

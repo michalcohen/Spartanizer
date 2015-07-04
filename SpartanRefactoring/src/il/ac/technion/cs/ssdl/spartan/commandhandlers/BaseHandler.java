@@ -41,8 +41,7 @@ public abstract class BaseHandler extends AbstractHandler {
     this.refactoring = refactoring;
   }
 
-  @Override public Void execute(final ExecutionEvent e)
-      throws ExecutionException {
+  @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     try {
       return execute(HandlerUtil.getCurrentSelection(e));
     } catch (final InterruptedException x) {
@@ -54,20 +53,16 @@ public abstract class BaseHandler extends AbstractHandler {
     return !(s instanceof ITextSelection) ? null : execute((ITextSelection) s);
   }
 
-  private Void execute(final ITextSelection textSelect)
-      throws InterruptedException {
-    return execute(new RefactoringWizardOpenOperation(getWizard(textSelect,
-        getCompilationUnit())));
+  private Void execute(final ITextSelection textSelect) throws InterruptedException {
+    return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
   }
 
-  private Void execute(final RefactoringWizardOpenOperation wop)
-      throws InterruptedException {
+  private Void execute(final RefactoringWizardOpenOperation wop) throws InterruptedException {
     wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
     return null;
   }
 
-  private RefactoringWizard getWizard(final ITextSelection ts,
-      final ICompilationUnit cu) {
+  private RefactoringWizard getWizard(final ITextSelection ts, final ICompilationUnit cu) {
     final Spartanization $ = getRefactoring();
     $.setSelection(ts);
     $.setCompilationUnit(cu);
@@ -75,13 +70,11 @@ public abstract class BaseHandler extends AbstractHandler {
   }
 
   private static ICompilationUnit getCompilationUnit() {
-    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage()
-        .getActiveEditor());
+    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
   }
 
   private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
-    return ep == null ? null : getCompilationUnit(ep.getEditorInput()
-        .getAdapter(IResource.class));
+    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
   }
 
   private static ICompilationUnit getCompilationUnit(final IResource r) {

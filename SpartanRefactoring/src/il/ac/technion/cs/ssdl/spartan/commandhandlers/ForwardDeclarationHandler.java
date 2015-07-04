@@ -11,8 +11,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ForwardDeclaration;
  * @since 2013/07/01
  */
 public class ForwardDeclarationHandler extends BaseHandler {
-	/** Instantiates this class */
-	public ForwardDeclarationHandler() {
-		super(new ForwardDeclaration());
-	}
+  /** Instantiates this class */
+  public ForwardDeclarationHandler() {
+    super(new ForwardDeclaration());
+  }
 }

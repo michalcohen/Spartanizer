@@ -11,8 +11,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand;
  * @since 2013/07/011
  */
 public class ShortestOperandHandler extends BaseHandler {
-	/** Instantiates this class */
-	public ShortestOperandHandler() {
-		super(new ShortestOperand());
-	}
+  /** Instantiates this class */
+  public ShortestOperandHandler() {
+    super(new ShortestOperand());
+  }
 }

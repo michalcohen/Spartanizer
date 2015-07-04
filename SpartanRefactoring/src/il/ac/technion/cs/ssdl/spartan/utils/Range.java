@@ -9,59 +9,59 @@ import org.eclipse.jdt.core.dom.ASTNode;
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  */
 public class Range {
-	/** the beginning of the range (inclusive) */
-	public final int from;
-	/** the end of the range (exclusive) */
-	public final int to;
+  /** the beginning of the range (inclusive) */
+  public final int from;
+  /** the end of the range (exclusive) */
+  public final int to;
 
-	/**
-	 * Instantiates from beginning and end locations
-	 * 
-	 * @param from
-	 *            the beginning of the range (inclusive)
-	 * @param to
-	 *            the end of the range (exclusive)
-	 */
-	public Range(final int from, final int to) {
-		this.from = from;
-		this.to = to;
-	}
+  /**
+   * Instantiates from beginning and end locations
+   * 
+   * @param from
+   *          the beginning of the range (inclusive)
+   * @param to
+   *          the end of the range (exclusive)
+   */
+  public Range(final int from, final int to) {
+    this.from = from;
+    this.to = to;
+  }
 
-	/**
-	 * Instantiates from a single ASTNode
-	 * 
-	 * @param n
-	 *            an arbitrary ASTNode
-	 */
-	public Range(final ASTNode n) {
-		this(n.getStartPosition(), n.getStartPosition() + n.getLength());
-	}
+  /**
+   * Instantiates from a single ASTNode
+   * 
+   * @param n
+   *          an arbitrary ASTNode
+   */
+  public Range(final ASTNode n) {
+    this(n.getStartPosition(), n.getStartPosition() + n.getLength());
+  }
 
-	/**
-	 * Instantiates from beginning and end ASTNodes
-	 * 
-	 * @param from
-	 *            the beginning ASTNode (inclusive)
-	 * @param to
-	 *            the end ASTNode (inclusive)
-	 */
-	public Range(final ASTNode from, final ASTNode to) {
-		this(from.getStartPosition(), to.getStartPosition() + to.getLength());
-	}
+  /**
+   * Instantiates from beginning and end ASTNodes
+   * 
+   * @param from
+   *          the beginning ASTNode (inclusive)
+   * @param to
+   *          the end ASTNode (inclusive)
+   */
+  public Range(final ASTNode from, final ASTNode to) {
+    this(from.getStartPosition(), to.getStartPosition() + to.getLength());
+  }
 
-	@Override public int hashCode() {
-		final int $ = from;
-		final int $$ = to;
-		// Cantor pairing function
-		return (int) ($ + 0.5 * ($ + $$) * ($ + 1 + $$));
-	}
+  @Override public int hashCode() {
+    final int $ = from;
+    final int $$ = to;
+    // Cantor pairing function
+    return (int) ($ + 0.5 * ($ + $$) * ($ + 1 + $$));
+  }
 
-	@Override public boolean equals(final Object o) {
-		boolean $ = false;
-		if (o instanceof Range) {
-			final Range r = (Range) o;
-			$ = from == r.from && to == r.to;
-		}
-		return $;
-	}
+  @Override public boolean equals(final Object o) {
+    boolean $ = false;
+    if (o instanceof Range) {
+      final Range r = (Range) o;
+      $ = from == r.from && to == r.to;
+    }
+    return $;
+  }
 }

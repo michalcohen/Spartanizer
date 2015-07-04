@@ -11,8 +11,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.RenameReturnVariableToDollar;
  * @since 2013/07/01
  */
 public class ChangeReturnToDollarHandler extends BaseHandler {
-	/** Instantiates this class */
-	public ChangeReturnToDollarHandler() {
-		super(new RenameReturnVariableToDollar());
-	}
+  /** Instantiates this class */
+  public ChangeReturnToDollarHandler() {
+    super(new RenameReturnVariableToDollar());
+  }
 }

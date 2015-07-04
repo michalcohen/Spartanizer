@@ -32,27 +32,23 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public class RenameReturnVariableToDollar extends Spartanization {
   /** Instantiates this class */
   public RenameReturnVariableToDollar() {
-    super("Rename returned variable to '$'",
-        "Rename the variable returned by a function to '$'");
+    super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
   }
 
-  @Override protected final void fillRewrite(final ASTRewrite $, final AST t,
-      final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment returnVar = selectReturnVariable(n);
         if (returnVar == null || !inRange(m, returnVar))
           return true;
-        for (final Expression e : Occurrences.BOTH_LEXICAL.of(
-            returnVar.getName()).in(n))
+        for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
           $.replace(e, t.newSimpleName("$"), null);
         return true;
       }
     });
   }
 
-  static List<VariableDeclarationFragment> getCandidates(
-      final MethodDeclaration d) {
+  static List<VariableDeclarationFragment> getCandidates(final MethodDeclaration d) {
     if (d == null)
       return null;
     final List<VariableDeclarationFragment> $ = new ArrayList<>();
@@ -66,8 +62,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
        *          ignored, we don't want to visit declarations inside anonymous
        *          classes
        */
-      @Override public boolean visit(
-          @SuppressWarnings("unused") final AnonymousClassDeclaration _) {
+      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
         return false;
       }
 
@@ -92,8 +87,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
        *          ignored, we don't want to visit declarations inside anonymous
        *          classes
        */
-      @Override public boolean visit(
-          @SuppressWarnings("unused") final AnonymousClassDeclaration _) {
+      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
         return false;
       }
 
@@ -105,8 +99,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
     return $;
   }
 
-  static VariableDeclarationFragment selectReturnVariable(
-      final MethodDeclaration m) {
+  static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
     final List<VariableDeclarationFragment> vs = getCandidates(m);
     if (vs == null || vs.isEmpty() || hasDollar(vs))
       return null;
@@ -135,8 +128,8 @@ public class RenameReturnVariableToDollar extends Spartanization {
     return $;
   }
 
-  private static VariableDeclarationFragment bestCandidate(
-      final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
+  private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
+      final List<ReturnStatement> rs) {
     final int bestScore = bestScore(vs, rs);
     if (bestScore > 0)
       for (final VariableDeclarationFragment v : vs)
@@ -145,38 +138,34 @@ public class RenameReturnVariableToDollar extends Spartanization {
     return null;
   }
 
-  private static boolean noRivals(final VariableDeclarationFragment candidate,
-      final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
+  private static boolean noRivals(final VariableDeclarationFragment candidate, final List<VariableDeclarationFragment> vs,
+      final List<ReturnStatement> rs) {
     for (final VariableDeclarationFragment rival : vs)
       if (rival != candidate && score(rival, rs) >= score(candidate, rs))
         return false;
     return true;
   }
 
-  private static int bestScore(final List<VariableDeclarationFragment> vs,
-      final List<ReturnStatement> rs) {
+  private static int bestScore(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final VariableDeclarationFragment v : vs)
       $ = Math.max($, score(v, rs));
     return $;
   }
 
-  private static int score(final VariableDeclarationFragment v,
-      final List<ReturnStatement> rs) {
+  private static int score(final VariableDeclarationFragment v, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final ReturnStatement r : rs)
       $ += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r).size();
     return $;
   }
 
-  @Override protected ASTVisitor fillOpportunities(
-      final List<Range> opportunities) {
+  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment v = selectReturnVariable(n);
         if (v != null)
-          opportunities.add(new Range(getContainerByNodeType(v,
-              ASTNode.METHOD_DECLARATION)));
+          opportunities.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
         if (v != null)
           System.out.println(v);
         return true;

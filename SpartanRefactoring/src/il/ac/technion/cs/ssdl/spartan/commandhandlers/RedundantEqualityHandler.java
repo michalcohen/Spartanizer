@@ -11,8 +11,8 @@ import il.ac.technion.cs.ssdl.spartan.refactoring.ComparisonWithBoolean;
  * @since 2013/07/01
  */
 public class RedundantEqualityHandler extends BaseHandler {
-	/** Instantiates this class */
-	public RedundantEqualityHandler() {
-		super(new ComparisonWithBoolean());
-	}
+  /** Instantiates this class */
+  public RedundantEqualityHandler() {
+    super(new ComparisonWithBoolean());
+  }
 }

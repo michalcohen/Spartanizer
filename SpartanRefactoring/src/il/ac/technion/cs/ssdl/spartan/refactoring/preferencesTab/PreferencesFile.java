@@ -29,9 +29,7 @@ public class PreferencesFile {
    * @return Spartanization rules preferences file path.
    */
   public static String getPrefFilePath() {
-    return SpartanizationPreferencePage.class.getProtectionDomain()
-        .getCodeSource().getLocation().getPath()
-        + "Sparta.pref";
+    return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "Sparta.pref";
   }
 
   /**
