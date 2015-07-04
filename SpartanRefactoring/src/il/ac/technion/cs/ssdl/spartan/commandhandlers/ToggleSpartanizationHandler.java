@@ -21,11 +21,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * A command handler which toggles the spartanization nature
- * 
+ *
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
- * 
+ *
  * @since 2013/07/01
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {
@@ -34,15 +34,10 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
    */
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     try {
-      return execute(e, HandlerUtil.getActivePartIdChecked(e));
+      return execute(HandlerUtil.getCurrentSelectionChecked(e));
     } catch (final CoreException x) {
       throw new ExecutionException(x.getMessage());
     }
-  }
-
-  private static Void execute(final ExecutionEvent e, final String partId) throws ExecutionException, CoreException {
-    System.out.println(partId);
-    return execute(HandlerUtil.getCurrentSelectionChecked(e));
   }
 
   private static Void execute(final ISelection s) throws CoreException {
