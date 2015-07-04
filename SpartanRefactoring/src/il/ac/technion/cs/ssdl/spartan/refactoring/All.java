@@ -49,8 +49,9 @@ public enum All {
   // are used in between
   // TODO List of safe and sane operations: comparison with boolean, literal
   // ordering, simplify negation, ternarize, chain, shortest branch
-  // TODO Add as source menu item for safe operations.
-  // TODO Add as cleanup operations
+  // TODO Add safe operations as source menu item for safe operations.
+  // TODO Add safe operations as cleanup operations
+  // TODO Use one letter name for local variables and parameters
   ;
   private final Spartanization value;
 
