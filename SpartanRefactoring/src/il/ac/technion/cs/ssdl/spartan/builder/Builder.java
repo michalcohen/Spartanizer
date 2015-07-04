@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 /**
- * @author Eclipse (auto-generated)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
  *         2014/6/16 (v3)
