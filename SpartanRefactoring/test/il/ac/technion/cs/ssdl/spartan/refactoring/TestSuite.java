@@ -192,11 +192,10 @@ public abstract class TestSuite {
 	 * Makes an Output file out of a Test file
 	 */
 	static File makeOutFile(final File file) {
-		final StringBuilder str = new StringBuilder(fileToStringBuilder(file));
-		final int testMarker = str.indexOf(testKeyword);
-		if (testMarker > 0)
-			str.delete(0, str.indexOf(testKeyword) + testKeyword.length() + (str.indexOf("\r\n") > 0 ? 2 : 1));
-		return createTempFile(str, TestDirection.Out, file);
+		final StringBuilder $ = new StringBuilder(fileToStringBuilder(file));
+		if ($.indexOf(testKeyword) > 0)
+			$.delete(0, $.indexOf(testKeyword) + testKeyword.length() + ($.indexOf("\r\n") > 0 ? 2 : 1));
+		return createTempFile($, TestDirection.Out, file);
 	}
 	/**
 	 * Creates a temporary file - including lazy deletion.
