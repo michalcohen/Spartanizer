@@ -31,16 +31,20 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
  */
 public class Builder extends IncrementalProjectBuilder {
   /**
-   * Prefix to be used in front of all suggestions
+   * Long prefix to be used in front of all suggestions
    */
   public static final String SPARTANIZATION_LONG_PREFIX = "Spartanization suggestion: ";
+  /**
+   * Short prefix to be used in front of all suggestions
+   */
+  public static final String SPARTANIZATION_SHORT_PREFIX = "Spartanize: ";
   /**
    * Empty prefix for brevity
    */
   public static final String EMPTY_PREFIX = "";
 
   private static String prefix() {
-    return EMPTY_PREFIX;
+    return SPARTANIZATION_SHORT_PREFIX;
   }
 
   /**
@@ -63,6 +67,7 @@ public class Builder extends IncrementalProjectBuilder {
       m.done();
     return null;
   }
+
   private void build(final int kind) throws CoreException {
     if (kind == FULL_BUILD)
       fullBuild();
@@ -70,10 +75,10 @@ public class Builder extends IncrementalProjectBuilder {
       final IResourceDelta d = getDelta(getProject());
       if (d == null)
         fullBuild();
-      else
-        incrementalBuild(d);
+      else incrementalBuild(d);
     }
   }
+
   protected void fullBuild() {
     try {
       getProject().accept(new IResourceVisitor() {
@@ -86,14 +91,17 @@ public class Builder extends IncrementalProjectBuilder {
       e.printStackTrace();
     }
   }
+
   static void addMarkers(final IResource r) throws CoreException {
     if (r instanceof IFile && r.getName().endsWith(".java"))
       addMarkers((IFile) r);
   }
+
   private static void addMarkers(final IFile f) throws CoreException {
     deleteMarkers(f);
     addMarkers(f, (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null));
   }
+
   private static void addMarkers(final IFile f, final CompilationUnit cu) throws CoreException {
     All.reset();
     for (final Spartanization s : All.all())
@@ -101,25 +109,30 @@ public class Builder extends IncrementalProjectBuilder {
         if (r != null)
           addMarker(f, s, r);
   }
+
   private static void addMarker(final IFile f, final Spartanization s, final Range r) throws CoreException {
     addMarker(f.createMarker(MARKER_TYPE), s, r);
   }
+
   private static void addMarker(final IMarker m, final Spartanization s, final Range r) throws CoreException {
     m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
     addMarker(m, s);
     addMarker(m, r);
   }
+
   private static void addMarker(final IMarker m, final Range r) throws CoreException {
     m.setAttribute(IMarker.CHAR_START, r.from);
     m.setAttribute(IMarker.CHAR_END, r.to);
   }
+
   private static void addMarker(final IMarker m, final Spartanization s) throws CoreException {
     m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
     m.setAttribute(IMarker.MESSAGE, prefix() + s.getMessage());
   }
+
   /**
    * deletes all spartanization suggestion markers
-   * 
+   *
    * @param f
    *          the file from which to delete the markers
    * @throws CoreException
@@ -132,6 +145,7 @@ public class Builder extends IncrementalProjectBuilder {
   public static void deleteMarkers(final IFile f) throws CoreException {
     f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);
   }
+
   protected static void incrementalBuild(final IResourceDelta d) throws CoreException {
     d.accept(new IResourceDeltaVisitor() {
       @Override public boolean visit(final IResourceDelta internalDelta) throws CoreException {
