@@ -31,17 +31,26 @@ import java.util.Map;
  * @since 2013/07/01
  */
 public enum All {
-  @SuppressWarnings("javadoc") ComparisonWithBoolean(
-      new ComparisonWithBoolean()), //
+  @SuppressWarnings("javadoc") ComparisonWithBoolean(new ComparisonWithBoolean()), //
   @SuppressWarnings("javadoc") ForwardDeclaration(new ForwardDeclaration()), //
   @SuppressWarnings("javadoc") InlineSingleUse(new InlineSingleUse()), //
-  @SuppressWarnings("javadoc") RenameReturnVariableToDollar(
-      new RenameReturnVariableToDollar()), //
+  @SuppressWarnings("javadoc") RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
   @SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
   @SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
   @SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
+  // TODO Clever chaining in 2 to 3 selected classes
+  // TODO Do not commute in +; it might be strings
+  // TODO Literal always on left on multiplication
+  // TODO Literal always on right on all comparisons
+  // TODO 'this' always on right on all comparisons
+  // TODO more clever forward/inline. do not propose if components of expression
+  // are used in between
+  // TODO List of safe and sane operations: comparison with boolean, literal
+  // ordering, simplify negation, ternarize, chain, shortest branch
+  // TODO Add as source menu item for safe operations.
+  // TODO Add as cleanup operations
   ;
   private final Spartanization value;
 
@@ -62,8 +71,7 @@ public enum All {
    * @return Spartanization class rule instance
    */
   @SuppressWarnings("unchecked")//
-  public static <T extends Spartanization> T findInstance(
-      final Class<? extends T> c) {
+  public static <T extends Spartanization> T findInstance(final Class<? extends T> c) {
     for (final All a : All.values()) {
       final Spartanization $ = a.value();
       if ($.getClass().equals(c))
@@ -121,24 +129,19 @@ public enum All {
       if (line.contains(repositionRightLiterals))
         shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
       if (line.contains(repositionRightException))
-        shortestOperandInstance
-            .setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
+        shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
       if (line.contains(doNotRepositionRightLiterals))
-        shortestOperandInstance
-            .setRightLiteralRule(RepositionRightLiteral.None);
+        shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
       if (line.contains(repositionAllLiterals))
         shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
       if (line.contains(doNotRepositionLiterals))
         shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
       if (line.contains(NullAndBoolAtStart))
-        shortestOperandInstance
-            .setBoolNullLiteralsRule(RepositionBoolAndNull.MoveLeft);
+        shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveLeft);
       if (line.contains(NullAndBoolAtEnd))
-        shortestOperandInstance
-            .setBoolNullLiteralsRule(RepositionBoolAndNull.MoveRight);
+        shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveRight);
       if (line.contains(NullAndBoolAtNone))
-        shortestOperandInstance
-            .setBoolNullLiteralsRule(RepositionBoolAndNull.None);
+        shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.None);
       if (line.contains(showOneSwap))
         shortestOperandInstance.setMessagingOption(MessagingOptions.Union);
       if (line.contains(showEverySwap))
@@ -158,8 +161,7 @@ public enum All {
     final boolean useAll = str == null;
     int i = 0;
     for (final Spartanization rule : allAvailableSpartanizations()) {
-      if (useAll || str != null && str.length >= i + offset
-          && !ignored(str[i + offset]))
+      if (useAll || str != null && str.length >= i + offset && !ignored(str[i + offset]))
         put(rule);
       i++;
     }
