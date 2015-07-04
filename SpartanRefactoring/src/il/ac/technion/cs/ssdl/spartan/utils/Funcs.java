@@ -276,7 +276,7 @@ public enum Funcs {
 	 * @return true if a return statement exists in the block or false otherwise
 	 */
 	public static boolean hasReturn(final Block b) {
-		if (null == b)
+		if (b == null)
 			return false;
 		for (int i = 0; i < b.statements().size(); i++)
 			if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i)).getNodeType())
