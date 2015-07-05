@@ -202,14 +202,13 @@ public abstract class TestSuite {
    * Makes an Input file out of a Test file
    */
   static File makeInFile(final File f) {
-    final StringBuilder $ = fileToStringBuilder(f);
-    deleteTestKeyword($);
-    return createTempFile($, TestDirection.In, f);
+    return createTempFile(deleteTestKeyword(fileToStringBuilder(f)), TestDirection.In, f);
   }
 
-  private static void deleteTestKeyword(final StringBuilder $) {
+  private static StringBuilder deleteTestKeyword(final StringBuilder $) {
     if ($.indexOf(testKeyword) > 0)
       $.delete($.indexOf(testKeyword), $.length());
+    return $;
   }
 
   /**
