@@ -1,0 +1,17 @@
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		if (null == a)
+		  return;
+	}
+}
+<Test Result>
+package p;
+
+public class Blah {
+	public void yada(final String s) {
+		if (a == null)
+		  return;
+	}
+}
