@@ -224,15 +224,15 @@ public abstract class TestSuite {
   /**
    * Creates a temporary file - including lazy deletion.
    */
-  static File createTempFile(final StringBuilder str, final TestDirection direction, final File file) {
+  static File createTempFile(final StringBuilder b, final TestDirection direction, final File f) {
     File $;
     try {
-      $ = File.createTempFile(file.getName().replace(".", ""), direction == TestDirection.In ? ".in" : ".out");
+      $ = File.createTempFile(f.getName().replace(".", ""), direction == TestDirection.In ? ".in" : ".out");
     } catch (final IOException e) {
       $ = null; // Failed to create temporary file
     }
     try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
-      fh.writeBytes(str.toString());
+      fh.writeBytes(b.toString());
       if ($ != null)
         $.deleteOnExit();
     } catch (final IOException e) {
