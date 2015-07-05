@@ -176,7 +176,7 @@ public abstract class TestSuite {
    */
   public static abstract class Files extends TestSuite.Traverse {
     /* (non-Javadoc)
-     * 
+     *
      * @see
      * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
      * .util.List, java.io.File) */
@@ -202,7 +202,6 @@ public abstract class TestSuite {
    * Makes an Input file out of a Test file
    */
   static File makeInFile(final File f) {
-    // TODO: Why string builder?
     final StringBuilder $ = fileToStringBuilder(f);
     deleteTestKeyword($);
     return createTempFile($, TestDirection.In, f);

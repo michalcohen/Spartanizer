@@ -20,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Yossi Gil
  * @since 2014/05/24
  */
-@RunWith(Parameterized.class)//
+@RunWith(Parameterized.class) //
 public class Unchanged extends AbstractParametrizedTest {
   /**
    * An object describing the required transformation
@@ -50,19 +50,22 @@ public class Unchanged extends AbstractParametrizedTest {
    * opportunities is zero, the input does not change.
    */
   @Test public void checkNoChange() {
-    // TODO: Why do you use StringBuilder?
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    if (new StringBuilder(input.getName()).indexOf(testSuffix) <= 0)
-      assertEquals(readFile(input), rewrite(spartanization, makeAST(input), new Document(readFile(input))).get());
-    else assertEquals(readFile(makeInFile(input)), rewrite(spartanization, makeAST(input), new Document(readFile(makeInFile(input))))
-        .get());
+    if (input.getName().indexOf(testSuffix) <= 0)
+      assertEquals(input(), rewrite(spartanization, makeAST(input), new Document(input())).get());
+    else assertEquals(readFile(makeInFile(input)),
+        rewrite(spartanization, makeAST(input), new Document(readFile(makeInFile(input)))).get());
+  }
+
+  private String input() {
+    return readFile(input);
   }
 
   /**
    * @return a collection of cases, where each cases is an array of three
    *         objects, the spartanization, the test case name, and the input file
    */
-  @Parameters(name = "{index}: {0} {1}")//
+  @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
     return new TestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
