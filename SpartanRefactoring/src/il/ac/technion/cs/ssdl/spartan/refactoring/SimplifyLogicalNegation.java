@@ -18,7 +18,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
@@ -52,10 +51,12 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 /**
  * Simplifies a negated boolean expression using De-Morgan laws and laws of
  * arithmetics.
- * 
+ *
  * @author Yossi Gil
  * @since 2014/06/15
  */
@@ -105,8 +106,8 @@ public class SimplifyLogicalNegation extends Spartanization {
       boolean deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
         return replace(e, //
             parenthesize( //
-            addExtendedOperands(inner, //
-                makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right)))));
+                addExtendedOperands(inner, //
+                    makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right)))));
       }
 
       InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
@@ -245,7 +246,7 @@ public class SimplifyLogicalNegation extends Spartanization {
 
   /**
    * Check if a value is found among a list of other values of the same type.
-   * 
+   *
    * @param t
    *          some value to be examined; must not be null
    * @param ts
@@ -282,11 +283,11 @@ public class SimplifyLogicalNegation extends Spartanization {
    * for the containing class. Note our naming convention: a) test methods do
    * not use the redundant "test" prefix. b) test methods begin with the name of
    * the method they check.
-   * 
+   *
    * @author Yossi Gil
    * @since 2014-06-14
    */
-  @FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method" })//
+  @FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method" }) //
   public static class TEST {
     @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsNotNull() {
       final InfixExpression i = mock(InfixExpression.class);
