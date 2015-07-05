@@ -39,15 +39,19 @@ import org.eclipse.ui.IMarkerResolution;
 /**
  * the base class for all Spartanization Refactoring classes, contains common
  * functionality
- * 
+ *
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <boris.van.sosin [at] gmail.com>} (v2)
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/10
- * 
+ *
  * @since 2013/01/01
  */
 public abstract class Spartanization extends Refactoring {
+  protected abstract ASTVisitor fillOpportunities(final List<Range> opportunities);
+
+  protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
+
   private ITextSelection selection = null;
   private ICompilationUnit compilationUnit = null;
   private IMarker marker = null;
@@ -57,7 +61,7 @@ public abstract class Spartanization extends Refactoring {
 
   /***
    * Instantiates this class, with message identical to name
-   * 
+   *
    * @param name
    *          a short name of this refactoring
    */
@@ -67,7 +71,7 @@ public abstract class Spartanization extends Refactoring {
 
   /***
    * Instantiates this class
-   * 
+   *
    * @param name
    *          a short name of this refactoring
    * @param message
@@ -84,7 +88,7 @@ public abstract class Spartanization extends Refactoring {
 
   /**
    * creates an ASTRewrite which contains the changes
-   * 
+   *
    * @param cu
    *          the Compilation Unit (outermost ASTNode in the Java Grammar)
    * @param pm
@@ -99,7 +103,7 @@ public abstract class Spartanization extends Refactoring {
   /**
    * creates an ASTRewrite, under the context of a text marker, which contains
    * the changes
-   * 
+   *
    * @param pm
    *          a progress monitor in which to display the progress of the
    *          refactoring
@@ -129,15 +133,13 @@ public abstract class Spartanization extends Refactoring {
     return $;
   }
 
-  protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
-
   private final boolean isTextSelected() {
     return selection != null && !selection.isEmpty() && 0 != selection.getLength();
   }
 
   /**
    * Determines if the node is outside of the selected text.
-   * 
+   *
    * @return true if the node is not inside selection. If there is no selection
    *         at all will return false.
    */
@@ -174,7 +176,7 @@ public abstract class Spartanization extends Refactoring {
   }
 
   @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException,
-      OperationCanceledException {
+  OperationCanceledException {
     changes.clear();
     if (marker == null)
       runAsManualCall(pm);
@@ -226,12 +228,12 @@ public abstract class Spartanization extends Refactoring {
   /**
    * Creates a change from each compilation unit and stores it in the changes
    * array
-   * 
+   *
    * @throws IllegalArgumentException
    * @throws CoreException
    */
   protected void scanCompilationUnits(final List<ICompilationUnit> cus, final IProgressMonitor pm) throws IllegalArgumentException,
-      CoreException {
+  CoreException {
     pm.beginTask("Iterating over gathered compilation units...", cus.size());
     for (final ICompilationUnit cu : cus)
       scanCompilationUnit(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
@@ -291,7 +293,7 @@ public abstract class Spartanization extends Refactoring {
   /**
    * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
    * spartanization suggestions
-   * 
+   *
    * @param cu
    *          what to check
    * @return a collection of {@link Range} objects each containing a
@@ -302,8 +304,6 @@ public abstract class Spartanization extends Refactoring {
     cu.accept(fillOpportunities($));
     return $;
   }
-
-  protected abstract ASTVisitor fillOpportunities(List<Range> opportunities);
 
   @Override public final Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm)
       throws OperationCanceledException {
@@ -372,13 +372,13 @@ public abstract class Spartanization extends Refactoring {
 
   /**
    * a quickfix which automatically performs the spartanization
-   * 
+   *
    * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
    * @since 2013/07/01
    */
   public class SpartanizationResolution implements IMarkerResolution {
     @Override public String getLabel() {
-      return ": Do it! " + Spartanization.this.toString();
+      return "Do it! " + Spartanization.this.toString();
     }
 
     @Override public void run(final IMarker m) {
@@ -392,7 +392,7 @@ public abstract class Spartanization extends Refactoring {
 
   /**
    * a quickfix which opens a refactoring wizard with the spartanization
-   * 
+   *
    * @author r Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
    *         (v2)
    */

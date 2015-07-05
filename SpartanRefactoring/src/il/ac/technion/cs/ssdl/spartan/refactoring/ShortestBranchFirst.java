@@ -5,7 +5,6 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getBlockSingleStmnt;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isInfix;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isPrefix;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
@@ -47,7 +46,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  * @since 2013/01/01
  */
-public class ShortestBranchFirst extends Spartanization {
+public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
   public ShortestBranchFirst() {
     super("Shortest Branch First",
@@ -111,8 +110,8 @@ public class ShortestBranchFirst extends Spartanization {
     if (op == null)
       return null;
     return op != CONDITIONAL_AND && op != CONDITIONAL_OR //
-    ? makeInfixExpression(t, r, op, e.getLeftOperand(), e.getRightOperand())//
-        : makeInfixExpression(t, r, op, negateExp(t, r, e.getLeftOperand()), negateExp(t, r, e.getRightOperand()));
+    ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())//
+        : makeInfixExpression(r, t, negateExp(t, r, e.getLeftOperand()), op, negateExp(t, r, e.getRightOperand()));
   }
 
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {

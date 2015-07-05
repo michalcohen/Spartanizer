@@ -22,7 +22,6 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isOpAssign;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isReturn;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isVarDeclStmt;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeAssigment;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeReturnStatement;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeVarDeclFrag;
@@ -499,8 +498,8 @@ public class Ternarize extends Spartanization {
 
   private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement i,
       final Assignment then, final Expression otherAsgnExp) {
-    final Expression thenSideExp = isOpAssign(then) ? then.getRightHandSide() : makeInfixExpression(t, r,
-        InfixExpression.Operator.PLUS, then.getRightHandSide(), otherAsgnExp);
+    final Expression thenSideExp = isOpAssign(then) ? then.getRightHandSide() : SpartanizationOfInfixExpression.makeInfixExpression(r, t,
+        then.getRightHandSide(), InfixExpression.Operator.PLUS, otherAsgnExp);
     final Expression newCond = makeParenthesizedConditionalExp(t, r, i.getExpression(), thenSideExp, otherAsgnExp);
     r.replace(i, t.newExpressionStatement(makeAssigment(t, r, then.getOperator(), newCond, then.getLeftHandSide())), null);
   }

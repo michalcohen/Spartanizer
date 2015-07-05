@@ -11,13 +11,11 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
@@ -47,6 +45,8 @@ public enum Funcs {
   }
 
   /**
+   * determine whether there is a null in a sequence of object
+   * 
    * @param os
    *          an unknown number of objects
    * @return true if one of the objects is a null or false otherwise
@@ -220,30 +220,6 @@ public enum Funcs {
    * @param r
    *          ASTRewrite for the given AST
    * @param o
-   *          the operator for the new infix expression
-   * @param left
-   *          the left expression
-   * @param right
-   *          the right expression
-   * @return the new infix expression
-   */
-  public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
-      final Expression left, final Expression right) {
-    if (hasNull(t, r, o, right, left))
-      return null;
-    final InfixExpression $ = t.newInfixExpression();
-    $.setOperator(o);
-    $.setRightOperand(null == right.getParent() ? right : (Expression) r.createCopyTarget(right));
-    $.setLeftOperand(null == left.getParent() ? left : (Expression) r.createCopyTarget(left));
-    return $;
-  }
-
-  /**
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param o
    *          the assignment operator
    * @param right
    *          right side of the assignment, usually an expression
@@ -251,7 +227,7 @@ public enum Funcs {
    *          left side of the assignment, usually a variable name
    * @return the new assignment
    */
-  public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Operator o, final Expression right,
+  public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Assignment.Operator o, final Expression right,
       final Expression left) {
     if (hasNull(t, r, o, right, left))
       return null;
@@ -735,12 +711,11 @@ public enum Funcs {
 
   /**
    * @param n
-   *          node to check
-   * @return true if the given node is a boolean or null literal or false
-   *         otherwise
+   *          Expression node
+   * @return true if the Expression is literal
    */
-  public static boolean isBoolOrNull(final ASTNode n) {
-    return is(n, ASTNode.BOOLEAN_LITERAL) || is(n, ASTNode.NULL_LITERAL);
+  public static boolean isLiteral(final ASTNode n) {
+    return 0 <= Arrays.binarySearch(literals, n.getNodeType());
   }
 
   /**
@@ -808,6 +783,27 @@ public enum Funcs {
     return is(n, ASTNode.BLOCK);
   }
 
+  /**
+   * Determine whether the type of an {@link ASTNode} node is one of given list
+   *
+   * @param n
+   *          a node
+   * @param types
+   *          a list of types
+   * @return <code><b>true</b></code> <i>iff</i> function #ASTNode.getNodeType
+   *         returns one of the types provided as parameters
+   */
+  public static boolean isOneOf(final ASTNode n, final int... types) {
+    return n == null ? false : isOneOf(n.getNodeType(), types);
+  }
+
+  private static boolean isOneOf(final int i, final int... is) {
+    for (final int j : is)
+      if (i == j)
+        return true;
+    return false;
+  }
+
   private static boolean is(final ASTNode n, final int type) {
     return n != null && type == n.getNodeType();
   }
@@ -865,15 +861,6 @@ public enum Funcs {
    */
   public static boolean isLiteral(final ReturnStatement r) {
     return isLiteral(r.getExpression());
-  }
-
-  /**
-   * @param n
-   *          Expression node
-   * @return true if the Expression is literal
-   */
-  public static boolean isLiteral(final ASTNode n) {
-    return 0 <= Arrays.binarySearch(literals, n.getNodeType());
   }
 
   /**

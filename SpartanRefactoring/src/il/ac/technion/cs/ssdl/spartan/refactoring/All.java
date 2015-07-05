@@ -38,6 +38,7 @@ public enum All {
   @SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
   @SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
   @SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
+  @SuppressWarnings("javadoc") ComparisonWithLiteral(new ShortestOperand()), //
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
   // TODO Clever chaining in 2 to 3 selected classes

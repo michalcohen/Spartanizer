@@ -35,14 +35,14 @@ public class RenameReturnVariableToDollar extends Spartanization {
     super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
   }
 
-  @Override protected final void fillRewrite(final ASTRewrite $, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment returnVar = selectReturnVariable(n);
         if (returnVar == null || !inRange(m, returnVar))
           return true;
         for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
-          $.replace(e, t.newSimpleName("$"), null);
+          r.replace(e, t.newSimpleName("$"), null);
         return true;
       }
     });
