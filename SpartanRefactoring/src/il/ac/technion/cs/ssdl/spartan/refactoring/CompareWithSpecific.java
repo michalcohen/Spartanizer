@@ -17,6 +17,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
 
 import java.util.List;
 
@@ -32,6 +35,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.mockito.stubbing.Stubber;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -99,7 +104,10 @@ public final class CompareWithSpecific extends SpartanizationOfInfixExpression {
    * @since 2014-07-10
    *
    */
-  @FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method", "javadoc", "synthetic-access" }) //
+  // @RunWith(PowerMockRunner.class) //
+  @PrepareForTest(ASTNode.class) //
+  @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
+  @SuppressWarnings({ "boxing", "static-method", "javadoc", "synthetic-access" }) //
   public static class TEST {
     @Test public void trivialNodeGetNodeTypeV0() {
       final ASTNode n = mock(ASTNode.class);
@@ -133,7 +141,7 @@ public final class CompareWithSpecific extends SpartanizationOfInfixExpression {
     }
 
     @Test public void simpleGetNodeType() {
-      final InfixExpression e = setOperator(mockExpression(), EQUALS);
+      final InfixExpression e = makeEqualsExpression();
       final InfixExpression right = mockExpression();
       // doReturnInt(ARRAY_ACCESS).when(right).getNodeType();
       doReturn(right).when(e).getRightOperand();
@@ -153,25 +161,30 @@ public final class CompareWithSpecific extends SpartanizationOfInfixExpression {
     }
 
     @Test public void notAapplicableToDgenerateEqualsExpressionShortSyntax() {
-      assertFalse(applicable(setOperator(mockExpression(), EQUALS)));
+      assertFalse(applicable(makeEqualsExpression()));
     }
 
     @Test public void applicableToValidEqualsExpression() {
-      final InfixExpression e = setOperator(mockExpression(), EQUALS);
-      doReturn(setOperator(mockExpression(), EQUALS)).when(e).getLeftOperand();
+      final InfixExpression e = makeEqualsExpression();
+      doReturn(makeEqualsExpression()).when(e).getLeftOperand();
       final InfixExpression right = mockExpression();
+      when(right.getNodeType()).thenReturn(NULL_LITERAL);
       when(e.getRightOperand()).thenReturn(right);
       assertTrue(applicable(e));
     }
 
+    private InfixExpression makeEqualsExpression() {
+      return setOperator(mockExpression(), EQUALS);
+    }
+
     @Test public void checkLeftOperandStubbing() {
-      final InfixExpression e = setOperator(mockExpression(), EQUALS);
-      doReturn(setOperator(mockExpression(), EQUALS)).when(e).getLeftOperand();
+      final InfixExpression e = makeEqualsExpression();
+      doReturn(makeEqualsExpression()).when(e).getLeftOperand();
       assertNotNull(e.getLeftOperand());
     }
 
     @Test public void checkRightOperandStubbing() {
-      final InfixExpression e = setOperator(mockExpression(), EQUALS);
+      final InfixExpression e = makeEqualsExpression();
       final InfixExpression right = mockExpression();
       when(e.getRightOperand()).thenReturn(right);
       assertNotNull(e.getRightOperand());
@@ -179,8 +192,8 @@ public final class CompareWithSpecific extends SpartanizationOfInfixExpression {
     }
 
     @Test public void checkBothOperandsStubbing() {
-      final InfixExpression e = setOperator(mockExpression(), EQUALS);
-      doReturn(setOperator(mockExpression(), EQUALS)).when(e).getLeftOperand();
+      final InfixExpression e = makeEqualsExpression();
+      doReturn(makeEqualsExpression()).when(e).getLeftOperand();
       assertNotNull(e.getLeftOperand());
       final InfixExpression right = mockExpression();
       assertNotNull(e.getRightOperand());
@@ -189,7 +202,7 @@ public final class CompareWithSpecific extends SpartanizationOfInfixExpression {
     }
 
     @Test public void isComparionToTrivialdEqualsExpression() {
-      final InfixExpression e = setOperator(mockExpression(), EQUALS);
+      final InfixExpression e = makeEqualsExpression();
       final InfixExpression right = mockExpression();
       when(e.getRightOperand()).thenReturn(right);
       assertTrue(isComparison(e));

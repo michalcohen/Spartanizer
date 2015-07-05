@@ -16,8 +16,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 import java.util.List;
 
@@ -50,6 +50,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.powermock.api.mockito.PowerMockito;
 
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -290,9 +291,9 @@ public class SimplifyLogicalNegation extends Spartanization {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method" }) //
   public static class TEST {
     @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsNotNull() {
-      final InfixExpression i = mock(InfixExpression.class);
-      doReturn(GREATER).when(i).getOperator();
-      assertNotNull(asComparison(i));
+      final InfixExpression e = mock(InfixExpression.class);
+      PowerMockito.doReturn(GREATER).when(e).getOperator();
+      assertNotNull(asComparison(e));
     }
 
     @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsCorrect() {
