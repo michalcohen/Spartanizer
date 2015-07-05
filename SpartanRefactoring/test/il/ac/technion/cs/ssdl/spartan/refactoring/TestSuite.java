@@ -244,9 +244,9 @@ public abstract class TestSuite {
   /**
    * Creates a StringBuilder object out of a file object.
    */
-  static StringBuilder fileToStringBuilder(final File file) {
-    try {
-      return new StringBuilder(new Scanner(file).useDelimiter("\\Z").next());
+  static StringBuilder fileToStringBuilder(final File f) {
+    try (final Scanner $ = new Scanner(f)) {
+      return new StringBuilder($.useDelimiter("\\Z").next());
     } catch (final Exception e) {
       return new StringBuilder("");
     }
