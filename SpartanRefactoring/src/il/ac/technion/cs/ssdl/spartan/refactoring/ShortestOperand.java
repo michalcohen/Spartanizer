@@ -21,7 +21,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -42,6 +41,8 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
  *         24.05.2014)
@@ -56,10 +57,8 @@ public class ShortestOperand extends Spartanization {
    */
   public static enum RepositionBoolAndNull {
     /** a == null */
-    MoveRight,
-    /** null == a */
-    MoveLeft,
-    /** Don't interrupt user choice */
+    MoveRight, /** null == a */
+    MoveLeft, /** Don't interrupt user choice */
     None
   }
 
@@ -68,10 +67,10 @@ public class ShortestOperand extends Spartanization {
    */
   public static enum RepositionRightLiteral {
     /** When right can be swapped - do it */
-    All,
-    /** Swap literal only when it is not boolean or null */
-    AllButBooleanAndNull,
-    /** When the literal appears to the right - do not swap */
+    All, /** Swap literal only when it is not boolean or null */
+    AllButBooleanAndNull, /**
+                           * When the literal appears to the right - do not swap
+                           */
     None
   }
 
@@ -80,8 +79,7 @@ public class ShortestOperand extends Spartanization {
    */
   public static enum RepositionLiterals {
     /** Swap literals */
-    All,
-    /** Do not swap literals */
+    All, /** Do not swap literals */
     None
   }
 
@@ -90,8 +88,7 @@ public class ShortestOperand extends Spartanization {
    */
   public static enum MessagingOptions {
     /** Swap literals */
-    Union,
-    /** Do not swap literals */
+    Union, /** Do not swap literals */
     ShowAll
   }
 
@@ -218,7 +215,7 @@ public class ShortestOperand extends Spartanization {
       ie.setRightOperand(transpose(t, (InfixExpression) r, hasChanged));
   }
 
-  @SuppressWarnings("boxing")// Justification: because ASTNode is a primitive
+  @SuppressWarnings("boxing") // Justification: because ASTNode is a primitive
   // int we can't use the generic "in" function on
   // it
   // without boxing into Integer. Any other
@@ -379,7 +376,7 @@ public class ShortestOperand extends Spartanization {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression n) {
         final AtomicBoolean hasChanged = new AtomicBoolean(false);
-        transpose(AST.newAST(AST.JLS4), n, hasChanged);
+        transpose(AST.newAST(AST.JLS8), n, hasChanged);
         if (!hasChanged.get() || invalid(n))
           return true;
         for (ASTNode k = n; isInfix(k); k = k.getParent())
@@ -416,17 +413,18 @@ public class ShortestOperand extends Spartanization {
   boolean isLarger(final Expression a, final Expression b) {
     if (a == null || b == null)
       return false;
-    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isBoolOrNull(a) || optionBoolNull == RepositionBoolAndNull.MoveLeft
-        && isBoolOrNull(b))
+    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isBoolOrNull(a)
+        || optionBoolNull == RepositionBoolAndNull.MoveLeft && isBoolOrNull(b))
       return true;
     // Nothing to change check
-    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isBoolOrNull(b) || optionBoolNull == RepositionBoolAndNull.MoveLeft
-        && isBoolOrNull(a) || optionBoolNull == RepositionBoolAndNull.None && (isBoolOrNull(b) || isBoolOrNull(a)))
+    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isBoolOrNull(b)
+        || optionBoolNull == RepositionBoolAndNull.MoveLeft && isBoolOrNull(a)
+        || optionBoolNull == RepositionBoolAndNull.None && (isBoolOrNull(b) || isBoolOrNull(a)))
       return false;
     if (countNodes(a) > THRESHOLD + countNodes(b))
       return true;
     return !isMethodInvocation(a) || !isMethodInvocation(b) //
-    ? a.getLength() > b.getLength()//
+        ? a.getLength() > b.getLength()//
         : moreArguments((MethodInvocation) a, (MethodInvocation) b);
   }
 
