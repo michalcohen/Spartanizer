@@ -7,12 +7,15 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import il.ac.technion.cs.ssdl.spartan.utils.As;
 
 /**
  * Test cases in which the transformation should not do anything
@@ -41,7 +44,7 @@ public class Unchanged extends AbstractParametrizedTest {
    */
   @Test public void checkNoOpportunities() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    assertEquals(0, spartanization.findOpportunities(AbstractParametrizedTest.makeAST(input)).size());
+    assertEquals(0, spartanization.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size());
   }
 
   /**
@@ -52,13 +55,16 @@ public class Unchanged extends AbstractParametrizedTest {
   @Test public void checkNoChange() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
     if (input.getName().indexOf(testSuffix) <= 0)
-      assertEquals(input(), rewrite(spartanization, makeAST(input), new Document(input())).get());
-    else assertEquals(readFile(makeInFile(input)),
-        rewrite(spartanization, makeAST(input), new Document(readFile(makeInFile(input)))).get());
+      assertEquals(input(),
+          TESTUtils.rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(input())).get());
+    else assertEquals(As.string(makeInFile(input)),
+        TESTUtils
+            .rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(makeInFile(input))))
+            .get());
   }
 
   private String input() {
-    return readFile(input);
+    return As.string(input);
   }
 
   /**
@@ -67,9 +73,10 @@ public class Unchanged extends AbstractParametrizedTest {
    */
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
+    System.err.println("Hi, Mum!");
     return new TestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
-        if (name.endsWith(testSuffix) && -1 == fileToStringBuilder(f).indexOf(testKeyword))
+        if (name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword))
           return objects(s, name, makeInFile(f));
         if (!name.endsWith(".in"))
           return null;

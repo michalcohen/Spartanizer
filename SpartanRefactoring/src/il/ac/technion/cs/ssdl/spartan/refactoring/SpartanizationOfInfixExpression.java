@@ -55,7 +55,7 @@ abstract class SpartanizationOfInfixExpression extends Spartanization {
   }
 
   protected static InfixExpression flip(final AST t, final InfixExpression $, final InfixExpression e) {
-    return remake($, duplicateRight(t, e), flip(e.getOperator()), duplicateLeft(t, e));
+    return remake($, duplicateLeft(t, e), flip(e.getOperator()), duplicateRight(t, e));
   }
 
   protected static void flip(final ASTRewrite r, final AST t, final InfixExpression e) {
@@ -105,9 +105,9 @@ abstract class SpartanizationOfInfixExpression extends Spartanization {
     if (hasNull(t, r, o, right, left))
       return null;
     final InfixExpression $ = t.newInfixExpression();
+    $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
     $.setOperator(o);
-    $.setRightOperand(null == right.getParent() ? right : (Expression) r.createCopyTarget(right));
-    $.setLeftOperand(null == left.getParent() ? left : (Expression) r.createCopyTarget(left));
+    $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
     return $;
   }
 }

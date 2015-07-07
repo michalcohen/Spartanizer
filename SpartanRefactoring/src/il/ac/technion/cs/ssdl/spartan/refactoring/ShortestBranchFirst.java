@@ -79,7 +79,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
           return null;
         final Statement elseStmnt = n.getElseStatement();
         final Statement thenStmnt = n.getThenStatement();
-        if (1 == statementsCount(elseStmnt) && ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
+        if (statementsCount(elseStmnt) == 1 && ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
           return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStmnt);
@@ -164,7 +164,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   }
 
   static boolean longerFirst(final IfStatement n) {
-    return null != n.getElseStatement() && countNodes(n.getThenStatement()) > threshold + countNodes(n.getElseStatement());
+    return n.getElseStatement() != null && countNodes(n.getThenStatement()) > threshold + countNodes(n.getElseStatement());
   }
 
   static boolean longerFirst(final ConditionalExpression n) {

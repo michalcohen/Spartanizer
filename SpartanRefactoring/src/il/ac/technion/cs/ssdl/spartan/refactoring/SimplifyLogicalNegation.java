@@ -16,8 +16,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
@@ -50,7 +50,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.powermock.api.mockito.PowerMockito;
 
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
@@ -274,7 +273,7 @@ public class SimplifyLogicalNegation extends Spartanization {
       }
 
       private boolean hasOpportunity(final Expression inner) {
-        return null != asNot(inner) || null != asAndOrOr(inner) || null != asComparison(inner);
+        return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
       }
     };
   }
@@ -292,7 +291,7 @@ public class SimplifyLogicalNegation extends Spartanization {
   public static class TEST {
     @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsNotNull() {
       final InfixExpression e = mock(InfixExpression.class);
-      PowerMockito.doReturn(GREATER).when(e).getOperator();
+      doReturn(GREATER).when(e).getOperator();
       assertNotNull(asComparison(e));
     }
 

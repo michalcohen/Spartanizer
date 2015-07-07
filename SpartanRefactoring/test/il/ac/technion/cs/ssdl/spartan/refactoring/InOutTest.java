@@ -1,9 +1,11 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.refactoring.TESTUtils.assertSimilar;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.objects;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.Collection;
@@ -16,6 +18,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import il.ac.technion.cs.ssdl.spartan.utils.As;
+
 /**
  * Run tests in which a specific transformation is not supposed to change the
  * input text
@@ -23,9 +27,23 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Yossi Gil
  * @since 2014/05/24
  */
-@RunWith(Parameterized.class)//
+@RunWith(Parameterized.class) //
 public class InOutTest extends AbstractParametrizedTest {
-  private static final String WHITES = "\\s+";
+  protected static void go(final Spartanization s, final File from, final File to) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(makeInFile(from));
+    assertEquals(u.toString(), 1, TESTUtils.countOpportunities(s, u));
+    TESTUtils.assertOneOpportunity(s, As.string(from));
+    if (from.getName().endsWith(testSuffix)) {
+      final String expected = As.string(TestSuite.makeOutFile(to));
+      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(TestSuite.makeInFile(from))));
+      assertSimilar(expected, rewrite.get());
+    } else {
+      final String expected = As.string(to);
+      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(from)));
+      assertSimilar(expected, rewrite.get());
+    }
+  }
+
   /**
    * An object describing the required transformation
    */
@@ -49,35 +67,7 @@ public class InOutTest extends AbstractParametrizedTest {
    */
   @Test public void go() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    final CompilationUnit cu = makeAST(makeInFile(input));
-    assertEquals(cu.toString(), 1, spartanization.findOpportunities(cu).size());
-    final boolean properSuffix = input.getName().endsWith(testSuffix);
-    assertTrue(similar(!properSuffix ? readFile(output) : readFile(TestSuite.makeOutFile(output)),
-        rewrite(spartanization, cu, new Document(!properSuffix ? readFile(input) : readFile(TestSuite.makeInFile(input)))).get()));
-  }
-
-  private static boolean similar(final String expected, final String actual) {
-    return expected.equals(actual) || almostSame(expected, actual);
-  }
-
-  private static boolean almostSame(final String expected, final String actual) {
-    assertEquals(compressSpaces(expected), compressSpaces(actual));
-    return true;
-  }
-
-  private static String compressSpaces(final String s) {
-    String $ = s//
-        .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
-        .replaceAll("[ \t]+", " ") // Squeeze whites
-        .replaceAll("[ \t]+$", "") // Remove trailing spaces
-        .replaceAll("^[ \t]+$", "") // No space at line beginnings
-        ;
-    for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
-      $ = $ //
-      .replaceAll(WHITES + operator, operator) // Preceding whites
-      .replaceAll(operator + WHITES, operator) // Trailing whites
-      ;
-    return $;
+    go(spartanization, input, output);
   }
 
   /**
@@ -87,11 +77,11 @@ public class InOutTest extends AbstractParametrizedTest {
    *         the spartanization, the test case name, the input file, and the
    *         output file.
    */
-  @Parameters(name = "{index}: {0} {1}")//
+  @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
     return new TestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
-        if (name.endsWith(testSuffix) && 0 < fileToStringBuilder(input).indexOf(testKeyword))
+        if (name.endsWith(testSuffix) && As.stringBuilder(input).indexOf(testKeyword) > 0)
           return objects(s, name, input, makeOutFile(input));
         if (!name.endsWith(".in"))
           return null;

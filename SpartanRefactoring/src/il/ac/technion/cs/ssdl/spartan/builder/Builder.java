@@ -1,10 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.builder;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.All;
-import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
-import il.ac.technion.cs.ssdl.spartan.utils.Utils;
-
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -18,8 +13,12 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+
+import il.ac.technion.cs.ssdl.spartan.refactoring.All;
+import il.ac.technion.cs.ssdl.spartan.refactoring.Spartanization;
+import il.ac.technion.cs.ssdl.spartan.utils.As;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
@@ -98,7 +97,7 @@ public class Builder extends IncrementalProjectBuilder {
 
   private static void addMarkers(final IFile f) throws CoreException {
     deleteMarkers(f);
-    addMarkers(f, (CompilationUnit) Utils.makeParser(JavaCore.createCompilationUnitFrom(f)).createAST(null));
+    addMarkers(f, (CompilationUnit) As.COMPILIATION_UNIT.ast(f));
   }
 
   private static void addMarkers(final IFile f, final CompilationUnit cu) throws CoreException {

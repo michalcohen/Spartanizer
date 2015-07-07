@@ -10,17 +10,18 @@ import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.Preferen
 import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.repositionRightLiterals;
 import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.showEverySwap;
 import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.showOneSwap;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.MessagingOptions;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionBoolAndNull;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
-import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.MessagingOptions;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionBoolAndNull;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
+import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
+import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -32,6 +33,7 @@ import java.util.Map;
  */
 public enum All {
   @SuppressWarnings("javadoc") ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  @SuppressWarnings("javadoc") ComparisonWithSpecific(new ComparisonWithSpecific()), //
   @SuppressWarnings("javadoc") ForwardDeclaration(new ForwardDeclaration()), //
   @SuppressWarnings("javadoc") InlineSingleUse(new InlineSingleUse()), //
   @SuppressWarnings("javadoc") RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
@@ -72,7 +74,7 @@ public enum All {
    *          Spartanization rule
    * @return Spartanization class rule instance
    */
-  @SuppressWarnings("unchecked")//
+  @SuppressWarnings("unchecked") //
   public static <T extends Spartanization> T findInstance(final Class<? extends T> c) {
     for (final All a : All.values()) {
       final Spartanization $ = a.value();
@@ -115,7 +117,7 @@ public enum All {
   }
 
   private static boolean ignored(final String sparta) {
-    return 0 <= sparta.indexOf(ignoreRuleStr);
+    return sparta.indexOf(ignoreRuleStr) >= 0;
   }
 
   private static void assignRulesOptions(final String[] lines) {

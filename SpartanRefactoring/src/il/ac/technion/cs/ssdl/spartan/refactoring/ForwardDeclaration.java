@@ -52,7 +52,7 @@ public class ForwardDeclaration extends Spartanization {
           return true;
         final Block b = (Block) containingNode;
         final int firstUseIdx = findFirstUse(b, v.getName());
-        if (0 > firstUseIdx)
+        if (firstUseIdx < 0)
           return true;
         final int declaredIdx = b.statements().indexOf(v.getParent());
         if (nextNodeIsAlreadyFixed(b, v, declaredIdx))
@@ -61,7 +61,7 @@ public class ForwardDeclaration extends Spartanization {
         if (declaredIdx >= beginingOfDeclarationsBlockIdx)
           return true;
         final ASTNode declarationNode = (ASTNode) b.statements().get(declaredIdx);
-        if (1 == ((VariableDeclarationStatement) declarationNode).fragments().size())
+        if (((VariableDeclarationStatement) declarationNode).fragments().size() == 1)
           rewrite(beginingOfDeclarationsBlockIdx, declarationNode, r.getListRewrite(b, Block.STATEMENTS_PROPERTY));
         else {
           r.getListRewrite(b, Block.STATEMENTS_PROPERTY).insertAt(
@@ -81,7 +81,7 @@ public class ForwardDeclaration extends Spartanization {
 
   static boolean nextNodeIsAlreadyFixed(final Block block, final VariableDeclarationFragment n, final int declaredIdx) {
     final int firstUseIdx = findFirstUse(block, n.getName());
-    if (0 > firstUseIdx)
+    if (firstUseIdx < 0)
       return true;
     final int beginingOfDeclarationsIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
     final ASTNode nextN = (ASTNode) block.statements().get(1 + declaredIdx);
@@ -104,7 +104,7 @@ public class ForwardDeclaration extends Spartanization {
 
       private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
         final int firstUseIdx = findFirstUse(b, n.getName());
-        if (0 > firstUseIdx)
+        if (firstUseIdx < 0)
           return true;
         final int declaredIdx = b.statements().indexOf(n.getParent());
         if (nextNodeIsAlreadyFixed(b, n, declaredIdx))
@@ -119,7 +119,7 @@ public class ForwardDeclaration extends Spartanization {
   static int findFirstUse(final Block b, final SimpleName name) {
     final ASTNode declarationStmt = name.getParent().getParent();
     for (int $ = 1 + b.statements().indexOf(declarationStmt); $ < b.statements().size(); ++$)
-      if (0 < Occurrences.BOTH_LEXICAL.of(name).in((ASTNode) b.statements().get($)).size())
+      if (Occurrences.BOTH_LEXICAL.of(name).in((ASTNode) b.statements().get($)).size() > 0)
         return $; // first use!
     return -1; // that means unused
   }

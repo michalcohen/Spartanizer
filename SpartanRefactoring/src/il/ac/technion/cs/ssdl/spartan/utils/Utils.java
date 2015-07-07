@@ -2,65 +2,17 @@ package il.ac.technion.cs.ssdl.spartan.utils;
 
 import java.util.Arrays;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-
 /**
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>
  * @since 2013/07/01
- * 
+ *
  */
 public enum Utils {
   ;
   /**
-   * Creates a no-binding parser for a given compilation unit
-   * 
-   * @param cu
-   *          what to parse
-   * @return a newly created parser for the parameter
-   */
-  public static ASTParser makeParser(final ICompilationUnit cu) {
-    final ASTParser $ = makeParser();
-    $.setSource(cu);
-    return $;
-  }
-
-  /**
-   * Creates a no-binding parser for a given text
-   * 
-   * @param text
-   *          what to parse
-   * @return a newly created parser for the parameter
-   */
-  public static ASTParser makeParser(final String text) {
-    return makeParser(text.toCharArray());
-  }
-
-  /**
-   * Creates a no-binding parser for a given text
-   * 
-   * @param text
-   *          what to parse
-   * @return a newly created parser for the parameter
-   */
-  public static ASTParser makeParser(final char[] text) {
-    final ASTParser $ = makeParser();
-    $.setSource(text);
-    return $;
-  }
-
-  private static ASTParser makeParser() {
-    final ASTParser $ = ASTParser.newParser(AST.JLS4);
-    $.setKind(ASTParser.K_COMPILATION_UNIT);
-    $.setResolveBindings(false);
-    return $;
-  }
-
-  /**
    * Appends an element to an array, by reallocating an array whose size is
    * greater by one and placing the element at the last position.
-   * 
+   *
    * @param ts
    *          an arbitrary array
    * @param t
@@ -76,7 +28,7 @@ public enum Utils {
   /**
    * Deletes a specified element from an array, by reallocating an array whose
    * size is smaller by one and shifting the other elements down.
-   * 
+   *
    * @param ts
    *          an arbitrary array
    * @param i
@@ -91,7 +43,7 @@ public enum Utils {
 
   /**
    * Sorts an array
-   * 
+   *
    * @param is
    *          what to sort
    * @return the given array with elements in sorted order
@@ -103,7 +55,7 @@ public enum Utils {
 
   /**
    * Convert multiple arguments into an array
-   * 
+   *
    * @param ts
    *          a sequence of arguments of the same type
    * @return an array representation of the parameter

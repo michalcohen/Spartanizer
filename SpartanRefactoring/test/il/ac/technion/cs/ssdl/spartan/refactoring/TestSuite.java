@@ -3,16 +3,14 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Scanner;
+
+import il.ac.technion.cs.ssdl.spartan.utils.As;
 
 /**
  * An abstract representation of our test suite, which is represented in
@@ -33,23 +31,11 @@ public abstract class TestSuite {
   /**
    * Suffix for test files.
    */
-  final static String testSuffix = ".test";
+  protected final static String testSuffix = ".test";
   /**
    * Folder in which all test cases are found
    */
   public static final File location = new File("TestCases");
-
-  static String readFile(final File f) {
-    try (final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f)))) {
-      final StringBuilder $ = new StringBuilder();
-      for (String line = r.readLine(); line != null; line = r.readLine())
-        $.append(line).append(System.lineSeparator());
-      return $.toString();
-    } catch (final IOException e) {
-      fail(e.toString());
-      return null;
-    }
-  }
 
   static Spartanization makeSpartanizationObject(final File f) {
     return makeSpartanizationObject(f.getName());
@@ -201,8 +187,8 @@ public abstract class TestSuite {
   /**
    * Makes an Input file out of a Test file
    */
-  static File makeInFile(final File f) {
-    return createTempFile(deleteTestKeyword(fileToStringBuilder(f)), TestDirection.In, f);
+  protected static File makeInFile(final File f) {
+    return createTempFile(deleteTestKeyword(As.stringBuilder(f)), TestDirection.In, f);
   }
 
   private static StringBuilder deleteTestKeyword(final StringBuilder $) {
@@ -214,8 +200,8 @@ public abstract class TestSuite {
   /**
    * Makes an Output file out of a Test file
    */
-  static File makeOutFile(final File f) {
-    final StringBuilder $ = fileToStringBuilder(f);
+  protected static File makeOutFile(final File f) {
+    final StringBuilder $ = As.stringBuilder(f);
     if ($.indexOf(testKeyword) > 0)
       $.delete(0, $.indexOf(testKeyword) + testKeyword.length() + ($.indexOf("\r\n") > 0 ? 2 : 1));
     return createTempFile($, TestDirection.Out, f);
@@ -246,16 +232,5 @@ public abstract class TestSuite {
       e.printStackTrace(); // Probably permissions problem
     }
     return $;
-  }
-
-  /**
-   * Creates a StringBuilder object out of a file object.
-   */
-  static StringBuilder fileToStringBuilder(final File f) {
-    try (final Scanner $ = new Scanner(f)) {
-      return new StringBuilder($.useDelimiter("\\Z").next());
-    } catch (final Exception e) {
-      return new StringBuilder("");
-    }
   }
 }

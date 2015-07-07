@@ -20,7 +20,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +38,8 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
  *         24.05.2014)
@@ -53,10 +54,8 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
    */
   public static enum RepositionBoolAndNull {
     /** a == null */
-    MoveRight,
-    /** null == a */
-    MoveLeft,
-    /** Don't interrupt user choice */
+    MoveRight, /** null == a */
+    MoveLeft, /** Don't interrupt user choice */
     None
   }
 
@@ -65,10 +64,10 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
    */
   public static enum RepositionRightLiteral {
     /** When right can be swapped - do it */
-    All,
-    /** Swap literal only when it is not boolean or null */
-    AllButBooleanAndNull,
-    /** When the literal appears to the right - do not swap */
+    All, /** Swap literal only when it is not boolean or null */
+    AllButBooleanAndNull, /**
+                           * When the literal appears to the right - do not swap
+                           */
     None
   }
 
@@ -77,8 +76,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
    */
   public static enum RepositionLiterals {
     /** Swap literals */
-    All,
-    /** Do not swap literals */
+    All, /** Do not swap literals */
     None
   }
 
@@ -87,8 +85,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
    */
   public static enum MessagingOptions {
     /** Swap literals */
-    Union,
-    /** Do not swap literals */
+    Union, /** Do not swap literals */
     ShowAll
   }
 
@@ -102,22 +99,22 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
 
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
-    cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final InfixExpression n) {
-        if (!inRange(m, n) || invalid(n))
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
+    u.accept(new ASTVisitor() {
+      @Override public boolean visit(final InfixExpression e) {
+        if (!inRange(m, e) || invalid(e) || ComparisonWithSpecific.withinDomain(e))
           return true;
         final AtomicBoolean hasChanged = new AtomicBoolean(false);
-        final InfixExpression newNode = transpose(t, n, hasChanged);
+        final InfixExpression newNode = transpose(t, e, hasChanged);
         if (hasChanged.get())
-          r.replace(n, newNode, null); // Replace old tree with
+          r.replace(e, newNode, null); // Replace old tree with
         return true;
       }
     });
   }
 
   static boolean invalid(final InfixExpression n) {
-    return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n)
+    return n == null || n.getLeftOperand() == null || n.getRightOperand() == null || stringReturningMethod(n)
         || containsStringLiteral(n);
   }
 
@@ -154,7 +151,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
   public InfixExpression transpose(final AST t, final InfixExpression e, final AtomicBoolean hasChanged) {
     final InfixExpression $ = (InfixExpression) ASTNode.copySubtree(t, e);
     transposeOperands($, t, new AtomicBoolean());
-    if (CompareWithSpecific.applicable($))
+    if (ComparisonWithSpecific.applicable($))
       return $;
     if (isFlipable(e.getOperator()) && longerFirst(e) && !inInfixExceptions($)) {
       flip(t, $, e);
@@ -215,7 +212,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
       ie.setRightOperand(transpose(t, (InfixExpression) r, hasChanged));
   }
 
-  @SuppressWarnings("boxing")// Justification: because ASTNode is a primitive
+  @SuppressWarnings("boxing") // Justification: because ASTNode is a primitive
   // int we can't use the generic "in" function on
   // it
   // without boxing into Integer. Any other
@@ -347,15 +344,17 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
 
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
-      @Override public boolean visit(final InfixExpression n) {
-        final AtomicBoolean hasChanged = new AtomicBoolean(false);
-        transpose(AST.newAST(AST.JLS4), n, hasChanged);
-        if (!hasChanged.get() || invalid(n))
+      @Override public boolean visit(final InfixExpression e) {
+        if (invalid(e) || ComparisonWithSpecific.withinDomain(e))
           return true;
-        for (ASTNode k = n; isInfix(k); k = k.getParent())
+        final AtomicBoolean hasChanged = new AtomicBoolean(false);
+        transpose(AST.newAST(AST.JLS8), e, hasChanged);
+        if (!hasChanged.get())
+          return true;
+        for (ASTNode k = e; isInfix(k); k = k.getParent())
           unionRangeWithList(opportunities, new Range(k));
-        if (!unionRangeWithList(opportunities, new Range(n)))
-          opportunities.add(new Range(n));
+        if (!unionRangeWithList(opportunities, new Range(e)))
+          opportunities.add(new Range(e));
         return true;
       }
     };
@@ -386,17 +385,18 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
   boolean isLonger(final Expression e1, final Expression e2) {
     if (e1 == null || e2 == null)
       return false;
-    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isLiteral(e1) || optionBoolNull == RepositionBoolAndNull.MoveLeft
-        && isLiteral(e2))
+    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isLiteral(e1)
+        || optionBoolNull == RepositionBoolAndNull.MoveLeft && isLiteral(e2))
       return true;
     // Nothing to change check
-    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isLiteral(e2) || optionBoolNull == RepositionBoolAndNull.MoveLeft
-        && isLiteral(e1) || optionBoolNull == RepositionBoolAndNull.None && (isLiteral(e2) || isLiteral(e1)))
+    if (optionBoolNull == RepositionBoolAndNull.MoveRight && isLiteral(e2)
+        || optionBoolNull == RepositionBoolAndNull.MoveLeft && isLiteral(e1)
+        || optionBoolNull == RepositionBoolAndNull.None && (isLiteral(e2) || isLiteral(e1)))
       return false;
     if (countNodes(e1) > THRESHOLD + countNodes(e2))
       return true;
     return !isMethodInvocation(e1) || !isMethodInvocation(e2) //
-    ? e1.getLength() > e2.getLength()//
+        ? e1.getLength() > e2.getLength()//
         : moreArguments((MethodInvocation) e1, (MethodInvocation) e2);
   }
 
