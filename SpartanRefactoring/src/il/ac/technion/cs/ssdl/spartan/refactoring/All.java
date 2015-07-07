@@ -114,7 +114,7 @@ public enum All {
   }
 
   private static boolean ignored(final String sparta) {
-    return 0 <= sparta.indexOf(ignoreRuleStr);
+    return sparta.indexOf(ignoreRuleStr) >= 0;
   }
 
   private static void assignRulesOptions(final String[] lines) {

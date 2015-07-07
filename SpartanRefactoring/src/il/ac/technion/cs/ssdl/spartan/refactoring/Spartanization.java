@@ -132,7 +132,7 @@ public abstract class Spartanization extends Refactoring {
   protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
 
   private final boolean isTextSelected() {
-    return selection != null && !selection.isEmpty() && 0 != selection.getLength();
+    return selection != null && !selection.isEmpty() && selection.getLength() != 0;
   }
 
   /**
@@ -249,7 +249,7 @@ public abstract class Spartanization extends Refactoring {
     textChange.setEdit(createRewrite(
         (CompilationUnit) Utils.makeParser(u).createAST(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)),
         new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).rewriteAST());
-    if (0 != textChange.getEdit().getLength())
+    if (textChange.getEdit().getLength() != 0)
       changes.add(textChange);
     pm.done();
   }
@@ -261,7 +261,7 @@ public abstract class Spartanization extends Refactoring {
     final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
     textChange.setTextType("java");
     textChange.setEdit(createRewrite(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m).rewriteAST());
-    if (0 != textChange.getEdit().getLength())
+    if (textChange.getEdit().getLength() != 0)
       if (preview)
         changes.add(textChange);
       else textChange.perform(pm);

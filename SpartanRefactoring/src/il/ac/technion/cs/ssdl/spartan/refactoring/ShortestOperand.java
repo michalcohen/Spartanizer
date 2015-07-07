@@ -117,7 +117,7 @@ public class ShortestOperand extends Spartanization {
   }
 
   static boolean invalid(final InfixExpression n) {
-    return n == null || null == n.getLeftOperand() || null == n.getRightOperand() || stringReturningMethod(n)
+    return n == null || n.getLeftOperand() == null || n.getRightOperand() == null || stringReturningMethod(n)
         || containsStringLiteral(n);
   }
 

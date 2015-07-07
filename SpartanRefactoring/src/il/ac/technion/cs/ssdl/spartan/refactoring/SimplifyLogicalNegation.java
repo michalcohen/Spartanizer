@@ -273,7 +273,7 @@ public class SimplifyLogicalNegation extends Spartanization {
       }
 
       private boolean hasOpportunity(final Expression inner) {
-        return null != asNot(inner) || null != asAndOrOr(inner) || null != asComparison(inner);
+        return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
       }
     };
   }

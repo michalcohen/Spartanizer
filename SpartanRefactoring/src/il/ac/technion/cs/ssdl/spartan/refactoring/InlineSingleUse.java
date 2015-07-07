@@ -2,8 +2,6 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isFinal;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
-import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
@@ -17,6 +15,9 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+
+import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
  * @author Artium Nihamkin (original)
@@ -62,9 +63,9 @@ public class InlineSingleUse extends Spartanization {
         final SimpleName varName = n.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
         final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-        if (1 == uses.size() && (isFinal(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()))) {
+        if (uses.size() == 1 && (isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
           r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
-          r.remove(1 != parent.fragments().size() ? n : parent, null);
+          r.remove(parent.fragments().size() != 1 ? n : parent, null);
         }
         return true;
       }
@@ -79,10 +80,14 @@ public class InlineSingleUse extends Spartanization {
 
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
-        if (1 == numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent())
-            && (isFinal(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent())))
+        if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1
+            && (isFinal(parent) || countAssignments(n, parent) == 1))
           opportunities.add(new Range(v));
         return true;
+      }
+
+      private int countAssignments(final SimpleName n, final VariableDeclarationStatement parent) {
+        return numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent());
       }
     };
   }

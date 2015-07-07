@@ -120,7 +120,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
     for (final Iterator<ReturnStatement> i = $.iterator(); i.hasNext();) {
       final ReturnStatement r = i.next();
       // Is enclosing method <code><b>void</b></code>?
-      if (null == r.getExpression())
+      if (r.getExpression() == null)
         return null;
       if (isLiteral(r))
         i.remove();

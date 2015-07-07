@@ -144,8 +144,8 @@ public enum Funcs {
     if (hasNull(t, r, varName, initalizer))
       return null;
     final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
-    $.setInitializer(null == initalizer.getParent() ? initalizer : (Expression) r.createCopyTarget(initalizer));
-    $.setName(null == varName.getParent() ? varName : (SimpleName) r.createCopyTarget(varName));
+    $.setInitializer(initalizer.getParent() == null ? initalizer : (Expression) r.createCopyTarget(initalizer));
+    $.setName(varName.getParent() == null ? varName : (SimpleName) r.createCopyTarget(varName));
     return $;
   }
 
@@ -167,9 +167,9 @@ public enum Funcs {
     if (hasNull(t, r, cond, thenExp, elseExp))
       return null;
     final ConditionalExpression $ = t.newConditionalExpression();
-    $.setExpression(null == cond.getParent() ? cond : (Expression) r.createCopyTarget(cond));
-    $.setThenExpression(null == thenExp.getParent() ? thenExp : (Expression) r.createCopyTarget(thenExp));
-    $.setElseExpression(null == elseExp.getParent() ? elseExp : (Expression) r.createCopyTarget(elseExp));
+    $.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
+    $.setThenExpression(thenExp.getParent() == null ? thenExp : (Expression) r.createCopyTarget(thenExp));
+    $.setElseExpression(elseExp.getParent() == null ? elseExp : (Expression) r.createCopyTarget(elseExp));
     return makeParenthesizedExpression(t, r, $);
   }
 
@@ -191,9 +191,9 @@ public enum Funcs {
     if (hasNull(t, r, cond, thenStmnt, elseStmnt))
       return null;
     final IfStatement $ = t.newIfStatement();
-    $.setExpression(null == cond.getParent() ? cond : (Expression) r.createCopyTarget(cond));
-    $.setThenStatement(null == thenStmnt.getParent() ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
-    $.setElseStatement(null == elseStmnt.getParent() ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
+    $.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
+    $.setThenStatement(thenStmnt.getParent() == null ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
+    $.setElseStatement(elseStmnt.getParent() == null ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
     return $;
   }
 
@@ -210,7 +210,7 @@ public enum Funcs {
     if (hasNull(t, r))
       return null;
     final ReturnStatement $ = t.newReturnStatement();
-    $.setExpression(e == null || null == e.getParent() ? e : (Expression) r.createCopyTarget(e));
+    $.setExpression(e == null || e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
     return $;
   }
 
@@ -233,8 +233,8 @@ public enum Funcs {
       return null;
     final InfixExpression $ = t.newInfixExpression();
     $.setOperator(o);
-    $.setRightOperand(null == right.getParent() ? right : (Expression) r.createCopyTarget(right));
-    $.setLeftOperand(null == left.getParent() ? left : (Expression) r.createCopyTarget(left));
+    $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
+    $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
     return $;
   }
 
@@ -257,8 +257,8 @@ public enum Funcs {
       return null;
     final Assignment $ = t.newAssignment();
     $.setOperator(o);
-    $.setRightHandSide(null == right.getParent() ? right : (Expression) r.createCopyTarget(right));
-    $.setLeftHandSide(null == left.getParent() ? left : (Expression) r.createCopyTarget(left));
+    $.setRightHandSide(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
+    $.setLeftHandSide(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
     return $;
   }
 
@@ -280,7 +280,7 @@ public enum Funcs {
       return null;
     final PrefixExpression $ = t.newPrefixExpression();
     $.setOperator(o);
-    $.setOperand(null == operand.getParent() ? operand : (Expression) r.createCopyTarget(operand));
+    $.setOperand(operand.getParent() == null ? operand : (Expression) r.createCopyTarget(operand));
     return $;
   }
 
@@ -297,7 +297,7 @@ public enum Funcs {
     if (hasNull(t, r, exp))
       return null;
     final ParenthesizedExpression $ = t.newParenthesizedExpression();
-    $.setExpression(null == exp.getParent() ? exp : (Expression) r.createCopyTarget(exp));
+    $.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
     return $;
   }
 
@@ -363,8 +363,8 @@ public enum Funcs {
    *         Contains more than one statement
    */
   public static boolean isAssignment(final ASTNode n) {
-    return isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n))) : isExpressionStatement(n)
-        && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
+    return isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n)))
+        : isExpressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
 
   /**
@@ -392,7 +392,7 @@ public enum Funcs {
   }
 
   private static Statement getBlockSingleStmnt(final Block b) {
-    return 1 != b.statements().size() ? null : (Statement) b.statements().get(0);
+    return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
   }
 
   /**
@@ -456,7 +456,7 @@ public enum Funcs {
   }
 
   private static ReturnStatement asReturn(final Block b) {
-    return 1 != b.statements().size() ? null : asReturn((Statement) b.statements().get(0));
+    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
   }
 
   /**
@@ -469,8 +469,8 @@ public enum Funcs {
    */
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
     return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-        || name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),
-            (SimpleName) name);
+        || name.getNodeType() != ASTNode.SIMPLE_NAME ? null
+            : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
   }
 
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
@@ -494,7 +494,7 @@ public enum Funcs {
       return false;
     for (final Expression name : names)
       if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-      || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+          || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
         return false;
     return true;
   }
@@ -531,7 +531,7 @@ public enum Funcs {
       return false;
     for (final Assignment asgn : asgns)
       if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
-      || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
+          || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
         return false;
     return true;
   }
@@ -694,7 +694,8 @@ public enum Funcs {
       case ASTNode.EXPRESSION_STATEMENT:
         return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
       case ASTNode.POSTFIX_EXPRESSION:
-        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT);
+        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT,
+            PostfixExpression.Operator.DECREMENT);
       case ASTNode.PREFIX_EXPRESSION:
         return in(((PrefixExpression) n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
       default:
@@ -721,7 +722,7 @@ public enum Funcs {
    * @return true if the variable is declared as final
    */
   public static boolean isFinal(final VariableDeclarationStatement v) {
-    return 0 != (Modifier.FINAL & v.getModifiers());
+    return (Modifier.FINAL & v.getModifiers()) != 0;
   }
 
   /**
@@ -873,7 +874,7 @@ public enum Funcs {
    * @return true if the Expression is literal
    */
   public static boolean isLiteral(final ASTNode n) {
-    return 0 <= Arrays.binarySearch(literals, n.getNodeType());
+    return Arrays.binarySearch(literals, n.getNodeType()) >= 0;
   }
 
   /**

@@ -91,7 +91,7 @@ public class InOutTest extends AbstractParametrizedTest {
   public static Collection<Object[]> cases() {
     return new TestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
-        if (name.endsWith(testSuffix) && 0 < fileToStringBuilder(input).indexOf(testKeyword))
+        if (name.endsWith(testSuffix) && fileToStringBuilder(input).indexOf(testKeyword) > 0)
           return objects(s, name, input, makeOutFile(input));
         if (!name.endsWith(".in"))
           return null;
