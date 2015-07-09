@@ -61,15 +61,16 @@ public class InfixTest {
   private static final String P2 = "package p; \n" + //
       "public class SpongeBob {\n" + //
       " public boolean squarePants() {\n" + //
-      " return (1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);\n" + //
-      " }";
+      " return a*b*c*d>d*e;\n" + //
+      " }"//
+      + "";
 
   @Test public void noOpportunitySp1() {
     assertNoOpportunity(new ShortestOperand(), P1);
   }
 
-  @Test public void noOpportunitySp2() {
-    assertNoOpportunity(new ShortestOperand(), P2);
+  @Test public void oneOpportunitySP2() {
+    assertOneOpportunity(new ShortestOperand(), P2);
   }
 
   @Test public void noOpportunity0() {
@@ -132,7 +133,7 @@ public class InfixTest {
 
   @Test public void t8() {
     final InfixExpression e = i("1 + 2  + 3 < 3 ");
-    assertFalse(ShortestOperand.outOfScope(e));
+    assertTrue(ShortestOperand.outOfScope(e));
   }
 
   @Test public void t9() {
@@ -142,10 +143,6 @@ public class InfixTest {
     assertFalse(ComparisonWithSpecific.withinDomain(e));
     assertFalse(ShortestOperand.stringReturningMethod(e));
     assertFalse(ShortestOperand.containsStringLiteral(e));
-  }
-
-  @Test public void noOpportunity2() {
-    assertNoOpportunity(new ShortestOperand(), P2);
   }
 
   @Test public void one() {
