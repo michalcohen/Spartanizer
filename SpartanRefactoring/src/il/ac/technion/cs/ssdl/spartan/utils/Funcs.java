@@ -3,6 +3,7 @@ package il.ac.technion.cs.ssdl.spartan.utils;
 import static il.ac.technion.cs.ssdl.spartan.utils.As.asBlock;
 import static il.ac.technion.cs.ssdl.spartan.utils.As.asExpressionStatement;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.in;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.inRange;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -27,7 +28,9 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -256,6 +259,30 @@ public enum Funcs {
    * @param r
    *          ASTRewrite for the given AST
    * @param o
+   *          the operator for the new infix expression
+   * @param left
+   *          the left expression
+   * @param right
+   *          the right expression
+   * @return the new infix expression
+   */
+  public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
+      final Expression left, final Expression right) {
+    if (hasNull(t, r, o, right, left))
+      return null;
+    final InfixExpression $ = t.newInfixExpression();
+    $.setOperator(o);
+    $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
+    $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+    return $;
+  }
+
+  /**
+   * @param t
+   *          the AST who is to own the new return statement
+   * @param r
+   *          ASTRewrite for the given AST
+   * @param o
    *          the assignment operator
    * @param right
    *          right side of the assignment, usually an expression
@@ -380,6 +407,17 @@ public enum Funcs {
   }
 
   /**
+   * @param n
+   *          the statement or block to check if it is an assignment
+   * @return true if it is an assignment or false if it is not or if the block
+   *         Contains more than one statement
+   */
+  public static boolean isAssignment(final ASTNode n) {
+    return isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n)))
+        : isExpressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
+  }
+
+  /**
    * @param b
    *          the block to check
    * @return true if a return statement exists in the block or false otherwise
@@ -447,6 +485,28 @@ public enum Funcs {
       default:
         return 1;
     }
+  }
+
+  /**
+   * @param s
+   *          The node from which to return statement.
+   * @return null if it is not possible to extract the return statement.
+   */
+  public static ReturnStatement asReturn(final ASTNode s) {
+    if (s == null)
+      return null;
+    switch (s.getNodeType()) {
+      case ASTNode.BLOCK:
+        return asReturn((Block) s);
+      case ASTNode.RETURN_STATEMENT:
+        return (ReturnStatement) s;
+      default:
+        return null;
+    }
+  }
+
+  private static ReturnStatement asReturn(final Block b) {
+    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
   }
 
   /**
@@ -637,8 +697,146 @@ public enum Funcs {
   }
 
   /**
-   * Determine whether two nodes are the same, in the sense that their textual
-   * representations is identical.
+   * @param n
+   *          node to check
+   * @return true if node is an Expression Statement of type Post or Pre
+   *         Expression with ++ or -- operator false if node is not an
+   *         Expression Statement or its a Post or Pre fix expression that its
+   *         operator is not ++ or --
+   */
+  public static boolean isNodeIncOrDecExp(final ASTNode n) {
+    switch (n.getNodeType()) {
+      case ASTNode.EXPRESSION_STATEMENT:
+        return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
+      case ASTNode.POSTFIX_EXPRESSION:
+        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT,
+            PostfixExpression.Operator.DECREMENT);
+      case ASTNode.PREFIX_EXPRESSION:
+        return in(((PrefixExpression) n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Determine if a given node is a boolean literal
+   *
+   * @param n
+   *          node to check
+   * @return true if the given node is a boolean literal or false otherwise
+   */
+  public static boolean isBooleanLiteral(final ASTNode n) {
+    return is(n, ASTNode.BOOLEAN_LITERAL);
+  }
+
+  /**
+   * Determine whether a variable declaration is final or not
+   *
+   * @param v
+   *          some declaration
+   * @return true if the variable is declared as final
+   */
+  public static boolean isFinal(final VariableDeclarationStatement v) {
+    return (Modifier.FINAL & v.getModifiers()) != 0;
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a string literal or false otherwise
+   */
+  public static boolean isStringLiteral(final ASTNode n) {
+    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a boolean or null literal or false
+   *         otherwise
+   */
+  public static boolean isBoolOrNull(final ASTNode n) {
+    return is(n, ASTNode.BOOLEAN_LITERAL) || is(n, ASTNode.NULL_LITERAL);
+  }
+
+  /**
+   * Determined if a node is an "expression statement"
+   *
+   * @param n
+   *          node to check
+   * @return true if the given node is expression statement
+   */
+  public static boolean isExpressionStatement(final ASTNode n) {
+    return is(n, ASTNode.EXPRESSION_STATEMENT);
+  }
+
+  /**
+   * Determined if a node is a return statement
+   *
+   * @param n
+   *          node to check
+   * @return true if the given node is a return statement or false otherwise
+   */
+  public static boolean isReturn(final ASTNode n) {
+    return is(n, ASTNode.RETURN_STATEMENT);
+  }
+
+  /**
+   * Determined if a node is a return statement
+   *
+   * @param n
+   *          node to check
+   * @return true if the given node is a block statement
+   */
+  public static boolean isBlock(final ASTNode n) {
+    return is(n, ASTNode.BLOCK);
+  }
+
+  private static boolean is(final ASTNode n, final int type) {
+    return n != null && type == n.getNodeType();
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a variable declaration statement or false
+   *         otherwise
+   */
+  public static boolean isVarDeclStmt(final ASTNode n) {
+    return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is an infix expression or false otherwise
+   */
+  public static boolean isInfix(final ASTNode n) {
+    return is(n, ASTNode.INFIX_EXPRESSION);
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a method invocation or false otherwise
+   */
+  public static boolean isMethodInvocation(final ASTNode n) {
+    return is(n, ASTNode.METHOD_INVOCATION);
+  }
+
+  /**
+   * @param a
+   *          the assignment who's operator we want to check
+   * @return true is the assignment's operator is assign
+   */
+  public static boolean isOpAssign(final Assignment a) {
+    return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
+  }
+
+  /**
+   * >>>>>>> 2949358a639f6cff98216d9ebc429786ffaee105 Determine whether two
+   * nodes are the same, in the sense that their textual representations is
+   * identical.
    *
    * @param n1
    *          an arbitrary node

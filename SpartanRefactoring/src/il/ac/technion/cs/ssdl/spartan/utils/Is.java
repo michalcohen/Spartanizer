@@ -2,7 +2,7 @@ package il.ac.technion.cs.ssdl.spartan.utils;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.As.asExpressionStatement;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.in;
-import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.intIsIn;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
@@ -15,7 +15,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -33,40 +32,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 public enum Is {
   ;
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a prefix expression or false otherwise
-   */
-  public static boolean isPrefix(final ASTNode n) {
-    return is(n, ASTNode.PREFIX_EXPRESSION);
-  }
-
-  private static boolean is(final ASTNode n, final int type) {
-    return n != null && type == n.getNodeType();
-  }
-
-  /**
-   * Determined if a node is a return statement
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a return statement or false otherwise
-   */
-  public static boolean isReturn(final ASTNode n) {
-    return is(n, ASTNode.RETURN_STATEMENT);
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a variable declaration statement or false
-   *         otherwise
-   */
-  public static boolean isVarDeclStmt(final ASTNode n) {
-    return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
-  }
-
   /**
    * @param n
    *          the statement or block to check if it is an assignment
@@ -89,15 +54,8 @@ public enum Is {
     return is(n, ASTNode.BLOCK);
   }
 
-  /**
-   * Determine if a given node is a boolean literal
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a boolean literal or false otherwise
-   */
-  public static boolean isBooleanLiteral(final ASTNode n) {
-    return is(n, ASTNode.BOOLEAN_LITERAL);
+  public static boolean booleanLiteral(final ASTNode e) {
+    return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
   }
 
   /**
@@ -135,14 +93,24 @@ public enum Is {
   }
 
   /**
-   * Determine whether a variable declaration is final or not
-   *
-   * @param v
-   *          some declaration
-   * @return true if the variable is declared as final
+   * @param o
+   *          The operator to check
+   * @return True - if the operator have opposite one in terms of operands swap.
    */
-  public static boolean isFinal(final VariableDeclarationStatement v) {
-    return (Modifier.FINAL & v.getModifiers()) != 0;
+  public static boolean flipable(final Operator o) {
+    return in(o, //
+        AND, //
+        EQUALS, //
+        GREATER, //
+        GREATER_EQUALS, //
+        LESS_EQUALS, //
+        LESS, //
+        NOT_EQUALS, //
+        OR, //
+        PLUS, // Too risky
+        TIMES, //
+        XOR, //
+        null);
   }
 
   /**
@@ -152,6 +120,32 @@ public enum Is {
    */
   public static boolean infix(final ASTNode n) {
     return is(n, ASTNode.INFIX_EXPRESSION);
+  }
+
+  private static boolean is(final ASTNode n, final int type) {
+    return n != null && type == n.getNodeType();
+  }
+
+  /**
+   * Determine if a given node is a boolean literal
+   *
+   * @param n
+   *          node to check
+   * @return true if the given node is a boolean literal or false otherwise
+   */
+  public static boolean isBooleanLiteral(final ASTNode n) {
+    return is(n, ASTNode.BOOLEAN_LITERAL);
+  }
+
+  /**
+   * Determine whether a variable declaration is final or not
+   *
+   * @param v
+   *          some declaration
+   * @return true if the variable is declared as final
+   */
+  public static boolean isFinal(final VariableDeclarationStatement v) {
+    return (Modifier.FINAL & v.getModifiers()) != 0;
   }
 
   /**
@@ -167,42 +161,6 @@ public enum Is {
    */
   public static <T> boolean isLast(final T t, final List<T> ts) {
     return ts.indexOf(t) == ts.size() - 1;
-  }
-
-  /**
-   * @param n
-   *          Expression node
-   * @return true if the Expression is literal
-   */
-  public static boolean literal(final ASTNode n) {
-    return Arrays.binarySearch(literals, n.getNodeType()) >= 0;
-  }
-
-  private static final int[] literals = sort(new int[] {
-      //
-      ASTNode.NULL_LITERAL, //
-      ASTNode.CHARACTER_LITERAL, //
-      ASTNode.NUMBER_LITERAL, //
-      ASTNode.STRING_LITERAL, //
-      ASTNode.BOOLEAN_LITERAL, //
-  });
-
-  /**
-   * @param r
-   *          Return Statement node
-   * @return true if the ReturnStatement is of literal type
-   */
-  public static boolean isLiteral(final ReturnStatement r) {
-    return literal(r.getExpression());
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a method invocation or false otherwise
-   */
-  public static boolean methodInvocation(final ASTNode n) {
-    return is(n, ASTNode.METHOD_INVOCATION);
   }
 
   /**
@@ -227,6 +185,76 @@ public enum Is {
     }
   }
 
+  private static boolean isOneOf(final int i, final int... is) {
+    for (final int j : is)
+      if (i == j)
+        return true;
+    return false;
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a prefix expression or false otherwise
+   */
+  public static boolean isPrefix(final ASTNode n) {
+    return is(n, ASTNode.PREFIX_EXPRESSION);
+  }
+
+  /**
+   * Determined if a node is a return statement
+   *
+   * @param n
+   *          node to check
+   * @return true if the given node is a return statement or false otherwise
+   */
+  public static boolean isReturn(final ASTNode n) {
+    return is(n, ASTNode.RETURN_STATEMENT);
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a variable declaration statement or false
+   *         otherwise
+   */
+  public static boolean isVarDeclStmt(final ASTNode n) {
+    return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
+  }
+
+  /**
+   * @param n
+   *          Expression node
+   * @return true if the Expression is literal
+   */
+  public static boolean literal(final ASTNode n) {
+    return intIsIn(n.getNodeType(), //
+        ASTNode.NULL_LITERAL, //
+        ASTNode.CHARACTER_LITERAL, //
+        ASTNode.NUMBER_LITERAL, //
+        ASTNode.STRING_LITERAL, //
+        ASTNode.BOOLEAN_LITERAL //
+    );
+  }
+
+  /**
+   * @param r
+   *          Return Statement node
+   * @return true if the ReturnStatement is of literal type
+   */
+  public static boolean literal(final ReturnStatement r) {
+    return literal(r.getExpression());
+  }
+
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a method invocation or false otherwise
+   */
+  public static boolean methodInvocation(final ASTNode n) {
+    return is(n, ASTNode.METHOD_INVOCATION);
+  }
+
   /**
    * Determine whether the type of an {@link ASTNode} node is one of given list
    *
@@ -241,22 +269,6 @@ public enum Is {
     return n == null ? false : isOneOf(n.getNodeType(), types);
   }
 
-  private static boolean isOneOf(final int i, final int... is) {
-    for (final int j : is)
-      if (i == j)
-        return true;
-    return false;
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a string literal or false otherwise
-   */
-  public static boolean stringLiteral(final ASTNode n) {
-    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
-  }
-
   /**
    * @param a
    *          the assignment who's operator we want to check
@@ -267,27 +279,11 @@ public enum Is {
   }
 
   /**
-   * @param o
-   *          The operator to check
-   * @return True - if the operator have opposite one in terms of operands swap.
+   * @param n
+   *          node to check
+   * @return true if the given node is a string literal or false otherwise
    */
-  public static boolean flipable(final Operator o) {
-    return in(o, //
-        AND, //
-        EQUALS, //
-        GREATER, //
-        GREATER_EQUALS, //
-        LESS_EQUALS, //
-        LESS, //
-        NOT_EQUALS, //
-        OR, //
-        PLUS, // Too risky
-        TIMES, //
-        XOR, //
-        null);
-  }
-
-  public static boolean booleanLiteral(final ASTNode e) {
-    return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
+  public static boolean stringLiteral(final ASTNode n) {
+    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
   }
 }

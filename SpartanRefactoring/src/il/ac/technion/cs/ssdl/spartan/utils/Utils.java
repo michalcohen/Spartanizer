@@ -15,7 +15,9 @@ public enum Utils {
    *
    * @param os
    *          an unknown number of objects
-   * @return the parameter, as an array.
+   * @return the parameter, as an array. ======= Creates a no-binding parser for
+   *         a given compilation unit
+   *
    */
   public static Object[] objects(final Object... os) {
     return os;
@@ -99,7 +101,7 @@ public enum Utils {
    *          where to search
    * @return true if the the item is found in the list
    */
-  @SafeVarargs public static boolean in(final int candidate, final int... is) {
+  @SafeVarargs public static boolean intIsIn(final int candidate, final int... is) {
     for (final int i : is)
       if (i == candidate)
         return true;

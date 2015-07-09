@@ -389,7 +389,9 @@ public class Ternarize extends Spartanization {
         && nextAsgn == null //
         && !Is.conditional(then.getRightHandSide()) //
         && prevDecl != null //
-        && prevDecl.getInitializer() != null && i.getElseStatement() == null && !Is.conditional(prevDecl.getInitializer()) //
+        && prevDecl.getInitializer() != null //
+        && i.getElseStatement() == null // 
+        && !Is.conditional(prevDecl.getInitializer()) //
         && !dependsOn(prevDecl.getName(), i.getExpression(), then.getRightHandSide())//
         ;
   }
@@ -581,7 +583,7 @@ public class Ternarize extends Spartanization {
 
   private static boolean dependsOn(final Expression expToCheck, final Expression... possiblyDependentExps) {
     for (final Expression pde : possiblyDependentExps)
-      if (Occurrences.BOTH_SEMANTIC.of(expToCheck).in(pde).size() > 0)
+      if (!Occurrences.BOTH_SEMANTIC.of(expToCheck).in(pde).isEmpty())
         return true;
     return false;
   }

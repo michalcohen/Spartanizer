@@ -104,6 +104,18 @@ public enum All {
     return sparta.indexOf(ignoreRuleStr) >= 0;
   }
 
+  private static void assignRulesOptions(final String[] lines) {
+    final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
+    if (lines == null || shortestOperandInstance == null)
+      return;
+    for (final String line : lines)
+      // There must be a way to make it looks good, it's looks similar to
+      // the case with o.equals() and the in() function but it's not the
+      // same case...
+      if (line == null)
+        continue;
+  }
+
   /**
    * Resets the enumeration with the current values from the preferences file.
    * Letting the rules notification decisions be updated without restarting

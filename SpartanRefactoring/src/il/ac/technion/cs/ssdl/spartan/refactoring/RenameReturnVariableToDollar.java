@@ -123,7 +123,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
       // Is enclosing method <code><b>void</b></code>?
       if (r.getExpression() == null)
         return null;
-      if (Is.isLiteral(r))
+      if (Is.literal(r))
         i.remove();
     }
     return $;

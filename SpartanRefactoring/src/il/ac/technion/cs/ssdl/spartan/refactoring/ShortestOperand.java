@@ -36,7 +36,53 @@ import il.ac.technion.cs.ssdl.spartan.utils.Range;
  *         24.05.2014)
  * @since 2014/05/24
  */
-public class ShortestOperand extends SpartanizationOfInfixExpression {
+public class ShortestOperand extends Spartanization {
+  // Option flags
+  /**
+   * Enumeration for null and boolean swap
+   */
+  public static enum RepositionBoolAndNull {
+    /** a == null */
+    MoveRight, /** null == a */
+    MoveLeft, /** Don't interrupt user choice */
+    None
+  }
+
+  /**
+   * Enumeration for right literal rule options
+   */
+  public static enum RepositionRightLiteral {
+    /** When right can be swapped - do it */
+    All, /** Swap literal only when it is not boolean or null */
+    AllButBooleanAndNull, /**
+                           * When the literal appears to the right - do not swap
+                           */
+    None
+  }
+
+  /**
+   * Enumeration for both side literals rule options
+   */
+  public static enum RepositionLiterals {
+    /** Swap literals */
+    All, /** Do not swap literals */
+    None
+  }
+
+  /**
+   * Enumeration for ranges of messages
+   */
+  public static enum MessagingOptions {
+    /** Swap literals */
+    Union, /** Do not swap literals */
+    ShowAll
+  }
+
+  private final RepositionRightLiteral optionRightLiteral = RepositionRightLiteral.AllButBooleanAndNull;
+  private final RepositionLiterals optionBothLiterals = RepositionLiterals.All;
+  private final RepositionBoolAndNull optionBoolNull = RepositionBoolAndNull.MoveRight;
+  private final MessagingOptions optionUnionOpportunities = MessagingOptions.Union;
+
   /** Instantiates this class */
   public ShortestOperand() {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
@@ -61,6 +107,11 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
         || stringReturningMethod(e) //
         || containsStringLiteral(e)//
         ;
+  }
+
+  static boolean invalid(final InfixExpression n) {
+    return n == null || n.getLeftOperand() == null || n.getRightOperand() == null || stringReturningMethod(n)
+        || containsStringLiteral(n);
   }
 
   static boolean containsStringLiteral(final ASTNode n) {
@@ -114,11 +165,6 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
       ie.setRightOperand(transpose(t, (InfixExpression) r));
   }
 
-  // int we can't use the generic "in" function on
-  // it
-  // without boxing into Integer. Any other
-  // solution
-  // will cause less readable/maintainable code.
   private boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
     if (Is.methodInvocation(rN))
       return true;
