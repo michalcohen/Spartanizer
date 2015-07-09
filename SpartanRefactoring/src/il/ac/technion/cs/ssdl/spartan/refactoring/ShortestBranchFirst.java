@@ -39,7 +39,6 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import il.ac.technion.cs.ssdl.spartan.utils.Is;
-import il.ac.technion.cs.ssdl.spartan.utils.Is;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
@@ -117,7 +116,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   }
 
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
-    if (Is._final(e))
+    if (Is.infix(e))
       return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), NOT);
     return !Is.isPrefix(e) || !((PrefixExpression) e).getOperator().equals(NOT) //
         ? makePrefixExpression(t, r, e, NOT) //

@@ -48,10 +48,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import il.ac.technion.cs.ssdl.spartan.utils.Funcs;
 import il.ac.technion.cs.ssdl.spartan.utils.Is;
-import il.ac.technion.cs.ssdl.spartan.utils.Is;
 import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**

@@ -13,7 +13,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -28,8 +27,6 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import il.ac.technion.cs.ssdl.spartan.utils.Is;
-import il.ac.technion.cs.ssdl.spartan.utils.Is;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
@@ -67,7 +64,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
   }
 
   static boolean containsStringLiteral(final ASTNode n) {
-    if (n == null || !Is._final(n))
+    if (n == null || !Is.infix(n))
       return false;
     final InfixExpression e = (InfixExpression) n;
     if (EQUALS == e.getOperator()) // The only permitted operator on strings
@@ -107,17 +104,16 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
     return Is.flipable(e.getOperator()) && longerFirst(e) && !inInfixExceptions(e);
   }
 
-  private void transposeOperands(final InfixExpression ie, final AST t, final AtomicBoolean hasChanged) {
+  void transposeOperands(final InfixExpression ie, final AST t) {
     final Expression l = ie.getLeftOperand();
     // sortInfix($);
-    if (Is._final(l))
+    if (Is.infix(l))
       ie.setLeftOperand(transpose(t, (InfixExpression) l));
     final Expression r = ie.getRightOperand();
-    if (Is._final(r))
+    if (Is.infix(r))
       ie.setRightOperand(transpose(t, (InfixExpression) r));
   }
 
-  @SuppressWarnings("boxing") // Justification: because ASTNode is a primitive
   // int we can't use the generic "in" function on
   // it
   // without boxing into Integer. Any other
@@ -131,7 +127,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
     return Is.literal(rN);
   }
 
-  private boolean inOperandExceptions(final ASTNode n, final Operator o) {
+  private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
     return Is.literal(n) ? true : o == PLUS && Is.stringLiteral(n);
   }
 
@@ -189,7 +185,7 @@ public class ShortestOperand extends SpartanizationOfInfixExpression {
    * @see areOverlapped
    * @see mergerangeList
    */
-  protected boolean unionRangeWithList(final List<Range> rs, final Range rNew) {
+  protected static boolean unionRangeWithList(final List<Range> rs, final Range rNew) {
     boolean $ = false;
     for (final Range r : rs)
       if (overlapping(r, rNew)) {
