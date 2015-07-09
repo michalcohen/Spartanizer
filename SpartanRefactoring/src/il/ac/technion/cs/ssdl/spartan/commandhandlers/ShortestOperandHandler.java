@@ -3,8 +3,8 @@ package il.ac.technion.cs.ssdl.spartan.commandhandlers;
 import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand;
 
 /**
- * a handler for {@link ShortestOperand}
- * 
+ * a handler for {@link ShortestOperandTest}
+ *
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code> (major refactoring
  *         2013/07/11)

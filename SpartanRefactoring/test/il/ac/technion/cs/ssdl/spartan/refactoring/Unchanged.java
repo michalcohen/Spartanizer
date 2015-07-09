@@ -1,6 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.objects;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.objects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -24,7 +24,7 @@ import il.ac.technion.cs.ssdl.spartan.utils.As;
  * @since 2014/05/24
  */
 @RunWith(Parameterized.class) //
-public class Unchanged extends AbstractParametrizedTest {
+public class Unchanged {
   /**
    * An object describing the required transformation
    */
@@ -54,13 +54,11 @@ public class Unchanged extends AbstractParametrizedTest {
    */
   @Test public void checkNoChange() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    if (input.getName().indexOf(testSuffix) <= 0)
+    if (input.getName().indexOf(TestSuite.testSuffix) <= 0)
       assertEquals(input(),
           TESTUtils.rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(input())).get());
-    else assertEquals(As.string(makeInFile(input)),
-        TESTUtils
-            .rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(makeInFile(input))))
-            .get());
+    else assertEquals(As.string(TestSuite.makeInFile(input)), TESTUtils.rewrite(spartanization,
+        (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(TestSuite.makeInFile(input)))).get());
   }
 
   private String input() {
@@ -73,7 +71,6 @@ public class Unchanged extends AbstractParametrizedTest {
    */
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
-    System.err.println("Hi, Mum!");
     return new TestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
         if (name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword))

@@ -1,10 +1,18 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Utils.sort;
+import static il.ac.technion.cs.ssdl.spartan.utils.As.asBlock;
+import static il.ac.technion.cs.ssdl.spartan.utils.As.asExpressionStatement;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.inRange;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.jdt.core.dom.AST;
@@ -16,10 +24,10 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -34,43 +42,85 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 public enum Funcs {
   ;
   /**
-   * Convert variadic list into an array
+   * Makes an opposite operator from a given one, which keeps its logical
+   * operation after the node swapping. e.g. "&" is commutative, therefore no
+   * change needed. "<" isn't commutative, but it has its opposite: ">=".
    *
-   * @param os
-   *          an unknown number of objects
-   * @return the parameter, as an array.
+   * @param o
+   *          The operator to flip
+   * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
+   *         "+".
    */
-  public static Object[] objects(final Object... os) {
-    return os;
+  public static Operator flip(final Operator o) {
+    return !conjugate.containsKey(o) ? o : conjugate.get(o);
+  }
+
+  private static Map<Operator, Operator> conjugate = makeConjeguates();
+
+  private static Map<Operator, Operator> makeConjeguates() {
+    final Map<Operator, Operator> $ = new HashMap<>();
+    $.put(GREATER, LESS);
+    $.put(LESS, GREATER);
+    $.put(GREATER_EQUALS, LESS_EQUALS);
+    $.put(LESS_EQUALS, GREATER_EQUALS);
+    return $;
+  }
+
+  public static InfixExpression flip(final AST t, final InfixExpression $, final InfixExpression e) {
+    return remake($, duplicateLeft(t, e), flip(e.getOperator()), duplicateRight(t, e));
+  }
+
+  public static void flip(final ASTRewrite r, final AST t, final InfixExpression e) {
+    final InfixExpression $ = t.newInfixExpression();
+    r.replace(e, flip(t, $, e), null); // Replace old tree with
+  }
+
+  public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o,
+      final Expression right) {
+    $.setRightOperand(left);
+    $.setOperator(o);
+    $.setLeftOperand(right);
+    return $;
+  }
+
+  public static InfixExpression duplicate(final AST t, final InfixExpression e) {
+    return (InfixExpression) ASTNode.copySubtree(t, e);
+  }
+
+  public static Expression duplicateLeft(final AST t, final InfixExpression e) {
+    return duplicate(t, e.getLeftOperand());
+  }
+
+  public static Expression duplicateRight(final AST t, final InfixExpression e) {
+    return duplicate(t, e.getRightOperand());
+  }
+
+  public static Expression duplicate(final AST t, final Expression e) {
+    return (Expression) ASTNode.copySubtree(t, e);
   }
 
   /**
-   * determine whether there is a null in a sequence of object
-   * 
-   * @param os
-   *          an unknown number of objects
-   * @return true if one of the objects is a null or false otherwise
-   */
-  public static boolean hasNull(final Object... os) {
-    for (final Object o : os)
-      if (o == null)
-        return true;
-    return false;
-  }
-
-  /**
-   * Determine whether an item is the last one in a list
-   *
+   * @param r
+   *          ASTRewrite for the given AST
    * @param t
-   *          a list item
-   * @param ts
-   *          a list
-   *
-   * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
-   *         and it is the last one in it.
+   *          the AST who is to own the new return statement
+   * @param left
+   *          the left expression
+   * @param o
+   *          the operator for the new infix expression
+   * @param right
+   *          the right expression
+   * @return the new infix expression
    */
-  public static <T> boolean isLast(final T t, final List<T> ts) {
-    return ts.indexOf(t) == ts.size() - 1;
+  public static InfixExpression makeInfixExpression(final ASTRewrite r, final AST t, final Expression left, final Operator o,
+      final Expression right) {
+    if (hasNull(t, r, o, right, left))
+      return null;
+    final InfixExpression $ = t.newInfixExpression();
+    $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+    $.setOperator(o);
+    $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
+    return $;
   }
 
   /**
@@ -111,20 +161,6 @@ public enum Funcs {
    */
   public static <T> T last(final List<T> ts) {
     return ts.get(ts.size() - 1);
-  }
-
-  /**
-   * Determine whether an integer is a valid list index
-   *
-   * @param i
-   *          some integer
-   * @param ts
-   *          a list of things
-   * @return <code><b>true</b></code> <i>iff</i> the index is valid index into
-   *         the list. and it is the last one in it.
-   */
-  public static <T> boolean inRange(final int i, final List<T> ts) {
-    return i >= 0 && i < ts.size();
   }
 
   /**
@@ -240,24 +276,38 @@ public enum Funcs {
 
   /**
    * @param t
-   *          the AST who is to own the new return statement
+   *          the AST to own the newly created expression
    * @param r
    *          ASTRewrite for the given AST
-   * @param operand
+   * @param e
    *          the operand for the new prefix Expression
    * @param o
    *          the operator for the new prefix Expression
    * @return the new prefix expression or null if one of the given parameters
    *         was null
    */
-  public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression operand,
+  public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression e,
       final PrefixExpression.Operator o) {
-    if (hasNull(t, operand, o))
+    if (hasNull(t, e, o))
       return null;
     final PrefixExpression $ = t.newPrefixExpression();
     $.setOperator(o);
-    $.setOperand(operand.getParent() == null ? operand : (Expression) r.createCopyTarget(operand));
+    $.setOperand(e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
     return $;
+  }
+
+  /**
+   * @param r
+   *          ASTRewrite for the given AST
+   * @param e
+   *          the operand for the new prefix Expression
+   * @param o
+   *          the operator for the new prefix Expression
+   * @return the new prefix expression or null if one of the given parameters
+   *         was null
+   */
+  public static PrefixExpression makePrefixExpression(final ASTRewrite r, final Expression e, final PrefixExpression.Operator o) {
+    return makePrefixExpression(e.getAST(), r, e, o);
   }
 
   /**
@@ -275,6 +325,17 @@ public enum Funcs {
     final ParenthesizedExpression $ = t.newParenthesizedExpression();
     $.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
     return $;
+  }
+
+  /**
+   * @param r
+   *          ASTRewrite for the given AST
+   * @param e
+   *          the expression to put in parenthesis
+   * @return the given expression with parenthesis
+   */
+  public static ParenthesizedExpression makeParenthesizedExpression(final ASTRewrite r, final Expression e) {
+    return makeParenthesizedExpression(e.getAST(), r, e);
   }
 
   /**
@@ -298,20 +359,6 @@ public enum Funcs {
 
   /**
    * @param s
-   *          a statement or a block to extract the expression statement from
-   * @return the expression statement if n is a block or an expression statement
-   *         or null if it not an expression statement or if the block contains
-   *         more than one statement
-   */
-  public static ExpressionStatement asExpressionStatement(final Statement s) {
-    if (s == null)
-      return null;
-    final ASTNode $ = !isBlock(s) ? s : getBlockSingleStmnt(s);
-    return !isExpressionStatement($) ? null : (ExpressionStatement) $;
-  }
-
-  /**
-   * @param s
    *          a statement or block to extract the assignment from
    * @return null if the block contains more than one statement or if the
    *         statement is not an assignment or the assignment if it exists
@@ -330,17 +377,6 @@ public enum Funcs {
   public static MethodInvocation getMethodInvocation(final Statement s) {
     final ExpressionStatement $ = asExpressionStatement(s);
     return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
-  }
-
-  /**
-   * @param n
-   *          the statement or block to check if it is an assignment
-   * @return true if it is an assignment or false if it is not or if the block
-   *         Contains more than one statement
-   */
-  public static boolean isAssignment(final ASTNode n) {
-    return isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n))) : isExpressionStatement(n)
-        && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
 
   /**
@@ -414,28 +450,6 @@ public enum Funcs {
   }
 
   /**
-   * @param s
-   *          The node from which to return statement.
-   * @return null if it is not possible to extract the return statement.
-   */
-  public static ReturnStatement asReturn(final ASTNode s) {
-    if (s == null)
-      return null;
-    switch (s.getNodeType()) {
-      case ASTNode.BLOCK:
-        return asReturn((Block) s);
-      case ASTNode.RETURN_STATEMENT:
-        return (ReturnStatement) s;
-      default:
-        return null;
-    }
-  }
-
-  private static ReturnStatement asReturn(final Block b) {
-    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
-  }
-
-  /**
    * @param n
    *          the node from which to extract the proper fragment
    * @param name
@@ -445,8 +459,8 @@ public enum Funcs {
    */
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
     return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-        || name.getNodeType() != ASTNode.SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),
-            (SimpleName) name);
+        || name.getNodeType() != ASTNode.SIMPLE_NAME ? null
+            : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
   }
 
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
@@ -470,7 +484,7 @@ public enum Funcs {
       return false;
     for (final Expression name : names)
       if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-      || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+          || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
         return false;
     return true;
   }
@@ -507,7 +521,7 @@ public enum Funcs {
       return false;
     for (final Assignment asgn : asgns)
       if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
-      || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
+          || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
         return false;
     return true;
   }
@@ -574,47 +588,12 @@ public enum Funcs {
   }
 
   /**
-   * @param es
-   *          expressions to check
-   * @return true if one of the expressions is a conditional or parenthesized
-   *         conditional expression or false otherwise
-   */
-  public static boolean isConditional(final Expression... es) {
-    for (final Expression e : es) {
-      if (e == null)
-        continue;
-      switch (e.getNodeType()) {
-        default:
-          break;
-        case ASTNode.CONDITIONAL_EXPRESSION:
-          return true;
-        case ASTNode.PARENTHESIZED_EXPRESSION:
-          if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
-            return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * @param n
    *          the potential block who's statements list we return
    * @return the list of statements in n if it is a block or null otherwise
    */
   public static List<ASTNode> statements(final ASTNode n) {
     return statements(asBlock(n));
-  }
-
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link Block}
-   *
-   * @param n
-   *          what to convert
-   * @return the argument, but downcasted to a {@link Block}, or
-   *         <code><b>null</b></code> otherwise.
-   */
-  public static Block asBlock(final ASTNode n) {
-    return !(n instanceof Block) ? null : (Block) n;
   }
 
   private static List<ASTNode> statements(final Block b) {
@@ -652,224 +631,9 @@ public enum Funcs {
     if (nodes == null)
       return false;
     for (final ASTNode n : nodes)
-      if (n != null && isNodeIncOrDecExp(n))
+      if (n != null && Is.isNodeIncOrDecExp(n))
         return true;
     return false;
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if node is an Expression Statement of type Post or Pre
-   *         Expression with ++ or -- operator false if node is not an
-   *         Expression Statement or its a Post or Pre fix expression that its
-   *         operator is not ++ or --
-   */
-  public static boolean isNodeIncOrDecExp(final ASTNode n) {
-    switch (n.getNodeType()) {
-      case ASTNode.EXPRESSION_STATEMENT:
-        return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
-      case ASTNode.POSTFIX_EXPRESSION:
-        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT);
-      case ASTNode.PREFIX_EXPRESSION:
-        return in(((PrefixExpression) n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * Determine if a given node is a boolean literal
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a boolean literal or false otherwise
-   */
-  public static boolean isBooleanLiteral(final ASTNode n) {
-    return is(n, ASTNode.BOOLEAN_LITERAL);
-  }
-
-  /**
-   * Determine whether a variable declaration is final or not
-   *
-   * @param v
-   *          some declaration
-   * @return true if the variable is declared as final
-   */
-  public static boolean isFinal(final VariableDeclarationStatement v) {
-    return (Modifier.FINAL & v.getModifiers()) != 0;
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a string literal or false otherwise
-   */
-  public static boolean isStringLiteral(final ASTNode n) {
-    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
-  }
-
-  /**
-   * @param n
-   *          Expression node
-   * @return true if the Expression is literal
-   */
-  public static boolean isLiteral(final ASTNode n) {
-    return Arrays.binarySearch(literals, n.getNodeType()) >= 0;
-  }
-
-  /**
-   * Determined if a node is an "expression statement"
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is expression statement
-   */
-  public static boolean isExpressionStatement(final ASTNode n) {
-    return is(n, ASTNode.EXPRESSION_STATEMENT);
-  }
-
-  /**
-   * Determine if an item can be found in a list of values
-   *
-   * @param candidate
-   *          what to search for
-   * @param ts
-   *          where to search
-   * @return true if the the item is found in the list
-   */
-  @SafeVarargs public static <T> boolean in(final T candidate, final T... ts) {
-    for (final T t : ts)
-      if (t != null && t.equals(candidate))
-        return true;
-    return false;
-  }
-
-  /**
-   * Determine if an integer can be found in a list of values
-   *
-   * @param candidate
-   *          what to search for
-   * @param is
-   *          where to search
-   * @return true if the the item is found in the list
-   */
-  @SafeVarargs public static boolean in(final int candidate, final int... is) {
-    for (final int i : is)
-      if (i == candidate)
-        return true;
-    return false;
-  }
-
-  /**
-   * Determined if a node is a return statement
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a return statement or false otherwise
-   */
-  public static boolean isReturn(final ASTNode n) {
-    return is(n, ASTNode.RETURN_STATEMENT);
-  }
-
-  /**
-   * Determined if a node is a return statement
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a block statement
-   */
-  public static boolean isBlock(final ASTNode n) {
-    return is(n, ASTNode.BLOCK);
-  }
-
-  /**
-   * Determine whether the type of an {@link ASTNode} node is one of given list
-   *
-   * @param n
-   *          a node
-   * @param types
-   *          a list of types
-   * @return <code><b>true</b></code> <i>iff</i> function #ASTNode.getNodeType
-   *         returns one of the types provided as parameters
-   */
-  public static boolean isOneOf(final ASTNode n, final int... types) {
-    return n == null ? false : isOneOf(n.getNodeType(), types);
-  }
-
-  private static boolean isOneOf(final int i, final int... is) {
-    for (final int j : is)
-      if (i == j)
-        return true;
-    return false;
-  }
-
-  private static boolean is(final ASTNode n, final int type) {
-    return n != null && type == n.getNodeType();
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a variable declaration statement or false
-   *         otherwise
-   */
-  public static boolean isVarDeclStmt(final ASTNode n) {
-    return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is an infix expression or false otherwise
-   */
-  public static boolean isInfix(final ASTNode n) {
-    return is(n, ASTNode.INFIX_EXPRESSION);
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a method invocation or false otherwise
-   */
-  public static boolean isMethodInvocation(final ASTNode n) {
-    return is(n, ASTNode.METHOD_INVOCATION);
-  }
-
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a prefix expression or false otherwise
-   */
-  public static boolean isPrefix(final ASTNode n) {
-    return is(n, ASTNode.PREFIX_EXPRESSION);
-  }
-
-  private static final int[] literals = sort(new int[] {
-      //
-      ASTNode.NULL_LITERAL, //
-      ASTNode.CHARACTER_LITERAL, //
-      ASTNode.NUMBER_LITERAL, //
-      ASTNode.STRING_LITERAL, //
-      ASTNode.BOOLEAN_LITERAL, //
-  });
-
-  /**
-   * @param r
-   *          Return Statement node
-   * @return true if the ReturnStatement is of literal type
-   */
-  public static boolean isLiteral(final ReturnStatement r) {
-    return isLiteral(r.getExpression());
-  }
-
-  /**
-   * @param a
-   *          the assignment who's operator we want to check
-   * @return true is the assignment's operator is assign
-   */
-  public static boolean isOpAssign(final Assignment a) {
-    return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
 
   /**

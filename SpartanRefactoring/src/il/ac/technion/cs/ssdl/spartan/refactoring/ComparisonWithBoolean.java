@@ -2,7 +2,6 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
@@ -18,11 +17,14 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+import il.ac.technion.cs.ssdl.spartan.utils.Is;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
+
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * 
- * 
+ *
+ *
  */
 public class ComparisonWithBoolean extends Spartanization {
   /** Instantiates this class */
@@ -39,25 +41,22 @@ public class ComparisonWithBoolean extends Spartanization {
           return true;
         ASTNode nonliteral = null;
         BooleanLiteral literal = null;
-        if (isBooleanLiteral(n.getRightOperand()) && !isBooleanLiteral(n.getLeftOperand())) {
+        if (Is.booleanLiteral(n.getRightOperand()) && !Is.booleanLiteral(n.getLeftOperand())) {
           nonliteral = r.createMoveTarget(n.getLeftOperand());
           literal = (BooleanLiteral) n.getRightOperand();
-        } else if (!isBooleanLiteral(n.getLeftOperand()) && !isBooleanLiteral(n.getRightOperand()))
+        } else if (!Is.booleanLiteral(n.getLeftOperand()) && !Is.booleanLiteral(n.getRightOperand()))
           return true;
         else {
           nonliteral = r.createMoveTarget(n.getRightOperand());
           literal = (BooleanLiteral) n.getLeftOperand();
         }
-        r.replace(
-            n,
-            literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue()
-                && n.getOperator() == Operator.NOT_EQUALS ? nonliteral : makePrefixExpression(t, r,
-                makeParenthesizedExpression(t, r, (Expression) nonliteral), PrefixExpression.Operator.NOT), null);
+        r.replace(n,
+            literal.booleanValue() && n.getOperator() == Operator.EQUALS
+                || !literal.booleanValue() && n.getOperator() == Operator.NOT_EQUALS ? nonliteral
+                    : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, (Expression) nonliteral),
+                        PrefixExpression.Operator.NOT),
+            null);
         return true;
-      }
-
-      private boolean isBooleanLiteral(final Expression e) {
-        return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
       }
     });
   }

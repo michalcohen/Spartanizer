@@ -1,6 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.hasNull;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.hasNull;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -287,65 +288,65 @@ public class SimplifyLogicalNegation extends Spartanization {
    * @author Yossi Gil
    * @since 2014-06-14
    */
-  @FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method" }) //
+  @FixMethodOrder(MethodSorters.NAME_ASCENDING) @SuppressWarnings({ "static-method", "javadoc" }) //
   public static class TEST {
-    @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsNotNull() {
+    @Test public void asComparisonTypicalInfixIsNotNull() {
       final InfixExpression e = mock(InfixExpression.class);
       doReturn(GREATER).when(e).getOperator();
       assertNotNull(asComparison(e));
     }
 
-    @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixIsCorrect() {
+    @Test public void asComparisonTypicalInfixIsCorrect() {
       final InfixExpression i = mock(InfixExpression.class);
       doReturn(GREATER).when(i).getOperator();
       assertEquals(i, asComparison(i));
     }
 
-    @SuppressWarnings("javadoc") @Test public void asComparisonTypicalExpression() {
+    @Test public void asComparisonTypicalExpression() {
       final InfixExpression i = mock(InfixExpression.class);
       doReturn(GREATER).when(i).getOperator();
       assertNotNull(asComparison(i));
     }
 
-    @SuppressWarnings("javadoc") @Test public void asComparisonPrefixlExpression() {
+    @Test public void asComparisonPrefixlExpression() {
       final PrefixExpression p = mock(PrefixExpression.class);
-      doReturn(NOT).when(p).getOperator();
+      when(p.getOperator()).thenReturn(NOT);
       assertNull(asComparison(p));
     }
 
-    @SuppressWarnings("javadoc") @Test public void asComparisonTypicalInfixFalse() {
+    @Test public void asComparisonTypicalInfixFalse() {
       final InfixExpression i = mock(InfixExpression.class);
       doReturn(CONDITIONAL_AND).when(i).getOperator();
       assertNull(asComparison(i));
     }
 
-    @SuppressWarnings("javadoc") @Test public void asComparisonTypicalExpressionFalse() {
+    @Test public void asComparisonTypicalExpressionFalse() {
       final InfixExpression i = mock(InfixExpression.class);
       doReturn(CONDITIONAL_OR).when(i).getOperator();
       assertNull(asComparison(i));
     }
 
-    @SuppressWarnings("javadoc") @Test public void isDeMorganAND() {
+    @Test public void isDeMorganAND() {
       assertTrue(isDeMorgan(CONDITIONAL_AND));
     }
 
-    @SuppressWarnings("javadoc") @Test public void isDeMorganOR() {
+    @Test public void isDeMorganOR() {
       assertTrue(isDeMorgan(CONDITIONAL_OR));
     }
 
-    @SuppressWarnings("javadoc") @Test public void isDeMorganGreater() {
+    @Test public void isDeMorganGreater() {
       assertFalse(isDeMorgan(GREATER));
     }
 
-    @SuppressWarnings("javadoc") @Test public void isDeMorganGreaterEuals() {
+    @Test public void isDeMorganGreaterEuals() {
       assertFalse(isDeMorgan(GREATER_EQUALS));
     }
 
-    @SuppressWarnings("javadoc") @Test public void inTypicalTrue() {
+    @Test public void inTypicalTrue() {
       assertTrue(in("A", "A", "B", "C"));
     }
 
-    @SuppressWarnings("javadoc") @Test public void inTypicalFalse() {
+    @Test public void inTypicalFalse() {
       assertFalse(in("X", "A", "B", "C"));
     }
   }

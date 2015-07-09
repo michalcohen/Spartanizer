@@ -62,6 +62,11 @@ enum TESTUtils {
     assertEquals(u.toString(), 1, countOpportunities(s, u));
   }
 
+  static void assertNoOpportunity(final Spartanization s, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertEquals(u.toString(), 0, countOpportunities(s, u));
+  }
+
   static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
     try {
       s.createRewrite(u, null).rewriteAST(d, null).apply(d);

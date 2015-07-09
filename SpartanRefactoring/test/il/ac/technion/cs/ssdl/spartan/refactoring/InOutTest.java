@@ -1,10 +1,8 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.refactoring.TESTUtils.assertSimilar;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.objects;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.objects;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -28,12 +26,12 @@ import il.ac.technion.cs.ssdl.spartan.utils.As;
  * @since 2014/05/24
  */
 @RunWith(Parameterized.class) //
-public class InOutTest extends AbstractParametrizedTest {
+public class InOutTest {
   protected static void go(final Spartanization s, final File from, final File to) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(makeInFile(from));
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(TestSuite.makeInFile(from));
     assertEquals(u.toString(), 1, TESTUtils.countOpportunities(s, u));
     TESTUtils.assertOneOpportunity(s, As.string(from));
-    if (from.getName().endsWith(testSuffix)) {
+    if (from.getName().endsWith(TestSuite.testSuffix)) {
       final String expected = As.string(TestSuite.makeOutFile(to));
       final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(TestSuite.makeInFile(from))));
       assertSimilar(expected, rewrite.get());

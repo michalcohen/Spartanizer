@@ -1,26 +1,11 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.NullAndBoolAtEnd;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.NullAndBoolAtNone;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.NullAndBoolAtStart;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.doNotRepositionLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.doNotRepositionRightLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.repositionAllLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.repositionRightException;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.repositionRightLiterals;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.showEverySwap;
-import static il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesStrings.showOneSwap;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.MessagingOptions;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionBoolAndNull;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionLiterals;
-import il.ac.technion.cs.ssdl.spartan.refactoring.ShortestOperand.RepositionRightLiteral;
 import il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferencesFile;
 
 /**
@@ -40,7 +25,6 @@ public enum All {
   @SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
   @SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
   @SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
-  @SuppressWarnings("javadoc") ComparisonWithLiteral(new ShortestOperand()), //
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
   // TODO Clever chaining in 2 to 3 selected classes
@@ -120,39 +104,6 @@ public enum All {
     return sparta.indexOf(ignoreRuleStr) >= 0;
   }
 
-  private static void assignRulesOptions(final String[] lines) {
-    final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
-    if (lines == null || shortestOperandInstance == null)
-      return;
-    for (final String line : lines) {
-      // There must be a way to make it looks good, it's looks similar to
-      // the case with o.equals() and the in() function but it's not the
-      // same case...
-      if (line == null)
-        continue;
-      if (line.contains(repositionRightLiterals))
-        shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.All);
-      if (line.contains(repositionRightException))
-        shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.AllButBooleanAndNull);
-      if (line.contains(doNotRepositionRightLiterals))
-        shortestOperandInstance.setRightLiteralRule(RepositionRightLiteral.None);
-      if (line.contains(repositionAllLiterals))
-        shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.All);
-      if (line.contains(doNotRepositionLiterals))
-        shortestOperandInstance.setBothLiteralsRule(RepositionLiterals.None);
-      if (line.contains(NullAndBoolAtStart))
-        shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveLeft);
-      if (line.contains(NullAndBoolAtEnd))
-        shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.MoveRight);
-      if (line.contains(NullAndBoolAtNone))
-        shortestOperandInstance.setBoolNullLiteralsRule(RepositionBoolAndNull.None);
-      if (line.contains(showOneSwap))
-        shortestOperandInstance.setMessagingOption(MessagingOptions.Union);
-      if (line.contains(showEverySwap))
-        shortestOperandInstance.setMessagingOption(MessagingOptions.ShowAll);
-    }
-  }
-
   /**
    * Resets the enumeration with the current values from the preferences file.
    * Letting the rules notification decisions be updated without restarting
@@ -169,7 +120,6 @@ public enum All {
         put(rule);
       i++;
     }
-    assignRulesOptions(str);
     put(new SimplifyLogicalNegation());
   }
 

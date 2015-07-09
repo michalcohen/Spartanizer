@@ -1,9 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isFinal;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
-import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.List;
 
@@ -17,6 +14,10 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+
+import il.ac.technion.cs.ssdl.spartan.utils.Is;
+import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
  * @author Artium Nihamkin (original)
@@ -62,7 +63,7 @@ public class InlineSingleUse extends Spartanization {
         final SimpleName varName = n.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
         final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-        if (uses.size() == 1 && (isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
+        if (uses.size() == 1 && (Is.isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
           r.replace(uses.get(0), makeParenthesizedExpression(t, r, n.getInitializer()), null);
           r.remove(parent.fragments().size() != 1 ? n : parent, null);
         }
@@ -80,7 +81,7 @@ public class InlineSingleUse extends Spartanization {
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
         if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1
-            && (isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
+            && (Is.isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
           opportunities.add(new Range(v));
         return true;
       }

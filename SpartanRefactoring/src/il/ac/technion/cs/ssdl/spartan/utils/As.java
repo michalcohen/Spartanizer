@@ -17,8 +17,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.Statement;
 
 public enum As {
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT) {
@@ -158,5 +162,53 @@ public enum As {
     $.setKind(kind);
     $.setResolveBindings(false);
     return $;
+  }
+
+  private static ReturnStatement asReturn(final Block b) {
+    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
+  }
+
+  /**
+   * @param s
+   *          The node from which to return statement.
+   * @return null if it is not possible to extract the return statement.
+   */
+  public static ReturnStatement asReturn(final ASTNode s) {
+    if (s == null)
+      return null;
+    switch (s.getNodeType()) {
+      case ASTNode.BLOCK:
+        return asReturn((Block) s);
+      case ASTNode.RETURN_STATEMENT:
+        return (ReturnStatement) s;
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * @param s
+   *          a statement or a block to extract the expression statement from
+   * @return the expression statement if n is a block or an expression statement
+   *         or null if it not an expression statement or if the block contains
+   *         more than one statement
+   */
+  public static ExpressionStatement asExpressionStatement(final Statement s) {
+    if (s == null)
+      return null;
+    final ASTNode $ = !Is.block(s) ? s : Funcs.getBlockSingleStmnt(s);
+    return !Is.expressionStatement($) ? null : (ExpressionStatement) $;
+  }
+
+  /**
+   * Convert, is possible, an {@link ASTNode} to a {@link Block}
+   *
+   * @param n
+   *          what to convert
+   * @return the argument, but downcasted to a {@link Block}, or
+   *         <code><b>null</b></code> otherwise.
+   */
+  public static Block asBlock(final ASTNode n) {
+    return !(n instanceof Block) ? null : (Block) n;
   }
 }

@@ -2,9 +2,8 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getBlockSingleStmnt;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isInfix;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isPrefix;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeIfStmnt;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeInfixExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedConditionalExp;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
@@ -18,7 +17,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +37,10 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+
+import il.ac.technion.cs.ssdl.spartan.utils.Is;
+import il.ac.technion.cs.ssdl.spartan.utils.Is;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
  * @author Artium Nihamkin (original)
@@ -88,8 +90,8 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
       }
 
       private ParenthesizedExpression transpose(final ConditionalExpression n) {
-        return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(),
-            n.getThenExpression());
+        return n == null ? null
+            : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
       }
     });
   }
@@ -101,8 +103,8 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
     if (e instanceof InfixExpression)
       return tryNegateComparison(t, r, (InfixExpression) e);
-    return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e) : makePrefixExpression(t, r,
-        makeParenthesizedExpression(t, r, e), NOT);
+    return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e)
+        : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), NOT);
   }
 
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
@@ -110,15 +112,15 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
     if (op == null)
       return null;
     return op != CONDITIONAL_AND && op != CONDITIONAL_OR //
-    ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())//
+        ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())//
         : makeInfixExpression(r, t, negateExp(t, r, e.getLeftOperand()), op, negateExp(t, r, e.getRightOperand()));
   }
 
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
-    if (isInfix(e))
+    if (Is._final(e))
       return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), NOT);
-    return !isPrefix(e) || !((PrefixExpression) e).getOperator().equals(NOT) //
-    ? makePrefixExpression(t, r, e, NOT) //
+    return !Is.isPrefix(e) || !((PrefixExpression) e).getOperator().equals(NOT) //
+        ? makePrefixExpression(t, r, e, NOT) //
         : (Expression) r.createCopyTarget(((PrefixExpression) e).getOperand());
   }
 

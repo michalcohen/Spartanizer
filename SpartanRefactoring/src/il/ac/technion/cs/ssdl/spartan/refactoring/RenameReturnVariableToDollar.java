@@ -1,9 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.getContainerByNodeType;
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.isLiteral;
-import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
-import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +19,10 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+
+import il.ac.technion.cs.ssdl.spartan.utils.Is;
+import il.ac.technion.cs.ssdl.spartan.utils.Occurrences;
+import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
  * @author Artium Nihamkin (original)
@@ -122,7 +123,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
       // Is enclosing method <code><b>void</b></code>?
       if (r.getExpression() == null)
         return null;
-      if (isLiteral(r))
+      if (Is.isLiteral(r))
         i.remove();
     }
     return $;
