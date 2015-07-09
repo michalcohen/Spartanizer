@@ -32,9 +32,9 @@ import il.ac.technion.cs.ssdl.spartan.utils.Range;
  *         24.05.2014)
  * @since 2014/05/24
  */
-public class ExpressionSimplifier extends SpartanizationOfInfixExpression {
+public class SimplificationEngine extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
-  public ExpressionSimplifier() {
+  public SimplificationEngine() {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   };
 
