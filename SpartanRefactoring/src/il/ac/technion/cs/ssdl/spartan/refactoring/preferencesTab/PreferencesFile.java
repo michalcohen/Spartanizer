@@ -20,7 +20,7 @@ public class PreferencesFile {
    */
   public static String[] getSpartanTitle() {
     return new String[] { //
-    "Preferences file for Spartanization rules profiles", //
+        "Preferences file for Spartanization rules profiles", //
         "Please avoid editing the file manually ", //
         "--------------------------------------------------" };
   }

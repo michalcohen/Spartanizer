@@ -31,8 +31,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * to the main plug-in class. That way, preferences can be accessed directly via
  * the preference store. <p>
  *
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original) @since
- *         10/06/2014
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code>
+ *         (original) @since 10/06/2014
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> @since
  *         2014/6/16 (v2)
  */

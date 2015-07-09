@@ -27,14 +27,21 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
  * @since 2013/01/01 TODO: There <b>must</b> be an option to disable this
  *        warning in selected places. Consider this example:
  * 
- *        <pre> public static &lt;T&gt; void swap(final T[] ts, final int i,
- *        final int j) { final T t = ts[i]; ts[i] = ts[j]; ts[j] = t; } </pre>
+ *        <pre>
+ *        public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
+ *          final T t = ts[i];
+ *          ts[i] = ts[j];
+ *          ts[j] = t;
+ *        }
+ *        </pre>
  * 
  *        Require comment
  * 
- *        <pre> public static &lt;T&gt; void swap(final T[] ts, final int i,
+ *        <pre>
+ *  public static &lt;T&gt; void swap(final T[] ts, final int i,
  *        final int j) { final T t = ts[i]; // Don't move! ts[i] = ts[j]; ts[j]
- *        = t; } </pre>
+ *        = t; }
+ *        </pre>
  */
 public class ForwardDeclaration extends Spartanization {
   /** Instantiates this class */

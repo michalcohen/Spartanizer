@@ -69,6 +69,12 @@ public enum Funcs {
     return $;
   }
 
+  public static InfixExpression flip(final InfixExpression e) {
+    final AST t = e.getAST();
+    final InfixExpression $ = t.newInfixExpression();
+    return remake($, duplicateLeft(t, e), flip(e.getOperator()), duplicateRight(t, e));
+  }
+
   public static InfixExpression flip(final AST t, final InfixExpression $, final InfixExpression e) {
     return remake($, duplicateLeft(t, e), flip(e.getOperator()), duplicateRight(t, e));
   }

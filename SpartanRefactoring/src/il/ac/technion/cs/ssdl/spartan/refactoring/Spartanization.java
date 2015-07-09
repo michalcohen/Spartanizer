@@ -357,56 +357,60 @@ public abstract class Spartanization extends Refactoring {
   /**
    * @return a quickfix which automatically performs the spartanization
    */
-  public IMarkerResolution getFix() {
-    return new SpartanizationResolution();
+  public IMarkerResolution getFix(final String s) {
+    /**
+     * a quickfix which automatically performs the spartanization
+     *
+     * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
+     * @since 2013/07/01
+     */
+    return new IMarkerResolution() {
+      @Override public String getLabel() {
+        return "Do it! " + s;
+      }
+
+      @Override public void run(final IMarker m) {
+        try {
+          runAsMarkerFix(new NullProgressMonitor(), m);
+        } catch (final CoreException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    };
   }
 
   /**
    * @return a quickfix which opens a refactoring wizard with the spartanization
    */
+  public IMarkerResolution getFixWithPreview(final String s) {
+    return new IMarkerResolution() {
+      /**
+       * a quickfix which opens a refactoring wizard with the spartanization
+       *
+       * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
+       *         (v2)
+       */
+      @Override public String getLabel() {
+        return Spartanization.this + "Show me a preview of '" + s + "' first";
+      }
+
+      @Override public void run(final IMarker m) {
+        setMarker(m);
+        try {
+          new RefactoringWizardOpenOperation(new Wizard(Spartanization.this)).run(Display.getCurrent().getActiveShell(),
+              "Spartan refactoring: " + Spartanization.this);
+        } catch (final InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    };
+  }
+
+  public IMarkerResolution getFix() {
+    return getFix(getName());
+  }
+
   public IMarkerResolution getFixWithPreview() {
-    return new SpartanizationResolutionWithPreview();
-  }
-
-  /**
-   * a quickfix which automatically performs the spartanization
-   *
-   * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
-   * @since 2013/07/01
-   */
-  public class SpartanizationResolution implements IMarkerResolution {
-    @Override public String getLabel() {
-      return "Do it! " + Spartanization.this.toString();
-    }
-
-    @Override public void run(final IMarker m) {
-      try {
-        runAsMarkerFix(new NullProgressMonitor(), m);
-      } catch (final CoreException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  /**
-   * a quickfix which opens a refactoring wizard with the spartanization
-   *
-   * @author r Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
-   *         (v2)
-   */
-  public class SpartanizationResolutionWithPreview implements IMarkerResolution {
-    @Override public String getLabel() {
-      return Spartanization.this + ": Show me a preview first";
-    }
-
-    @Override public void run(final IMarker m) {
-      setMarker(m);
-      try {
-        new RefactoringWizardOpenOperation(new Wizard(Spartanization.this)).run(Display.getCurrent().getActiveShell(),
-            "Spartan refactoring: " + Spartanization.this);
-      } catch (final InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
+    return getFixWithPreview(getName());
   }
 }

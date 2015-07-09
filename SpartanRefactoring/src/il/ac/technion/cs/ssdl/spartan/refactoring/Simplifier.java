@@ -1,10 +1,21 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.countNodes;
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.flip;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.hasNull;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.in;
+import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
@@ -71,7 +82,8 @@ public abstract class Simplifier {
   }
 
   private static final Simplifier[] values = new Simplifier[] { //
-      new Simplifier() { // Comparison with boolean
+      // Comparison with boolean
+      new Simplifier() {
         @Override public final boolean withinScope(final InfixExpression e) {
           return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
               && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
@@ -87,11 +99,11 @@ public abstract class Simplifier {
           Expression nonliteral;
           BooleanLiteral literal;
           if (Is.booleanLiteral(e.getLeftOperand())) {
-            nonliteral = (Expression) r.createMoveTarget(e.getLeftOperand());
-            literal = (BooleanLiteral) e.getRightOperand();
-          } else {
-            nonliteral = (Expression) r.createMoveTarget(e.getRightOperand());
             literal = (BooleanLiteral) e.getLeftOperand();
+            nonliteral = (Expression) r.createMoveTarget(e.getRightOperand());
+          } else {
+            literal = (BooleanLiteral) e.getRightOperand();
+            nonliteral = (Expression) r.createMoveTarget(e.getLeftOperand());
           }
           return nonNegating(e, literal) ? nonliteral : negate(r, nonliteral);
         }
@@ -103,7 +115,44 @@ public abstract class Simplifier {
         private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
           return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
         }
-      }, //
+      },
+      // Compare with specific
+      new Simplifier() {
+        @Override public boolean withinScope(final InfixExpression e) {
+          return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+        }
+
+        @Override public boolean eligible(final InfixExpression e) {
+          assert withinScope(e);
+          return isSpecific(e.getLeftOperand());
+        }
+
+        @Override protected Expression replacement(final ASTRewrite r, final InfixExpression e) {
+          return flip(e);
+        }
+
+        boolean hasThisOrNull(final InfixExpression e) {
+          return isThisOrNull(e.getLeftOperand()) || isThisOrNull(e.getRightOperand());
+        }
+
+        private boolean hasOneSpecificArgument(final InfixExpression e) {
+          // One of the arguments must be specific, the other must not be.
+          return isSpecific(e.getLeftOperand()) != isSpecific(e.getRightOperand());
+        }
+
+        boolean isComparison(final InfixExpression e) {
+          return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
+        }
+
+        boolean isSpecific(final Expression e) {
+          return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+        }
+
+        boolean isThisOrNull(final Expression e) {
+          return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
+        }
+      },
+      // Longest first
       new Simplifier() {
         @Override public final boolean withinScope(final InfixExpression e) {
           return Is.flipable(e.getOperator());
@@ -116,7 +165,7 @@ public abstract class Simplifier {
 
         @Override protected Expression replacement(final ASTRewrite r, final InfixExpression e) {
           assert eligible(e);
-          return null;
+          return flip(e);
         }
       }, };
   private static final int TOKEN_THRESHOLD = 1;

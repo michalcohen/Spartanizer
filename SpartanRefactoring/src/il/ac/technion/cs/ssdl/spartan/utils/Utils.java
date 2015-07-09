@@ -10,6 +10,18 @@ import java.util.List;
  */
 public enum Utils {
   ;
+  public static String removeSuffix(final String s, final String postfix) {
+    for (String $ = s;; $ = $.substring(0, $.length() - postfix.length()))
+      if (!$.endsWith(postfix))
+        return $;
+  }
+
+  public static String removePrefix(final String s, final String prefix) {
+    for (String $ = s;; $ = $.substring(prefix.length()))
+      if (!$.startsWith(prefix))
+        return $;
+  }
+
   /**
    * Convert variadic list into an array
    *

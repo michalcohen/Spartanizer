@@ -36,7 +36,7 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
   public SimplificationEngine() {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
-  };
+  }
 
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {

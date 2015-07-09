@@ -390,7 +390,7 @@ public class Ternarize extends Spartanization {
         && !Is.conditional(then.getRightHandSide()) //
         && prevDecl != null //
         && prevDecl.getInitializer() != null //
-        && i.getElseStatement() == null // 
+        && i.getElseStatement() == null //
         && !Is.conditional(prevDecl.getInitializer()) //
         && !dependsOn(prevDecl.getName(), i.getExpression(), then.getRightHandSide())//
         ;

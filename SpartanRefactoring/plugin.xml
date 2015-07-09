@@ -2,6 +2,24 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
+         point="org.eclipse.jdt.ui.cleanUps">
+      <cleanUp
+            id="org.eclipse.jdt.copyrightsaveaction.copyright_clean_up"
+            class="il.ac.technion.cs.ssdl.spartan.builder.Builder">
+      </cleanUp>
+      
+      <cleanUpOptionsInitializer
+            class="org.eclipse.jdt.ui.internal.copyrightupdater.CopyrightOnSaveOptionsInitializer"
+            cleanUpKind="saveAction">
+      </cleanUpOptionsInitializer>
+      <cleanUpConfigurationUI
+            class="org.eclipse.jdt.ui.internal.copyrightupdater.CopyrightTabPage"
+            name="%cleanUpConfigurationUI.name"
+            cleanUpKind="saveAction">
+      </cleanUpConfigurationUI>
+   </extension>
+   
+   <extension
          id="il.ac.technion.cs.ssdl.spartan.builder.Builder"
          name="Spartanization Checker"
          point="org.eclipse.core.resources.builders">
