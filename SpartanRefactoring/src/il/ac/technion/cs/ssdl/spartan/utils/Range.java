@@ -1,5 +1,7 @@
 package il.ac.technion.cs.ssdl.spartan.utils;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
@@ -61,6 +63,15 @@ public class Range {
       if (includedIn($))
         return $;
     return null;
+  }
+
+  public void pruneIncluders(final List<Range> rs) {
+    for (;;) {
+      final Range includesMe = findIncludedIn(rs);
+      if (includesMe == null)
+        break;
+      rs.remove(includesMe);
+    }
   }
 
   /**

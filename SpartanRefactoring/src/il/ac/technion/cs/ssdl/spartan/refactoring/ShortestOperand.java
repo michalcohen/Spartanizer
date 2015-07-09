@@ -78,11 +78,6 @@ public class ShortestOperand extends Spartanization {
     ShowAll
   }
 
-  private final RepositionRightLiteral optionRightLiteral = RepositionRightLiteral.AllButBooleanAndNull;
-  private final RepositionLiterals optionBothLiterals = RepositionLiterals.All;
-  private final RepositionBoolAndNull optionBoolNull = RepositionBoolAndNull.MoveRight;
-  private final MessagingOptions optionUnionOpportunities = MessagingOptions.Union;
-
   /** Instantiates this class */
   public ShortestOperand() {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
@@ -165,7 +160,7 @@ public class ShortestOperand extends Spartanization {
       ie.setRightOperand(transpose(t, (InfixExpression) r));
   }
 
-  private boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
+  private static boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
     if (Is.methodInvocation(rN))
       return true;
     if (inOperandExceptions(rN, o) || o == PLUS && (Is.methodInvocation(rN) || Is.stringLiteral(rN)))
@@ -177,7 +172,7 @@ public class ShortestOperand extends Spartanization {
     return Is.literal(n) ? true : o == PLUS && Is.stringLiteral(n);
   }
 
-  private boolean inInfixExceptions(final InfixExpression ie) {
+  private static boolean inInfixExceptions(final InfixExpression ie) {
     final Operator $ = ie.getOperator();
     return Is.methodInvocation(ie.getLeftOperand()) && Is.methodInvocation(ie.getRightOperand())
         || inOperandExceptions(ie.getLeftOperand(), $) //
@@ -259,21 +254,9 @@ public class ShortestOperand extends Spartanization {
   }
 
   static boolean overrideInto(final Range r, final List<Range> rs) {
-    for (;;) {
-      final Range parent = findContaining(rs, r);
-      if (parent == null)
-        break;
-      rs.remove(parent);
-    }
+    r.pruneIncluders(rs);
     rs.add(r);
-    return false;
-  }
-
-  private static Range findContaining(final Iterable<Range> rs, final Range r) {
-    for (final Range $ : rs)
-      if (includedIn(r, $))
-        return $;
-    return null;
+    return true;
   }
 
   static boolean stringReturningMethod(final InfixExpression n) {
@@ -342,7 +325,7 @@ public class ShortestOperand extends Spartanization {
     return $;
   }
 
-  private boolean moveMethodsToTheBack(final List<Expression> es, final AST t, final Operator o) {
+  private static boolean moveMethodsToTheBack(final List<Expression> es, final AST t, final Operator o) {
     boolean $ = false;
     // Selective bubble sort
     for (int i = 0, size = es.size(); i < size; i++)

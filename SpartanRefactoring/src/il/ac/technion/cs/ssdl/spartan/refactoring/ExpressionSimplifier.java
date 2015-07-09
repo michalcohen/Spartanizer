@@ -66,13 +66,8 @@ public class ExpressionSimplifier extends SpartanizationOfInfixExpression {
     return overrideInto(new Range(e), rs);
   }
 
-  static boolean overrideInto(final Range r, final List<Range> rs) {
-    for (;;) {
-      final Range parent = r.findIncludedIn(rs);
-      if (parent == null)
-        break;
-      rs.remove(parent);
-    }
+  private static boolean overrideInto(final Range r, final List<Range> rs) {
+    r.pruneIncluders(rs);
     rs.add(r);
     return true;
   }
