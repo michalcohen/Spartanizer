@@ -44,7 +44,7 @@ public abstract class Simplifier {
    * but that actual application will be vacuous.
    *
    * @param e
-   *          arbitrary
+   *          John Doe
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */
@@ -52,7 +52,7 @@ public abstract class Simplifier {
 
   /**
    * @param e
-   *          some arbitrary value
+   *          John Doe
    * @return <code><b>true</b></code> <i>iff</i> the argument is legible for the
    *         simplification offered by this object.
    */
@@ -64,14 +64,13 @@ public abstract class Simplifier {
    * @param r
    *          John Doe
    * @param e
-   *          Hane Doe
+   *          Jane Doe
    * @return <code><b>true</b></code> <i>iff</i> there is room for further
    *         simplification of this expression.
    */
   public final boolean go(final ASTRewrite r, final InfixExpression e) {
-    if (!eligible(e))
-      return true;
-    r.replace(e, replacement(r, e), null);
+    if (eligible(e))
+      r.replace(e, replacement(r, e), null);
     return true;
   }
 
@@ -180,10 +179,8 @@ public abstract class Simplifier {
       return false;
     final boolean tokenWiseGreater = countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2);
     final boolean characterWiseGreater = e1.getLength() > CHARACTER_THRESHOLD + e2.getLength();
-    if (tokenWiseGreater && characterWiseGreater)
-      return true;
-    if (!tokenWiseGreater && !characterWiseGreater)
-      return false;
+    if (tokenWiseGreater == characterWiseGreater) // In case both metrics agree
+      return tokenWiseGreater;
     return moreArguments(e1, e2);
   }
 

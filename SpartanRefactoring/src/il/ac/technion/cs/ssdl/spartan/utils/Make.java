@@ -8,42 +8,16 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 
 public enum Make {
-  COMPILIATION_UNIT {
-    /**
-     * @see il.ac.technion.cs.ssdl.spartan.utils.As#kind()
-     * @see ASTParser#K_COMPILATION_UNIT
-     */
-    @Override int kind() {
-      return ASTParser.K_COMPILATION_UNIT;
-    }
-  },
-  EXPRESSION {
-    /**
-     * @see il.ac.technion.cs.ssdl.spartan.utils.As#kind()
-     * @see ASTParser#K_EXPRESSION
-     */
-    @Override int kind() {
-      return ASTParser.K_EXPRESSION;
-    }
-  },
-  STATEMENTS {
-    /**
-     * @see il.ac.technion.cs.ssdl.spartan.utils.As#kind()
-     * @see ASTParser#K_STATEMENTS
-     */
-    @Override int kind() {
-      return ASTParser.K_STATEMENTS;
-    }
-  },
-  CLASS_BODY_DECLARATIONS {
-    /**
-     * @see il.ac.technion.cs.ssdl.spartan.utils.As#kind()
-     * @see ASTParser#K_CLASS_BODY_DECLARATIONS
-     */
-    @Override int kind() {
-      return ASTParser.K_CLASS_BODY_DECLARATIONS;
-    }
-  };
+  COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT), //
+  EXPRESSION(ASTParser.K_EXPRESSION), //
+  STATEMENTS(ASTParser.K_STATEMENTS), //
+  CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS); //
+  private final int kind;
+
+  private Make(final int kind) {
+    this.kind = kind;
+  }
+
   /**
    * Creates a no-binding parser for a given text
    *
@@ -91,12 +65,10 @@ public enum Make {
 
   private ASTParser parser() {
     final ASTParser $ = ASTParser.newParser(AST.JLS8);
-    $.setKind(kind());
+    $.setKind(kind);
     $.setResolveBindings(false);
     return $;
   }
-
-  abstract int kind();
 
   public static Make of(final As a) {
     switch (a) {

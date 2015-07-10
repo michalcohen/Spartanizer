@@ -2,9 +2,11 @@ package il.ac.technion.cs.ssdl.spartan.refactoring;
 
 import static il.ac.technion.cs.ssdl.spartan.refactoring.TESTUtils.assertOneOpportunity;
 import static il.ac.technion.cs.ssdl.spartan.refactoring.TESTUtils.assertSimilar;
+import static il.ac.technion.cs.ssdl.spartan.refactoring.TESTUtils.compressSpaces;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.removePrefix;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.removeSuffix;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
@@ -59,6 +61,10 @@ public class SimplificationEngineTest {
 
   private void assertSimplifiesTo(final String from, final String expected) {
     final String result = peel(apply(new SimplificationEngine(), wrap(from)));
+    if (result.equals(from))
+      assertNotEquals("No similification of " + from, from, result);
+    if (compressSpaces(result).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(result), compressSpaces(from));
     assertSimilar(expected, result);
   }
 
@@ -158,6 +164,18 @@ public class SimplificationEngineTest {
     assertNoChange("very(complicate,func,-ction,call) <= null");
     assertNoChange("very(complicate,func,-ction,call) >= this");
     assertNoChange("very(complicate,func,-ction,call) >= null");
+  }
+
+  @Test public void twoMultiplication0() {
+    assertSimplifiesTo("f(a,b,c,d) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d)");
+  }
+
+  @Test public void twoMultiplication1() {
+    assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
+  }
+
+  @Test public void threeMultiplication() {
+    assertSimplifiesTo("f(a,b,c,d) * f(a,b,c) * f()", "f() * f(a,b,c) * f(a,b,c,d)");
   }
 
   @Test public void desiredSimplificationOfExample() {

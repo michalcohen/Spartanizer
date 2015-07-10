@@ -26,10 +26,8 @@ public enum Utils {
    * Convert variadic list into an array
    *
    * @param os
-   *          an unknown number of objects
-   * @return the parameter, as an array. ======= Creates a no-binding parser for
-   *         a given compilation unit
-   *
+   *          _
+   * @return the parameter, as an array.
    */
   public static Object[] objects(final Object... os) {
     return os;

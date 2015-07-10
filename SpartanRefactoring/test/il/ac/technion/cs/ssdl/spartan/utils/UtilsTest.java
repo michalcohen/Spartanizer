@@ -2,8 +2,12 @@ package il.ac.technion.cs.ssdl.spartan.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.JVM) //
+@SuppressWarnings({ "static-method", "javadoc" }) //
 public class UtilsTest {
   @Test public void removePrefixTypical() {
     assertEquals(Utils.removePrefix("AAAABC", "AA"), "BC");

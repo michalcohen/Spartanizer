@@ -30,7 +30,7 @@ enum TESTUtils {
     assertNotEquals(compressSpaces(expected), compressSpaces(actual));
   }
 
-  private static String compressSpaces(final String s) {
+  public static String compressSpaces(final String s) {
     String $ = s//
         .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
         .replaceAll("[ \t]+", " ") // Squeeze whites
