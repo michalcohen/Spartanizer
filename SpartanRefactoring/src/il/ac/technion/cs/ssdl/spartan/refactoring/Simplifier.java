@@ -33,12 +33,11 @@ import il.ac.technion.cs.ssdl.spartan.utils.Is;
  *
  */
 public abstract class Simplifier {
-  private final String name;
+  final String name;
 
-  public Simplifier(final String name) {
+  Simplifier(final String name) {
     this.name = name;
   }
-
   /**
    * Determines whether this {@link Simplifier} object is applicable for a given
    * {@InfixExpression} is within the "scope" of this . Note that it could be
@@ -51,7 +50,6 @@ public abstract class Simplifier {
    *         scope of this object
    */
   public abstract boolean withinScope(InfixExpression e);
-
   /**
    * @param e
    *          John Doe
@@ -62,16 +60,12 @@ public abstract class Simplifier {
     assert withinScope(e);
     return _eligible(e);
   }
-
   final Expression replacement(final ASTRewrite r, final InfixExpression e) {
     assert eligible(e);
     return _replacement(r, e);
   }
-
   abstract Expression _replacement(ASTRewrite r, final InfixExpression e);
-
   abstract boolean _eligible(InfixExpression e);
-
   /**
    * Record a rewrite
    *
@@ -87,120 +81,101 @@ public abstract class Simplifier {
       r.replace(e, replacement(r, e), null);
     return true;
   }
-
   public static Simplifier find(final String name) {
     for (final Simplifier $ : values)
       if ($.name.equals(name))
         return $;
     return null;
   }
-
   public static Simplifier find(final InfixExpression e) {
     for (final Simplifier s : values())
       if (s.withinScope(e))
         return s;
     return null;
   }
-
   public static Simplifier[] values() {
     return values;
   }
 
-  private static final Simplifier[] values = new Simplifier[] { //
-      new Simplifier("Comparison with Boolean") {
-        @Override public final boolean withinScope(final InfixExpression e) {
-          return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
-              && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
-        }
-
-        @Override boolean _eligible(final InfixExpression e) {
-          assert withinScope(e);
-          return true;
-        }
-
-        @Override Expression _replacement(final ASTRewrite r, final InfixExpression e) {
-          Expression nonliteral;
-          BooleanLiteral literal;
-          if (Is.booleanLiteral(e.getLeftOperand())) {
-            literal = (BooleanLiteral) e.getLeftOperand();
-            nonliteral = (Expression) r.createMoveTarget(e.getRightOperand());
-          } else {
-            literal = (BooleanLiteral) e.getRightOperand();
-            nonliteral = (Expression) r.createMoveTarget(e.getLeftOperand());
-          }
-          return nonNegating(e, literal) ? nonliteral : negate(r, nonliteral);
-        }
-
-        private PrefixExpression negate(final ASTRewrite r, final ASTNode e) {
-          return makePrefixExpression(r, makeParenthesizedExpression(r, (Expression) e), PrefixExpression.Operator.NOT);
-        }
-
-        private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
-          return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
-        }
-      }, //
-      new Simplifier("Comparison with specific") {
-        @Override public boolean withinScope(final InfixExpression e) {
-          return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
-        }
-
-        @Override boolean _eligible(final InfixExpression e) {
-          return Is.specific(e.getLeftOperand());
-        }
-
-        @Override Expression _replacement(final ASTRewrite r, final InfixExpression e) {
-          return flip(e);
-        }
-
-        boolean hasThisOrNull(final InfixExpression e) {
-          return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
-        }
-
-        private boolean hasOneSpecificArgument(final InfixExpression e) {
-          // One of the arguments must be specific, the other must not be.
-          return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
-        }
-
-        boolean isComparison(final InfixExpression e) {
-          return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
-        }
-      },
-      //
-      new Simplifier("Shortest operand first") {
-        @Override public final boolean withinScope(final InfixExpression e) {
-          return Is.flipable(e.getOperator());
-        }
-
-        @Override public boolean _eligible(final InfixExpression e) {
-          return longerFirst(e);
-        }
-
-        @Override protected Expression _replacement(final ASTRewrite r, final InfixExpression e) {
-          return flip(e);
-        }
-      },//
+  static final Simplifier comparisionWithBoolean = new Simplifier("Comparison with Boolean") {
+    @Override public final boolean withinScope(final InfixExpression e) {
+      return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
+          && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      assert withinScope(e);
+      return true;
+    }
+    @Override Expression _replacement(final ASTRewrite r, final InfixExpression e) {
+      Expression nonliteral;
+      BooleanLiteral literal;
+      if (Is.booleanLiteral(e.getLeftOperand())) {
+        literal = (BooleanLiteral) e.getLeftOperand();
+        nonliteral = (Expression) r.createMoveTarget(e.getRightOperand());
+      } else {
+        literal = (BooleanLiteral) e.getRightOperand();
+        nonliteral = (Expression) r.createMoveTarget(e.getLeftOperand());
+      }
+      return nonNegating(e, literal) ? nonliteral : negate(r, nonliteral);
+    }
+    private PrefixExpression negate(final ASTRewrite r, final ASTNode e) {
+      return makePrefixExpression(r, makeParenthesizedExpression(r, (Expression) e), PrefixExpression.Operator.NOT);
+    }
+    private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
+      return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
+    }
   };
-  private static final int TOKEN_THRESHOLD = 1;
-  private static final int CHARACTER_THRESHOLD = 2;
+  static final Simplifier comparisionWithSpecific = new Simplifier("Comparison with specific") {
+    @Override public boolean withinScope(final InfixExpression e) {
+      return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return Is.specific(e.getLeftOperand());
+    }
+    @Override Expression _replacement(final ASTRewrite r, final InfixExpression e) {
+      return flip(e);
+    }
+    boolean hasThisOrNull(final InfixExpression e) {
+      return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
+    }
+    private boolean hasOneSpecificArgument(final InfixExpression e) {
+      // One of the arguments must be specific, the other must not be.
+      return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
+    }
+    boolean isComparison(final InfixExpression e) {
+      return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
+    }
+  };
+  static final Simplifier shortestOperandFirst = new Simplifier("Shortest operand first") {
+    @Override public final boolean withinScope(final InfixExpression e) {
+      return Is.flipable(e.getOperator());
+    }
+    @Override public boolean _eligible(final InfixExpression e) {
+      return longerFirst(e);
+    }
+    @Override protected Expression _replacement(final ASTRewrite r, final InfixExpression e) {
+      return flip(e);
+    }
+  };
+  private static final Simplifier[] values = new Simplifier[] { //
+      comparisionWithBoolean, //
+      comparisionWithSpecific, //
+      shortestOperandFirst,//
+  };
+  static final int TOKEN_THRESHOLD = 1;
 
-  static boolean longerFirst(final InfixExpression n) {
-    return isLonger(n.getLeftOperand(), n.getRightOperand());
+  static boolean longerFirst(final InfixExpression e) {
+    return isLonger(e.getLeftOperand(), e.getRightOperand());
   }
-
   static boolean isLonger(final Expression e1, final Expression e2) {
-    if (hasNull(e1, e2))
-      return false;
-    final boolean tokenWiseGreater = countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2);
-    final boolean characterWiseGreater = e1.getLength() > CHARACTER_THRESHOLD + e2.getLength();
-    if (tokenWiseGreater == characterWiseGreater) // In case both metrics agree
-      return tokenWiseGreater;
-    return moreArguments(e1, e2);
+    return !hasNull(e1, e2) && (//
+    countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2) || //
+        countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
+    );
   }
-
-  private static boolean moreArguments(final Expression e1, final Expression e2) {
+  static boolean moreArguments(final Expression e1, final Expression e2) {
     return Is.methodInvocation(e1) && Is.methodInvocation(e2) && moreArguments((MethodInvocation) e1, (MethodInvocation) e2);
   }
-
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
   }

@@ -1,6 +1,5 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
-import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.duplicate;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.duplicateLeft;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.duplicateRight;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.flip;
@@ -37,7 +36,6 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
   public SimplificationEngine() {
     super("Expression simplifier", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
@@ -48,7 +46,6 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
       }
     };
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
@@ -61,44 +58,27 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
       }
     });
   }
-
   static boolean overrideInto(final InfixExpression e, final List<Range> rs) {
     return overrideInto(new Range(e), rs);
   }
-
   private static boolean overrideInto(final Range r, final List<Range> rs) {
     r.pruneIncluders(rs);
     rs.add(r);
     return true;
   }
-
   /**
    * Transpose infix expressions recursively. Makes the shortest operand first
    * on every subtree of the node.
    *
-   * @param t
-   *          The AST - for copySubTree.
    * @param e
    *          The node.
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public static InfixExpression transpose(final AST t, final InfixExpression e) {
-    final InfixExpression $ = duplicate(t, e);
-    flip(t, $, e);
+    final InfixExpression $ = flip(e);
     sortInfix($, t);
     return $;
   }
-
-  /**
-   * @param a
-   *          b Ranges to merge
-   * @return A new merged range.
-   * @see areOverlapped
-   */
-  private static Range merge(final Range a, final Range b) {
-    return new Range(a.from < b.from ? a.from : b.from, a.to > b.to ? a.to : b.to);
-  }
-
   /**
    * Tries to union the given range with one of the elements inside the given
    * list.
@@ -116,39 +96,33 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
     boolean $ = false;
     for (final Range r : rs)
       if (r.overlapping(rNew)) {
-        merge(r, rNew);
-        rs.add(r);
+        rs.add(r.merge(rNew));
         $ = true;
         break;
       }
     removeDuplicates(rs);
     return $;
   }
-
   protected static <T> void removeDuplicates(final List<T> ts) {
     final Set<T> noDuplicates = new LinkedHashSet<>(ts);
     ts.clear();
     ts.addAll(noDuplicates);
   }
-
   static boolean stringReturningMethod(final InfixExpression n) {
     for (ASTNode parent = n.getParent(); parent != null; parent = parent.getParent())
       if (Is.isReturn(parent) && doesMthdRetString(parent))
         return true;
     return false;
   }
-
   private static boolean doesMthdRetString(final ASTNode n) {
     for (ASTNode p = n.getParent(); p != null; p = p.getParent())
       if (p.getNodeType() == ASTNode.METHOD_DECLARATION)
         return ((MethodDeclaration) p).getReturnType2().toString().equals("String");
     return false;
   }
-
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
   }
-
   static boolean sortInfix(final InfixExpression e, final AST t) {
     boolean $ = false;
     if (e == null || !Is.flipable(e.getOperator()) || !e.hasExtendedOperands())
@@ -171,7 +145,7 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
     eo.remove(0);
     // (Left = a) (Right = b) | c, d, e, f
     // if (longerFirst(e) && !inInfixExceptions(e)) {
-    remake(e, duplicateLeft(t, e), flip(o), duplicateRight(t, e));
+    remake(e, duplicateLeft(e), flip(o), duplicateRight(e));
     $ = true;
     // }
     return $;

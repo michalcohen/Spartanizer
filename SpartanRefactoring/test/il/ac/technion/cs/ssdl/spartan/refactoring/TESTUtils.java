@@ -1,12 +1,17 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.removePrefix;
+import static il.ac.technion.cs.ssdl.spartan.utils.Utils.removeSuffix;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -21,15 +26,12 @@ enum TESTUtils {
     if (!expected.equals(actual))
       assertEquals(compressSpaces(expected), compressSpaces(actual));
   }
-
   public static void assertSimilar(final String expected, final Document actual) {
     assertSimilar(expected, actual.get());
   }
-
   public static void assertNotEvenSimilar(final String expected, final String actual) {
     assertNotEquals(compressSpaces(expected), compressSpaces(actual));
   }
-
   public static String compressSpaces(final String s) {
     String $ = s//
         .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
@@ -44,29 +46,47 @@ enum TESTUtils {
           ;
     return $;
   }
+  static String apply(final SimplificationEngine s, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    final Document d = new Document(from);
+    return TESTUtils.rewrite(s, u, d).get();
+  }
 
+  private static final String PRE = //
+  "package p; \n" + //
+      "public class SpongeBob {\n" + //
+      " public boolean squarePants() {\n" + //
+      "   return ";
+  private static final String POST = //
+  "" + //
+      ";\n" + //
+      " }" + //
+      "}" + //
+      "";
+
+  static final String peel(final String s) {
+    return removeSuffix(removePrefix(s, PRE), POST);
+  }
+  static final String wrap(final String s) {
+    return PRE + s + POST;
+  }
   static int countOppportunities(final Spartanization s, final File f) {
     return countOppportunities(s, As.string(f));
   }
-
   protected static int countOppportunities(final Spartanization s, final String input) {
     return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
   }
-
   static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
   }
-
   static void assertOneOpportunity(final Spartanization s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertEquals(u.toString(), 1, countOpportunities(s, u));
   }
-
   static void assertNoOpportunity(final Spartanization s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertEquals(u.toString(), 0, countOpportunities(s, u));
   }
-
   static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
     try {
       s.createRewrite(u, null).rewriteAST(d, null).apply(d);
@@ -79,5 +99,56 @@ enum TESTUtils {
       fail(e.getMessage());
     }
     return null;
+  }
+  static InfixExpression asExpression(final String expression) {
+    return (InfixExpression) As.EXPRESSION.ast(expression);
+  }
+  static void assertLegible(final String name, final String expression) {
+    assertTrue(Simplifier.find(name).eligible(asExpression(expression)));
+  }
+  static void assertNoChange(final String input) {
+    assertSimilar(input, peel(apply(new SimplificationEngine(), wrap(input))));
+  }
+  static void assertNotLegible(final Simplifier s, final InfixExpression e) {
+    assertFalse(s.eligible(e));
+  }
+  static void assertNotLegible(final String name, final String expression) {
+    final Simplifier s = Simplifier.find(name);
+    final InfixExpression e = asExpression(expression);
+    assertNotLegible(s, e);
+  }
+  static void assertNotWithinScope(final Simplifier s, final InfixExpression e) {
+    assertFalse(s.withinScope(e));
+  }
+  static void assertNotWithinScope(final String name, final String expression) {
+    final Simplifier s = Simplifier.find(name);
+    final InfixExpression e = asExpression(expression);
+    assertNotWithinScope(s, e);
+  }
+  static void assertSimplifiesTo(final String from, final String expected) {
+    final String wrap = wrap(from);
+    assertEquals(from, peel(wrap));
+    final String unpeeled = apply(new SimplificationEngine(), wrap);
+    final String peeled = peel(unpeeled);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
+  }
+  static void assertWithinScope(final Simplifier s, final InfixExpression e) {
+    assertTrue(s.withinScope(e));
+  }
+  static void assertWithinScope(final String name, final String expression) {
+    final Simplifier s = Simplifier.find(name);
+    final InfixExpression e = asExpression(expression);
+    assertWithinScope(s, e);
+  }
+  static void asserWithinScope(final String name, final String expression) {
+    final Simplifier s = Simplifier.find(name);
+    final InfixExpression e = asExpression(expression);
+    assertNotWithinScope(s, e);
   }
 }

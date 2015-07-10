@@ -82,7 +82,6 @@ public class ShortestOperand extends Spartanization {
   public ShortestOperand() {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
@@ -94,7 +93,6 @@ public class ShortestOperand extends Spartanization {
       }
     });
   }
-
   static boolean outOfScope(final InfixExpression e) {
     return e == null //
         || hasNull(e.getLeftOperand(), e.getRightOperand()) //
@@ -103,12 +101,10 @@ public class ShortestOperand extends Spartanization {
         || containsStringLiteral(e)//
         ;
   }
-
   static boolean invalid(final InfixExpression n) {
     return n == null || n.getLeftOperand() == null || n.getRightOperand() == null || stringReturningMethod(n)
         || containsStringLiteral(n);
   }
-
   static boolean containsStringLiteral(final ASTNode n) {
     if (n == null || !Is.infix(n))
       return false;
@@ -125,7 +121,6 @@ public class ShortestOperand extends Spartanization {
           return true;
     return containsStringLiteral(l) || containsStringLiteral(r);
   }
-
   /**
    * Transpose infix expressions recursively. Makes the shortest operand first
    * on every subtree of the node.
@@ -140,16 +135,14 @@ public class ShortestOperand extends Spartanization {
     final InfixExpression $ = duplicate(t, e);
     System.out.println("BEGIN OP=" + e.getOperator() + " HIM MU");
     if (eligible(e))
-      flip(t, $, e);
+      flip(e);
     sortInfix($, t);
     System.out.println("END OP=" + e.getOperator() + " HIM MU");
     return $;
   }
-
   private boolean eligible(final InfixExpression e) {
     return Is.flipable(e.getOperator()) && longerFirst(e) && !inInfixExceptions(e);
   }
-
   void transposeOperands(final InfixExpression ie, final AST t) {
     final Expression l = ie.getLeftOperand();
     // sortInfix($);
@@ -159,7 +152,6 @@ public class ShortestOperand extends Spartanization {
     if (Is.infix(r))
       ie.setRightOperand(transpose(t, (InfixExpression) r));
   }
-
   private static boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
     if (Is.methodInvocation(rN))
       return true;
@@ -167,11 +159,9 @@ public class ShortestOperand extends Spartanization {
       return true;
     return Is.literal(rN);
   }
-
   private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
     return Is.literal(n) ? true : o == PLUS && Is.stringLiteral(n);
   }
-
   private static boolean inInfixExceptions(final InfixExpression ie) {
     final Operator $ = ie.getOperator();
     return Is.methodInvocation(ie.getLeftOperand()) && Is.methodInvocation(ie.getRightOperand())
@@ -186,11 +176,9 @@ public class ShortestOperand extends Spartanization {
   protected static boolean includeEachOther(final Range a, final Range b) {
     return includedIn(a, b) || includedIn(b, a);
   }
-
   private static boolean includedIn(final Range a, final Range b) {
     return a.from < b.from && a.to > b.to;
   }
-
   /**
    * Determine if the ranges are overlapping in a part of their range
    *
@@ -202,7 +190,6 @@ public class ShortestOperand extends Spartanization {
   protected static boolean overlapping(final Range a, final Range b) {
     return b.to >= a.from && a.to >= b.from || includeEachOther(a, b);
   }
-
   /**
    * @param a
    *          b Ranges to merge
@@ -212,7 +199,6 @@ public class ShortestOperand extends Spartanization {
   protected static Range merge(final Range a, final Range b) {
     return new Range(a.from < b.from ? a.from : b.from, a.to > b.to ? a.to : b.to);
   }
-
   /**
    * Tries to union the given range with one of the elements inside the given
    * list.
@@ -238,13 +224,11 @@ public class ShortestOperand extends Spartanization {
     removeDuplicates(rs);
     return $;
   }
-
   protected static <T> void removeDuplicates(final List<T> ts) {
     final Set<T> noDuplicates = new LinkedHashSet<>(ts);
     ts.clear();
     ts.addAll(noDuplicates);
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
@@ -252,31 +236,26 @@ public class ShortestOperand extends Spartanization {
       }
     };
   }
-
   static boolean overrideInto(final Range r, final List<Range> rs) {
     r.pruneIncluders(rs);
     rs.add(r);
     return true;
   }
-
   static boolean stringReturningMethod(final InfixExpression n) {
     for (ASTNode parent = n.getParent(); parent != null; parent = parent.getParent())
       if (Is.isReturn(parent) && doesMthdRetString(parent))
         return true;
     return false;
   }
-
   private static boolean doesMthdRetString(final ASTNode n) {
     for (ASTNode p = n.getParent(); p != null; p = p.getParent())
       if (p.getNodeType() == ASTNode.METHOD_DECLARATION)
         return ((MethodDeclaration) p).getReturnType2().toString().equals("String");
     return false;
   }
-
   static boolean longerFirst(final InfixExpression n) {
     return isLonger(n.getLeftOperand(), n.getRightOperand());
   }
-
   static boolean isLonger(final Expression e1, final Expression e2) {
     if (hasNull(e1, e2))
       return false;
@@ -288,15 +267,12 @@ public class ShortestOperand extends Spartanization {
       return false;
     return moreArguments(e1, e2);
   }
-
   private static boolean moreArguments(final Expression e1, final Expression e2) {
     return Is.methodInvocation(e1) && Is.methodInvocation(e2) && moreArguments((MethodInvocation) e1, (MethodInvocation) e2);
   }
-
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
   }
-
   boolean sortInfix(final InfixExpression e, final AST t) {
     boolean $ = false;
     if (e == null || !Is.flipable(e.getOperator()) || !e.hasExtendedOperands())
@@ -319,12 +295,11 @@ public class ShortestOperand extends Spartanization {
     eo.remove(0);
     // (Left = a) (Right = b) | c, d, e, f
     if (longerFirst(e) && !inInfixExceptions(e)) {
-      remake(e, duplicateLeft(t, e), flip(o), duplicateRight(t, e));
+      remake(e, duplicateLeft(e), flip(o), duplicateRight(e));
       $ = true;
     }
     return $;
   }
-
   private static boolean moveMethodsToTheBack(final List<Expression> es, final AST t, final Operator o) {
     boolean $ = false;
     // Selective bubble sort
@@ -340,7 +315,6 @@ public class ShortestOperand extends Spartanization {
       }
     return $;
   }
-
   private boolean sortOperandList(final List<Expression> es, final AST t, final Operator o) {
     boolean $ = false;
     // Bubble sort
@@ -358,12 +332,10 @@ public class ShortestOperand extends Spartanization {
       }
     return $;
   }
-
   private boolean areExpsValid(final Operator o, final Expression l, final Expression s) {
     return isLonger(l, s) && !Is.methodInvocation(l) && !Is.methodInvocation(s) && !inOperandExceptions(l, o)
         && !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o) && !inRightOperandExceptions(s, o);
   }
-
   private boolean sortExpressionList(final List<Expression> es, final AST t, final Operator o) {
     return moveMethodsToTheBack(es, t, o) | sortOperandList(es, t, o);
   }

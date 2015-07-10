@@ -54,11 +54,11 @@ public class Unchanged {
    */
   @Test public void checkNoChange() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    if (input.getName().indexOf(TestSuite.testSuffix) <= 0)
+    if (input.getName().indexOf(SATestSuite.testSuffix) <= 0)
       assertEquals(input(),
           TESTUtils.rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(input())).get());
-    else assertEquals(As.string(TestSuite.makeInFile(input)), TESTUtils.rewrite(spartanization,
-        (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(TestSuite.makeInFile(input)))).get());
+    else assertEquals(As.string(SATestSuite.makeInFile(input)), TESTUtils.rewrite(spartanization,
+        (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(SATestSuite.makeInFile(input)))).get());
   }
 
   private String input() {
@@ -71,7 +71,7 @@ public class Unchanged {
    */
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
-    return new TestSuite.Files() {
+    return new SATestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
         if (name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword))
           return objects(s, name, makeInFile(f));

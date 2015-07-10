@@ -19,7 +19,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 2014/05/24
  */
 @RunWith(Parameterized.class) //
-public class SpartanizationClassForFolderExists extends TestSuite {
+public class SpartanizationClassForFolderExists extends SATestSuite {
   /**
    * A name of a folder whose name should represent a {@link Spartanization}
    * class
@@ -39,7 +39,7 @@ public class SpartanizationClassForFolderExists extends TestSuite {
    */
   @Parameters(name = "{index}: {0}") //
   public static Collection<Object[]> cases() {
-    return new TestSuite.Directories() {
+    return new SATestSuite.Directories() {
       @Override Object[] makeCase(final File folder) {
         return objects(folder.getName());
       }

@@ -38,7 +38,6 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
   public ComparisonWithSpecific() {
     super("Specific comparison", "Specific values: 'null', 'this' and numerical literals should appear last in comparisons");
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
@@ -48,42 +47,34 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
       }
     };
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
         if (inRange(m, e) && withinDomain(e) && applicable(e))
-          flip(r, t, e);
+          r.replace(e, flip(e), null);
         return true;
       }
     });
   }
-
   static boolean applicable(final InfixExpression e) {
     return isSpecific(e.getLeftOperand());
   }
-
   static boolean withinDomain(final InfixExpression e) {
     return e != null && isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
   }
-
   private static boolean hasThisOrNull(final InfixExpression e) {
     return isThisOrNull(e.getLeftOperand()) || isThisOrNull(e.getRightOperand());
   }
-
   private static boolean hasOneSpecificArgument(final InfixExpression e) {
     // One of the arguments must be specific, the other must not be.
     return isSpecific(e.getLeftOperand()) != isSpecific(e.getRightOperand());
   }
-
   static boolean isComparison(final InfixExpression e) {
     return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
   }
-
   static boolean isSpecific(final Expression e) {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
   }
-
   static boolean isThisOrNull(final Expression e) {
     return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
   }

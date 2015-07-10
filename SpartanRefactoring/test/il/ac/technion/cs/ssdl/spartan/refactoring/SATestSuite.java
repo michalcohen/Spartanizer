@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jface.text.Document;
+
 import il.ac.technion.cs.ssdl.spartan.utils.As;
 
 /**
@@ -22,7 +25,7 @@ import il.ac.technion.cs.ssdl.spartan.utils.As;
 /**
  * @author yogi
  */
-public abstract class TestSuite {
+public abstract class SATestSuite {
   /**
    * A String determines whereas we are at the IN or OUT side of the test See
    * TestCases test files for reference.
@@ -99,12 +102,12 @@ public abstract class TestSuite {
    * An abstract class representing the concept of traversing the
    * {@link #location} while generating test cases.
    *
-   * @see TestSuite.Traverse.Files
-   * @see TestSuite.Traverse.Directories
+   * @see TestSuite.SATestSuite.Files
+   * @see TestSuite.SATestSuite.Directories
    * @author Yossi Gil
    * @since 2014/05/24
    */
-  public static abstract class Traverse extends TestSuite {
+  public static abstract class Traverse extends SATestSuite {
     /**
      * @return a collection of all test cases generated in the traversal
      */
@@ -130,12 +133,12 @@ public abstract class TestSuite {
    ** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
    *
-   * @see TestSuite.Traverse.Files
-   * @see TestSuite.Traverse
+   * @see TestSuite.SATestSuite.Files
+   * @see SATestSuite.Traverse
    * @author Yossi Gil
    * @since 2014/05/24
    */
-  public static abstract class Directories extends TestSuite.Traverse {
+  public static abstract class Directories extends SATestSuite.Traverse {
     /**
      * Adds a test case to the collection of all test cases generated in the
      * traversal
@@ -155,12 +158,12 @@ public abstract class TestSuite {
    ** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
    *
-   * @see TestSuite.Traverse.Directories
-   * @see TestSuite.Traverse
+   * @see TestSuite.SATestSuite.Directories
+   * @see SATestSuite.Traverse
    * @author Yossi Gil
    * @since 2014/05/24
    */
-  public static abstract class Files extends TestSuite.Traverse {
+  public static abstract class Files extends SATestSuite.Traverse {
     /* (non-Javadoc)
      *
      * @see
@@ -232,5 +235,11 @@ public abstract class TestSuite {
       e.printStackTrace(); // Probably permissions problem
     }
     return $;
+  }
+
+  private String apply(final SimplificationEngine s, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    final Document d = new Document(from);
+    return TESTUtils.rewrite(s, u, d).get();
   }
 }

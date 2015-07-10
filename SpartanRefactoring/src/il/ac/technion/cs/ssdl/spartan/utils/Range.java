@@ -28,7 +28,6 @@ public class Range {
     this.from = from;
     this.to = to;
   }
-
   /**
    * Instantiates from a single ASTNode
    *
@@ -38,7 +37,6 @@ public class Range {
   public Range(final ASTNode n) {
     this(n.getStartPosition(), n.getStartPosition() + n.getLength());
   }
-
   /**
    * @param r
    *          arbitrary
@@ -48,7 +46,6 @@ public class Range {
   public boolean includedIn(final Range r) {
     return from >= r.from && to <= r.to;
   }
-
   /**
    * Find an including range
    *
@@ -64,7 +61,6 @@ public class Range {
         return $;
     return null;
   }
-
   public void pruneIncluders(final List<Range> rs) {
     for (;;) {
       final Range includesMe = findIncludedIn(rs);
@@ -73,7 +69,6 @@ public class Range {
       rs.remove(includesMe);
     }
   }
-
   /**
    * Determine whether overlaps in any part another range
    *
@@ -85,7 +80,6 @@ public class Range {
   public boolean overlapping(final Range r) {
     return from >= r.from || to <= r.to;
   }
-
   /**
    * Instantiates from beginning and end ASTNodes
    *
@@ -97,14 +91,12 @@ public class Range {
   public Range(final ASTNode from, final ASTNode to) {
     this(from.getStartPosition(), to.getStartPosition() + to.getLength());
   }
-
   @Override public int hashCode() {
     final int $ = from;
     final int $$ = to;
     // Cantor pairing function
     return (int) ($ + 0.5 * ($ + $$) * ($ + 1 + $$));
   }
-
   @Override public boolean equals(final Object o) {
     boolean $ = false;
     if (o instanceof Range) {
@@ -112,5 +104,14 @@ public class Range {
       $ = from == r.from && to == r.to;
     }
     return $;
+  }
+  /**
+   * @param a
+   *          b Ranges to merge
+   * @return A new merged range.
+   * @see areOverlapped
+   */
+  public Range merge(final Range r) {
+    return new Range(from < r.from ? from : r.from, to > r.to ? to : r.to);
   }
 }

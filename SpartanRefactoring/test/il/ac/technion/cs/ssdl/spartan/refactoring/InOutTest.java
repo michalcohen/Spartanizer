@@ -28,12 +28,12 @@ import il.ac.technion.cs.ssdl.spartan.utils.As;
 @RunWith(Parameterized.class) //
 public class InOutTest {
   protected static void go(final Spartanization s, final File from, final File to) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(TestSuite.makeInFile(from));
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(SATestSuite.makeInFile(from));
     assertEquals(u.toString(), 1, TESTUtils.countOpportunities(s, u));
     TESTUtils.assertOneOpportunity(s, As.string(from));
-    if (from.getName().endsWith(TestSuite.testSuffix)) {
-      final String expected = As.string(TestSuite.makeOutFile(to));
-      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(TestSuite.makeInFile(from))));
+    if (from.getName().endsWith(SATestSuite.testSuffix)) {
+      final String expected = As.string(SATestSuite.makeOutFile(to));
+      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(SATestSuite.makeInFile(from))));
       assertSimilar(expected, rewrite.get());
     } else {
       final String expected = As.string(to);
@@ -77,7 +77,7 @@ public class InOutTest {
    */
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
-    return new TestSuite.Files() {
+    return new SATestSuite.Files() {
       @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
         if (name.endsWith(testSuffix) && As.stringBuilder(input).indexOf(testKeyword) > 0)
           return objects(s, name, input, makeOutFile(input));

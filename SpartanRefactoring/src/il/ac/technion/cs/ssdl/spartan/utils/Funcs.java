@@ -68,32 +68,23 @@ public enum Funcs {
     $.put(LESS_EQUALS, GREATER_EQUALS);
     return $;
   }
-
   public static InfixExpression flip(final InfixExpression e) {
-    return flip(e.getAST(), e.getAST().newInfixExpression(), e);
-  }
-
-  public static InfixExpression flip(final AST t, final InfixExpression $, final InfixExpression e) {
     final Operator flip = flip(e.getOperator());
-    return remake($, duplicateRight(t, e), flip, leftMoveableToRight(flip, t, e));
+    return remake(e.getAST().newInfixExpression(), rightMoveableToLeft(flip, e), flip, leftMoveableToRight(flip, e));
   }
-
-  private static Expression leftMoveableToRight(final Operator o, final AST t, final InfixExpression e) {
-    final Expression left = duplicateLeft(t, e);
-    return Precedence.of(o) == Precedence.of(left) && Associativity.isL2R(o) ? parenthesize(left) : left;
+  private static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
+    final Expression left = e.getLeftOperand();
+    return Precedence.of(o) == Precedence.of(left) && Associativity.isL2R(o) ? parenthesize(left) : duplicate(left);
   }
-
+  private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
+    final Expression right = e.getRightOperand();
+    return Precedence.of(o) == Precedence.of(right) && Associativity.isL2R(o) ? parenthesize(right) : duplicate(right);
+  }
   private static Expression parenthesize(final Expression e) {
     final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
     $.setExpression(e.getParent() == null ? e : duplicate(e));
     return $;
   }
-
-  public static void flip(final ASTRewrite r, final AST t, final InfixExpression e) {
-    final InfixExpression $ = t.newInfixExpression();
-    r.replace(e, flip(t, $, e), null); // Replace old tree with
-  }
-
   public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o,
       final Expression right) {
     $.setLeftOperand(left);
@@ -101,27 +92,18 @@ public enum Funcs {
     $.setRightOperand(right);
     return $;
   }
-
   public static Expression duplicate(final Expression e) {
-    return (InfixExpression) ASTNode.copySubtree(e.getAST(), e);
+    return (Expression) ASTNode.copySubtree(e.getAST(), e);
   }
-
   public static InfixExpression duplicate(final AST t, final InfixExpression e) {
     return (InfixExpression) ASTNode.copySubtree(t, e);
   }
-
-  public static Expression duplicateLeft(final AST t, final InfixExpression e) {
-    return duplicate(t, e.getLeftOperand());
+  public static Expression duplicateLeft(final InfixExpression e) {
+    return duplicate(e.getLeftOperand());
   }
-
-  public static Expression duplicateRight(final AST t, final InfixExpression e) {
-    return duplicate(t, e.getRightOperand());
+  public static Expression duplicateRight(final InfixExpression e) {
+    return duplicate(e.getRightOperand());
   }
-
-  public static Expression duplicate(final AST t, final Expression e) {
-    return (Expression) ASTNode.copySubtree(t, e);
-  }
-
   /**
    * @param r
    *          ASTRewrite for the given AST
@@ -145,7 +127,6 @@ public enum Funcs {
     $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
     return $;
   }
-
   /**
    * Retrieve previous item in a list
    *
@@ -160,7 +141,6 @@ public enum Funcs {
   public static <T> T prev(final int i, final List<T> ts) {
     return ts.get(i < 1 ? 0 : i - 1);
   }
-
   /**
    * Retrieve next item in a list
    *
@@ -176,7 +156,6 @@ public enum Funcs {
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
   }
-
   /**
    * @param ts
    *          a list
@@ -185,7 +164,6 @@ public enum Funcs {
   public static <T> T last(final List<T> ts) {
     return ts.get(ts.size() - 1);
   }
-
   /**
    * @param t
    *          the AST who is to own the new variable declaration fragment
@@ -207,7 +185,6 @@ public enum Funcs {
     $.setName(varName.getParent() == null ? varName : (SimpleName) r.createCopyTarget(varName));
     return $;
   }
-
   /**
    * @param t
    *          the AST who is to own the new parenthesized conditional expression
@@ -231,7 +208,6 @@ public enum Funcs {
     $.setElseExpression(elseExp.getParent() == null ? elseExp : (Expression) r.createCopyTarget(elseExp));
     return makeParenthesizedExpression(t, r, $);
   }
-
   /**
    * @param t
    *          the AST who is to own the new If Statement
@@ -255,7 +231,6 @@ public enum Funcs {
     $.setElseStatement(elseStmnt.getParent() == null ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
     return $;
   }
-
   /**
    * @param t
    *          the AST who is to own the new return statement
@@ -272,7 +247,6 @@ public enum Funcs {
     $.setExpression(e == null || e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
     return $;
   }
-
   /**
    * @param t
    *          the AST who is to own the new return statement
@@ -296,7 +270,6 @@ public enum Funcs {
     $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
     return $;
   }
-
   /**
    * @param t
    *          the AST who is to own the new return statement
@@ -320,7 +293,6 @@ public enum Funcs {
     $.setLeftHandSide(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
     return $;
   }
-
   /**
    * @param t
    *          the AST to own the newly created expression
@@ -342,7 +314,6 @@ public enum Funcs {
     $.setOperand(e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
     return $;
   }
-
   /**
    * @param r
    *          ASTRewrite for the given AST
@@ -356,7 +327,6 @@ public enum Funcs {
   public static PrefixExpression makePrefixExpression(final ASTRewrite r, final Expression e, final PrefixExpression.Operator o) {
     return makePrefixExpression(e.getAST(), r, e, o);
   }
-
   /**
    * @param t
    *          the AST who is to own the new return statement
@@ -373,7 +343,6 @@ public enum Funcs {
     $.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
     return $;
   }
-
   /**
    * @param r
    *          ASTRewrite for the given AST
@@ -384,7 +353,6 @@ public enum Funcs {
   public static ParenthesizedExpression makeParenthesizedExpression(final ASTRewrite r, final Expression e) {
     return makeParenthesizedExpression(e.getAST(), r, e);
   }
-
   /**
    * @param node
    *          a node to extract an expression from
@@ -403,7 +371,6 @@ public enum Funcs {
         return null;
     }
   }
-
   /**
    * @param s
    *          a statement or block to extract the assignment from
@@ -414,7 +381,6 @@ public enum Funcs {
     final ExpressionStatement $ = asExpressionStatement(s);
     return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
   }
-
   /**
    * @param s
    *          the statement or block to extract the method invocation from
@@ -425,7 +391,6 @@ public enum Funcs {
     final ExpressionStatement $ = asExpressionStatement(s);
     return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
   }
-
   /**
    * @param n
    *          the statement or block to check if it is an assignment
@@ -436,7 +401,6 @@ public enum Funcs {
     return isBlock(n) ? isAssignment(asExpressionStatement(getBlockSingleStmnt((Block) n)))
         : isExpressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
-
   /**
    * @param b
    *          the block to check
@@ -450,7 +414,6 @@ public enum Funcs {
         return true;
     return false;
   }
-
   /**
    * @param b
    *          the block to get the statement from
@@ -460,11 +423,9 @@ public enum Funcs {
   public static Statement getBlockSingleStmnt(final Statement b) {
     return b == null || ASTNode.BLOCK != b.getNodeType() ? b : getBlockSingleStmnt((Block) b);
   }
-
   private static Statement getBlockSingleStmnt(final Block b) {
     return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
   }
-
   /**
    * Determine whether a given statement is return or has return in it.
    *
@@ -489,7 +450,6 @@ public enum Funcs {
     }
     return false;
   }
-
   /**
    * @param node
    *          the node to get the number of statements in
@@ -506,7 +466,6 @@ public enum Funcs {
         return 1;
     }
   }
-
   /**
    * @param s
    *          The node from which to return statement.
@@ -524,11 +483,9 @@ public enum Funcs {
         return null;
     }
   }
-
   private static ReturnStatement asReturn(final Block b) {
     return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
   }
-
   /**
    * @param n
    *          the node from which to extract the proper fragment
@@ -542,14 +499,12 @@ public enum Funcs {
         || name.getNodeType() != ASTNode.SIMPLE_NAME ? null
             : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
   }
-
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)
       if (same(name, o.getName()))
         return o;
     return null;
   }
-
   /**
    * String wise comparison of all the given SimpleNames
    *
@@ -568,7 +523,6 @@ public enum Funcs {
         return false;
     return true;
   }
-
   /**
    * @param cmpTo
    *          the assignment operator to compare all to
@@ -584,7 +538,6 @@ public enum Funcs {
         return false;
     return true;
   }
-
   /**
    * the function checks if all the given assignments has the same left hand
    * side(variable) and operator
@@ -605,7 +558,6 @@ public enum Funcs {
         return false;
     return true;
   }
-
   /**
    * the function receives a condition and the then boolean value and returns
    * the proper condition (its negation if thenValue is false)
@@ -626,7 +578,6 @@ public enum Funcs {
       return null;
     return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
   }
-
   /**
    * Counts the number of nodes in the tree of which node is root.
    *
@@ -648,7 +599,6 @@ public enum Funcs {
     });
     return $.get();
   }
-
   /**
    * @param root
    *          the node whose children we return
@@ -666,7 +616,6 @@ public enum Funcs {
     $.remove(0);
     return $;
   }
-
   /**
    * @param n
    *          the potential block who's statements list we return
@@ -675,11 +624,9 @@ public enum Funcs {
   public static List<ASTNode> statements(final ASTNode n) {
     return statements(asBlock(n));
   }
-
   private static List<ASTNode> statements(final Block b) {
     return b == null ? null : b.statements();
   }
-
   /**
    * Get the containing node by type. Say we want to find the first block that
    * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
@@ -699,7 +646,6 @@ public enum Funcs {
         break;
     return $;
   }
-
   /**
    * @param nodes
    *          unknown number of nodes to check
@@ -715,7 +661,6 @@ public enum Funcs {
         return true;
     return false;
   }
-
   /**
    * @param n
    *          node to check
@@ -737,7 +682,6 @@ public enum Funcs {
         return false;
     }
   }
-
   /**
    * Determine if a given node is a boolean literal
    *
@@ -748,7 +692,6 @@ public enum Funcs {
   public static boolean isBooleanLiteral(final ASTNode n) {
     return is(n, ASTNode.BOOLEAN_LITERAL);
   }
-
   /**
    * Determine whether a variable declaration is final or not
    *
@@ -759,7 +702,6 @@ public enum Funcs {
   public static boolean isFinal(final VariableDeclarationStatement v) {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
-
   /**
    * @param n
    *          node to check
@@ -768,7 +710,6 @@ public enum Funcs {
   public static boolean isStringLiteral(final ASTNode n) {
     return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
   }
-
   /**
    * @param n
    *          node to check
@@ -778,7 +719,6 @@ public enum Funcs {
   public static boolean isBoolOrNull(final ASTNode n) {
     return is(n, ASTNode.BOOLEAN_LITERAL) || is(n, ASTNode.NULL_LITERAL);
   }
-
   /**
    * Determined if a node is an "expression statement"
    *
@@ -789,7 +729,6 @@ public enum Funcs {
   public static boolean isExpressionStatement(final ASTNode n) {
     return is(n, ASTNode.EXPRESSION_STATEMENT);
   }
-
   /**
    * Determined if a node is a return statement
    *
@@ -800,7 +739,6 @@ public enum Funcs {
   public static boolean isReturn(final ASTNode n) {
     return is(n, ASTNode.RETURN_STATEMENT);
   }
-
   /**
    * Determined if a node is a return statement
    *
@@ -811,11 +749,9 @@ public enum Funcs {
   public static boolean isBlock(final ASTNode n) {
     return is(n, ASTNode.BLOCK);
   }
-
   private static boolean is(final ASTNode n, final int type) {
     return n != null && type == n.getNodeType();
   }
-
   /**
    * @param n
    *          node to check
@@ -825,7 +761,6 @@ public enum Funcs {
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
   }
-
   /**
    * @param n
    *          node to check
@@ -834,7 +769,6 @@ public enum Funcs {
   public static boolean isInfix(final ASTNode n) {
     return is(n, ASTNode.INFIX_EXPRESSION);
   }
-
   /**
    * @param n
    *          node to check
@@ -843,7 +777,6 @@ public enum Funcs {
   public static boolean isMethodInvocation(final ASTNode n) {
     return is(n, ASTNode.METHOD_INVOCATION);
   }
-
   /**
    * @param a
    *          the assignment who's operator we want to check
@@ -852,7 +785,6 @@ public enum Funcs {
   public static boolean isOpAssign(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
-
   /**
    * >>>>>>> 2949358a639f6cff98216d9ebc429786ffaee105 Determine whether two
    * nodes are the same, in the sense that their textual representations is
@@ -867,7 +799,6 @@ public enum Funcs {
   public static boolean same(final ASTNode n1, final ASTNode n2) {
     return n1.toString().equals(n2.toString());
   }
-
   /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
