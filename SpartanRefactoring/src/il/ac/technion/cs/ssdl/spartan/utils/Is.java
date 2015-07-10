@@ -3,6 +3,10 @@ package il.ac.technion.cs.ssdl.spartan.utils;
 import static il.ac.technion.cs.ssdl.spartan.utils.As.asExpressionStatement;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.in;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.intIsIn;
+import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
@@ -285,5 +289,13 @@ public enum Is {
    */
   public static boolean stringLiteral(final ASTNode n) {
     return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
+  }
+
+  public static boolean specific(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+  }
+
+  public static boolean thisOrNull(final Expression e) {
+    return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
   }
 }

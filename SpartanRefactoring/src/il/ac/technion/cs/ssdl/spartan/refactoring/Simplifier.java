@@ -6,10 +6,6 @@ import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makeParenthesizedExpres
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.makePrefixExpression;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.hasNull;
 import static il.ac.technion.cs.ssdl.spartan.utils.Utils.in;
-import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -37,6 +33,12 @@ import il.ac.technion.cs.ssdl.spartan.utils.Is;
  *
  */
 public abstract class Simplifier {
+  private final String name;
+
+  public Simplifier(final String name) {
+    this.name = name;
+  }
+
   /**
    * Determines whether this {@link Simplifier} object is applicable for a given
    * {@InfixExpression} is within the "scope" of this . Note that it could be
@@ -56,7 +58,19 @@ public abstract class Simplifier {
    * @return <code><b>true</b></code> <i>iff</i> the argument is legible for the
    *         simplification offered by this object.
    */
-  public abstract boolean eligible(InfixExpression e);
+  final boolean eligible(final InfixExpression e) {
+    assert withinScope(e);
+    return _eligible(e);
+  }
+
+  final Expression replacement(final ASTRewrite r, final InfixExpression e) {
+    assert eligible(e);
+    return _replacement(r, e);
+  }
+
+  abstract Expression _replacement(ASTRewrite r, final InfixExpression e);
+
+  abstract boolean _eligible(InfixExpression e);
 
   /**
    * Record a rewrite
@@ -74,27 +88,37 @@ public abstract class Simplifier {
     return true;
   }
 
-  protected abstract Expression replacement(ASTRewrite r, final InfixExpression e);
+  public static Simplifier find(final String name) {
+    for (final Simplifier $ : values)
+      if ($.name.equals(name))
+        return $;
+    return null;
+  }
+
+  public static Simplifier find(final InfixExpression e) {
+    for (final Simplifier s : values())
+      if (s.withinScope(e))
+        return s;
+    return null;
+  }
 
   public static Simplifier[] values() {
     return values;
   }
 
   private static final Simplifier[] values = new Simplifier[] { //
-      // Comparison with boolean
-      new Simplifier() {
+      new Simplifier("Comparison with Boolean") {
         @Override public final boolean withinScope(final InfixExpression e) {
           return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
               && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
         }
 
-        @Override public boolean eligible(final InfixExpression e) {
+        @Override boolean _eligible(final InfixExpression e) {
           assert withinScope(e);
           return true;
         }
 
-        @Override protected Expression replacement(final ASTRewrite r, final InfixExpression e) {
-          assert eligible(e);
+        @Override Expression _replacement(final ASTRewrite r, final InfixExpression e) {
           Expression nonliteral;
           BooleanLiteral literal;
           if (Is.booleanLiteral(e.getLeftOperand())) {
@@ -114,59 +138,48 @@ public abstract class Simplifier {
         private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
           return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
         }
-      },
-      // Compare with specific
-      new Simplifier() {
+      }, //
+      new Simplifier("Comparison with specific") {
         @Override public boolean withinScope(final InfixExpression e) {
           return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
         }
 
-        @Override public boolean eligible(final InfixExpression e) {
-          assert withinScope(e);
-          return isSpecific(e.getLeftOperand());
+        @Override boolean _eligible(final InfixExpression e) {
+          return Is.specific(e.getLeftOperand());
         }
 
-        @Override protected Expression replacement(final ASTRewrite r, final InfixExpression e) {
+        @Override Expression _replacement(final ASTRewrite r, final InfixExpression e) {
           return flip(e);
         }
 
         boolean hasThisOrNull(final InfixExpression e) {
-          return isThisOrNull(e.getLeftOperand()) || isThisOrNull(e.getRightOperand());
+          return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
         }
 
         private boolean hasOneSpecificArgument(final InfixExpression e) {
           // One of the arguments must be specific, the other must not be.
-          return isSpecific(e.getLeftOperand()) != isSpecific(e.getRightOperand());
+          return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
         }
 
         boolean isComparison(final InfixExpression e) {
           return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
         }
-
-        boolean isSpecific(final Expression e) {
-          return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
-        }
-
-        boolean isThisOrNull(final Expression e) {
-          return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
-        }
       },
-      // Longest first
-      new Simplifier() {
+      //
+      new Simplifier("Shortest operand first") {
         @Override public final boolean withinScope(final InfixExpression e) {
           return Is.flipable(e.getOperator());
         }
 
-        @Override public boolean eligible(final InfixExpression e) {
-          assert withinScope(e);
+        @Override public boolean _eligible(final InfixExpression e) {
           return longerFirst(e);
         }
 
-        @Override protected Expression replacement(final ASTRewrite r, final InfixExpression e) {
-          assert eligible(e);
+        @Override protected Expression _replacement(final ASTRewrite r, final InfixExpression e) {
           return flip(e);
         }
-      }, };
+      },//
+  };
   private static final int TOKEN_THRESHOLD = 1;
   private static final int CHARACTER_THRESHOLD = 2;
 

@@ -70,13 +70,23 @@ public enum Funcs {
   }
 
   public static InfixExpression flip(final InfixExpression e) {
-    final AST t = e.getAST();
-    final InfixExpression $ = t.newInfixExpression();
-    return remake($, duplicateLeft(t, e), flip(e.getOperator()), duplicateRight(t, e));
+    return flip(e.getAST(), e.getAST().newInfixExpression(), e);
   }
 
   public static InfixExpression flip(final AST t, final InfixExpression $, final InfixExpression e) {
-    return remake($, duplicateLeft(t, e), flip(e.getOperator()), duplicateRight(t, e));
+    final Operator flip = flip(e.getOperator());
+    return remake($, duplicateRight(t, e), flip, leftMoveableToRight(flip, t, e));
+  }
+
+  private static Expression leftMoveableToRight(final Operator o, final AST t, final InfixExpression e) {
+    final Expression left = duplicateLeft(t, e);
+    return Precedence.of(o) == Precedence.of(left) && Associativity.isL2R(o) ? parenthesize(left) : left;
+  }
+
+  private static Expression parenthesize(final Expression e) {
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(e.getParent() == null ? e : duplicate(e));
+    return $;
   }
 
   public static void flip(final ASTRewrite r, final AST t, final InfixExpression e) {
@@ -86,10 +96,14 @@ public enum Funcs {
 
   public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o,
       final Expression right) {
-    $.setRightOperand(left);
+    $.setLeftOperand(left);
     $.setOperator(o);
-    $.setLeftOperand(right);
+    $.setRightOperand(right);
     return $;
+  }
+
+  public static Expression duplicate(final Expression e) {
+    return (InfixExpression) ASTNode.copySubtree(e.getAST(), e);
   }
 
   public static InfixExpression duplicate(final AST t, final InfixExpression e) {
