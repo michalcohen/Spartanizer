@@ -25,11 +25,8 @@ import il.ac.technion.cs.ssdl.spartan.utils.Is;
 import il.ac.technion.cs.ssdl.spartan.utils.Range;
 
 /**
- * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
- *         24.05.2014)
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (original /
- *         24.05.2014)
- * @since 2014/05/24
+ * @author Yossi Gil
+ * @since 2015/07/10
  */
 public class SimplificationEngine extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
@@ -138,8 +135,8 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
     // | a, e, d, b, c, f - is the list with the operands
     // $ = $ | sortExpressionList(eo, t, o);
     // | a, b, c, d, e, f - is the list after sorting
-    e.setRightOperand((Expression) ASTNode.copySubtree(t, eo.get(1)));
-    e.setLeftOperand((Expression) ASTNode.copySubtree(t, eo.get(0)));
+    e.setRightOperand((Expression) duplicate(eo.get(1)));
+    e.setLeftOperand((Expression) duplicate(eo.get(0)));
     // (Left = a) (Right = b) | a, b, c, d, e, f - retrieve the operands
     eo.remove(1);
     eo.remove(0);
