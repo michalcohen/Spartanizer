@@ -60,6 +60,9 @@ public abstract class Simplifier {
     assert withinScope(e);
     return _eligible(e);
   }
+  boolean noneligible(final InfixExpression e) {
+    return !eligible(e);
+  }
   final Expression replacement(final ASTRewrite r, final InfixExpression e) {
     assert eligible(e);
     return _replacement(r, e);

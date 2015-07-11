@@ -37,9 +37,7 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
         final Simplifier s = Simplifier.find(e);
-        if (s != null)
-          return !s.eligible(e) ? true : overrideInto(e, opportunities);
-        return true;
+        return s != null && s.noneligible(e) ? true : overrideInto(e, opportunities);
       }
     };
   }
