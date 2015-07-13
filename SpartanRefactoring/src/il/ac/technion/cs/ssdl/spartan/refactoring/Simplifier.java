@@ -92,7 +92,7 @@ public abstract class Simplifier {
   final boolean noneligible(final InfixExpression e) {
     return !eligible(e);
   }
-   abstract boolean withinScope(PrefixExpression e);
+  public abstract boolean withinScope(PrefixExpression e);
   /**
    * @param e
    *          JD
