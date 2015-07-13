@@ -103,8 +103,8 @@ enum TESTUtils {
   static InfixExpression asExpression(final String expression) {
     return (InfixExpression) As.EXPRESSION.ast(expression);
   }
-  static void assertLegible(final String name, final String expression) {
-    assertTrue(Simplifier.find(name).eligible(asExpression(expression)));
+  static void assertLegible(final Simplifier s, final String expression) {
+    assertTrue(s.eligible(asExpression(expression)));
   }
   static void assertNoChange(final String input) {
     assertSimilar(input, peel(apply(new SimplificationEngine(), wrap(input))));
@@ -112,16 +112,14 @@ enum TESTUtils {
   static void assertNotLegible(final Simplifier s, final InfixExpression e) {
     assertFalse(s.eligible(e));
   }
-  static void assertNotLegible(final String name, final String expression) {
-    final Simplifier s = Simplifier.find(name);
+  static void assertNotLegible(final Simplifier s, final String expression) {
     final InfixExpression e = asExpression(expression);
     assertNotLegible(s, e);
   }
   static void assertNotWithinScope(final Simplifier s, final InfixExpression e) {
     assertFalse(s.withinScope(e));
   }
-  static void assertNotWithinScope(final String name, final String expression) {
-    final Simplifier s = Simplifier.find(name);
+  static void assertNotWithinScope(final Simplifier s, final String expression) {
     final InfixExpression e = asExpression(expression);
     assertNotWithinScope(s, e);
   }
@@ -141,13 +139,11 @@ enum TESTUtils {
   static void assertWithinScope(final Simplifier s, final InfixExpression e) {
     assertTrue(s.withinScope(e));
   }
-  static void assertWithinScope(final String name, final String expression) {
-    final Simplifier s = Simplifier.find(name);
+  static void assertWithinScope(final Simplifier s, final String expression) {
     final InfixExpression e = asExpression(expression);
     assertWithinScope(s, e);
   }
-  static void asserWithinScope(final String name, final String expression) {
-    final Simplifier s = Simplifier.find(name);
+  static void asserWithinScope(final Simplifier s, final String expression) {
     final InfixExpression e = asExpression(expression);
     assertNotWithinScope(s, e);
   }

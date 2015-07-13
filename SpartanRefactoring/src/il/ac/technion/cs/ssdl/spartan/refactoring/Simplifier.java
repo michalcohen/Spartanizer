@@ -33,74 +33,95 @@ import il.ac.technion.cs.ssdl.spartan.utils.Is;
  *
  */
 public abstract class Simplifier {
-  final String name;
-
-  Simplifier(final String name) {
-    this.name = name;
-  }
   /**
-   * Determines whether this {@link Simplifier} object is applicable for a given
-   * {@InfixExpression} is within the "scope" of this . Note that it could be
-   * the case that a {@link Simplifier} is applicable in principle to an object,
-   * but that actual application will be vacuous.
+   * Find the first {@link Simplifier} appropriate for an
+   * {@link InfixExpression}
    *
    * @param e
-   *          John Doe
-   * @return <code><b>true</b></code> <i>iff</i> the argument is within the
-   *         scope of this object
+   *          JD
+   * @return the first {@link Simplifier} for which the parameter is eligible,
+   *         or <code><b>null</b></code>i if no such {@link Simplifier} is
+   *         found.
    */
-  public abstract boolean withinScope(InfixExpression e);
-  /**
-   * @param e
-   *          John Doe
-   * @return <code><b>true</b></code> <i>iff</i> the argument is legible for the
-   *         simplification offered by this object.
-   */
-  final boolean eligible(final InfixExpression e) {
-    assert withinScope(e);
-    return _eligible(e);
-  }
-  boolean noneligible(final InfixExpression e) {
-    return !eligible(e);
-  }
-  final Expression replacement(final ASTRewrite r, final InfixExpression e) {
-    assert eligible(e);
-    return _replacement(r, e);
-  }
-  abstract Expression _replacement(ASTRewrite r, final InfixExpression e);
-  abstract boolean _eligible(InfixExpression e);
-  /**
-   * Record a rewrite
-   *
-   * @param r
-   *          John Doe
-   * @param e
-   *          Jane Doe
-   * @return <code><b>true</b></code> <i>iff</i> there is room for further
-   *         simplification of this expression.
-   */
-  public final boolean go(final ASTRewrite r, final InfixExpression e) {
-    if (eligible(e))
-      r.replace(e, replacement(r, e), null);
-    return true;
-  }
-  public static Simplifier find(final String name) {
-    for (final Simplifier $ : values)
-      if ($.name.equals(name))
-        return $;
-    return null;
-  }
   public static Simplifier find(final InfixExpression e) {
     for (final Simplifier s : values())
       if (s.withinScope(e))
         return s;
     return null;
   }
+  /**
+   * Find the first {@link Simplifier} appropriate for a
+   * {@link PrefixExpression}
+   *
+   * @param e
+   *          JD
+   * @return the first {@link Simplifier} for which the parameter is eligible,
+   *         or <code><b>null</b></code>i if no such {@link Simplifier} is
+   *         found.
+   */
+  public static Simplifier find(final PrefixExpression e) {
+    for (final Simplifier s : values())
+      if (s.withinScope(e))
+        return s;
+    return null;
+  }
+  /**
+   * Determines whether this {@link Simplifier} object is applicable for a given
+   * {@link InfixExpression} is within the "scope" of this . Note that it could
+   * be the case that a {@link Simplifier} is applicable in principle to an
+   * object, but that actual application will be vacuous.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is within the
+   *         scope of this object
+   */
+  public abstract boolean withinScope(InfixExpression e);
+  /**
+   * Determines whether this {@link Simplifier} object is applicable for a given
+   * {@link PrefixExpression} is within the "scope" of this . Note that a
+   * {@link Simplifier} is applicable in principle to an object, but that actual
+   * application will be vacuous.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
+   *         the simplification offered by this object.
+   */
+  abstract boolean eligible(final InfixExpression e);
+  final boolean noneligible(final InfixExpression e) {
+    return !eligible(e);
+  }
+   abstract boolean withinScope(PrefixExpression e);
+  /**
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
+   *         the simplification offered by this object.
+   */
+  abstract boolean eligible(final PrefixExpression e);
+  abstract Expression replacement(final ASTRewrite r, final InfixExpression e);
+  abstract Expression replacement(final ASTRewrite r, final PrefixExpression e);
+  /**
+   * Record a rewrite
+   *
+   * @param r
+   *          JD
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> there is room for further
+   *         simplification of this expression.
+   */
+  boolean go(final ASTRewrite r, final InfixExpression e) {
+    if (eligible(e))
+      r.replace(e, replacement(r, e), null);
+    return true;
+  }
   public static Simplifier[] values() {
     return values;
   }
 
-  static final Simplifier comparisionWithBoolean = new Simplifier("Comparison with Boolean") {
+  static final Simplifier comparisionWithBoolean = new OfInfixExpression() {
     @Override public final boolean withinScope(final InfixExpression e) {
       return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
           && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
@@ -128,7 +149,7 @@ public abstract class Simplifier {
       return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
     }
   };
-  static final Simplifier comparisionWithSpecific = new Simplifier("Comparison with specific") {
+  static final Simplifier comparisionWithSpecific = new OfInfixExpression() {
     @Override public boolean withinScope(final InfixExpression e) {
       return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
@@ -149,7 +170,7 @@ public abstract class Simplifier {
       return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
     }
   };
-  static final Simplifier shortestOperandFirst = new Simplifier("Shortest operand first") {
+  static final Simplifier shortestOperandFirst = new OfInfixExpression() {
     @Override public final boolean withinScope(final InfixExpression e) {
       return Is.flipable(e.getOperator());
     }
@@ -181,5 +202,32 @@ public abstract class Simplifier {
   }
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
+  }
+
+  static abstract class OfInfixExpression extends Simplifier {
+    abstract boolean _eligible(final InfixExpression e);
+    abstract Expression _replacement(final ASTRewrite r, final InfixExpression e);
+    @Override final boolean eligible(final InfixExpression e) {
+      assert withinScope(e);
+      return _eligible(e);
+    }
+    @Override final Expression replacement(final ASTRewrite r, final InfixExpression e) {
+      assert eligible(e);
+      return _replacement(r, e);
+    }
+    @Override final boolean go(final ASTRewrite r, final InfixExpression e) {
+      if (eligible(e))
+        r.replace(e, replacement(r, e), null);
+      return true;
+    }
+    @SuppressWarnings("unused") @Override public final boolean withinScope(final PrefixExpression _) {
+      return false;
+    }
+    @Override final boolean eligible(@SuppressWarnings("unused") final PrefixExpression _) {
+      return false;
+    }
+    @SuppressWarnings("unused") @Override final Expression replacement(final ASTRewrite r, final PrefixExpression _) {
+      return null;
+    }
   }
 }
