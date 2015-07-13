@@ -1,11 +1,15 @@
 package org.spartan.refactoring;
 
+import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refacotring.utils.Funcs.countNodes;
 import static org.spartan.refacotring.utils.Funcs.flip;
 import static org.spartan.refacotring.utils.Funcs.makeParenthesizedExpression;
@@ -19,6 +23,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refacotring.utils.Is;
@@ -116,6 +121,7 @@ public abstract class Simplifier {
       r.replace(e, replacement(r, e), null);
     return true;
   }
+  abstract boolean go(ASTRewrite r, PrefixExpression e);
   public static Simplifier[] values() {
     return values;
   }
@@ -146,6 +152,63 @@ public abstract class Simplifier {
     }
     private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
       return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
+    }
+  };
+  static final Simplifier simplifyNegation = new OfPrefixExpression() {
+    @Override Expression _replacement(final ASTRewrite r, final PrefixExpression e) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+    @Override public boolean withinScope(final InfixExpression e) {
+      // TODO Auto-generated method stub
+      return false;
+    }
+    @Override boolean _eligible(final PrefixExpression e) {
+      return hasOpportunity(asNot(e));
+    }
+    @Override public boolean withinScope(final PrefixExpression e) {
+      return asNot(e) != null;
+    }
+    @Override Expression replacement(final ASTRewrite r, final InfixExpression e) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+    PrefixExpression asNot(final PrefixExpression e) {
+      return NOT.equals(e.getOperator()) ? e : null;
+    }
+    PrefixExpression asNot(final Expression e) {
+      return !(e instanceof PrefixExpression) ? null : asNot((PrefixExpression) e);
+    }
+    boolean hasOpportunity(final PrefixExpression e) {
+      return e == null ? false : hasOpportunity(getCore(e.getOperand()));
+    }
+    private boolean hasOpportunity(final Expression inner) {
+      return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+    }
+    Expression getCore(final Expression $) {
+      return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
+    }
+    InfixExpression asAndOrOr(final Expression e) {
+      return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
+    }
+    InfixExpression asAndOrOr(final InfixExpression e) {
+      return isDeMorgan(e.getOperator()) ? e : null;
+    }
+    boolean isDeMorgan(final Operator o) {
+      return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
+    }
+    InfixExpression asComparison(final Expression e) {
+      return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
+    }
+    InfixExpression asComparison(final InfixExpression e) {
+      return in(e.getOperator(), //
+          GREATER, //
+          GREATER_EQUALS, //
+          LESS, //
+          LESS_EQUALS, //
+          EQUALS, //
+          NOT_EQUALS //
+      ) ? e : null;
     }
   };
   static final Simplifier comparisionWithSpecific = new OfInfixExpression() {
@@ -206,6 +269,11 @@ public abstract class Simplifier {
   static abstract class OfInfixExpression extends Simplifier {
     abstract boolean _eligible(final InfixExpression e);
     abstract Expression _replacement(final ASTRewrite r, final InfixExpression e);
+    @Override final boolean go(final ASTRewrite r, final InfixExpression e) {
+      if (eligible(e))
+        r.replace(e, replacement(r, e), null);
+      return true;
+    }
     @Override final boolean eligible(final InfixExpression e) {
       assert withinScope(e);
       return _eligible(e);
@@ -213,11 +281,6 @@ public abstract class Simplifier {
     @Override final Expression replacement(final ASTRewrite r, final InfixExpression e) {
       assert eligible(e);
       return _replacement(r, e);
-    }
-    @Override final boolean go(final ASTRewrite r, final InfixExpression e) {
-      if (eligible(e))
-        r.replace(e, replacement(r, e), null);
-      return true;
     }
     @SuppressWarnings("unused") @Override public final boolean withinScope(final PrefixExpression _) {
       return false;
@@ -227,6 +290,33 @@ public abstract class Simplifier {
     }
     @SuppressWarnings("unused") @Override final Expression replacement(final ASTRewrite r, final PrefixExpression _) {
       return null;
+    }
+    @Override final boolean go(final ASTRewrite r, final PrefixExpression e) {
+      return false;
+    }
+  }
+
+  static abstract class OfPrefixExpression extends Simplifier {
+    abstract Expression _replacement(final ASTRewrite r, final PrefixExpression e);
+    abstract boolean _eligible(final PrefixExpression e);
+    @Override final boolean go(final ASTRewrite r, final PrefixExpression e) {
+      if (eligible(e))
+        r.replace(e, replacement(r, e), null);
+      return true;
+    }
+    @Override final boolean eligible(final PrefixExpression e) {
+      assert withinScope(e);
+      return _eligible(e);
+    }
+    @Override final Expression replacement(final ASTRewrite r, final PrefixExpression e) {
+      assert eligible(e);
+      return _replacement(r, e);
+    }
+    @Override final boolean go(final ASTRewrite r, final InfixExpression e) {
+      return super.go(r, e);
+    }
+    @Override final boolean eligible(final InfixExpression e) {
+      return false;
     }
   }
 }

@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refacotring.utils.Is;
 import org.spartan.utils.Range;
@@ -44,6 +45,14 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
+        if (!inRange(m, e))
+          return true;
+        final Simplifier s = Simplifier.find(e);
+        if (s != null)
+          return s.go(r, e);
+        return true;
+      }
+      @Override public boolean visit(final PrefixExpression e) {
         if (!inRange(m, e))
           return true;
         final Simplifier s = Simplifier.find(e);

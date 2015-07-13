@@ -209,12 +209,16 @@ public class SimplifyLogicalNegation extends Spartanization {
     return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
   }
 
+  static PrefixExpression asNot(final Expression e) {
+    return !(e instanceof PrefixExpression) ? null : asNot((PrefixExpression) e);
+  }
+
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
   }
 
-  static PrefixExpression asNot(final Expression e) {
-    return !(e instanceof PrefixExpression) ? null : asNot((PrefixExpression) e);
+  static InfixExpression asAndOrOr(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
   }
 
   static InfixExpression asAndOrOr(final InfixExpression e) {
@@ -225,8 +229,8 @@ public class SimplifyLogicalNegation extends Spartanization {
     return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
 
-  static InfixExpression asAndOrOr(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
+  static InfixExpression asComparison(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
 
   static InfixExpression asComparison(final InfixExpression e) {
@@ -238,10 +242,6 @@ public class SimplifyLogicalNegation extends Spartanization {
         EQUALS, //
         NOT_EQUALS //
     ) ? e : null;
-  }
-
-  static InfixExpression asComparison(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
 
   /**
