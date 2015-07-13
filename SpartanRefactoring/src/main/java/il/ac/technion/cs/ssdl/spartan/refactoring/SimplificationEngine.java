@@ -1,5 +1,6 @@
 package il.ac.technion.cs.ssdl.spartan.refactoring;
 
+import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.duplicate;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.duplicateLeft;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.duplicateRight;
 import static il.ac.technion.cs.ssdl.spartan.utils.Funcs.flip;
@@ -133,8 +134,8 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
     // | a, e, d, b, c, f - is the list with the operands
     // $ = $ | sortExpressionList(eo, t, o);
     // | a, b, c, d, e, f - is the list after sorting
-    e.setRightOperand((Expression) duplicate(eo.get(1)));
-    e.setLeftOperand((Expression) duplicate(eo.get(0)));
+    e.setRightOperand(duplicate(eo.get(1)));
+    e.setLeftOperand(duplicate(eo.get(0)));
     // (Left = a) (Right = b) | a, b, c, d, e, f - retrieve the operands
     eo.remove(1);
     eo.remove(0);
