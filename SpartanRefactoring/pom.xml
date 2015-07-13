@@ -4,23 +4,14 @@
 	<groupId>SpartanRefactoring</groupId>
 	<artifactId>SpartanRefactoring</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<organization>
-		<name>The Technion</name>
+		<name>Spart Ani Zation</name>
 	</organization>
+	<packaging>pom</packaging>
+	<name>Spartan Refactorer</name>
+	<modules>
+		<module>main</module>
+	</modules>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
