@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.utils.Utils.objects;
 
@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.Spartanization;
+import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * Tests that each directory in our test suite is a name of valid
@@ -20,7 +20,7 @@ import org.spartan.refactoring.Spartanization;
  * @since 2014/05/24
  */
 @RunWith(Parameterized.class) //
-public class SpartanizationClassForFolderExists extends SATestSuite {
+public class SpartanizationClassForFolderExists extends FileTestUtils {
   /**
    * A name of a folder whose name should represent a {@link Spartanization}
    * class
@@ -40,7 +40,7 @@ public class SpartanizationClassForFolderExists extends SATestSuite {
    */
   @Parameters(name = "{index}: {0}") //
   public static Collection<Object[]> cases() {
-    return new SATestSuite.Directories() {
+    return new FileTestUtils.Directories() {
       @Override Object[] makeCase(final File folder) {
         return objects(folder.getName());
       }

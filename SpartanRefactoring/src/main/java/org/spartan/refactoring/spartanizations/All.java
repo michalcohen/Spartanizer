@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import java.util.ArrayList;
 import java.util.HashMap;

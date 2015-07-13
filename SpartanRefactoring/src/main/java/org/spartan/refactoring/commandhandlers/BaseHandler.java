@@ -15,8 +15,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.spartan.refactoring.Spartanization;
-import org.spartan.refactoring.Wizard;
+import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.spartanizations.Wizard;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>:

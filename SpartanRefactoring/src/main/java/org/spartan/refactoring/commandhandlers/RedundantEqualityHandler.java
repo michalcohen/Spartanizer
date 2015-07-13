@@ -1,6 +1,6 @@
 package org.spartan.refactoring.commandhandlers;
 
-import org.spartan.refactoring.ComparisonWithBoolean;
+import org.spartan.refactoring.spartanizations.ComparisonWithBoolean;
 
 /**
  * a handler for {@link ComparisonWithBoolean}

@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;

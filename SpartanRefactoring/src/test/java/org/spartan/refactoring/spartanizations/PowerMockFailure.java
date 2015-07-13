@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
@@ -21,7 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.stubbing.Stubber;
-import org.spartan.refactoring.ComparisonWithSpecific;
+import org.spartan.refactoring.spartanizations.ComparisonWithSpecific;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note

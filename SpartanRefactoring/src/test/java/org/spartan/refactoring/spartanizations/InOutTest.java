@@ -1,8 +1,8 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.spartan.refactoring.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.utils.Utils.objects;
 
 import java.io.File;
@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.Spartanization;
+import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * Run tests in which a specific transformation is not supposed to change the
@@ -28,12 +28,12 @@ import org.spartan.refactoring.Spartanization;
 @RunWith(Parameterized.class) //
 public class InOutTest {
   protected static void go(final Spartanization s, final File from, final File to) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(SATestSuite.makeInFile(from));
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(FileTestUtils.makeInFile(from));
     assertEquals(u.toString(), 1, TESTUtils.countOpportunities(s, u));
     TESTUtils.assertOneOpportunity(s, As.string(from));
-    if (from.getName().endsWith(SATestSuite.testSuffix)) {
-      final String expected = As.string(SATestSuite.makeOutFile(to));
-      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(SATestSuite.makeInFile(from))));
+    if (from.getName().endsWith(FileTestUtils.testSuffix)) {
+      final String expected = As.string(FileTestUtils.makeOutFile(to));
+      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(FileTestUtils.makeInFile(from))));
       assertSimilar(expected, rewrite.get());
     } else {
       final String expected = As.string(to);
@@ -77,7 +77,7 @@ public class InOutTest {
    */
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
-    return new SATestSuite.Files() {
+    return new FileTestUtils.Files() {
       @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
         if (name.endsWith(testSuffix) && As.stringBuilder(input).indexOf(testKeyword) > 0)
           return objects(s, name, input, makeOutFile(input));

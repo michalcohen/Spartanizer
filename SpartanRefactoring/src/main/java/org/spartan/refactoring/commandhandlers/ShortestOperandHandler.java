@@ -1,6 +1,6 @@
 package org.spartan.refactoring.commandhandlers;
 
-import org.spartan.refactoring.ShortestOperand;
+import org.spartan.refactoring.spartanizations.ShortestOperand;
 
 /**
  * a handler for {@link ShortestOperand}

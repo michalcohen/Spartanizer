@@ -1,6 +1,5 @@
 package org.spartan.refactoring.preferencesTab;
 
-import static org.spartan.refactoring.All.allRulesNames;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.BothLiteralsOptions;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.NullAndBoolOptions;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.bothLiteralsHeader;
@@ -9,6 +8,7 @@ import static org.spartan.refactoring.preferencesTab.PreferencesStrings.repositi
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.rightLiteralOptions;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageHeader;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageOptions;
+import static org.spartan.refactoring.spartanizations.All.allRulesNames;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

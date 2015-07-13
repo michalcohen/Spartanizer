@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;

@@ -1,6 +1,6 @@
 package org.spartan.refactoring.commandhandlers;
 
-import org.spartan.refactoring.ComparisonWithSpecific;
+import org.spartan.refactoring.spartanizations.ComparisonWithSpecific;
 
 /**
  * a handler for {@link ComparisonWithSpecific}

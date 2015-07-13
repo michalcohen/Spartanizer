@@ -1,6 +1,6 @@
 package org.spartan.refactoring.commandhandlers;
 
-import org.spartan.refactoring.Ternarize;
+import org.spartan.refactoring.spartanizations.Ternarize;
 
 /**
  * a BaseSpartanizationHandler configured to return the BaseRefactoring and

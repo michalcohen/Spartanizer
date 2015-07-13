@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.All;
-import org.spartan.refactoring.Spartanization;
+import org.spartan.refactoring.spartanizations.All;
+import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.utils.Range;
 
 /**

@@ -4,8 +4,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
-import org.spartan.refactoring.All;
-import org.spartan.refactoring.Spartanization;
+import org.spartan.refactoring.spartanizations.All;
+import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * A quickfix generator for spartanization refactoring

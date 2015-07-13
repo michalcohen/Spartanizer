@@ -1,10 +1,10 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.TESTUtils.asExpression;
-import static org.spartan.refactoring.TESTUtils.assertSimplifiesTo;
+import static org.spartan.refactoring.spartanizations.TESTUtils.asExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.Simplifier;
+import org.spartan.refactoring.spartanizations.Simplifier;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note

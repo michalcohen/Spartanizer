@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,9 +16,9 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.SimplificationEngine;
-import org.spartan.refactoring.Simplifier;
-import org.spartan.refactoring.Spartanization;
+import org.spartan.refactoring.spartanizations.SimplificationEngine;
+import org.spartan.refactoring.spartanizations.Simplifier;
+import org.spartan.refactoring.spartanizations.Spartanization;
 
 enum TESTUtils {
   ;

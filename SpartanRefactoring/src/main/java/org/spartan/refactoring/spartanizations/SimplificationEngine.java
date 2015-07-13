@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refacotring.utils.Funcs.duplicate;
 import static org.spartan.refacotring.utils.Funcs.duplicateLeft;

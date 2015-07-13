@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;

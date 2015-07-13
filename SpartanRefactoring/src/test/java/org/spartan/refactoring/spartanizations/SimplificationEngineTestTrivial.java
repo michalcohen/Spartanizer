@@ -1,20 +1,20 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refacotring.utils.Funcs.countNodes;
-import static org.spartan.refactoring.TESTUtils.asExpression;
-import static org.spartan.refactoring.TESTUtils.assertLegible;
-import static org.spartan.refactoring.TESTUtils.assertNoChange;
-import static org.spartan.refactoring.TESTUtils.assertNotLegible;
-import static org.spartan.refactoring.TESTUtils.assertNotWithinScope;
-import static org.spartan.refactoring.TESTUtils.assertOneOpportunity;
-import static org.spartan.refactoring.TESTUtils.assertSimplifiesTo;
-import static org.spartan.refactoring.TESTUtils.assertWithinScope;
-import static org.spartan.refactoring.TESTUtils.peel;
-import static org.spartan.refactoring.TESTUtils.wrap;
+import static org.spartan.refactoring.spartanizations.TESTUtils.asExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertLegible;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotLegible;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotWithinScope;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertWithinScope;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -26,8 +26,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.spartan.refacotring.utils.Is;
-import org.spartan.refactoring.SimplificationEngine;
-import org.spartan.refactoring.Simplifier;
+import org.spartan.refactoring.spartanizations.SimplificationEngine;
+import org.spartan.refactoring.spartanizations.Simplifier;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note

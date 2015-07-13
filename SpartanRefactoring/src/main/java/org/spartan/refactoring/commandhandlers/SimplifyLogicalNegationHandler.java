@@ -1,6 +1,6 @@
 package org.spartan.refactoring.commandhandlers;
 
-import org.spartan.refactoring.SimplifyLogicalNegation;
+import org.spartan.refactoring.spartanizations.SimplifyLogicalNegation;
 
 /**
  * a BaseSpartanizationHandler configured to return the BaseRefactoring and

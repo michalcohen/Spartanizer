@@ -1,6 +1,6 @@
 package org.spartan.refactoring.commandhandlers;
 
-import org.spartan.refactoring.ShortestBranchFirst;
+import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 
 /**
  * a handler for {@link ShortestBranchFirst}

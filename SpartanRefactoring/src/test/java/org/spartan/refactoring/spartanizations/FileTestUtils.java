@@ -1,4 +1,4 @@
-package org.spartan.refactoring;
+package org.spartan.refactoring.spartanizations;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -13,8 +13,8 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.SimplificationEngine;
-import org.spartan.refactoring.Spartanization;
+import org.spartan.refactoring.spartanizations.SimplificationEngine;
+import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * An abstract representation of our test suite, which is represented in
@@ -26,7 +26,7 @@ import org.spartan.refactoring.Spartanization;
 /**
  * @author yogi
  */
-public abstract class SATestSuite {
+public abstract class FileTestUtils {
   /**
    * A String determines whereas we are at the IN or OUT side of the test See
    * TestCases test files for reference.
@@ -39,12 +39,11 @@ public abstract class SATestSuite {
   /**
    * Folder in which all test cases are found
    */
-  public static final File location = new File("TestCases");
+  public static final File location = new File("src/test/resources");
 
   static Spartanization makeSpartanizationObject(final File f) {
     return makeSpartanizationObject(f.getName());
   }
-
   static Spartanization makeSpartanizationObject(final String folderForClass) {
     final Class<?> c = asClass(folderForClass);
     assertNotNull(c);
@@ -52,7 +51,6 @@ public abstract class SATestSuite {
     assertNotNull($);
     return (Spartanization) $;
   }
-
   /**
    * Instantiates a {@link Class} object if possible, otherwise generate an
    * assertion failure
@@ -75,12 +73,10 @@ public abstract class SATestSuite {
     }
     return null;
   }
-
   private static Spartanization error(final String message, final Class<?> c, final Throwable e) {
     System.err.println(message + " '" + c.getCanonicalName() + "' " + e.getMessage());
     return null;
   }
-
   /**
    * Convert a canonical name of a class into a {@link Class} object, if
    * possible, otherwise generate an assertion failure
@@ -103,22 +99,25 @@ public abstract class SATestSuite {
    * An abstract class representing the concept of traversing the
    * {@link #location} while generating test cases.
    *
-   * @see TestSuite.SATestSuite.Files
-   * @see TestSuite.SATestSuite.Directories
+   * @seTestUtils.SATestSuite.Files
+   * @seTestUtils.SATestSuite.Directories
    * @author Yossi Gil
    * @since 2014/05/24
    */
-  public static abstract class Traverse extends SATestSuite {
+  public static abstract class Traverse extends FileTestUtils {
     /**
      * @return a collection of all test cases generated in the traversal
      */
     public final Collection<Object[]> go() {
       final List<Object[]> $ = new ArrayList<>();
-      for (final File f : location.listFiles())
+      assertNotNull(location);
+      assertNotNull(location.listFiles());
+      for (final File f : location.listFiles()) {
+        assertNotNull(f);
         go($, f);
+      }
       return $;
     }
-
     /**
      * Collect test cases from each file in {@link #location}
      *
@@ -134,12 +133,12 @@ public abstract class SATestSuite {
    ** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
    *
-   * @see TestSuite.SATestSuite.Files
-   * @see SATestSuite.Traverse
+   * @seTestUtils.SATestSuite.Files
+   * @see FileTestUtils.Traverse
    * @author Yossi Gil
    * @since 2014/05/24
    */
-  public static abstract class Directories extends SATestSuite.Traverse {
+  public static abstract class Directories extends FileTestUtils.Traverse {
     /**
      * Adds a test case to the collection of all test cases generated in the
      * traversal
@@ -151,7 +150,6 @@ public abstract class SATestSuite {
           $.add(c);
       }
     }
-
     abstract Object[] makeCase(File d);
   }
 
@@ -159,12 +157,12 @@ public abstract class SATestSuite {
    ** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
    *
-   * @see TestSuite.SATestSuite.Directories
-   * @see SATestSuite.Traverse
+   * @seTestUtils.SATestSuite.Directories
+   * @see FileTestUtils.Traverse
    * @author Yossi Gil
    * @since 2014/05/24
    */
-  public static abstract class Files extends SATestSuite.Traverse {
+  public static abstract class Files extends FileTestUtils.Traverse {
     /* (non-Javadoc)
      *
      * @see
@@ -179,7 +177,6 @@ public abstract class SATestSuite {
             $.add(c);
         }
     }
-
     abstract Object[] makeCase(final Spartanization s, final File d, final File f, final String name);
   }
 
@@ -194,13 +191,11 @@ public abstract class SATestSuite {
   protected static File makeInFile(final File f) {
     return createTempFile(deleteTestKeyword(As.stringBuilder(f)), TestDirection.In, f);
   }
-
   private static StringBuilder deleteTestKeyword(final StringBuilder $) {
     if ($.indexOf(testKeyword) > 0)
       $.delete($.indexOf(testKeyword), $.length());
     return $;
   }
-
   /**
    * Makes an Output file out of a Test file
    */
@@ -210,7 +205,6 @@ public abstract class SATestSuite {
       $.delete(0, $.indexOf(testKeyword) + testKeyword.length() + ($.indexOf("\r\n") > 0 ? 2 : 1));
     return createTempFile($, TestDirection.Out, f);
   }
-
   /**
    * Creates a temporary file - including lazy deletion.
    */
@@ -218,7 +212,6 @@ public abstract class SATestSuite {
     final File $ = createTempFile(direction, f);
     return createTemporaryRandomAccessFile($, b.toString());
   }
-
   private static File createTempFile(final TestDirection direction, final File f) {
     try {
       return File.createTempFile(f.getName().replace(".", ""), direction == TestDirection.In ? ".in" : ".out");
@@ -226,7 +219,6 @@ public abstract class SATestSuite {
       return null; // Failed to create temporary file
     }
   }
-
   private static File createTemporaryRandomAccessFile(final File $, final String string) {
     try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
       fh.writeBytes(string);
@@ -237,7 +229,6 @@ public abstract class SATestSuite {
     }
     return $;
   }
-
   private String apply(final SimplificationEngine s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     final Document d = new Document(from);
