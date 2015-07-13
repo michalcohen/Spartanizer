@@ -11,21 +11,38 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refacotring.utils.Funcs.countNodes;
+import static org.spartan.refacotring.utils.Funcs.duplicate;
 import static org.spartan.refacotring.utils.Funcs.flip;
 import static org.spartan.refacotring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refacotring.utils.Funcs.makePrefixExpression;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NullLiteral;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperFieldAccess;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.ThisExpression;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refacotring.utils.As;
 import org.spartan.refacotring.utils.Is;
 
 /**
@@ -80,7 +97,7 @@ public abstract class Simplifier {
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */
-  public abstract boolean withinScope(InfixExpression e);
+  abstract boolean withinScope(InfixExpression e);
   /**
    * Determines whether this {@link Simplifier} object is applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
@@ -156,61 +173,155 @@ public abstract class Simplifier {
   };
   static final Simplifier simplifyNegation = new OfPrefixExpression() {
     @Override Expression _replacement(final ASTRewrite r, final PrefixExpression e) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-    @Override public boolean withinScope(final InfixExpression e) {
-      // TODO Auto-generated method stub
-      return false;
+      return simplifyNot(As.not(e));
     }
     @Override boolean _eligible(final PrefixExpression e) {
-      return hasOpportunity(asNot(e));
+      return hasOpportunity(As.not(e));
     }
     @Override public boolean withinScope(final PrefixExpression e) {
-      return asNot(e) != null;
+      return As.not(e) != null;
     }
     @Override Expression replacement(final ASTRewrite r, final InfixExpression e) {
       // TODO Auto-generated method stub
       return null;
     }
-    PrefixExpression asNot(final PrefixExpression e) {
-      return NOT.equals(e.getOperator()) ? e : null;
+    private Expression simplifyNot(final PrefixExpression e) {
+      return e == null ? null : simplifyNot(e, getCore(e.getOperand()));
     }
-    PrefixExpression asNot(final Expression e) {
-      return !(e instanceof PrefixExpression) ? null : asNot((PrefixExpression) e);
+    private Expression simplifyNot(final PrefixExpression e, final Expression inner) {
+      Expression $;
+      return ($ = perhapsDoubleNegation(e, inner)) != null//
+          || ($ = perhapsDeMorgan(e, inner)) != null//
+          || ($ = perhapsComparison(e, inner)) != null //
+              ? $ : null;
+    }
+    Expression perhapsDoubleNegation(final Expression e, final Expression inner) {
+      return perhapsDoubleNegation(e, As.not(inner));
+    }
+    Expression perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
+      return inner == null ? null : inner.getOperand();
+    }
+    Expression perhapsDeMorgan(final Expression e, final Expression inner) {
+      return perhapsDeMorgan(e, asAndOrOr(inner));
+    }
+    Expression perhapsDeMorgan(final Expression e, final InfixExpression inner) {
+      return inner == null ? null : deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
+    }
+    Expression deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
+      return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
+    }
+    Expression deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
+      return parenthesize( //
+          addExtendedOperands(inner, //
+              makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
+    }
+    InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
+      if (from.hasExtendedOperands())
+        addExtendedOperands(from.extendedOperands(), $.extendedOperands());
+      return $;
+    }
+    void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
+      for (final Expression e : from)
+        to.add(not(e));
+    }
+    Expression perhapsComparison(final Expression e, final Expression inner) {
+      return perhapsComparison(e, asComparison(inner));
+    }
+    Expression perhapsComparison(final Expression e, final InfixExpression inner) {
+      return inner == null ? null : comparison(e, inner);
+    }
+    Expression comparison(final Expression e, final InfixExpression inner) {
+      return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
+    }
+    InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
+      return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
+    }
+    Expression parenthesize(final Expression e) {
+      if (isSimple(e))
+        return e;
+      final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+      $.setExpression(getCore(e));
+      return $;
+    }
+    boolean isSimple(final Expression e) {
+      return isSimple(e.getClass());
+    }
+    boolean isSimple(final Class<? extends Expression> c) {
+      return in(c, BooleanLiteral.class, //
+          CharacterLiteral.class, //
+          NullLiteral.class, //
+          NumberLiteral.class, //
+          StringLiteral.class, //
+          TypeLiteral.class, //
+          Name.class, //
+          QualifiedName.class, //
+          SimpleName.class, //
+          ParenthesizedExpression.class, //
+          SuperMethodInvocation.class, //
+          MethodInvocation.class, //
+          ClassInstanceCreation.class, //
+          SuperFieldAccess.class, //
+          FieldAccess.class, //
+          ThisExpression.class, //
+          null);
+    }
+    PrefixExpression not(final Expression e) {
+      final PrefixExpression $ = e.getAST().newPrefixExpression();
+      $.setOperator(NOT);
+      $.setOperand(parenthesize(e));
+      return $;
+    }
+    InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
+      final InfixExpression $ = left.getAST().newInfixExpression();
+      $.setLeftOperand(duplicate(left));
+      $.setOperator(o);
+      $.setRightOperand(duplicate(right));
+      return $;
+    }
+    Expression getCoreRight(final InfixExpression e) {
+      return getCore(e.getRightOperand());
+    }
+    Expression getCoreLeft(final InfixExpression e) {
+      return getCore(e.getLeftOperand());
+    }
+    Operator conjugate(final Operator o) {
+      assert isDeMorgan(o);
+      return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
     }
     boolean hasOpportunity(final PrefixExpression e) {
       return e == null ? false : hasOpportunity(getCore(e.getOperand()));
     }
-    private boolean hasOpportunity(final Expression inner) {
-      return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+    boolean hasOpportunity(final Expression inner) {
+      return As.not(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
     }
     Expression getCore(final Expression $) {
       return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
     }
-    InfixExpression asAndOrOr(final Expression e) {
-      return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
-    }
-    InfixExpression asAndOrOr(final InfixExpression e) {
-      return isDeMorgan(e.getOperator()) ? e : null;
-    }
-    boolean isDeMorgan(final Operator o) {
-      return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
-    }
-    InfixExpression asComparison(final Expression e) {
-      return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
-    }
-    InfixExpression asComparison(final InfixExpression e) {
-      return in(e.getOperator(), //
-          GREATER, //
-          GREATER_EQUALS, //
-          LESS, //
-          LESS_EQUALS, //
-          EQUALS, //
-          NOT_EQUALS //
-      ) ? e : null;
-    }
   };
+
+  InfixExpression asAndOrOr(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
+  }
+  InfixExpression asAndOrOr(final InfixExpression e) {
+    return isDeMorgan(e.getOperator()) ? e : null;
+  }
+  boolean isDeMorgan(final Operator o) {
+    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
+  }
+  InfixExpression asComparison(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
+  }
+  InfixExpression asComparison(final InfixExpression e) {
+    return in(e.getOperator(), //
+        GREATER, //
+        GREATER_EQUALS, //
+        LESS, //
+        LESS_EQUALS, //
+        EQUALS, //
+        NOT_EQUALS //
+    ) ? e : null;
+  }
+
   static final Simplifier comparisionWithSpecific = new OfInfixExpression() {
     @Override public boolean withinScope(final InfixExpression e) {
       return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
@@ -316,6 +427,9 @@ public abstract class Simplifier {
       return super.go(r, e);
     }
     @Override final boolean eligible(final InfixExpression e) {
+      return false;
+    }
+    @Override final boolean withinScope(final InfixExpression e) {
       return false;
     }
   }

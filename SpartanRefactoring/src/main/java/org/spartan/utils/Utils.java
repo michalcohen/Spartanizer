@@ -1,6 +1,8 @@
 package org.spartan.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,13 +17,11 @@ public enum Utils {
       if (!$.endsWith(postfix))
         return $;
   }
-
   public static String removePrefix(final String s, final String prefix) {
     for (String $ = s;; $ = $.substring(prefix.length()))
       if (!$.startsWith(prefix))
         return $;
   }
-
   /**
    * Convert variadic list into an array
    *
@@ -32,7 +32,6 @@ public enum Utils {
   public static Object[] objects(final Object... os) {
     return os;
   }
-
   /**
    * determine whether there is a null in a sequence of object
    *
@@ -46,7 +45,6 @@ public enum Utils {
         return true;
     return false;
   }
-
   /**
    * Appends an element to an array, by reallocating an array whose size is
    * greater by one and placing the element at the last position.
@@ -62,7 +60,6 @@ public enum Utils {
     $[ts.length] = t;
     return $;
   }
-
   /**
    * Deletes a specified element from an array, by reallocating an array whose
    * size is smaller by one and shifting the other elements down.
@@ -78,7 +75,6 @@ public enum Utils {
     System.arraycopy(ts, i + 1, $, i, $.length - i);
     return $;
   }
-
   /**
    * Sorts an array
    *
@@ -90,7 +86,6 @@ public enum Utils {
     Arrays.sort(is);
     return is;
   }
-
   /**
    * Convert multiple arguments into an array
    *
@@ -101,7 +96,6 @@ public enum Utils {
   @SafeVarargs public static <T> T[] asArray(final T... ts) {
     return ts;
   }
-
   /**
    * Determine if an integer can be found in a list of values
    *
@@ -117,7 +111,6 @@ public enum Utils {
         return true;
     return false;
   }
-
   /**
    * Determine if an item can be found in a list of values
    *
@@ -133,7 +126,6 @@ public enum Utils {
         return true;
     return false;
   }
-
   /**
    * Determine whether an integer is a valid list index
    *
@@ -146,5 +138,11 @@ public enum Utils {
    */
   public static <T> boolean inRange(final int i, final List<T> ts) {
     return i >= 0 && i < ts.size();
+  }
+  public static <T> Collection<T> asList(final T... ts) {
+    final Collection<T> $ = new ArrayList<>(ts.length);
+    for (final T t : ts)
+      $.add(t);
+    return $;
   }
 }
