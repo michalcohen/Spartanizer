@@ -16,6 +16,8 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotEvenSim
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
+import static org.spartan.refactoring.spartanizations.TESTUtils.e;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
 import static org.spartan.utils.Utils.hasNull;
 
@@ -25,7 +27,6 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -265,9 +266,6 @@ public class InfixTest {
   @Test public void withinDomainTrue4() {
     assertTrue(withinDomain(i("a == 11")));
   }
-  private InfixExpression i(final String s) {
-    return (InfixExpression) e(s);
-  }
   @Test public void withinDomainFalse0() {
     assertFalse(withinDomain(i("13455643294 < 22")));
   }
@@ -297,8 +295,5 @@ public class InfixTest {
   }
   @Test public void withinDomainFalse9() {
     assertFalse(withinDomain(i(" 6 - 7 < 2 + 1   ")));
-  }
-  private static Expression e(final String s2) {
-    return (Expression) As.EXPRESSION.ast(s2);
   }
 }

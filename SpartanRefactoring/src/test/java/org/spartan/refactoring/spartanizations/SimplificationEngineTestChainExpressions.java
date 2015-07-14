@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.spartanizations.Simplifier;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
@@ -33,7 +32,7 @@ public class SimplificationEngineTestChainExpressions {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   @Test public void chainComparison0() {
-    final InfixExpression e = asExpression("a == true == b == c");
+    final InfixExpression e = (InfixExpression) asExpression("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
     final Simplifier s = Simplifier.find(e);
     assertEquals(s, Simplifier.shortestOperandFirst);

@@ -1,10 +1,21 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.spartan.refactoring.spartanizations.TESTUtils.apply;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
+import static org.spartan.refactoring.spartanizations.TESTUtils.p;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,8 +51,36 @@ public class SimplificationEngineTestNegation {
    */
   @Parameter(value = 2) public String output;
 
+  @Test public void inputNotNull() {
+    assertNotNull(input);
+  }
+  @Test public void applicable() {
+    final PrefixExpression p = p(input);
+    assertNotNull(p);
+  }
+  @Test public void withinScopeOfNegation() {
+    assertTrue(Simplifier.simplifyNegation.withinScope(p(input)));
+  }
+  @Test public void eligibleForNegation() {
+    assertTrue(Simplifier.simplifyNegation.eligible(p(input)));
+  }
+  @Test public void hasReplacement() {
+    assertNotNull(Simplifier.simplifyNegation.replacement(p(input)));
+  }
   @Test public void simiplifies() {
-    assertSimplifiesTo(input, output);
+    final String from = input;
+    final String expected = output;
+    final String wrap = wrap(from);
+    assertEquals(from, peel(wrap));
+    final String unpeeled = apply(new SimplificationEngine(), wrap);
+    final String peeled = peel(unpeeled);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
   }
   /**
    * Generate test cases for this parameterized class.

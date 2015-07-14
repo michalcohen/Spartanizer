@@ -11,17 +11,26 @@ import static org.spartan.utils.Utils.removeSuffix;
 import java.io.File;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.spartanizations.SimplificationEngine;
-import org.spartan.refactoring.spartanizations.Simplifier;
-import org.spartan.refactoring.spartanizations.Spartanization;
 
 enum TESTUtils {
   ;
+  static InfixExpression i(final String s) {
+    return (InfixExpression) e(s);
+  }
+  static PrefixExpression p(final String s) {
+    return (PrefixExpression) e(s);
+  }
+  static Expression e(final String s2) {
+    return (Expression) As.EXPRESSION.ast(s2);
+  }
+
   static final String WHITES = "\\s+";
 
   public static void assertSimilar(final String expected, final String actual) {
@@ -102,11 +111,11 @@ enum TESTUtils {
     }
     return null;
   }
-  static InfixExpression asExpression(final String expression) {
+  static Expression asExpression(final String expression) {
     return (InfixExpression) As.EXPRESSION.ast(expression);
   }
   static void assertLegible(final Simplifier s, final String expression) {
-    assertTrue(s.eligible(asExpression(expression)));
+    assertTrue(s.eligible((InfixExpression) asExpression(expression)));
   }
   static void assertNoChange(final String input) {
     assertSimilar(input, peel(apply(new SimplificationEngine(), wrap(input))));
@@ -115,14 +124,14 @@ enum TESTUtils {
     assertFalse(s.eligible(e));
   }
   static void assertNotLegible(final Simplifier s, final String expression) {
-    final InfixExpression e = asExpression(expression);
+    final InfixExpression e = (InfixExpression) asExpression(expression);
     assertNotLegible(s, e);
   }
   static void assertNotWithinScope(final Simplifier s, final InfixExpression e) {
     assertFalse(s.withinScope(e));
   }
   static void assertNotWithinScope(final Simplifier s, final String expression) {
-    final InfixExpression e = asExpression(expression);
+    final InfixExpression e = (InfixExpression) asExpression(expression);
     assertNotWithinScope(s, e);
   }
   static void assertSimplifiesTo(final String from, final String expected) {
@@ -142,11 +151,11 @@ enum TESTUtils {
     assertTrue(s.withinScope(e));
   }
   static void assertWithinScope(final Simplifier s, final String expression) {
-    final InfixExpression e = asExpression(expression);
+    final InfixExpression e = (InfixExpression) asExpression(expression);
     assertWithinScope(s, e);
   }
   static void asserWithinScope(final Simplifier s, final String expression) {
-    final InfixExpression e = asExpression(expression);
+    final InfixExpression e = (InfixExpression) asExpression(expression);
     assertNotWithinScope(s, e);
   }
 }
