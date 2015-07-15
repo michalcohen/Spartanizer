@@ -206,7 +206,7 @@ public enum Funcs {
     $.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
     $.setThenExpression(thenExp.getParent() == null ? thenExp : (Expression) r.createCopyTarget(thenExp));
     $.setElseExpression(elseExp.getParent() == null ? elseExp : (Expression) r.createCopyTarget(elseExp));
-    return makeParenthesizedExpression(t, r, $);
+    return makeParenthesizedExpression(t, $);
   }
   /**
    * @param t
@@ -296,8 +296,6 @@ public enum Funcs {
   /**
    * @param t
    *          the AST to own the newly created expression
-   * @param r
-   *          ASTRewrite for the given AST
    * @param e
    *          the operand for the new prefix Expression
    * @param o
@@ -305,18 +303,15 @@ public enum Funcs {
    * @return the new prefix expression or null if one of the given parameters
    *         was null
    */
-  public static PrefixExpression makePrefixExpression(final AST t, final ASTRewrite r, final Expression e,
-      final PrefixExpression.Operator o) {
+  public static PrefixExpression makePrefixExpression(final AST t, final Expression e, final PrefixExpression.Operator o) {
     if (hasNull(t, e, o))
       return null;
     final PrefixExpression $ = t.newPrefixExpression();
     $.setOperator(o);
-    $.setOperand(e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
+    $.setOperand(e.getParent() == null ? e : duplicate(e));
     return $;
   }
   /**
-   * @param r
-   *          ASTRewrite for the given AST
    * @param e
    *          the operand for the new prefix Expression
    * @param o
@@ -324,34 +319,30 @@ public enum Funcs {
    * @return the new prefix expression or null if one of the given parameters
    *         was null
    */
-  public static PrefixExpression makePrefixExpression(final ASTRewrite r, final Expression e, final PrefixExpression.Operator o) {
-    return makePrefixExpression(e.getAST(), r, e, o);
+  public static PrefixExpression makePrefixExpression(final Expression e, final PrefixExpression.Operator o) {
+    return makePrefixExpression(e.getAST(), e, o);
   }
   /**
    * @param t
    *          the AST who is to own the new return statement
-   * @param r
-   *          ASTRewrite for the given AST
    * @param exp
    *          the expression to put in parenthesis
    * @return the given expression with parenthesis
    */
-  public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final ASTRewrite r, final Expression exp) {
-    if (hasNull(t, r, exp))
+  public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final Expression exp) {
+    if (hasNull(t, exp))
       return null;
     final ParenthesizedExpression $ = t.newParenthesizedExpression();
-    $.setExpression(exp.getParent() == null ? exp : (Expression) r.createCopyTarget(exp));
+    $.setExpression(exp.getParent() == null ? exp : (Expression) duplicate(exp));
     return $;
   }
   /**
-   * @param r
-   *          ASTRewrite for the given AST
    * @param e
    *          the expression to put in parenthesis
    * @return the given expression with parenthesis
    */
-  public static ParenthesizedExpression makeParenthesizedExpression(final ASTRewrite r, final Expression e) {
-    return makeParenthesizedExpression(e.getAST(), r, e);
+  public static ParenthesizedExpression makeParenthesizedExpression(final Expression e) {
+    return makeParenthesizedExpression(e.getAST(), e);
   }
   /**
    * @param node
@@ -576,7 +567,7 @@ public enum Funcs {
   public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
     if (hasNull(t, cond))
       return null;
-    return thenValue ? cond : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, cond), PrefixExpression.Operator.NOT);
+    return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(t, cond), PrefixExpression.Operator.NOT);
   }
   /**
    * Counts the number of nodes in the tree of which node is root.

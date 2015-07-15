@@ -52,8 +52,7 @@ public class ComparisonWithBoolean extends Spartanization {
         r.replace(n,
             literal.booleanValue() && n.getOperator() == Operator.EQUALS
                 || !literal.booleanValue() && n.getOperator() == Operator.NOT_EQUALS ? nonliteral
-                    : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, (Expression) nonliteral),
-                        PrefixExpression.Operator.NOT),
+                    : makePrefixExpression(t, makeParenthesizedExpression(t, (Expression) nonliteral), PrefixExpression.Operator.NOT),
             null);
         return true;
       }

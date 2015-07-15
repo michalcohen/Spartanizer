@@ -8,7 +8,6 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifies
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -39,7 +38,7 @@ public class SimplificationEngineTestChainExpressions {
     assertNotNull(s);
     assertTrue(s.withinScope(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(ASTRewrite.create(e.getAST()), e);
+    final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("a == b == c", replacement);
   }

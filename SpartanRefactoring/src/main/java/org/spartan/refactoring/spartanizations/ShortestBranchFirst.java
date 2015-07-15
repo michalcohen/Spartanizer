@@ -102,7 +102,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
     if (e instanceof InfixExpression)
       return tryNegateComparison(t, r, (InfixExpression) e);
     return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e)
-        : makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), NOT);
+        : makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
   }
 
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
@@ -116,9 +116,9 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
 
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
     if (Is.infix(e))
-      return makePrefixExpression(t, r, makeParenthesizedExpression(t, r, e), NOT);
+      return makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
     return !Is.isPrefix(e) || !((PrefixExpression) e).getOperator().equals(NOT) //
-        ? makePrefixExpression(t, r, e, NOT) //
+        ? makePrefixExpression(t, e, NOT) //
         : (Expression) r.createCopyTarget(((PrefixExpression) e).getOperand());
   }
 

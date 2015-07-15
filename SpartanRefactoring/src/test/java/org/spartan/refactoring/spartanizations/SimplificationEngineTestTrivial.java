@@ -21,7 +21,6 @@ import static org.spartan.utils.Utils.in;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -194,7 +193,7 @@ public class SimplificationEngineTestTrivial {
     assertNotNull(s);
     assertTrue(s.withinScope(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(ASTRewrite.create(e.getAST()), e);
+    final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
@@ -207,7 +206,7 @@ public class SimplificationEngineTestTrivial {
     assertNotNull(s);
     assertTrue(s.withinScope(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(ASTRewrite.create(e.getAST()), e);
+    final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("a != null", replacement.toString());
   }
@@ -236,7 +235,7 @@ public class SimplificationEngineTestTrivial {
     assertTrue(Simplifier.moreArguments(e1, e2));
     assertTrue(Simplifier.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final Expression replacement = s.replacement(ASTRewrite.create(e.getAST()), e);
+    final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
@@ -256,7 +255,7 @@ public class SimplificationEngineTestTrivial {
     assertTrue(Simplifier.moreArguments(e1, e2));
     assertTrue(Simplifier.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final Expression replacement = s.replacement(ASTRewrite.create(e.getAST()), e);
+    final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d,e)", replacement.toString());
   }

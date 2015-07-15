@@ -28,19 +28,15 @@ public enum Precedence {
       return of((Assignment) e);
     return UNDEFINED;
   }
-
   public static int of(final InfixExpression e) {
     return of(e.getOperator());
   }
-
   public static int of(final Assignment a) {
     return of(a.getOperator());
   }
-
   private static int of(final Assignment.Operator o) {
     return of(o.toString());
   }
-
   public static int of(final InfixExpression.Operator o) {
     return of(o.toString());
   }
