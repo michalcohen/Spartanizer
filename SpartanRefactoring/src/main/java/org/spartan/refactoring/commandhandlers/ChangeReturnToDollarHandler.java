@@ -4,7 +4,7 @@ import org.spartan.refactoring.spartanizations.RenameReturnVariableToDollar;
 
 /**
  * a handler for {@link RenameReturnVariableToDollar}
- * 
+ *
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code> (major refactoring
  *         2013/07/11)

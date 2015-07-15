@@ -24,14 +24,12 @@ public class PreferencesFile {
         "Please avoid editing the file manually ", //
         "--------------------------------------------------" };
   }
-
   /**
    * @return Spartanization rules preferences file path.
    */
   public static String getPrefFilePath() {
     return SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath() + "Sparta.pref";
   }
-
   /**
    * @return Preferences file as lines array
    */

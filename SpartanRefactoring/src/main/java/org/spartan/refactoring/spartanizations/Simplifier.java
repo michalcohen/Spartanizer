@@ -66,7 +66,7 @@ public abstract class Simplifier {
    */
   public static Simplifier find(final InfixExpression e) {
     for (final Simplifier s : values())
-      if (s.withinScope(e))
+      if (s.scopeIncludes(e))
         return s;
     return null;
   }
@@ -97,7 +97,7 @@ public abstract class Simplifier {
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */
-  abstract boolean withinScope(InfixExpression e);
+  abstract boolean scopeIncludes(InfixExpression e);
   /**
    * Determines whether this {@link Simplifier} object is applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
@@ -144,12 +144,12 @@ public abstract class Simplifier {
   }
 
   static final Simplifier comparisionWithBoolean = new OfInfixExpression() {
-    @Override public final boolean withinScope(final InfixExpression e) {
+    @Override public final boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
           && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     }
     @Override boolean _eligible(final InfixExpression e) {
-      assert withinScope(e);
+      assert scopeIncludes(e);
       return true;
     }
     @Override Expression _replacement(final InfixExpression e) {
@@ -181,7 +181,7 @@ public abstract class Simplifier {
     @Override public boolean withinScope(final PrefixExpression e) {
       return As.not(e) != null;
     }
-    @Override Expression replacement(final InfixExpression e) {
+    @Override Expression replacement(@SuppressWarnings("unused") final InfixExpression _) {
       return null;
     }
     private Expression simplifyNot(final PrefixExpression e) {
@@ -322,7 +322,7 @@ public abstract class Simplifier {
   }
 
   static final Simplifier comparisionWithSpecific = new OfInfixExpression() {
-    @Override public boolean withinScope(final InfixExpression e) {
+    @Override public boolean scopeIncludes(final InfixExpression e) {
       return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
@@ -343,7 +343,7 @@ public abstract class Simplifier {
     }
   };
   static final Simplifier shortestOperandFirst = new OfInfixExpression() {
-    @Override public final boolean withinScope(final InfixExpression e) {
+    @Override public final boolean scopeIncludes(final InfixExpression e) {
       return Is.flipable(e.getOperator());
     }
     @Override public boolean _eligible(final InfixExpression e) {
@@ -385,7 +385,7 @@ public abstract class Simplifier {
       return true;
     }
     @Override final boolean eligible(final InfixExpression e) {
-      assert withinScope(e);
+      assert scopeIncludes(e);
       return _eligible(e);
     }
     @Override final Expression replacement(final InfixExpression e) {
@@ -425,10 +425,10 @@ public abstract class Simplifier {
     @Override final boolean go(final ASTRewrite r, final InfixExpression e) {
       return super.go(r, e);
     }
-    @Override final boolean eligible(final InfixExpression e) {
+    @Override final boolean eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return false;
     }
-    @Override final boolean withinScope(final InfixExpression e) {
+    @Override final boolean scopeIncludes(@SuppressWarnings("unused") final InfixExpression _) {
       return false;
     }
   }

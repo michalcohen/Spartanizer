@@ -34,7 +34,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
   public RenameReturnVariableToDollar() {
     super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
@@ -47,7 +46,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
       }
     });
   }
-
   static List<VariableDeclarationFragment> getCandidates(final MethodDeclaration d) {
     if (d == null)
       return null;
@@ -65,7 +63,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
         return false;
       }
-
       @Override public boolean visit(final VariableDeclarationStatement n) {
         $.addAll(n.fragments());
         return true;
@@ -73,7 +70,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
     });
     return $;
   }
-
   static List<ReturnStatement> getReturnStatements(final ASTNode container) {
     final List<ReturnStatement> $ = new ArrayList<>();
     container.accept(new ASTVisitor() {
@@ -90,7 +86,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
         return false;
       }
-
       @Override public boolean visit(final ReturnStatement node) {
         $.add(node);
         return true;
@@ -98,7 +93,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
     });
     return $;
   }
-
   static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
     final List<VariableDeclarationFragment> vs = getCandidates(m);
     if (vs == null || vs.isEmpty() || hasDollar(vs))
@@ -106,14 +100,12 @@ public class RenameReturnVariableToDollar extends Spartanization {
     final List<ReturnStatement> rs = prune(getReturnStatements(m));
     return rs == null || rs.isEmpty() ? null : bestCandidate(vs, rs);
   }
-
   private static boolean hasDollar(final List<VariableDeclarationFragment> vs) {
     for (final VariableDeclaration v : vs)
       if (v.getName().getIdentifier().equals("$"))
         return true;
     return false;
   }
-
   private static List<ReturnStatement> prune(final List<ReturnStatement> $) {
     if ($ == null || $.isEmpty())
       return null;
@@ -127,7 +119,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
     }
     return $;
   }
-
   private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
       final List<ReturnStatement> rs) {
     final int bestScore = bestScore(vs, rs);
@@ -137,7 +128,6 @@ public class RenameReturnVariableToDollar extends Spartanization {
           return noRivals(v, vs, rs) ? v : null;
     return null;
   }
-
   private static boolean noRivals(final VariableDeclarationFragment candidate, final List<VariableDeclarationFragment> vs,
       final List<ReturnStatement> rs) {
     for (final VariableDeclarationFragment rival : vs)
@@ -145,21 +135,18 @@ public class RenameReturnVariableToDollar extends Spartanization {
         return false;
     return true;
   }
-
   private static int bestScore(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final VariableDeclarationFragment v : vs)
       $ = Math.max($, score(v, rs));
     return $;
   }
-
   private static int score(final VariableDeclarationFragment v, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final ReturnStatement r : rs)
       $ += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r).size();
     return $;
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {

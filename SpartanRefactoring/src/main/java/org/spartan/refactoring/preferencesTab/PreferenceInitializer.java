@@ -1,6 +1,6 @@
 package org.spartan.refactoring.preferencesTab;
 
-import static org.spartan.refactoring.spartanizations.All.allRulesNames;
+import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;

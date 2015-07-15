@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
@@ -46,7 +47,6 @@ public enum Is {
     return block(n) ? assignment(asExpressionStatement(Funcs.getBlockSingleStmnt((Block) n)))
         : expressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
-
   /**
    * Determined if a node is a return statement
    *
@@ -57,11 +57,9 @@ public enum Is {
   public static boolean block(final ASTNode n) {
     return is(n, ASTNode.BLOCK);
   }
-
   public static boolean booleanLiteral(final ASTNode e) {
     return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
   }
-
   /**
    * @param es
    *          expressions to check
@@ -84,7 +82,6 @@ public enum Is {
     }
     return false;
   }
-
   /**
    * Determined if a node is an "expression statement"
    *
@@ -95,7 +92,6 @@ public enum Is {
   public static boolean expressionStatement(final ASTNode n) {
     return is(n, ASTNode.EXPRESSION_STATEMENT);
   }
-
   /**
    * @param o
    *          The operator to check
@@ -116,7 +112,6 @@ public enum Is {
         XOR, //
         null);
   }
-
   /**
    * @param n
    *          node to check
@@ -125,11 +120,9 @@ public enum Is {
   public static boolean infix(final ASTNode n) {
     return is(n, ASTNode.INFIX_EXPRESSION);
   }
-
   private static boolean is(final ASTNode n, final int type) {
     return n != null && type == n.getNodeType();
   }
-
   /**
    * Determine if a given node is a boolean literal
    *
@@ -140,7 +133,6 @@ public enum Is {
   public static boolean isBooleanLiteral(final ASTNode n) {
     return is(n, ASTNode.BOOLEAN_LITERAL);
   }
-
   /**
    * Determine whether a variable declaration is final or not
    *
@@ -151,7 +143,6 @@ public enum Is {
   public static boolean isFinal(final VariableDeclarationStatement v) {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
-
   /**
    * Determine whether an item is the last one in a list
    *
@@ -166,7 +157,6 @@ public enum Is {
   public static <T> boolean isLast(final T t, final List<T> ts) {
     return ts.indexOf(t) == ts.size() - 1;
   }
-
   /**
    * @param n
    *          node to check
@@ -188,14 +178,12 @@ public enum Is {
         return false;
     }
   }
-
   private static boolean isOneOf(final int i, final int... is) {
     for (final int j : is)
       if (i == j)
         return true;
     return false;
   }
-
   /**
    * @param n
    *          node to check
@@ -204,7 +192,6 @@ public enum Is {
   public static boolean isPrefix(final ASTNode n) {
     return is(n, ASTNode.PREFIX_EXPRESSION);
   }
-
   /**
    * Determined if a node is a return statement
    *
@@ -215,7 +202,6 @@ public enum Is {
   public static boolean isReturn(final ASTNode n) {
     return is(n, ASTNode.RETURN_STATEMENT);
   }
-
   /**
    * @param n
    *          node to check
@@ -225,7 +211,6 @@ public enum Is {
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
   }
-
   /**
    * @param n
    *          Expression node
@@ -240,7 +225,38 @@ public enum Is {
         ASTNode.BOOLEAN_LITERAL //
     );
   }
-
+  /**
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
+   *         whose type is provably not of type {@link String}, in the sense
+   *         used in applying the <code>+</code> operator to concatenate
+   *         strings. concatenation.
+   */
+  public static boolean notString(final Expression e) {
+    return intIsIn(e.getNodeType(), //
+        ASTNode.NULL_LITERAL, // null + null is an error, not a string.
+        ASTNode.CHARACTER_LITERAL, //
+        ASTNode.NUMBER_LITERAL, //
+        ASTNode.BOOLEAN_LITERAL, //
+        ASTNode.PREFIX_EXPRESSION, //
+        ASTNode.INFIX_EXPRESSION, //
+        ASTNode.ARRAY_CREATION, //
+        ASTNode.INSTANCEOF_EXPRESSION//
+    //
+    ) || notString(As.infixExpression(e));
+  }
+  /**
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
+   *         whose type is provably not of type {@link String}, in the sense
+   *         used in applying the <code>+</code> operator to concatenate
+   *         strings. concatenation.
+   */
+  public static boolean notString(final InfixExpression e) {
+    return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
+  }
   /**
    * @param r
    *          Return Statement node
@@ -249,7 +265,6 @@ public enum Is {
   public static boolean literal(final ReturnStatement r) {
     return literal(r.getExpression());
   }
-
   /**
    * @param n
    *          node to check
@@ -258,7 +273,6 @@ public enum Is {
   public static boolean methodInvocation(final ASTNode n) {
     return is(n, ASTNode.METHOD_INVOCATION);
   }
-
   /**
    * Determine whether the type of an {@link ASTNode} node is one of given list
    *
@@ -272,7 +286,6 @@ public enum Is {
   public static boolean oneOf(final ASTNode n, final int... types) {
     return n == null ? false : isOneOf(n.getNodeType(), types);
   }
-
   /**
    * @param a
    *          the assignment who's operator we want to check
@@ -281,7 +294,6 @@ public enum Is {
   public static boolean plainAssignment(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
-
   /**
    * @param n
    *          node to check
@@ -290,11 +302,9 @@ public enum Is {
   public static boolean stringLiteral(final ASTNode n) {
     return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
   }
-
   public static boolean specific(final Expression e) {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
   }
-
   public static boolean thisOrNull(final Expression e) {
     return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
   }

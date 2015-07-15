@@ -8,7 +8,7 @@ import static org.spartan.refactoring.preferencesTab.PreferencesStrings.repositi
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.rightLiteralOptions;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageHeader;
 import static org.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageOptions;
-import static org.spartan.refactoring.spartanizations.All.allRulesNames;
+import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -45,7 +45,6 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
     setPreferenceStore(Plugin.getDefault().getPreferenceStore());
     setDescription(Strings.description);
   }
-
   /**
    * Creates the field editors. Field editors are abstractions of the common GUI
    * blocks needed to manipulate various types of preferences. Each field editor
@@ -60,7 +59,6 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
     addField(new RadioGroupFieldEditor(nullAndBoolHeader, nullAndBoolHeader, 1, NullAndBoolOptions, getFieldEditorParent()));
     addField(new RadioGroupFieldEditor(swapMessageHeader, swapMessageHeader, 1, swapMessageOptions, getFieldEditorParent()));
   }
-
   @Override public boolean performOk() {
     super.performOk();
     SpartanizationPreferencePage.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -81,7 +79,6 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
     }
     return true;
   }
-
   /**
    * Initializes the workbench
    */

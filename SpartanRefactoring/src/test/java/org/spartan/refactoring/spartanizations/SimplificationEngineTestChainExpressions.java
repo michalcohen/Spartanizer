@@ -36,7 +36,7 @@ public class SimplificationEngineTestChainExpressions {
     final Simplifier s = Simplifier.find(e);
     assertEquals(s, Simplifier.shortestOperandFirst);
     assertNotNull(s);
-    assertTrue(s.withinScope(e));
+    assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);

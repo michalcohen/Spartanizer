@@ -16,7 +16,7 @@ import org.spartan.refactoring.preferencesTab.PreferencesFile;
  *         30.05.2014) (v3)
  * @since 2013/07/01
  */
-public enum All {
+public enum Spartanizations {
   @SuppressWarnings("javadoc") ComparisonWithBoolean(new ComparisonWithBoolean()), //
   @SuppressWarnings("javadoc") ComparisonWithSpecific(new ComparisonWithSpecific()), //
   @SuppressWarnings("javadoc") ForwardDeclaration(new ForwardDeclaration()), //
@@ -42,17 +42,15 @@ public enum All {
   ;
   private final Spartanization value;
 
-  private All(final Spartanization value) {
+  private Spartanizations(final Spartanization value) {
     this.value = value;
   }
-
   /**
    * @return Spartanization class rule instance
    */
   public Spartanization value() {
     return value;
   }
-
   /**
    * @param c
    *          Spartanization rule
@@ -60,14 +58,13 @@ public enum All {
    */
   @SuppressWarnings("unchecked") //
   public static <T extends Spartanization> T findInstance(final Class<? extends T> c) {
-    for (final All a : All.values()) {
+    for (final Spartanizations a : Spartanizations.values()) {
       final Spartanization $ = a.value();
       if ($.getClass().equals(c))
         return (T) $;
     }
     return null;
   }
-
   /**
    * @return Iteration over all Spartanization class instances
    */
@@ -80,11 +77,9 @@ public enum All {
           @Override public boolean hasNext() {
             return next < values().length;
           }
-
           @Override public Spartanization next() {
             return values()[next++].value();
           }
-
           @Override public final void remove() {
             throw new IllegalArgumentException();
           }
@@ -99,11 +94,9 @@ public enum All {
   private static void put(final Spartanization s) {
     all.put(s.toString(), s);
   }
-
   private static boolean ignored(final String sparta) {
     return sparta.indexOf(ignoreRuleStr) >= 0;
   }
-
   private static void assignRulesOptions(final String[] lines) {
     final ShortestOperand shortestOperandInstance = (ShortestOperand) ShortestOperand.value;
     if (lines == null || shortestOperandInstance == null)
@@ -115,7 +108,6 @@ public enum All {
       if (line == null)
         continue;
   }
-
   /**
    * Resets the enumeration with the current values from the preferences file.
    * Letting the rules notification decisions be updated without restarting
@@ -134,7 +126,6 @@ public enum All {
     }
     put(new SimplifyLogicalNegation());
   }
-
   /**
    * @param name
    *          the name of the spartanization
@@ -144,14 +135,12 @@ public enum All {
     assert name != null;
     return all.get(name);
   }
-
   /**
    * @return all the registered spartanization refactoring objects
    */
   public static Iterable<Spartanization> all() {
     return all.values();
   }
-
   /**
    * @return all the registered spartanization refactoring objects names
    */

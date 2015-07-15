@@ -43,10 +43,10 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 /**
  * A utility class for finding occurrences of an {@link Expression} in an
  * {@link ASTNode}.
- * 
+ *
  * @author Boris van Sosin <boris.van.sosin @ gmail.com>
  * @author Yossi Gil <yossi.gil @ gmail.com> (major refactoring 2013/07/10)
- * 
+ *
  * @since 2013/07/01
  */
 public enum Occurrences {
@@ -94,7 +94,7 @@ public enum Occurrences {
   };
   /**
    * Creates a function object for searching for a given value.
-   * 
+   *
    * @param e
    *          what to search for
    * @return a function object which can be used for searching for the parameter
@@ -118,7 +118,7 @@ public enum Occurrences {
    * search for; it represents the function that, given a location for the
    * search, will carry out the search for the captured value in its location
    * parameter.
-   * 
+   *
    * @see Occurrences#of(Expression)
    * @author Yossi Gil <yossi.gil @ gmail.com>
    * @since 2013/14/07
@@ -126,7 +126,7 @@ public enum Occurrences {
   public static abstract class Of {
     /**
      * the method that will carry out the search
-     * 
+     *
      * @param n
      *          a location in which the search is to be carried out
      * @return a list of occurrences of the captured value in the parameter.
@@ -136,12 +136,12 @@ public enum Occurrences {
 
   /**
    * Lists the required occurrences
-   * 
+   *
    * @param what
    *          the expression to search for
    * @param where
    *          the n in which to counted
-   * 
+   *
    * @return the list of uses
    */
   final List<Expression> collect(final Expression what, final ASTNode where) {
@@ -155,57 +155,46 @@ public enum Occurrences {
     });
     return $;
   }
-
   abstract ASTVisitor[] collectors(final List<Expression> into, final Expression e);
-
   static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
     return new ASTVisitor() {
       @Override public boolean visit(final Assignment n) {
         collectExpression(n.getLeftHandSide());
         return true;
       }
-
       @Override public boolean visit(final VariableDeclarationFragment n) {
         collectExpression(n.getName());
         return true;
       }
-
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
         return false;
       }
-
       void collectExpression(final Expression candidate) {
         if (candidate != null && candidate.getNodeType() == e.getNodeType() && candidate.subtreeMatch(matcher, e))
           into.add(candidate);
       }
     };
   }
-
   static ASTVisitor lexicalUsesCollector(final List<Expression> into, final Expression what) {
     return usesCollector(into, what, true);
   }
-
   static ASTVisitor semanticalUsesCollector(final List<Expression> into, final Expression what) {
     return usesCollector(into, what, false);
   }
-
   private static ASTVisitor usesCollector(final List<Expression> into, final Expression what, final boolean lexicalOnly) {
     return new ASTVisitor() {
       private boolean collect(final Expression e) {
         collectExpression(what, e);
         return true;
       }
-
       private boolean add(final Object o) {
         return collect((Expression) o);
       }
-
       private boolean collect(@SuppressWarnings("rawtypes") final List os) {
         for (final Object o : os)
           add(o);
         return true;
       }
-
       @Override public boolean visit(final MethodDeclaration n) {
         /* Now: this is a bit complicated. Java allows declaring methods in
          * anonymous classes in which the formal parameters hide variables in
@@ -216,137 +205,107 @@ public enum Occurrences {
             return false;
         return true;
       }
-
       @Override public boolean visit(final AnonymousClassDeclaration n) {
         for (final VariableDeclarationFragment f : getFieldsOfClass(n))
           if (f.getName().subtreeMatch(matcher, what))
             return false;
         return true;
       }
-
       @Override public boolean visit(final InfixExpression n) {
         collect(n.getRightOperand());
         collect(n.getLeftOperand());
         return collect(n.extendedOperands());
       }
-
       @Override public boolean visit(final PrefixExpression n) {
         return collect(n.getOperand());
       }
-
       @Override public boolean visit(final ConditionalExpression n) {
         collect(n.getThenExpression());
         collect(n.getExpression());
         return collect(n.getElseExpression());
       }
-
       @Override public boolean visit(final PostfixExpression n) {
         return collect(n.getOperand());
       }
-
       @Override public boolean visit(final ParenthesizedExpression n) {
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final Assignment n) {
         return collect(n.getRightHandSide());
       }
-
       @Override public boolean visit(final CastExpression n) {
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final ArrayAccess n) {
         return collect(n.getArray());
       }
-
       @Override public boolean visit(final MethodInvocation n) {
         collect(n.getExpression());
         return collect(n.arguments());
       }
-
       @Override public boolean visit(final ConstructorInvocation n) {
         return collect(n.arguments());
       }
-
       @Override public boolean visit(final ClassInstanceCreation n) {
         collect(n.getExpression());
         return collect(n.arguments());
       }
-
       @Override public boolean visit(final ArrayCreation n) {
         return collect(n.dimensions());
       }
-
       @Override public boolean visit(final ArrayInitializer n) {
         return collect(n.expressions());
       }
-
       @Override public boolean visit(final ReturnStatement n) {
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final FieldAccess n) {
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final QualifiedName n) {
         collectExpression(what, n.getQualifier());
         return true;
       }
-
       @Override public boolean visit(final VariableDeclarationFragment n) {
         return collect(n.getInitializer());
       }
-
       @Override public boolean visit(final IfStatement n) {
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final SwitchStatement n) {
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final InstanceofExpression n) {
         return collect(n.getLeftOperand());
       }
-
       @Override public boolean visit(final ForStatement n) {
         loopDepth++;
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final EnhancedForStatement n) {
         loopDepth++;
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final DoStatement n) {
         loopDepth++;
         return collect(n.getExpression());
       }
-
       @Override public boolean visit(final WhileStatement n) {
         loopDepth++;
         return collect(n.getExpression());
       }
-
       @Override public void endVisit(@SuppressWarnings("unused") final DoStatement _) {
         loopDepth--;
       }
-
       @Override public void endVisit(@SuppressWarnings("unused") final EnhancedForStatement _) {
         loopDepth--;
       }
-
       @Override public void endVisit(@SuppressWarnings("unused") final ForStatement _) {
         loopDepth--;
       }
-
       @Override public void endVisit(@SuppressWarnings("unused") final WhileStatement _) {
         loopDepth--;
       }
-
       void collectExpression(final Expression e, final Expression candidate) {
         if (candidate != null && candidate.getNodeType() == e.getNodeType() && candidate.subtreeMatch(matcher, e)) {
           into.add(candidate);
@@ -354,7 +313,6 @@ public enum Occurrences {
             into.add(candidate);
         }
       }
-
       private boolean repeated() {
         return !lexicalOnly && loopDepth > 0;
       }

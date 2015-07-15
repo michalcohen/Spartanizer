@@ -39,7 +39,6 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
       throw new ExecutionException(x.getMessage());
     }
   }
-
   private static Void execute(final ISelection s) throws CoreException {
     if (s instanceof IStructuredSelection)
       for (final Object o : ((IStructuredSelection) s).toList()) {
@@ -49,12 +48,10 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
       }
     return null;
   }
-
   private static IProject extractProject(final Object o) {
     return o instanceof IProject ? (IProject) o
         : !(o instanceof IAdaptable) ? null : (IProject) ((IAdaptable) o).getAdapter(IProject.class);
   }
-
   private static void toggleNature(final IProject p) throws CoreException {
     final IProjectDescription description = p.getDescription();
     final String[] natures = description.getNatureIds();

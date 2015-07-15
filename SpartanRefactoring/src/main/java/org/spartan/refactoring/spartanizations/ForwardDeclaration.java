@@ -25,7 +25,7 @@ import org.spartan.utils.Range;
  *         04.06.2014)
  * @since 2013/01/01 TODO: There <b>must</b> be an option to disable this
  *        warning in selected places. Consider this example:
- * 
+ *
  *        <pre>
  *        public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
  *          final T t = ts[i];
@@ -33,9 +33,9 @@ import org.spartan.utils.Range;
  *          ts[j] = t;
  *        }
  *        </pre>
- * 
+ *
  *        Require comment
- * 
+ *
  *        <pre>
  *  public static &lt;T&gt; void swap(final T[] ts, final int i,
  *        final int j) { final T t = ts[i]; // Don't move! ts[i] = ts[j]; ts[j]
@@ -47,7 +47,6 @@ public class ForwardDeclaration extends Spartanization {
   public ForwardDeclaration() {
     super("Forward declaration", "Forward declaration of a variable just prior to first use");
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment v) {
@@ -77,14 +76,12 @@ public class ForwardDeclaration extends Spartanization {
         }
         return true;
       }
-
       private void rewrite(final int beginingOfDeclarationsBlockIdx, final ASTNode n, final ListRewrite lr) {
         lr.remove(n, null);
         lr.insertAt(ASTNode.copySubtree(t, n), 1 + beginingOfDeclarationsBlockIdx, null);
       }
     });
   }
-
   static boolean nextNodeIsAlreadyFixed(final Block block, final VariableDeclarationFragment n, final int declaredIdx) {
     final int firstUseIdx = findFirstUse(block, n.getName());
     if (firstUseIdx < 0)
@@ -100,14 +97,12 @@ public class ForwardDeclaration extends Spartanization {
     }
     return false;
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
         final ASTNode $ = n.getParent().getParent();
         return !($ instanceof Block) ? true : moverForward(n, (Block) $);
       }
-
       private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
         final int firstUseIdx = findFirstUse(b, n.getName());
         if (firstUseIdx < 0)
@@ -121,7 +116,6 @@ public class ForwardDeclaration extends Spartanization {
       }
     };
   }
-
   static int findFirstUse(final Block b, final SimpleName name) {
     final ASTNode declarationStmt = name.getParent().getParent();
     for (int $ = 1 + b.statements().indexOf(declarationStmt); $ < b.statements().size(); ++$)
@@ -129,7 +123,6 @@ public class ForwardDeclaration extends Spartanization {
         return $; // first use!
     return -1; // that means unused
   }
-
   static int findBeginingOfDeclarationBlock(final Block b, final int declaredIdx, final int firstUseIdx) {
     int $ = firstUseIdx - 1;
     for (int i = firstUseIdx - 1; i > declaredIdx; --i) {

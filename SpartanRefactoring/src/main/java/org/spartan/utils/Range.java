@@ -107,9 +107,8 @@ public class Range {
   }
   /**
    * @param a
-   *          b Ranges to merge
+   *          JD
    * @return A new merged range.
-   * @see areOverlapped
    */
   public Range merge(final Range r) {
     return new Range(from < r.from ? from : r.from, to > r.to ? to : r.to);

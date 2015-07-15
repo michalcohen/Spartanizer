@@ -31,7 +31,6 @@ public class Nature implements IProjectNature {
     d.setBuildSpec(Utils.append(cs, c));
     project.setDescription(d, null);
   }
-
   /* (non-Javadoc)
    *
    * @see org.eclipse.core.resources.IProjectNature#deconfigure() */
@@ -45,11 +44,9 @@ public class Nature implements IProjectNature {
         return;
       }
   }
-
   @Override public IProject getProject() {
     return project;
   }
-
   @Override public void setProject(final IProject project) {
     this.project = project;
   }

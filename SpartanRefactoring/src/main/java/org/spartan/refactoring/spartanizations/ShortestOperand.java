@@ -86,8 +86,7 @@ public class ShortestOperand extends Spartanization {
       @Override public boolean visit(final InfixExpression e) {
         if (!inRange(m, e) || outOfScope(e))
           return true;
-        final InfixExpression newNode = transpose(t, e);
-        r.replace(e, newNode, null);
+        r.replace(e, transpose(t, e), null);
         return true;
       }
     });

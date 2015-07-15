@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * Tests that each directory in our test suite is a name of valid
@@ -33,7 +32,6 @@ public class SpartanizationClassForFolderExists extends FileTestUtils {
   @Test public void validClassName() {
     makeSpartanizationObject(folderForClass);
   }
-
   /**
    * @return a collection of cases, where each case is an array of length 1
    *         containing the name of a in the test suite

@@ -17,7 +17,6 @@ public enum Make {
   private Make(final int kind) {
     this.kind = kind;
   }
-
   /**
    * Creates a no-binding parser for a given text
    *
@@ -28,7 +27,6 @@ public enum Make {
   public ASTParser parser(final String text) {
     return parser(text.toCharArray());
   }
-
   /**
    * Creates a no-binding parser for a given text
    *
@@ -41,15 +39,12 @@ public enum Make {
     $.setSource(text);
     return $;
   }
-
   public ASTParser parser(final IMarker m) {
     return parser(As.iCompilationUnit(m));
   }
-
   public ASTParser parser(final IFile f) {
     return parser(JavaCore.createCompilationUnitFrom(f));
   }
-
   /**
    * Creates a no-binding parser for a given compilation unit
    *
@@ -62,14 +57,12 @@ public enum Make {
     $.setSource(u);
     return $;
   }
-
   private ASTParser parser() {
     final ASTParser $ = ASTParser.newParser(AST.JLS8);
     $.setKind(kind);
     $.setResolveBindings(false);
     return $;
   }
-
   public static Make of(final As a) {
     switch (a) {
       case STATEMENTS:

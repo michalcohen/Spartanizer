@@ -191,7 +191,7 @@ public class SimplificationEngineTestTrivial {
     final Simplifier s = Simplifier.find(e);
     assertEquals(s, Simplifier.shortestOperandFirst);
     assertNotNull(s);
-    assertTrue(s.withinScope(e));
+    assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
@@ -204,7 +204,7 @@ public class SimplificationEngineTestTrivial {
     final InfixExpression e = i("null != a");
     final Simplifier s = Simplifier.find(e);
     assertNotNull(s);
-    assertTrue(s.withinScope(e));
+    assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
@@ -226,7 +226,7 @@ public class SimplificationEngineTestTrivial {
     final Simplifier s = Simplifier.find(e);
     assertEquals(Simplifier.shortestOperandFirst, s);
     assertNotNull(s);
-    assertTrue(s.withinScope(e));
+    assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
     final Expression e2 = e.getRightOperand();
     assertFalse(hasNull(e1, e2));
@@ -246,7 +246,7 @@ public class SimplificationEngineTestTrivial {
     final Simplifier s = Simplifier.find(e);
     assertEquals(Simplifier.shortestOperandFirst, s);
     assertNotNull(s);
-    assertTrue(s.withinScope(e));
+    assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
     final Expression e2 = e.getRightOperand();
     assertFalse(hasNull(e1, e2));

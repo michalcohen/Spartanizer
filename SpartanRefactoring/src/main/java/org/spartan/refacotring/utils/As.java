@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
@@ -196,5 +197,8 @@ public enum As {
   }
   public static PrefixExpression not(final Expression e) {
     return !(e instanceof PrefixExpression) ? null : As.not((PrefixExpression) e);
+  }
+  public static InfixExpression infixExpression(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
 }

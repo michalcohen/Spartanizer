@@ -15,7 +15,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * Test cases in which the transformation should not do anything
@@ -46,7 +45,6 @@ public class Unchanged {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
     assertEquals(0, spartanization.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size());
   }
-
   /**
    * Runs a parameterized test case, based on the instance variables of this
    * instance, and check that no matter what, even if the number of
@@ -60,11 +58,9 @@ public class Unchanged {
     else assertEquals(As.string(FileTestUtils.makeInFile(input)), TESTUtils.rewrite(spartanization,
         (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(FileTestUtils.makeInFile(input)))).get());
   }
-
   private String input() {
     return As.string(input);
   }
-
   /**
    * @return a collection of cases, where each cases is an array of three
    *         objects, the spartanization, the test case name, and the input file

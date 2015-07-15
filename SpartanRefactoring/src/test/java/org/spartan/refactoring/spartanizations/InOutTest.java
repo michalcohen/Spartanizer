@@ -16,7 +16,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refacotring.utils.As;
-import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * Run tests in which a specific transformation is not supposed to change the
@@ -67,7 +66,6 @@ public class InOutTest {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
     go(spartanization, input, output);
   }
-
   /**
    * Generate test cases for this parameterized class.
    *

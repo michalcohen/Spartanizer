@@ -128,7 +128,7 @@ enum TESTUtils {
     assertNotLegible(s, e);
   }
   static void assertNotWithinScope(final Simplifier s, final InfixExpression e) {
-    assertFalse(s.withinScope(e));
+    assertFalse(s.scopeIncludes(e));
   }
   static void assertNotWithinScope(final Simplifier s, final String expression) {
     final InfixExpression e = (InfixExpression) asExpression(expression);
@@ -148,7 +148,7 @@ enum TESTUtils {
     assertSimilar(expected, peeled);
   }
   static void assertWithinScope(final Simplifier s, final InfixExpression e) {
-    assertTrue(s.withinScope(e));
+    assertTrue(s.scopeIncludes(e));
   }
   static void assertWithinScope(final Simplifier s, final String expression) {
     final InfixExpression e = (InfixExpression) asExpression(expression);

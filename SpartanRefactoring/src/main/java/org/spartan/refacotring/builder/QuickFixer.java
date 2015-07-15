@@ -4,8 +4,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
-import org.spartan.refactoring.spartanizations.All;
 import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.spartanizations.Spartanizations;
 
 /**
  * A quickfix generator for spartanization refactoring
@@ -16,7 +16,7 @@ import org.spartan.refactoring.spartanizations.Spartanization;
 public class QuickFixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
-      final Spartanization $ = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
+      final Spartanization $ = Spartanizations.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
       assert $ != null;
       return new IMarkerResolution[] { $.getFix(), $.getFixWithPreview() };
     } catch (final CoreException _) {

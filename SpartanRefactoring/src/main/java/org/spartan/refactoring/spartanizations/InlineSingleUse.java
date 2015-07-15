@@ -53,7 +53,6 @@ public class InlineSingleUse extends Spartanization {
   public InlineSingleUse() {
     super("Inline Single Use", "Inline variable used once");
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
@@ -70,13 +69,11 @@ public class InlineSingleUse extends Spartanization {
       }
     });
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
         return !(node.getParent() instanceof VariableDeclarationStatement) ? true : go(node, node.getName());
       }
-
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
         if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1
@@ -84,13 +81,11 @@ public class InlineSingleUse extends Spartanization {
           opportunities.add(new Range(v));
         return true;
       }
-
       private int countAssignments(final SimpleName n, final VariableDeclarationStatement parent) {
         return numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent());
       }
     };
   }
-
   static int numOfOccur(final Occurrences typeOfOccur, final Expression of, final ASTNode in) {
     return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
   }

@@ -30,7 +30,6 @@ public class ComparisonWithBoolean extends Spartanization {
   public ComparisonWithBoolean() {
     super("Comparison With Boolean", "Eliminate reduntant comparison to boolean constant");
   }
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression n) {
@@ -52,13 +51,13 @@ public class ComparisonWithBoolean extends Spartanization {
         r.replace(n,
             literal.booleanValue() && n.getOperator() == Operator.EQUALS
                 || !literal.booleanValue() && n.getOperator() == Operator.NOT_EQUALS ? nonliteral
-                    : makePrefixExpression(t, makeParenthesizedExpression(t, (Expression) nonliteral), PrefixExpression.Operator.NOT),
+                    : makePrefixExpression(t, makeParenthesizedExpression(t, (Expression) nonliteral),
+                        PrefixExpression.Operator.NOT),
             null);
         return true;
       }
     });
   }
-
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression n) {
