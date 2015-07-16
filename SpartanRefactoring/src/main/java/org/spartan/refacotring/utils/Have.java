@@ -4,6 +4,13 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.Expression;
 
+/**
+ * A class for fluent programming.
+ *
+ * @author Yossi Gil
+ * @since 2015-07-16
+ *
+ */
 public enum Have {
   ;
   public static boolean literal(final List<Expression> es) {

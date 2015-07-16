@@ -5,15 +5,29 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 
 /**
- * Determine precedence and associativity of Java operators; drawn from
+ * * A an empty <code><b>enum</b></code> for fluent programming. The name says
+ * it all: The name, followed by a dot, followed by a method name, should read
+ * like a word phrase.
+ *
+ * Specifically, this class determines precedence and associativity of Java
+ * operators; data is drawn from
  * {@link "http://introcs.cs.princeton.edu/java/11precedence/"}
  *
  * @author Yossi Gil
- * @since 2015
+ * @since 2015-07-14
  *
  */
 public enum Precedence {
   ;
+  /**
+   * * A an empty <code><b>enum</b></code> for fluent programming. The name says
+   * it all: The name, followed by a dot, followed by a method name, should read
+   * like a word phrase.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-14
+   *
+   */
   public enum Is {
     ;
     public static boolean legal(final int precedence) {

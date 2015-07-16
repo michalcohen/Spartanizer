@@ -37,6 +37,13 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
+/**
+ * A class for fluent programming.
+ *
+ * @author Yossi Gil
+ * @since 2015-07-16
+ *
+ */
 public enum Is {
   ;
   /**

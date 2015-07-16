@@ -7,6 +7,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 
+/**
+ * A class for fluent programming.
+ *
+ * @author Yossi Gil
+ * @since 2015-07-16
+ *
+ */
 public enum Make {
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT), //
   EXPRESSION(ASTParser.K_EXPRESSION), //

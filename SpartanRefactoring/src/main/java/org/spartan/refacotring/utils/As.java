@@ -27,6 +27,13 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 
+/**
+ * A class for fluent programming.
+ *
+ * @author Yossi Gil
+ * @since 2015-07-16
+ *
+ */
 public enum As {
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT) {
     @Override public CompilationUnit ast(final File f) {
