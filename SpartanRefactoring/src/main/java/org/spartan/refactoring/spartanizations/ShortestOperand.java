@@ -131,11 +131,9 @@ public class ShortestOperand extends Spartanization {
    */
   public InfixExpression transpose(final AST t, final InfixExpression e) {
     final InfixExpression $ = duplicate(t, e);
-    System.out.println("BEGIN OP=" + e.getOperator() + " HIM MU");
     if (eligible(e))
       flip(e);
     sortInfix($, t);
-    System.out.println("END OP=" + e.getOperator() + " HIM MU");
     return $;
   }
   private boolean eligible(final InfixExpression e) {

@@ -5,6 +5,8 @@ import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -310,5 +312,8 @@ public enum Is {
   }
   public static boolean numericalLiteral(final Expression e) {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
+  }
+  public static boolean deMorgan(final Operator o) {
+    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
 }

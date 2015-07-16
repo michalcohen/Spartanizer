@@ -192,7 +192,7 @@ public class SimplificationEngineTestTrivial {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     final Simplifier s = Simplifiers.find(e);
-    assertEquals(s, shortestOperandFirst);
+    assertEquals(s, shortestOperandFirst.inner);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
@@ -214,7 +214,7 @@ public class SimplificationEngineTestTrivial {
     assertEquals("a != null", replacement.toString());
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
-    assertEquals(comparisionWithSpecific, Simplifiers.find(i("null != a")));
+    assertEquals(comparisionWithSpecific.inner, Simplifiers.find(i("null != a")));
   }
   @Test public void shorterChainParenthesisComparisonLast() {
     assertSimplifiesTo("a * b * c * d * e * f * g * h == b == c", "c == a * b * c * d * e * f * g * h == b");

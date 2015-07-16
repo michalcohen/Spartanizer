@@ -67,9 +67,6 @@ public abstract class Simplifier {
     return true;
   }
   abstract boolean go(ASTRewrite r, PrefixExpression e);
-  InfixExpression asAndOrOr(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asAndOrOr(e);
-  }
 
   static abstract class OfInfixExpression extends Simplifier {
     abstract boolean _eligible(final InfixExpression e);

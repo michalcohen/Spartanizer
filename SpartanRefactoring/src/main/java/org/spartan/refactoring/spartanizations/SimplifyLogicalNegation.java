@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.spartan.refacotring.utils.Funcs.asAndOrOr;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -53,6 +54,9 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.spartan.refacotring.utils.As;
+import
+
+org.spartan.refacotring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
@@ -179,20 +183,11 @@ public class SimplifyLogicalNegation extends Spartanization {
     return getCore(e.getLeftOperand());
   }
   static Operator conjugate(final Operator o) {
-    assert isDeMorgan(o);
+    assert Is.deMorgan(o);
     return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
   }
   static Expression getCore(final Expression $) {
     return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
-  }
-  static InfixExpression asAndOrOr(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
-  }
-  static InfixExpression asAndOrOr(final InfixExpression e) {
-    return isDeMorgan(e.getOperator()) ? e : null;
-  }
-  static boolean isDeMorgan(final Operator o) {
-    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
   static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
@@ -265,16 +260,16 @@ public class SimplifyLogicalNegation extends Spartanization {
       assertNull(asComparison(i));
     }
     @Test public void isDeMorganAND() {
-      assertTrue(isDeMorgan(CONDITIONAL_AND));
+      assertTrue(Is.deMorgan(CONDITIONAL_AND));
     }
     @Test public void isDeMorganOR() {
-      assertTrue(isDeMorgan(CONDITIONAL_OR));
+      assertTrue(Is.deMorgan(CONDITIONAL_OR));
     }
     @Test public void isDeMorganGreater() {
-      assertFalse(isDeMorgan(GREATER));
+      assertFalse(Is.deMorgan(GREATER));
     }
     @Test public void isDeMorganGreaterEuals() {
-      assertFalse(isDeMorgan(GREATER_EQUALS));
+      assertFalse(Is.deMorgan(GREATER_EQUALS));
     }
     @Test public void inTypicalTrue() {
       assertTrue(in("A", "A", "B", "C"));

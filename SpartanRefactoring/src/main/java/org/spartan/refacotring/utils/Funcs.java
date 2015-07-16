@@ -776,15 +776,20 @@ public enum Funcs {
   public static boolean isOpAssign(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
+  public static InfixExpression asAndOrOr(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
+  }
+  public static InfixExpression asAndOrOr(final InfixExpression e) {
+    return Is.deMorgan(e.getOperator()) ? e : null;
+  }
   /**
-   * >>>>>>> 2949358a639f6cff98216d9ebc429786ffaee105 Determine whether two
-   * nodes are the same, in the sense that their textual representations is
-   * identical.
+   * Determine whether two nodes are the same, in the sense that their textual
+   * representations is identical.
    *
    * @param n1
-   *          an arbitrary node
+   *          JD
    * @param n2
-   *          second node to compare
+   *          JD
    * @return are the nodes equal string-wise
    */
   public static boolean same(final ASTNode n1, final ASTNode n2) {
