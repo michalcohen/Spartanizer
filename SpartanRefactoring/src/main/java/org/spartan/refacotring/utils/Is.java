@@ -308,4 +308,7 @@ public enum Is {
   public static boolean thisOrNull(final Expression e) {
     return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
   }
+  public static boolean numericalLiteral(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
+  }
 }

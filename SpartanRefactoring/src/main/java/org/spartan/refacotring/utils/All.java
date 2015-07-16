@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 public enum All {
   ;
   public static List<Expression> operands(final InfixExpression e) {
-    final List<Expression> $ = new ArrayList<Expression>();
+    final List<Expression> $ = new ArrayList<>();
     $.add(e.getLeftOperand());
     $.add(e.getRightOperand());
     if (e.hasExtendedOperands())

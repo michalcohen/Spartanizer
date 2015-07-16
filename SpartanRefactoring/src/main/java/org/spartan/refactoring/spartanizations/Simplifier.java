@@ -42,7 +42,10 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refacotring.utils.All;
+import org.spartan.refacotring.utils.Are;
 import org.spartan.refacotring.utils.As;
+import org.spartan.refacotring.utils.Have;
 import org.spartan.refacotring.utils.Is;
 
 /**
@@ -113,7 +116,7 @@ public abstract class Simplifier {
   final boolean noneligible(final InfixExpression e) {
     return !eligible(e);
   }
-  public abstract boolean withinScope(PrefixExpression e);
+  abstract boolean withinScope(PrefixExpression e);
   /**
    * @param e
    *          JD
@@ -353,8 +356,25 @@ public abstract class Simplifier {
       return flip(e);
     }
   };
+  public static final Simplifier simplifyAddSomethingToLiteral = new Simplifier.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return e.getOperator() == Operator.PLUS && scopeIncludes(All.operands(e));
+    }
+    private boolean scopeIncludes(final List<Expression> operands) {
+      return Have.literal(operands) && Are.notString(operands);
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      // TODO Auto-generated method stub
+      return false;
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+  };
   private static final Simplifier[] values = new Simplifier[] { //
       comparisionWithBoolean, //
+      simplifyAddSomethingToLiteral, //
       comparisionWithSpecific, //
       shortestOperandFirst,//
   };
@@ -392,7 +412,7 @@ public abstract class Simplifier {
       assert eligible(e);
       return _replacement(e);
     }
-    @SuppressWarnings("unused") @Override public final boolean withinScope(final PrefixExpression _) {
+    @SuppressWarnings("unused") @Override final boolean withinScope(final PrefixExpression _) {
       return false;
     }
     @Override final boolean eligible(@SuppressWarnings("unused") final PrefixExpression _) {
