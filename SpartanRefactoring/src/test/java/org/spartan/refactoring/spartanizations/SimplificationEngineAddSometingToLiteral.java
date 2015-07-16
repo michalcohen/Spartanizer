@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.spartan.refactoring.spartanizations.Simplifiers.simplifyAddSomethingToLiteral;
 import static org.spartan.refactoring.spartanizations.TESTUtils.apply;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
@@ -59,13 +60,13 @@ public class SimplificationEngineAddSometingToLiteral {
     assertNotNull(p);
   }
   @Test public void withinScopeOfNegation() {
-    assertTrue(Simplifier.simplifyAddSomethingToLiteral.withinScope(p(input)));
+    assertTrue(simplifyAddSomethingToLiteral.inner.withinScope(p(input)));
   }
   @Test public void eligibleForNegation() {
-    assertTrue(Simplifier.simplifyAddSomethingToLiteral.eligible(p(input)));
+    assertTrue(simplifyAddSomethingToLiteral.inner.eligible(p(input)));
   }
   @Test public void hasReplacement() {
-    assertNotNull(Simplifier.simplifyAddSomethingToLiteral.replacement(p(input)));
+    assertNotNull(simplifyAddSomethingToLiteral.inner.replacement(p(input)));
   }
   @Test public void simiplifies() {
     final String from = input;

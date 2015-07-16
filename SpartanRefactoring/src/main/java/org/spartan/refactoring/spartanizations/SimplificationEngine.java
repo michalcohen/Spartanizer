@@ -37,7 +37,7 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        final Simplifier s = Simplifier.find(e);
+        final Simplifier s = Simplifiers.find(e);
         return s != null && s.noneligible(e) ? true : overrideInto(e, opportunities);
       }
     };
@@ -47,7 +47,7 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
       @Override public boolean visit(final InfixExpression e) {
         if (!inRange(m, e))
           return true;
-        final Simplifier s = Simplifier.find(e);
+        final Simplifier s = Simplifiers.find(e);
         if (s != null)
           return s.go(r, e);
         return true;
@@ -55,7 +55,7 @@ public class SimplificationEngine extends SpartanizationOfInfixExpression {
       @Override public boolean visit(final PrefixExpression e) {
         if (!inRange(m, e))
           return true;
-        final Simplifier s = Simplifier.find(e);
+        final Simplifier s = Simplifiers.find(e);
         if (s != null)
           return s.go(r, e);
         return true;

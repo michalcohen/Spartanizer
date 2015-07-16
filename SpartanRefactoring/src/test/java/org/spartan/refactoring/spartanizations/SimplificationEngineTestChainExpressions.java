@@ -3,6 +3,7 @@ package org.spartan.refactoring.spartanizations;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.spartan.refactoring.spartanizations.Simplifiers.shortestOperandFirst;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
 
@@ -33,8 +34,8 @@ public class SimplificationEngineTestChainExpressions {
   @Test public void chainComparison0() {
     final InfixExpression e = (InfixExpression) asExpression("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
-    final Simplifier s = Simplifier.find(e);
-    assertEquals(s, Simplifier.shortestOperandFirst);
+    final Simplifier s = Simplifiers.find(e);
+    assertEquals(s, shortestOperandFirst);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
