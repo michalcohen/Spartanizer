@@ -1,4 +1,4 @@
-package org.spartan.refacotring.builder;
+package org.spartan.refactoring.builder;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

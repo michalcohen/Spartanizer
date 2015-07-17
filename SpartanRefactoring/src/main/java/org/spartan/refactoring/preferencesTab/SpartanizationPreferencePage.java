@@ -19,7 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.spartan.refacotring.builder.Plugin;
+import org.spartan.refactoring.builder.Plugin;
 import org.spartan.refactoring.preferencesTab.PreferencesStrings.Strings;
 
 /**

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Spartan Refactoring Plugin
 Bundle-SymbolicName: il.ac.technion.cs.ssdl.spartan.refactoring;singleton:=true
 Bundle-Version: 2.1.0
-Bundle-Activator: org.spartan.refacotring.builder.Plugin
+Bundle-Activator: org.spartan.refactoring.builder.Plugin
 Bundle-Vendor: SSDL
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -18,4 +18,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
-Export-Package: org.spartan.refacotring.builder
+Export-Package: org.spartan.refactoring.builder

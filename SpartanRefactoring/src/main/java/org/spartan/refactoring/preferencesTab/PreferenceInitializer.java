@@ -4,7 +4,7 @@ import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNa
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.spartan.refacotring.builder.Plugin;
+import org.spartan.refactoring.builder.Plugin;
 
 /**
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> @since

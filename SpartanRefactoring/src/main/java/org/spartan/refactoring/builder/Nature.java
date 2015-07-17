@@ -1,4 +1,4 @@
-package org.spartan.refacotring.builder;
+package org.spartan.refactoring.builder;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;

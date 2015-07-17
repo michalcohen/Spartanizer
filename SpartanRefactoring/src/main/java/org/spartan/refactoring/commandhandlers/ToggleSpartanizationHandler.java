@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.spartan.refacotring.builder.Builder;
-import org.spartan.refacotring.builder.Nature;
+import org.spartan.refactoring.builder.Builder;
+import org.spartan.refactoring.builder.Nature;
 
 /**
  * A command handler which toggles the spartanization nature
