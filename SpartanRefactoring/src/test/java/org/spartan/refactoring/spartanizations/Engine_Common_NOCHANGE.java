@@ -16,6 +16,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.Test;
 
+@SuppressWarnings("javadoc") //
 public abstract class Engine_Common_NOCHANGE extends Engine_Common {
   /**
    * Instantiates the enclosing class ({@link Engine_Common_NOCHANGE})
@@ -36,11 +37,10 @@ public abstract class Engine_Common_NOCHANGE extends Engine_Common {
     final CompilationUnit u = asCompilationUnit();
     assertEquals(u.toString(), 0, engine.findOpportunities(u).size());
   }
-  @Test @SuppressWarnings("javadoc") public void hasNoReplacement() {
+  @Test(expected = AssertionError.class) @SuppressWarnings("javadoc") public void hasNoReplacement() {
     assertNull(simplifier.replacement(asInfixExpression()));
   }
-  @Test @SuppressWarnings("javadoc") public void simiplifies()
-      throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+  @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final CompilationUnit u = asCompilationUnit();
     final ASTRewrite r = engine.createRewrite(u, null);
     final Document d = asDocument();

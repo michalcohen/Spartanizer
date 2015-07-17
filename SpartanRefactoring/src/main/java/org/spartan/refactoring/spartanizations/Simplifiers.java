@@ -42,6 +42,7 @@ import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.spartan.refacotring.utils.All;
 import org.spartan.refacotring.utils.As;
 import org.spartan.refacotring.utils.Have;
 import org.spartan.refacotring.utils.Is;
@@ -61,8 +62,7 @@ public enum Simplifiers {
    */
   ADDITION_SORTER(new Simplifier.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && !e.hasExtendedOperands()
-          && Have.numericalLiteral(e.getLeftOperand(), e.getRightOperand());
+      return e.getOperator() == Operator.PLUS && !e.hasExtendedOperands() && Have.numericalLiteral(All.operands(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
       return Is.numericalLiteral(e.getLeftOperand());
