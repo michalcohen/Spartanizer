@@ -29,9 +29,9 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015/07/10
  */
-public class SimplificationEngine extends SpartanizationOfInfixExpression {
+public class Engine extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
-  public SimplificationEngine() {
+  public Engine() {
     super("Expression simplifier", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {

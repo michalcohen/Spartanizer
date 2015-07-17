@@ -38,7 +38,9 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 /**
- * A class for fluent programming.
+ * A an empty <code><b>enum</b></code> for fluent programming. The name says it
+ * all: The name, followed by a dot, followed by a method name, should read like
+ * a word phrase.
  *
  * @author Yossi Gil
  * @since 2015-07-16
@@ -57,15 +59,24 @@ public enum Is {
         : expressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
   /**
-   * Determined if a node is a return statement
+   * Determined whether a node is a {@link Block}
    *
    * @param n
-   *          node to check
-   * @return true if the given node is a block statement
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
    */
   public static boolean block(final ASTNode n) {
     return is(n, ASTNode.BLOCK);
   }
+  /**
+   * Determined whether a node is a boolean literal
+   *
+   * @param n
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a boolean
+   *         literal
+   */
   public static boolean booleanLiteral(final ASTNode e) {
     return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
   }

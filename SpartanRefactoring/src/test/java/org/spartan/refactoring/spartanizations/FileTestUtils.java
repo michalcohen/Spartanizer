@@ -227,7 +227,7 @@ public abstract class FileTestUtils {
     }
     return $;
   }
-  private static String apply(final SimplificationEngine s, final String from) {
+  private static String apply(final Engine s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     final Document d = new Document(from);
     return TESTUtils.rewrite(s, u, d).get();

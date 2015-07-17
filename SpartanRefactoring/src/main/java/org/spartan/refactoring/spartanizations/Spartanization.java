@@ -87,8 +87,8 @@ public abstract class Spartanization extends Refactoring {
    * @param cu
    *          the Compilation Unit (outermost ASTNode in the Java Grammar)
    * @param pm
-   *          a progress monitor in which to display the progress of the
-   *          refactoring
+   *          a progress monitor in which the progress of the refactoring is
+   *          displayed
    * @return an ASTRewrite which contains the changes
    */
   public final ASTRewrite createRewrite(final CompilationUnit cu, final SubProgressMonitor pm) {

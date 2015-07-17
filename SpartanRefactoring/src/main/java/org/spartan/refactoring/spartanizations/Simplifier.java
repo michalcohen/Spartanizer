@@ -38,10 +38,10 @@ public abstract class Simplifier {
    *         the simplification offered by this object.
    */
   abstract boolean eligible(final InfixExpression e);
-  final boolean noneligible(final InfixExpression e) {
+  public final boolean noneligible(final InfixExpression e) {
     return !eligible(e);
   }
-  abstract boolean withinScope(PrefixExpression e);
+  abstract boolean scopeIncludes(PrefixExpression e);
   /**
    * @param e
    *          JD
@@ -84,16 +84,16 @@ public abstract class Simplifier {
       assert eligible(e);
       return _replacement(e);
     }
-    @SuppressWarnings("unused") @Override final boolean withinScope(final PrefixExpression _) {
+    @SuppressWarnings("unused") @Override final boolean scopeIncludes(final PrefixExpression _) {
       return false;
     }
     @Override final boolean eligible(@SuppressWarnings("unused") final PrefixExpression _) {
       return false;
     }
-    @SuppressWarnings("unused") @Override final Expression replacement(final PrefixExpression _) {
+    @Override @SuppressWarnings("unused") final Expression replacement(final PrefixExpression _) {
       return null;
     }
-    @Override final boolean go(final ASTRewrite r, final PrefixExpression e) {
+    @Override @SuppressWarnings("unused") final boolean go(final ASTRewrite r, final PrefixExpression e) {
       return false;
     }
   }
@@ -107,7 +107,7 @@ public abstract class Simplifier {
       return true;
     }
     @Override final boolean eligible(final PrefixExpression e) {
-      assert withinScope(e);
+      assert scopeIncludes(e);
       return _eligible(e);
     }
     @Override final Expression replacement(final PrefixExpression e) {
@@ -122,6 +122,9 @@ public abstract class Simplifier {
     }
     @Override final boolean scopeIncludes(@SuppressWarnings("unused") final InfixExpression _) {
       return false;
+    }
+    @Override final Expression replacement(@SuppressWarnings("unused") final InfixExpression _) {
+      return null;
     }
   }
 }

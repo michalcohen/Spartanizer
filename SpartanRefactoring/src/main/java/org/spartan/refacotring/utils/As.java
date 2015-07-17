@@ -28,7 +28,9 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 
 /**
- * A class for fluent programming.
+ * A an empty <code><b>enum</b></code> for fluent programming. The name says it
+ * all: The name, followed by a dot, followed by a method name, should read like
+ * a word phrase.
  *
  * @author Yossi Gil
  * @since 2015-07-16

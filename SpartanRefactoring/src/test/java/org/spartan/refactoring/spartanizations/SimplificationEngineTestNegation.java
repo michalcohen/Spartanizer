@@ -60,7 +60,7 @@ public class SimplificationEngineTestNegation {
     assertNotNull(p);
   }
   @Test public void withinScopeOfNegation() {
-    assertTrue(simplifyNegation.inner.withinScope(p(input)));
+    assertTrue(simplifyNegation.inner.scopeIncludes(p(input)));
   }
   @Test public void eligibleForNegation() {
     assertTrue(simplifyNegation.inner.eligible(p(input)));
@@ -73,7 +73,7 @@ public class SimplificationEngineTestNegation {
     final String expected = output;
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new SimplificationEngine(), wrap);
+    final String unpeeled = apply(new Engine(), wrap);
     final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);

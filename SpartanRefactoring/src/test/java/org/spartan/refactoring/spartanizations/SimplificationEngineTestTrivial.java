@@ -201,7 +201,7 @@ public class SimplificationEngineTestTrivial {
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
   @Test public void oneOpportunityExample() {
-    assertOneOpportunity(new SimplificationEngine(), wrap(example));
+    assertOneOpportunity(new Engine(), wrap(example));
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");

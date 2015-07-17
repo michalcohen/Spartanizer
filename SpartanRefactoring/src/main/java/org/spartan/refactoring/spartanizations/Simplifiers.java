@@ -42,14 +42,35 @@ import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
-import org.spartan.refacotring.utils.All;
-import org.spartan.refacotring.utils.Are;
 import org.spartan.refacotring.utils.As;
 import org.spartan.refacotring.utils.Have;
 import org.spartan.refacotring.utils.Is;
 import org.spartan.refactoring.spartanizations.Simplifier.OfInfixExpression;
 
 public enum Simplifiers {
+  /**
+   * A {@link Simplifier} that sorts the arguments of a {@link Operator#PLUS}
+   * expression.
+   *
+   * Extra care is taken to leave intact the use of {@link Operator#PLUS} for
+   * the concatenation of {@link String}s.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
+  ADDITION_SORTER(new Simplifier.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return e.getOperator() == Operator.PLUS && !e.hasExtendedOperands()
+          && Have.numericalLiteral(e.getLeftOperand(), e.getRightOperand());
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return Is.numericalLiteral(e.getLeftOperand());
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      return flip(e);
+    }
+  }), //
   comparisionWithBoolean(new Simplifier.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
@@ -110,34 +131,24 @@ public enum Simplifiers {
       return flip(e);
     }
   }), //
-  simplifyAddSomethingToLiteral(new Simplifier.OfInfixExpression() {
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && scopeIncludes(All.operands(e));
-    }
-    private boolean scopeIncludes(final List<Expression> operands) {
-      return Have.literal(operands) && Are.notString(operands);
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      // TODO Auto-generated method stub
-      return false;
-    }
-    @Override Expression _replacement(final InfixExpression e) {
-      // TODO Auto-generated method stub
-      return null;
-    }
-  }), //
+  /**
+   * A {@link Simplifier} that pushes down "<code>!</code>", the negation
+   * operator as much as possible, using the de-Morgan and other simplification
+   * rules.
+   *
+   * @author Yossi Gil
+   * @since 2015-7-17
+   *
+   */
   simplifyNegation(new Simplifier.OfPrefixExpression() {
-    @Override Expression _replacement(final PrefixExpression e) {
-      return simplifyNot(As.not(e));
+    @Override public boolean scopeIncludes(final PrefixExpression e) {
+      return As.not(e) != null;
     }
     @Override boolean _eligible(final PrefixExpression e) {
       return hasOpportunity(As.not(e));
     }
-    @Override public boolean withinScope(final PrefixExpression e) {
-      return As.not(e) != null;
-    }
-    @Override Expression replacement(@SuppressWarnings("unused") final InfixExpression _) {
-      return null;
+    @Override Expression _replacement(final PrefixExpression e) {
+      return simplifyNot(As.not(e));
     }
     private Expression simplifyNot(final PrefixExpression e) {
       return e == null ? null : simplifyNot(e, getCore(e.getOperand()));
@@ -289,7 +300,7 @@ public enum Simplifiers {
    */
   public static Simplifier find(final PrefixExpression e) {
     for (final Simplifiers s : Simplifiers.values())
-      if (s.inner.withinScope(e))
+      if (s.inner.scopeIncludes(e))
         return s.inner;
     return null;
   }

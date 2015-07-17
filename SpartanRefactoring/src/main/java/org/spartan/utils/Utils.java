@@ -139,7 +139,7 @@ public enum Utils {
   public static <T> boolean inRange(final int i, final List<T> ts) {
     return i >= 0 && i < ts.size();
   }
-  public static <T> Collection<T> asList(final T... ts) {
+  @SafeVarargs public static <T> Collection<T> asList(final T... ts) {
     final Collection<T> $ = new ArrayList<>(ts.length);
     for (final T t : ts)
       $.add(t);

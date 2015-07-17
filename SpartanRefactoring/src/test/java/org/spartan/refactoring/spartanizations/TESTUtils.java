@@ -3,6 +3,7 @@ package org.spartan.refactoring.spartanizations;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.utils.Utils.removePrefix;
@@ -19,16 +20,21 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.spartan.refacotring.utils.As;
 
-enum TESTUtils {
+/**
+ * @author Yossi Gil
+ * @since 2015-07-17
+ *
+ */
+public enum TESTUtils {
   ;
-  static InfixExpression i(final String s) {
-    return (InfixExpression) e(s);
+  public static InfixExpression i(final String expression) {
+    return (InfixExpression) e(expression);
   }
-  static PrefixExpression p(final String s) {
-    return (PrefixExpression) e(s);
+  public static PrefixExpression p(final String expression) {
+    return (PrefixExpression) e(expression);
   }
-  static Expression e(final String s2) {
-    return (Expression) As.EXPRESSION.ast(s2);
+  public static Expression e(final String expression) {
+    return (Expression) As.EXPRESSION.ast(expression);
   }
 
   static final String WHITES = "\\s+";
@@ -57,9 +63,11 @@ enum TESTUtils {
           ;
     return $;
   }
-  static String apply(final SimplificationEngine s, final String from) {
+  static String apply(final Engine s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
     final Document d = new Document(from);
+    assertNotNull(d);
     return TESTUtils.rewrite(s, u, d).get();
   }
 
@@ -118,7 +126,7 @@ enum TESTUtils {
     assertTrue(s.eligible((InfixExpression) asExpression(expression)));
   }
   static void assertNoChange(final String input) {
-    assertSimilar(input, peel(apply(new SimplificationEngine(), wrap(input))));
+    assertSimilar(input, peel(apply(new Engine(), wrap(input))));
   }
   static void assertNotLegible(final Simplifier s, final InfixExpression e) {
     assertFalse(s.eligible(e));
@@ -137,7 +145,7 @@ enum TESTUtils {
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new SimplificationEngine(), wrap);
+    final String unpeeled = apply(new Engine(), wrap);
     final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);

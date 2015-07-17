@@ -195,11 +195,9 @@ public class InfixTest {
     final Document d = new Document(P0);
     assertNotNull(d);
     final ComparisonWithSpecific s = s();
-    final Document rewrite;
     final ASTRewrite r = s.createRewrite(u, null);
     r.rewriteAST(d, null).apply(d);
-    rewrite = d;
-    assertSimilar(expected, rewrite);
+    assertSimilar(expected, d);
   }
   @Test public void one2true7() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String expected = P1;
@@ -209,9 +207,7 @@ public class InfixTest {
     final ComparisonWithSpecific s = s();
     final ASTRewrite r = s.createRewrite(u, null);
     r.rewriteAST(d, null).apply(d);
-    final Document rewrite;
-    rewrite = d;
-    assertSimilar(expected, rewrite);
+    assertSimilar(expected, d);
   }
   private ComparisonWithSpecific s() {
     return new ComparisonWithSpecific();

@@ -30,6 +30,15 @@ public enum Precedence {
    */
   public enum Is {
     ;
+    /**
+     * determine whether an integer falls within the legal range of precedences.
+     *
+     * @param precedence
+     *          JD
+     *
+     * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
+     *         precedence of Java.
+     */
     public static boolean legal(final int precedence) {
       return precedence >= 1 && precedence <= 15;
     }
@@ -68,7 +77,7 @@ public enum Precedence {
       .putOn(4, "*", "/", "%") // multiplicative
       .putOn(5, "+", "-") // additive
       .putOn(6, ">>", "<<", ">>>") // shift
-      .putOn(7, "<=", "<=", ">", ">=", "instanceof") // relational
+      .putOn(7, "<", "<=", ">", ">=", "instanceof") // relational
       .putOn(8, "==", "!=") // equality
       .putOn(9, "&") // bitwise AND
       .putOn(10, "^") // bitwise XOR
