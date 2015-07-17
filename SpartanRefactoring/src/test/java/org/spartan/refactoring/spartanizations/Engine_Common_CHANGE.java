@@ -23,7 +23,7 @@ public abstract class Engine_Common_CHANGE extends Engine_Common {
    * @return the expected output of the simplification
    */
   abstract String output();
-  Engine_Common_CHANGE(final Simplifier simplifier) {
+  Engine_Common_CHANGE(final Wring simplifier) {
     super(simplifier);
   }
   @Test @SuppressWarnings("javadoc") public void peelableOutput() {

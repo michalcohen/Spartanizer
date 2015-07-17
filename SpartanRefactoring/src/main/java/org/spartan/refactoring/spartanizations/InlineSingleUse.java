@@ -1,6 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refacotring.utils.Funcs.makeParenthesizedExpression;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refacotring.utils.Is;
-import org.spartan.refacotring.utils.Occurrences;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
 
 /**

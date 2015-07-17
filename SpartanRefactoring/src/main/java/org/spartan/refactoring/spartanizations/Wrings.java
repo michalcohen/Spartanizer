@@ -10,15 +10,17 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refacotring.utils.Funcs.asAndOrOr;
-import static org.spartan.refacotring.utils.Funcs.countNodes;
-import static org.spartan.refacotring.utils.Funcs.duplicate;
-import static org.spartan.refacotring.utils.Funcs.flip;
-import static org.spartan.refacotring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refacotring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.countNodes;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
+import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -42,36 +44,19 @@ import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
-import org.spartan.refacotring.utils.All;
-import org.spartan.refacotring.utils.As;
-import org.spartan.refacotring.utils.Have;
-import org.spartan.refacotring.utils.Is;
-import org.spartan.refactoring.spartanizations.Simplifier.OfInfixExpression;
+import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
+import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Have;
+import org.spartan.refactoring.utils.Is;
 
-public enum Simplifiers {
-  /**
-   * A {@link Simplifier} that sorts the arguments of a {@link Operator#PLUS}
-   * expression.
-   *
-   * Extra care is taken to leave intact the use of {@link Operator#PLUS} for
-   * the concatenation of {@link String}s.
-   *
-   * @author Yossi Gil
-   * @since 2015-07-17
-   *
-   */
-  ADDITION_SORTER(new Simplifier.OfInfixExpression() {
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && !e.hasExtendedOperands() && Have.numericalLiteral(All.operands(e));
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      return Is.numericalLiteral(e.getLeftOperand());
-    }
-    @Override Expression _replacement(final InfixExpression e) {
-      return flip(e);
-    }
-  }), //
-  comparisionWithBoolean(new Simplifier.OfInfixExpression() {
+/**
+ * @author Yossi Gil
+ * @since 2015-07-17
+ *
+ */
+public enum Wrings {
+  COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
           && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
@@ -99,7 +84,46 @@ public enum Simplifiers {
       return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
     }
   }), //
-  comparisionWithSpecific(new Simplifier.OfInfixExpression() {
+  /**
+   * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
+   * expression.
+   *
+   * Extra care is taken to leave intact the use of {@link Operator#PLUS} for
+   * the concatenation of {@link String}s.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
+  ADDITION_SORTER(new Wring.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return e.getOperator() == Operator.PLUS && Have.numericalLiteral(All.operands(e));
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return tryToSort(All.operands(e));
+    }
+    private boolean tryToSort(final List<Expression> es) {
+      return Wrings.tryToSort(es, new Comparator<Expression>() {
+        @Override public int compare(final Expression e1, final Expression e2) {
+          if (Is.numericLiteral(e1) || Is.numericLiteral(e2))
+            return Wrings.compare(Is.numericLiteral(e1), Is.numericLiteral(e2));
+          if (moreArguments(e1, e2))
+            return 1;
+          if (moreArguments(e2, e1))
+            return -1;
+          final int $ = countNodes(e1) - countNodes(e2);
+          return Math.abs($) > TOKEN_THRESHOLD ? $ : 0;
+        }
+      });
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      final List<Expression> operands = All.operands(e);
+      if (!tryToSort(operands))
+        return null;
+      return refit(e, operands);
+    }
+  }), //
+  comparisionWithSpecific(new Wring.OfInfixExpression() {
     @Override public boolean scopeIncludes(final InfixExpression e) {
       return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
@@ -132,15 +156,14 @@ public enum Simplifiers {
     }
   }), //
   /**
-   * A {@link Simplifier} that pushes down "<code>!</code>", the negation
-   * operator as much as possible, using the de-Morgan and other simplification
-   * rules.
+   * A {@link Wring} that pushes down "<code>!</code>", the negation operator as
+   * much as possible, using the de-Morgan and other simplification rules.
    *
    * @author Yossi Gil
    * @since 2015-7-17
    *
    */
-  simplifyNegation(new Simplifier.OfPrefixExpression() {
+  simplifyNegation(new Wring.OfPrefixExpression() {
     @Override public boolean scopeIncludes(final PrefixExpression e) {
       return As.not(e) != null;
     }
@@ -250,7 +273,7 @@ public enum Simplifiers {
       return getCore(e.getLeftOperand());
     }
     Operator conjugate(final Operator o) {
-      assert isDeMorgan(o);
+      assert Is.deMorgan(o);
       return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
     }
     boolean hasOpportunity(final PrefixExpression e) {
@@ -264,42 +287,46 @@ public enum Simplifiers {
     }
   }), //
   ;
-  public final Simplifier inner;
+  public final Wring inner;
 
-  Simplifiers(final Simplifier s) {
+  Wrings(final Wring s) {
     inner = s;
   }
-  @Override public String toString() {
-    return inner.toString();
+  static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
+    assert operands.size() >= 2;
+    final InfixExpression $ = e.getAST().newInfixExpression();
+    $.setOperator(e.getOperator());
+    $.setLeftOperand(duplicate(operands.get(0)));
+    $.setRightOperand(duplicate(operands.get(1)));
+    operands.remove(0);
+    for (final Expression operand : operands)
+      $.extendedOperands().add(duplicate(operand));
+    return $;
   }
   /**
-   * Find the first {@link Simplifier} appropriate for an
-   * {@link InfixExpression}
+   * Find the first {@link Wring} appropriate for an {@link InfixExpression}
    *
    * @param e
    *          JD
-   * @return the first {@link Simplifier} for which the parameter is eligible,
-   *         or <code><b>null</b></code>i if no such {@link Simplifier} is
-   *         found.
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
-  public static Simplifier find(final InfixExpression e) {
-    for (final Simplifiers s : values())
+  public static Wring find(final InfixExpression e) {
+    for (final Wrings s : values())
       if (s.inner.scopeIncludes(e))
         return s.inner;
     return null;
   }
   /**
-   * Find the first {@link Simplifier} appropriate for a
-   * {@link PrefixExpression}
+   * Find the first {@link Wring} appropriate for a {@link PrefixExpression}
    *
    * @param e
    *          JD
-   * @return the first {@link Simplifier} for which the parameter is eligible,
-   *         or <code><b>null</b></code>i if no such {@link Simplifier} is
-   *         found.
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
-  public static Simplifier find(final PrefixExpression e) {
-    for (final Simplifiers s : Simplifiers.values())
+  public static Wring find(final PrefixExpression e) {
+    for (final Wrings s : Wrings.values())
       if (s.inner.scopeIncludes(e))
         return s.inner;
     return null;
@@ -322,20 +349,25 @@ public enum Simplifiers {
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
   }
-  static boolean isDeMorgan(final Operator o) {
-    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
+  static boolean tryToSort(final List<Expression> es, final Comparator<Expression> c) {
+    boolean $ = false;
+    // Bubble sort, duplicating in each case of swap
+    for (int i = 0, size = es.size(); i < size; i++)
+      for (int j = 0; j < size - 1; j++) {
+        final Expression e0 = es.get(j);
+        final Expression e1 = es.get(j + 1);
+        if (c.compare(e0, e1) <= 0)
+          continue;
+        es.get(j + 1);
+        es.remove(j);
+        es.remove(j);
+        es.add(j, e0);
+        es.add(j, e1);
+        $ = true;
+      }
+    return $;
   }
-  static InfixExpression asComparison(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
-  }
-  static InfixExpression asComparison(final InfixExpression e) {
-    return in(e.getOperator(), //
-        GREATER, //
-        GREATER_EQUALS, //
-        LESS, //
-        LESS_EQUALS, //
-        EQUALS, //
-        NOT_EQUALS //
-    ) ? e : null;
+  static int compare(final boolean b1, final boolean b2) {
+    return b1 == b2 ? 0 : b2 ? 1 : -1;
   }
 }

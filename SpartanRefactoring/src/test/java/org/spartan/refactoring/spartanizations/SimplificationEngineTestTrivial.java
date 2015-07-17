@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refacotring.utils.Funcs.countNodes;
-import static org.spartan.refactoring.spartanizations.Simplifiers.comparisionWithBoolean;
-import static org.spartan.refactoring.spartanizations.Simplifiers.comparisionWithSpecific;
-import static org.spartan.refactoring.spartanizations.Simplifiers.shortestOperandFirst;
+import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
+import static org.spartan.refactoring.spartanizations.Wrings.comparisionWithSpecific;
+import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
+import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertLegible;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotLegible;
@@ -27,7 +27,7 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.Is;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
@@ -99,7 +99,7 @@ public class SimplificationEngineTestTrivial {
     assertSimplifiesTo("this != a", "a != this");
   }
   @Test public void comparisonWithSpecific0Legibiliy0() {
-    assertNotWithinScope(comparisionWithBoolean.inner, "this != a");
+    assertNotWithinScope(COMPARISON_WITH_BOOLEAN.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0Legibiliy00() {
     final InfixExpression e = i("this != a");
@@ -112,20 +112,20 @@ public class SimplificationEngineTestTrivial {
   }
   @Test public void comparisonWithSpecific0Legibiliy1() {
     assertTrue(Is.specific(i("this != a").getLeftOperand()));
-    assertNotLegible(Simplifiers.shortestOperandFirst.inner, "this != a");
+    assertNotLegible(Wrings.shortestOperandFirst.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0Legibiliy1withinScope() {
-    assertNotWithinScope(Simplifiers.comparisionWithBoolean.inner, "this != a");
+    assertNotWithinScope(Wrings.COMPARISON_WITH_BOOLEAN.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0Legibiliy2() {
     assertTrue(Is.specific(i("this != a").getLeftOperand()));
-    assertLegible(Simplifiers.comparisionWithSpecific.inner, "this != a");
+    assertLegible(Wrings.comparisionWithSpecific.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0z0() {
-    assertWithinScope(Simplifiers.comparisionWithSpecific.inner, "this != a");
+    assertWithinScope(Wrings.comparisionWithSpecific.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0z1() {
-    assertLegible(Simplifiers.comparisionWithSpecific.inner, "this != a");
+    assertLegible(Wrings.comparisionWithSpecific.inner, "this != a");
   }
   @Test public void comparisonWithSpecific1() {
     assertSimplifiesTo("null != a", "a != null");
@@ -191,7 +191,7 @@ public class SimplificationEngineTestTrivial {
   @Test public void oneMultiplication0() {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
-    final Simplifier s = Simplifiers.find(e);
+    final Wring s = Wrings.find(e);
     assertEquals(s, shortestOperandFirst.inner);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
@@ -201,11 +201,11 @@ public class SimplificationEngineTestTrivial {
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
   @Test public void oneOpportunityExample() {
-    assertOneOpportunity(new Engine(), wrap(example));
+    assertOneOpportunity(new Wringer(), wrap(example));
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
-    final Simplifier s = Simplifiers.find(e);
+    final Wring s = Wrings.find(e);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
@@ -214,7 +214,7 @@ public class SimplificationEngineTestTrivial {
     assertEquals("a != null", replacement.toString());
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
-    assertEquals(comparisionWithSpecific.inner, Simplifiers.find(i("null != a")));
+    assertEquals(comparisionWithSpecific.inner, Wrings.find(i("null != a")));
   }
   @Test public void shorterChainParenthesisComparisonLast() {
     assertSimplifiesTo("a * b * c * d * e * f * g * h == b == c", "c == a * b * c * d * e * f * g * h == b");
@@ -226,17 +226,17 @@ public class SimplificationEngineTestTrivial {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d)", e.getLeftOperand().toString());
-    final Simplifier s = Simplifiers.find(e);
+    final Wring s = Wrings.find(e);
     assertEquals(shortestOperandFirst.inner, s);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
     final Expression e2 = e.getRightOperand();
     assertFalse(hasNull(e1, e2));
-    final boolean tokenWiseGreater = countNodes(e1) > Simplifiers.TOKEN_THRESHOLD + countNodes(e2);
+    final boolean tokenWiseGreater = countNodes(e1) > Wrings.TOKEN_THRESHOLD + countNodes(e2);
     assertFalse(tokenWiseGreater);
-    assertTrue(Simplifiers.moreArguments(e1, e2));
-    assertTrue(Simplifiers.longerFirst(e));
+    assertTrue(Wrings.moreArguments(e1, e2));
+    assertTrue(Wrings.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
@@ -246,17 +246,17 @@ public class SimplificationEngineTestTrivial {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d,e)", e.getLeftOperand().toString());
-    final Simplifier s = Simplifiers.find(e);
-    assertEquals(Simplifiers.shortestOperandFirst.inner, s);
+    final Wring s = Wrings.find(e);
+    assertEquals(Wrings.shortestOperandFirst.inner, s);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
     final Expression e2 = e.getRightOperand();
     assertFalse(hasNull(e1, e2));
-    final boolean tokenWiseGreater = countNodes(e1) > Simplifiers.TOKEN_THRESHOLD + countNodes(e2);
+    final boolean tokenWiseGreater = countNodes(e1) > Wrings.TOKEN_THRESHOLD + countNodes(e2);
     assertTrue(tokenWiseGreater);
-    assertTrue(Simplifiers.moreArguments(e1, e2));
-    assertTrue(Simplifiers.longerFirst(e));
+    assertTrue(Wrings.moreArguments(e1, e2));
+    assertTrue(Wrings.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);

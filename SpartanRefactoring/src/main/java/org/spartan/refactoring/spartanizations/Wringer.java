@@ -1,10 +1,10 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refacotring.utils.Funcs.duplicate;
-import static org.spartan.refacotring.utils.Funcs.duplicateLeft;
-import static org.spartan.refacotring.utils.Funcs.duplicateRight;
-import static org.spartan.refacotring.utils.Funcs.flip;
-import static org.spartan.refacotring.utils.Funcs.remake;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
+import static org.spartan.refactoring.utils.Funcs.duplicateRight;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.remake;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,22 +22,22 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
  * @author Yossi Gil
  * @since 2015/07/10
  */
-public class Engine extends SpartanizationOfInfixExpression {
+public class Wringer extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
-  public Engine() {
+  public Wringer() {
     super("Expression simplifier", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        final Simplifier s = Simplifiers.find(e);
+        final Wring s = Wrings.find(e);
         return s != null && s.noneligible(e) ? true : overrideInto(e, opportunities);
       }
     };
@@ -47,7 +47,7 @@ public class Engine extends SpartanizationOfInfixExpression {
       @Override public boolean visit(final InfixExpression e) {
         if (!inRange(m, e))
           return true;
-        final Simplifier s = Simplifiers.find(e);
+        final Wring s = Wrings.find(e);
         if (s != null)
           return s.go(r, e);
         return true;
@@ -55,7 +55,7 @@ public class Engine extends SpartanizationOfInfixExpression {
       @Override public boolean visit(final PrefixExpression e) {
         if (!inRange(m, e))
           return true;
-        final Simplifier s = Simplifiers.find(e);
+        final Wring s = Wrings.find(e);
         if (s != null)
           return s.go(r, e);
         return true;

@@ -1,4 +1,4 @@
-package org.spartan.refacotring.utils;
+package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.junit.Assert.fail;

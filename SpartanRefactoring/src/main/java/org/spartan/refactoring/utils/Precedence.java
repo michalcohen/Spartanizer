@@ -1,4 +1,4 @@
-package org.spartan.refacotring.utils;
+package org.spartan.refactoring.utils;
 
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;

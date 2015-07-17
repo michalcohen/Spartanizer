@@ -18,7 +18,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
-import org.spartan.refacotring.utils.As;
+import org.spartan.refactoring.utils.As;
 
 /**
  * @author Yossi Gil
@@ -63,7 +63,7 @@ public enum TESTUtils {
           ;
     return $;
   }
-  static String apply(final Engine s, final String from) {
+  static String apply(final Wringer s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
     final Document d = new Document(from);
@@ -122,30 +122,30 @@ public enum TESTUtils {
   static Expression asExpression(final String expression) {
     return (InfixExpression) As.EXPRESSION.ast(expression);
   }
-  static void assertLegible(final Simplifier s, final String expression) {
+  static void assertLegible(final Wring s, final String expression) {
     assertTrue(s.eligible((InfixExpression) asExpression(expression)));
   }
   static void assertNoChange(final String input) {
-    assertSimilar(input, peel(apply(new Engine(), wrap(input))));
+    assertSimilar(input, peel(apply(new Wringer(), wrap(input))));
   }
-  static void assertNotLegible(final Simplifier s, final InfixExpression e) {
+  static void assertNotLegible(final Wring s, final InfixExpression e) {
     assertFalse(s.eligible(e));
   }
-  static void assertNotLegible(final Simplifier s, final String expression) {
+  static void assertNotLegible(final Wring s, final String expression) {
     final InfixExpression e = (InfixExpression) asExpression(expression);
     assertNotLegible(s, e);
   }
-  static void assertNotWithinScope(final Simplifier s, final InfixExpression e) {
+  static void assertNotWithinScope(final Wring s, final InfixExpression e) {
     assertFalse(s.scopeIncludes(e));
   }
-  static void assertNotWithinScope(final Simplifier s, final String expression) {
+  static void assertNotWithinScope(final Wring s, final String expression) {
     final InfixExpression e = (InfixExpression) asExpression(expression);
     assertNotWithinScope(s, e);
   }
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new Engine(), wrap);
+    final String unpeeled = apply(new Wringer(), wrap);
     final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
@@ -155,14 +155,14 @@ public enum TESTUtils {
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  static void assertWithinScope(final Simplifier s, final InfixExpression e) {
+  static void assertWithinScope(final Wring s, final InfixExpression e) {
     assertTrue(s.scopeIncludes(e));
   }
-  static void assertWithinScope(final Simplifier s, final String expression) {
+  static void assertWithinScope(final Wring s, final String expression) {
     final InfixExpression e = (InfixExpression) asExpression(expression);
     assertWithinScope(s, e);
   }
-  static void asserWithinScope(final Simplifier s, final String expression) {
+  static void asserWithinScope(final Wring s, final String expression) {
     final InfixExpression e = (InfixExpression) asExpression(expression);
     assertNotWithinScope(s, e);
   }

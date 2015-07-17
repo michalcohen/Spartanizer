@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.spartan.refactoring.spartanizations.Simplifiers.simplifyNegation;
+import static org.spartan.refactoring.spartanizations.Wrings.simplifyNegation;
 import static org.spartan.refactoring.spartanizations.TESTUtils.apply;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
@@ -73,7 +73,7 @@ public class SimplificationEngineTestNegation {
     final String expected = output;
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new Engine(), wrap);
+    final String unpeeled = apply(new Wringer(), wrap);
     final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);

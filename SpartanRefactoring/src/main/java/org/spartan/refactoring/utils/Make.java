@@ -1,4 +1,4 @@
-package org.spartan.refacotring.utils;
+package org.spartan.refactoring.utils;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;

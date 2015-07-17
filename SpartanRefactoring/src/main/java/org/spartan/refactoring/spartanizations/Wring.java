@@ -13,11 +13,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2015-07-09
  *
  */
-public abstract class Simplifier {
+public abstract class Wring {
   /**
-   * Determines whether this {@link Simplifier} object is applicable for a given
+   * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
-   * be the case that a {@link Simplifier} is applicable in principle to an
+   * be the case that a {@link Wring} is applicable in principle to an
    * object, but that actual application will be vacuous.
    *
    * @param e
@@ -27,9 +27,9 @@ public abstract class Simplifier {
    */
   abstract boolean scopeIncludes(InfixExpression e);
   /**
-   * Determines whether this {@link Simplifier} object is applicable for a given
+   * Determines whether this {@link Wring} object is applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
-   * {@link Simplifier} is applicable in principle to an object, but that actual
+   * {@link Wring} is applicable in principle to an object, but that actual
    * application will be vacuous.
    *
    * @param e
@@ -68,7 +68,7 @@ public abstract class Simplifier {
   }
   abstract boolean go(ASTRewrite r, PrefixExpression e);
 
-  static abstract class OfInfixExpression extends Simplifier {
+  static abstract class OfInfixExpression extends Wring {
     abstract boolean _eligible(final InfixExpression e);
     abstract Expression _replacement(final InfixExpression e);
     @Override final boolean go(final ASTRewrite r, final InfixExpression e) {
@@ -98,7 +98,7 @@ public abstract class Simplifier {
     }
   }
 
-  static abstract class OfPrefixExpression extends Simplifier {
+  static abstract class OfPrefixExpression extends Wring {
     abstract Expression _replacement(final PrefixExpression e);
     abstract boolean _eligible(final PrefixExpression e);
     @Override final boolean go(final ASTRewrite r, final PrefixExpression e) {

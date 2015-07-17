@@ -24,7 +24,7 @@ public abstract class Engine_Common_NOCHANGE extends Engine_Common {
    * @param simplifier
    *          JD
    */
-  public Engine_Common_NOCHANGE(final Simplifier simplifier) {
+  public Engine_Common_NOCHANGE(final Wring simplifier) {
     super(simplifier);
   }
   @Test @SuppressWarnings("javadoc") public void eligible() {

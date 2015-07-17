@@ -15,17 +15,17 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jface.text.Document;
 import org.junit.Test;
-import org.spartan.refacotring.utils.As;
+import org.spartan.refactoring.utils.As;
 
 @SuppressWarnings("javadoc") //
 public abstract class Engine_Common {
   abstract String input();
-  public Engine_Common(final Simplifier simplifier) {
+  public Engine_Common(final Wring simplifier) {
     this.simplifier = simplifier;
   }
 
-  protected final Simplifier simplifier;
-  protected final Engine engine = new Engine();
+  protected final Wring simplifier;
+  protected final Wringer engine = new Wringer();
 
   @Test public void inputNotNull() {
     assertNotNull(input());
@@ -34,10 +34,10 @@ public abstract class Engine_Common {
     assertEquals(input(), peel(wrap(input())));
   }
   @Test public void findsSimplifier() {
-    assertNotNull(Simplifiers.find(asInfixExpression()));
+    assertNotNull(Wrings.find(asInfixExpression()));
   }
   @Test public void correctSimplifier() {
-    assertEquals(simplifier, Simplifiers.find(asInfixExpression()));
+    assertEquals(simplifier, Wrings.find(asInfixExpression()));
   }
   @Test public void scopeIncludes() {
     assertTrue(simplifier.scopeIncludes(asInfixExpression()));

@@ -2,12 +2,12 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.spartan.refacotring.utils.Funcs.countNodes;
-import static org.spartan.refacotring.utils.Funcs.duplicate;
-import static org.spartan.refacotring.utils.Funcs.duplicateLeft;
-import static org.spartan.refacotring.utils.Funcs.duplicateRight;
-import static org.spartan.refacotring.utils.Funcs.flip;
-import static org.spartan.refacotring.utils.Funcs.remake;
+import static org.spartan.refactoring.utils.Funcs.countNodes;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
+import static org.spartan.refactoring.utils.Funcs.duplicateRight;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.remake;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.LinkedHashSet;
@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**

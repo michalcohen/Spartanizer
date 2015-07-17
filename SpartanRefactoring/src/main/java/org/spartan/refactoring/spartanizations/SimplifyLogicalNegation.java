@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.spartan.refacotring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -53,10 +53,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refacotring.utils.As;
-import
-
-org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**

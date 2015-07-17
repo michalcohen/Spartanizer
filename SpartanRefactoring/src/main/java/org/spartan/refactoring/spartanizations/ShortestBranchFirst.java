@@ -9,14 +9,14 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refacotring.utils.Funcs.countNodes;
-import static org.spartan.refacotring.utils.Funcs.getBlockSingleStmnt;
-import static org.spartan.refacotring.utils.Funcs.makeIfStmnt;
-import static org.spartan.refacotring.utils.Funcs.makeInfixExpression;
-import static org.spartan.refacotring.utils.Funcs.makeParenthesizedConditionalExp;
-import static org.spartan.refacotring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refacotring.utils.Funcs.makePrefixExpression;
-import static org.spartan.refacotring.utils.Funcs.statementsCount;
+import static org.spartan.refactoring.utils.Funcs.countNodes;
+import static org.spartan.refactoring.utils.Funcs.getBlockSingleStmnt;
+import static org.spartan.refactoring.utils.Funcs.makeIfStmnt;
+import static org.spartan.refactoring.utils.Funcs.makeInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
+import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.statementsCount;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,7 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**

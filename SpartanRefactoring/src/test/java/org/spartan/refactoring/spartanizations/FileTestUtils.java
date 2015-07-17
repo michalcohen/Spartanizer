@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
-import org.spartan.refacotring.utils.As;
+import org.spartan.refactoring.utils.As;
 
 /**
  * An abstract representation of our test suite, which is represented in
@@ -227,7 +227,7 @@ public abstract class FileTestUtils {
     }
     return $;
   }
-  private static String apply(final Engine s, final String from) {
+  private static String apply(final Wringer s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     final Document d = new Document(from);
     return TESTUtils.rewrite(s, u, d).get();

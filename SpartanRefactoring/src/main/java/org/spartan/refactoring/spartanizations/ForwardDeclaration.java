@@ -13,7 +13,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-import org.spartan.refacotring.utils.Occurrences;
+import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
 
 /**

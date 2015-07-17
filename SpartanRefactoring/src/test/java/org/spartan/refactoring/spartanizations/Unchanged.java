@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refacotring.utils.As;
+import org.spartan.refactoring.utils.As;
 
 /**
  * Test cases in which the transformation should not do anything

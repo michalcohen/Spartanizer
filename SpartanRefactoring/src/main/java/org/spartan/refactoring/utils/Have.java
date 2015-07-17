@@ -1,4 +1,4 @@
-package org.spartan.refacotring.utils;
+package org.spartan.refactoring.utils;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public enum Have {
    */
   public static boolean numericalLiteral(final List<Expression> es) {
     for (final Expression e : es)
-      if (Is.numericalLiteral(e))
+      if (Is.numericLiteral(e))
         return true;
     return false;
   }
@@ -67,7 +67,7 @@ public enum Have {
    */
   public static boolean numericalLiteral(final Expression... es) {
     for (final Expression e : es)
-      if (Is.numericalLiteral(e))
+      if (Is.numericLiteral(e))
         return true;
     return false;
   }

@@ -1,4 +1,4 @@
-package org.spartan.refacotring.utils;
+package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
@@ -17,7 +17,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
-import static org.spartan.refacotring.utils.As.asExpressionStatement;
+import static org.spartan.refactoring.utils.As.asExpressionStatement;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.intIsIn;
 
@@ -48,6 +48,53 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
  */
 public enum Is {
   ;
+  /**
+   * @param n
+   *          JD
+   * @return true if the given node is a string literal or false otherwise
+   */
+  public static boolean stringLiteral(final ASTNode n) {
+    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
+  }
+  /**
+   * Determined whether a node is a "specific", i.e., <code><b>null</b></code>
+   * or <code><b>this</b></code> or literal.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
+   */
+  public static boolean specific(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+  }
+  /**
+   * Determined whether a node is <code><b>this</b></code> or
+   * <code><b>null</b></code>
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
+   */
+  public static boolean thisOrNull(final Expression e) {
+    return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
+  }
+  /**
+   * Determined whether a node is <code><b>this</b></code> or
+   * <code><b>null</b></code>
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
+   */
+  public static boolean numericLiteral(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
+  }
+  public static boolean deMorgan(final Operator o) {
+    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
+  }
   /**
    * @param n
    *          the statement or block to check if it is an assignment
@@ -313,25 +360,5 @@ public enum Is {
    */
   public static boolean plainAssignment(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
-  }
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a string literal or false otherwise
-   */
-  public static boolean stringLiteral(final ASTNode n) {
-    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
-  }
-  public static boolean specific(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
-  }
-  public static boolean thisOrNull(final Expression e) {
-    return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
-  }
-  public static boolean numericalLiteral(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
-  }
-  public static boolean deMorgan(final Operator o) {
-    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
 }

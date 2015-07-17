@@ -31,8 +31,8 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
-import org.spartan.refacotring.utils.As;
-import org.spartan.refacotring.utils.Make;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Make;
 import org.spartan.utils.Range;
 
 /**

@@ -36,8 +36,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.Mockito;
-import org.spartan.refacotring.utils.As;
-import org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**

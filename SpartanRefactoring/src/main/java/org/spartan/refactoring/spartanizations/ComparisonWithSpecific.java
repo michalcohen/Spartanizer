@@ -10,7 +10,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.spartan.refacotring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refacotring.utils.Is;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**

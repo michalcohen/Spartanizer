@@ -18,7 +18,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.spartan.utils.Utils;
 
 /**
- * Unit tests for {@link Simplifiers#ADDITION_SORTER}.
+ * Unit tests for {@link Wrings#ADDITION_SORTER}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
@@ -28,7 +28,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class Engine_ADDITION_SORTER_NOCHANGE extends Engine_Common_NOCHANGE {
   public Engine_ADDITION_SORTER_NOCHANGE() {
-    super(Simplifiers.ADDITION_SORTER.inner);
+    super(Wrings.ADDITION_SORTER.inner);
   }
   @Override protected String input() {
     return input;
