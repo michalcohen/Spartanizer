@@ -55,8 +55,9 @@ public class Unchanged {
     if (input.getName().indexOf(FileTestUtils.testSuffix) <= 0)
       assertEquals(input(),
           TESTUtils.rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(input())).get());
-    else assertEquals(As.string(FileTestUtils.makeInFile(input)), TESTUtils.rewrite(spartanization,
-        (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(FileTestUtils.makeInFile(input)))).get());
+    else
+      assertEquals(As.string(FileTestUtils.makeInFile(input)), TESTUtils.rewrite(spartanization,
+          (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(FileTestUtils.makeInFile(input)))).get());
   }
   private String input() {
     return As.string(input);

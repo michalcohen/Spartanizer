@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jface.text.Document;
 import org.spartan.refactoring.utils.As;
 
 /**
@@ -226,10 +224,5 @@ public abstract class FileTestUtils {
       e.printStackTrace(); // Probably permissions problem
     }
     return $;
-  }
-  private static String apply(final Wringer s, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    final Document d = new Document(from);
-    return TESTUtils.rewrite(s, u, d).get();
   }
 }

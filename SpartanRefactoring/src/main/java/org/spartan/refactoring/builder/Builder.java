@@ -71,7 +71,8 @@ public class Builder extends IncrementalProjectBuilder {
       final IResourceDelta d = getDelta(getProject());
       if (d == null)
         fullBuild();
-      else incrementalBuild(d);
+      else
+        incrementalBuild(d);
     }
   }
   protected void fullBuild() {

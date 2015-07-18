@@ -351,7 +351,8 @@ public enum Wrings {
       final List<Expression> internalOperands = All.operands(asInfixExpression(getCore(operand)));
       if (internalOperands != null)
         es.addAll(internalOperands);
-      else es.add(operand);
+      else
+        es.add(operand);
     }
     return refit(duplicate($), es);
   }

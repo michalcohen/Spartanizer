@@ -3,9 +3,9 @@ package org.spartan.refactoring.spartanizations;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
+import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;

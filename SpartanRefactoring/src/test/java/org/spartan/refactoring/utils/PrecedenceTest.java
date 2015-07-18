@@ -3,7 +3,6 @@ package org.spartan.refactoring.utils;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 
 import org.junit.Test;
-import org.spartan.refactoring.utils.Precedence;
 
 /**
  * @author Yossi Gil

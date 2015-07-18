@@ -4,10 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
-import static org.spartan.refactoring.spartanizations.Wrings.comparisionWithSpecific;
-import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
-import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertLegible;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotLegible;
@@ -18,6 +14,10 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertWithinScop
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
+import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
+import static org.spartan.refactoring.spartanizations.Wrings.comparisionWithSpecific;
+import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
+import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 

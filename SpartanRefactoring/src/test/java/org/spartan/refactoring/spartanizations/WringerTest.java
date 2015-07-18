@@ -151,7 +151,7 @@ public abstract class WringerTest {
 
     /**
      * Instantiates the enclosing class ({@link WringedInput})
-     * 
+     *
      * @param simplifier
      */
     WringedInput(final Wring simplifier) {

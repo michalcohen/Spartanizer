@@ -245,7 +245,8 @@ public abstract class Spartanization extends Refactoring {
     if (textChange.getEdit().getLength() != 0)
       if (preview)
         changes.add(textChange);
-      else textChange.perform(pm);
+      else
+        textChange.perform(pm);
     pm.done();
   }
   /**

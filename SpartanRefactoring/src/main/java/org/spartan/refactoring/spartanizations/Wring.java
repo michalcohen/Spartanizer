@@ -17,8 +17,8 @@ public abstract class Wring {
   /**
    * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
-   * be the case that a {@link Wring} is applicable in principle to an
-   * object, but that actual application will be vacuous.
+   * be the case that a {@link Wring} is applicable in principle to an object,
+   * but that actual application will be vacuous.
    *
    * @param e
    *          JD

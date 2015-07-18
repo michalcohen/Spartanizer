@@ -81,9 +81,6 @@ public class InlineSingleUse extends Spartanization {
           opportunities.add(new Range(v));
         return true;
       }
-      private int countAssignments(final SimpleName n, final VariableDeclarationStatement parent) {
-        return numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent());
-      }
     };
   }
   static int numOfOccur(final Occurrences typeOfOccur, final Expression of, final ASTNode in) {
