@@ -25,6 +25,8 @@ public enum All {
    * @return a list of all operands of the parameter, ordered from left to right
    */
   public static List<Expression> operands(final InfixExpression e) {
+    if (e == null)
+      return null;
     final List<Expression> $ = new ArrayList<>();
     $.add(e.getLeftOperand());
     $.add(e.getRightOperand());

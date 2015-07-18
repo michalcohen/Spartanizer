@@ -1,5 +1,8 @@
 package org.spartan.refactoring.utils;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
@@ -24,5 +27,8 @@ public class AllTest {
     final InfixExpression e = i("a+b+c+(d+e)+f");
     final List<Expression> operands = All.operands(e);
     assertThat(operands.size(), is(5));
+  }
+  @Test public void operandsOfNullIsNull() {
+    assertThat(All.operands(null), is(nullValue()));
   }
 }
