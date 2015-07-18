@@ -21,6 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.mockito.stubbing.Stubber;
+import org.spartan.refactoring.utils.Is;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
@@ -168,12 +169,12 @@ public class PowerMockFailure {
     final InfixExpression e = makeEqualsExpression();
     final InfixExpression right = mockExpression();
     when(e.getRightOperand()).thenReturn(right);
-    assertTrue(ComparisonWithSpecific.isComparison(e));
+    assertTrue(Is.comparison(e));
   }
   @Test @Ignore("PowerMock stack overflow bug in presence of function equals()") public void isSpecificTrue() {
     final Expression e = mock(Expression.class);
     when(e.getNodeType()).thenReturn(NULL_LITERAL);
-    assertTrue(ComparisonWithSpecific.isSpecific(e));
+    assertTrue(Is.specific(e));
   }
   @Test @Ignore("PowerMock stack overflow bug in presence of function equals()") public void stubbingOfIntExpression() {
     final Expression e = mock(Expression.class);

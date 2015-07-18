@@ -15,7 +15,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
-import static org.spartan.refactoring.spartanizations.Wrings.comparisionWithSpecific;
+import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
 import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.utils.Utils.hasNull;
@@ -119,13 +119,13 @@ public class SimplificationEngineTestTrivial {
   }
   @Test public void comparisonWithSpecific0Legibiliy2() {
     assertTrue(Is.specific(i("this != a").getLeftOperand()));
-    assertLegible(Wrings.comparisionWithSpecific.inner, "this != a");
+    assertLegible(Wrings.COMPARISON_WITH_SPECIFIC.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0z0() {
-    assertWithinScope(Wrings.comparisionWithSpecific.inner, "this != a");
+    assertWithinScope(Wrings.COMPARISON_WITH_SPECIFIC.inner, "this != a");
   }
   @Test public void comparisonWithSpecific0z1() {
-    assertLegible(Wrings.comparisionWithSpecific.inner, "this != a");
+    assertLegible(Wrings.COMPARISON_WITH_SPECIFIC.inner, "this != a");
   }
   @Test public void comparisonWithSpecific1() {
     assertSimplifiesTo("null != a", "a != null");
@@ -214,7 +214,7 @@ public class SimplificationEngineTestTrivial {
     assertEquals("a != null", replacement.toString());
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
-    assertEquals(comparisionWithSpecific.inner, Wrings.find(i("null != a")));
+    assertEquals(COMPARISON_WITH_SPECIFIC.inner, Wrings.find(i("null != a")));
   }
   @Test public void shorterChainParenthesisComparisonLast() {
     assertSimplifiesTo("a * b * c * d * e * f * g * h == b == c", "c == a * b * c * d * e * f * g * h == b");

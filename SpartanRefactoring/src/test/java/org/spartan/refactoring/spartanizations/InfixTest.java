@@ -9,7 +9,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.applicable;
-import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.isSpecific;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.withinDomain;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotEvenSimilar;
@@ -223,10 +222,10 @@ public class InfixTest {
     e("2+2");
   }
   @Test public void callIsSpecific() {
-    isSpecific(e("2+2"));
+    Is.specific(e("2+2"));
   }
   @Test public void callIsSpecificFalse() {
-    assertFalse(isSpecific(e("2+2")));
+    assertFalse(Is.specific(e("2+2")));
   }
   @Test public void getNodeType() {
     assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
@@ -235,10 +234,10 @@ public class InfixTest {
     assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
   }
   @Test public void callIsSpecificTrue() {
-    assertTrue(isSpecific(e("this")));
+    assertTrue(Is.specific(e("this")));
   }
   @Test public void cisSpecificFalse1() {
-    assertFalse(isSpecific(e("a")));
+    assertFalse(Is.specific(e("a")));
   }
   @Test public void breakExpression() {
     final InfixExpression i = i("a == this");

@@ -1,17 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.utils.Utils.in;
 
 import java.util.List;
 
@@ -19,7 +8,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
@@ -56,25 +44,16 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
     });
   }
   static boolean applicable(final InfixExpression e) {
-    return isSpecific(e.getLeftOperand());
+    return Is.specific(e.getLeftOperand());
   }
   static boolean withinDomain(final InfixExpression e) {
-    return e != null && isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+    return e != null && Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
   }
   private static boolean hasThisOrNull(final InfixExpression e) {
-    return isThisOrNull(e.getLeftOperand()) || isThisOrNull(e.getRightOperand());
+    return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
   }
   private static boolean hasOneSpecificArgument(final InfixExpression e) {
     // One of the arguments must be specific, the other must not be.
-    return isSpecific(e.getLeftOperand()) != isSpecific(e.getRightOperand());
-  }
-  static boolean isComparison(final InfixExpression e) {
-    return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
-  }
-  static boolean isSpecific(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
-  }
-  static boolean isThisOrNull(final Expression e) {
-    return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
+    return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
   }
 }

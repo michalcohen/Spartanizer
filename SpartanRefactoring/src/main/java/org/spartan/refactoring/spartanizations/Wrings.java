@@ -3,12 +3,6 @@ package org.spartan.refactoring.spartanizations;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
@@ -50,6 +44,7 @@ import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -117,9 +112,18 @@ public enum Wrings {
       return refit(e, operands);
     }
   }), //
-  comparisionWithSpecific(new Wring.OfInfixExpression() {
+  /**
+   * A {@link Wring} that reorder comparisons so that the specific value is
+   * placed on the right. Specific value means a literal, or any of the two
+   * keywords <code><b>this</b></code> or <code><b>null</b></code>.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
+  COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
     @Override public boolean scopeIncludes(final InfixExpression e) {
-      return isComparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+      return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
       return Is.specific(e.getLeftOperand());
@@ -133,9 +137,6 @@ public enum Wrings {
     private boolean hasOneSpecificArgument(final InfixExpression e) {
       // One of the arguments must be specific, the other must not be.
       return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
-    }
-    boolean isComparison(final InfixExpression e) {
-      return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
     }
   }), //
   shortestOperandFirst(new OfInfixExpression() {
@@ -278,7 +279,7 @@ public enum Wrings {
     }
   }), //
   ;
-  public final Wring inner;
+  final Wring inner;
 
   Wrings(final Wring inner) {
     this.inner = inner;
@@ -363,7 +364,7 @@ public enum Wrings {
     $.add(e);
     return $;
   }
-  public static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
+  static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
     assert operands.size() >= 2;
     final InfixExpression $ = e.getAST().newInfixExpression();
     $.setOperator(e.getOperator());

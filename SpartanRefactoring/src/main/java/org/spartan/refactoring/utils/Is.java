@@ -50,53 +50,6 @@ public enum Is {
   ;
   /**
    * @param n
-   *          JD
-   * @return true if the given node is a string literal or false otherwise
-   */
-  public static boolean stringLiteral(final ASTNode n) {
-    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
-  }
-  /**
-   * Determined whether a node is a "specific", i.e., <code><b>null</b></code>
-   * or <code><b>this</b></code> or literal.
-   *
-   * @param e
-   *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
-   *         statement
-   */
-  public static boolean specific(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
-  }
-  /**
-   * Determined whether a node is <code><b>this</b></code> or
-   * <code><b>null</b></code>
-   *
-   * @param e
-   *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
-   *         statement
-   */
-  public static boolean thisOrNull(final Expression e) {
-    return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
-  }
-  /**
-   * Determined whether a node is <code><b>this</b></code> or
-   * <code><b>null</b></code>
-   *
-   * @param e
-   *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
-   *         statement
-   */
-  public static boolean numericLiteral(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
-  }
-  public static boolean deMorgan(final Operator o) {
-    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
-  }
-  /**
-   * @param n
    *          the statement or block to check if it is an assignment
    * @return true if it is an assignment or false if it is not or if the block
    *         Contains more than one statement
@@ -129,7 +82,16 @@ public enum Is {
   }
   /**
    * @param es
-   *          expressions to check
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a
+   *         comparison expression.
+   */
+  public static boolean comparison(final InfixExpression e) {
+    return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
+  }
+  /**
+   * @param es
+   *          JD
    * @return true if one of the expressions is a conditional or parenthesized
    *         conditional expression or false otherwise
    */
@@ -148,6 +110,9 @@ public enum Is {
       }
     }
     return false;
+  }
+  public static boolean deMorgan(final Operator o) {
+    return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
   /**
    * Determined if a node is an "expression statement"
@@ -293,6 +258,22 @@ public enum Is {
     );
   }
   /**
+   * @param r
+   *          Return Statement node
+   * @return true if the ReturnStatement is of literal type
+   */
+  public static boolean literal(final ReturnStatement r) {
+    return literal(r.getExpression());
+  }
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a method invocation or false otherwise
+   */
+  public static boolean methodInvocation(final ASTNode n) {
+    return is(n, ASTNode.METHOD_INVOCATION);
+  }
+  /**
    * @param e
    *          JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
@@ -325,20 +306,16 @@ public enum Is {
     return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
   }
   /**
-   * @param r
-   *          Return Statement node
-   * @return true if the ReturnStatement is of literal type
+   * Determined whether a node is <code><b>this</b></code> or
+   * <code><b>null</b></code>
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
    */
-  public static boolean literal(final ReturnStatement r) {
-    return literal(r.getExpression());
-  }
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a method invocation or false otherwise
-   */
-  public static boolean methodInvocation(final ASTNode n) {
-    return is(n, ASTNode.METHOD_INVOCATION);
+  public static boolean numericLiteral(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
   }
   /**
    * Determine whether the type of an {@link ASTNode} node is one of given list
@@ -360,5 +337,40 @@ public enum Is {
    */
   public static boolean plainAssignment(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
+  }
+  public static boolean specfic(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+  }
+  /**
+   * Determined whether a node is a "specific", i.e., <code><b>null</b></code>
+   * or <code><b>this</b></code> or literal.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
+   */
+  public static boolean specific(final Expression e) {
+    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+  }
+  /**
+   * @param n
+   *          JD
+   * @return true if the given node is a string literal or false otherwise
+   */
+  public static boolean stringLiteral(final ASTNode n) {
+    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
+  }
+  /**
+   * Determined whether a node is <code><b>this</b></code> or
+   * <code><b>null</b></code>
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   *         statement
+   */
+  public static boolean thisOrNull(final Expression e) {
+    return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
   }
 }
