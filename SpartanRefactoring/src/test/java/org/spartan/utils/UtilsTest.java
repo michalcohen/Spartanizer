@@ -1,10 +1,10 @@
 package org.spartan.utils;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.number.OrderingComparison.greaterThan;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertEquals;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.OrderingComparison.greaterThan;
+import static org.spartan.hamcrest.OrderingComparison.lessThan;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

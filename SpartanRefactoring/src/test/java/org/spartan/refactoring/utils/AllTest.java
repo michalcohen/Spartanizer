@@ -10,9 +10,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
 
 /**
  * @author Yossi Gil
@@ -20,7 +18,6 @@ import org.junit.runners.Parameterized;
  *
  */
 @SuppressWarnings({ "static-method", "javadoc" }) //
-@RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class AllTest {
   @Test public void operandsCount() {

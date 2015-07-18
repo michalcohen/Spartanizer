@@ -136,7 +136,7 @@ public class ShortestOperand extends Spartanization {
     sortInfix($, t);
     return $;
   }
-  private boolean eligible(final InfixExpression e) {
+  boolean eligible(final InfixExpression e) {
     return Is.flipable(e.getOperator()) && longerFirst(e) && !inInfixExceptions(e);
   }
   void transposeOperands(final InfixExpression ie, final AST t) {

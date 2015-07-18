@@ -1,10 +1,10 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
@@ -35,9 +34,8 @@ import org.spartan.utils.Utils;
  *
  */
 @SuppressWarnings("javadoc") //
-@RunWith(Parameterized.class) //
-@FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class ADDITION_SORTER_Test {
+public enum ADDITION_SORTER_Test {
+  ;
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends WringerTest.WringedInput {
@@ -67,30 +65,10 @@ public class ADDITION_SORTER_Test {
       final InfixExpression e = asInfixExpression();
       assertTrue(Are.notString(All.operands(e)));
     }
-    @Override String input() {
-      return input;
-    }
-    @Override String output() {
-      return output;
-    }
     @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
-
-    /**
-     * Where the expected output can be found?
-     */
-    @Parameter(value = 2) public String output;
-    /**
-     * The name of the specific test for this transformation
-     */
-    @Parameter(value = 0) public String name;
-    /**
-     * Where the input text can be found
-     */
-    @Parameter(value = 1) public String input;
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -117,23 +95,10 @@ public class ADDITION_SORTER_Test {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Engine_ADDITION_SORTER_NOCHANGE extends WringerTest.Noneligible {
-    public Engine_ADDITION_SORTER_NOCHANGE() {
+  public static class Noneligible extends WringerTest.Noneligible {
+    public Noneligible() {
       super(Wrings.ADDITION_SORTER.inner);
     }
-    @Override protected String input() {
-      return input;
-    }
-
-    /**
-     * The name of the specific test for this transformation
-     */
-    @Parameter(value = 0) public String name;
-    /**
-     * Where the input text can be found
-     */
-    @Parameter(value = 1) public String input;
-
     /**
      * Generate test cases for this parameterized class.
      *

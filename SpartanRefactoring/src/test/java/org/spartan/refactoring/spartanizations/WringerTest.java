@@ -24,6 +24,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameter;
 import org.spartan.refactoring.utils.As;
 
 /**
@@ -35,8 +36,15 @@ import org.spartan.refactoring.utils.As;
 public abstract class WringerTest {
   protected final Wring inner;
   protected final Wringer wringer = new Wringer();
+  /**
+   * The name of the specific test for this transformation
+   */
+  @Parameter(value = 0) public String name;
+  /**
+   * Where the input text can be found
+   */
+  @Parameter(value = 1) public String input;
 
-  abstract String input();
   /**
    * Instantiates the enclosing class ({@link WringerTest})
    *
@@ -46,10 +54,10 @@ public abstract class WringerTest {
     this.inner = inner;
   }
   @Test public void inputNotNull() {
-    assertNotNull(input());
+    assertNotNull(input);
   }
-  @Test public void peelableInput() {
-    assertEquals(input(), peel(wrap(input())));
+  @Test public void peelableinput() {
+    assertEquals(input, peel(wrap(input)));
   }
   @Test public void findsSimplifier() {
     assertNotNull(Wrings.find(asInfixExpression()));
@@ -61,18 +69,18 @@ public abstract class WringerTest {
     assertTrue(inner.scopeIncludes(asInfixExpression()));
   }
   protected InfixExpression asInfixExpression() {
-    final InfixExpression $ = i(input());
+    final InfixExpression $ = i(input);
     assertNotNull($);
     return $;
   }
   protected CompilationUnit asCompilationUnit() {
-    final ASTNode $ = As.COMPILIATION_UNIT.ast(wrap(input()));
+    final ASTNode $ = As.COMPILIATION_UNIT.ast(wrap(input));
     assertNotNull($);
     assertThat($, is(instanceOf(CompilationUnit.class)));
     return (CompilationUnit) $;
   }
   protected Document asDocument() {
-    return new Document(wrap(input()));
+    return new Document(wrap(input));
   }
 
   /**
@@ -108,8 +116,8 @@ public abstract class WringerTest {
       final ASTRewrite r = wringer.createRewrite(u, null);
       final Document d = asDocument();
       r.rewriteAST(d, null).apply(d);
-      assertSimilar(compressSpaces(peel(d.get())), compressSpaces(input()));
-      assertSimilar(wrap(input()), d.get());
+      assertSimilar(compressSpaces(peel(d.get())), compressSpaces(input));
+      assertSimilar(wrap(input), d.get());
     }
   }
 
@@ -137,14 +145,20 @@ public abstract class WringerTest {
    */
   public static abstract class WringedInput extends Eligible {
     /**
-     * @return the expected output of the simplification
+     * Where the expected output can be found?
      */
-    abstract String output();
+    @Parameter(value = 2) public String output;
+
+    /**
+     * Instantiates the enclosing class ({@link WringedInput})
+     * 
+     * @param simplifier
+     */
     WringedInput(final Wring simplifier) {
       super(simplifier);
     }
     @Test public void peelableOutput() {
-      assertEquals(output(), peel(wrap(output())));
+      assertEquals(output, peel(wrap(output)));
     }
     @Test public void oneOpporunity() {
       final CompilationUnit u = asCompilationUnit();
@@ -160,14 +174,14 @@ public abstract class WringerTest {
       final Document d = asDocument();
       r.rewriteAST(d, null).apply(d);
       final String peeled = peel(d.get());
-      if (output().equals(peeled))
+      if (output.equals(peeled))
         return;
-      if (input().equals(peeled))
-        fail("Nothing done on " + input());
-      if (compressSpaces(peeled).equals(compressSpaces(input())))
-        assertNotEquals("Simpification of " + input() + " is just reformatting", compressSpaces(peeled), compressSpaces(input()));
-      assertSimilar(output(), peeled);
-      assertSimilar(wrap(output()), d);
+      if (input.equals(peeled))
+        fail("Nothing done on " + input);
+      if (compressSpaces(peeled).equals(compressSpaces(input)))
+        assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
+      assertSimilar(output, peeled);
+      assertSimilar(wrap(output), d);
     }
     static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
       try {
