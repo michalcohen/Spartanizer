@@ -3,6 +3,9 @@ package org.spartan.hamcrest;
 import org.hamcrest.Matcher;
 
 /**
+ * Non-auto-boxing version for all primitive types of the family of Hamcrest
+ * functions {@link org.hamcrest.MatcherAssert#assertThat}
+ *
  * @author Yossi Gil
  * @since 2015-07-18
  *

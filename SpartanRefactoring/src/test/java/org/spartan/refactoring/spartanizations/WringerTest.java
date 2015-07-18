@@ -80,14 +80,14 @@ public abstract class WringerTest {
    * @since 2015-07-18
    *
    */
-  public static abstract class Unchanged extends WringerTest {
+  public static abstract class Noneligible extends WringerTest {
     /**
-     * Instantiates the enclosing class ({@link Unchanged})
+     * Instantiates the enclosing class ({@link Noneligible})
      *
      * @param simplifier
      *          JD
      */
-    public Unchanged(final Wring simplifier) {
+    public Noneligible(final Wring simplifier) {
       super(simplifier);
     }
     @Test public void eligible() {
@@ -118,7 +118,24 @@ public abstract class WringerTest {
    * @since 2015-07-15
    *
    */
-  public static abstract class WringedInput extends WringerTest {
+  public static abstract class Eligible extends WringerTest {
+    public Eligible(final Wring inner) {
+      super(inner);
+    }
+    @Test public void eligible() {
+      assertTrue(inner.eligible(asInfixExpression()));
+    }
+    @Test public void noneligible() {
+      assertFalse(inner.noneligible(asInfixExpression()));
+    }
+  }
+
+  /**
+   * @author Yossi Gil
+   * @since 2015-07-15
+   *
+   */
+  public static abstract class WringedInput extends Eligible {
     /**
      * @return the expected output of the simplification
      */
@@ -133,12 +150,6 @@ public abstract class WringerTest {
       final CompilationUnit u = asCompilationUnit();
       assertEquals(u.toString(), 1, wringer.findOpportunities(u).size());
       assertTrue(inner.scopeIncludes(asInfixExpression()));
-    }
-    @Test public void eligible() {
-      assertTrue(inner.eligible(asInfixExpression()));
-    }
-    @Test public void noneligible() {
-      assertFalse(inner.noneligible(asInfixExpression()));
     }
     @Test public void hasReplacement() {
       assertNotNull(inner.replacement(asInfixExpression()));

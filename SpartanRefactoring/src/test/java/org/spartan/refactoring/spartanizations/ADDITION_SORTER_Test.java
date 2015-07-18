@@ -117,7 +117,7 @@ public class ADDITION_SORTER_Test {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Engine_ADDITION_SORTER_NOCHANGE extends WringerTest.Unchanged {
+  public static class Engine_ADDITION_SORTER_NOCHANGE extends WringerTest.Noneligible {
     public Engine_ADDITION_SORTER_NOCHANGE() {
       super(Wrings.ADDITION_SORTER.inner);
     }
