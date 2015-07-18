@@ -1,5 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -86,8 +88,8 @@ public enum ADDITION_SORTER_Test {
         Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
         Utils.asArray("Add '\\0' to a*.b", "'\0'+a*b", "a*b+'\0'"), //
         Utils.asArray("Sort from first to last", "1 + a*b + b*c", "a*b+b*c+1"), //
-        Utils.asArray("Add 1", "1+a", "a+1"), //
-        Utils.asArray("Add 1", "1+a", "a+1") //
+        Utils.asArray("Add 1", "1+a*b", "a*b+1"), //
+        Utils.asArray("Add 1", "1+c*d", "c*d+1") //
     );
 
     /**
@@ -109,17 +111,26 @@ public enum ADDITION_SORTER_Test {
     public Wringed() {
       super(Wrings.ADDITION_SORTER.inner);
     }
+    @Test public void tryToSort() {
+      final InfixExpression e = asInfixExpression();
+      assertTrue(Wrings.tryToSort(All.operands(Wrings.flatten(e)), new PlusComprator()));
+    }
+    @Test public void flattenIsIdempotentt() {
+      final InfixExpression flatten = Wrings.flatten(asInfixExpression());
+      assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+    }
     @Test public void allNotStringArgument() {
       final InfixExpression e = asInfixExpression();
       assertTrue(Are.notString(All.operands(e)));
     }
     @Test public void hasLiteral() {
       final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(e)) && Are.notString(All.operands(e)));
+      assertTrue(e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(Wrings.flatten(e)))
+          && Are.notString(All.operands(e)));
     }
     @Test public void hasNumericLiteralArgument() {
       final InfixExpression e = asInfixExpression();
-      assertTrue(Have.numericLiteral(All.operands(e)));
+      assertTrue(Have.numericLiteral(All.operands(Wrings.flatten(e))));
     }
     @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();

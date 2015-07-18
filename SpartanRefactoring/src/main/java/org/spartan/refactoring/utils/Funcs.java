@@ -182,6 +182,9 @@ public enum Funcs {
   public static InfixExpression duplicate(final AST t, final InfixExpression e) {
     return (InfixExpression) ASTNode.copySubtree(t, e);
   }
+  public static Expression duplicate(final AST t, final Expression e) {
+    return (Expression) ASTNode.copySubtree(t, e);
+  }
   public static Expression duplicate(final Expression e) {
     return (Expression) ASTNode.copySubtree(e.getAST(), e);
   }

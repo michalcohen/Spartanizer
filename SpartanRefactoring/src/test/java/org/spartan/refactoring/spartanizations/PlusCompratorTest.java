@@ -1,12 +1,14 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThan;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 
 import org.eclipse.jdt.core.dom.Expression;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Test class for {@link PlusComprator}
@@ -15,6 +17,7 @@ import org.junit.Test;
  * @since 2015-07-17
  *
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class PlusCompratorTest {
   @Test public void twoFunction() {

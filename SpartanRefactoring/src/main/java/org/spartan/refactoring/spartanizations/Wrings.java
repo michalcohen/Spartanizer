@@ -100,17 +100,17 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(e)) && Are.notString(All.operands(e));
+      return e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(flatten(e))) && Are.notString(All.operands(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
-      return tryToSort(All.operands(e));
+      return tryToSort(e);
     }
-    private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, new PlusComprator());
+    private boolean tryToSort(final InfixExpression e) {
+      return Wrings.tryToSort(All.operands(flatten(e)), new PlusComprator());
     }
     @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(e);
-      if (!tryToSort(operands))
+      final List<Expression> operands = All.operands(flatten(e));
+      if (!tryToSort(e))
         return null;
       return refit(e, operands);
     }
