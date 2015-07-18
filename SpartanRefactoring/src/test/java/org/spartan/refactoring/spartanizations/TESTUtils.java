@@ -113,6 +113,7 @@ public enum TESTUtils {
     } catch (final MalformedTreeException e) {
       fail(e.getMessage());
     } catch (final IllegalArgumentException e) {
+      e.printStackTrace();
       fail(e.getMessage());
     } catch (final BadLocationException e) {
       fail(e.getMessage());

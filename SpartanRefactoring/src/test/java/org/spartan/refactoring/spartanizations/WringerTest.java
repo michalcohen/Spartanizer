@@ -2,6 +2,7 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -15,9 +16,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
 
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -170,39 +169,24 @@ public abstract class WringerTest {
     @Test public void hasReplacement() {
       assertNotNull(inner.replacement(asInfixExpression()));
     }
-    @Test public void simiplifiesUsingReplacement() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+    @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final CompilationUnit u = asCompilationUnit();
-      final AST t = u.getAST();
-      final InfixExpression e = duplicate(t, asInfixExpression());
-      final ASTRewrite r = ASTRewrite.create(u.getAST());
-      assertNotNull(inner.replacement(e));
-      r.replace(e, inner.replacement(e), null);
-      final Document d = asDocument();
-      r.rewriteAST(d, null).apply(d);
-      final String peeled = peel(d.get());
-      if (output.equals(peeled))
-        return;
-      if (input.equals(peeled))
-        fail("Nothing done on " + input);
-      if (compressSpaces(peeled).equals(compressSpaces(input)))
-        assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
-      assertSimilar(output, peeled);
-      assertSimilar(wrap(output), d);
+      final Document d = new Document(wrap(input));
+      final ASTRewrite r = wringer.createRewrite(u, null);
+      assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final CompilationUnit u = asCompilationUnit();
-      final ASTRewrite r = wringer.createRewrite(u, null);
-      final Document d = asDocument();
-      r.rewriteAST(d, null).apply(d);
-      final String peeled = peel(d.get());
+      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrap(input)));
+      final String peeled = peel(excpected.get());
       if (output.equals(peeled))
         return;
       if (input.equals(peeled))
         fail("Nothing done on " + input);
       if (compressSpaces(peeled).equals(compressSpaces(input)))
-        assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
+        assertNotEquals("Wringing of " + input + " amount to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(output, peeled);
-      assertSimilar(wrap(output), d);
+      assertSimilar(wrap(output), excpected);
     }
     static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
       try {
