@@ -348,9 +348,9 @@ public enum Wrings {
   public static InfixExpression flatten(final InfixExpression $) {
     final List<Expression> es = new ArrayList<>();
     for (final Expression operand : All.operands($)) {
-      final InfixExpression c = asInfixExpression(getCore(operand));
-      if (c != null)
-        es.addAll(All.operands(c));
+      final List<Expression> internalOperands = All.operands(asInfixExpression(getCore(operand)));
+      if (internalOperands != null)
+        es.addAll(internalOperands);
       else es.add(operand);
     }
     return refit(duplicate($), es);
