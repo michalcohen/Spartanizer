@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -110,7 +109,7 @@ public abstract class WringerTest {
       assertEquals(u.toString(), 0, wringer.findOpportunities(u).size());
     }
     @Test(expected = AssertionError.class) public void hasNoReplacement() {
-      assertNull(inner.replacement(asInfixExpression()));
+      assertThat(inner.replacement(asInfixExpression()), is(notNullValue()));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final CompilationUnit u = asCompilationUnit();
@@ -127,24 +126,7 @@ public abstract class WringerTest {
    * @since 2015-07-15
    *
    */
-  public static abstract class Eligible extends WringerTest {
-    public Eligible(final Wring inner) {
-      super(inner);
-    }
-    @Test public void eligible() {
-      assertTrue(inner.eligible(asInfixExpression()));
-    }
-    @Test public void noneligible() {
-      assertFalse(inner.noneligible(asInfixExpression()));
-    }
-  }
-
-  /**
-   * @author Yossi Gil
-   * @since 2015-07-15
-   *
-   */
-  public static abstract class WringedInput extends Eligible {
+  public static abstract class WringedInput extends WringerTest {
     /**
      * Where the expected output can be found?
      */
@@ -157,6 +139,12 @@ public abstract class WringerTest {
      */
     WringedInput(final Wring simplifier) {
       super(simplifier);
+    }
+    @Test public void eligible() {
+      assertTrue(inner.eligible(asInfixExpression()));
+    }
+    @Test public void noneligible() {
+      assertFalse(inner.noneligible(asInfixExpression()));
     }
     @Test public void peelableOutput() {
       assertEquals(output, peel(wrap(output)));
@@ -175,7 +163,7 @@ public abstract class WringerTest {
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
     }
-    @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+    @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
       final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrap(input)));
       final String peeled = peel(excpected.get());
@@ -184,7 +172,7 @@ public abstract class WringerTest {
       if (input.equals(peeled))
         fail("Nothing done on " + input);
       if (compressSpaces(peeled).equals(compressSpaces(input)))
-        assertNotEquals("Wringing of " + input + " amount to mere reformatting", compressSpaces(peeled), compressSpaces(input));
+        assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(output, peeled);
       assertSimilar(wrap(output), excpected);
     }

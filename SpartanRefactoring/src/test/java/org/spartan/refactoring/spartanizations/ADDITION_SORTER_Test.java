@@ -2,6 +2,7 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -10,8 +11,10 @@ import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jface.text.BadLocationException;
@@ -25,7 +28,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
-import org.spartan.refactoring.utils.Have;
 import org.spartan.utils.Utils;
 
 /**
@@ -42,10 +44,10 @@ public enum ADDITION_SORTER_Test {
   @RunWith(Parameterized.class) //
   public static class Noneligible extends WringerTest.Noneligible {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Add 1", "a+1"), //
-        Utils.asArray("Add '1'", "a+'1'"), //
-        Utils.asArray("Add '\0'", "a+'\0'"), //
-        Utils.asArray("Plain addition", "a+b"), //
+        Utils.asArray("Add 1", "a*2+1"), //
+        Utils.asArray("Add '1'", "a*2+'1'"), //
+        Utils.asArray("Add '\\0'", "3*a+'\0'"), //
+        Utils.asArray("Plain addition", "5*a+b*c"), //
         Utils.asArray("Literal addition", "2+3") //
     );
 
@@ -61,6 +63,36 @@ public enum ADDITION_SORTER_Test {
       for (final String[] t : cases)
         $.add(t);
       return $;
+    }
+    @Test public void tryToSort() {
+      final InfixExpression e = asInfixExpression();
+      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), new PlusComprator()));
+    }
+    @Test public void tryToSortTwice() {
+      final InfixExpression e = asInfixExpression();
+      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      assertFalse(Wrings.tryToSort(operands, new PlusComprator()));
+      assertFalse(Wrings.tryToSort(operands, new PlusComprator()));
+    }
+    @Test public void flattenIsIdempotentt() {
+      final InfixExpression flatten = Wrings.flatten(asInfixExpression());
+      assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+    }
+    @Test public void allNotStringArgument() {
+      final InfixExpression e = asInfixExpression();
+      assertTrue(Are.notString(All.operands(e)));
+    }
+    @Test public void inputIsInfixExpression() {
+      final InfixExpression e = asInfixExpression();
+      assertNotNull(e);
+    }
+    @Test public void isPlus() {
+      final InfixExpression e = asInfixExpression();
+      assertTrue(e.getOperator() == Operator.PLUS);
+    }
+    @Test public void twoOrMoreArguments() {
+      final InfixExpression e = asInfixExpression();
+      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
     }
     static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
       try {
@@ -88,8 +120,11 @@ public enum ADDITION_SORTER_Test {
         Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
         Utils.asArray("Add '\\0' to a*.b", "'\0'+a*b", "a*b+'\0'"), //
         Utils.asArray("Sort from first to last", "1 + a*b + b*c", "a*b+b*c+1"), //
+        Utils.asArray("Sort from second to last", "a*b + 2 + b*c", "a*b+b*c+2"), //
+        Utils.asArray("All literals at the end", "1 + a*b + 2 + b*c + 3 + d*e + 4", "a*b + b*c  + d*e + 1 + 2 + 3+4"), //
         Utils.asArray("Add 1", "1+a*b", "a*b+1"), //
-        Utils.asArray("Add 1", "1+c*d", "c*d+1") //
+        Utils.asArray("Add 1", "1+c*d", "c*d+1"), //
+        Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)")//
     );
 
     /**
@@ -115,6 +150,12 @@ public enum ADDITION_SORTER_Test {
       final InfixExpression e = asInfixExpression();
       assertTrue(Wrings.tryToSort(All.operands(Wrings.flatten(e)), new PlusComprator()));
     }
+    @Test public void tryToSortTwice() {
+      final InfixExpression e = asInfixExpression();
+      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      assertTrue(Wrings.tryToSort(operands, new PlusComprator()));
+      assertFalse(Wrings.tryToSort(operands, new PlusComprator()));
+    }
     @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
@@ -122,15 +163,6 @@ public enum ADDITION_SORTER_Test {
     @Test public void allNotStringArgument() {
       final InfixExpression e = asInfixExpression();
       assertTrue(Are.notString(All.operands(e)));
-    }
-    @Test public void hasLiteral() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(Wrings.flatten(e)))
-          && Are.notString(All.operands(e)));
-    }
-    @Test public void hasNumericLiteralArgument() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(Have.numericLiteral(All.operands(Wrings.flatten(e))));
     }
     @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();

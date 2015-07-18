@@ -50,7 +50,6 @@ import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -100,7 +99,7 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(flatten(e))) && Are.notString(All.operands(e));
+      return e.getOperator() == Operator.PLUS && Are.notString(All.operands(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
