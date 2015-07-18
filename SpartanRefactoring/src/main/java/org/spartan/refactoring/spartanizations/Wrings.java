@@ -346,15 +346,20 @@ public enum Wrings {
     return $;
   }
   public static InfixExpression flatten(final InfixExpression $) {
-    final List<Expression> es = new ArrayList<>();
-    for (final Expression operand : All.operands($)) {
-      final List<Expression> internalOperands = All.operands(asInfixExpression(getCore(operand)));
-      if (internalOperands != null)
-        es.addAll(internalOperands);
-      else
-        es.add(operand);
-    }
-    return refit(duplicate($), es);
+    return refit(duplicate($), flattenInto($.getOperator(), All.operands($), new ArrayList<Expression>()));
+  }
+  private static List<Expression> flattenInto(final Operator o, final List<Expression> es, final List<Expression> $) {
+    for (final Expression e : es)
+      flattenInto(o, e, $);
+    return $;
+  }
+  private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
+    final InfixExpression inner = asInfixExpression(getCore(e));
+    return inner == null || inner.getOperator() != o ? flattenInto(e, $) : flattenInto(o, All.operands(inner), $);
+  }
+  private static List<Expression> flattenInto(final Expression e, final List<Expression> $) {
+    $.add(e);
+    return $;
   }
   public static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
     assert operands.size() >= 2;

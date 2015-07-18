@@ -18,9 +18,21 @@ import org.spartan.refactoring.utils.Is;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class FlattenTest {
-  @Test public void flattenOfThree() {
+  @Test public void flattenOfParenthesis() {
     final InfixExpression e = i("1+2+(3)");
-    assertThat(Wrings.flatten(e).extendedOperands().size(), is(3));
+    assertThat(Wrings.flatten(e).extendedOperands().size(), is(1));
+  }
+  @Test public void flattenOfDeepParenthesisSize() {
+    final InfixExpression e = i("(1+(2))+(3)");
+    assertThat(Wrings.flatten(e).extendedOperands().size(), is(1));
+  }
+  @Test public void flattenOfDeepParenthesisIsCorrect() {
+    final InfixExpression e = i("(((1+2)))+(((3 + (4+5))))");
+    assertThat(Wrings.flatten(e).toString(), is("1 + 2 + 3+ 4+ 5"));
+  }
+  @Test public void flattenOfDeepParenthesOtherOperatorsisIsCorrect() {
+    final InfixExpression e = i("(((1+2)))+(((3 + (4*5))))");
+    assertThat(Wrings.flatten(e).toString(), is("1 + 2 + 3+ (4 * 5)"));
   }
   @Test public void flattenExists() {
     final InfixExpression e = i("1+2");
