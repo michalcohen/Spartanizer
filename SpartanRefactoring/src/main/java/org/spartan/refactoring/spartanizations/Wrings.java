@@ -106,11 +106,14 @@ public enum Wrings {
       return tryToSort(e);
     }
     private boolean tryToSort(final InfixExpression e) {
-      return Wrings.tryToSort(All.operands(flatten(e)), new PlusComprator());
+      return tryToSort(All.operands(flatten(e)));
+    }
+    private boolean tryToSort(final List<Expression> es) {
+      return Wrings.tryToSort(es, new PlusComprator());
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      if (!tryToSort(e))
+      if (!tryToSort(operands))
         return null;
       return refit(e, operands);
     }
