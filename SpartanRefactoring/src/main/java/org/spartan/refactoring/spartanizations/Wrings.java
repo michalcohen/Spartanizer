@@ -98,7 +98,7 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Have.numericalLiteral(All.operands(e)) && Are.notString(All.operands(e));
+      return e.getOperator() == Operator.PLUS && Have.numericLiteral(All.operands(e)) && Are.notString(All.operands(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(All.operands(e));

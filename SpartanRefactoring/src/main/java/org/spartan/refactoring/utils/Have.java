@@ -51,7 +51,7 @@ public enum Have {
    * @return <code><b>true</b></code> <i>iff</i> one or more of the elements
    *         that is a numeric literal.
    */
-  public static boolean numericalLiteral(final List<Expression> es) {
+  public static boolean numericLiteral(final List<Expression> es) {
     for (final Expression e : es)
       if (Is.numericLiteral(e))
         return true;
@@ -65,7 +65,7 @@ public enum Have {
    * @return <code><b>true</b></code> <i>iff</i> one or more of the elements
    *         that is a numeric literal.
    */
-  public static boolean numericalLiteral(final Expression... es) {
+  public static boolean numericLiteral(final Expression... es) {
     for (final Expression e : es)
       if (Is.numericLiteral(e))
         return true;

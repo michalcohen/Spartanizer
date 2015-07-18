@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.JVM) //
-@SuppressWarnings({ "static-method", "javadoc", "boxing" }) //
+@SuppressWarnings({ "static-method", "javadoc", }) //
 public class UtilsTest {
   @Test public void compareFF() {
     assertThat(Utils.compare(false, false), is(0));
