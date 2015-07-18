@@ -18,6 +18,12 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.Test;
 
+/**
+ * @author Yossi Gil
+ * @since 2015-07-15
+ *
+ */
+@SuppressWarnings("javadoc") //
 public abstract class Engine_Common_CHANGE extends Engine_Common {
   /**
    * @return the expected output of the simplification
@@ -26,25 +32,24 @@ public abstract class Engine_Common_CHANGE extends Engine_Common {
   Engine_Common_CHANGE(final Wring simplifier) {
     super(simplifier);
   }
-  @Test @SuppressWarnings("javadoc") public void peelableOutput() {
+  @Test public void peelableOutput() {
     assertEquals(output(), peel(wrap(output())));
   }
   @Test @SuppressWarnings("javadoc") public void oneOpporunity() {
     final CompilationUnit u = asCompilationUnit();
     assertEquals(u.toString(), 1, engine.findOpportunities(u).size());
-    assertTrue(simplifier.scopeIncludes(asInfixExpression()));
+    assertTrue(inner.scopeIncludes(asInfixExpression()));
   }
-  @Test public @SuppressWarnings("javadoc") void eligible() {
-    assertTrue(simplifier.eligible(asInfixExpression()));
+  @Test public void eligible() {
+    assertTrue(inner.eligible(asInfixExpression()));
   }
-  @Test @SuppressWarnings("javadoc") public void noneligible() {
-    assertFalse(simplifier.noneligible(asInfixExpression()));
+  @Test public void noneligible() {
+    assertFalse(inner.noneligible(asInfixExpression()));
   }
-  @Test @SuppressWarnings("javadoc") public void hasReplacement() {
-    assertNotNull(simplifier.replacement(asInfixExpression()));
+  @Test public void hasReplacement() {
+    assertNotNull(inner.replacement(asInfixExpression()));
   }
-  @Test @SuppressWarnings("javadoc") public void simiplifies()
-      throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+  @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final CompilationUnit u = asCompilationUnit();
     final ASTRewrite r = engine.createRewrite(u, null);
     final Document d = asDocument();

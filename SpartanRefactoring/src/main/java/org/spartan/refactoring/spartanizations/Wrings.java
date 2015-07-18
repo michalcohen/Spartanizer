@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
@@ -97,24 +98,13 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Have.numericalLiteral(All.operands(e));
+      return e.getOperator() == Operator.PLUS && Have.numericalLiteral(All.operands(e)) && Are.notString(All.operands(e));
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(All.operands(e));
     }
     private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, new Comparator<Expression>() {
-        @Override public int compare(final Expression e1, final Expression e2) {
-          if (Is.numericLiteral(e1) || Is.numericLiteral(e2))
-            return Wrings.compare(Is.numericLiteral(e1), Is.numericLiteral(e2));
-          if (moreArguments(e1, e2))
-            return 1;
-          if (moreArguments(e2, e1))
-            return -1;
-          final int $ = countNodes(e1) - countNodes(e2);
-          return Math.abs($) > TOKEN_THRESHOLD ? $ : 0;
-        }
-      });
+      return Wrings.tryToSort(es, new PlusComprator());
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(e);
@@ -289,8 +279,8 @@ public enum Wrings {
   ;
   public final Wring inner;
 
-  Wrings(final Wring s) {
-    inner = s;
+  Wrings(final Wring inner) {
+    this.inner = inner;
   }
   static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
     assert operands.size() >= 2;
@@ -298,6 +288,7 @@ public enum Wrings {
     $.setOperator(e.getOperator());
     $.setLeftOperand(duplicate(operands.get(0)));
     $.setRightOperand(duplicate(operands.get(1)));
+    operands.remove(0);
     operands.remove(0);
     for (final Expression operand : operands)
       $.extendedOperands().add(duplicate(operand));
@@ -366,8 +357,5 @@ public enum Wrings {
         $ = true;
       }
     return $;
-  }
-  static int compare(final boolean b1, final boolean b2) {
-    return b1 == b2 ? 0 : b2 ? 1 : -1;
   }
 }

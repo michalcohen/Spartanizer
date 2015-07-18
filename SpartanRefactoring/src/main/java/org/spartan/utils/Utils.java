@@ -3,6 +3,7 @@ package org.spartan.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -12,6 +13,25 @@ import java.util.List;
  */
 public enum Utils {
   ;
+  /**
+   * Impose an ordering on type <code><b>boolean</b></code> by which
+   * <code><b>true</b></code> is greater than <code><b>false</b></code>.
+   *
+   * @param b1
+   *          JD
+   * @param b2
+   *          JD
+   *
+   * @return an integer that is negative, zero or positive depending on whether
+   *         the first argument is less than, equal to or greater than the
+   *         second.
+   *
+   * @see Comparable
+   * @see Comparator
+   */
+  public static int compare(final boolean b1, final boolean b2) {
+    return b1 == b2 ? 0 : b1 ? 1 : -1;
+  }
   public static String removeSuffix(final String s, final String postfix) {
     for (String $ = s;; $ = $.substring(0, $.length() - postfix.length()))
       if (!$.endsWith(postfix))

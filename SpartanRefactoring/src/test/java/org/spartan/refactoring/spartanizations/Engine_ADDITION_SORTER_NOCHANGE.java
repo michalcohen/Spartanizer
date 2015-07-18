@@ -24,7 +24,7 @@ import org.spartan.utils.Utils;
  * @since 2014-07-13
  *
  */
-@RunWith(Parameterized.class) //
+@SuppressWarnings("javadoc") @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class Engine_ADDITION_SORTER_NOCHANGE extends Engine_Common_NOCHANGE {
   public Engine_ADDITION_SORTER_NOCHANGE() {

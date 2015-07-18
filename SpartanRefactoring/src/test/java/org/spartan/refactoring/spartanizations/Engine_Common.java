@@ -21,10 +21,10 @@ import org.spartan.refactoring.utils.As;
 public abstract class Engine_Common {
   abstract String input();
   public Engine_Common(final Wring simplifier) {
-    this.simplifier = simplifier;
+    this.inner = simplifier;
   }
 
-  protected final Wring simplifier;
+  protected final Wring inner;
   protected final Wringer engine = new Wringer();
 
   @Test public void inputNotNull() {
@@ -37,10 +37,10 @@ public abstract class Engine_Common {
     assertNotNull(Wrings.find(asInfixExpression()));
   }
   @Test public void correctSimplifier() {
-    assertEquals(simplifier, Wrings.find(asInfixExpression()));
+    assertEquals(inner, Wrings.find(asInfixExpression()));
   }
   @Test public void scopeIncludes() {
-    assertTrue(simplifier.scopeIncludes(asInfixExpression()));
+    assertTrue(inner.scopeIncludes(asInfixExpression()));
   }
   protected InfixExpression asInfixExpression() {
     final InfixExpression $ = i(input());

@@ -28,17 +28,17 @@ public abstract class Engine_Common_NOCHANGE extends Engine_Common {
     super(simplifier);
   }
   @Test @SuppressWarnings("javadoc") public void eligible() {
-    assertFalse(simplifier.eligible(asInfixExpression()));
+    assertFalse(inner.eligible(asInfixExpression()));
   }
   @Test @SuppressWarnings("javadoc") public void noneligible() {
-    assertTrue(simplifier.noneligible(asInfixExpression()));
+    assertTrue(inner.noneligible(asInfixExpression()));
   }
   @Test @SuppressWarnings("javadoc") public void noOpporunity() {
     final CompilationUnit u = asCompilationUnit();
     assertEquals(u.toString(), 0, engine.findOpportunities(u).size());
   }
   @Test(expected = AssertionError.class) @SuppressWarnings("javadoc") public void hasNoReplacement() {
-    assertNull(simplifier.replacement(asInfixExpression()));
+    assertNull(inner.replacement(asInfixExpression()));
   }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final CompilationUnit u = asCompilationUnit();

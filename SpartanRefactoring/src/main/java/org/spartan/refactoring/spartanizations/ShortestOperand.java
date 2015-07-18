@@ -228,7 +228,7 @@ public class ShortestOperand extends Spartanization {
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        return outOfScope(e) || !eligible(e) ? true : overrideInto(new Range(e), opportunities);
+        return !outOfScope(e) && eligible(e) ? overrideInto(new Range(e), opportunities) : true;
       }
     };
   }
