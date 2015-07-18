@@ -51,6 +51,9 @@ public enum Funcs {
   public static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
+  public static InfixExpression asInfixExpression(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
+  }
   public static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
@@ -181,6 +184,9 @@ public enum Funcs {
   }
   public static Expression duplicate(final Expression e) {
     return (Expression) ASTNode.copySubtree(e.getAST(), e);
+  }
+  public static InfixExpression duplicate(final InfixExpression e) {
+    return (InfixExpression) ASTNode.copySubtree(e.getAST(), e);
   }
   public static Expression duplicateLeft(final InfixExpression e) {
     return duplicate(e.getLeftOperand());

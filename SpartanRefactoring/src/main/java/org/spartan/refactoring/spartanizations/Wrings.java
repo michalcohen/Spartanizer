@@ -12,6 +12,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
@@ -20,6 +21,7 @@ import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -272,27 +274,12 @@ public enum Wrings {
     boolean hasOpportunity(final Expression inner) {
       return As.not(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
     }
-    Expression getCore(final Expression $) {
-      return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
-    }
   }), //
   ;
   public final Wring inner;
 
   Wrings(final Wring inner) {
     this.inner = inner;
-  }
-  static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
-    assert operands.size() >= 2;
-    final InfixExpression $ = e.getAST().newInfixExpression();
-    $.setOperator(e.getOperator());
-    $.setLeftOperand(duplicate(operands.get(0)));
-    $.setRightOperand(duplicate(operands.get(1)));
-    operands.remove(0);
-    operands.remove(0);
-    for (final Expression operand : operands)
-      $.extendedOperands().add(duplicate(operand));
-    return $;
   }
   /**
    * Find the first {@link Wring} appropriate for an {@link InfixExpression}
@@ -357,5 +344,31 @@ public enum Wrings {
         $ = true;
       }
     return $;
+  }
+  public static InfixExpression flatten(final InfixExpression $) {
+    final List<Expression> es = new ArrayList<>();
+    for (final Expression operand : All.operands($)) {
+      final InfixExpression c = asInfixExpression(getCore(operand));
+      if (c != null)
+        es.addAll(All.operands(c));
+      else es.add(operand);
+    }
+    return refit(duplicate($), es);
+  }
+  public static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
+    assert operands.size() >= 2;
+    final InfixExpression $ = e.getAST().newInfixExpression();
+    $.setOperator(e.getOperator());
+    $.setLeftOperand(duplicate(operands.get(0)));
+    $.setRightOperand(duplicate(operands.get(1)));
+    operands.remove(0);
+    operands.remove(0);
+    if (!operands.isEmpty())
+      for (final Expression operand : operands)
+        $.extendedOperands().add(duplicate(operand));
+    return $;
+  }
+  static Expression getCore(final Expression $) {
+    return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
   }
 }
