@@ -64,7 +64,7 @@ public enum Is {
    *
    * @param n
    *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
   public static boolean block(final ASTNode n) {
@@ -75,17 +75,17 @@ public enum Is {
    *
    * @param n
    *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a boolean
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a boolean
    *         literal
    */
-  public static boolean booleanLiteral(final ASTNode e) {
-    return e != null && ASTNode.BOOLEAN_LITERAL == e.getNodeType();
+  public static boolean booleanLiteral(final ASTNode n) {
+    return n != null && ASTNode.BOOLEAN_LITERAL == n.getNodeType();
   }
   /**
-   * @param es
+   * @param e
    *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a
-   *         comparison expression.
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a comparison
+   *         expression.
    */
   public static boolean comparison(final InfixExpression e) {
     return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
@@ -112,6 +112,15 @@ public enum Is {
     }
     return false;
   }
+  /**
+   * Check whether an operator is susceptible for applying one of the two de
+   * Morgan laws.
+   *
+   * @param o
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an operator on
+   *         which the de Morgan laws apply.
+   */
   public static boolean deMorgan(final Operator o) {
     return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
@@ -312,7 +321,7 @@ public enum Is {
    *
    * @param e
    *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
   public static boolean numericLiteral(final Expression e) {
@@ -339,16 +348,13 @@ public enum Is {
   public static boolean plainAssignment(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
-  public static boolean specfic(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
-  }
   /**
-   * Determined whether a node is a "specific", i.e., <code><b>null</b></code>
-   * or <code><b>this</b></code> or literal.
+   * Determine whether a node is a "specific", i.e., <code><b>null</b></code> or
+   * <code><b>this</b></code> or literal.
    *
    * @param e
    *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
   public static boolean specific(final Expression e) {
@@ -363,12 +369,12 @@ public enum Is {
     return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
   }
   /**
-   * Determined whether a node is <code><b>this</b></code> or
+   * Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
    *
    * @param e
    *          JD
-   * @return <code><b>true</b></code> <i>iff</i> if the parameter is a block
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
   public static boolean thisOrNull(final Expression e) {
