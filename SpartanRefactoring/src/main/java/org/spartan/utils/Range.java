@@ -5,10 +5,15 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
- * a range which contains a spartanization suggestion. used for creating text
- * markers
+ * An immutable integral range, representing all integers between {@link #from},
+ * up to, but not including, {@link #to}, i.e.,
+ *
+ * <pre>
+ * {@link #from}, {@link #from}+1, ..., {@link #to}-1
+ * </pre>
  *
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
+ * @since 2012
  */
 public class Range {
   /** the beginning of the range (inclusive) */
@@ -17,12 +22,20 @@ public class Range {
   public final int to;
 
   /**
+   * The number of integers in the range
+   *
+   * @return a non-negative integer, computed as {@link #to} -{@link #from}
+   */
+  public int size() {
+    return to - from;
+  }
+  /**
    * Instantiates from beginning and end locations
    *
    * @param from
-   *          the beginning of the range (inclusive)
+   *          JD
    * @param to
-   *          the end of the range (exclusive)
+   *          JD
    */
   public Range(final int from, final int to) {
     this.from = from;
@@ -61,11 +74,17 @@ public class Range {
         return $;
     return null;
   }
+  /**
+   * Prune all ranges in a given list that include this object.
+   *
+   * @param rs
+   *          JD
+   */
   public void pruneIncluders(final List<Range> rs) {
     for (;;) {
       final Range includesMe = findIncludedIn(rs);
       if (includesMe == null)
-        break;
+        return;
       rs.remove(includesMe);
     }
   }

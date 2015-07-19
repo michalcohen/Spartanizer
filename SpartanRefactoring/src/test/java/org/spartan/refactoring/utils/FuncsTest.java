@@ -47,7 +47,6 @@ public class FuncsTest {
   }
   @Test public void asComparisonPrefixlExpression() {
     final PrefixExpression p = mock(PrefixExpression.class);
-    // TODO
     doReturn(PrefixExpression.Operator.NOT).when(p).getOperator();
     assertNull(asComparison(p));
   }

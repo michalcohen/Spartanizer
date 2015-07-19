@@ -28,10 +28,6 @@ public enum Spartanizations {
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
   // TODO Clever chaining in 2 to 3 selected classes
-  // TODO Do not commute in +; it might be strings
-  // TODO Literal always on left on multiplication
-  // TODO Literal always on right on all comparisons
-  // TODO 'this' always on right on all comparisons
   // TODO more clever forward/inline. do not propose if components of expression
   // are used in between
   // TODO List of safe and sane operations: comparison with boolean, literal
