@@ -51,6 +51,14 @@ import org.spartan.refactoring.utils.Is;
  *
  */
 public enum Wrings {
+  /**
+   * A {@link Wring} that eliminates redundant comparison with the two boolean
+   * literals: <code><b>true</b></code> and <code><b>false</b></code>.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
@@ -91,6 +99,37 @@ public enum Wrings {
    *
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return e.getOperator() == Operator.PLUS && Are.notString(All.operands(e));
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return tryToSort(e);
+    }
+    private boolean tryToSort(final InfixExpression e) {
+      return tryToSort(All.operands(flatten(e)));
+    }
+    private boolean tryToSort(final List<Expression> es) {
+      return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      final List<Expression> operands = All.operands(flatten(e));
+      if (!tryToSort(operands))
+        return null;
+      return refit(e, operands);
+    }
+  }), //
+  /**
+   * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
+   * expression.
+   *
+   * Extra care is taken to leave intact the use of {@link Operator#PLUS} for
+   * the concatenation of {@link String}s.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
+  MULTIPLICATION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
       return e.getOperator() == Operator.PLUS && Are.notString(All.operands(e));
     }

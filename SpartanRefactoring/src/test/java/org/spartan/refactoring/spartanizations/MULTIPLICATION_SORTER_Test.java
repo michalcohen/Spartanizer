@@ -42,7 +42,7 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum ADDITION_SORTER_Test {
+public enum MULTIPLICATION_SORTER_Test {
   ;
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible {
@@ -79,7 +79,7 @@ public enum ADDITION_SORTER_Test {
     }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
-      super(Wrings.ADDITION_SORTER.inner);
+      super(Wrings.MULTIPLICATION_SORTER.inner);
     }
     @Test public void allNotStringArgument() {
       final InfixExpression e = asInfixExpression();
@@ -143,7 +143,7 @@ public enum ADDITION_SORTER_Test {
      * Instantiates the enclosing class ({@link Wringed})
      */
     public Wringed() {
-      super(Wrings.ADDITION_SORTER.inner);
+      super(Wrings.MULTIPLICATION_SORTER.inner);
     }
     @Test public void allNotStringArgument() {
       final InfixExpression e = asInfixExpression();

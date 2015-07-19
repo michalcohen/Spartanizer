@@ -17,7 +17,7 @@ import org.junit.runners.MethodSorters;
 
 /**
  * A test suite for class {@link All}
- * 
+ *
  * @author Yossi Gil
  * @since 2015-07-18
  * @see All
