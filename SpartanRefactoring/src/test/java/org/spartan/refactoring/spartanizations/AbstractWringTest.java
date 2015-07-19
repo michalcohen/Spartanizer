@@ -20,6 +20,8 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -32,6 +34,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameter;
 import org.spartan.refactoring.utils.As;
+import org.spartan.utils.Range;
 
 /**
  * @author Yossi Gil
@@ -306,8 +309,9 @@ public abstract class AbstractWringTest {
     }
     @Test public void oneOpporunity() {
       final CompilationUnit u = asCompilationUnit();
-      assertThat(u.toString(), wringer.findOpportunities(u).size(), is(1));
       assertTrue(inner.scopeIncludes(asExpression()));
+      final List<Range> findOpportunities = wringer.findOpportunities(u);
+      assertThat(u.toString(), findOpportunities.size(), is(1));
     }
     @Test public void hasReplacement() {
       assertNotNull(inner.replacement(asExpression()));

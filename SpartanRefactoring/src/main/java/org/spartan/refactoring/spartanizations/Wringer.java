@@ -53,7 +53,7 @@ public class Wringer extends Spartanization {
         return e == null ? false : hasOpportunity(getCore(e.getOperand()));
       }
       private boolean hasOpportunity(final Expression inner) {
-        return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+        return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
       }
     };
   }

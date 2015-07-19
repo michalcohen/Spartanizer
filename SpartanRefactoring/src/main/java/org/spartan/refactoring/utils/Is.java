@@ -167,16 +167,6 @@ public enum Is {
     return n != null && type == n.getNodeType();
   }
   /**
-   * Determine if a given node is a boolean literal
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a boolean literal or false otherwise
-   */
-  public static boolean isBooleanLiteral(final ASTNode n) {
-    return is(n, ASTNode.BOOLEAN_LITERAL);
-  }
-  /**
    * Determine whether a variable declaration is final or not
    *
    * @param v

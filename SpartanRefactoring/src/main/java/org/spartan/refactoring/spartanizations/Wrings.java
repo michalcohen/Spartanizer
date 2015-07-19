@@ -4,6 +4,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asNot;
@@ -328,10 +329,19 @@ public enum Wrings {
   }
   static Expression pushdownNot(final PrefixExpression e, final Expression inner) {
     Expression $;
-    return ($ = perhapsDoubleNegation(e, inner)) != null//
+    return ($ = perhapsNotOfLiteral(e, inner)) != null//
+        || ($ = perhapsDoubleNegation(e, inner)) != null//
         || ($ = perhapsDeMorgan(e, inner)) != null//
         || ($ = perhapsComparison(e, inner)) != null //
             ? $ : null;
+  }
+  static Expression perhapsNotOfLiteral(final PrefixExpression e, final Expression inner) {
+    return !Is.booleanLiteral(inner) ? null : notOfLiteral(e, asBooleanLiteral(inner));
+  }
+  static Expression notOfLiteral(final PrefixExpression e, final BooleanLiteral l) {
+    final BooleanLiteral $ = duplicate(l);
+    $.setBooleanValue(!l.booleanValue());
+    return $;
   }
   static Expression perhapsDoubleNegation(final Expression e, final Expression inner) {
     return perhapsDoubleNegation(e, asNot(inner));
@@ -430,6 +440,6 @@ public enum Wrings {
     return e == null ? false : hasOpportunity(getCore(e.getOperand()));
   }
   static boolean hasOpportunity(final Expression inner) {
-    return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+    return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
   }
 }

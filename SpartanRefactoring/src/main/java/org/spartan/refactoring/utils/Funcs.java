@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -105,6 +106,18 @@ public enum Funcs {
    */
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
+  }
+  /**
+   * Down-cast, if possible, to {@link BooleanLiteral}
+   *
+   * @param e
+   *          JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   *
+   */
+  public static BooleanLiteral asBooleanLiteral(final Expression e) {
+    return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
   }
   public static PrefixExpression asNot(final Expression e) {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
@@ -268,6 +281,9 @@ public enum Funcs {
   }
   public static Expression duplicate(final Expression e) {
     return (Expression) ASTNode.copySubtree(e.getAST(), e);
+  }
+  public static BooleanLiteral duplicate(final BooleanLiteral e) {
+    return (BooleanLiteral) ASTNode.copySubtree(e.getAST(), e);
   }
   public static InfixExpression duplicate(final InfixExpression e) {
     return (InfixExpression) ASTNode.copySubtree(e.getAST(), e);
@@ -459,16 +475,6 @@ public enum Funcs {
    */
   public static boolean isBlock(final ASTNode n) {
     return is(n, ASTNode.BLOCK);
-  }
-  /**
-   * Determine if a given node is a boolean literal
-   *
-   * @param n
-   *          node to check
-   * @return true if the given node is a boolean literal or false otherwise
-   */
-  public static boolean isBooleanLiteral(final ASTNode n) {
-    return is(n, ASTNode.BOOLEAN_LITERAL);
   }
   /**
    * @param n

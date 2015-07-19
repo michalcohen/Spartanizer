@@ -1,11 +1,20 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.spartanizations.TESTUtils.p;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+import static org.spartan.refactoring.utils.Funcs.asNot;
+import static org.spartan.refactoring.utils.Funcs.getCore;
 
 import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -14,9 +23,9 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible.Infix;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Utils;
 
 /**
@@ -27,10 +36,28 @@ import org.spartan.utils.Utils;
  *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "javadoc" }) //
-public enum PUSHDOWN_NOT_Test {
-  ;
+@SuppressWarnings({ "javadoc", "static-method" }) //
+public class PUSHDOWN_NOT_Test {
+  /** The {@link Wring} under test */
   static final Wring WRING = Wrings.PUSHDOWN_NOT.inner;
+
+  @Test public void notOfFalse() {
+    final PrefixExpression e = p("!false");
+    assertThat(e, is(notNullValue()));
+    assertThat(WRING.scopeIncludes(e), is(true));
+    assertThat(WRING.eligible(e), is(true));
+    assertThat(Wrings.hasOpportunity(e), is(true));
+    assertThat(asNot(e), is(notNullValue()));
+    final Expression inner = getCore(e.getOperand());
+    assertThat(inner, is(notNullValue()));
+    assertThat(inner.toString(), is("false"));
+    assertThat(Is.booleanLiteral(inner), is(true));
+    assertThat(Wrings.perhapsNotOfLiteral(e, inner), is(notNullValue()));
+    assertThat(Wrings.notOfLiteral(e, asBooleanLiteral(inner)), is(notNullValue()));
+    assertThat(Wrings.pushdownNot(e, inner), is(notNullValue()));
+    assertThat(Wrings.pushdownNot(asNot(e)), is(notNullValue()));
+    assertThat(WRING.replacement(e), is(notNullValue()));
+  }
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
@@ -79,17 +106,6 @@ public enum PUSHDOWN_NOT_Test {
     public Noneligible() {
       super(WRING);
     }
-
-    static abstract class Infix extends Noneligible {
-      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-      Infix(final Wring w) {
-        super(w);
-      }
-      @Test public void inputIsInfixExpression() {
-        final InfixExpression e = asInfixExpression();
-        assertNotNull(e);
-      }
-    }
   }
 
   @RunWith(Parameterized.class) //
@@ -110,7 +126,8 @@ public enum PUSHDOWN_NOT_Test {
         Utils.asArray("double not", "!!f()", "f()"), //
         Utils.asArray("double not nested", "!(!f())", "f()"), //
         Utils.asArray("double not deeply nested", "!(((!f())))", "f()"), //
-        Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
+        Utils.asArray("not of false", "!false", "true"), //
+        Utils.asArray("not of true", "!true", "false"), //
         null);
 
     /**

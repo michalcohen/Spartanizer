@@ -318,7 +318,7 @@ public class Ternarize extends Spartanization {
   }
   private static Expression determineNewExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp,
       final Expression elseExp) {
-    return !Is.isBooleanLiteral(thenExp) || !Is.isBooleanLiteral(elseExp)
+    return !Is.booleanLiteral(thenExp) || !Is.booleanLiteral(elseExp)
         ? makeParenthesizedConditionalExp(t, r, cond, thenExp, elseExp)
         : tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue());
   }
