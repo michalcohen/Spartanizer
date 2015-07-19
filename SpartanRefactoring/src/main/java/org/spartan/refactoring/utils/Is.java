@@ -17,7 +17,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
-import static org.spartan.refactoring.utils.As.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.intIsIn;
@@ -227,14 +228,6 @@ public enum Is {
     return false;
   }
   /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a prefix expression or false otherwise
-   */
-  public static boolean prefix(final ASTNode n) {
-    return is(n, ASTNode.PREFIX_EXPRESSION);
-  }
-  /**
    * Determined if a node is a return statement
    *
    * @param n
@@ -302,7 +295,7 @@ public enum Is {
         ASTNode.ARRAY_CREATION, //
         ASTNode.INSTANCEOF_EXPRESSION//
     //
-    ) || notString(As.infixExpression(e));
+    ) || notString(asInfixExpression(e));
   }
   /**
    * @param e
@@ -347,6 +340,14 @@ public enum Is {
    */
   public static boolean plainAssignment(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
+  }
+  /**
+   * @param n
+   *          node to check
+   * @return true if the given node is a prefix expression or false otherwise
+   */
+  public static boolean prefix(final ASTNode n) {
+    return is(n, ASTNode.PREFIX_EXPRESSION);
   }
   /**
    * Determine whether a node is a "specific", i.e., <code><b>null</b></code> or

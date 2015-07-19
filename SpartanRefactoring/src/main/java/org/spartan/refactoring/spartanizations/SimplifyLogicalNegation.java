@@ -6,6 +6,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -37,7 +38,6 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
@@ -56,7 +56,7 @@ public class SimplifyLogicalNegation extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
-        return !inRange(m, e) ? true : simplifyNot(As.not(e));
+        return !inRange(m, e) ? true : simplifyNot(asNot(e));
       }
       private boolean simplifyNot(final PrefixExpression e) {
         return e == null ? true : simplifyNot(e, getCore(e.getOperand()));
@@ -68,7 +68,7 @@ public class SimplifyLogicalNegation extends Spartanization {
             || true;
       }
       boolean perhapsDoubleNegation(final Expression e, final Expression inner) {
-        return perhapsDoubleNegation(e, As.not(inner));
+        return perhapsDoubleNegation(e, asNot(inner));
       }
       boolean perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
         return inner != null && replace(e, inner.getOperand());
@@ -174,7 +174,7 @@ public class SimplifyLogicalNegation extends Spartanization {
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
-        if (hasOpportunity(As.not(e)))
+        if (hasOpportunity(asNot(e)))
           opportunities.add(new Range(e));
         return true;
       }
@@ -182,7 +182,7 @@ public class SimplifyLogicalNegation extends Spartanization {
         return e == null ? false : hasOpportunity(getCore(e.getOperand()));
       }
       private boolean hasOpportunity(final Expression inner) {
-        return As.not(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+        return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
       }
     };
   }

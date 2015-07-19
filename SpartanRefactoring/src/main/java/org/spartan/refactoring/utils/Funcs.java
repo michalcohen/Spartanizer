@@ -6,8 +6,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.spartan.refactoring.utils.As.asBlock;
-import static org.spartan.refactoring.utils.As.asExpressionStatement;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
@@ -55,6 +54,17 @@ public enum Funcs {
   public static InfixExpression asAndOrOr(final InfixExpression e) {
     return Is.deMorgan(e.getOperator()) ? e : null;
   }
+  /**
+   * Convert, is possible, an {@link ASTNode} to a {@link Block}
+   *
+   * @param n
+   *          what to convert
+   * @return the argument, but down-casted to a {@link Block}, or
+   *         <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static Block asBlock(final ASTNode n) {
+    return !(n instanceof Block) ? null : (Block) n;
+  }
   public static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
@@ -68,25 +78,68 @@ public enum Funcs {
         NOT_EQUALS //
     ) ? e : null;
   }
+  /**
+   * Convert, is possible, an {@link Statement} to a {@link ExpressionStatement}
+   *
+   * @param s
+   *          a statement or a block to extract the expression statement from
+   * @return the expression statement if n is a block or an expression statement
+   *         or null if it not an expression statement or if the block contains
+   *         more than one statement
+   */
+  public static ExpressionStatement asExpressionStatement(final Statement s) {
+    if (s == null)
+      return null;
+    final ASTNode $ = !Is.block(s) ? s : getBlockSingleStmnt(s);
+    return !Is.expressionStatement($) ? null : (ExpressionStatement) $;
+  }
+  /**
+   * Down-cast, if possible, to {@link InfixExpression}
+   *
+   * @param e
+   *          JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   *
+   */
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
+  public static PrefixExpression asNot(final Expression e) {
+    return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
+  }
+  public static PrefixExpression asNot(final PrefixExpression e) {
+    return NOT.equals(e.getOperator()) ? e : null;
+  }
+  /**
+   * Down-cast, if possible, to {@link PrefixExpression}
+   *
+   * @param e
+   *          JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   *
+   */
   public static PrefixExpression asPrefixExpression(final ASTNode e) {
     return !(e instanceof PrefixExpression) ? null : (PrefixExpression) e;
   }
   /**
-   * @param s
-   *          The node from which to return statement.
-   * @return null if it is not possible to extract the return statement.
+   * Down-cast, if possible, to {@link ReturnStatement}
+   *
+   * @param n
+   *          JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   *
    */
-  public static ReturnStatement asReturn(final ASTNode s) {
-    if (s == null)
+  public static ReturnStatement asReturn(final ASTNode n) {
+    if (n == null)
       return null;
-    switch (s.getNodeType()) {
+    switch (n.getNodeType()) {
       case ASTNode.BLOCK:
-        return asReturn((Block) s);
+        return asReturn((Block) n);
       case ASTNode.RETURN_STATEMENT:
-        return (ReturnStatement) s;
+        return (ReturnStatement) n;
       default:
         return null;
     }
@@ -100,17 +153,17 @@ public enum Funcs {
    *
    * @param base
    *          The assignment to compare all others to
-   * @param asgns
+   * @param as
    *          The assignments to compare
    * @return true if all assignments has the same left hand side and operator as
    *         the first one or false otherwise
    */
-  public static boolean compatible(final Assignment base, final Assignment... asgns) {
-    if (hasNull(base, asgns))
+  public static boolean compatible(final Assignment base, final Assignment... as) {
+    if (hasNull(base, as))
       return false;
-    for (final Assignment asgn : asgns)
-      if (asgn == null || !compatibleOps(base.getOperator(), asgn.getOperator())
-          || !compatibleNames(base.getLeftHandSide(), asgn.getLeftHandSide()))
+    for (final Assignment a : as)
+      if (a == null || !compatibleOps(base.getOperator(), a.getOperator())
+          || !compatibleNames(base.getLeftHandSide(), a.getLeftHandSide()))
         return false;
     return true;
   }
@@ -190,7 +243,7 @@ public enum Funcs {
    *          JD
    * @return Number of abstract syntax tree nodes under the parameter.
    */
-  public static int countNonWhiteCharacters(final ASTNode n) {
+  public static int countNonWhites(final ASTNode n) {
     return removeWhites(n.toString()).length();
   }
   public static Expression duplicate(final AST t, final Expression e) {

@@ -29,16 +29,6 @@ import org.spartan.refactoring.builder.Nature;
  * @since 2013/07/01
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {
-  /**
-   * the main method of the command handler, runs when the command is called.
-   */
-  @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
-    try {
-      return execute(HandlerUtil.getCurrentSelectionChecked(e));
-    } catch (final CoreException x) {
-      throw new ExecutionException(x.getMessage());
-    }
-  }
   private static Void execute(final ISelection s) throws CoreException {
     if (s instanceof IStructuredSelection)
       for (final Object o : ((IStructuredSelection) s).toList()) {
@@ -72,5 +62,15 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
     // Add the nature
     description.setNatureIds(append(natures, Nature.NATURE_ID));
     p.setDescription(description, null);
+  }
+  /**
+   * the main method of the command handler, runs when the command is called.
+   */
+  @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
+    try {
+      return execute(HandlerUtil.getCurrentSelectionChecked(e));
+    } catch (final CoreException x) {
+      throw new ExecutionException(x.getMessage());
+    }
   }
 }

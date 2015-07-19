@@ -26,14 +26,20 @@ import org.spartan.refactoring.spartanizations.Wizard;
  * @since 2013/07/01
  */
 public abstract class BaseHandler extends AbstractHandler {
-  private final Spartanization refactoring;
+  private static ICompilationUnit getCompilationUnit() {
+    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
+  }
 
-  protected Spartanization getRefactoring() {
-    return refactoring;
+  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
+    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
   }
-  protected final String getDialogTitle() {
-    return refactoring.getName();
+  private static ICompilationUnit getCompilationUnit(final IResource r) {
+    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
   }
+  private static IWorkbenchWindow getCurrentWorkbenchWindow() {
+    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+  }
+  private final Spartanization refactoring;
   protected BaseHandler(final Spartanization refactoring) {
     this.refactoring = refactoring;
   }
@@ -54,22 +60,16 @@ public abstract class BaseHandler extends AbstractHandler {
     wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
     return null;
   }
+  protected final String getDialogTitle() {
+    return refactoring.getName();
+  }
+  protected Spartanization getRefactoring() {
+    return refactoring;
+  }
   private RefactoringWizard getWizard(final ITextSelection ts, final ICompilationUnit cu) {
     final Spartanization $ = getRefactoring();
     $.setSelection(ts);
     $.setCompilationUnit(cu);
     return new Wizard($);
-  }
-  private static ICompilationUnit getCompilationUnit() {
-    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
-  }
-  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
-    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
-  }
-  private static ICompilationUnit getCompilationUnit(final IResource r) {
-    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
-  }
-  private static IWorkbenchWindow getCurrentWorkbenchWindow() {
-    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
 }

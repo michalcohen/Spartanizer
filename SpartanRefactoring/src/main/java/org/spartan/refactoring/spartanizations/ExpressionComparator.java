@@ -1,7 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.utils.Funcs.countNodes;
-import static org.spartan.refactoring.utils.Funcs.countNonWhiteCharacters;
+import static org.spartan.refactoring.utils.Funcs.countNonWhites;
 
 import java.util.Comparator;
 
@@ -58,7 +58,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return round(countNodes(e1) - countNodes(e2), Wrings.TOKEN_THRESHOLD);
   }
   static int characterCompare(final Expression e1, final Expression e2) {
-    return countNonWhiteCharacters(e1) - countNonWhiteCharacters(e2);
+    return countNonWhites(e1) - countNonWhites(e2);
   }
   static int round(final int $, final int threshold) {
     return Math.abs($) > threshold ? $ : 0;

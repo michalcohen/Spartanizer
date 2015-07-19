@@ -1,8 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.junit.Assert.fail;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,9 +20,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 
@@ -177,38 +172,5 @@ public enum As {
       default:
         return null;
     }
-  }
-  /**
-   * @param s
-   *          a statement or a block to extract the expression statement from
-   * @return the expression statement if n is a block or an expression statement
-   *         or null if it not an expression statement or if the block contains
-   *         more than one statement
-   */
-  public static ExpressionStatement asExpressionStatement(final Statement s) {
-    if (s == null)
-      return null;
-    final ASTNode $ = !Is.block(s) ? s : Funcs.getBlockSingleStmnt(s);
-    return !Is.expressionStatement($) ? null : (ExpressionStatement) $;
-  }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link Block}
-   *
-   * @param n
-   *          what to convert
-   * @return the argument, but downcasted to a {@link Block}, or
-   *         <code><b>null</b></code> otherwise.
-   */
-  public static Block asBlock(final ASTNode n) {
-    return !(n instanceof Block) ? null : (Block) n;
-  }
-  public static PrefixExpression not(final PrefixExpression e) {
-    return NOT.equals(e.getOperator()) ? e : null;
-  }
-  public static PrefixExpression not(final Expression e) {
-    return !(e instanceof PrefixExpression) ? null : As.not(asPrefixExpression(e));
-  }
-  public static InfixExpression infixExpression(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
 }

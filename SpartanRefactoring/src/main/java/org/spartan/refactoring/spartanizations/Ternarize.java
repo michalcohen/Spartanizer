@@ -1,7 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.As.asBlock;
-import static org.spartan.refactoring.utils.As.asReturn;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asReturn;
 import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.utils.Funcs.compatibleNames;
 import static org.spartan.refactoring.utils.Funcs.compatibleOps;

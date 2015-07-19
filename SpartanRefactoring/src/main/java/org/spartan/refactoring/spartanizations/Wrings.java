@@ -7,6 +7,7 @@ import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
@@ -42,7 +43,6 @@ import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
-import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -197,13 +197,13 @@ public enum Wrings {
    */
   simplifyNegation(new Wring.OfPrefixExpression() {
     @Override public boolean scopeIncludes(final PrefixExpression e) {
-      return As.not(e) != null;
+      return asNot(e) != null;
     }
     @Override boolean _eligible(final PrefixExpression e) {
-      return hasOpportunity(As.not(e));
+      return hasOpportunity(asNot(e));
     }
     @Override Expression _replacement(final PrefixExpression e) {
-      return simplifyNot(As.not(e));
+      return simplifyNot(asNot(e));
     }
     private Expression simplifyNot(final PrefixExpression e) {
       return e == null ? null : simplifyNot(e, getCore(e.getOperand()));
@@ -216,7 +216,7 @@ public enum Wrings {
               ? $ : null;
     }
     Expression perhapsDoubleNegation(final Expression e, final Expression inner) {
-      return perhapsDoubleNegation(e, As.not(inner));
+      return perhapsDoubleNegation(e, asNot(inner));
     }
     Expression perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
       return inner == null ? null : inner.getOperand();
@@ -312,7 +312,7 @@ public enum Wrings {
       return e == null ? false : hasOpportunity(getCore(e.getOperand()));
     }
     boolean hasOpportunity(final Expression inner) {
-      return As.not(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+      return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
     }
   }), //
   ;

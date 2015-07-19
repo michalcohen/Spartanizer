@@ -33,7 +33,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class FuncsTest {
   @Test public void cocountNonWhiteCharactersunt() {
-    assertThat(Funcs.countNonWhiteCharacters(e("1 + 23     *456 + \n /* aa */ 7890")), is(13));
+    assertThat(Funcs.countNonWhites(e("1 + 23     *456 + \n /* aa */ 7890")), is(13));
   }
   @Test public void asComparisonTypicalInfixIsCorrect() {
     final InfixExpression i = mock(InfixExpression.class);
