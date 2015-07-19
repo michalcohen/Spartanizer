@@ -156,7 +156,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param b
    *          JD
@@ -176,7 +176,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param b
    *          JD
@@ -216,7 +216,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param d
    *          JD
@@ -236,7 +236,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param f
    *          JD
@@ -256,7 +256,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param i
    *          JD
@@ -276,7 +276,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param l
    *          JD
@@ -296,7 +296,7 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}.
    *
    * @param reason
-   *          as in
+   *          as in the original Hamcrest function
    *          {@link org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)}
    * @param s
    *          JD

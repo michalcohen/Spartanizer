@@ -32,6 +32,24 @@ public enum ExpressionComparator implements Comparator<Expression> {
           ($ = characterCompare(e1, e2)) != 0 //
               ? $ : 0;
     }
+  },
+  /**
+   * Order on terms in multiplication: literals must be last. Sort literals by
+   * length.
+   *
+   *
+   * @author Yossi Gil
+   * @since 2015-07-19
+   *
+   */
+  MULITIPLICATION {
+    @Override public int compare(final Expression e1, final Expression e2) {
+      int $;
+      return ($ = literalCompare(e2, e1)) != 0 || //
+          ($ = nodesCompare(e1, e2)) != 0 || //
+          ($ = characterCompare(e1, e2)) != 0 //
+              ? $ : 0;
+    }
   };
   static int literalCompare(final Expression e1, final Expression e2) {
     return asBit(Is.literal(e1)) - asBit(Is.literal(e2));

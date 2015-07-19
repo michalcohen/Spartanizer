@@ -277,7 +277,7 @@ public abstract class AbstractWringTest {
     }
     @Test public void oneOpporunity() {
       final CompilationUnit u = asCompilationUnit();
-      assertEquals(u.toString(), 1, wringer.findOpportunities(u).size());
+      assertThat(u.toString(), wringer.findOpportunities(u).size(), is(1));
       assertTrue(inner.scopeIncludes(asInfixExpression()));
     }
     @Test public void hasReplacement() {

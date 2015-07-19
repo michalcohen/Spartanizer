@@ -1,11 +1,19 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.fail;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
@@ -14,13 +22,20 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -124,6 +139,7 @@ public enum ADDITION_SORTER_Test {
         Utils.asArray("All literals at the end", "1 + a*b + 2 + b*c + 3 + d*e + 4", "a*b + b*c  + d*e + 1 + 2 + 3+4"), //
         Utils.asArray("Add 1", "1+a*b", "a*b+1"), //
         Utils.asArray("Add 1", "1+c*d", "c*d+1"), //
+        Utils.asArray("Literals of distinct length", "123+12+1", "1+12+123"), //
         Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)"), //
         null);
 
@@ -161,7 +177,12 @@ public enum ADDITION_SORTER_Test {
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
-      assertTrue(Wrings.tryToSort(All.operands(Wrings.flatten(e)), ExpressionComparator.ADDITION));
+      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      final boolean tryToSort = Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
+      assertThat(//
+          "Before: " + All.operands(Wrings.flatten(e)) + "\n" + //
+              "After: " + operands + "\n", //
+          tryToSort, is(true));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
