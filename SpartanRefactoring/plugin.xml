@@ -2,32 +2,32 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="il.ac.technion.cs.ssdl.spartan.builder.Builder"
+         id="org.spartan.builder.Builder"
          name="Spartanization Checker"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">
          <run
-               class="il.ac.technion.cs.ssdl.spartan.builder.Builder">
+               class="org.spartan.refatoring.builder.Builder">
          </run>
       </builder>
    </extension>
    <extension
-         id="il.ac.technion.cs.ssdl.spartan.Nature"
+         id="org.spartan.refactoring.Nature"
          name="Spartanization Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="il.ac.technion.cs.ssdl.spartan.builder.Nature">
+               class="org.spartan.refatoring.builder.Nature">
          </run>
       </runtime>
       <builder
-            id="il.ac.technion.cs.ssdl.spartan.builder.Builder">
+            id="org.spartan.refatoring.builderr.Builder">
       </builder>
    </extension>
    
 <extension
-    id="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
+    id="org.spartan.refactoring.spartanizationSuggestion"
     name="Spartanization Suggestion"
     point="org.eclipse.core.resources.markers">
   <super type="org.eclipse.core.resources.problemmarker" />
@@ -36,115 +36,115 @@
 
    <extension point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
-         markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion"
-         class="il.ac.technion.cs.ssdl.spartan.builder.QuickFixer"/>
+         markerType="org.spartan.spartanizationSuggestion"
+         class="org.spartan.builder.QuickFixer"/>
    </extension>
    <extension point="org.eclipse.ui.editors.annotationTypes">
-      <type markerType="il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion" name="il.ac.technion.cs.ssdl.spartan.spartanizationMarker" />
+      <type markerType="org.spartan.spartanizationSuggestion" name="org.spartan.spartanizationMarker" />
    </extension>
    <extension
       point="org.eclipse.ui.editors.markerAnnotationSpecification">
    <specification
-         annotationType="il.ac.technion.cs.ssdl.spartan.spartanizationMarker"
-         colorPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.color"
+         annotationType="org.spartan.spartanizationMarker"
+         colorPreferenceKey="org.spartan.spartanizationMarker.color"
          colorPreferenceValue="0,0,180"
          contributesToHeader="false"
          includeOnPreferencePage="true"
          label="Spartanization Suggestion"
-         overviewRulerPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.overview"
+         overviewRulerPreferenceKey="org.spartan.spartanizationMarker.overview"
          overviewRulerPreferenceValue="true"
          presentationLayer="0"
-         textPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.text"
+         textPreferenceKey="org.spartan.spartanizationMarker.text"
          textPreferenceValue="true"
          textStylePreferenceValue="PROBLEM_UNDERLINE"
-         verticalRulerPreferenceKey="il.ac.technion.cs.ssdl.spartan.spartanizationMarker.ruler"
+         verticalRulerPreferenceKey="org.spartan.spartanizationMarker.ruler"
          verticalRulerPreferenceValue="true">
    </specification>
 </extension>
    <extension
          point="org.eclipse.ui.commands">
       <category
-            id="il.ac.technion.cs.ssdl.spartan.commands.category"
+            id="org.spartan.commands.category"
             name="Spartanization Category">
       </category>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.commands.category"
-            id="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand"
+            categoryId="org.spartan.commands.category"
+            id="org.spartan.commands.ToggleCommand"
             name="Toggle Automatic Spartanization Suggestion">
       </command>
       <category
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.category"
+            id="org.spartan.refactoring.category"
             name="Spartan Refactoring">
       </category>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ChangeReturnToDollar"
             name="Change return variable to $">
       </command>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ConvertToTernary"
             name="Convert conditional to ternary">
       </command>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ShortestOperand"
             name="Shortest operand first">
       </command>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ForwardDeclaraion"
             name="Forward declaration">
       </command>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.InlineSingleUse"
             name="Inline single use">
       </command>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.RedundantEquality"
             name="Redandant equality">
       </command>
       <command
-            categoryId="il.ac.technion.cs.ssdl.spartan.refactoring.category"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ShortestBranchFirst"
             name="Shortest branch first">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ToggleSpartanizationHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.commands.ToggleCommand">
+            class="org.spartan.commandhandlers.ToggleSpartanizationHandler"
+            commandId="org.spartan.commands.ToggleCommand">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ChangeReturnToDollarHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar">
+            class="org.spartan.commandhandlers.ChangeReturnToDollarHandler"
+            commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.TernarizeHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary">
+            class="org.spartan.commandhandlers.TernarizeHandler"
+            commandId="org.spartan.refactoring.commands.ConvertToTernary">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ShortestOperandHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand">
+            class="org.spartan.commandhandlers.ShortestOperandHandler"
+            commandId="org.spartan.refactoring.commands.ShortestOperand">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ForwardDeclarationHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion">
+            class="org.spartan.commandhandlers.ForwardDeclarationHandler"
+            commandId="org.spartan.refactoring.commands.ForwardDeclaraion">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.InlineSingleUseHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse">
+            class="org.spartan.commandhandlers.InlineSingleUseHandler"
+            commandId="org.spartan.refactoring.commands.InlineSingleUse">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.RedundantEqualityHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality">
+            class="org.spartan.commandhandlers.RedundantEqualityHandler"
+            commandId="org.spartan.refactoring.commands.RedundantEquality">
       </handler>
       <handler
-            class="il.ac.technion.cs.ssdl.spartan.commandhandlers.ShortestBranchFirstHandler"
-            commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst">
+            class="org.spartan.commandhandlers.ShortestBranchFirstHandler"
+            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
       </handler>
    </extension>
    <extension
@@ -157,38 +157,38 @@
             <menu
                   label="Spartanization">
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.ChangeReturnToDollarCommand"
+                     commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
+                     id="org.spartan.menus.ChangeReturnToDollarCommand"
                      style="push">
                </command>
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.ConvertToTernaryCommand"
+                     commandId="org.spartan.refactoring.commands.ConvertToTernary"
+                     id="org.spartan.menus.ConvertToTernaryCommand"
                      style="push">
                </command>
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.ShortestOperandCommand"
+                     commandId="org.spartan.refactoring.commands.ShortestOperand"
+                     id="org.spartan.menus.ShortestOperandCommand"
                      style="push">
                </command>
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.ForwardDeclarationCommand"
+                     commandId="org.spartan.refactoring.commands.ForwardDeclaraion"
+                     id="org.spartan.menus.ForwardDeclarationCommand"
                      style="push">
                </command>
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.InlineSingleUseCommand"
+                     commandId="org.spartan.refactoring.commands.InlineSingleUse"
+                     id="org.spartan.menus.InlineSingleUseCommand"
                      style="push">
                </command>
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.RedundantEqualityCommand"
+                     commandId="org.spartan.refactoring.commands.RedundantEquality"
+                     id="org.spartan.menus.RedundantEqualityCommand"
                      style="push">
                </command>
                <command
-                     commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
-                     id="il.ac.technion.cs.ssdl.spartan.menus.ShortestBranchFirstCommand"
+                     commandId="org.spartan.refactoring.commands.ShortestBranchFirst"
+                     id="org.spartan.menus.ShortestBranchFirstCommand"
                      style="push">
                </command>
             </menu>
@@ -201,31 +201,31 @@
                id="org.eclipse.jdt.ui.refactoring.menu2"
                label="Spartanization">
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ChangeReturnToDollar"
+                  commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
                   style="push">
             </command>
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ConvertToTernary"
+                  commandId="org.spartan.refactoring.commands.ConvertToTernary"
                   style="push">
             </command>
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestOperand"
+                  commandId="org.spartan.refactoring.commands.ShortestOperand"
                   style="push">
             </command>
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ForwardDeclaraion"
+                  commandId="org.spartan.refactoring.commands.ForwardDeclaraion"
                   style="push">
             </command>
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.InlineSingleUse"
+                  commandId="org.spartan.refactoring.commands.InlineSingleUse"
                   style="push">
             </command>
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.RedundantEquality"
+                  commandId="org.spartan.refactoring.commands.RedundantEquality"
                   style="push">
             </command>
             <command
-                  commandId="il.ac.technion.cs.ssdl.spartan.refactoring.commands.ShortestBranchFirst"
+                  commandId="org.spartan.refactoring.commands.ShortestBranchFirst"
                   style="push">
             </command>
             <visibleWhen>
@@ -258,8 +258,8 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
-            id="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
+            class="org.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
+            id="org.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
             name="Spartanization"
             category="org.eclipse.jdt.ui.preferences.CompliancePreferencePage">
       </page>
@@ -267,7 +267,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="il.ac.technion.cs.ssdl.spartan.refactoring.preferencesTab.PreferenceInitializer">
+            class="org.spartan.refactoring.preferencesTab.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
