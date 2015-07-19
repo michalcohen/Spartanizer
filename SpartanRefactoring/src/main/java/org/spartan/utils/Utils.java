@@ -165,4 +165,7 @@ public enum Utils {
       $.add(t);
     return $;
   }
+  public static String removeWhites(final String s) {
+    return s.replaceAll("\\s+", "");
+  }
 }

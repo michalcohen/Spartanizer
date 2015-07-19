@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.utils.Utils.removePrefix;
 import static org.spartan.utils.Utils.removeSuffix;
+import static org.spartan.utils.Utils.removeWhites;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public enum TESTUtils {
 
   public static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
-      assertEquals(removeSpaces(expected), removeSpaces(actual));
+      assertEquals(removeWhites(expected), removeWhites(actual));
   }
   public static void assertSimilar(final String expected, final Document actual) {
     assertSimilar(expected, actual.get());
@@ -71,9 +72,6 @@ public enum TESTUtils {
           .replaceAll(operator + WHITES, operator) // Trailing whites
           ;
     return $;
-  }
-  public static String removeSpaces(final String s) {
-    return s.replaceAll("\\s+", "");
   }
   static String apply(final Wringer s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);

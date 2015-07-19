@@ -1,10 +1,15 @@
 package org.spartan.utils;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThan;
 import static org.spartan.hamcrest.OrderingComparison.lessThan;
+import static org.spartan.utils.Utils.in;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -42,5 +47,20 @@ public class UtilsTest {
   }
   @Test public void removeSuffiExhaustive() {
     assertEquals(Utils.removeSuffix("AXAXAXAXAXAXAXAX", "AX"), "");
+  }
+  @Test public void removeWhites() {
+    assertThat(Utils.removeWhites("ABC"), is("ABC"));
+    assertThat(Utils.removeWhites("ABC\n"), is("ABC"));
+    assertThat(Utils.removeWhites(" ABC\n"), is("ABC"));
+    assertThat(Utils.removeWhites("A BC"), is("ABC"));
+    assertThat(Utils.removeWhites("AB\rC\n"), is("ABC"));
+    assertThat(Utils.removeWhites("A\fB\rC\n"), is("ABC"));
+    assertThat(Utils.removeWhites("\t\tA\fB\rC\n"), is("ABC"));
+  }
+  @Test public void inTypicalTrue() {
+    assertTrue(in("A", "A", "B", "C"));
+  }
+  @Test public void inTypicalFalse() {
+    assertFalse(in("X", "A", "B", "C"));
   }
 }

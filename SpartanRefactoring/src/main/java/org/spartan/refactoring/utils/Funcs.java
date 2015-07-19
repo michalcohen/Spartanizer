@@ -11,6 +11,7 @@ import static org.spartan.refactoring.utils.As.asExpressionStatement;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
+import static org.spartan.utils.Utils.removeWhites;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,14 +49,14 @@ public enum Funcs {
   ;
   private static Map<Operator, Operator> conjugate = makeConjeguates();
 
+  public static InfixExpression asAndOrOr(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
+  }
+  public static InfixExpression asAndOrOr(final InfixExpression e) {
+    return Is.deMorgan(e.getOperator()) ? e : null;
+  }
   public static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
-  }
-  public static InfixExpression asInfixExpression(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
-  }
-  public static PrefixExpression asPrefixExpression(final ASTNode e) {
-    return !(e instanceof PrefixExpression) ? null : (PrefixExpression) e;
   }
   public static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
@@ -67,11 +68,11 @@ public enum Funcs {
         NOT_EQUALS //
     ) ? e : null;
   }
-  public static InfixExpression asAndOrOr(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
+  public static InfixExpression asInfixExpression(final Expression e) {
+    return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
-  public static InfixExpression asAndOrOr(final InfixExpression e) {
-    return Is.deMorgan(e.getOperator()) ? e : null;
+  public static PrefixExpression asPrefixExpression(final ASTNode e) {
+    return !(e instanceof PrefixExpression) ? null : (PrefixExpression) e;
   }
   /**
    * @param s
@@ -162,10 +163,10 @@ public enum Funcs {
     return false;
   }
   /**
-   * Counts the number of nodes in the tree of which node is root.
+   * Counts the number of nodes in a tree rooted at a given node
    *
    * @param n
-   *          The node.
+   *          JD
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public static int countNodes(final ASTNode n) {
@@ -182,11 +183,21 @@ public enum Funcs {
     });
     return $.get();
   }
-  public static InfixExpression duplicate(final AST t, final InfixExpression e) {
-    return (InfixExpression) ASTNode.copySubtree(t, e);
+  /**
+   * Counts the number of non-space characters in a tree rooted at a given node
+   *
+   * @param n
+   *          JD
+   * @return Number of abstract syntax tree nodes under the parameter.
+   */
+  public static int countNonWhiteCharacters(final ASTNode n) {
+    return removeWhites(n.toString()).length();
   }
   public static Expression duplicate(final AST t, final Expression e) {
     return (Expression) ASTNode.copySubtree(t, e);
+  }
+  public static InfixExpression duplicate(final AST t, final InfixExpression e) {
+    return (InfixExpression) ASTNode.copySubtree(t, e);
   }
   public static Expression duplicate(final Expression e) {
     return (Expression) ASTNode.copySubtree(e.getAST(), e);

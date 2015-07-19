@@ -16,7 +16,6 @@ import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -44,7 +43,6 @@ import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -103,7 +101,7 @@ public enum Wrings {
       return tryToSort(All.operands(flatten(e)));
     }
     private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, PlusComprator.INSTANCE);
+      return Wrings.tryToSort(es, Comparator.ADDITION);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
@@ -330,7 +328,7 @@ public enum Wrings {
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
   }
-  static boolean tryToSort(final List<Expression> es, final Comparator<Expression> c) {
+  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort, duplicating in each case of swap
     for (int i = 0, size = es.size(); i < size; i++)

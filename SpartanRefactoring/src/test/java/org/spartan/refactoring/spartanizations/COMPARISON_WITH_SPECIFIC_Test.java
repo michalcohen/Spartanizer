@@ -178,8 +178,8 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      Wrings.tryToSort(operands, PlusComprator.INSTANCE);
-      assertFalse(Wrings.tryToSort(operands, PlusComprator.INSTANCE));
+      Wrings.tryToSort(operands, Comparator.ADDITION);
+      assertFalse(Wrings.tryToSort(operands, Comparator.ADDITION));
     }
     @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());

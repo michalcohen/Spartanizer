@@ -98,13 +98,13 @@ public enum ADDITION_SORTER_Test {
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), PlusComprator.INSTANCE));
+      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), Comparator.ADDITION));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      assertFalse(Wrings.tryToSort(operands, PlusComprator.INSTANCE));
-      assertFalse(Wrings.tryToSort(operands, PlusComprator.INSTANCE));
+      assertFalse(Wrings.tryToSort(operands, Comparator.ADDITION));
+      assertFalse(Wrings.tryToSort(operands, Comparator.ADDITION));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
@@ -161,13 +161,13 @@ public enum ADDITION_SORTER_Test {
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
-      assertTrue(Wrings.tryToSort(All.operands(Wrings.flatten(e)), PlusComprator.INSTANCE));
+      assertTrue(Wrings.tryToSort(All.operands(Wrings.flatten(e)), Comparator.ADDITION));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      assertTrue(Wrings.tryToSort(operands, PlusComprator.INSTANCE));
-      assertFalse(Wrings.tryToSort(operands, PlusComprator.INSTANCE));
+      assertTrue(Wrings.tryToSort(operands, Comparator.ADDITION));
+      assertFalse(Wrings.tryToSort(operands, Comparator.ADDITION));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
