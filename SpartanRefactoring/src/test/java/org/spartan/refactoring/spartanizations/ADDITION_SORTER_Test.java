@@ -44,7 +44,7 @@ public enum ADDITION_SORTER_Test {
   static final ExpressionComparator COMPARATOR = ExpressionComparator.ADDITION;
 
   @RunWith(Parameterized.class) //
-  public static class Noneligible extends AbstractWringTest.Noneligible {
+  public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Add 1", "2*a+1"), //
         Utils.asArray("Add '1'", "2*a+'1'"), //
@@ -76,7 +76,7 @@ public enum ADDITION_SORTER_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
@@ -102,7 +102,7 @@ public enum ADDITION_SORTER_Test {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed {
+  public static class Wringed extends AbstractWringTest.Wringed.Infix {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("Add 1 to 2*3", "1+2*3", "2*3+1"), //
         Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
@@ -140,7 +140,7 @@ public enum ADDITION_SORTER_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }

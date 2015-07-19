@@ -44,7 +44,7 @@ import org.spartan.utils.Utils;
 public enum MULTIPLICATION_SORTER_Test {
   ;
   @RunWith(Parameterized.class) //
-  public static class Noneligible extends AbstractWringTest.Noneligible {
+  public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Plain product of two, sorted", "2*a"), //
         Utils.asArray("Plain product of two, no order", "a*b"), //
@@ -83,7 +83,7 @@ public enum MULTIPLICATION_SORTER_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
@@ -109,7 +109,7 @@ public enum MULTIPLICATION_SORTER_Test {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed {
+  public static class Wringed extends AbstractWringTest.Wringed.Infix {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("Constant first", "a*2", "2*a"), //
         Utils.asArray("Constant first two arguments", "a*2*b", "2*a*b"), //
@@ -140,7 +140,7 @@ public enum MULTIPLICATION_SORTER_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }

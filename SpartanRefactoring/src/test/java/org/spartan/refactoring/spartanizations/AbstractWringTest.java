@@ -16,6 +16,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
+import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 
@@ -23,6 +24,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -67,6 +69,11 @@ public abstract class AbstractWringTest {
     assertNotNull($);
     return $;
   }
+  protected PrefixExpression asPrefixExpression() {
+    final PrefixExpression $ = p(input);
+    assertNotNull($);
+    return $;
+  }
   protected Expression asExpression() {
     final Expression $ = e(input);
     assertNotNull($);
@@ -98,6 +105,17 @@ public abstract class AbstractWringTest {
     @Test public void scopeDoesNotInclude() {
       assertThat(inner.scopeIncludes(asExpression()), is(false));
     }
+
+    public static abstract class Infix extends OutOfScope {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Infix(final Wring w) {
+        super(w);
+      }
+      @Test public void inputIsInfixExpression() {
+        final InfixExpression e = asInfixExpression();
+        assertNotNull(e);
+      }
+    }
   }
 
   /**
@@ -112,29 +130,29 @@ public abstract class AbstractWringTest {
      *
      */
     static abstract class WringedInput extends AbstractWringTest {
+      /** How should a test case like this be described? */
       protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
-      /**
-       * Where the expected output can be found?
-       */
+      /** Where the expected output can be found? */
       @Parameter(2) public String output;
       protected final Wringer wringer = new Wringer();
 
       /**
        * Instantiates the enclosing class ({@link Wringed})
        *
-       * @param simplifier
+       * @param w
+       *          JD
        */
-      WringedInput(final Wring simplifier) {
-        super(simplifier);
+      WringedInput(final Wring w) {
+        super(w);
       }
       @Test public void scopeIncludes() {
-        assertFalse(inner.scopeIncludes(asInfixExpression()));
+        assertFalse(inner.scopeIncludes(asExpression()));
       }
       @Test public void eligible() {
-        assertTrue(inner.eligible(asInfixExpression()));
+        assertTrue(inner.eligible(asExpression()));
       }
       @Test public void noneligible() {
-        assertFalse(inner.noneligible(asInfixExpression()));
+        assertFalse(inner.noneligible(asExpression()));
       }
       @Test public void peelableOutput() {
         assertEquals(output, peel(wrap(output)));
@@ -142,10 +160,10 @@ public abstract class AbstractWringTest {
       @Test public void oneOpporunity() {
         final CompilationUnit u = asCompilationUnit();
         assertEquals(u.toString(), 1, wringer.findOpportunities(u).size());
-        assertTrue(inner.scopeIncludes(asInfixExpression()));
+        assertTrue(inner.scopeIncludes(asExpression()));
       }
       @Test public void hasReplacement() {
-        assertNotNull(inner.replacement(asInfixExpression()));
+        assertNotNull(inner.replacement(asExpression()));
       }
       @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
         final CompilationUnit u = asCompilationUnit();
@@ -167,10 +185,10 @@ public abstract class AbstractWringTest {
         assertSimilar(wrap(output), excpected);
       }
       @Test public void findsSimplifier() {
-        assertNotNull(Wrings.find(asInfixExpression()));
+        assertNotNull(Wrings.find(asExpression()));
       }
       @Test public void correctSimplifier() {
-        assertEquals(inner, Wrings.find(asInfixExpression()));
+        assertEquals(inner, Wrings.find(asExpression()));
       }
       static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
         try {
@@ -194,10 +212,10 @@ public abstract class AbstractWringTest {
     protected final Wringer wringer = new Wringer();
 
     @Test public void findsSimplifier() {
-      assertNotNull(Wrings.find(asInfixExpression()));
+      assertNotNull(Wrings.find(asExpression()));
     }
     @Test public void correctSimplifier() {
-      assertEquals(inner, Wrings.find(asInfixExpression()));
+      assertEquals(inner, Wrings.find(asExpression()));
     }
   }
 
@@ -220,10 +238,10 @@ public abstract class AbstractWringTest {
       super(simplifier);
     }
     @Test public void eligible() {
-      assertFalse(inner.eligible(asInfixExpression()));
+      assertFalse(inner.eligible(asExpression()));
     }
     @Test public void noneligible() {
-      assertTrue(inner.noneligible(asInfixExpression()));
+      assertTrue(inner.noneligible(asExpression()));
     }
     @Test public void noOpporunity() {
       final CompilationUnit u = asCompilationUnit();
@@ -238,10 +256,21 @@ public abstract class AbstractWringTest {
       assertSimilar(wrap(input), d.get());
     }
     @Override @Test public void findsSimplifier() {
-      assertNotNull(Wrings.find(asInfixExpression()));
+      assertNotNull(Wrings.find(asExpression()));
     }
     @Override @Test public void correctSimplifier() {
-      assertThat(Wrings.find(asInfixExpression()), is(inner));
+      assertThat(Wrings.find(asExpression()), is(inner));
+    }
+
+    static abstract class Infix extends Noneligible {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Infix(final Wring w) {
+        super(w);
+      }
+      @Test public void inputIsInfixExpression() {
+        final InfixExpression e = asInfixExpression();
+        assertNotNull(e);
+      }
     }
   }
 
@@ -267,10 +296,10 @@ public abstract class AbstractWringTest {
       super(simplifier);
     }
     @Test public void eligible() {
-      assertTrue(inner.eligible(asInfixExpression()));
+      assertTrue(inner.eligible(asExpression()));
     }
     @Test public void noneligible() {
-      assertFalse(inner.noneligible(asInfixExpression()));
+      assertFalse(inner.noneligible(asExpression()));
     }
     @Test public void peelableOutput() {
       assertEquals(expected, peel(wrap(expected)));
@@ -278,10 +307,10 @@ public abstract class AbstractWringTest {
     @Test public void oneOpporunity() {
       final CompilationUnit u = asCompilationUnit();
       assertThat(u.toString(), wringer.findOpportunities(u).size(), is(1));
-      assertTrue(inner.scopeIncludes(asInfixExpression()));
+      assertTrue(inner.scopeIncludes(asExpression()));
     }
     @Test public void hasReplacement() {
-      assertNotNull(inner.replacement(asInfixExpression()));
+      assertNotNull(inner.replacement(asExpression()));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final CompilationUnit u = asCompilationUnit();
@@ -303,23 +332,21 @@ public abstract class AbstractWringTest {
       assertSimilar(wrap(expected), excpected);
     }
     @Override @Test public void findsSimplifier() {
-      assertNotNull(Wrings.find(asInfixExpression()));
+      assertNotNull(Wrings.find(asExpression()));
     }
     @Override @Test public void correctSimplifier() {
-      assertEquals(inner, Wrings.find(asInfixExpression()));
+      assertEquals(inner, Wrings.find(asExpression()));
     }
-    static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
-      try {
-        s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-        return d;
-      } catch (final MalformedTreeException e) {
-        fail(e.getMessage());
-      } catch (final IllegalArgumentException e) {
-        fail(e.getMessage());
-      } catch (final BadLocationException e) {
-        fail(e.getMessage());
+
+    static abstract class Infix extends Wringed {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Infix(final Wring w) {
+        super(w);
       }
-      return null;
+      @Test public void inputIsInfixExpression() {
+        final InfixExpression e = asInfixExpression();
+        assertNotNull(e);
+      }
     }
   }
 }

@@ -12,7 +12,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
-import static org.spartan.refactoring.spartanizations.Wrings.simplifyNegation;
+import static org.spartan.refactoring.spartanizations.Wrings.PUSHDOWN_NOT;
 
 import java.util.Collection;
 
@@ -60,13 +60,13 @@ public class ShortestOperandFirstTest {
     assertNotNull(p);
   }
   @Test public void withinScopeOfNegation() {
-    assertTrue(simplifyNegation.inner.scopeIncludes(p(input)));
+    assertTrue(PUSHDOWN_NOT.inner.scopeIncludes(p(input)));
   }
   @Test public void eligibleForNegation() {
-    assertTrue(simplifyNegation.inner.eligible(p(input)));
+    assertTrue(PUSHDOWN_NOT.inner.eligible(p(input)));
   }
   @Test public void hasReplacement() {
-    assertNotNull(simplifyNegation.inner.replacement(p(input)));
+    assertNotNull(PUSHDOWN_NOT.inner.replacement(p(input)));
   }
   @Test public void simiplifies() {
     final String from = input;

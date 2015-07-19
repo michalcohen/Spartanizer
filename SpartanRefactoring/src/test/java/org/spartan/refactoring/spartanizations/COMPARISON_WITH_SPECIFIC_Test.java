@@ -36,8 +36,10 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public enum COMPARISON_WITH_SPECIFIC_Test {
   ;
+  static final Wring WRING = Wrings.COMPARISON_WITH_SPECIFIC.inner;
+
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //
@@ -45,7 +47,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
 
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
-      super(Wrings.COMPARISON_WITH_SPECIFIC.inner);
+      super(WRING);
     }
     /**
      * Generate test cases for this parameterized class.
@@ -60,7 +62,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
   }
 
   @RunWith(Parameterized.class) //
-  public static class Noneligible extends AbstractWringTest.Noneligible {
+  public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
         // Literal
         Utils.asArray("LT/literal", "a<2"), //
@@ -108,7 +110,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
@@ -118,13 +120,13 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
     }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
-      super(Wrings.COMPARISON_WITH_SPECIFIC.inner);
+      super(WRING);
     }
   }
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed {
+  public static class Wringed extends AbstractWringTest.Wringed.Infix {
     private static String[][] cases = Utils.asArray(//
         // Literal
         Utils.asArray("LT/literal", "2<a", "a>2"), //
@@ -173,7 +175,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
      * Instantiates the enclosing class ({@link Wringed})
      */
     public Wringed() {
-      super(Wrings.COMPARISON_WITH_SPECIFIC.inner);
+      super(WRING);
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
@@ -185,7 +187,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }

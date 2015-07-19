@@ -1,9 +1,13 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
 import static org.spartan.refactoring.utils.Funcs.duplicateRight;
 import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.getCore;
 import static org.spartan.refactoring.utils.Funcs.remake;
 
 import java.util.LinkedHashSet;
@@ -29,16 +33,27 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015/07/10
  */
-public class Wringer extends SpartanizationOfInfixExpression {
+public class Wringer extends Spartanization {
   /** Instantiates this class */
   public Wringer() {
     super("Expression simplifier", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
+      @Override public boolean visit(final PrefixExpression e) {
+        if (hasOpportunity(asNot(e)))
+          opportunities.add(new Range(e));
+        return true;
+      }
       @Override public boolean visit(final InfixExpression e) {
-        final Wring s = Wrings.find(e);
-        return s != null && s.noneligible(e) ? true : overrideInto(e, opportunities);
+        final Wring w = Wrings.find(e);
+        return w != null && w.noneligible(e) ? true : overrideInto(e, opportunities);
+      }
+      private boolean hasOpportunity(final PrefixExpression e) {
+        return e == null ? false : hasOpportunity(getCore(e.getOperand()));
+      }
+      private boolean hasOpportunity(final Expression inner) {
+        return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
       }
     };
   }

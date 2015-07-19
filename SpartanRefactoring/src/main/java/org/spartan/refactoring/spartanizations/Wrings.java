@@ -7,6 +7,7 @@ import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asNot;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.getCore;
@@ -126,7 +127,7 @@ public enum Wrings {
    */
   PSEUDO_ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator() == Operator.OR);
+      return in(e.getOperator(), Operator.OR);
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -210,126 +211,18 @@ public enum Wrings {
    * @since 2015-7-17
    *
    */
-  simplifyNegation(new Wring.OfPrefixExpression() {
+  PUSHDOWN_NOT(new Wring.OfPrefixExpression() {
     @Override public boolean scopeIncludes(final PrefixExpression e) {
-      return asNot(e) != null;
+      return e != null && asNot(e) != null;
     }
     @Override boolean _eligible(final PrefixExpression e) {
       return hasOpportunity(asNot(e));
     }
     @Override Expression _replacement(final PrefixExpression e) {
-      return simplifyNot(asNot(e));
+      return pushdownNot(asNot(e));
     }
-    private Expression simplifyNot(final PrefixExpression e) {
-      return e == null ? null : simplifyNot(e, getCore(e.getOperand()));
-    }
-    private Expression simplifyNot(final PrefixExpression e, final Expression inner) {
-      Expression $;
-      return ($ = perhapsDoubleNegation(e, inner)) != null//
-          || ($ = perhapsDeMorgan(e, inner)) != null//
-          || ($ = perhapsComparison(e, inner)) != null //
-              ? $ : null;
-    }
-    Expression perhapsDoubleNegation(final Expression e, final Expression inner) {
-      return perhapsDoubleNegation(e, asNot(inner));
-    }
-    Expression perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
-      return inner == null ? null : inner.getOperand();
-    }
-    Expression perhapsDeMorgan(final Expression e, final Expression inner) {
-      return perhapsDeMorgan(e, asAndOrOr(inner));
-    }
-    Expression perhapsDeMorgan(final Expression e, final InfixExpression inner) {
-      return inner == null ? null : deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
-    }
-    Expression deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
-      return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
-    }
-    Expression deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
-      return parenthesize( //
-          addExtendedOperands(inner, //
-              makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
-    }
-    InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
-      if (from.hasExtendedOperands())
-        addExtendedOperands(from.extendedOperands(), $.extendedOperands());
-      return $;
-    }
-    void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
-      for (final Expression e : from)
-        to.add(not(e));
-    }
-    Expression perhapsComparison(final Expression e, final Expression inner) {
-      return perhapsComparison(e, asComparison(inner));
-    }
-    Expression perhapsComparison(final Expression e, final InfixExpression inner) {
-      return inner == null ? null : comparison(e, inner);
-    }
-    Expression comparison(final Expression e, final InfixExpression inner) {
-      return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
-    }
-    InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
-      return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
-    }
-    Expression parenthesize(final Expression e) {
-      if (isSimple(e))
-        return duplicate(e);
-      final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-      $.setExpression(duplicate(getCore(e)));
-      return $;
-    }
-    boolean isSimple(final Expression e) {
-      return isSimple(e.getClass());
-    }
-    boolean isSimple(final Class<? extends Expression> c) {
-      return in(c, BooleanLiteral.class, //
-          CharacterLiteral.class, //
-          NullLiteral.class, //
-          NumberLiteral.class, //
-          StringLiteral.class, //
-          TypeLiteral.class, //
-          Name.class, //
-          QualifiedName.class, //
-          SimpleName.class, //
-          ParenthesizedExpression.class, //
-          SuperMethodInvocation.class, //
-          MethodInvocation.class, //
-          ClassInstanceCreation.class, //
-          SuperFieldAccess.class, //
-          FieldAccess.class, //
-          ThisExpression.class, //
-          null);
-    }
-    PrefixExpression not(final Expression e) {
-      final PrefixExpression $ = e.getAST().newPrefixExpression();
-      $.setOperator(NOT);
-      $.setOperand(parenthesize(e));
-      return $;
-    }
-    InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
-      final InfixExpression $ = left.getAST().newInfixExpression();
-      $.setLeftOperand(duplicate(left));
-      $.setOperator(o);
-      $.setRightOperand(duplicate(right));
-      return $;
-    }
-    Expression getCoreRight(final InfixExpression e) {
-      return getCore(e.getRightOperand());
-    }
-    Expression getCoreLeft(final InfixExpression e) {
-      return getCore(e.getLeftOperand());
-    }
-    Operator conjugate(final Operator o) {
-      assert Is.deMorgan(o);
-      return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
-    }
-    boolean hasOpportunity(final PrefixExpression e) {
-      return e == null ? false : hasOpportunity(getCore(e.getOperand()));
-    }
-    boolean hasOpportunity(final Expression inner) {
-      return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
-    }
-  }), //
+  }),
+  //
   ;
   final Wring inner;
 
@@ -344,7 +237,24 @@ public enum Wrings {
    * @return the first {@link Wring} for which the parameter is eligible, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
+  public static Wring find(final Expression e) {
+    Wring $;
+    return ($ = find(asInfixExpression(e))) != null//
+        || ($ = find(asPrefixExpression(e))) != null//
+            //
+            ? $ : null;
+  }
+  /**
+   * Find the first {@link Wring} appropriate for an {@link InfixExpression}
+   *
+   * @param e
+   *          JD
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
   public static Wring find(final InfixExpression e) {
+    if (e == null)
+      return null;
     for (final Wrings s : values())
       if (s.inner.scopeIncludes(e))
         return s.inner;
@@ -359,6 +269,8 @@ public enum Wrings {
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
   public static Wring find(final PrefixExpression e) {
+    if (e == null)
+      return null;
     for (final Wrings s : Wrings.values())
       if (s.inner.scopeIncludes(e))
         return s.inner;
@@ -410,5 +322,114 @@ public enum Wrings {
       for (final Expression operand : operands)
         $.extendedOperands().add(duplicate(operand));
     return $;
+  }
+  static Expression pushdownNot(final PrefixExpression e) {
+    return e == null ? null : pushdownNot(e, getCore(e.getOperand()));
+  }
+  static Expression pushdownNot(final PrefixExpression e, final Expression inner) {
+    Expression $;
+    return ($ = perhapsDoubleNegation(e, inner)) != null//
+        || ($ = perhapsDeMorgan(e, inner)) != null//
+        || ($ = perhapsComparison(e, inner)) != null //
+            ? $ : null;
+  }
+  static Expression perhapsDoubleNegation(final Expression e, final Expression inner) {
+    return perhapsDoubleNegation(e, asNot(inner));
+  }
+  static Expression perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
+    return inner == null ? null : inner.getOperand();
+  }
+  static Expression perhapsDeMorgan(final Expression e, final Expression inner) {
+    return perhapsDeMorgan(e, asAndOrOr(inner));
+  }
+  static Expression perhapsDeMorgan(final Expression e, final InfixExpression inner) {
+    return inner == null ? null : deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
+  }
+  static Expression deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
+    return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
+  }
+  static Expression deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
+    return parenthesize( //
+        addExtendedOperands(inner, //
+            makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
+  }
+  static InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
+    if (from.hasExtendedOperands())
+      addExtendedOperands(from.extendedOperands(), $.extendedOperands());
+    return $;
+  }
+  static void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
+    for (final Expression e : from)
+      to.add(not(e));
+  }
+  static Expression perhapsComparison(final Expression e, final Expression inner) {
+    return perhapsComparison(e, asComparison(inner));
+  }
+  static Expression perhapsComparison(final Expression e, final InfixExpression inner) {
+    return inner == null ? null : comparison(e, inner);
+  }
+  static Expression comparison(final Expression e, final InfixExpression inner) {
+    return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
+  }
+  static InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
+    return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
+  }
+  static Expression parenthesize(final Expression e) {
+    if (isSimple(e))
+      return duplicate(e);
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(duplicate(getCore(e)));
+    return $;
+  }
+  static boolean isSimple(final Expression e) {
+    return isSimple(e.getClass());
+  }
+  static boolean isSimple(final Class<? extends Expression> c) {
+    return in(c, BooleanLiteral.class, //
+        CharacterLiteral.class, //
+        NullLiteral.class, //
+        NumberLiteral.class, //
+        StringLiteral.class, //
+        TypeLiteral.class, //
+        Name.class, //
+        QualifiedName.class, //
+        SimpleName.class, //
+        ParenthesizedExpression.class, //
+        SuperMethodInvocation.class, //
+        MethodInvocation.class, //
+        ClassInstanceCreation.class, //
+        SuperFieldAccess.class, //
+        FieldAccess.class, //
+        ThisExpression.class, //
+        null);
+  }
+  static PrefixExpression not(final Expression e) {
+    final PrefixExpression $ = e.getAST().newPrefixExpression();
+    $.setOperator(NOT);
+    $.setOperand(parenthesize(e));
+    return $;
+  }
+  static InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
+    final InfixExpression $ = left.getAST().newInfixExpression();
+    $.setLeftOperand(duplicate(left));
+    $.setOperator(o);
+    $.setRightOperand(duplicate(right));
+    return $;
+  }
+  static Expression getCoreRight(final InfixExpression e) {
+    return getCore(e.getRightOperand());
+  }
+  static Expression getCoreLeft(final InfixExpression e) {
+    return getCore(e.getLeftOperand());
+  }
+  static Operator conjugate(final Operator o) {
+    assert Is.deMorgan(o);
+    return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
+  }
+  static boolean hasOpportunity(final PrefixExpression e) {
+    return e == null ? false : hasOpportunity(getCore(e.getOperand()));
+  }
+  static boolean hasOpportunity(final Expression inner) {
+    return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
   }
 }

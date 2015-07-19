@@ -39,7 +39,7 @@ import org.spartan.utils.Utils;
 public enum COMPARISON_WITH_BOOLEAN_Test {
   ;
   @RunWith(Parameterized.class) //
-  public static class WringedInput extends AbstractWringTest.Wringed {
+  public static class WringedInput extends AbstractWringTest.Wringed.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("", "a == b == c == true", "a == b == c"), //
         Utils.asArray("", "a == true", "a"), //
@@ -80,7 +80,7 @@ public enum COMPARISON_WITH_BOOLEAN_Test {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
-    @Test public void inputIsInfixExpression() {
+    @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
