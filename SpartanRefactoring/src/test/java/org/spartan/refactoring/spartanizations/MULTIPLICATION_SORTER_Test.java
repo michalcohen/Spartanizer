@@ -30,7 +30,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
 import org.spartan.refactoring.utils.All;
-import org.spartan.refactoring.utils.Are;
 import org.spartan.utils.Utils;
 
 /**
@@ -78,7 +77,7 @@ public enum MULTIPLICATION_SORTER_Test {
     }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
-      super(Wrings.MULTIPLICATION_SORTER.inner);
+      super(WRING);
     }
     @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
@@ -88,15 +87,19 @@ public enum MULTIPLICATION_SORTER_Test {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
+    @Test public void isTimes() {
+      final InfixExpression e = asInfixExpression();
+      assertTrue(e.getOperator() == Operator.TIMES);
+    }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), ExpressionComparator.MULTIPLICATION));
+      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), COMPARATOR));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION));
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION));
+      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
+      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
@@ -108,16 +111,11 @@ public enum MULTIPLICATION_SORTER_Test {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("Add 1 to 2*3", "1+2*3", "2*3+1"), //
-        Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
-        Utils.asArray("Add '\\0' to a*.b", "'\0'+a*b", "a*b+'\0'"), //
-        Utils.asArray("Sort from first to last", "1 + a*b + b*c", "a*b+b*c+1"), //
-        Utils.asArray("Sort from second to last", "a*b + 2 + b*c", "a*b+b*c+2"), //
-        Utils.asArray("All literals at the end", "1 + a*b + 2 + b*c + 3 + d*e + 4", "a*b + b*c  + d*e + 1 + 2 + 3+4"), //
-        Utils.asArray("Add 1", "1+a*b", "a*b+1"), //
-        Utils.asArray("Add 1", "1+c*d", "c*d+1"), //
-        Utils.asArray("Literals of distinct length", "123+12+1", "1+12+123"), //
-        Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)"), //
+        Utils.asArray("Constant first", "a*2", "2*a"), //
+        Utils.asArray("Constant first two arguments", "a*2*b", "2*a*b"), //
+        Utils.asArray("Function with fewer arguments first", "f(a,b,c)*f(a,b)*f(a)", "f(a)*f(a,b)*f(a,b,c)"), //
+        Utils.asArray("Literals of distinct length", "123*12*1", "1*12*123"), //
+        Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) * 2*f(a,b) * 3*f()", "1*2*3*f()*f(a,b)*f(a,b,c,d)"), //
         null);
 
     /**
@@ -134,11 +132,7 @@ public enum MULTIPLICATION_SORTER_Test {
      * Instantiates the enclosing class ({@link Wringed})
      */
     public Wringed() {
-      super(Wrings.MULTIPLICATION_SORTER.inner);
-    }
-    @Test public void allNotStringArgument() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(Are.notString(All.operands(e)));
+      super(WRING);
     }
     @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
@@ -148,14 +142,14 @@ public enum MULTIPLICATION_SORTER_Test {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
     }
-    @Test public void isPlus() {
+    @Test public void isTimes() {
       final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.PLUS);
+      assertTrue(e.getOperator() == Operator.TIMES);
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      final boolean tryToSort = Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION);
+      final boolean tryToSort = Wrings.tryToSort(operands, COMPARATOR);
       assertThat(//
           "Before: " + All.operands(Wrings.flatten(e)) + "\n" + //
               "After: " + operands + "\n", //
@@ -164,12 +158,15 @@ public enum MULTIPLICATION_SORTER_Test {
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      assertTrue(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLCATION));
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLCATION));
+      assertTrue(Wrings.tryToSort(operands, COMPARATOR));
+      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
       assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
     }
   }
+
+  static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
+  static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
 }

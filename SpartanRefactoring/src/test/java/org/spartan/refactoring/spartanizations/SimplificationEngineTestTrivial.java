@@ -8,9 +8,9 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertLegible;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotLegible;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotWithinScope;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertWithinScope;
+import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
@@ -21,12 +21,14 @@ import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -161,7 +163,7 @@ public class SimplificationEngineTestTrivial {
   }
   @Test public void desiredSimplificationOfExample() {
     final String from = example;
-    final String to = "on*notion*of*no*nothion != kludge+the*plain";
+    final String to = "on*of*no*notion*nothion!=kludge+the*plain";
     assertSimplifiesTo(from, to);
   }
   @Test public void legibleOnShorterChainParenthesisComparisonLast() {
@@ -171,7 +173,7 @@ public class SimplificationEngineTestTrivial {
     assertNoChange("12");
     assertNoChange("true");
     assertNoChange("null");
-    assertNoChange("on * notion * of * no * notion");
+    assertNoChange("on*of*no*notion*notion");
   }
   @Test public void noChange0() {
     assertSimplifiesTo("the * plain + kludge", "kludge + the * plain ");
@@ -189,7 +191,7 @@ public class SimplificationEngineTestTrivial {
     assertSimplifiesTo("f(a,b,c,d,e) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d,e)");
   }
   @Test public void oneMultiplication0() {
-    final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
+    final InfixExpression e = i("f(a,b,c,d) ^ f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     final Wring s = Wrings.find(e);
     assertEquals(s, shortestOperandFirst.inner);
@@ -198,10 +200,11 @@ public class SimplificationEngineTestTrivial {
     assertTrue(s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
-    assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
+    assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
   }
   @Test public void oneOpportunityExample() {
-    assertOneOpportunity(new Wringer(), wrap(example));
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap(example));
+    assertEquals(u.toString(), 2, countOpportunities(new Wringer(), u));
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
@@ -223,7 +226,7 @@ public class SimplificationEngineTestTrivial {
     assertEquals(example, peel(wrap(example)));
   }
   @Test public void isGreaterTrueButAlmostNot() {
-    final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
+    final InfixExpression e = i("f(a,b,c,d) ^ f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d)", e.getLeftOperand().toString());
     final Wring s = Wrings.find(e);
@@ -240,10 +243,10 @@ public class SimplificationEngineTestTrivial {
     assertTrue(e.toString(), s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
-    assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
+    assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
   }
   @Test public void isGreaterTrue() {
-    final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
+    final InfixExpression e = i("f(a,b,c,d,e) & f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d,e)", e.getLeftOperand().toString());
     final Wring s = Wrings.find(e);
@@ -260,9 +263,9 @@ public class SimplificationEngineTestTrivial {
     assertTrue(e.toString(), s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
-    assertEquals("f(a,b,c) * f(a,b,c,d,e)", replacement.toString());
+    assertEquals("f(a,b,c) & f(a,b,c,d,e)", replacement.toString());
   }
   @Test public void twoMultiplication1() {
-    assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
+    assertSimplifiesTo("f(a,b,c,d) & f()", "f() & f(a,b,c,d)");
   }
 }

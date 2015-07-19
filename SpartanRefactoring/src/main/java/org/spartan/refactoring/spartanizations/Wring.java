@@ -59,7 +59,19 @@ public abstract class Wring {
    *         the simplification offered by this object.
    */
   abstract boolean eligible(final InfixExpression e);
-  public final boolean noneligible(final InfixExpression e) {
+  /**
+   * Determines whether this {@link Wring} object is not applicable for a given
+   * {@link PrefixExpression} is within the "scope" of this . Note that a
+   * {@link Wring} is applicable in principle to an object, but that actual
+   * application will be vacuous.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is noneligible for
+   *         the simplification offered by this object.
+   * @see #eligible(InfixExpression)
+   */
+  final boolean noneligible(final InfixExpression e) {
     return !eligible(e);
   }
   abstract boolean scopeIncludes(PrefixExpression e);

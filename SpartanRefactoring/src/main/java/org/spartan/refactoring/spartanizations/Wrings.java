@@ -100,7 +100,7 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Are.notString(All.operands(e));
+      return e.getOperator() == Operator.PLUS && Are.notString(All.operands(flatten(e)));
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -131,7 +131,7 @@ public enum Wrings {
    */
   MULTIPLICATION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Are.notString(All.operands(e));
+      return e.getOperator() == Operator.TIMES;
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -140,7 +140,7 @@ public enum Wrings {
       return tryToSort(All.operands(flatten(e)));
     }
     private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
+      return Wrings.tryToSort(es, ExpressionComparator.MULTIPLICATION);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));

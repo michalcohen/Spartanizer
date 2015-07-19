@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
@@ -14,13 +13,9 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +26,7 @@ import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Utils;
 
 /**
@@ -50,10 +46,11 @@ public enum ADDITION_SORTER_Test {
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Add 1", "a*2+1"), //
-        Utils.asArray("Add '1'", "a*2+'1'"), //
+        Utils.asArray("Add 1", "2*a+1"), //
+        Utils.asArray("Add '1'", "2*a+'1'"), //
         Utils.asArray("Add '\\0'", "3*a+'\0'"), //
         Utils.asArray("Plain addition", "5*a+b*c"), //
+        Utils.asArray("Plain addition plust constant", "5*a+b*c+12"), //
         Utils.asArray("Literal addition", "2+3"), //
         null);
 
@@ -66,19 +63,6 @@ public enum ADDITION_SORTER_Test {
     @Parameters(name = DESCRIPTION) //
     public static Collection<Object[]> cases() {
       return collect(cases);
-    }
-    static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
-      try {
-        s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-        return d;
-      } catch (final MalformedTreeException e) {
-        fail(e.getMessage());
-      } catch (final IllegalArgumentException e) {
-        fail(e.getMessage());
-      } catch (final BadLocationException e) {
-        fail(e.getMessage());
-      }
-      return null;
     }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
@@ -163,6 +147,10 @@ public enum ADDITION_SORTER_Test {
     @Test public void isPlus() {
       final InfixExpression e = asInfixExpression();
       assertTrue(e.getOperator() == Operator.PLUS);
+    }
+    @Test public void notString() {
+      for (final Expression e : All.operands(Wrings.flatten(asInfixExpression())))
+        assertThat(e.toString(), Is.notString(e), is(true));
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();

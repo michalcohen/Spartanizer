@@ -89,7 +89,7 @@ public abstract class AbstractWringTest {
    */
   public static abstract class OutOfScope extends AbstractWringTest {
     /** Description of a test case for {@link Parameter} annotation */
-    protected static final String DESCRIPTION = "{index}: \"{1}\" out of scope ({0})";
+    protected static final String DESCRIPTION = "Test #{index}. \"{1}\" out of scope ({0})";
 
     /** Instantiates the enclosing class ({@link OutOfScope})@param inner */
     public OutOfScope(final Wring inner) {
@@ -208,7 +208,7 @@ public abstract class AbstractWringTest {
    */
   public static abstract class Noneligible extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
-    protected static final String DESCRIPTION = "{index}: \"{1}\" unchanged ({0})";
+    protected static final String DESCRIPTION = "Test #{index}. \"{1}\" unchanged ({0})";
 
     /**
      * Instantiates the enclosing class ({@link Noneligible})
@@ -227,7 +227,7 @@ public abstract class AbstractWringTest {
     }
     @Test public void noOpporunity() {
       final CompilationUnit u = asCompilationUnit();
-      assertEquals(u.toString(), 0, wringer.findOpportunities(u).size());
+      assertEquals(u.toString() + wringer.findOpportunities(u), 0, wringer.findOpportunities(u).size());
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final CompilationUnit u = asCompilationUnit();
@@ -241,7 +241,7 @@ public abstract class AbstractWringTest {
       assertNotNull(Wrings.find(asInfixExpression()));
     }
     @Override @Test public void correctSimplifier() {
-      assertEquals(inner, Wrings.find(asInfixExpression()));
+      assertThat(Wrings.find(asInfixExpression()), is(inner));
     }
   }
 
@@ -252,7 +252,7 @@ public abstract class AbstractWringTest {
    */
   public static abstract class Wringed extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
-    protected static final String DESCRIPTION = "{index}: \"{1}\" wringed to \"{2}\" ({0})";
+    protected static final String DESCRIPTION = "Test #{index}. \"{1}\" wringed to \"{2}\" ({0})";
     /**
      * What should the output be
      */
