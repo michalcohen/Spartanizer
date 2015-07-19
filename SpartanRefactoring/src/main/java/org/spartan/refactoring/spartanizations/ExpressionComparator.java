@@ -2,10 +2,14 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.utils.Funcs.countNonWhites;
+import static org.spartan.refactoring.utils.Funcs.removeWhites;
+import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Comparator;
 
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -29,7 +33,8 @@ public enum ExpressionComparator implements Comparator<Expression> {
       int $;
       return ($ = literalCompare(e1, e2)) != 0 || //
           ($ = nodesCompare(e1, e2)) != 0 || //
-          ($ = characterCompare(e1, e2)) != 0 //
+          ($ = characterCompare(e1, e2)) != 0 || //
+          ($ = alphabeticalCompare(e1, e2)) != 0 //
               ? $ : 0;
     }
   },
@@ -47,7 +52,8 @@ public enum ExpressionComparator implements Comparator<Expression> {
       int $;
       return ($ = literalCompare(e2, e1)) != 0 || //
           ($ = nodesCompare(e1, e2)) != 0 || //
-          ($ = characterCompare(e1, e2)) != 0 //
+          ($ = characterCompare(e1, e2)) != 0 || //
+          ($ = alphabeticalCompare(e1, e2)) != 0 //
               ? $ : 0;
     }
   };
@@ -55,10 +61,23 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return asBit(Is.literal(e1)) - asBit(Is.literal(e2));
   }
   static int nodesCompare(final Expression e1, final Expression e2) {
-    return round(countNodes(e1) - countNodes(e2), Wrings.TOKEN_THRESHOLD);
+    return round(countNodes(e1) - countNodes(e2), TOKEN_THRESHOLD);
+  }
+  static int argumentsCompare(final Expression e1, final Expression e2) {
+    return !Is.methodInvocation(e1) || !Is.methodInvocation(e2) ? 0
+        : argumentsCompare((MethodInvocation) e1, (MethodInvocation) e2);
+  }
+  static int argumentsCompare(final MethodInvocation i1, final MethodInvocation i2) {
+    return i1.arguments().size() - i2.arguments().size();
+  }
+  static boolean moreArguments(final Expression e1, final Expression e2) {
+    return argumentsCompare(e1, e2) > 0;
   }
   static int characterCompare(final Expression e1, final Expression e2) {
     return countNonWhites(e1) - countNonWhites(e2);
+  }
+  static int alphabeticalCompare(final Expression e1, final Expression e2) {
+    return removeWhites(e1).compareTo(removeWhites(e2));
   }
   static int round(final int $, final int threshold) {
     return Math.abs($) > threshold ? $ : 0;
@@ -66,4 +85,15 @@ public enum ExpressionComparator implements Comparator<Expression> {
   static int asBit(final boolean b) {
     return b ? 1 : 0;
   }
+  static boolean longerFirst(final InfixExpression e) {
+    return isLonger(e.getLeftOperand(), e.getRightOperand());
+  }
+  static boolean isLonger(final Expression e1, final Expression e2) {
+    return !hasNull(e1, e2) && (//
+    countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2) || //
+        countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
+    );
+  }
+
+  static final int TOKEN_THRESHOLD = 1;
 }

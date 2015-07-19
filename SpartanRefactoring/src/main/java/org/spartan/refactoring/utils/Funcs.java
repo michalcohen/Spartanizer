@@ -1,5 +1,6 @@
 package org.spartan.refactoring.utils;
 
+import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -10,7 +11,6 @@ import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
-import static org.spartan.utils.Utils.removeWhites;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.utils.Utils;
 
 /**
  * Useful Functions
@@ -244,7 +245,20 @@ public enum Funcs {
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public static int countNonWhites(final ASTNode n) {
-    return removeWhites(n.toString()).length();
+    return removeWhites(n).length();
+  }
+  /**
+   * Obtain a condensed textual representation of an {@link ASTNode}
+   *
+   * @param n
+   *          JD
+   * @return the textual representation of the parameter,
+   */
+  public static String removeWhites(final ASTNode n) {
+    return Utils.removeWhites(n.toString());
+  }
+  public static Expression getCore(final Expression $) {
+    return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
   }
   public static Expression duplicate(final AST t, final Expression e) {
     return (Expression) ASTNode.copySubtree(t, e);

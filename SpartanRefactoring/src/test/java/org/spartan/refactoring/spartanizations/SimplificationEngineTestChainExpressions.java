@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
-import static org.spartan.refactoring.spartanizations.Wrings.shortestOperandFirst;
+import static org.spartan.refactoring.spartanizations.Wrings.MULTIPLICATION_SORTER;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -35,7 +35,7 @@ public class SimplificationEngineTestChainExpressions {
     final InfixExpression e = (InfixExpression) asExpression("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
     final Wring s = Wrings.find(e);
-    assertEquals(s, shortestOperandFirst);
+    assertEquals(s, MULTIPLICATION_SORTER);
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));

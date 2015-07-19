@@ -16,10 +16,14 @@ import org.eclipse.jdt.core.dom.Expression;
 public enum Are {
   ;
   /**
+   * Determine whether a <i>all</i> elements list of {@link Expression} are
+   * provably not a string.
+   *
    * @param es
    *          JD
    * @return <code><b>true</b></code> <i>iff</i> all elements in the argument
    *         are provably not a {@link String}.
+   * @see Is#notString(Expression)
    */
   public static boolean notString(final List<Expression> es) {
     for (final Expression e : es)

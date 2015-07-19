@@ -48,7 +48,7 @@ public enum ADDITION_SORTER_Test {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Add 1", "2*a+1"), //
         Utils.asArray("Add '1'", "2*a+'1'"), //
-        Utils.asArray("Add '\\0'", "3*a+'\0'"), //
+        Utils.asArray("Add '\\0'", "3*a+'\\0'"), //
         Utils.asArray("Plain addition", "5*a+b*c"), //
         Utils.asArray("Plain addition plust constant", "5*a+b*c+12"), //
         Utils.asArray("Literal addition", "2+3"), //

@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
@@ -8,12 +7,11 @@ import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asNot;
-import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.getCore;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
-import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
 import java.util.ArrayList;
@@ -40,7 +38,6 @@ import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
-import org.spartan.refactoring.spartanizations.Wring.OfInfixExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Is;
@@ -100,7 +97,36 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS && Are.notString(All.operands(flatten(e)));
+      return e.getOperator() == Operator.PLUS;
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return Are.notString(All.operands(flatten(e))) && tryToSort(e);
+    }
+    private boolean tryToSort(final InfixExpression e) {
+      return tryToSort(All.operands(flatten(e)));
+    }
+    private boolean tryToSort(final List<Expression> es) {
+      return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      final List<Expression> operands = All.operands(flatten(e));
+      return !Are.notString(operands) || !tryToSort(operands) ? null : refit(e, operands);
+    }
+  }), //
+  /**
+   * A {@link Wring} that sorts the arguments of an expression using the same
+   * sorting order as {@link Operator#PLUS} expression, except that we do not
+   * worry about commutativity. Unlike {@link #ADDITION_SORTER}, we know that
+   * the reordering is always possible.
+   *
+   * @see #ADDITION_SORTER
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
+  PSEUDO_ADDITION_SORTER(new Wring.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return in(e.getOperator() == Operator.OR);
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -131,7 +157,7 @@ public enum Wrings {
    */
   MULTIPLICATION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.TIMES;
+      return in(e.getOperator(), Operator.TIMES, Operator.XOR, Operator.AND);
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -174,17 +200,6 @@ public enum Wrings {
     private boolean hasOneSpecificArgument(final InfixExpression e) {
       // One of the arguments must be specific, the other must not be.
       return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
-    }
-  }), //
-  shortestOperandFirst(new OfInfixExpression() {
-    @Override public final boolean scopeIncludes(final InfixExpression e) {
-      return Is.flipable(e.getOperator());
-    }
-    @Override public boolean _eligible(final InfixExpression e) {
-      return longerFirst(e);
-    }
-    @Override protected Expression _replacement(final InfixExpression e) {
-      return flip(e);
     }
   }), //
   /**
@@ -349,24 +364,6 @@ public enum Wrings {
         return s.inner;
     return null;
   }
-
-  static final int TOKEN_THRESHOLD = 1;
-
-  static boolean longerFirst(final InfixExpression e) {
-    return isLonger(e.getLeftOperand(), e.getRightOperand());
-  }
-  static boolean isLonger(final Expression e1, final Expression e2) {
-    return !hasNull(e1, e2) && (//
-    countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2) || //
-        countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
-    );
-  }
-  static boolean moreArguments(final Expression e1, final Expression e2) {
-    return Is.methodInvocation(e1) && Is.methodInvocation(e2) && moreArguments((MethodInvocation) e1, (MethodInvocation) e2);
-  }
-  static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
-    return i1.arguments().size() > i2.arguments().size();
-  }
   static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort, duplicating in each case of swap
@@ -413,8 +410,5 @@ public enum Wrings {
       for (final Expression operand : operands)
         $.extendedOperands().add(duplicate(operand));
     return $;
-  }
-  static Expression getCore(final Expression $) {
-    return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
   }
 }
