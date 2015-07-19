@@ -25,7 +25,7 @@ public class ExpressionComparatorTest {
     assertThat(ExpressionComparator.ADDITION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
   }
   @Test public void twoFunctionMultiplication() {
-    assertThat(ExpressionComparator.MULITIPLICATION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
+    assertThat(ExpressionComparator.MULTIPLICATION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
   }
   @Test public void literalAndProductAddition() {
     final Expression e1 = e("1");
@@ -35,12 +35,12 @@ public class ExpressionComparatorTest {
   @Test public void literalAndProductMULITIPLICATION() {
     final Expression e1 = e("1");
     final Expression e2 = e("2*3");
-    assertThat(ExpressionComparator.MULITIPLICATION.compare(e1, e2), lessThan(0));
+    assertThat(ExpressionComparator.MULTIPLICATION.compare(e1, e2), lessThan(0));
   }
   @Test public void longLiteralShortLiteralMultiplication() {
     final Expression e1 = e("1");
     final Expression e2 = e("12");
-    assertThat(ExpressionComparator.MULITIPLICATION.compare(e1, e2), lessThan(0));
+    assertThat(ExpressionComparator.MULTIPLICATION.compare(e1, e2), lessThan(0));
   }
   @Test public void longLiteralShortLiteralAddition() {
     final Expression e1 = e("1");

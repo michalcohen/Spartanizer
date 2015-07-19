@@ -42,7 +42,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
    * @since 2015-07-19
    *
    */
-  MULITIPLICATION {
+  MULTIPLICATION {
     @Override public int compare(final Expression e1, final Expression e2) {
       int $;
       return ($ = literalCompare(e2, e1)) != 0 || //
