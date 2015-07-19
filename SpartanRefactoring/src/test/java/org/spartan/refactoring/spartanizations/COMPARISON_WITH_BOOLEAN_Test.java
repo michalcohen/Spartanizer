@@ -70,15 +70,11 @@ public enum COMPARISON_WITH_BOOLEAN_Test {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    @Test public void tryToSort() {
-      final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), Comparator.ADDITION));
-    }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(Wrings.flatten(e));
-      assertFalse(Wrings.tryToSort(operands, Comparator.ADDITION));
-      assertFalse(Wrings.tryToSort(operands, Comparator.ADDITION));
+      Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
+      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
     }
     @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());

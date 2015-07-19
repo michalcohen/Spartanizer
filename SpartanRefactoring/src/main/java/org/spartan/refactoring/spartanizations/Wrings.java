@@ -101,7 +101,7 @@ public enum Wrings {
       return tryToSort(All.operands(flatten(e)));
     }
     private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, Comparator.ADDITION);
+      return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
