@@ -29,7 +29,6 @@ public abstract class BaseHandler extends AbstractHandler {
   private static ICompilationUnit getCompilationUnit() {
     return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
   }
-
   private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
     return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
   }
@@ -39,7 +38,9 @@ public abstract class BaseHandler extends AbstractHandler {
   private static IWorkbenchWindow getCurrentWorkbenchWindow() {
     return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
+
   private final Spartanization refactoring;
+
   protected BaseHandler(final Spartanization refactoring) {
     this.refactoring = refactoring;
   }
