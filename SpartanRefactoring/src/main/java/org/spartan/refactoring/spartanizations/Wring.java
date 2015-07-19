@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * Reifying the notion of a simplifier; all concrete simplification are found in
- * the array returned by {@link #values()}.
+ * the array returned by {@link Wrings#values()}.
  *
  * @author Yossi Gil
  * @since 2015-07-09

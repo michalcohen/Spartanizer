@@ -104,7 +104,12 @@ public enum As {
     }
   }
   /**
-   * Creates a StringBuilder object out of a file object.
+   * Creates a {@link StringBuilder} object out of a file object.
+   *
+   * @param f
+   *          JD
+   * @return {@link StringBuilder} whose content is the same as the contents of
+   *         the parameter.
    */
   public static StringBuilder stringBuilder(final File f) {
     try (final Scanner $ = new Scanner(f)) {
