@@ -53,9 +53,7 @@ public class ShortestOperand extends Spartanization {
   public static enum RepositionRightLiteral {
     /** When right can be swapped - do it */
     All, /** Swap literal only when it is not boolean or null */
-    AllButBooleanAndNull, /**
-                           * When the literal appears to the right - do not swap
-                           */
+    AllButBooleanAndNull, /** If literal appears on right - do not swap */
     None
   }
 

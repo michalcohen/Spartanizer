@@ -21,7 +21,7 @@ import org.junit.runners.MethodSorters;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class PlusCompratorTest {
   @Test public void twoFunction() {
-    assertThat(new PlusComprator().compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
+    assertThat(PlusComprator.INSTANCE.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
   }
   @Test public void LiteralAndProduct() {
     final Expression e1 = e("1");
@@ -29,6 +29,6 @@ public class PlusCompratorTest {
     assertThat(compare(e1, e2), greaterThan(0));
   }
   private int compare(final Expression e1, final Expression e2) {
-    return new PlusComprator().compare(e1, e2);
+    return PlusComprator.INSTANCE.compare(e1, e2);
   }
 }

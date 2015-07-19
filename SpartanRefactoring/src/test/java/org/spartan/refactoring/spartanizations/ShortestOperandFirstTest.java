@@ -7,13 +7,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.TESTUtils.apply;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 import static org.spartan.refactoring.spartanizations.Wrings.simplifyNegation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -91,10 +91,7 @@ public class ShortestOperandFirstTest {
    */
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
-    final Collection<Object[]> $ = new ArrayList<>(cases.length);
-    for (final String[] t : cases)
-      $.add(t);
-    return $;
+    return collect(cases);
   }
 
   static String[][] cases = Utils.asArray(//
@@ -110,6 +107,6 @@ public class ShortestOperandFirstTest {
       Utils.asArray("not of AND", "!(a && b && c)", "(!a || !b || !c)"), //
       Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
       Utils.asArray("double not", "!!f()", "f()"), //
-      Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))") //
-  );
+      Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
+      null);
 }

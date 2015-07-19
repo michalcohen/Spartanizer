@@ -17,7 +17,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
@@ -244,7 +243,8 @@ public class SimplifyLogicalNegation extends Spartanization {
     }
     @Test public void asComparisonPrefixlExpression() {
       final PrefixExpression p = mock(PrefixExpression.class);
-      when(p.getOperator()).thenReturn(NOT);
+      // TODO
+      doReturn(PrefixExpression.Operator.NOT).when(p).getOperator();
       assertNull(asComparison(p));
     }
     @Test public void asComparisonTypicalInfixFalse() {

@@ -9,6 +9,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.utils.Funcs.getBlockSingleStmnt;
 import static org.spartan.refactoring.utils.Funcs.makeIfStmnt;
@@ -96,7 +97,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
     if (e instanceof InfixExpression)
       return tryNegateComparison(t, r, (InfixExpression) e);
-    return e instanceof PrefixExpression ? tryNegatePrefix(r, (PrefixExpression) e)
+    return e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e))
         : makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
   }
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
@@ -110,9 +111,9 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
     if (Is.infix(e))
       return makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
-    return !Is.isPrefix(e) || !((PrefixExpression) e).getOperator().equals(NOT) //
+    return !Is.prefix(e) || !asPrefixExpression(e).getOperator().equals(NOT) //
         ? makePrefixExpression(t, e, NOT) //
-        : (Expression) r.createCopyTarget(((PrefixExpression) e).getOperand());
+        : (Expression) r.createCopyTarget(asPrefixExpression(e).getOperand());
   }
   static Operator negate(final Operator o) {
     return !negate.containsKey(o) ? null : negate.get(o);

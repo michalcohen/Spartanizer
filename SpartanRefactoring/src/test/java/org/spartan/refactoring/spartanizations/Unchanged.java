@@ -27,15 +27,15 @@ public class Unchanged {
   /**
    * An object describing the required transformation
    */
-  @Parameter(value = 0) public Spartanization spartanization;
+  @Parameter(0) public Spartanization spartanization;
   /**
    * The name of the specific test for this transformation
    */
-  @Parameter(value = 1) public String name;
+  @Parameter(1) public String name;
   /**
    * Where the input text can be found
    */
-  @Parameter(value = 2) public File input;
+  @Parameter(2) public File input;
 
   /**
    * Runs a parameterized test case, based on the instance variables of this
@@ -74,7 +74,10 @@ public class Unchanged {
           return objects(s, name, makeInFile(f));
         if (!name.endsWith(".in"))
           return null;
-        return new File(d, name.replaceAll("\\.in$", ".out")).exists() ? null : objects(name.replaceAll("\\.in$", ""), s, f);
+        return dotOutExists(d, name) ? null : objects(name.replaceAll("\\.in$", ""), s, f);
+      }
+      private boolean dotOutExists(final File d, final String name) {
+        return new File(d, name.replaceAll("\\.in$", ".out")).exists();
       }
     }.go();
   }

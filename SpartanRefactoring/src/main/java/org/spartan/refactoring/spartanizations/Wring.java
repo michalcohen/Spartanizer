@@ -1,5 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -14,6 +17,24 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *
  */
 public abstract class Wring {
+  /**
+   * Determines whether this {@link Wring} object is applicable for a given
+   * {@link InfixExpression} is within the "scope" of this . Note that it could
+   * be the case that a {@link Wring} is applicable in principle to an object,
+   * but that actual application will be vacuous.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is within the
+   *         scope of this object
+   */
+  final boolean scopeIncludes(final Expression e) {
+    if (e instanceof InfixExpression)
+      return scopeIncludes(asInfixExpression(e));
+    if (e instanceof PrefixExpression)
+      return scopeIncludes(asPrefixExpression(e));
+    return false;
+  }
   /**
    * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could

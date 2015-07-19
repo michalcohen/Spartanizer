@@ -54,6 +54,9 @@ public enum Funcs {
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
+  public static PrefixExpression asPrefixExpression(final ASTNode e) {
+    return !(e instanceof PrefixExpression) ? null : (PrefixExpression) e;
+  }
   public static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
@@ -450,7 +453,7 @@ public enum Funcs {
         return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT,
             PostfixExpression.Operator.DECREMENT);
       case ASTNode.PREFIX_EXPRESSION:
-        return in(((PrefixExpression) n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
+        return in(asPrefixExpression(n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
       default:
         return false;
     }

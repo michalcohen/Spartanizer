@@ -10,6 +10,8 @@ import static org.spartan.utils.Utils.removePrefix;
 import static org.spartan.utils.Utils.removeSuffix;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -27,6 +29,13 @@ import org.spartan.refactoring.utils.As;
  */
 public enum TESTUtils {
   ;
+  static Collection<Object[]> collect(final String[][] cases) {
+    final Collection<Object[]> $ = new ArrayList<>(cases.length);
+    for (final String[] t : cases)
+      if (t != null)
+        $.add(t);
+    return $;
+  }
   public static InfixExpression i(final String expression) {
     return (InfixExpression) e(expression);
   }
@@ -41,7 +50,7 @@ public enum TESTUtils {
 
   public static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
-      assertEquals(compressSpaces(expected), compressSpaces(actual));
+      assertEquals(removeSpaces(expected), removeSpaces(actual));
   }
   public static void assertSimilar(final String expected, final Document actual) {
     assertSimilar(expected, actual.get());
@@ -62,6 +71,9 @@ public enum TESTUtils {
           .replaceAll(operator + WHITES, operator) // Trailing whites
           ;
     return $;
+  }
+  public static String removeSpaces(final String s) {
+    return s.replaceAll("\\s+", "");
   }
   static String apply(final Wringer s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);

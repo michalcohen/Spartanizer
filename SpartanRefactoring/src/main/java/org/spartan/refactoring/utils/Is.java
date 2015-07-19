@@ -18,6 +18,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.spartan.refactoring.utils.As.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.intIsIn;
 
@@ -205,7 +206,7 @@ public enum Is {
         return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT,
             PostfixExpression.Operator.DECREMENT);
       case ASTNode.PREFIX_EXPRESSION:
-        return in(((PrefixExpression) n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
+        return in(asPrefixExpression(n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
       default:
         return false;
     }
@@ -221,7 +222,7 @@ public enum Is {
    *          node to check
    * @return true if the given node is a prefix expression or false otherwise
    */
-  public static boolean isPrefix(final ASTNode n) {
+  public static boolean prefix(final ASTNode n) {
     return is(n, ASTNode.PREFIX_EXPRESSION);
   }
   /**

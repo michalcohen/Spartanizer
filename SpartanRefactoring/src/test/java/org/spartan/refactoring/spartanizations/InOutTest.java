@@ -73,7 +73,7 @@ public class InOutTest {
    *         the spartanization, the test case name, the input file, and the
    *         output file.
    */
-  @Parameters(name = "{index}: {0} {1}") //
+  @Parameters(name = "{index}) \"{0}\" =={2}==>> \"{1}\"") //
   public static Collection<Object[]> cases() {
     return new FileTestUtils.Files() {
       @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {

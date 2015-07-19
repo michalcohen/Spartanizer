@@ -2,6 +2,7 @@ package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.junit.Assert.fail;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -205,7 +206,7 @@ public enum As {
     return NOT.equals(e.getOperator()) ? e : null;
   }
   public static PrefixExpression not(final Expression e) {
-    return !(e instanceof PrefixExpression) ? null : As.not((PrefixExpression) e);
+    return !(e instanceof PrefixExpression) ? null : As.not(asPrefixExpression(e));
   }
   public static InfixExpression infixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
