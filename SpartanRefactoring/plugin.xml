@@ -114,8 +114,7 @@
             name="Shortest branch first">
       </command>
    </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
+   <extension point="org.eclipse.ui.handlers">
       <handler
             class="org.spartan.refactoring.commandhandlers.ToggleSpartanizationHandler"
             commandId="org.spartan.commands.ToggleCommand">
@@ -149,6 +148,10 @@
             commandId="org.spartan.commands.ToggleCommand">
       </handler>
       <handler
+            class="org.spartan.refactoring.commandhandlers.ShortestBranchFirstHandler"
+            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
+      </handler>
+      <handler
             class="org.spartan.refactoring.commandhandlers.ChangeReturnToDollarHandler"
             commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
       </handler>
@@ -160,6 +163,7 @@
             class="org.spartan.refactoring.commandhandlers.ShortestOperandHandler"
             commandId="org.spartan.refactoring.commands.ShortestOperand">
       </handler>
+
       <handler
             class="org.spartan.refactoring.commandhandlers.ForwardDeclarationHandler"
             commandId="org.spartan.refactoring.commands.ForwardDeclaraion">
@@ -167,14 +171,6 @@
       <handler
             class="org.spartan.refactoring.commandhandlers.InlineSingleUseHandler"
             commandId="org.spartan.refactoring.commands.InlineSingleUse">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.commandhandlers.RedundantEqualityHandler"
-            commandId="org.spartan.refactoring.commands.RedundantEquality">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.commandhandlers.ShortestBranchFirstHandler"
-            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
       </handler>
    </extension>
    <extension

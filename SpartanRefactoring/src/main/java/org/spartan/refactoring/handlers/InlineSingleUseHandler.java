@@ -1,4 +1,4 @@
-package org.spartan.refactoring.commandhandlers;
+package org.spartan.refactoring.handlers;
 
 import org.spartan.refactoring.spartanizations.InlineSingleUse;
 

@@ -1,4 +1,4 @@
-package org.spartan.refactoring.commandhandlers;
+package org.spartan.refactoring.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;

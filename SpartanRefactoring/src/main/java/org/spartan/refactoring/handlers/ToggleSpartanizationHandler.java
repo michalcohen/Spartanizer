@@ -1,4 +1,4 @@
-package org.spartan.refactoring.commandhandlers;
+package org.spartan.refactoring.handlers;
 
 import static org.spartan.utils.Utils.append;
 import static org.spartan.utils.Utils.delete;

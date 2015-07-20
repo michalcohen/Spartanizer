@@ -1,6 +1,6 @@
-package org.spartan.refactoring.commandhandlers;
+package org.spartan.refactoring.handlers;
 
-import org.spartan.refactoring.spartanizations.SimplifyLogicalNegation;
+import org.spartan.refactoring.spartanizations.Ternarize;
 
 /**
  * a BaseSpartanizationHandler configured to return the BaseRefactoring and
@@ -11,9 +11,9 @@ import org.spartan.refactoring.spartanizations.SimplifyLogicalNegation;
  *         2013/07/11)
  * @since 2013/07/01
  */
-public class SimplifyLogicalNegationHandler extends BaseHandler {
+public class TernarizeHandler extends BaseHandler {
   /** Instantiates this class */
-  public SimplifyLogicalNegationHandler() {
-    super(new SimplifyLogicalNegation());
+  public TernarizeHandler() {
+    super(new Ternarize());
   }
 }
