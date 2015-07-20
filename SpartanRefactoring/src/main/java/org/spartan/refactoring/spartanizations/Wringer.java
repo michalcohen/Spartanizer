@@ -133,7 +133,7 @@ public class Wringer extends Spartanization {
   }
   static boolean stringReturningMethod(final InfixExpression n) {
     for (ASTNode parent = n.getParent(); parent != null; parent = parent.getParent())
-      if (Is.isReturn(parent) && doesMthdRetString(parent))
+      if (Is.retern(parent) && doesMthdRetString(parent))
         return true;
     return false;
   }
