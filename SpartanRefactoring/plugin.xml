@@ -88,11 +88,7 @@
             id="org.spartan.refactoring.commands.ConvertToTernary"
             name="Convert conditional to ternary">
       </command>
-      <command
-            categoryId="org.spartan.refactoring.category"
-            id="org.spartan.refactoring.commands.ShortestOperand"
-            name="Shortest operand first">
-      </command>
+
       <command
             categoryId="org.spartan.refactoring.category"
             id="org.spartan.refactoring.commands.ForwardDeclaraion"
@@ -142,35 +138,6 @@
       <handler
             class="org.spartan.refactoring.handlers.RedundantEqualityHandler"
             commandId="org.spartan.refactoring.commands.RedundantEquality">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ShortestBranchFirstHandler"
-            commandId="org.spartan.commands.ToggleCommand">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ShortestBranchFirstHandler"
-            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ChangeReturnToDollarHandler"
-            commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.TernarizeHandler"
-            commandId="org.spartan.refactoring.commands.ConvertToTernary">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ShortestOperandHandler"
-            commandId="org.spartan.refactoring.commands.ShortestOperand">
-      </handler>
-
-      <handler
-            class="org.spartan.refactoring.handlers.ForwardDeclarationHandler"
-            commandId="org.spartan.refactoring.commands.ForwardDeclaraion">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.InlineSingleUseHandler"
-            commandId="org.spartan.refactoring.commands.InlineSingleUse">
       </handler>
    </extension>
    <extension

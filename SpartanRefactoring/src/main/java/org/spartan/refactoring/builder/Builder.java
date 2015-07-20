@@ -47,13 +47,13 @@ public class Builder extends IncrementalProjectBuilder {
   /**
    * the ID under which this builder is registered
    */
-  public static final String BUILDER_ID = "il.ac.technion.cs.ssdl.spartan.builder.Builder";
-  private static final String MARKER_TYPE = "il.ac.technion.cs.ssdl.spartan.spartanizationSuggestion";
+  public static final String BUILDER_ID = "org.spartan.refactoring.builder.Builder";
+  private static final String MARKER_TYPE = "org.spartan.refactoring.spartanizationSuggestion";
   /**
    * the key in the marker's properties map under which the type of the
    * spartanization is stored
    */
-  public static final String SPARTANIZATION_TYPE_KEY = "il.ac.technion.cs.ssdl.spartan.spartanizationType";
+  public static final String SPARTANIZATION_TYPE_KEY = "org.spartan.refactoring.spartanizationType";
 
   @Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
       final IProgressMonitor m) throws CoreException {
