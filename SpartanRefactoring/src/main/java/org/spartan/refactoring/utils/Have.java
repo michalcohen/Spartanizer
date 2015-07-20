@@ -1,5 +1,7 @@
 package org.spartan.refactoring.utils;
 
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.Expression;
@@ -82,6 +84,20 @@ public enum Have {
   public static boolean booleanLiteral(final List<Expression> es) {
     for (final Expression e : es)
       if (Is.booleanLiteral(e))
+        return true;
+    return false;
+  }
+  /**
+   * Determine whether the boolean literal <code><b>true</b></code> is present
+   *
+   * @param es
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> one or more of the elements is
+   *         the boolean literal <code><b>true</b></code>
+   */
+  public static boolean trueLiteral(final List<Expression> es) {
+    for (final Expression e : es)
+      if (Is.booleanLiteral(e) && asBooleanLiteral(e).booleanValue())
         return true;
     return false;
   }

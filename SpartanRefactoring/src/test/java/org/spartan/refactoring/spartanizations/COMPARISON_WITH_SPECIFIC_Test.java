@@ -106,7 +106,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    @Test public void flattenIsIdempotentt() {
+    @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }
@@ -183,7 +183,7 @@ public enum COMPARISON_WITH_SPECIFIC_Test {
       Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
       assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
     }
-    @Test public void flattenIsIdempotentt() {
+    @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }

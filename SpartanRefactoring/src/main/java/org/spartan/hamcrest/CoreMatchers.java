@@ -88,4 +88,16 @@ public class CoreMatchers extends org.hamcrest.CoreMatchers {
   public static Matcher<Character> is(final char c) {
     return is(Character.valueOf(c));
   }
+  /**
+   * A vacuous wrapper around {@link org.hamcrest.CoreMatchers#is(Matcher)};
+   * placed in this class to make it possible to use one <code><b>static
+   * import</b></code> declaration for the current class, i.e.,
+   * {@link org.spartan.hamcrest.CoreMatchers} which eliminates the need to
+   * <code><b>static import</b></code> the original
+   * {@link org.hamcrest.CoreMatchers#is(Matcher)}.
+   *
+   */
+  public static <T> org.hamcrest.Matcher<T> is(final T value) {
+    return org.hamcrest.core.Is.<T> is(value);
+  }
 }

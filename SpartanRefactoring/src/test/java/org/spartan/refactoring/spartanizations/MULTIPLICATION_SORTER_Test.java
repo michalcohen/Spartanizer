@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -79,10 +78,6 @@ public enum MULTIPLICATION_SORTER_Test {
     public Noneligible() {
       super(WRING);
     }
-    @Test public void flattenIsIdempotentt() {
-      final InfixExpression flatten = Wrings.flatten(asInfixExpression());
-      assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
-    }
     @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
       assertNotNull(e);
@@ -136,7 +131,7 @@ public enum MULTIPLICATION_SORTER_Test {
     public Wringed() {
       super(WRING);
     }
-    @Test public void flattenIsIdempotentt() {
+    @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = Wrings.flatten(asInfixExpression());
       assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
     }

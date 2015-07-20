@@ -805,6 +805,15 @@ public enum Funcs {
     $.setRightOperand(right);
     return $;
   }
+  /**
+   * Remove all occurrences of a boolean literal from a list of
+   * {@link Expression}s
+   *
+   * @param b
+   *          JD
+   * @param es
+   *          JD
+   */
   public static void removeAll(final boolean b, final List<Expression> es) {
     for (;;) {
       final Expression e = find(b, es);

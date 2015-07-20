@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
@@ -99,7 +100,7 @@ public abstract class AbstractWringTest {
    */
   public static abstract class OutOfScope extends AbstractWringTest {
     /** Description of a test case for {@link Parameter} annotation */
-    protected static final String DESCRIPTION = "Test #{index}. \"{1}\" out of scope ({0})";
+    protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" N/A";
 
     /** Instantiates the enclosing class ({@link OutOfScope})@param inner */
     public OutOfScope(final Wring inner) {
@@ -229,7 +230,7 @@ public abstract class AbstractWringTest {
    */
   public static abstract class Noneligible extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
-    protected static final String DESCRIPTION = "Test #{index}. \"{1}\" unchanged ({0})";
+    protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==>|";
 
     /**
      * Instantiates the enclosing class ({@link Noneligible})
@@ -274,6 +275,10 @@ public abstract class AbstractWringTest {
         final InfixExpression e = asInfixExpression();
         assertNotNull(e);
       }
+      @Test public void flattenIsIdempotentt() {
+        final InfixExpression flatten = Wrings.flatten(asInfixExpression());
+        assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+      }
     }
   }
 
@@ -284,7 +289,7 @@ public abstract class AbstractWringTest {
    */
   public static abstract class Wringed extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
-    protected static final String DESCRIPTION = "Test #{index}. \"{1}\" wringed to \"{2}\" ({0})";
+    protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
     /**
      * What should the output be
      */
@@ -307,11 +312,11 @@ public abstract class AbstractWringTest {
     @Test public void peelableOutput() {
       assertEquals(expected, peel(wrap(expected)));
     }
-    @Test public void oneOpporunity() {
+    @Test public void hasOpportunity() {
       final CompilationUnit u = asCompilationUnit();
       assertTrue(inner.scopeIncludes(asExpression()));
       final List<Range> findOpportunities = wringer.findOpportunities(u);
-      assertThat(u.toString(), findOpportunities.size(), is(1));
+      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
     }
     @Test public void hasReplacement() {
       assertNotNull(inner.replacement(asExpression()));
@@ -350,6 +355,10 @@ public abstract class AbstractWringTest {
       @Test public void inputIsInfixExpression() {
         final InfixExpression e = asInfixExpression();
         assertNotNull(e);
+      }
+      @Test public void flattenIsIdempotentt() {
+        final InfixExpression flatten = Wrings.flatten(asInfixExpression());
+        assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
       }
     }
   }

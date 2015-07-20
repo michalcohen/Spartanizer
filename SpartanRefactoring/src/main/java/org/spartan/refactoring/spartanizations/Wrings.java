@@ -91,6 +91,34 @@ public enum Wrings {
     }
   }), //
   /**
+   * A {@link Wring} that eliminate Boolean literals, when possible present on
+   * logical AND an logical OR.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-20
+   *
+   */
+  ANDOR_TRUE(new Wring.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR) && Have.trueLiteral(All.operands(flatten(e)));
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
+      return true;
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      final List<Expression> operands = All.operands(flatten(e));
+      removeAll(true, operands);
+      switch (operands.size()) {
+        case 0:
+          return e.getAST().newBooleanLiteral(true);
+        case 1:
+          return duplicate(operands.get(0));
+        default:
+          return refitOperands(e, operands);
+      }
+    }
+  }), //
+  /**
    * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
    * expression.
    *
@@ -148,31 +176,6 @@ public enum Wrings {
       if (!tryToSort(operands))
         return null;
       return refitOperands(e, operands);
-    }
-  }), //
-  /**
-   * A {@link Wring} that eliminate Boolean literals, when possible present on
-   * logical AND an logical OR.
-   *
-   * @author Yossi Gil
-   * @since 2015-07-20
-   *
-   */
-  ANDOR_BOOLEAN(new Wring.OfInfixExpression() {
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR)
-          && Have.booleanLiteral(All.operands(flatten(e)));
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      return true;
-    }
-    @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(flatten(e));
-      if (e.getOperator() == Operator.AND)
-        removeAll(true, operands);
-      if (e.getOperator() == Operator.OR)
-        removeAll(false, operands);
-      return operands.size() == 1 ? duplicate(operands.get(0)) : refitOperands(e, operands);
     }
   }), //
   /**
@@ -333,10 +336,12 @@ public enum Wrings {
     return $;
   }
   private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
-    final InfixExpression inner = asInfixExpression(getCore(e));
-    return inner == null || inner.getOperator() != o ? flattenInto(e, $) : flattenInto(o, All.operands(inner), $);
+    final Expression core = getCore(e);
+    if (Is.infix(core) && asInfixExpression(core).getOperator() == o)
+      return flattenInto(o, All.operands(asInfixExpression(core)), $);
+    return add(isSimple(core) ? core : e, $);
   }
-  private static List<Expression> flattenInto(final Expression e, final List<Expression> $) {
+  private static List<Expression> add(final Expression e, final List<Expression> $) {
     $.add(e);
     return $;
   }
@@ -424,7 +429,8 @@ public enum Wrings {
     return isSimple(e.getClass());
   }
   static boolean isSimple(final Class<? extends Expression> c) {
-    return in(c, BooleanLiteral.class, //
+    return in(c, //
+        BooleanLiteral.class, //
         CharacterLiteral.class, //
         NullLiteral.class, //
         NumberLiteral.class, //
