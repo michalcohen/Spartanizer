@@ -6,7 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import org.spartan.refactoring.preferences.PreferencesFile;
+=======
+import org.spartan.refactoring.preferencestab.PreferencesFile;
+>>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
