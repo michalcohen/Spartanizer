@@ -266,7 +266,7 @@ public abstract class AbstractWringTest {
       assertThat(Wrings.find(asExpression()), is(inner));
     }
 
-    static abstract class Infix extends Noneligible {
+    public static abstract class Infix extends Noneligible {
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
       Infix(final Wring w) {
         super(w);
