@@ -2,47 +2,27 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-<<<<<<< HEAD
-         id="org.spartan.builder.Builder"
-=======
          id="org.spartan.refactoring.builder.Builder"
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
          name="Spartanization Checker"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">
          <run
-<<<<<<< HEAD
-               class="org.spartan.refatoring.builder.Builder">
-=======
                class="org.spartan.refactoring.builder.Builder">
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
          </run>
       </builder>
    </extension>
    <extension
-<<<<<<< HEAD
-         id="org.spartan.refactoring.Nature"
-=======
          id="org.spartan.refactoring.builder.Nature"
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
          name="Spartanization Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-<<<<<<< HEAD
                class="org.spartan.refatoring.builder.Nature">
          </run>
       </runtime>
       <builder
-            id="org.spartan.refatoring.builderr.Builder">
-=======
-               class="org.spartan.refactoring.builder.Nature">
-         </run>
-      </runtime>
-      <builder
             id="org.spartan.refactoring.builder.Builder">
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
       </builder>
    </extension>
    
@@ -55,23 +35,14 @@
 </extension>
 
    <extension point="org.eclipse.ui.ide.markerResolution">
-      <markerResolutionGenerator
-<<<<<<< HEAD
-         markerType="org.spartan.spartanizationSuggestion"
-         class="org.spartan.builder.QuickFixer"/>
-=======
-         markerType="org.spartan.refactoring.spartanizationSuggestion"
+      <markerResolutionGenerator 
+               markerType="org.spartan.refactoring.spartanizationSuggestion"
          class="org.spartan.refactoring.builder.QuickFixer"/>
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
    </extension>
 
    <extension point="org.eclipse.ui.editors.annotationTypes">
-<<<<<<< HEAD
-      <type markerType="org.spartan.spartanizationSuggestion" name="org.spartan.spartanizationMarker" />
-=======
      <type markerType="org.spartan.refactoring.spartanizationSuggestion" 
        name="org.spartan.refactoring.spartanizationMarker" />
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
    </extension>
    <extension
       point="org.eclipse.ui.editors.markerAnnotationSpecification">
@@ -135,11 +106,7 @@
       <command
             categoryId="org.spartan.refactoring.category"
             id="org.spartan.refactoring.commands.RedundantEquality"
-<<<<<<< HEAD
             name="Redandant equality">
-=======
-            name="Redundant equality">
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
       </command>
       <command
             categoryId="org.spartan.refactoring.category"
@@ -150,37 +117,6 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-<<<<<<< HEAD
-            class="org.spartan.commandhandlers.ToggleSpartanizationHandler"
-            commandId="org.spartan.commands.ToggleCommand">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.ChangeReturnToDollarHandler"
-            commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.TernarizeHandler"
-            commandId="org.spartan.refactoring.commands.ConvertToTernary">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.ShortestOperandHandler"
-            commandId="org.spartan.refactoring.commands.ShortestOperand">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.ForwardDeclarationHandler"
-            commandId="org.spartan.refactoring.commands.ForwardDeclaraion">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.InlineSingleUseHandler"
-            commandId="org.spartan.refactoring.commands.InlineSingleUse">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.RedundantEqualityHandler"
-            commandId="org.spartan.refactoring.commands.RedundantEquality">
-      </handler>
-      <handler
-            class="org.spartan.commandhandlers.ShortestBranchFirstHandler"
-=======
             class="org.spartan.refactoring.commandhandlers.ToggleSpartanizationHandler"
             commandId="org.spartan.commands.ToggleCommand">
       </handler>
@@ -210,7 +146,34 @@
       </handler>
       <handler
             class="org.spartan.refactoring.commandhandlers.ShortestBranchFirstHandler"
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
+            commandId="org.spartan.commands.ToggleCommand">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.ChangeReturnToDollarHandler"
+            commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.TernarizeHandler"
+            commandId="org.spartan.refactoring.commands.ConvertToTernary">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.ShortestOperandHandler"
+            commandId="org.spartan.refactoring.commands.ShortestOperand">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.ForwardDeclarationHandler"
+            commandId="org.spartan.refactoring.commands.ForwardDeclaraion">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.InlineSingleUseHandler"
+            commandId="org.spartan.refactoring.commands.InlineSingleUse">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.RedundantEqualityHandler"
+            commandId="org.spartan.refactoring.commands.RedundantEquality">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.commandhandlers.ShortestBranchFirstHandler"
             commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
       </handler>
    </extension>
@@ -325,13 +288,8 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-<<<<<<< HEAD
             class="org.spartan.refactoring.preferences.SpartanizationPreferencePage"
             id="org.spartan.refactoring.preferences.SpartanizationPreferencePage"
-=======
-            class="org.spartan.refactoring.preferencestab.SpartanizationPreferencePage"
-            id="org.spartan.refactoring.preferencestab.SpartanizationPreferencePage"
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
             name="Spartanization"
             category="org.eclipse.jdt.ui.preferences.CompliancePreferencePage">
       </page>
@@ -339,11 +297,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-<<<<<<< HEAD
             class="org.spartan.refactoring.preferences.PreferenceInitializer">
-=======
-            class="org.spartan.refactoring.preferencestab.PreferenceInitializer">
->>>>>>> 7cec28f27015571e21e54c92b8be0df2aa677ad0
       </initializer>
    </extension>
    <extension
