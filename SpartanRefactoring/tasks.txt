@@ -1,0 +1,19 @@
+* Move to Maven
+* Move to org.spartan
+* Use hamcrest
+* Added general purpose utility classes for hamcerst
+* Added general purpose utility classes under org.spartan.util
+* Added utility classes for JDT: Is, Make, All, Have, As, Are and Funcs.
+* Around 2000 unit tests
+* Introduced the "wring" technology; currently all packed under one sprartanization, which is not active yet.
+
+Bug introduced:
+* Broke the shortest operand first code (does not sort remaining arguments)
+* Broke the plugin semantics.
+* Maven still produces errors.
+
+Todos:
+* Hack the unit tests so that they work.
+* Make the plugin work again; do not worry about wrings.
+* List of safe and sane operations: comparison with boolean, literal ordering, simplify negation, ternarize, chain, shortest branch
+* Add safe operations as cleanup operations

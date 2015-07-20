@@ -37,19 +37,19 @@ public class RefitTest {
     final InfixExpression e = i("1+2");
     final List<Expression> operands = All.operands(Funcs.duplicate(e.getAST(), i("a*b")));
     assertThat(operands.size(), is(2));
-    final InfixExpression refit = Wrings.refit(e, operands);
+    final InfixExpression refit = Wrings.refitOperands(e, operands);
     assertThat(refit.hasExtendedOperands(), is(false));
     assertThat(refit.toString(), is("a + b"));
   }
   @Test public void refitIsCorrecct() {
     final InfixExpression e = i("1+2+3");
     final List<Expression> operands = All.operands(Funcs.duplicate(e.getAST(), i("a*b*c")));
-    assertThat(Wrings.refit(e, operands).toString(), is("a + b + c"));
+    assertThat(Wrings.refitOperands(e, operands).toString(), is("a + b + c"));
   }
   @Test public void refitNotNull() {
     final InfixExpression e = i("1+2+3");
     final List<Expression> operands = All.operands(Funcs.duplicate(e.getAST(), i("a+b+c")));
-    assertThat(Wrings.refit(e, operands), notNullValue());
+    assertThat(Wrings.refitOperands(e, operands), notNullValue());
   }
   @Test public void refitWithSort() {
     final InfixExpression e = i("1 + 2 * 3");
@@ -60,7 +60,7 @@ public class RefitTest {
     assertTrue(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
     assertThat(operands.get(0).toString(), is("2 * 3"));
     assertThat(operands.get(1).toString(), is("1"));
-    final InfixExpression refit = Wrings.refit(e, operands);
+    final InfixExpression refit = Wrings.refitOperands(e, operands);
     assertThat(refit, is(not(e)));
     assertThat(refit.toString(), is("2 * 3 + 1"));
   }
@@ -70,7 +70,7 @@ public class RefitTest {
     final AST t = e.getAST();
     operands.add(duplicate(t, e("3*4")));
     operands.add(duplicate(t, e("5")));
-    final InfixExpression refit = Wrings.refit(e, operands);
+    final InfixExpression refit = Wrings.refitOperands(e, operands);
     assertThat(refit, is(not(e)));
     assertThat(refit.toString(), is("3 * 4 + 5"));
   }

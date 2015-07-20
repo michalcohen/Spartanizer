@@ -13,7 +13,7 @@ import org.spartan.utils.Utils;
  */
 public class Nature implements IProjectNature {
   /** ID of this project nature */
-  public static final String NATURE_ID = "il.ac.technion.cs.ssdl.spartan.Nature";
+  public static final String NATURE_ID = "org.spartan.refactoring.Nature";
   /** The project to which we relate */
   private IProject project;
 

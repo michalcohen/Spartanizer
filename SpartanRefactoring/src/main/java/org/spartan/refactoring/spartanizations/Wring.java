@@ -10,7 +10,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 /**
  * Reifying the notion of a simplifier; all concrete simplification are found in
- * the array returned by {@link Wrings#values()}.
+ * the array returned by {@link Wrings#values()}. A wring is a transformation
+ * that currently works on expressions only, but in the future it will work on
+ * any AstNode. Such a transformation make a single simplification of the tree.
+ * A wring is so small that it is idempotent: Applying a wring to the output of
+ * itself is the empty operation.
  *
  * @author Yossi Gil
  * @since 2015-07-09

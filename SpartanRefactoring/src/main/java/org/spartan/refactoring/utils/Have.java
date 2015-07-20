@@ -71,4 +71,18 @@ public enum Have {
         return true;
     return false;
   }
+  /**
+   * Determine whether a boolean literal is present
+   *
+   * @param es
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> one or more of the elements
+   *         that is a boolean literal.
+   */
+  public static boolean booleanLiteral(final List<Expression> es) {
+    for (final Expression e : es)
+      if (Is.booleanLiteral(e))
+        return true;
+    return false;
+  }
 }
