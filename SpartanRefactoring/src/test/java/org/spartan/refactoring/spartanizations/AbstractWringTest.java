@@ -84,7 +84,7 @@ public abstract class AbstractWringTest {
   }
   protected CompilationUnit asCompilationUnit() {
     final ASTNode $ = As.COMPILIATION_UNIT.ast(wrap(input));
-    assertNotNull($);
+    assertThat($, is(notNullValue()));
     assertThat($, is(instanceOf(CompilationUnit.class)));
     return (CompilationUnit) $;
   }

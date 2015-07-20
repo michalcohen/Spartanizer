@@ -206,7 +206,7 @@ public class Ternarize extends Spartanization {
     final TwoExpressions $ = findDiffExps(diffNodes);
     if (Is.expressionStatement(diffNodes.then))
       return $;
-    return $ == null || !Is.isReturn(diffNodes.then) ? null //
+    return $ == null || !Is.retern(diffNodes.then) ? null //
         : new TwoExpressions(getExpression(diffNodes.then), getExpression(diffNodes.elze));
   }
   private static TwoExpressions findDiffExps(final TwoNodes diffNodes) {
@@ -239,7 +239,7 @@ public class Ternarize extends Spartanization {
     return $;
   }
   private static boolean isExpStmntOrRet(final ASTNode n) {
-    return n != null && (Is.expressionStatement(n) || Is.isReturn(n));
+    return n != null && (Is.expressionStatement(n) || Is.retern(n));
   }
   private static boolean handleCaseDiffNodesAreBlocks(final TwoNodes diffNodes) {
     if (statementsCount(diffNodes.then) != 1 || statementsCount(diffNodes.elze) != 1)
@@ -457,7 +457,7 @@ public class Ternarize extends Spartanization {
     return statements(i.getParent()) == null ? null : detectIfReturn(i, statements(i.getParent()));
   }
   private static Range detectIfReturn(final IfStatement s, final List<ASTNode> ss) {
-    return Is.isLast(s, ss) ? null : detectIfReturn(s.getThenStatement(), s.getElseStatement(), ss, ss.indexOf(s));
+    return Is.last(s, ss) ? null : detectIfReturn(s.getThenStatement(), s.getElseStatement(), ss, ss.indexOf(s));
   }
   private static Range detectIfReturn(final Statement thenStmt, final Statement elseStmt, final List<ASTNode> ss, final int ifIdx) {
     final ReturnStatement nextRet = asReturn(ss.get(1 + ifIdx));

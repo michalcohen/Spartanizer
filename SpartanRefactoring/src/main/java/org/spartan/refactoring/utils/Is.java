@@ -187,7 +187,7 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
    *         and it is the last one in it.
    */
-  public static <T> boolean isLast(final T t, final List<T> ts) {
+  public static <T> boolean last(final T t, final List<T> ts) {
     return ts.indexOf(t) == ts.size() - 1;
   }
   /**
@@ -218,18 +218,18 @@ public enum Is {
     return false;
   }
   /**
-   * Determined if a node is a return statement
+   * Determined whether a node is a return statement
    *
    * @param n
-   *          node to check
+   *          JD
    * @return true if the given node is a return statement or false otherwise
    */
-  public static boolean isReturn(final ASTNode n) {
+  public static boolean retern(final ASTNode n) {
     return is(n, ASTNode.RETURN_STATEMENT);
   }
   /**
    * @param n
-   *          node to check
+   *          JD
    * @return true if the given node is a variable declaration statement or false
    *         otherwise
    */
