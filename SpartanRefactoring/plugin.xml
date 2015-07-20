@@ -258,8 +258,8 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
-            id="org.spartan.refactoring.preferencesTab.SpartanizationPreferencePage"
+            class="org.spartan.refactoring.preferences.SpartanizationPreferencePage"
+            id="org.spartan.refactoring.preferences.SpartanizationPreferencePage"
             name="Spartanization"
             category="org.eclipse.jdt.ui.preferences.CompliancePreferencePage">
       </page>
@@ -267,7 +267,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.spartan.refactoring.preferencesTab.PreferenceInitializer">
+            class="org.spartan.refactoring.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension

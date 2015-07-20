@@ -1,4 +1,4 @@
-package org.spartan.refactoring.preferencesTab;
+package org.spartan.refactoring.preferences;
 
 import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
 

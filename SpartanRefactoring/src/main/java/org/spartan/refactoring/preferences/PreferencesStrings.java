@@ -1,4 +1,4 @@
-package org.spartan.refactoring.preferencesTab;
+package org.spartan.refactoring.preferences;
 
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
