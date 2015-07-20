@@ -1,13 +1,13 @@
-package org.spartan.refactoring.preferencesTab;
+package org.spartan.refactoring.preferencestab;
 
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.BothLiteralsOptions;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.NullAndBoolOptions;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.bothLiteralsHeader;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.nullAndBoolHeader;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.repositionRightLiteralsHeader;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.rightLiteralOptions;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageHeader;
-import static org.spartan.refactoring.preferencesTab.PreferencesStrings.swapMessageOptions;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.BothLiteralsOptions;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.NullAndBoolOptions;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.bothLiteralsHeader;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.nullAndBoolHeader;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.repositionRightLiteralsHeader;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.rightLiteralOptions;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.swapMessageHeader;
+import static org.spartan.refactoring.preferencestab.PreferencesStrings.swapMessageOptions;
 import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
 
 import java.io.FileNotFoundException;
@@ -20,7 +20,7 @@ import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.spartan.refactoring.builder.Plugin;
-import org.spartan.refactoring.preferencesTab.PreferencesStrings.Strings;
+import org.spartan.refactoring.preferencestab.PreferencesStrings.Strings;
 
 /**
  * This class represents a preference page that is contributed to the

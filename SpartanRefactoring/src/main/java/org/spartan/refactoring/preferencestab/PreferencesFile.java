@@ -1,4 +1,4 @@
-package org.spartan.refactoring.preferencesTab;
+package org.spartan.refactoring.preferencestab;
 
 import java.io.File;
 import java.io.FileNotFoundException;

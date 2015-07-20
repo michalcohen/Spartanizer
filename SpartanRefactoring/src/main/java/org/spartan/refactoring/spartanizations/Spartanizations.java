@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.spartan.refactoring.preferencesTab.PreferencesFile;
+import org.spartan.refactoring.preferencestab.PreferencesFile;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)

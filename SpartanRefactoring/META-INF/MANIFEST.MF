@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Spartan Refactoring Plugin
-Bundle-SymbolicName: il.ac.technion.cs.ssdl.spartan.refactoring;singleton:=true
-Bundle-Version: 2.1.0
+Bundle-SymbolicName: org.spartan.refactoring;singleton:=true
+Bundle-Version: 2.2.0
 Bundle-Activator: org.spartan.refactoring.builder.Plugin
-Bundle-Vendor: SSDL
+Bundle-Vendor: Org.spartan
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ltk.core.refactoring,
