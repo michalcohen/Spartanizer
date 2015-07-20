@@ -67,6 +67,18 @@ public enum Funcs {
   public static Block asBlock(final ASTNode n) {
     return !(n instanceof Block) ? null : (Block) n;
   }
+  /**
+   * Down-cast, if possible, to {@link BooleanLiteral}
+   *
+   * @param e
+   *          JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   *
+   */
+  public static BooleanLiteral asBooleanLiteral(final Expression e) {
+    return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
+  }
   public static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
@@ -107,18 +119,6 @@ public enum Funcs {
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
-  /**
-   * Down-cast, if possible, to {@link BooleanLiteral}
-   *
-   * @param e
-   *          JD
-   * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   *
-   */
-  public static BooleanLiteral asBooleanLiteral(final Expression e) {
-    return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
-  }
   public static PrefixExpression asNot(final Expression e) {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
   }
@@ -157,9 +157,6 @@ public enum Funcs {
       default:
         return null;
     }
-  }
-  private static ReturnStatement asReturn(final Block b) {
-    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
   }
   /**
    * the function checks if all the given assignments has the same left hand
@@ -260,30 +257,17 @@ public enum Funcs {
   public static int countNonWhites(final ASTNode n) {
     return removeWhites(n).length();
   }
-  /**
-   * Obtain a condensed textual representation of an {@link ASTNode}
-   *
-   * @param n
-   *          JD
-   * @return the textual representation of the parameter,
-   */
-  public static String removeWhites(final ASTNode n) {
-    return Utils.removeWhites(n.toString());
-  }
-  public static Expression getCore(final Expression $) {
-    return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
-  }
   public static Expression duplicate(final AST t, final Expression e) {
     return (Expression) ASTNode.copySubtree(t, e);
   }
   public static InfixExpression duplicate(final AST t, final InfixExpression e) {
     return (InfixExpression) ASTNode.copySubtree(t, e);
   }
-  public static Expression duplicate(final Expression e) {
-    return (Expression) ASTNode.copySubtree(e.getAST(), e);
-  }
   public static BooleanLiteral duplicate(final BooleanLiteral e) {
     return (BooleanLiteral) ASTNode.copySubtree(e.getAST(), e);
+  }
+  public static Expression duplicate(final Expression e) {
+    return (Expression) ASTNode.copySubtree(e.getAST(), e);
   }
   public static InfixExpression duplicate(final InfixExpression e) {
     return (InfixExpression) ASTNode.copySubtree(e.getAST(), e);
@@ -293,6 +277,12 @@ public enum Funcs {
   }
   public static Expression duplicateRight(final InfixExpression e) {
     return duplicate(e.getRightOperand());
+  }
+  public static Expression find(final boolean b, final List<Expression> es) {
+    for (final Expression e : es)
+      if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
+        return e;
+    return null;
   }
   public static InfixExpression flip(final InfixExpression e) {
     final Operator flip = flip(e.getOperator());
@@ -320,9 +310,6 @@ public enum Funcs {
   public static Assignment getAssignment(final Statement s) {
     final ExpressionStatement $ = asExpressionStatement(s);
     return $ == null || ASTNode.ASSIGNMENT != $.getExpression().getNodeType() ? null : (Assignment) $.getExpression();
-  }
-  private static Statement getBlockSingleStmnt(final Block b) {
-    return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
   }
   /**
    * @param b
@@ -369,6 +356,9 @@ public enum Funcs {
         break;
     return $;
   }
+  public static Expression getCore(final Expression $) {
+    return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
+  }
   /**
    * @param node
    *          a node to extract an expression from
@@ -410,12 +400,6 @@ public enum Funcs {
         || name.getNodeType() != ASTNode.SIMPLE_NAME ? null
             : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
   }
-  private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
-    for (final VariableDeclarationFragment o : frags)
-      if (same(name, o.getName()))
-        return o;
-    return null;
-  }
   /**
    * @param b
    *          the block to check
@@ -452,9 +436,6 @@ public enum Funcs {
         break;
     }
     return false;
-  }
-  private static boolean is(final ASTNode n, final int type) {
-    return n != null && type == n.getNodeType();
   }
   /**
    * @param n
@@ -585,10 +566,6 @@ public enum Funcs {
   public static <T> T last(final List<T> ts) {
     return ts.get(ts.size() - 1);
   }
-  private static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
-    final Expression left = e.getLeftOperand();
-    return Precedence.of(o) == Precedence.of(left) && Associativity.isL2R(o) ? parenthesize(left) : duplicate(left);
-  }
   /**
    * @param t
    *          the AST who is to own the new return statement
@@ -610,14 +587,6 @@ public enum Funcs {
     $.setOperator(o);
     $.setRightHandSide(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
     $.setLeftHandSide(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
-    return $;
-  }
-  private static Map<Operator, Operator> makeConjeguates() {
-    final Map<Operator, Operator> $ = new HashMap<>();
-    $.put(GREATER, LESS);
-    $.put(LESS, GREATER);
-    $.put(GREATER_EQUALS, LESS_EQUALS);
-    $.put(LESS_EQUALS, GREATER_EQUALS);
     return $;
   }
   /**
@@ -815,11 +784,6 @@ public enum Funcs {
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
   }
-  private static Expression parenthesize(final Expression e) {
-    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(e.getParent() == null ? e : duplicate(e));
-    return $;
-  }
   /**
    * Retrieve previous item in a list
    *
@@ -841,9 +805,23 @@ public enum Funcs {
     $.setRightOperand(right);
     return $;
   }
-  private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
-    final Expression right = e.getRightOperand();
-    return Precedence.of(o) == Precedence.of(right) && Associativity.isL2R(o) ? parenthesize(right) : duplicate(right);
+  public static void removeAll(final boolean b, final List<Expression> es) {
+    for (;;) {
+      final Expression e = find(b, es);
+      if (e == null)
+        return;
+      es.remove(e);
+    }
+  }
+  /**
+   * Obtain a condensed textual representation of an {@link ASTNode}
+   *
+   * @param n
+   *          JD
+   * @return the textual representation of the parameter,
+   */
+  public static String removeWhites(final ASTNode n) {
+    return Utils.removeWhites(n.toString());
   }
   /**
    * Determine whether two nodes are the same, in the sense that their textual
@@ -878,9 +856,6 @@ public enum Funcs {
    */
   public static List<ASTNode> statements(final ASTNode n) {
     return statements(asBlock(n));
-  }
-  private static List<ASTNode> statements(final Block b) {
-    return b == null ? null : b.statements();
   }
   /**
    * @param node
@@ -917,5 +892,44 @@ public enum Funcs {
     if (hasNull(t, cond))
       return null;
     return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(t, cond), PrefixExpression.Operator.NOT);
+  }
+  private static ReturnStatement asReturn(final Block b) {
+    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
+  }
+  private static Statement getBlockSingleStmnt(final Block b) {
+    return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
+  }
+  private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
+    for (final VariableDeclarationFragment o : frags)
+      if (same(name, o.getName()))
+        return o;
+    return null;
+  }
+  private static boolean is(final ASTNode n, final int type) {
+    return n != null && type == n.getNodeType();
+  }
+  private static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
+    final Expression left = e.getLeftOperand();
+    return Precedence.of(o) == Precedence.of(left) && Associativity.isL2R(o) ? parenthesize(left) : duplicate(left);
+  }
+  private static Map<Operator, Operator> makeConjeguates() {
+    final Map<Operator, Operator> $ = new HashMap<>();
+    $.put(GREATER, LESS);
+    $.put(LESS, GREATER);
+    $.put(GREATER_EQUALS, LESS_EQUALS);
+    $.put(LESS_EQUALS, GREATER_EQUALS);
+    return $;
+  }
+  private static Expression parenthesize(final Expression e) {
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(e.getParent() == null ? e : duplicate(e));
+    return $;
+  }
+  private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
+    final Expression right = e.getRightOperand();
+    return Precedence.of(o) == Precedence.of(right) && Associativity.isL2R(o) ? parenthesize(right) : duplicate(right);
+  }
+  private static List<ASTNode> statements(final Block b) {
+    return b == null ? null : b.statements();
   }
 }

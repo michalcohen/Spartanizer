@@ -14,6 +14,7 @@ import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.getCore;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.utils.Utils.in;
 
 import java.util.ArrayList;
@@ -42,9 +43,12 @@ import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
+import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
 
 /**
+ * This enum represents an ordered list of all {@link Wring} objects.
+ *
  * @author Yossi Gil
  * @since 2015-07-17
  *
@@ -71,10 +75,10 @@ public enum Wrings {
       Expression nonliteral;
       BooleanLiteral literal;
       if (Is.booleanLiteral(e.getLeftOperand())) {
-        literal = (BooleanLiteral) e.getLeftOperand();
+        literal = asBooleanLiteral(e.getLeftOperand());
         nonliteral = duplicate(e.getRightOperand());
       } else {
-        literal = (BooleanLiteral) e.getRightOperand();
+        literal = asBooleanLiteral(e.getRightOperand());
         nonliteral = duplicate(e.getLeftOperand());
       }
       return nonNegating(e, literal) ? nonliteral : negate(nonliteral);
@@ -112,7 +116,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !Are.notString(operands) || !tryToSort(operands) ? null : refit(e, operands);
+      return !Are.notString(operands) || !tryToSort(operands) ? null : refitOperands(e, operands);
     }
   }), //
   /**
@@ -143,7 +147,32 @@ public enum Wrings {
       final List<Expression> operands = All.operands(flatten(e));
       if (!tryToSort(operands))
         return null;
-      return refit(e, operands);
+      return refitOperands(e, operands);
+    }
+  }), //
+  /**
+   * A {@link Wring} that eliminate Boolean literals, when possible present on
+   * logical AND an logical OR.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-20
+   *
+   */
+  ANDOR_BOOLEAN(new Wring.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR)
+          && Have.booleanLiteral(All.operands(flatten(e)));
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return true;
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      final List<Expression> operands = All.operands(flatten(e));
+      if (e.getOperator() == Operator.AND)
+        removeAll(true, operands);
+      if (e.getOperator() == Operator.OR)
+        removeAll(false, operands);
+      return operands.size() == 1 ? duplicate(operands.get(0)) : refitOperands(e, operands);
     }
   }), //
   /**
@@ -174,7 +203,7 @@ public enum Wrings {
       final List<Expression> operands = All.operands(flatten(e));
       if (!tryToSort(operands))
         return null;
-      return refit(e, operands);
+      return refitOperands(e, operands);
     }
   }), //
   /**
@@ -296,7 +325,7 @@ public enum Wrings {
     return $;
   }
   public static InfixExpression flatten(final InfixExpression $) {
-    return refit(duplicate($), flattenInto($.getOperator(), All.operands($), new ArrayList<Expression>()));
+    return refitOperands(duplicate($), flattenInto($.getOperator(), All.operands($), new ArrayList<Expression>()));
   }
   private static List<Expression> flattenInto(final Operator o, final List<Expression> es, final List<Expression> $) {
     for (final Expression e : es)
@@ -311,7 +340,7 @@ public enum Wrings {
     $.add(e);
     return $;
   }
-  static InfixExpression refit(final InfixExpression e, final List<Expression> operands) {
+  static InfixExpression refitOperands(final InfixExpression e, final List<Expression> operands) {
     assert operands.size() >= 2;
     final InfixExpression $ = e.getAST().newInfixExpression();
     $.setOperator(e.getOperator());

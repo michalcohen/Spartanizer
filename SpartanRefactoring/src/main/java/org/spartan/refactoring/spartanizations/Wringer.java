@@ -30,6 +30,9 @@ import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
+ * Applies the suite of {@link Wring} objects found in <ode><b>enum</b></code>
+ * {@link Wrings} to a tree.
+ *
  * @author Yossi Gil
  * @since 2015/07/10
  */
@@ -40,6 +43,7 @@ public class Wringer extends Spartanization {
   }
   @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
     return new ASTVisitor() {
+      // TODO: this must be a bug.
       @Override public boolean visit(final PrefixExpression e) {
         if (hasOpportunity(asNot(e)))
           opportunities.add(new Range(e));
