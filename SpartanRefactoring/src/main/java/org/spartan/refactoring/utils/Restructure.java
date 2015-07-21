@@ -3,13 +3,11 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-
+import static org.spartan.refactoring.utils.Funcs.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -37,11 +35,12 @@ public enum Restructure {
    * @param s
    *          JD
    * @return a flattened list of all {@link Statement}s found within the
-   *         parameter.
+   *         parameter, or an empty list, if the parameter is not a
+   *         {@link Statement}
    */
-  public static List<Statement> statements(final Statement s) {
+  public static List<Statement> statements(final ASTNode s) {
     final ArrayList<Statement> $ = new ArrayList<>();
-    return statementsInto(s, $);
+    return statementsInto(asStatement(s), $);
   }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     if (Is.block(s))

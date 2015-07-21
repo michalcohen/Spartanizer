@@ -7,7 +7,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Restructure.parenthesize;
+import static org.spartan.refactoring.utils.Restructure.*;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
@@ -84,6 +84,18 @@ public enum Funcs {
    */
   public static BooleanLiteral asBooleanLiteral(final Expression e) {
     return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
+  }
+  /**
+   * Down-cast, if possible, to {@link BooleanLiteral}
+   *
+   * @param e
+   *          JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   *
+   */
+  public static Statement asStatement(final ASTNode e) {
+    return !(e instanceof Statement) ? null : (Statement) e;
   }
   /**
    * Convert an {@link Expression} into {@link InfixExpression} whose operator
@@ -881,31 +893,13 @@ public enum Funcs {
     return n1.toString().equals(n2.toString());
   }
   /**
-   * @param n
-   *          the potential block who's statements list we return
-   * @return the list of statements in n if it is a block or null otherwise
-   */
-  public static List<ASTNode> statements(final ASTNode n) {
-    return statements(asBlock(n));
-  }
-  private static List<ASTNode> statements(final Block b) {
-    return b == null ? null : b.statements();
-  }
-  /**
-   * @param node
-   *          the node to get the number of statements in
+   * @param s
+   *          JD
    * @return 0 is s is null, 1 if s is a statement or the number of statement in
-   *         the block is s is a block
+   *         the block is the parameter is
    */
-  public static int statementsCount(final ASTNode node) {
-    if (node == null)
-      return 0;
-    switch (node.getNodeType()) {
-      case ASTNode.BLOCK:
-        return statements(node).size();
-      default:
-        return 1;
-    }
+  public static int statementsCount(final ASTNode s) {
+    return statements(asStatement(s)).size();
   }
   /**
    * the function receives a condition and the then boolean value and returns
