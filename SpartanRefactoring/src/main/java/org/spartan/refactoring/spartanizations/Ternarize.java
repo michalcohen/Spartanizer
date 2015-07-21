@@ -59,8 +59,8 @@ import org.spartan.utils.Range;
 public class Ternarize extends Spartanization {
   /** Instantiates this class */
   public Ternarize() {
-    super("Ternarize",
-        "Convert conditional to an expression using the ternary (?:) operator" + "or to a return condition statement");
+    super("Ternarize", "Convert conditional to an expression using the ternary (?:) operator" + //
+        "or to a return condition statement");
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
@@ -70,7 +70,7 @@ public class Ternarize extends Spartanization {
             || perhapsAssignIfAssign(t, r, i) //
             || perhapsIfReturn(t, r, i) //
             || perhapsIfSameExpStmntOrRet(t, r, i) //
-            || true // "i" is beyond hope, perhaps its children
+            || true // current node is beyond hope, perhaps its children
             ;
       }
     });
@@ -78,17 +78,23 @@ public class Ternarize extends Spartanization {
   static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
     return asBlock(i.getParent()) != null && treatIfReturn(t, r, i, statements(asBlock(i.getParent())));
   }
-  private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<ASTNode> stmts) {
+  private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<ASTNode> ns) {
     if (!hasReturn(i.getThenStatement()))
       return false;
-    final ReturnStatement nextRet = nextStatement(stmts, stmts.indexOf(i));
-    return nextRet != null && singletonThen(i) && emptyElse(i) && rewriteIfToRetStmnt(t, r, i, nextRet);
+    final ReturnStatement nextRet = nextStatement(ns, ns.indexOf(i));
+    return nextRet != null && singletonThenPart(i) && emptyElsePart(i) && rewriteIfToRetStmnt(t, r, i, nextRet);
   }
-  private static boolean emptyElse(final IfStatement i) {
-    return statementsCount(i.getElseStatement()) == 0;
+  private static boolean emptyElsePart(final IfStatement i) {
+    return isEmpty(i.getElseStatement());
   }
-  private static boolean singletonThen(final IfStatement i) {
-    return statementsCount(i.getThenStatement()) == 1;
+  private static boolean isEmpty(final Statement s) {
+    return statementsCount(s) == 0;
+  }
+  private static boolean singletonThenPart(final IfStatement i) {
+    return isSingleton(i.getThenStatement());
+  }
+  private static boolean isSingleton(final Statement s) {
+    return statementsCount(s) == 1;
   }
   private static ReturnStatement nextStatement(final List<ASTNode> ns, final int n) {
     return n + 1 >= ns.size() ? null : asReturn(ns.get(n + 1));
@@ -239,7 +245,7 @@ public class Ternarize extends Spartanization {
     return $;
   }
   private static boolean isExpStmntOrRet(final ASTNode n) {
-    return n != null && (Is.expressionStatement(n) || Is.retern(n));
+    return Is.expressionStatement(n) || Is.retern(n);
   }
   private static boolean handleCaseDiffNodesAreBlocks(final TwoNodes diffNodes) {
     if (statementsCount(diffNodes.then) != 1 || statementsCount(diffNodes.elze) != 1)
