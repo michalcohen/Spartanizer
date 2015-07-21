@@ -37,12 +37,38 @@ public enum TESTUtils {
         $.add(t);
     return $;
   }
+  /**
+   * Convert a given {@link String} into an {@link InfixExpression}, or fail the
+   * current test, if such a conversion is not possible
+   *
+   * @param expression
+   *          a {@link String} that represents a Java expression
+   * @return an {@link InfixExpression} data structure representing the
+   *         parameter.
+   */
   public static InfixExpression i(final String expression) {
     return (InfixExpression) e(expression);
   }
+  /**
+   * Convert a given {@link String} into an {@link PrefixExpression}, or fail
+   * the current test, if such a conversion is not possible
+   *
+   * @param expression
+   *          a {@link String} that represents a Java expression
+   * @return an {@link PrefixExpression} data structure representing the
+   *         parameter.
+   */
   public static PrefixExpression p(final String expression) {
     return (PrefixExpression) e(expression);
   }
+  /**
+   * Convert a given {@link String} into an {@link Expression}, or fail the
+   * current test, if such a conversion is not possible
+   *
+   * @param expression
+   *          a {@link String} that represents a Java expression
+   * @return an {@link Expression} data structure representing the parameter.
+   */
   public static Expression e(final String expression) {
     return (Expression) As.EXPRESSION.ast(expression);
   }

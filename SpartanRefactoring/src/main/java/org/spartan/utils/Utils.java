@@ -2,13 +2,15 @@ package org.spartan.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
+ * An empty <code><b>enum</b></code> with a variety of <code>public
+ * static</code> utility functions of reasonably wide use.
+ *
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>
  * @since 2013/07/01
  *
@@ -40,8 +42,15 @@ public enum Utils {
   @SafeVarargs public static <T> T[] asArray(final T... ts) {
     return ts;
   }
-  @SafeVarargs public static <T> Collection<T> asList(final T... ts) {
-    final Collection<T> $ = new ArrayList<>(ts.length);
+  /**
+   * Convert multiple arguments into a {@link List}
+   *
+   * @param ts
+   *          a sequence of arguments of the same type
+   * @return a newly created {@link List} representation of the parameter
+   */
+  @SafeVarargs public static <T> List<T> asList(final T... ts) {
+    final List<T> $ = new ArrayList<>(ts.length);
     for (final T t : ts)
       $.add(t);
     return $;
@@ -146,21 +155,52 @@ public enum Utils {
   public static Object[] objects(final Object... os) {
     return os;
   }
+  /**
+   * Remove any duplicates that may be present in a given {@link List}
+   *
+   * @param ts
+   *          JD
+   */
   public static <T> void removeDuplicates(final List<T> ts) {
     final Set<T> noDuplicates = new LinkedHashSet<>(ts);
     ts.clear();
     ts.addAll(noDuplicates);
   }
+  /**
+   * Remove all occurrences of a given prefix from a given {@link String}.
+   *
+   * @param s
+   *          JD
+   * @param prefix
+   *          what should be removed
+   * @return the parameter after all such occurrences are removed.
+   */
   public static String removePrefix(final String s, final String prefix) {
     for (String $ = s;; $ = $.substring(prefix.length()))
       if (!$.startsWith(prefix))
         return $;
   }
-  public static String removeSuffix(final String s, final String postfix) {
-    for (String $ = s;; $ = $.substring(0, $.length() - postfix.length()))
-      if (!$.endsWith(postfix))
+  /**
+   * Remove all occurrences of a given suffix from a given string.
+   *
+   * @param s
+   *          JD
+   * @param suffix
+   *          what should be removed
+   * @return the parameter after all such occurrences are removed.
+   */
+  public static String removeSuffix(final String s, final String suffix) {
+    for (String $ = s;; $ = $.substring(0, $.length() - suffix.length()))
+      if (!$.endsWith(suffix))
         return $;
   }
+  /**
+   * Remove all occurrences of white space character in a given {@link String}
+   *
+   * @param s
+   *          JD
+   * @return the parameter after all such occurrences are removed.
+   */
   public static String removeWhites(final String s) {
     return s.replaceAll("\\s+", "");
   }
