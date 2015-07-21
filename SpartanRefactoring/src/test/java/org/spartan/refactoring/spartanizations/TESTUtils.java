@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -48,6 +49,17 @@ public enum TESTUtils {
    */
   public static InfixExpression i(final String expression) {
     return (InfixExpression) e(expression);
+  }
+  /**
+   * Convert a given {@link String} into an {@link statement}, or fail the
+   * current test, if such a conversion is not possible
+   *
+   * @param statement
+   *          a {@link String} that represents a Java statement
+   * @return an {@link Statement} data structure representing the parameter.
+   */
+  public static Statement s(final String statement) {
+    return (Statement) As.STATEMENTS.ast(statement);
   }
   /**
    * Convert a given {@link String} into an {@link PrefixExpression}, or fail

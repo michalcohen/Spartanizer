@@ -1,6 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
@@ -76,6 +77,17 @@ public enum Is {
         : expressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
   /**
+   * Determine whether a node is an {@link EmptyStatement}
+   *
+   * @param n
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an
+   *         {@link EmptyStatement}
+   */
+  public static boolean emptyStatement(final ASTNode n) {
+    return is(n, EMPTY_STATEMENT);
+  }
+  /**
    * Determine whether a node is a {@link Block}
    *
    * @param n
@@ -95,7 +107,7 @@ public enum Is {
    *         literal
    */
   public static boolean booleanLiteral(final ASTNode n) {
-    return n != null && ASTNode.BOOLEAN_LITERAL == n.getNodeType();
+    return is(n, BOOLEAN_LITERAL);
   }
   /**
    * @param e

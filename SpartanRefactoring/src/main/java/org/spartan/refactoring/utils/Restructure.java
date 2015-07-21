@@ -3,15 +3,16 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.Statement;
 
 /**
  * An empty <code><b>enum</b></code> with a variety of <code>public
@@ -23,6 +24,34 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
  */
 public enum Restructure {
   ;
+  /**
+   * Compute the list of statements within a statement.
+   *
+   * @param s
+   *          JD
+   * @return a flattened list of all {@link Statement}s found within the
+   *         parameter.
+   */
+  public static List<Statement> flatten(final Statement s) {
+    final ArrayList<Statement> $ = new ArrayList<>();
+    return flattenInto(s, $);
+  }
+  private static List<Statement> flattenInto(final Statement s, final List<Statement> $) {
+    if (Is.block(s))
+      return flattenInto(asBlock(s), $);
+    if (Is.emptyStatement(s))
+      return $;
+    return add(s, $);
+  }
+  private static List<Statement> add(final Statement s, final List<Statement> $) {
+    $.add(s);
+    return $;
+  }
+  private static List<Statement> flattenInto(final Block b, final List<Statement> $) {
+    for (final Object o : b.statements())
+      flattenInto((Statement) o, $);
+    return $;
+  }
   /**
    * Flatten the list of arguments to an {@link InfixExpression}, e.g., convert
    * an expression such as <code>(a + b) + c</code> whose inner form is roughly

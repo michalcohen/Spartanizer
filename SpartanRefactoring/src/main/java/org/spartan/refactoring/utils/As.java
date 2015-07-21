@@ -61,7 +61,8 @@ public enum As {
       return (Expression) Make.EXPRESSION.parser(f).createAST(null);
     }
   },
-  STATEMENTS(ASTParser.K_STATEMENTS), CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS);
+  STATEMENTS(ASTParser.K_STATEMENTS), //
+  CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS);
   final int kind;
 
   private As(final int kind) {
