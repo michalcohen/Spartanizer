@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
 
@@ -171,8 +172,8 @@ public enum ANDOR_TRUE_Test {
       super(WRING);
     }
     @Override @Test public void flattenIsIdempotentt() {
-      final InfixExpression flatten = Wrings.flatten(asInfixExpression());
-      assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+      final InfixExpression flatten = flatten(asInfixExpression());
+      assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();

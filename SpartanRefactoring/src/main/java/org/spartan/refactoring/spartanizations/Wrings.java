@@ -15,32 +15,19 @@ import static org.spartan.refactoring.utils.Funcs.getCore;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
+import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import static org.spartan.utils.Utils.in;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.CharacterLiteral;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.NullLiteral;
-import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.QualifiedName;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.SuperFieldAccess;
-import org.eclipse.jdt.core.dom.SuperMethodInvocation;
-import org.eclipse.jdt.core.dom.ThisExpression;
-import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Have;
@@ -327,37 +314,6 @@ public enum Wrings {
       }
     return $;
   }
-  public static InfixExpression flatten(final InfixExpression $) {
-    return refitOperands(duplicate($), flattenInto($.getOperator(), All.operands($), new ArrayList<Expression>()));
-  }
-  private static List<Expression> flattenInto(final Operator o, final List<Expression> es, final List<Expression> $) {
-    for (final Expression e : es)
-      flattenInto(o, e, $);
-    return $;
-  }
-  private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
-    final Expression core = getCore(e);
-    if (Is.infix(core) && asInfixExpression(core).getOperator() == o)
-      return flattenInto(o, All.operands(asInfixExpression(core)), $);
-    return add(isSimple(core) ? core : e, $);
-  }
-  private static List<Expression> add(final Expression e, final List<Expression> $) {
-    $.add(e);
-    return $;
-  }
-  static InfixExpression refitOperands(final InfixExpression e, final List<Expression> operands) {
-    assert operands.size() >= 2;
-    final InfixExpression $ = e.getAST().newInfixExpression();
-    $.setOperator(e.getOperator());
-    $.setLeftOperand(duplicate(operands.get(0)));
-    $.setRightOperand(duplicate(operands.get(1)));
-    operands.remove(0);
-    operands.remove(0);
-    if (!operands.isEmpty())
-      for (final Expression operand : operands)
-        $.extendedOperands().add(duplicate(operand));
-    return $;
-  }
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(e, getCore(e.getOperand()));
   }
@@ -419,34 +375,11 @@ public enum Wrings {
     return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
   }
   static Expression parenthesize(final Expression e) {
-    if (isSimple(e))
+    if (Is.simple(e))
       return duplicate(e);
     final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
     $.setExpression(duplicate(getCore(e)));
     return $;
-  }
-  static boolean isSimple(final Expression e) {
-    return isSimple(e.getClass());
-  }
-  static boolean isSimple(final Class<? extends Expression> c) {
-    return in(c, //
-        BooleanLiteral.class, //
-        CharacterLiteral.class, //
-        NullLiteral.class, //
-        NumberLiteral.class, //
-        StringLiteral.class, //
-        TypeLiteral.class, //
-        Name.class, //
-        QualifiedName.class, //
-        SimpleName.class, //
-        ParenthesizedExpression.class, //
-        SuperMethodInvocation.class, //
-        MethodInvocation.class, //
-        ClassInstanceCreation.class, //
-        SuperFieldAccess.class, //
-        FieldAccess.class, //
-        ThisExpression.class, //
-        null);
   }
   static PrefixExpression not(final Expression e) {
     final PrefixExpression $ = e.getAST().newPrefixExpression();

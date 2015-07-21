@@ -9,6 +9,7 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
 import java.util.List;
@@ -88,11 +89,11 @@ public enum MULTIPLICATION_SORTER_Test {
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.tryToSort(All.operands(Wrings.flatten(e)), COMPARATOR));
+      assertFalse(Wrings.tryToSort(All.operands(flatten(e)), COMPARATOR));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      final List<Expression> operands = All.operands(flatten(e));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }
@@ -132,8 +133,8 @@ public enum MULTIPLICATION_SORTER_Test {
       super(WRING);
     }
     @Override @Test public void flattenIsIdempotentt() {
-      final InfixExpression flatten = Wrings.flatten(asInfixExpression());
-      assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+      final InfixExpression flatten = flatten(asInfixExpression());
+      assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();
@@ -145,16 +146,16 @@ public enum MULTIPLICATION_SORTER_Test {
     }
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      final List<Expression> operands = All.operands(flatten(e));
       final boolean tryToSort = Wrings.tryToSort(operands, COMPARATOR);
       assertThat(//
-          "Before: " + All.operands(Wrings.flatten(e)) + "\n" + //
+          "Before: " + All.operands(flatten(e)) + "\n" + //
               "After: " + operands + "\n", //
           tryToSort, is(true));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      final List<Expression> operands = All.operands(flatten(e));
       assertTrue(Wrings.tryToSort(operands, COMPARATOR));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }

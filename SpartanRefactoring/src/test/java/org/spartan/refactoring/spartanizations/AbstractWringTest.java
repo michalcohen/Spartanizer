@@ -20,6 +20,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.List;
 
@@ -273,8 +274,8 @@ public abstract class AbstractWringTest {
         assertNotNull(e);
       }
       @Test public void flattenIsIdempotentt() {
-        final InfixExpression flatten = Wrings.flatten(asInfixExpression());
-        assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+        final InfixExpression flatten = flatten(asInfixExpression());
+        assertThat(flatten(flatten).toString(), is(flatten.toString()));
       }
     }
   }
@@ -352,8 +353,8 @@ public abstract class AbstractWringTest {
         assertNotNull(e);
       }
       @Test public void flattenIsIdempotentt() {
-        final InfixExpression flatten = Wrings.flatten(asInfixExpression());
-        assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+        final InfixExpression flatten = flatten(asInfixExpression());
+        assertThat(flatten(flatten).toString(), is(flatten.toString()));
       }
     }
   }

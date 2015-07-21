@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
 import java.util.List;
@@ -72,13 +73,13 @@ public enum COMPARISON_WITH_BOOLEAN_Test {
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(Wrings.flatten(e));
+      final List<Expression> operands = All.operands(flatten(e));
       Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
       assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
     }
     @Override @Test public void flattenIsIdempotentt() {
-      final InfixExpression flatten = Wrings.flatten(asInfixExpression());
-      assertThat(Wrings.flatten(flatten).toString(), is(flatten.toString()));
+      final InfixExpression flatten = flatten(asInfixExpression());
+      assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
       final InfixExpression e = asInfixExpression();

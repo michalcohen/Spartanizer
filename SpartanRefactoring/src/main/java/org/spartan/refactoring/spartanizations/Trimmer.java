@@ -15,8 +15,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.utils.Range;
 
 /**
- * Applies the suite of {@link Wring} objects found in <ode><b>enum</b></code>
- * {@link Wrings} to a tree.
+ * Applies the the first applicable {@link Wring} object found in
+ * <ode><b>enum</b></code> {@link Wrings} to a tree.
  *
  * @author Yossi Gil
  * @since 2015/07/10
@@ -24,7 +24,7 @@ import org.spartan.utils.Range;
 public class Trimmer extends Spartanization {
   /** Instantiates this class */
   public Trimmer() {
-    super("Expression simplifier", "Make the shortest operand first in a binary commutative or semi-commutative operator");
+    super("Trimmer", "Simiplifies expression once");
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {

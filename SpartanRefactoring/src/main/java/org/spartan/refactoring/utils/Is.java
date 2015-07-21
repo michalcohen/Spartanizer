@@ -28,15 +28,30 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NullLiteral;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperFieldAccess;
+import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.ThisExpression;
+import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 /**
@@ -50,6 +65,29 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
  */
 public enum Is {
   ;
+  public static boolean simple(final Expression e) {
+    return isSimple(e.getClass());
+  }
+  static boolean isSimple(final Class<? extends Expression> c) {
+    return in(c, //
+        BooleanLiteral.class, //
+        CharacterLiteral.class, //
+        NullLiteral.class, //
+        NumberLiteral.class, //
+        StringLiteral.class, //
+        TypeLiteral.class, //
+        Name.class, //
+        QualifiedName.class, //
+        SimpleName.class, //
+        ParenthesizedExpression.class, //
+        SuperMethodInvocation.class, //
+        MethodInvocation.class, //
+        ClassInstanceCreation.class, //
+        SuperFieldAccess.class, //
+        FieldAccess.class, //
+        ThisExpression.class, //
+        null);
+  }
   /**
    * @param n
    *          the statement or block to check if it is an assignment
