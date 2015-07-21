@@ -1,25 +1,17 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
-import static org.spartan.refactoring.utils.Funcs.duplicateRight;
-import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.remake;
 import static org.spartan.utils.Utils.removeDuplicates;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
@@ -96,33 +88,6 @@ public class Trimmer extends Spartanization {
         break;
       }
     removeDuplicates(rs);
-    return $;
-  }
-  static boolean sortInfix(final InfixExpression e, final AST t) {
-    boolean $ = false;
-    if (e == null || !Is.flipable(e.getOperator()) || !e.hasExtendedOperands())
-      return $;
-    final List<Expression> eo = e.extendedOperands();
-    // The algorithm is described as line-by-line example
-    // Say we have infix expression with (Left operand) (Right operand) and
-    // list of extended operands | e1, e2 ,e3...
-    // Infix: (Left = a) (Right = e) | d, b, c, f
-    eo.add(0, (Expression) ASTNode.copySubtree(t, e.getLeftOperand()));
-    eo.add(1, (Expression) ASTNode.copySubtree(t, e.getRightOperand()));
-    final Operator o = e.getOperator();
-    // | a, e, d, b, c, f - is the list with the operands
-    // $ = $ | sortExpressionList(eo, t, o);
-    // | a, b, c, d, e, f - is the list after sorting
-    e.setRightOperand(duplicate(eo.get(1)));
-    e.setLeftOperand(duplicate(eo.get(0)));
-    // (Left = a) (Right = b) | a, b, c, d, e, f - retrieve the operands
-    eo.remove(1);
-    eo.remove(0);
-    // (Left = a) (Right = b) | c, d, e, f
-    // if (longerFirst(e) && !inInfixExceptions(e)) {
-    remake(e, duplicateLeft(e), flip(o), duplicateRight(e));
-    $ = true;
-    // }
     return $;
   }
 }
