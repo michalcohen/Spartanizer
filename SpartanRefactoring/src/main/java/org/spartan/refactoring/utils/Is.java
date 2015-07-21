@@ -65,29 +65,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
  */
 public enum Is {
   ;
-  public static boolean simple(final Expression e) {
-    return isSimple(e.getClass());
-  }
-  static boolean isSimple(final Class<? extends Expression> c) {
-    return in(c, //
-        BooleanLiteral.class, //
-        CharacterLiteral.class, //
-        NullLiteral.class, //
-        NumberLiteral.class, //
-        StringLiteral.class, //
-        TypeLiteral.class, //
-        Name.class, //
-        QualifiedName.class, //
-        SimpleName.class, //
-        ParenthesizedExpression.class, //
-        SuperMethodInvocation.class, //
-        MethodInvocation.class, //
-        ClassInstanceCreation.class, //
-        SuperFieldAccess.class, //
-        FieldAccess.class, //
-        ThisExpression.class, //
-        null);
-  }
   /**
    * @param n
    *          the statement or block to check if it is an assignment
@@ -215,20 +192,6 @@ public enum Is {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
   /**
-   * Determine whether an item is the last one in a list
-   *
-   * @param t
-   *          a list item
-   * @param ts
-   *          a list
-   *
-   * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
-   *         and it is the last one in it.
-   */
-  public static <T> boolean last(final T t, final List<T> ts) {
-    return ts.indexOf(t) == ts.size() - 1;
-  }
-  /**
    * @param n
    *          node to check
    * @return true if node is an Expression Statement of type Post or Pre
@@ -256,16 +219,6 @@ public enum Is {
     return false;
   }
   /**
-   * Determined whether a node is a return statement
-   *
-   * @param n
-   *          JD
-   * @return true if the given node is a return statement or false otherwise
-   */
-  public static boolean retern(final ASTNode n) {
-    return is(n, ASTNode.RETURN_STATEMENT);
-  }
-  /**
    * @param n
    *          JD
    * @return true if the given node is a variable declaration statement or false
@@ -273,6 +226,20 @@ public enum Is {
    */
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
+  }
+  /**
+   * Determine whether an item is the last one in a list
+   *
+   * @param t
+   *          a list item
+   * @param ts
+   *          a list
+   *
+   * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
+   *         and it is the last one in it.
+   */
+  public static <T> boolean last(final T t, final List<T> ts) {
+    return ts.indexOf(t) == ts.size() - 1;
   }
   /**
    * @param n
@@ -376,6 +343,45 @@ public enum Is {
    */
   public static boolean prefix(final ASTNode n) {
     return is(n, ASTNode.PREFIX_EXPRESSION);
+  }
+  /**
+   * Determined whether a node is a return statement
+   *
+   * @param n
+   *          JD
+   * @return true if the given node is a return statement or false otherwise
+   */
+  public static boolean retern(final ASTNode n) {
+    return is(n, ASTNode.RETURN_STATEMENT);
+  }
+  /**
+   * Determine whether an {@link Expression} is so basic that it never needs to
+   * be placed in parenthesis.
+   *
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is so basic that
+   *         it never needs to be placed in parenthesis.
+   */
+  public static boolean simple(final Expression e) {
+    return in(e.getClass(), //
+    BooleanLiteral.class, //
+    CharacterLiteral.class, //
+    NullLiteral.class, //
+    NumberLiteral.class, //
+    StringLiteral.class, //
+    TypeLiteral.class, //
+    Name.class, //
+    QualifiedName.class, //
+    SimpleName.class, //
+    ParenthesizedExpression.class, //
+    SuperMethodInvocation.class, //
+    MethodInvocation.class, //
+    ClassInstanceCreation.class, //
+    SuperFieldAccess.class, //
+    FieldAccess.class, //
+    ThisExpression.class, //
+    null);
   }
   /**
    * Determine whether a node is a "specific", i.e., <code><b>null</b></code> or
