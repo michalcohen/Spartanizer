@@ -1,8 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.utils.Restructure.*;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
@@ -20,7 +18,6 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
@@ -68,7 +65,7 @@ public class SimplifyLogicalNegation extends Spartanization {
         return replace(e, //
             parenthesize( //
                 addExtendedOperands(inner, //
-                    makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right)))));
+                    makeInfixExpression(not(left), conjugate(inner), not(right)))));
       }
       InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
         if (from.hasExtendedOperands())
@@ -116,10 +113,6 @@ public class SimplifyLogicalNegation extends Spartanization {
   }
   static Expression getCoreLeft(final InfixExpression e) {
     return getCore(e.getLeftOperand());
-  }
-  static Operator conjugate(final Operator o) {
-    assert Is.deMorgan(o);
-    return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {

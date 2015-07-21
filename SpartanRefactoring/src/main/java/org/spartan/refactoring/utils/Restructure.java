@@ -1,6 +1,8 @@
 package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import java.util.ArrayList;
@@ -99,5 +101,37 @@ public enum Restructure {
     final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
     $.setExpression(e.getParent() == null ? e : duplicate(e));
     return $;
+  }
+  /**
+   * Compute the "de Morgan" conjugate of an operator.
+   *
+   * @param o
+   *          must be either {@link Operator#CONDITIONAL_AND} or
+   *          {@link Operator#CONDITIONAL_OR}
+   * @return {@link Operator#CONDITIONAL_AND} if the parameter is
+   *         {@link Operator#CONDITIONAL_OR}, or {@link Operator#CONDITIONAL_OR}
+   *         if the parameter is {@link Operator#CONDITIONAL_AND}
+   * @see Restructure#conjugate(InfixExpression)
+   */
+  public static Operator conjugate(final Operator o) {
+    assert Is.deMorgan(o);
+    return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
+  }
+  /**
+   * Compute the "de Morgan" conjugate of the operator present on an
+   * {@link InfixExpression}.
+   *
+   * @param e
+   *          an expression whose operator is either
+   *          {@link Operator#CONDITIONAL_AND} or
+   *          {@link Operator#CONDITIONAL_OR}
+   * @return {@link Operator#CONDITIONAL_AND} if the operator present on the
+   *         parameter is {@link Operator#CONDITIONAL_OR}, or
+   *         {@link Operator#CONDITIONAL_OR} if this operator is
+   *         {@link Operator#CONDITIONAL_AND}
+   * @see Restructure#conjugate(Operator)
+   */
+  public static Operator conjugate(final InfixExpression e) {
+    return conjugate(e.getOperator());
   }
 }

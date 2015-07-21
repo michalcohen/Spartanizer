@@ -1,7 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
@@ -14,9 +12,7 @@ import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
-import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.utils.Restructure.getCore;
-import static org.spartan.refactoring.utils.Restructure.refitOperands;
+import static org.spartan.refactoring.utils.Restructure.*;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -351,7 +347,7 @@ public enum Wrings {
   static Expression deMorgan1(final InfixExpression inner, final Expression left, final Expression right) {
     return parenthesize( //
         addExtendedOperands(inner, //
-            makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
+            makeInfixExpression(not(left), conjugate(inner), not(right))));
   }
   static InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
     if (from.hasExtendedOperands())
@@ -399,10 +395,6 @@ public enum Wrings {
   }
   static Expression getCoreLeft(final InfixExpression e) {
     return getCore(e.getLeftOperand());
-  }
-  static Operator conjugate(final Operator o) {
-    assert Is.deMorgan(o);
-    return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
   }
   static boolean hasOpportunity(final PrefixExpression e) {
     return e == null ? false : hasOpportunity(getCore(e.getOperand()));
