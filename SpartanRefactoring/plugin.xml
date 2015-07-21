@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="org.spartan.refactoring.builder.Builder"
+         name="Spartanization Checker"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.spartan.refactoring.builder.Builder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="org.spartan.refactoring.builder.Nature"
+         name="Spartanization Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.spartan.refatoring.builder.Nature">
+         </run>
+      </runtime>
+      <builder
+            id="org.spartan.refactoring.builder.Builder">
+      </builder>
+   </extension>
+   
+<extension
+    id="org.spartan.refactoring.spartanizationSuggestion"
+    name="Spartanization Suggestion"
+    point="org.eclipse.core.resources.markers">
+  <super type="org.eclipse.core.resources.problemmarker" />
+  <super type="org.eclipse.core.resources.textmarker" />
+</extension>
+
+   <extension point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator 
+               markerType="org.spartan.refactoring.spartanizationSuggestion"
+         class="org.spartan.refactoring.builder.QuickFixer"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+     <type markerType="org.spartan.refactoring.spartanizationSuggestion" 
+       name="org.spartan.refactoring.spartanizationMarker" />
+   </extension>
+   <extension
+      point="org.eclipse.ui.editors.markerAnnotationSpecification">
+   <specification
+         annotationType="org.spartan.spartanizationMarker"
+         colorPreferenceKey="org.spartan.spartanizationMarker.color"
+         colorPreferenceValue="0,0,180"
+         contributesToHeader="false"
+         includeOnPreferencePage="true"
+         label="Spartanization Suggestion"
+         overviewRulerPreferenceKey="org.spartan.spartanizationMarker.overview"
+         overviewRulerPreferenceValue="true"
+         presentationLayer="0"
+         textPreferenceKey="org.spartan.spartanizationMarker.text"
+         textPreferenceValue="true"
+         textStylePreferenceValue="PROBLEM_UNDERLINE"
+         verticalRulerPreferenceKey="org.spartan.spartanizationMarker.ruler"
+         verticalRulerPreferenceValue="true">
+   </specification>
+</extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.spartan.commands.category"
+            name="Spartanization Category">
+      </category>
+      <command
+            categoryId="org.spartan.commands.category"
+            id="org.spartan.commands.ToggleCommand"
+            name="Toggle Automatic Spartanization Suggestion">
+      </command>
+      <category
+            id="org.spartan.refactoring.category"
+            name="Spartan Refactoring">
+      </category>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ChangeReturnToDollar"
+            name="Change return variable to $">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ConvertToTernary"
+            name="Convert conditional to ternary">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ShortestOperand"
+            name="Shortest operand first">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ExtractMethod"
+            name="Extract statements to new method">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ForwardDeclaraion"
+            name="Forward declaration">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.InlineSingleUse"
+            name="Inline single use">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.RedundantEquality"
+            name="Redandant equality">
+      </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ShortestBranchFirst"
+            name="Shortest branch first">
+      </command>
+   </extension>
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.spartan.refactoring.handlers.ToggleSpartanizationHandler"
+            commandId="org.spartan.commands.ToggleCommand">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.ChangeReturnToDollarHandler"
+            commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.TernarizeHandler"
+            commandId="org.spartan.refactoring.commands.ConvertToTernary">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.ShortestOperandHandler"
+            commandId="org.spartan.refactoring.commands.ShortestOperand">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.ExtractMethodHandler"
+            commandId="org.spartan.refactoring.commands.ExtractMethod">
+      </handler>
+      <handler
+            class="org.spartan.commandhandlers.ForwardDeclarationHandler"
+            commandId="org.spartan.refactoring.commands.ForwardDeclaraion">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.InlineSingleUseHandler"
+            commandId="org.spartan.refactoring.commands.InlineSingleUse">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.RedundantEqualityHandler"
+            commandId="org.spartan.refactoring.commands.RedundantEquality">
+      </handler>
+      <handler
+            class="org.spartan.commandhandlers.ShortestBranchFirstHandler"
+            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?before=navigate">
+         <menu
+               id="org.eclipse.jdt.ui.refactoring.menu"
+               label="Refactor">
+            <menu
+                  label="Spartanization">
+               <command
+                     commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
+                     id="org.spartan.menus.ChangeReturnToDollarCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ConvertToTernary"
+                     id="org.spartan.menus.ConvertToTernaryCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ShortestOperand"
+                     id="org.spartan.menus.ShortestOperandCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ExtractMethod"
+                     id="org.spartan.menus.ExtractMethodCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ForwardDeclaraion"
+                     id="org.spartan.menus.ForwardDeclarationCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.InlineSingleUse"
+                     id="org.spartan.menus.InlineSingleUseCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.RedundantEquality"
+                     id="org.spartan.menus.RedundantEqualityCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ShortestBranchFirst"
+                     id="org.spartan.menus.ShortestBranchFirstCommand"
+                     style="push">
+               </command>
+            </menu>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="org.eclipse.jdt.ui.refactoring.menu2"
+               label="Spartanization">
+            <command
+                  commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.ConvertToTernary"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.ShortestOperand"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.ExtractMethod"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.ForwardDeclaraion"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.InlineSingleUse"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.RedundantEquality"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.spartan.refactoring.commands.ShortestBranchFirst"
+                  style="push">
+            </command>
+            <visibleWhen>
+               <and>
+                  <with
+                        variable="activeEditorInput">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              forcePluginActivation="true"
+                              property="org.eclipse.core.resources.extension"
+                              value="java">
+                        </test>
+                     </adapt>
+                  </with>
+                  <not>
+                     <iterate
+                           ifEmpty="true"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                        </adapt>
+                     </iterate>
+                  </not>
+               </and>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.spartan.refactoring.preferences.SpartanizationPreferencePage"
+            id="org.spartan.refactoring.preferences.SpartanizationPreferencePage"
+            name="Spartanization"
+            category="org.eclipse.jdt.ui.preferences.CompliancePreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.spartan.refactoring.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.core.resources.markers">
+   </extension>
+   
+</plugin>
