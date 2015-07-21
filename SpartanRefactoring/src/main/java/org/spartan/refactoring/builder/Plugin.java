@@ -7,7 +7,6 @@ import org.osgi.framework.BundleContext;
 
 /**
  * @author Artium Nihamkin
- *
  * @since 2013/01/01
  */
 public class Plugin extends AbstractUIPlugin {
@@ -35,8 +34,7 @@ public class Plugin extends AbstractUIPlugin {
   /**
    * logs an error in the plugin
    *
-   * @param t
-   *          an error
+   * @param t an error
    */
   public static void log(final Throwable t) {
     getDefault().getLog().log(new Status(IStatus.ERROR, "il.ac.technion.cs.ssdl.spartan.refactoring", 0, t.getMessage(), t));

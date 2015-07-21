@@ -46,7 +46,6 @@ import org.spartan.utils.Range;
  *
  * @author Yossi Gil
  * @since 2014-07-10
- *
  */
 // @RunWith(PowerMockRunner.class) //
 // @PrepareForTest({ Expression.class, /* ASTNode.class */ }) //

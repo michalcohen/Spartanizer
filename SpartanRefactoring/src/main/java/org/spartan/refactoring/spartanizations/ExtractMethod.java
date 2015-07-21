@@ -33,6 +33,7 @@ public class ExtractMethod extends Spartanization {
   }
 
   CompilationUnit oldCu;
+
   @Override protected ASTVisitor collectOpportunities(final List<Range> opportunities) {
     // No opportunities for now, if it's 2016 and not added yet, blame TODO Ofir
     return new ASTVisitor() {

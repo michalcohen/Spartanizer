@@ -8,15 +8,12 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 /**
  * *An empty <code><b>enum</b></code> for fluent programming. The name should
  * say it all: The name, followed by a dot, followed by a method name, should
- * read like a sentence phrase.
- *
- * Specifically, this class determines precedence and associativity of Java
- * operators; data is drawn from
+ * read like a sentence phrase. Specifically, this class determines precedence
+ * and associativity of Java operators; data is drawn from
  * {@link "http://introcs.cs.princeton.edu/java/11precedence/"}
  *
  * @author Yossi Gil
  * @since 2015-07-14
- *
  */
 public enum Precedence {
   ;
@@ -27,16 +24,13 @@ public enum Precedence {
    *
    * @author Yossi Gil
    * @since 2015-07-14
-   *
    */
   public enum Is {
     ;
     /**
      * determine whether an integer falls within the legal range of precedences.
      *
-     * @param precedence
-     *          JD
-     *
+     * @param precedence JD
      * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
      *         precedence of Java.
      */
@@ -75,8 +69,7 @@ public enum Precedence {
    * Determine the precedence of an
    * {@link org.eclipse.jdt.core.dom.Assignment.Operator}
    *
-   * @param o
-   *          JD
+   * @param o JD
    * @return the precedence of the parameter
    */
   public static int of(final Assignment.Operator o) {
@@ -85,8 +78,7 @@ public enum Precedence {
   /**
    * Determine the precedence of the operator present on an {@link Expression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the precedence of the parameter
    */
   public static int of(final Expression e) {
@@ -103,8 +95,7 @@ public enum Precedence {
    * Determine the precedence of an
    * {@link org.eclipse.jdt.core.dom.InfixExpression.Operator}
    *
-   * @param o
-   *          JD
+   * @param o JD
    * @return the precedence of the parameter
    */
   public static int of(final InfixExpression.Operator o) {
@@ -116,10 +107,8 @@ public enum Precedence {
   /**
    * Determine the precedence of two expressions is the same.
    *
-   * @param e1
-   *          JD
-   * @param e2
-   *          JD
+   * @param e1 JD
+   * @param e2 JD
    * @return the precedence of the parameter
    */
   public static boolean same(final Expression e1, final Expression e2) {
@@ -131,10 +120,8 @@ public enum Precedence {
    * Determine whether an expression has the same precedence as that of a given
    * operator.
    *
-   * @param o
-   *          JD
-   * @param e
-   *          JD
+   * @param o JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the precedence of the two
    *         parameters is the same.
    */

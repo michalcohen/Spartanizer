@@ -46,7 +46,6 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  *
  * @author Boris van Sosin <boris.van.sosin @ gmail.com>
  * @author Yossi Gil <yossi.gil @ gmail.com> (major refactoring 2013/07/10)
- *
  * @since 2013/07/01
  */
 public enum Occurrences {
@@ -95,8 +94,7 @@ public enum Occurrences {
   /**
    * Creates a function object for searching for a given value.
    *
-   * @param e
-   *          what to search for
+   * @param e what to search for
    * @return a function object which can be used for searching for the parameter
    *         in a given location
    */
@@ -113,11 +111,12 @@ public enum Occurrences {
   /**
    * An auxiliary class which makes it possible to use an easy invocation
    * sequence for the various offerings of the containing class. This class
-   * should never be instantiated or inherited by clients. <p> This class
-   * reifies the function object concept; an instance of it records the value we
-   * search for; it represents the function that, given a location for the
-   * search, will carry out the search for the captured value in its location
-   * parameter.
+   * should never be instantiated or inherited by clients.
+   * <p>
+   * This class reifies the function object concept; an instance of it records
+   * the value we search for; it represents the function that, given a location
+   * for the search, will carry out the search for the captured value in its
+   * location parameter.
    *
    * @see Occurrences#of(Expression)
    * @author Yossi Gil <yossi.gil @ gmail.com>
@@ -127,8 +126,7 @@ public enum Occurrences {
     /**
      * the method that will carry out the search
      *
-     * @param n
-     *          a location in which the search is to be carried out
+     * @param n a location in which the search is to be carried out
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode n);
@@ -137,11 +135,8 @@ public enum Occurrences {
   /**
    * Lists the required occurrences
    *
-   * @param what
-   *          the expression to search for
-   * @param where
-   *          the n in which to counted
-   *
+   * @param what the expression to search for
+   * @param where the n in which to counted
    * @return the list of uses
    */
   final List<Expression> collect(final Expression what, final ASTNode where) {

@@ -9,7 +9,6 @@ import org.hamcrest.Matcher;
  *
  * @author Yossi Gil
  * @since 2015-07-18
- *
  */
 public enum OrderingComparison {
   ;
@@ -18,8 +17,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>boolean</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -32,8 +30,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>byte</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -46,8 +43,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>char</b></code>.
    *
-   * @param c
-   *          JD
+   * @param c JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -60,8 +56,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>double</b></code>.
    *
-   * @param d
-   *          JD
+   * @param d JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -74,8 +69,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>float</b></code>.
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -88,8 +82,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>int</b></code>.
    *
-   * @param i
-   *          JD
+   * @param i JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -102,8 +95,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>long</b></code>.
    *
-   * @param l
-   *          JD
+   * @param l JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -116,8 +108,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for
    * primitive type <code><b>short</b></code>.
    *
-   * @param s
-   *          JD
+   * @param s JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} to
    *         the parameter
@@ -130,8 +121,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>boolean</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -144,8 +134,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>byte</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -158,8 +147,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>char</b></code> .
    *
-   * @param c
-   *          JD
+   * @param c JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -172,8 +160,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>double</b></code> .
    *
-   * @param d
-   *          JD
+   * @param d JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -186,8 +173,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>float</b></code> .
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -200,8 +186,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>int</b></code>.
    *
-   * @param i
-   *          JD
+   * @param i JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -214,8 +199,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>long</b></code> .
    *
-   * @param l
-   *          JD
+   * @param l JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -228,8 +212,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThan} for primitive
    * type <code><b>short</b></code> .
    *
-   * @param s
-   *          JD
+   * @param s JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThan} to the
    *         parameter
@@ -242,8 +225,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo} for
    * primitive type <code><b>boolean</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -256,8 +238,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo} for
    * primitive type <code><b>byte</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -270,8 +251,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    * for primitive type <code><b>char</b></code> .
    *
-   * @param c
-   *          JD
+   * @param c JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -284,8 +264,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    * for primitive type <code><b>double</b></code> .
    *
-   * @param d
-   *          JD
+   * @param d JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -298,8 +277,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    * for primitive type <code><b>float</b></code> .
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -312,8 +290,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo} for
    * primitive type <code><b>int</b></code>.
    *
-   * @param i
-   *          JD
+   * @param i JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -326,8 +303,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    * for primitive type <code><b>long</b></code> .
    *
-   * @param l
-   *          JD
+   * @param l JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -340,8 +316,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    * for primitive type <code><b>short</b></code> .
    *
-   * @param s
-   *          JD
+   * @param s JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#greaterThanOrEqualTo}
    *         to the parameter
@@ -354,8 +329,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThan} for primitive type
    * <code><b>boolean</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -368,8 +342,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThan} for primitive type
    * <code><b>byte</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -382,8 +355,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#lessThan} for
    * primitive type <code><b>char</b></code>.
    *
-   * @param c
-   *          JD
+   * @param c JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -396,8 +368,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#lessThan} for
    * primitive type <code><b>double</b></code> .
    *
-   * @param d
-   *          JD
+   * @param d JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -410,8 +381,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#lessThan} for
    * primitive type <code><b>float</b></code>.
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -424,8 +394,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThan} for primitive type
    * <code><b>int</b></code>.
    *
-   * @param i
-   *          JD
+   * @param i JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -438,8 +407,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#lessThan} for
    * primitive type <code><b>long</b></code>.
    *
-   * @param l
-   *          JD
+   * @param l JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -452,8 +420,7 @@ public enum OrderingComparison {
    * matcher {@link org.hamcrest.number.OrderingComparison#lessThan} for
    * primitive type <code><b>short</b></code>.
    *
-   * @param s
-   *          JD
+   * @param s JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThan} to the
    *         parameter
@@ -466,8 +433,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>boolean</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -480,8 +446,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>byte</b></code>.
    *
-   * @param b
-   *          JD
+   * @param b JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -494,8 +459,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>char</b></code>.
    *
-   * @param c
-   *          JD
+   * @param c JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -508,8 +472,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>double</b></code>.
    *
-   * @param d
-   *          JD
+   * @param d JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -522,8 +485,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>float</b></code>.
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -536,8 +498,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>int</b></code>.
    *
-   * @param i
-   *          JD
+   * @param i JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -550,8 +511,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>long</b></code>.
    *
-   * @param l
-   *          JD
+   * @param l JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter
@@ -564,8 +524,7 @@ public enum OrderingComparison {
    * {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} for
    * primitive type <code><b>short</b></code>.
    *
-   * @param s
-   *          JD
+   * @param s JD
    * @return the result of applying
    *         {@link org.hamcrest.number.OrderingComparison#lessThanOrEqualTo} to
    *         the parameter

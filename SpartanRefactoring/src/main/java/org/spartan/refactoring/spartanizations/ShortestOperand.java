@@ -120,10 +120,8 @@ public class ShortestOperand extends Spartanization {
    * Transpose infix expressions recursively. Makes the shortest operand first
    * on every subtree of the node.
    *
-   * @param t
-   *          The AST - for copySubTree.
-   * @param e
-   *          The node.
+   * @param t The AST - for copySubTree.
+   * @param e The node.
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public InfixExpression transpose(final AST t, final InfixExpression e) {
@@ -175,8 +173,7 @@ public class ShortestOperand extends Spartanization {
   /**
    * Determine if the ranges are overlapping in a part of their range
    *
-   * @param a
-   *          b Ranges to merge
+   * @param a b Ranges to merge
    * @return true - if such an overlap exists
    * @see ShortestOperandTest#merge
    */
@@ -184,8 +181,7 @@ public class ShortestOperand extends Spartanization {
     return b.to >= a.from && a.to >= b.from || includeEachOther(a, b);
   }
   /**
-   * @param a
-   *          b Ranges to merge
+   * @param a b Ranges to merge
    * @return A new merged range.
    * @see areOverlapped
    */
@@ -196,10 +192,8 @@ public class ShortestOperand extends Spartanization {
    * Tries to union the given range with one of the elements inside the given
    * list.
    *
-   * @param rs
-   *          The list of ranges to union with
-   * @param rNew
-   *          The new range to union
+   * @param rs The list of ranges to union with
+   * @param rNew The new range to union
    * @return True - if the list updated and the new range consumed False - the
    *         list remained intact
    * @see areOverlapped

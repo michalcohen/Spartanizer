@@ -32,10 +32,8 @@ public class Range {
   /**
    * Instantiates from beginning and end locations
    *
-   * @param from
-   *          JD
-   * @param to
-   *          JD
+   * @param from JD
+   * @param to JD
    */
   public Range(final int from, final int to) {
     this.from = from;
@@ -44,15 +42,13 @@ public class Range {
   /**
    * Instantiates from a single ASTNode
    *
-   * @param n
-   *          arbitrary
+   * @param n arbitrary
    */
   public Range(final ASTNode n) {
     this(n.getStartPosition(), n.getStartPosition() + n.getLength());
   }
   /**
-   * @param r
-   *          arbitrary
+   * @param r arbitrary
    * @return <code><b>true</b></code> <i>iff</i> <code><b>this</b></code> is
    *         included in the parameter.
    */
@@ -62,8 +58,7 @@ public class Range {
   /**
    * Find an including range
    *
-   * @param rs
-   *          some arbitrary {@link Range} objects
+   * @param rs some arbitrary {@link Range} objects
    * @return the first {@link Range} object among the parameters that contains
    *         <code><b>true</b></code>, or <code><b>true</b></code> <i>iff</i>
    *         <code><b>null</b></code> if not such object can be vound.
@@ -77,8 +72,7 @@ public class Range {
   /**
    * Prune all ranges in a given list that include this object.
    *
-   * @param rs
-   *          JD
+   * @param rs JD
    */
   public void pruneIncluders(final List<Range> rs) {
     for (;;) {
@@ -91,8 +85,7 @@ public class Range {
   /**
    * Determine whether overlaps in any part another range
    *
-   * @param r
-   *          arbitrary
+   * @param r arbitrary
    * @return <code><b>true</b></code> <i>iff</i> <code><b>this</b></code>
    *         overlaps the parameter.
    */
@@ -102,10 +95,8 @@ public class Range {
   /**
    * Instantiates from beginning and end ASTNodes
    *
-   * @param from
-   *          the beginning ASTNode (inclusive)
-   * @param to
-   *          the end ASTNode (inclusive)
+   * @param from the beginning ASTNode (inclusive)
+   * @param to the end ASTNode (inclusive)
    */
   public Range(final ASTNode from, final ASTNode to) {
     this(from.getStartPosition(), to.getStartPosition() + to.getLength());
@@ -127,8 +118,7 @@ public class Range {
   /**
    * Merge with another record
    *
-   * @param r
-   *          JD
+   * @param r JD
    * @return A newly created range representing the merge.
    */
   public Range merge(final Range r) {

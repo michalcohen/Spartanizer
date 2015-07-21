@@ -70,10 +70,8 @@ public class Trimmer extends Spartanization {
    * Tries to union the given range with one of the elements inside the given
    * list.
    *
-   * @param rs
-   *          The list of ranges to union with
-   * @param rNew
-   *          The new range to union
+   * @param rs The list of ranges to union with
+   * @param rNew The new range to union
    * @return True - if the list updated and the new range consumed False - the
    *         list remained intact
    * @see areOverlapped

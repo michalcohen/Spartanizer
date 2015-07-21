@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  *
  * @author Yossi Gil
  * @since 2015-07-09
- *
  */
 public abstract class Wring {
   final boolean eligible(final Expression e) {
@@ -30,15 +29,13 @@ public abstract class Wring {
    * {@link Wring} is applicable in principle to an object, but that actual
    * application will be vacuous.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object.
    */
   abstract boolean eligible(final InfixExpression e);
   /**
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object.
    */
@@ -46,10 +43,8 @@ public abstract class Wring {
   /**
    * Record a rewrite
    *
-   * @param r
-   *          JD
-   * @param e
-   *          JD
+   * @param r JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> there is room for further
    *         simplification of this expression.
    */
@@ -65,8 +60,7 @@ public abstract class Wring {
    * {@link Wring} is applicable in principle to an object, but that actual
    * application will be vacuous.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is noneligible for
    *         the simplification offered by this object.
    * @see #eligible(InfixExpression)
@@ -88,8 +82,7 @@ public abstract class Wring {
    * be the case that a {@link Wring} is applicable in principle to an object,
    * but that actual application will be vacuous.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */
@@ -102,8 +95,7 @@ public abstract class Wring {
    * be the case that a {@link Wring} is applicable in principle to an object,
    * but that actual application will be vacuous.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */

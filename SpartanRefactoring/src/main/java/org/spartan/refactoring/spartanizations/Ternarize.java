@@ -140,10 +140,8 @@ public class Ternarize extends Spartanization {
     /**
      * Instantiates the class with the given Expressions
      *
-     * @param t
-     *          then Expression
-     * @param e
-     *          else Expression
+     * @param t then Expression
+     * @param e else Expression
      */
     public TwoExpressions(final Expression t, final Expression e) {
       then = t;
@@ -164,10 +162,8 @@ public class Ternarize extends Spartanization {
     /**
      * Instantiates the class with the given nodes
      *
-     * @param t
-     *          then node
-     * @param e
-     *          else node
+     * @param t then node
+     * @param e else node
      */
     public TwoNodes(final ASTNode t, final ASTNode e) {
       then = t;

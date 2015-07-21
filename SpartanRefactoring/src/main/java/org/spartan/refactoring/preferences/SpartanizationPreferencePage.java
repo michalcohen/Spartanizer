@@ -26,10 +26,12 @@ import org.spartan.refactoring.preferences.PreferencesStrings.Strings;
  * This class represents a preference page that is contributed to the
  * Preferences dialog. By sub classing {@link FieldEditorPreferencePage} built
  * into {@link org.eclipse.jface} that allows us to create a page that is small
- * and knows how to save, restore and apply itself. <p> This page is used to
- * modify preferences only. They are stored in the preference store that belongs
- * to the main plug-in class. That way, preferences can be accessed directly via
- * the preference store. <p>
+ * and knows how to save, restore and apply itself.
+ * <p>
+ * This page is used to modify preferences only. They are stored in the
+ * preference store that belongs to the main plug-in class. That way,
+ * preferences can be accessed directly via the preference store.
+ * <p>
  *
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code>
  *         (original) @since 10/06/2014

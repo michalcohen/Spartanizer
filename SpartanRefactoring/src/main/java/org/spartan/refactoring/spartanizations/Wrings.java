@@ -37,7 +37,6 @@ import org.spartan.refactoring.utils.Is;
  *
  * @author Yossi Gil
  * @since 2015-07-17
- *
  */
 public enum Wrings {
   /**
@@ -46,7 +45,6 @@ public enum Wrings {
    *
    * @author Yossi Gil
    * @since 2015-07-17
-   *
    */
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
@@ -83,7 +81,6 @@ public enum Wrings {
    *
    * @author Yossi Gil
    * @since 2015-07-17
-   *
    */
   COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
     @Override public boolean scopeIncludes(final InfixExpression e) {
@@ -104,12 +101,62 @@ public enum Wrings {
     }
   }), //
   /**
+   * <pre>
+   * a ? b : c
+   * </pre>
+   *
+   * is the same as
+   *
+   * <pre>
+   * (a && b) || (!a && c)
+   * </pre>
+   *
+   * if b is false than:
+   *
+   * <pre>
+   * (a && false) || (!a && c) == (!a && c)
+   * </pre>
+   * 
+   * if b is true than:
+   *
+   * <pre>
+   * (a && true) || (!a && c) == a || (!a && c) == a || c
+   * </pre>
+   *
+   * if c is false than:
+   *
+   * <pre>
+   * (a && b) || (!a && false) == (!a && c)
+   * </pre>
+   *
+   * if c is true than
+   *
+   * <pre>
+   * (a && b) || (!a && true) == (a && b) || (!a) == !a || b
+   * </pre>
+   *
+   * keywords <code><b>this</b></code> or <code><b>null</b></code>.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-20
+   */
+  CONDITIONAL_TERNARY(new Wring.OfInfixExpression() {
+    @Override public boolean scopeIncludes(final InfixExpression e) {
+      return false;
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return false;
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      return null;
+    }
+  }), //
+  /**
    * A {@link Wring} that eliminate Boolean literals, when possible present on
    * logical AND an logical OR.
    *
    * @author Yossi Gil
    * @since 2015-07-20
-   *
    */
   ANDOR_TRUE(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
@@ -133,14 +180,11 @@ public enum Wrings {
   }), //
   /**
    * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
-   * expression.
-   *
-   * Extra care is taken to leave intact the use of {@link Operator#PLUS} for
-   * the concatenation of {@link String}s.
+   * expression. Extra care is taken to leave intact the use of
+   * {@link Operator#PLUS} for the concatenation of {@link String}s.
    *
    * @author Yossi Gil
    * @since 2015-07-17
-   *
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
@@ -169,7 +213,6 @@ public enum Wrings {
    * @see #ADDITION_SORTER
    * @author Yossi Gil
    * @since 2015-07-17
-   *
    */
   PSEUDO_ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
@@ -193,14 +236,11 @@ public enum Wrings {
   }), //
   /**
    * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
-   * expression.
-   *
-   * Extra care is taken to leave intact the use of {@link Operator#PLUS} for
-   * the concatenation of {@link String}s.
+   * expression. Extra care is taken to leave intact the use of
+   * {@link Operator#PLUS} for the concatenation of {@link String}s.
    *
    * @author Yossi Gil
    * @since 2015-07-17
-   *
    */
   MULTIPLICATION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
@@ -228,7 +268,6 @@ public enum Wrings {
    *
    * @author Yossi Gil
    * @since 2015-7-17
-   *
    */
   PUSHDOWN_NOT(new Wring.OfPrefixExpression() {
     @Override public boolean scopeIncludes(final PrefixExpression e) {
@@ -251,8 +290,7 @@ public enum Wrings {
   /**
    * Find the first {@link Wring} appropriate for an {@link InfixExpression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the first {@link Wring} for which the parameter is eligible, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
@@ -266,8 +304,7 @@ public enum Wrings {
   /**
    * Find the first {@link Wring} appropriate for an {@link InfixExpression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the first {@link Wring} for which the parameter is eligible, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
@@ -282,8 +319,7 @@ public enum Wrings {
   /**
    * Find the first {@link Wring} appropriate for a {@link PrefixExpression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the first {@link Wring} for which the parameter is eligible, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */

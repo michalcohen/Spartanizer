@@ -41,7 +41,6 @@ import org.spartan.utils.Range;
 /**
  * @author Yossi Gil
  * @since 2015-07-18
- *
  */
 @SuppressWarnings("javadoc") //
 public abstract class AbstractWringTest {
@@ -54,8 +53,7 @@ public abstract class AbstractWringTest {
   /**
    * Instantiates the enclosing class ({@link AbstractWringTest})
    *
-   * @param inner
-   *          JD
+   * @param inner JD
    */
   AbstractWringTest(final Wring inner) {
     this.inner = inner;
@@ -94,7 +92,6 @@ public abstract class AbstractWringTest {
   /**
    * @author Yossi Gil
    * @since 2015-07-18
-   *
    */
   public static abstract class OutOfScope extends AbstractWringTest {
     /** Description of a test case for {@link Parameter} annotation */
@@ -123,13 +120,11 @@ public abstract class AbstractWringTest {
   /**
    * @author Yossi Gil
    * @since 2015-07-18
-   *
    */
   static abstract class InScope extends AbstractWringTest {
     /**
      * @author Yossi Gil
      * @since 2015-07-15
-     *
      */
     static abstract class WringedInput extends AbstractWringTest {
       /** How should a test case like this be described? */
@@ -141,8 +136,7 @@ public abstract class AbstractWringTest {
       /**
        * Instantiates the enclosing class ({@link Wringed})
        *
-       * @param w
-       *          JD
+       * @param w JD
        */
       WringedInput(final Wring w) {
         super(w);
@@ -224,7 +218,6 @@ public abstract class AbstractWringTest {
   /**
    * @author Yossi Gil
    * @since 2015-07-18
-   *
    */
   public static abstract class Noneligible extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
@@ -233,8 +226,7 @@ public abstract class AbstractWringTest {
     /**
      * Instantiates the enclosing class ({@link Noneligible})
      *
-     * @param simplifier
-     *          JD
+     * @param simplifier JD
      */
     Noneligible(final Wring simplifier) {
       super(simplifier);
@@ -283,7 +275,6 @@ public abstract class AbstractWringTest {
   /**
    * @author Yossi Gil
    * @since 2015-07-15
-   *
    */
   public static abstract class Wringed extends InScope {
     /** Description of a test case for {@link Parameter} annotation */

@@ -43,7 +43,6 @@ import org.spartan.utils.Range;
  * @author Boris van Sosin <boris.van.sosin [at] gmail.com>} (v2)
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/10
- *
  * @since 2013/01/01
  */
 public abstract class Spartanization extends Refactoring {
@@ -60,8 +59,7 @@ public abstract class Spartanization extends Refactoring {
   /***
    * Instantiates this class, with message identical to name
    *
-   * @param name
-   *          a short name of this refactoring
+   * @param name a short name of this refactoring
    */
   protected Spartanization(final String name) {
     this(name, name);
@@ -69,10 +67,8 @@ public abstract class Spartanization extends Refactoring {
   /***
    * Instantiates this class
    *
-   * @param name
-   *          a short name of this refactoring
-   * @param message
-   *          the message to display in the quickfix
+   * @param name a short name of this refactoring
+   * @param message the message to display in the quickfix
    */
   protected Spartanization(final String name, final String message) {
     this.name = name;
@@ -84,10 +80,8 @@ public abstract class Spartanization extends Refactoring {
   /**
    * creates an ASTRewrite which contains the changes
    *
-   * @param cu
-   *          the Compilation Unit (outermost ASTNode in the Java Grammar)
-   * @param pm
-   *          a progress monitor in which the progress of the refactoring is
+   * @param cu the Compilation Unit (outermost ASTNode in the Java Grammar)
+   * @param pm a progress monitor in which the progress of the refactoring is
    *          displayed
    * @return an ASTRewrite which contains the changes
    */
@@ -98,11 +92,9 @@ public abstract class Spartanization extends Refactoring {
    * creates an ASTRewrite, under the context of a text marker, which contains
    * the changes
    *
-   * @param pm
-   *          a progress monitor in which to display the progress of the
+   * @param pm a progress monitor in which to display the progress of the
    *          refactoring
-   * @param m
-   *          the marker
+   * @param m the marker
    * @return an ASTRewrite which contains the changes
    */
   private final ASTRewrite createRewrite(final SubProgressMonitor pm, final IMarker m) {
@@ -154,8 +146,7 @@ public abstract class Spartanization extends Refactoring {
     return $;
   }
   /**
-   * @param marker
-   *          the marker to set for the refactoring
+   * @param marker the marker to set for the refactoring
    */
   public final void setMarker(final IMarker marker) {
     this.marker = marker;
@@ -184,14 +175,11 @@ public abstract class Spartanization extends Refactoring {
     return $;
   }
   /**
-   * @param pm
-   *          a progress monitor in which to display the progress of the
+   * @param pm a progress monitor in which to display the progress of the
    *          refactoring
-   * @param m
-   *          the marker for which the refactoring needs to run
+   * @param m the marker for which the refactoring needs to run
    * @return a RefactoringStatus
-   * @throws CoreException
-   *           the JDT core throws it
+   * @throws CoreException the JDT core throws it
    */
   public RefactoringStatus runAsMarkerFix(final IProgressMonitor pm, final IMarker m) throws CoreException {
     return innerRunAsMarkerFix(pm, m, false);
@@ -268,8 +256,7 @@ public abstract class Spartanization extends Refactoring {
    * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
    * spartanization suggestions
    *
-   * @param cu
-   *          what to check
+   * @param cu what to check
    * @return a collection of {@link Range} objects each containing a
    *         spartanization opportunity
    */
@@ -289,8 +276,7 @@ public abstract class Spartanization extends Refactoring {
     return selection;
   }
   /**
-   * @param selection
-   *          the selection to set
+   * @param selection the selection to set
    */
   public void setSelection(final ITextSelection selection) {
     this.selection = selection;
@@ -302,8 +288,7 @@ public abstract class Spartanization extends Refactoring {
     return compilationUnit;
   }
   /**
-   * @param compilationUnit
-   *          the compilationUnit to set
+   * @param compilationUnit the compilationUnit to set
    */
   public void setCompilationUnit(final ICompilationUnit compilationUnit) {
     this.compilationUnit = compilationUnit;

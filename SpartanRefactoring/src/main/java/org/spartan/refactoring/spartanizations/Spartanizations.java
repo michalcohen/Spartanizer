@@ -46,8 +46,7 @@ public enum Spartanizations {
     return value;
   }
   /**
-   * @param c
-   *          Spartanization rule
+   * @param c Spartanization rule
    * @return Spartanization class rule instance
    */
   @SuppressWarnings("unchecked") //
@@ -110,8 +109,7 @@ public enum Spartanizations {
     put(new SimplifyLogicalNegation());
   }
   /**
-   * @param name
-   *          the name of the spartanization
+   * @param name the name of the spartanization
    * @return an instance of the spartanization
    */
   public static Spartanization get(final String name) {

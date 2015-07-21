@@ -11,7 +11,6 @@ import org.junit.Test;
  *
  * @author Yossi Gil
  * @since 2015-07-17
- *
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class IsTest {

@@ -27,7 +27,6 @@ import org.spartan.refactoring.utils.As;
 /**
  * @author Yossi Gil
  * @since 2015-07-17
- *
  */
 public enum TESTUtils {
   ;
@@ -42,8 +41,7 @@ public enum TESTUtils {
    * Convert a given {@link String} into an {@link InfixExpression}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param expression
-   *          a {@link String} that represents a Java expression
+   * @param expression a {@link String} that represents a Java expression
    * @return an {@link InfixExpression} data structure representing the
    *         parameter.
    */
@@ -54,8 +52,7 @@ public enum TESTUtils {
    * Convert a given {@link String} into an {@link statement}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param statement
-   *          a {@link String} that represents a Java statement
+   * @param statement a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter.
    */
   public static Statement s(final String statement) {
@@ -65,8 +62,7 @@ public enum TESTUtils {
    * Convert a given {@link String} into an {@link PrefixExpression}, or fail
    * the current test, if such a conversion is not possible
    *
-   * @param expression
-   *          a {@link String} that represents a Java expression
+   * @param expression a {@link String} that represents a Java expression
    * @return an {@link PrefixExpression} data structure representing the
    *         parameter.
    */
@@ -77,8 +73,7 @@ public enum TESTUtils {
    * Convert a given {@link String} into an {@link Expression}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param expression
-   *          a {@link String} that represents a Java expression
+   * @param expression a {@link String} that represents a Java expression
    * @return an {@link Expression} data structure representing the parameter.
    */
   public static Expression e(final String expression) {

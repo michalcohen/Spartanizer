@@ -51,8 +51,7 @@ public abstract class FileTestUtils {
    * Instantiates a {@link Class} object if possible, otherwise generate an
    * assertion failure
    *
-   * @param c
-   *          an arbitrary class object
+   * @param c an arbitrary class object
    * @return an instance of the parameter
    */
   public static Object getInstance(final Class<?> c) {
@@ -77,8 +76,7 @@ public abstract class FileTestUtils {
    * Convert a canonical name of a class into a {@link Class} object, if
    * possible, otherwise generate an assertion failure
    *
-   * @param name
-   *          the canonical name of some class
+   * @param name the canonical name of some class
    * @return the object representing this class
    * @since 2014/05/23
    */
@@ -117,10 +115,8 @@ public abstract class FileTestUtils {
     /**
      * Collect test cases from each file in {@link #location}
      *
-     * @param $
-     *          where to save the collected test cases
-     * @param f
-     *          an entry in {@link #location}
+     * @param $ where to save the collected test cases
+     * @param f an entry in {@link #location}
      */
     public abstract void go(List<Object[]> $, final File f);
   }

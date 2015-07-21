@@ -12,15 +12,13 @@ import org.eclipse.jdt.core.dom.InfixExpression;
  *
  * @author Yossi Gil
  * @since 2015-07-16
- *
  */
 public enum Associativity {
   ;
   /**
    * Determine whether associativity is right-to-left
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the associativity of parameter
    *         present on the parameter is right-to-left.
    */
@@ -37,8 +35,7 @@ public enum Associativity {
   /**
    * Determine whether associativity is left-to-right
    *
-   * @param o
-   *          JD
+   * @param o JD
    * @return <code><b>true</b></code> <i>iff</i> the associativity of the
    *         parameter is left-to-right.
    */

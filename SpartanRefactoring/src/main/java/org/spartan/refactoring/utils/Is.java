@@ -64,13 +64,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
  *
  * @author Yossi Gil
  * @since 2015-07-16
- *
  */
 public enum Is {
   ;
   /**
-   * @param n
-   *          the statement or block to check if it is an assignment
+   * @param n the statement or block to check if it is an assignment
    * @return <code><b>true</b></code> if the parameter an assignment or false if
    *         the parameter not or if the block Contains more than one statement
    */
@@ -81,8 +79,7 @@ public enum Is {
   /**
    * Determine whether a node is an {@link EmptyStatement}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an
    *         {@link EmptyStatement}
    */
@@ -92,8 +89,7 @@ public enum Is {
   /**
    * Determine whether a node is a {@link Block}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
@@ -103,8 +99,7 @@ public enum Is {
   /**
    * Determine whether a node is a boolean literal
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a boolean
    *         literal
    */
@@ -112,8 +107,7 @@ public enum Is {
     return is(n, BOOLEAN_LITERAL);
   }
   /**
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a comparison
    *         expression.
    */
@@ -121,8 +115,7 @@ public enum Is {
     return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
   }
   /**
-   * @param es
-   *          JD
+   * @param es JD
    * @return <code><b>true</b></code> <i>iff</i> one of the parameters is a
    *         conditional or parenthesized conditional expression
    */
@@ -146,8 +139,7 @@ public enum Is {
    * Check whether an operator is susceptible for applying one of the two de
    * Morgan laws.
    *
-   * @param o
-   *          JD
+   * @param o JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an operator on
    *         which the de Morgan laws apply.
    */
@@ -157,8 +149,7 @@ public enum Is {
   /**
    * Determine whether a node is an "expression statement"
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an
    *         {@link ExpressionStatement} statement
    */
@@ -166,8 +157,7 @@ public enum Is {
     return is(n, ASTNode.EXPRESSION_STATEMENT);
   }
   /**
-   * @param o
-   *          The operator to check
+   * @param o The operator to check
    * @return True - if the operator have opposite one in terms of operands swap.
    */
   public static boolean flipable(final Operator o) {
@@ -186,8 +176,7 @@ public enum Is {
         null);
   }
   /**
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an infix
    *         expression.
    */
@@ -200,8 +189,7 @@ public enum Is {
   /**
    * Determine whether a variable declaration is final or not
    *
-   * @param v
-   *          some declaration
+   * @param v some declaration
    * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
    *         final
    */
@@ -209,8 +197,7 @@ public enum Is {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
   /**
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the node is an Expression
    *         Statement of type Post or Pre Expression with ++ or -- operator
    *         false if node is not an Expression Statement or its a Post or Pre
@@ -236,8 +223,7 @@ public enum Is {
     return false;
   }
   /**
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a variable
    *         declaration statement.
    */
@@ -247,11 +233,8 @@ public enum Is {
   /**
    * Determine whether an item is the last one in a list
    *
-   * @param t
-   *          a list item
-   * @param ts
-   *          a list
-   *
+   * @param t a list item
+   * @param ts a list
    * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
    *         and it is the last one in it.
    */
@@ -259,8 +242,7 @@ public enum Is {
     return ts.indexOf(t) == ts.size() - 1;
   }
   /**
-   * @param n
-   *          Expression node
+   * @param n Expression node
    * @return <code><b>true</b></code> <i>iff</i> the Expression is literal
    */
   public static boolean literal(final ASTNode n) {
@@ -273,8 +255,7 @@ public enum Is {
     );
   }
   /**
-   * @param r
-   *          Return Statement node
+   * @param r Return Statement node
    * @return <code><b>true</b></code> <i>iff</i> the ReturnStatement is of
    *         literal type
    */
@@ -282,8 +263,7 @@ public enum Is {
     return literal(r.getExpression());
   }
   /**
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a method
    *         invocation.
    */
@@ -291,8 +271,7 @@ public enum Is {
     return is(n, ASTNode.METHOD_INVOCATION);
   }
   /**
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
    *         whose type is provably not of type {@link String}, in the sense
    *         used in applying the <code>+</code> operator to concatenate
@@ -312,8 +291,7 @@ public enum Is {
     ) || notString(asInfixExpression(e));
   }
   /**
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
    *         whose type is provably not of type {@link String}, in the sense
    *         used in applying the <code>+</code> operator to concatenate
@@ -326,8 +304,7 @@ public enum Is {
    * Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
@@ -337,10 +314,8 @@ public enum Is {
   /**
    * Determine whether the type of an {@link ASTNode} node is one of given list
    *
-   * @param n
-   *          a node
-   * @param types
-   *          a list of types
+   * @param n a node
+   * @param types a list of types
    * @return <code><b>true</b></code> <i>iff</i> function #ASTNode.getNodeType
    *         returns one of the types provided as parameters
    */
@@ -348,16 +323,14 @@ public enum Is {
     return n == null ? false : isOneOf(n.getNodeType(), types);
   }
   /**
-   * @param a
-   *          the assignment who's operator we want to check
+   * @param a the assignment who's operator we want to check
    * @return true is the assignment's operator is assign
    */
   public static boolean plainAssignment(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
   /**
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a prefix
    *         expression.
    */
@@ -367,8 +340,7 @@ public enum Is {
   /**
    * Determine whether a node is a return statement
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a return
    *         statement.
    */
@@ -379,8 +351,7 @@ public enum Is {
    * Determine whether an {@link Expression} is so basic that it never needs to
    * be placed in parenthesis.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is so basic that
    *         it never needs to be placed in parenthesis.
    */
@@ -408,8 +379,7 @@ public enum Is {
    * Determine whether a node is a "specific", i.e., <code><b>null</b></code> or
    * <code><b>this</b></code> or literal.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */
@@ -417,8 +387,7 @@ public enum Is {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
   }
   /**
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a string
    *         literal
    */
@@ -429,8 +398,7 @@ public enum Is {
    * Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement
    */

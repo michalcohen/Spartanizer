@@ -26,7 +26,6 @@ import org.spartan.utils.Range;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- *
  * @since 2013/01/01
  */
 public class RenameReturnVariableToDollar extends Spartanization {
@@ -52,12 +51,9 @@ public class RenameReturnVariableToDollar extends Spartanization {
     final List<VariableDeclarationFragment> $ = new ArrayList<>();
     d.accept(new ASTVisitor() {
       /**
-       *
        * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
        *      AnonymousClassDeclaration)
-       *
-       * @param _
-       *          ignored, we don't want to visit declarations inside anonymous
+       * @param _ ignored, we don't want to visit declarations inside anonymous
        *          classes
        */
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
@@ -74,13 +70,9 @@ public class RenameReturnVariableToDollar extends Spartanization {
     final List<ReturnStatement> $ = new ArrayList<>();
     container.accept(new ASTVisitor() {
       /**
-       *
-       *
        * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
        *      AnonymousClassDeclaration)
-       *
-       * @param _
-       *          ignored, we don't want to visit declarations inside anonymous
+       * @param _ ignored, we don't want to visit declarations inside anonymous
        *          classes
        */
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {

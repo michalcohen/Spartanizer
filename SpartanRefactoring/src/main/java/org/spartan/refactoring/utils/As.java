@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.dom.Statement;
  *
  * @author Yossi Gil
  * @since 2015-07-16
- *
  */
 public enum As {
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT) {
@@ -89,8 +88,7 @@ public enum As {
   /**
    * Convert file contents into a {@link String}
    *
-   * @param f
-   *          a file
+   * @param f a file
    * @return the entire contents of this file, as one string
    */
   public static String string(final File f) {
@@ -107,8 +105,7 @@ public enum As {
   /**
    * Creates a {@link StringBuilder} object out of a file object.
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return {@link StringBuilder} whose content is the same as the contents of
    *         the parameter.
    */
@@ -122,8 +119,7 @@ public enum As {
   /**
    * Creates a no-binding parser for a given text
    *
-   * @param text
-   *          what to parse
+   * @param text what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser makeParser(final String text) {
@@ -132,8 +128,7 @@ public enum As {
   /**
    * Creates a no-binding parser for a given text
    *
-   * @param text
-   *          what to parse
+   * @param text what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser makeParser(final char[] text) {
@@ -144,8 +139,7 @@ public enum As {
   /**
    * Creates a no-binding parser for a given compilation unit
    *
-   * @param u
-   *          what to parse
+   * @param u what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser makeParser(final ICompilationUnit u) {
@@ -163,8 +157,7 @@ public enum As {
     return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
   }
   /**
-   * @param s
-   *          The node from which to return statement.
+   * @param s The node from which to return statement.
    * @return null if it is not possible to extract the return statement.
    */
   public static ReturnStatement asReturn(final ASTNode s) {
@@ -182,8 +175,7 @@ public enum As {
   /**
    * Converts a boolean into a bit value
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return 1 if the parameter is true, 0 otherwise
    */
   public static int bit(final boolean $) {

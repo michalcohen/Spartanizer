@@ -18,16 +18,13 @@ import org.spartan.refactoring.utils.Is;
  *
  * @author Yossi Gil
  * @since 2015-07-19
- *
  */
 public enum ExpressionComparator implements Comparator<Expression> {
   /**
    * Order on terms in addition: literals must be last. Sort literals by length.
    *
-   *
    * @author Yossi Gil
    * @since 2015-07-19
-   *
    */
   ADDITION {
     @Override public int compare(final Expression e1, final Expression e2) {
@@ -43,10 +40,8 @@ public enum ExpressionComparator implements Comparator<Expression> {
    * Order on terms in multiplication: literals must be last. Sort literals by
    * length.
    *
-   *
    * @author Yossi Gil
    * @since 2015-07-19
-   *
    */
   MULTIPLICATION {
     @Override public int compare(final Expression e1, final Expression e2) {
@@ -101,8 +96,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   /**
    * Counts the number of non-space characters in a tree rooted at a given node
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public static int countNonWhites(final ASTNode n) {
@@ -111,8 +105,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   /**
    * Counts the number of nodes in a tree rooted at a given node
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public static int countNodes(final ASTNode n) {
@@ -120,8 +113,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
     n.accept(new ASTVisitor() {
       /**
        * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
-       * @param _
-       *          ignored
+       * @param _ ignored
        */
       @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
         $.incrementAndGet();

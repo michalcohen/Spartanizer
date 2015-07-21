@@ -121,14 +121,12 @@ public class Builder extends IncrementalProjectBuilder {
   /**
    * deletes all spartanization suggestion markers
    *
-   * @param f
-   *          the file from which to delete the markers
-   * @throws CoreException
-   *           if this method fails. Reasons include: This resource does not
-   *           exist. This resource is a project that is not open. Resource
-   *           changes are disallowed during certain types of resource change
-   *           event notification. See {@link IResourceChangeEvent} for more
-   *           details.
+   * @param f the file from which to delete the markers
+   * @throws CoreException if this method fails. Reasons include: This resource
+   *           does not exist. This resource is a project that is not open.
+   *           Resource changes are disallowed during certain types of resource
+   *           change event notification. See {@link IResourceChangeEvent} for
+   *           more details.
    */
   public static void deleteMarkers(final IFile f) throws CoreException {
     f.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ONE);

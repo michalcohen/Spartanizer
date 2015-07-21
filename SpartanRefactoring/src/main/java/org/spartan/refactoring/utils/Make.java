@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.dom.ASTParser;
  *
  * @author Yossi Gil
  * @since 2015-07-16
- *
  */
 public enum Make {
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT), //
@@ -29,8 +28,7 @@ public enum Make {
   /**
    * Creates a no-binding parser for a given text
    *
-   * @param text
-   *          what to parse
+   * @param text what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser parser(final String text) {
@@ -39,8 +37,7 @@ public enum Make {
   /**
    * Creates a no-binding parser for a given text
    *
-   * @param text
-   *          what to parse
+   * @param text what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser parser(final char[] text) {
@@ -57,8 +54,7 @@ public enum Make {
   /**
    * Creates a no-binding parser for a given compilation unit
    *
-   * @param u
-   *          what to parse
+   * @param u what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser parser(final ICompilationUnit u) {

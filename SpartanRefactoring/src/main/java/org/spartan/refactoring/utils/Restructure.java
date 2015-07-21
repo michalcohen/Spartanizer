@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.dom.Statement;
  *
  * @author Yossi Gil
  * @since 2015-07-21
- *
  */
 public enum Restructure {
   ;
@@ -29,8 +28,7 @@ public enum Restructure {
    * Determine whether a give {@link ASTNode} includes precisely one
    * {@link Statement}, and return this statement.
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the single statement contained in the parameter, or
    *         <code><b>null</b></code> if not value exists.
    */
@@ -45,8 +43,7 @@ public enum Restructure {
    * statements, e.g., <code><b>for</b></code> and <code><b>if</b></code>, or
    * within anonymous and inner classes are not flattened here.
    *
-   * @param s
-   *          JD
+   * @param s JD
    * @return a flattened list of all {@link Statement}s found within the
    *         parameter, or an empty list, if the parameter is not a
    *         {@link Statement}
@@ -78,8 +75,7 @@ public enum Restructure {
    * "+(+(a,b),c)", into <code> a + b + c </code>, whose inner form is (roughly)
    * "+(a,b,c)".
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return a duplicate of the argument, with the a flattened list of operands.
    */
   public static InfixExpression flatten(final InfixExpression $) {
@@ -103,10 +99,8 @@ public enum Restructure {
   /**
    * Replace the list of arguments of a given @link {@link InfixExpression}
    *
-   * @param e
-   *          JD
-   * @param es
-   *          JD
+   * @param e JD
+   * @param es JD
    * @return a duplicate of the {@link InfixExpression} parameter, whose
    *         operands are the {@link List} of {@link Expression} parameter.
    */
@@ -127,8 +121,7 @@ public enum Restructure {
    * Find the "core" of a given {@link Expression}, by peeling of any
    * parenthesis that may wrap it.
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the parameter itself, if not parenthesized, or the result of
    *         applying this function (@link {@link #getClass()}) to whatever is
    *         wrapped in these parenthesis.
@@ -139,8 +132,7 @@ public enum Restructure {
   /**
    * Parenthesize an expression (if necessary).
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return a {@link Funcs#duplicate(Expression)} of the parameter wrapped in
    *         parenthesis.
    */
@@ -154,8 +146,7 @@ public enum Restructure {
   /**
    * Compute the "de Morgan" conjugate of an operator.
    *
-   * @param o
-   *          must be either {@link Operator#CONDITIONAL_AND} or
+   * @param o must be either {@link Operator#CONDITIONAL_AND} or
    *          {@link Operator#CONDITIONAL_OR}
    * @return {@link Operator#CONDITIONAL_AND} if the parameter is
    *         {@link Operator#CONDITIONAL_OR}, or {@link Operator#CONDITIONAL_OR}
@@ -170,8 +161,7 @@ public enum Restructure {
    * Compute the "de Morgan" conjugate of the operator present on an
    * {@link InfixExpression}.
    *
-   * @param e
-   *          an expression whose operator is either
+   * @param e an expression whose operator is either
    *          {@link Operator#CONDITIONAL_AND} or
    *          {@link Operator#CONDITIONAL_OR}
    * @return {@link Operator#CONDITIONAL_AND} if the operator present on the

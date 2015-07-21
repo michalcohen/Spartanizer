@@ -25,7 +25,6 @@ import org.spartan.refactoring.builder.Nature;
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
- *
  * @since 2013/07/01
  */
 public class ToggleSpartanizationHandler extends AbstractHandler {

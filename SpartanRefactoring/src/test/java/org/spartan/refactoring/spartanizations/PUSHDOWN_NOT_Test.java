@@ -33,7 +33,6 @@ import org.spartan.utils.Utils;
  *
  * @author Yossi Gil
  * @since 2014-07-13
- *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //

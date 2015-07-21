@@ -54,8 +54,7 @@ public enum Funcs {
    * is either {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#AND} or
    * {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#OR}.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
    *         conversion is not possible for it
    */
@@ -65,8 +64,7 @@ public enum Funcs {
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link Block}
    *
-   * @param n
-   *          what to convert
+   * @param n what to convert
    * @return the argument, but down-casted to a {@link Block}, or
    *         <code><b>null</b></code> if no such down-cast is possible..
    */
@@ -76,11 +74,9 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
-   *
    */
   public static BooleanLiteral asBooleanLiteral(final Expression e) {
     return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
@@ -88,11 +84,9 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
-   *
    */
   public static Statement asStatement(final ASTNode e) {
     return !(e instanceof Statement) ? null : (Statement) e;
@@ -102,8 +96,7 @@ public enum Funcs {
    * is one of the six comparison operators: <code><</code>, <code><=</code>,
    * <code>></code>, <code>>=</code>, <code>!=</code>, or <code>==</code>.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
    *         conversion is not possible for it
    */
@@ -123,8 +116,7 @@ public enum Funcs {
   /**
    * Convert, is possible, an {@link Statement} to a {@link ExpressionStatement}
    *
-   * @param s
-   *          a statement or a block to extract the expression statement from
+   * @param s a statement or a block to extract the expression statement from
    * @return the expression statement if n is a block or an expression statement
    *         or null if it not an expression statement or if the block contains
    *         more than one statement
@@ -138,11 +130,9 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link InfixExpression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
-   *
    */
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
@@ -151,8 +141,7 @@ public enum Funcs {
    * Convert an {@link Expression} into a {@link PrefixExpression} whose
    * operator is <code>!</code>,
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
    *         conversion is not possible for it
    */
@@ -165,11 +154,9 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link PrefixExpression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
-   *
    */
   public static PrefixExpression asPrefixExpression(final ASTNode e) {
     return !(e instanceof PrefixExpression) ? null : (PrefixExpression) e;
@@ -177,11 +164,9 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link ReturnStatement}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
-   *
    */
   public static ReturnStatement asReturn(final ASTNode n) {
     if (n == null)
@@ -202,10 +187,8 @@ public enum Funcs {
    * the function checks if all the given assignments has the same left hand
    * side(variable) and operator
    *
-   * @param base
-   *          The assignment to compare all others to
-   * @param as
-   *          The assignments to compare
+   * @param base The assignment to compare all others to
+   * @param as The assignments to compare
    * @return true if all assignments has the same left hand side and operator as
    *         the first one or false otherwise
    */
@@ -221,10 +204,8 @@ public enum Funcs {
   /**
    * String wise comparison of all the given SimpleNames
    *
-   * @param cmpTo
-   *          a string to compare all names to
-   * @param names
-   *          SimplesNames to compare by their string value to cmpTo
+   * @param cmpTo a string to compare all names to
+   * @param names SimplesNames to compare by their string value to cmpTo
    * @return true if all names are the same (string wise) or false otherwise
    */
   public static boolean compatibleNames(final Expression cmpTo, final Expression... names) {
@@ -237,10 +218,8 @@ public enum Funcs {
     return true;
   }
   /**
-   * @param cmpTo
-   *          the assignment operator to compare all to
-   * @param op
-   *          A unknown number of assignments operators
+   * @param cmpTo the assignment operator to compare all to
+   * @param op A unknown number of assignments operators
    * @return true if all the operator are the same or false otherwise
    */
   public static boolean compatibleOps(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
@@ -252,8 +231,7 @@ public enum Funcs {
     return true;
   }
   /**
-   * @param nodes
-   *          unknown number of nodes to check
+   * @param nodes unknown number of nodes to check
    * @return true if one of the nodes is an Expression Statement of type Post or
    *         Pre Expression with ++ or -- operator. false if none of them are or
    *         if the given parameter is null.
@@ -302,8 +280,7 @@ public enum Funcs {
    * operation after the node swapping. e.g. "&" is commutative, therefore no
    * change needed. "<" isn't commutative, but it has its opposite: ">=".
    *
-   * @param o
-   *          The operator to flip
+   * @param o The operator to flip
    * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
    *         "+".
    */
@@ -311,8 +288,7 @@ public enum Funcs {
     return !conjugate.containsKey(o) ? o : conjugate.get(o);
   }
   /**
-   * @param s
-   *          a statement or block to extract the assignment from
+   * @param s a statement or block to extract the assignment from
    * @return null if the block contains more than one statement or if the
    *         statement is not an assignment or the assignment if it exists
    */
@@ -324,8 +300,7 @@ public enum Funcs {
     return b.statements().size() != 1 ? null : (Statement) b.statements().get(0);
   }
   /**
-   * @param b
-   *          the block to get the statement from
+   * @param b the block to get the statement from
    * @return if b is a block with just 1 statement it returns that statement, if
    *         b is statement it returns b and if b is null it returns a null
    */
@@ -333,8 +308,7 @@ public enum Funcs {
     return b == null || ASTNode.BLOCK != b.getNodeType() ? b : getBlockSingleStmnt((Block) b);
   }
   /**
-   * @param root
-   *          the node whose children we return
+   * @param root the node whose children we return
    * @return A list containing all the nodes in the given root's sub tree
    */
   public static List<ASTNode> getChildren(final ASTNode root) {
@@ -353,10 +327,8 @@ public enum Funcs {
    * Get the containing node by type. Say we want to find the first block that
    * wraps our node: getContainerByNodeType(node, ASTNode.BLOCK);
    *
-   * @param n
-   *          Node to find its container
-   * @param ASTNodeType
-   *          The type of the containing node we want to find
+   * @param n Node to find its container
+   * @param ASTNodeType The type of the containing node we want to find
    * @return The containing node
    */
   public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
@@ -369,8 +341,7 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param node
-   *          a node to extract an expression from
+   * @param node a node to extract an expression from
    * @return null if the statement is not an expression or return statement or
    *         the expression if they are
    */
@@ -387,8 +358,7 @@ public enum Funcs {
     }
   }
   /**
-   * @param s
-   *          the statement or block to extract the method invocation from
+   * @param s the statement or block to extract the method invocation from
    * @return the method invocation if it exists or null if it doesn't or if the
    *         block contains more than one statement
    */
@@ -397,10 +367,8 @@ public enum Funcs {
     return $ == null || ASTNode.METHOD_INVOCATION != $.getExpression().getNodeType() ? null : (MethodInvocation) $.getExpression();
   }
   /**
-   * @param n
-   *          the node from which to extract the proper fragment
-   * @param name
-   *          the name by which to look for the fragment
+   * @param n the node from which to extract the proper fragment
+   * @param name the name by which to look for the fragment
    * @return the fragment if such with the given name exists or null otherwise
    *         (or if s or name are null)
    */
@@ -416,8 +384,7 @@ public enum Funcs {
     return null;
   }
   /**
-   * @param b
-   *          the block to check
+   * @param b the block to check
    * @return true if a return statement exists in the block or false otherwise
    */
   public static boolean hasReturn(final Block b) {
@@ -431,8 +398,7 @@ public enum Funcs {
   /**
    * Determine whether a given statement is return or has return in it.
    *
-   * @param s
-   *          the statement or block to check
+   * @param s the statement or block to check
    * @return true iff s contains a return statement
    */
   public static boolean hasReturn(final Statement s) {
@@ -456,8 +422,7 @@ public enum Funcs {
     return n != null && type == n.getNodeType();
   }
   /**
-   * @param n
-   *          the statement or block to check if it is an assignment
+   * @param n the statement or block to check if it is an assignment
    * @return true if it is an assignment or false if it is not or if the block
    *         Contains more than one statement
    */
@@ -468,16 +433,14 @@ public enum Funcs {
   /**
    * Determined if a node is a return statement
    *
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is a block statement
    */
   public static boolean isBlock(final ASTNode n) {
     return is(n, ASTNode.BLOCK);
   }
   /**
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is a boolean or null literal or false
    *         otherwise
    */
@@ -487,8 +450,7 @@ public enum Funcs {
   /**
    * Determined if a node is an "expression statement"
    *
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is expression statement
    */
   public static boolean isExpressionStatement(final ASTNode n) {
@@ -497,32 +459,28 @@ public enum Funcs {
   /**
    * Determine whether a variable declaration is final or not
    *
-   * @param v
-   *          some declaration
+   * @param v some declaration
    * @return true if the variable is declared as final
    */
   public static boolean isFinal(final VariableDeclarationStatement v) {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
   /**
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is an infix expression or false otherwise
    */
   public static boolean isInfix(final ASTNode n) {
     return is(n, ASTNode.INFIX_EXPRESSION);
   }
   /**
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is a method invocation or false otherwise
    */
   public static boolean isMethodInvocation(final ASTNode n) {
     return is(n, ASTNode.METHOD_INVOCATION);
   }
   /**
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if node is an Expression Statement of type Post or Pre
    *         Expression with ++ or -- operator false if node is not an
    *         Expression Statement or its a Post or Pre fix expression that its
@@ -542,8 +500,7 @@ public enum Funcs {
     }
   }
   /**
-   * @param a
-   *          the assignment who's operator we want to check
+   * @param a the assignment who's operator we want to check
    * @return true is the assignment's operator is assign
    */
   public static boolean isOpAssign(final Assignment a) {
@@ -552,24 +509,21 @@ public enum Funcs {
   /**
    * Determined if a node is a return statement
    *
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is a return statement or false otherwise
    */
   public static boolean isReturn(final ASTNode n) {
     return is(n, ASTNode.RETURN_STATEMENT);
   }
   /**
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is a string literal or false otherwise
    */
   public static boolean isStringLiteral(final ASTNode n) {
     return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
   }
   /**
-   * @param n
-   *          node to check
+   * @param n node to check
    * @return true if the given node is a variable declaration statement or false
    *         otherwise
    */
@@ -577,8 +531,7 @@ public enum Funcs {
     return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
   }
   /**
-   * @param ts
-   *          a list
+   * @param ts a list
    * @return the last item in a list
    */
   public static <T> T last(final List<T> ts) {
@@ -589,16 +542,11 @@ public enum Funcs {
     return Precedence.same(o, left) && Associativity.isLeftToRight(o) ? parenthesize(left) : duplicate(left);
   }
   /**
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param o
-   *          the assignment operator
-   * @param right
-   *          right side of the assignment, usually an expression
-   * @param left
-   *          left side of the assignment, usually a variable name
+   * @param t the AST who is to own the new return statement
+   * @param r ASTRewrite for the given AST
+   * @param o the assignment operator
+   * @param right right side of the assignment, usually an expression
+   * @param left left side of the assignment, usually a variable name
    * @return the new assignment
    */
   public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Assignment.Operator o, final Expression right,
@@ -620,16 +568,11 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t
-   *          the AST who is to own the new If Statement
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param cond
-   *          the condition
-   * @param thenStmnt
-   *          the then statement to set in the If Statement
-   * @param elseStmnt
-   *          the else statement to set in the If Statement
+   * @param t the AST who is to own the new If Statement
+   * @param r ASTRewrite for the given AST
+   * @param cond the condition
+   * @param thenStmnt the then statement to set in the If Statement
+   * @param elseStmnt the else statement to set in the If Statement
    * @return a new if Statement
    */
   public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
@@ -643,16 +586,11 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param o
-   *          the operator for the new infix expression
-   * @param left
-   *          the left expression
-   * @param right
-   *          the right expression
+   * @param t the AST who is to own the new return statement
+   * @param r ASTRewrite for the given AST
+   * @param o the operator for the new infix expression
+   * @param left the left expression
+   * @param right the right expression
    * @return the new infix expression
    */
   public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
@@ -666,16 +604,11 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param left
-   *          the left expression
-   * @param o
-   *          the operator for the new infix expression
-   * @param right
-   *          the right expression
+   * @param r ASTRewrite for the given AST
+   * @param t the AST who is to own the new return statement
+   * @param left the left expression
+   * @param o the operator for the new infix expression
+   * @param right the right expression
    * @return the new infix expression
    */
   public static InfixExpression makeInfixExpression(final ASTRewrite r, final AST t, final Expression left, final Operator o,
@@ -689,16 +622,11 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t
-   *          the AST who is to own the new parenthesized conditional expression
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param cond
-   *          the condition
-   * @param thenExp
-   *          the then statement to set in the conditional
-   * @param elseExp
-   *          the else statement to set in the conditional
+   * @param t the AST who is to own the new parenthesized conditional expression
+   * @param r ASTRewrite for the given AST
+   * @param cond the condition
+   * @param thenExp the then statement to set in the conditional
+   * @param elseExp the else statement to set in the conditional
    * @return a parenthesized conditional expression
    */
   public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
@@ -712,10 +640,8 @@ public enum Funcs {
     return makeParenthesizedExpression(t, $);
   }
   /**
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param exp
-   *          the expression to put in parenthesis
+   * @param t the AST who is to own the new return statement
+   * @param exp the expression to put in parenthesis
    * @return the given expression with parenthesis
    */
   public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final Expression exp) {
@@ -726,20 +652,16 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param e
-   *          the expression to put in parenthesis
+   * @param e the expression to put in parenthesis
    * @return the given expression with parenthesis
    */
   public static ParenthesizedExpression makeParenthesizedExpression(final Expression e) {
     return makeParenthesizedExpression(e.getAST(), e);
   }
   /**
-   * @param t
-   *          the AST to own the newly created expression
-   * @param e
-   *          the operand for the new prefix Expression
-   * @param o
-   *          the operator for the new prefix Expression
+   * @param t the AST to own the newly created expression
+   * @param e the operand for the new prefix Expression
+   * @param o the operator for the new prefix Expression
    * @return the new prefix expression or null if one of the given parameters
    *         was null
    */
@@ -752,10 +674,8 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param e
-   *          the operand for the new prefix Expression
-   * @param o
-   *          the operator for the new prefix Expression
+   * @param e the operand for the new prefix Expression
+   * @param o the operator for the new prefix Expression
    * @return the new prefix expression or null if one of the given parameters
    *         was null
    */
@@ -763,12 +683,9 @@ public enum Funcs {
     return makePrefixExpression(e.getAST(), e, o);
   }
   /**
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param e
-   *          the expression to return in the return statement
+   * @param t the AST who is to own the new return statement
+   * @param r ASTRewrite for the given AST
+   * @param e the expression to return in the return statement
    * @return the new return statement
    */
   public static ReturnStatement makeReturnStatement(final AST t, final ASTRewrite r, final Expression e) {
@@ -779,14 +696,10 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t
-   *          the AST who is to own the new variable declaration fragment
-   * @param r
-   *          the ASTRewrite for the given AST
-   * @param varName
-   *          the variable name for the new fragment
-   * @param initalizer
-   *          the initial value for the new fragment (for the variable)
+   * @param t the AST who is to own the new variable declaration fragment
+   * @param r the ASTRewrite for the given AST
+   * @param varName the variable name for the new fragment
+   * @param initalizer the initial value for the new fragment (for the variable)
    * @return the new variable declaration fragment or null if one of the given
    *         parameters was null
    */
@@ -802,12 +715,8 @@ public enum Funcs {
   /**
    * Retrieve next item in a list
    *
-   * @param i
-   *          an index of specific item in a list
-   * @param ts
-   *          the indexed list
-   *
-   *
+   * @param i an index of specific item in a list
+   * @param ts the indexed list
    * @return the following item in the list, if such such an item exists,
    *         otherwise, the last node
    */
@@ -817,11 +726,8 @@ public enum Funcs {
   /**
    * Retrieve previous item in a list
    *
-   * @param i
-   *          an index of specific item in a list
-   * @param ts
-   *          the indexed list
-   *
+   * @param i an index of specific item in a list
+   * @param ts the indexed list
    * @return the previous item in the list, if such an item exists, otherwise,
    *         the last node
    */
@@ -839,10 +745,8 @@ public enum Funcs {
    * Remove all occurrences of a boolean literal from a list of
    * {@link Expression}s
    *
-   * @param b
-   *          JD
-   * @param es
-   *          JD
+   * @param b JD
+   * @param es JD
    */
   public static void removeAll(final boolean b, final List<Expression> es) {
     for (;;) {
@@ -855,8 +759,7 @@ public enum Funcs {
   /**
    * Obtain a condensed textual representation of an {@link ASTNode}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the textual representation of the parameter,
    */
   public static String removeWhites(final ASTNode n) {
@@ -870,10 +773,8 @@ public enum Funcs {
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
    *
-   * @param n1
-   *          JD
-   * @param n2
-   *          JD
+   * @param n1 JD
+   * @param n2 JD
    * @return are the nodes equal string-wise
    */
   public static boolean same(final ASTNode n1, final ASTNode n2) {
@@ -883,18 +784,15 @@ public enum Funcs {
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
    *
-   * @param n1
-   *          first list to compare
-   * @param n2
-   *          second list to compare
+   * @param n1 first list to compare
+   * @param n2 second list to compare
    * @return are the lists equal string-wise
    */
   public static boolean same(final List<ASTNode> n1, final List<ASTNode> n2) {
     return n1.toString().equals(n2.toString());
   }
   /**
-   * @param s
-   *          JD
+   * @param s JD
    * @return 0 is s is null, 1 if s is a statement or the number of statement in
    *         the block is the parameter is
    */
@@ -905,14 +803,10 @@ public enum Funcs {
    * the function receives a condition and the then boolean value and returns
    * the proper condition (its negation if thenValue is false)
    *
-   * @param t
-   *          the AST who is to own the new return statement
-   * @param r
-   *          ASTRewrite for the given AST
-   * @param cond
-   *          the condition to try to negate
-   * @param thenValue
-   *          the then value
+   * @param t the AST who is to own the new return statement
+   * @param r ASTRewrite for the given AST
+   * @param cond the condition to try to negate
+   * @param thenValue the then value
    * @return the original condition if thenValue was true or its negation if it
    *         was false (or null if any of the given parameter were null)
    */

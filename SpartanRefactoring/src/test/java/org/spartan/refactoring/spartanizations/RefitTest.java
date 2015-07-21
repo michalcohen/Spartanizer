@@ -30,7 +30,6 @@ import org.spartan.refactoring.utils.Funcs;
  *
  * @author Yossi Gil
  * @since 2015-07-17
- *
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //

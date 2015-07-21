@@ -13,15 +13,13 @@ import org.eclipse.jdt.core.dom.InfixExpression;
  *
  * @author Yossi Gil
  * @since 2015-07-16
- *
  */
 public enum All {
   ;
   /**
    * Obtains a list of operands.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return a list of all operands of the parameter, ordered from left to right
    */
   public static List<Expression> operands(final InfixExpression e) {

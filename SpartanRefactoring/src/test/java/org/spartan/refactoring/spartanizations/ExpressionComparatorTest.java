@@ -16,7 +16,6 @@ import org.junit.runners.MethodSorters;
  *
  * @author Yossi Gil
  * @since 2015-07-17
- *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
