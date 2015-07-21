@@ -15,26 +15,19 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
- * like a word phrase.
+ * like a sentence phrase.
  *
  * @author Yossi Gil
- * @since 2015-MM-DD
+ * @since 2015-07-21
  *
  */
 public enum Restructure {
   ;
   /**
-   * Flatten the list of arguments to an {@link InfixExpression}, i.e., convert
-   *
-   * <pre>
-   * (a + b) + c
-   * </pre>
-   *
-   * to
-   *
-   * <pre>
-   * a + b + c
-   * </pre>
+   * Flatten the list of arguments to an {@link InfixExpression}, e.g., convert
+   * an expression such as <code>(a + b) + c</code> whose inner form is roughly
+   * "+(+(a,b),c)", into <code> a + b + c </code>, whose inner form is (roughly)
+   * "+(a,b,c)".
    *
    * @param $
    *          JD

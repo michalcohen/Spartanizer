@@ -7,7 +7,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 /**
  * *An empty <code><b>enum</b></code> for fluent programming. The name should
  * say it all: The name, followed by a dot, followed by a method name, should
- * read like a word phrase.
+ * read like a sentence phrase.
  *
  * Specifically, this class determines precedence and associativity of Java
  * operators; data is drawn from
@@ -22,7 +22,7 @@ public enum Precedence {
   /**
    * *An empty <code><b>enum</b></code> for fluent programming. The name should
    * say it all: The name, followed by a dot, followed by a method name, should
-   * read like a word phrase.
+   * read like a sentence phrase.
    *
    * @author Yossi Gil
    * @since 2015-07-14
