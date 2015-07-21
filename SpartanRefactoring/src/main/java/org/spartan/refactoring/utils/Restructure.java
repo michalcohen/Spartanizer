@@ -4,9 +4,9 @@ import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Funcs.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
@@ -26,6 +26,19 @@ import org.eclipse.jdt.core.dom.Statement;
 public enum Restructure {
   ;
   /**
+   * Determine whether a give {@link ASTNode} includes precisely one
+   * {@link Statement}, and return this statement.
+   *
+   * @param n
+   *          JD
+   * @return the single statement contained in the parameter, or
+   *         <code><b>null</b></code> if not value exists.
+   */
+  public static Statement singleStatement(final ASTNode n) {
+    final List<Statement> $ = statements(n);
+    return $.size() != 1 ? null : $.get(0);
+  }
+  /**
    * Compute a flattened list of statements nested within a statement. This
    * lists includes only statements nested within plain curly brackets
    * <code><b>{}</b></code>. Therefore, statements nested within control
@@ -39,7 +52,7 @@ public enum Restructure {
    *         {@link Statement}
    */
   public static List<Statement> statements(final ASTNode s) {
-    final ArrayList<Statement> $ = new ArrayList<>();
+    final List<Statement> $ = new ArrayList<>();
     return statementsInto(asStatement(s), $);
   }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
