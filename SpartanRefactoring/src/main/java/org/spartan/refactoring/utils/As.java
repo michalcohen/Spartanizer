@@ -179,4 +179,14 @@ public enum As {
         return null;
     }
   }
+  /**
+   * Converts a boolean into a bit value
+   *
+   * @param $
+   *          JD
+   * @return 1 if the parameter is true, 0 otherwise
+   */
+  public static int bit(final boolean $) {
+    return $ ? 1 : 0;
+  }
 }
