@@ -109,11 +109,8 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
         unionFind.union(first, i);
     }
     final ChainedHash<Integer, Integer> hm = new ChainedHash<>();
-    int i = As.bit(base == Base.OneBased);
-    i = 1;
-    for (; i < size; i++) {
-      final int rootKey = unionFind.find(i);
-      hm.chain(rootKey, i);
+    for (int i = As.bit(base == Base.OneBased); i < size; i++) {
+      hm.chain(unionFind.find(i), i);
     }
     return hm.values().iterator();
   }
