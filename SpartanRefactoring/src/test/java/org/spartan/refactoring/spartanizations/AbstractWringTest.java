@@ -1,7 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;

@@ -1,6 +1,8 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;

@@ -93,7 +93,7 @@ public class Ternarize extends Spartanization {
       }
     };
   }
-  private static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
+  static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
     return asBlock(i.getParent()) != null && treatIfReturn(t, r, i, statements(asBlock(i.getParent())));
   }
   private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<ASTNode> ns) {

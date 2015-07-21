@@ -1,11 +1,14 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Restructure.*;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asNot;
+import static org.spartan.refactoring.utils.Restructure.conjugate;
+import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.utils.Utils.hasNull;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;

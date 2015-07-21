@@ -1,6 +1,5 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Restructure.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -8,6 +7,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;

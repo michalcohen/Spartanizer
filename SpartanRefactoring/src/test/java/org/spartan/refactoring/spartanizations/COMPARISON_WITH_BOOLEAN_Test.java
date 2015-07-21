@@ -1,10 +1,10 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;

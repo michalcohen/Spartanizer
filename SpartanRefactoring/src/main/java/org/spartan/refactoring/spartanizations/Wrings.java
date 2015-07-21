@@ -12,7 +12,10 @@ import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
-import static org.spartan.refactoring.utils.Restructure.*;
+import static org.spartan.refactoring.utils.Restructure.conjugate;
+import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;

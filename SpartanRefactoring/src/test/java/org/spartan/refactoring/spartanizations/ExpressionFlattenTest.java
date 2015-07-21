@@ -1,10 +1,11 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;

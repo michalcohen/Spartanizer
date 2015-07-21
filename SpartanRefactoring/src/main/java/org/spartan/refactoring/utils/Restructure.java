@@ -3,7 +3,10 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,20 +28,24 @@ import org.eclipse.jdt.core.dom.Statement;
 public enum Restructure {
   ;
   /**
-   * Compute the list of statements within a statement.
+   * Compute a flattened list of statements nested within a statement. This
+   * lists includes only statements nested within plain curly brackets
+   * <code><b>{}</b></code>. Therefore, statements nested within control
+   * statements, e.g., <code><b>for</b></code> and <code><b>if</b></code>, or
+   * within anonymous and inner classes are not flattened here.
    *
    * @param s
    *          JD
    * @return a flattened list of all {@link Statement}s found within the
    *         parameter.
    */
-  public static List<Statement> flatten(final Statement s) {
+  public static List<Statement> statements(final Statement s) {
     final ArrayList<Statement> $ = new ArrayList<>();
-    return flattenInto(s, $);
+    return statementsInto(s, $);
   }
-  private static List<Statement> flattenInto(final Statement s, final List<Statement> $) {
+  private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     if (Is.block(s))
-      return flattenInto(asBlock(s), $);
+      return statementsInto(asBlock(s), $);
     if (Is.emptyStatement(s))
       return $;
     return add(s, $);
@@ -47,9 +54,9 @@ public enum Restructure {
     $.add(s);
     return $;
   }
-  private static List<Statement> flattenInto(final Block b, final List<Statement> $) {
+  private static List<Statement> statementsInto(final Block b, final List<Statement> $) {
     for (final Object o : b.statements())
-      flattenInto((Statement) o, $);
+      statementsInto((Statement) o, $);
     return $;
   }
   /**
