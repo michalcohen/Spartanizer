@@ -61,7 +61,7 @@ public class InlineSingleUse extends Spartanization {
         final SimpleName varName = n.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
         final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-        if (uses.size() == 1 && (Is.isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
+        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
           r.replace(uses.get(0), makeParenthesizedExpression(t, n.getInitializer()), null);
           r.remove(parent.fragments().size() != 1 ? n : parent, null);
         }
@@ -77,7 +77,7 @@ public class InlineSingleUse extends Spartanization {
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
         if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1
-            && (Is.isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
+            && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
           $.add(new Range(v));
         return true;
       }

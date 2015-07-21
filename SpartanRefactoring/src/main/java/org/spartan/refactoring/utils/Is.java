@@ -68,15 +68,15 @@ public enum Is {
   /**
    * @param n
    *          the statement or block to check if it is an assignment
-   * @return true if it is an assignment or false if it is not or if the block
-   *         Contains more than one statement
+   * @return <code><b>true</b></code> if the parameter an assignment or false if
+   *         the parameter not or if the block Contains more than one statement
    */
   public static boolean assignment(final ASTNode n) {
     return block(n) ? assignment(asExpressionStatement(Funcs.getBlockSingleStmnt((Block) n)))
         : expressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
   }
   /**
-   * Determined whether a node is a {@link Block}
+   * Determine whether a node is a {@link Block}
    *
    * @param n
    *          JD
@@ -87,7 +87,7 @@ public enum Is {
     return is(n, ASTNode.BLOCK);
   }
   /**
-   * Determined whether a node is a boolean literal
+   * Determine whether a node is a boolean literal
    *
    * @param n
    *          JD
@@ -109,8 +109,8 @@ public enum Is {
   /**
    * @param es
    *          JD
-   * @return true if one of the expressions is a conditional or parenthesized
-   *         conditional expression or false otherwise
+   * @return <code><b>true</b></code> <i>iff</i> one of the parameters is a
+   *         conditional or parenthesized conditional expression
    */
   public static boolean conditional(final Expression... es) {
     for (final Expression e : es) {
@@ -141,11 +141,12 @@ public enum Is {
     return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
   /**
-   * Determined if a node is an "expression statement"
+   * Determine whether a node is an "expression statement"
    *
    * @param n
-   *          node to check
-   * @return true if the given node is expression statement
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an
+   *         {@link ExpressionStatement} statement
    */
   public static boolean expressionStatement(final ASTNode n) {
     return is(n, ASTNode.EXPRESSION_STATEMENT);
@@ -172,8 +173,9 @@ public enum Is {
   }
   /**
    * @param n
-   *          node to check
-   * @return true if the given node is an infix expression or false otherwise
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an infix
+   *         expression.
    */
   public static boolean infix(final ASTNode n) {
     return is(n, ASTNode.INFIX_EXPRESSION);
@@ -186,18 +188,19 @@ public enum Is {
    *
    * @param v
    *          some declaration
-   * @return true if the variable is declared as final
+   * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
+   *         final
    */
-  public static boolean isFinal(final VariableDeclarationStatement v) {
+  public static boolean _final(final VariableDeclarationStatement v) {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
   /**
    * @param n
-   *          node to check
-   * @return true if node is an Expression Statement of type Post or Pre
-   *         Expression with ++ or -- operator false if node is not an
-   *         Expression Statement or its a Post or Pre fix expression that its
-   *         operator is not ++ or --
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the node is an Expression
+   *         Statement of type Post or Pre Expression with ++ or -- operator
+   *         false if node is not an Expression Statement or its a Post or Pre
+   *         fix expression that its operator is not ++ or --
    */
   public static boolean isNodeIncOrDecExp(final ASTNode n) {
     switch (n.getNodeType()) {
@@ -221,8 +224,8 @@ public enum Is {
   /**
    * @param n
    *          JD
-   * @return true if the given node is a variable declaration statement or false
-   *         otherwise
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a variable
+   *         declaration statement.
    */
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
@@ -244,7 +247,7 @@ public enum Is {
   /**
    * @param n
    *          Expression node
-   * @return true if the Expression is literal
+   * @return <code><b>true</b></code> <i>iff</i> the Expression is literal
    */
   public static boolean literal(final ASTNode n) {
     return intIsIn(n.getNodeType(), //
@@ -258,15 +261,17 @@ public enum Is {
   /**
    * @param r
    *          Return Statement node
-   * @return true if the ReturnStatement is of literal type
+   * @return <code><b>true</b></code> <i>iff</i> the ReturnStatement is of
+   *         literal type
    */
   public static boolean literal(final ReturnStatement r) {
     return literal(r.getExpression());
   }
   /**
    * @param n
-   *          node to check
-   * @return true if the given node is a method invocation or false otherwise
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a method
+   *         invocation.
    */
   public static boolean methodInvocation(final ASTNode n) {
     return is(n, ASTNode.METHOD_INVOCATION);
@@ -304,7 +309,7 @@ public enum Is {
     return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
   }
   /**
-   * Determined whether a node is <code><b>this</b></code> or
+   * Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
    *
    * @param e
@@ -338,18 +343,20 @@ public enum Is {
   }
   /**
    * @param n
-   *          node to check
-   * @return true if the given node is a prefix expression or false otherwise
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a prefix
+   *         expression.
    */
   public static boolean prefix(final ASTNode n) {
     return is(n, ASTNode.PREFIX_EXPRESSION);
   }
   /**
-   * Determined whether a node is a return statement
+   * Determine whether a node is a return statement
    *
    * @param n
    *          JD
-   * @return true if the given node is a return statement or false otherwise
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a return
+   *         statement.
    */
   public static boolean retern(final ASTNode n) {
     return is(n, ASTNode.RETURN_STATEMENT);
@@ -365,23 +372,23 @@ public enum Is {
    */
   public static boolean simple(final Expression e) {
     return in(e.getClass(), //
-    BooleanLiteral.class, //
-    CharacterLiteral.class, //
-    NullLiteral.class, //
-    NumberLiteral.class, //
-    StringLiteral.class, //
-    TypeLiteral.class, //
-    Name.class, //
-    QualifiedName.class, //
-    SimpleName.class, //
-    ParenthesizedExpression.class, //
-    SuperMethodInvocation.class, //
-    MethodInvocation.class, //
-    ClassInstanceCreation.class, //
-    SuperFieldAccess.class, //
-    FieldAccess.class, //
-    ThisExpression.class, //
-    null);
+        BooleanLiteral.class, //
+        CharacterLiteral.class, //
+        NullLiteral.class, //
+        NumberLiteral.class, //
+        StringLiteral.class, //
+        TypeLiteral.class, //
+        Name.class, //
+        QualifiedName.class, //
+        SimpleName.class, //
+        ParenthesizedExpression.class, //
+        SuperMethodInvocation.class, //
+        MethodInvocation.class, //
+        ClassInstanceCreation.class, //
+        SuperFieldAccess.class, //
+        FieldAccess.class, //
+        ThisExpression.class, //
+        null);
   }
   /**
    * Determine whether a node is a "specific", i.e., <code><b>null</b></code> or
@@ -398,7 +405,8 @@ public enum Is {
   /**
    * @param n
    *          JD
-   * @return true if the given node is a string literal or false otherwise
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a string
+   *         literal
    */
   public static boolean stringLiteral(final ASTNode n) {
     return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
