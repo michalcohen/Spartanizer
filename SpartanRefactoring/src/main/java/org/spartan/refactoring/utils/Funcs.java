@@ -417,8 +417,8 @@ public enum Funcs {
   public static boolean hasReturn(final Block b) {
     if (b == null)
       return false;
-    for (int i = 0; i < b.statements().size(); i++)
-      if (ASTNode.RETURN_STATEMENT == ((ASTNode) b.statements().get(i)).getNodeType())
+    for (final Object node : b.statements())
+      if (ASTNode.RETURN_STATEMENT == ((ASTNode) node).getNodeType())
         return true;
     return false;
   }
@@ -580,7 +580,7 @@ public enum Funcs {
   }
   private static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
     final Expression left = e.getLeftOperand();
-    return Precedence.of(o) == Precedence.of(left) && Associativity.isL2R(o) ? parenthesize(left) : duplicate(left);
+    return Precedence.same(o, left) && Associativity.isL2R(o) ? parenthesize(left) : duplicate(left);
   }
   /**
    * @param t
@@ -858,7 +858,7 @@ public enum Funcs {
   }
   private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
     final Expression right = e.getRightOperand();
-    return Precedence.of(o) == Precedence.of(right) && Associativity.isL2R(o) ? parenthesize(right) : duplicate(right);
+    return Precedence.same(o, right) && Associativity.isL2R(o) ? parenthesize(right) : duplicate(right);
   }
   /**
    * Determine whether two nodes are the same, in the sense that their textual

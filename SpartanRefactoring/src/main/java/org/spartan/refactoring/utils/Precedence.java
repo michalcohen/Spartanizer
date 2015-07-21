@@ -3,6 +3,7 @@ package org.spartan.refactoring.utils;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
 /**
  * *An empty <code><b>enum</b></code> for fluent programming. The name should
@@ -44,32 +45,7 @@ public enum Precedence {
     }
   }
 
-  public static int of(final Expression e) {
-    if (e instanceof InfixExpression)
-      return of((InfixExpression) e);
-    if (e instanceof Assignment)
-      return of((Assignment) e);
-    return UNDEFINED;
-  }
-  public static int of(final InfixExpression e) {
-    return of(e.getOperator());
-  }
-  public static int of(final Assignment a) {
-    return of(a.getOperator());
-  }
-  private static int of(final Assignment.Operator o) {
-    return of(o.toString());
-  }
-  public static int of(final InfixExpression.Operator o) {
-    return of(o.toString());
-  }
-
   private final static int UNDEFINED = -1;
-
-  private static int of(final String key) {
-    return of.containsKey(key) ? of.get(key) : UNDEFINED;
-  }
-
   private static final ChainStringToIntMap of = new ChainStringToIntMap()//
       .putOn(1, "[]", ".", "() invoke", "++ post", "-- post") //
       .putOn(2, "++ pre", "-- pre", "+ unary", "- unary", "!", "~") //
@@ -91,4 +67,80 @@ public enum Precedence {
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
   );
+
+  private static int of(final Assignment a) {
+    return of(a.getOperator());
+  }
+  /**
+   * Determine the precedence of an
+   * {@link org.eclipse.jdt.core.dom.Assignment.Operator}
+   *
+   * @param o
+   *          JD
+   * @return the precedence of the parameter
+   */
+  public static int of(final Assignment.Operator o) {
+    return of(o.toString());
+  }
+  /**
+   * Determine the precedence of the operator present on an {@link Expression}
+   *
+   * @param e
+   *          JD
+   * @return the precedence of the parameter
+   */
+  public static int of(final Expression e) {
+    if (e instanceof InfixExpression)
+      return of((InfixExpression) e);
+    if (e instanceof Assignment)
+      return of((Assignment) e);
+    return UNDEFINED;
+  }
+  private static int of(final InfixExpression e) {
+    return of(e.getOperator());
+  }
+  /**
+   * Determine the precedence of an
+   * {@link org.eclipse.jdt.core.dom.InfixExpression.Operator}
+   *
+   * @param o
+   *          JD
+   * @return the precedence of the parameter
+   */
+  public static int of(final InfixExpression.Operator o) {
+    return of(o.toString());
+  }
+  private static int of(final String key) {
+    return of.containsKey(key) ? of.get(key) : UNDEFINED;
+  }
+  /**
+   * Determine the precedence of two expressions is the same.
+   *
+   * @param e1
+   *          JD
+   * @param e2
+   *          JD
+   * @return the precedence of the parameter
+   */
+  public static boolean same(final Expression e1, final Expression e2) {
+    assert Precedence.of(e1) != UNDEFINED;
+    assert Precedence.of(e2) != UNDEFINED;
+    return Precedence.of(e1) == Precedence.of(e2);
+  }
+  /**
+   * Determine whether an expression has the same precedence as that of a given
+   * operator.
+   *
+   * @param o
+   *          JD
+   * @param e
+   *          JD
+   * @return <code><b>true</b></code> <i>iff</i> the precedence of the two
+   *         parameters is the same.
+   */
+  public static boolean same(final Operator o, final Expression e) {
+    assert Precedence.of(o) != UNDEFINED;
+    assert Precedence.of(e) != UNDEFINED;
+    return Precedence.of(o) == Precedence.of(e);
+  }
 }
