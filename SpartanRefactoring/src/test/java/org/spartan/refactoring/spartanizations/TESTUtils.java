@@ -75,17 +75,17 @@ public enum TESTUtils {
 
   static final String WHITES = "\\s+";
 
-  public static void assertSimilar(final String expected, final String actual) {
+  static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
       assertEquals(removeWhites(expected), removeWhites(actual));
   }
-  public static void assertSimilar(final String expected, final Document actual) {
+  static void assertSimilar(final String expected, final Document actual) {
     assertSimilar(expected, actual.get());
   }
-  public static void assertNotEvenSimilar(final String expected, final String actual) {
+  static void assertNotEvenSimilar(final String expected, final String actual) {
     assertNotEquals(compressSpaces(expected), compressSpaces(actual));
   }
-  public static String compressSpaces(final String s) {
+  static String compressSpaces(final String s) {
     String $ = s//
         .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
         .replaceAll("[ \t]+", " ") // Squeeze whites
