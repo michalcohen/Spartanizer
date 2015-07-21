@@ -54,7 +54,8 @@ public class PUSHDOWN_NOT_Test {
     assertThat(Is.booleanLiteral(inner), is(true));
     assertThat(Wrings.perhapsNotOfLiteral(inner), is(notNullValue()));
     assertThat(Wrings.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
-    assertThat(Wrings.pushdownNot(e, inner), is(notNullValue()));
+    assertThat(Wrings.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(Wrings.pushdownNot(inner), is(notNullValue()));
     assertThat(Wrings.pushdownNot(asNot(e)), is(notNullValue()));
     assertThat(WRING.replacement(e), is(notNullValue()));
   }
@@ -128,6 +129,8 @@ public class PUSHDOWN_NOT_Test {
         Utils.asArray("double not deeply nested", "!(((!f())))", "f()"), //
         Utils.asArray("not of false", "!false", "true"), //
         Utils.asArray("not of true", "!true", "false"), //
+        Utils.asArray("2 level not of false", "!!false", "false"), //
+        Utils.asArray("2 level not of true", "!!true", "true"), //
         null);
 
     /**

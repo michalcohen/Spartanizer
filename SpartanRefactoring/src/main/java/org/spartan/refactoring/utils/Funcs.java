@@ -1,5 +1,6 @@
 package org.spartan.refactoring.utils;
 
+import static org.spartan.refactoring.utils.Restructure.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -923,11 +924,6 @@ public enum Funcs {
     $.put(LESS, GREATER);
     $.put(GREATER_EQUALS, LESS_EQUALS);
     $.put(LESS_EQUALS, GREATER_EQUALS);
-    return $;
-  }
-  private static Expression parenthesize(final Expression e) {
-    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(e.getParent() == null ? e : duplicate(e));
     return $;
   }
   private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {

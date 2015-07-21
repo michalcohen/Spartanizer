@@ -3,7 +3,6 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,5 +84,20 @@ public enum Restructure {
    */
   public static Expression getCore(final Expression $) {
     return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
+  }
+  /**
+   * Parenthesize an expression (if necessary).
+   *
+   * @param e
+   *          JD
+   * @return a {@link Funcs#duplicate(Expression)} of the parameter wrapped in
+   *         parenthesis.
+   */
+  public static Expression parenthesize(final Expression e) {
+    if (Is.simple(e))
+      return duplicate(e);
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(e.getParent() == null ? e : duplicate(e));
+    return $;
   }
 }
