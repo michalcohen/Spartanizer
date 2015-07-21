@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -50,11 +48,18 @@ public enum Funcs {
   ;
   private static Map<Operator, Operator> conjugate = makeConjeguates();
 
+  /**
+   * Convert an {@link Expression} into {@link InfixExpression} whose operator
+   * is either {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#AND} or
+   * {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#OR}.
+   *
+   * @param e
+   *          JD
+   * @return the parameter thus converted, or <code><b>null</b> if the
+   *         conversion is not possible for it
+   */
   public static InfixExpression asAndOrOr(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : asAndOrOr((InfixExpression) e);
-  }
-  public static InfixExpression asAndOrOr(final InfixExpression e) {
-    return Is.deMorgan(e.getOperator()) ? e : null;
+    return Is.infix(e) && Is.deMorgan(asInfixExpression(e).getOperator()) ? asInfixExpression(e) : null;
   }
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link Block}
@@ -79,10 +84,20 @@ public enum Funcs {
   public static BooleanLiteral asBooleanLiteral(final Expression e) {
     return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
   }
+  /**
+   * Convert an {@link Expression} into {@link InfixExpression} whose operator
+   * is one of the six comparison operators: <code><</code>, <code><=</code>,
+   * <code>></code>, <code>>=</code>, <code>!=</code>, or <code>==</code>.
+   *
+   * @param e
+   *          JD
+   * @return the parameter thus converted, or <code><b>null</b> if the
+   *         conversion is not possible for it
+   */
   public static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
-  public static InfixExpression asComparison(final InfixExpression e) {
+  private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
         GREATER_EQUALS, //
@@ -119,10 +134,19 @@ public enum Funcs {
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
   }
+  /**
+   * Convert an {@link Expression} into a {@link PrefixExpression} whose
+   * operator is <code>!</code>,
+   *
+   * @param e
+   *          JD
+   * @return the parameter thus converted, or <code><b>null</b> if the
+   *         conversion is not possible for it
+   */
   public static PrefixExpression asNot(final Expression e) {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
   }
-  public static PrefixExpression asNot(final PrefixExpression e) {
+  static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
   }
   /**
@@ -228,37 +252,6 @@ public enum Funcs {
       if (n != null && Is.isNodeIncOrDecExp(n))
         return true;
     return false;
-  }
-  /**
-   * Counts the number of nodes in a tree rooted at a given node
-   *
-   * @param n
-   *          JD
-   * @return Number of abstract syntax tree nodes under the parameter.
-   */
-  public static int countNodes(final ASTNode n) {
-    final AtomicInteger $ = new AtomicInteger(0);
-    n.accept(new ASTVisitor() {
-      /**
-       * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
-       * @param _
-       *          ignored
-       */
-      @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-        $.incrementAndGet();
-      }
-    });
-    return $.get();
-  }
-  /**
-   * Counts the number of non-space characters in a tree rooted at a given node
-   *
-   * @param n
-   *          JD
-   * @return Number of abstract syntax tree nodes under the parameter.
-   */
-  public static int countNonWhites(final ASTNode n) {
-    return removeWhites(n).length();
   }
   public static Expression duplicate(final AST t, final Expression e) {
     return (Expression) ASTNode.copySubtree(t, e);

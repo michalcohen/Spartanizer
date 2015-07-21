@@ -1,8 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.spartanizations.ExpressionComparator.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.spartan.refactoring.utils.Funcs.countNodes;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
 import static org.spartan.refactoring.utils.Funcs.duplicateRight;
@@ -261,7 +261,7 @@ public class ShortestOperand extends Spartanization {
   static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() > i2.arguments().size();
   }
-  boolean sortInfix(final InfixExpression e, final AST t) {
+  static boolean sortInfix(final InfixExpression e, final AST t) {
     boolean $ = false;
     if (e == null || !Is.flipable(e.getOperator()) || !e.hasExtendedOperands())
       return $;
@@ -303,7 +303,7 @@ public class ShortestOperand extends Spartanization {
       }
     return $;
   }
-  private boolean sortOperandList(final List<Expression> es, final AST t, final Operator o) {
+  private static boolean sortOperandList(final List<Expression> es, final AST t, final Operator o) {
     boolean $ = false;
     // Bubble sort
     // We cannot use overridden version of Comparator due to the copy
@@ -312,7 +312,7 @@ public class ShortestOperand extends Spartanization {
       for (int j = 0; j < size - 1; j++) {
         final Expression l = es.get(j);
         final Expression s = es.get(j + 1);
-        if (areExpsValid(o, l, s)) {
+        if (areValid(o, l, s)) {
           es.remove(j);
           es.add(j + 1, (Expression) ASTNode.copySubtree(t, l));
           $ = true;
@@ -320,11 +320,11 @@ public class ShortestOperand extends Spartanization {
       }
     return $;
   }
-  private boolean areExpsValid(final Operator o, final Expression l, final Expression s) {
+  private static boolean areValid(final Operator o, final Expression l, final Expression s) {
     return isLonger(l, s) && !Is.methodInvocation(l) && !Is.methodInvocation(s) && !inOperandExceptions(l, o)
         && !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o) && !inRightOperandExceptions(s, o);
   }
-  private boolean sortExpressionList(final List<Expression> es, final AST t, final Operator o) {
+  private static boolean sortExpressionList(final List<Expression> es, final AST t, final Operator o) {
     return moveMethodsToTheBack(es, t, o) | sortOperandList(es, t, o);
   }
 }

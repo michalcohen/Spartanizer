@@ -18,7 +18,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
 import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.spartanizations.Wrings.MULTIPLICATION_SORTER;
-import static org.spartan.refactoring.utils.Funcs.countNodes;
+import static org.spartan.refactoring.spartanizations.ExpressionComparator.*;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 

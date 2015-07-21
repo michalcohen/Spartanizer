@@ -1,5 +1,6 @@
 package org.spartan.refactoring.utils;
 
+import static org.spartan.refactoring.spartanizations.ExpressionComparator.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
@@ -32,8 +33,8 @@ import org.junit.runners.MethodSorters;
 @SuppressWarnings({ "static-method", "javadoc" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class FuncsTest {
-  @Test public void cocountNonWhiteCharactersunt() {
-    assertThat(Funcs.countNonWhites(e("1 + 23     *456 + \n /* aa */ 7890")), is(13));
+  @Test public void countNonWhiteCharacters() {
+    assertThat(countNonWhites(e("1 + 23     *456 + \n /* aa */ 7890")), is(13));
   }
   @Test public void asComparisonTypicalInfixIsCorrect() {
     final InfixExpression i = mock(InfixExpression.class);

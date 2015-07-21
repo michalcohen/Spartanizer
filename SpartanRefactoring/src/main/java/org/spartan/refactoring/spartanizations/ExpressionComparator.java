@@ -1,12 +1,13 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.countNodes;
-import static org.spartan.refactoring.utils.Funcs.countNonWhites;
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -96,4 +97,36 @@ public enum ExpressionComparator implements Comparator<Expression> {
   }
 
   static final int TOKEN_THRESHOLD = 1;
+
+  /**
+   * Counts the number of non-space characters in a tree rooted at a given node
+   *
+   * @param n
+   *          JD
+   * @return Number of abstract syntax tree nodes under the parameter.
+   */
+  public static int countNonWhites(final ASTNode n) {
+    return removeWhites(n).length();
+  }
+  /**
+   * Counts the number of nodes in a tree rooted at a given node
+   *
+   * @param n
+   *          JD
+   * @return Number of abstract syntax tree nodes under the parameter.
+   */
+  public static int countNodes(final ASTNode n) {
+    final AtomicInteger $ = new AtomicInteger(0);
+    n.accept(new ASTVisitor() {
+      /**
+       * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
+       * @param _
+       *          ignored
+       */
+      @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
+        $.incrementAndGet();
+      }
+    });
+    return $.get();
+  }
 }
