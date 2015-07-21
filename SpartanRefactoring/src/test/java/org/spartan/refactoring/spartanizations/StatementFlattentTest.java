@@ -18,6 +18,12 @@ import org.junit.runners.MethodSorters;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class StatementFlattentTest {
+  @Test public void isNotNullOfNull() {
+    assertThat(statements(null), is(notNullValue()));
+  }
+  @Test public void isEmptyOfNull() {
+    assertThat(statements(null), empty());
+  }
   @Test public void isNotNullOfValidStatement() {
     final Statement s = s("{}");
     assertThat(statements(s), is(notNullValue()));

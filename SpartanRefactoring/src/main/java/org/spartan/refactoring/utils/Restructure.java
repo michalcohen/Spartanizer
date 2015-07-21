@@ -51,7 +51,8 @@ public enum Restructure {
     return add(s, $);
   }
   private static List<Statement> add(final Statement s, final List<Statement> $) {
-    $.add(s);
+    if (s != null)
+      $.add(s);
     return $;
   }
   private static List<Statement> statementsInto(final Block b, final List<Statement> $) {
