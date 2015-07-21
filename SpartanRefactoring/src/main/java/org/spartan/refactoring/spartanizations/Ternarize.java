@@ -8,7 +8,6 @@ import static org.spartan.refactoring.utils.Funcs.compatibleNames;
 import static org.spartan.refactoring.utils.Funcs.compatibleOps;
 import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
 import static org.spartan.refactoring.utils.Funcs.getAssignment;
-import static org.spartan.refactoring.utils.Funcs.getBlockSingleStmnt;
 import static org.spartan.refactoring.utils.Funcs.getChildren;
 import static org.spartan.refactoring.utils.Funcs.getExpression;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -100,15 +98,15 @@ public class Ternarize extends Spartanization {
     if (!hasReturn(i.getThenStatement()))
       return false;
     final ReturnStatement nextRet = nextStatement(ss, ss.indexOf(i));
-    return nextRet != null && singletonThenPart(i) && emptyElsePart(i) && rewriteIfToRetStmnt(t, r, i, nextRet);
+    return nextRet != null && singletonThen(i) && noElse(i) && rewriteIfToRetStmnt(t, r, i, nextRet);
   }
-  private static boolean emptyElsePart(final IfStatement i) {
+  private static boolean noElse(final IfStatement i) {
     return isEmpty(i.getElseStatement());
   }
   private static boolean isEmpty(final Statement s) {
     return statementsCount(s) == 0;
   }
-  private static boolean singletonThenPart(final IfStatement i) {
+  private static boolean singletonThen(final IfStatement i) {
     return isSingleton(i.getThenStatement());
   }
   private static boolean isSingleton(final Statement s) {
@@ -178,8 +176,8 @@ public class Ternarize extends Spartanization {
   }
 
   static boolean perhapsIfSameExpStmntOrRet(final AST t, final ASTRewrite r, final IfStatement i) {
-    final Statement then = getBlockSingleStmnt(i.getThenStatement());
-    final Statement elze = getBlockSingleStmnt(i.getElseStatement());
+    final Statement then = singleStatement(i.getThenStatement());
+    final Statement elze = singleElse(i);
     return !hasNull(asBlock(i.getParent()), then, elze) && treatIfSameExpStmntOrRet(t, r, i, then, elze);
   }
   private static boolean treatIfSameExpStmntOrRet(final AST t, final ASTRewrite r, final IfStatement ifStmt,
@@ -272,12 +270,9 @@ public class Ternarize extends Spartanization {
   private static boolean handleCaseDiffNodesAreBlocks(final TwoNodes diffNodes) {
     if (statementsCount(diffNodes.then) != 1 || statementsCount(diffNodes.elze) != 1)
       return false;
-    diffNodes.then = getStmntIfBlock(diffNodes.then);
-    diffNodes.elze = getStmntIfBlock(diffNodes.elze);
+    diffNodes.then = singleStatement(diffNodes.then);
+    diffNodes.elze = singleStatement(diffNodes.elze);
     return true;
-  }
-  private static ASTNode getStmntIfBlock(final ASTNode n) {
-    return n == null || ASTNode.BLOCK != n.getNodeType() ? n : getBlockSingleStmnt((Block) n);
   }
   private static TwoNodes findDiffNodes(final ASTNode thenNode, final ASTNode elseNode) {
     return hasNull(thenNode, elseNode) ? null : findFirstDifference(getChildren(thenNode), getChildren(elseNode));
@@ -309,8 +304,8 @@ public class Ternarize extends Spartanization {
   }
   private static boolean substitute(final AST t, final ASTRewrite r, final IfStatement i, final TwoExpressions diff,
       final Statement possiblePrevDecl) {
-    final Statement elze = getBlockSingleStmnt(i.getElseStatement());
-    final Statement then = getBlockSingleStmnt(i.getThenStatement());
+    final Statement elze = singleElse(i);
+    final Statement then = singleStatement(i.getThenStatement());
     final TwoNodes diffNodes = !isExpStmntOrRet(then) ? findDiffNodes(then, elze) : new TwoNodes(then, elze);
     final Expression newExp = determineNewExp(t, r, i.getExpression(), diff.then, diff.elze);
     if (Is.assignment(diffNodes.then) && Is.assignment(diffNodes.elze))
@@ -499,9 +494,15 @@ public class Ternarize extends Spartanization {
             : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
   }
   static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-    if (hasNull(getBlockSingleStmnt(i.getThenStatement()), getBlockSingleStmnt(i.getElseStatement()), asBlock(i.getParent())))
+    if (hasNull(singleThen(i), singleElse(i), asBlock(i.getParent())))
       return null;
     return !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
+  }
+  private static Statement singleElse(final IfStatement i) {
+    return singleStatement(i.getElseStatement());
+  }
+  private static Statement singleThen(final IfStatement i) {
+    return singleStatement(i.getThenStatement());
   }
   static Range detectAssignIfAssign(final IfStatement i) {
     return asBlock(i.getParent()) == null ? null : detectAssignIfAssign(i, statements(asBlock(i.getParent())));
