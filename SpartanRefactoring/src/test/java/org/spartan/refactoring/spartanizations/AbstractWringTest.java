@@ -135,7 +135,7 @@ public abstract class AbstractWringTest {
       protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
       /** Where the expected output can be found? */
       @Parameter(2) public String output;
-      protected final Trimmer wringer = new Trimmer();
+      protected final Trimmer trimmer = new Trimmer();
 
       /**
        * Instantiates the enclosing class ({@link Wringed})
@@ -160,7 +160,7 @@ public abstract class AbstractWringTest {
       }
       @Test public void oneOpporunity() {
         final CompilationUnit u = asCompilationUnit();
-        assertEquals(u.toString(), 1, wringer.findOpportunities(u).size());
+        assertEquals(u.toString(), 1, trimmer.findOpportunities(u).size());
         assertTrue(inner.scopeIncludes(asExpression()));
       }
       @Test public void hasReplacement() {
@@ -169,12 +169,12 @@ public abstract class AbstractWringTest {
       @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
         final CompilationUnit u = asCompilationUnit();
         final Document d = new Document(wrap(input));
-        final ASTRewrite r = wringer.createRewrite(u, null);
+        final ASTRewrite r = trimmer.createRewrite(u, null);
         assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
       }
       @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
         final CompilationUnit u = asCompilationUnit();
-        final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrap(input)));
+        final Document excpected = TESTUtils.rewrite(trimmer, u, new Document(wrap(input)));
         final String peeled = peel(excpected.get());
         if (output.equals(peeled))
           return;

@@ -43,7 +43,7 @@ import org.spartan.refactoring.utils.Is;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) //
-public class WringerTest {
+public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
 
   @Test public void chainCOmparisonTrueLast() {
