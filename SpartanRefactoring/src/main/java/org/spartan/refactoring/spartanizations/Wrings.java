@@ -91,6 +91,33 @@ public enum Wrings {
     }
   }), //
   /**
+   * A {@link Wring} that reorder comparisons so that the specific value is
+   * placed on the right. Specific value means a literal, or any of the two
+   * keywords <code><b>this</b></code> or <code><b>null</b></code>.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   *
+   */
+  COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
+    @Override public boolean scopeIncludes(final InfixExpression e) {
+      return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return Is.specific(e.getLeftOperand());
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      return flip(e);
+    }
+    boolean hasThisOrNull(final InfixExpression e) {
+      return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
+    }
+    private boolean hasOneSpecificArgument(final InfixExpression e) {
+      // One of the arguments must be specific, the other must not be.
+      return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
+    }
+  }), //
+  /**
    * A {@link Wring} that eliminate Boolean literals, when possible present on
    * logical AND an logical OR.
    *
@@ -207,33 +234,6 @@ public enum Wrings {
       if (!tryToSort(operands))
         return null;
       return refitOperands(e, operands);
-    }
-  }), //
-  /**
-   * A {@link Wring} that reorder comparisons so that the specific value is
-   * placed on the right. Specific value means a literal, or any of the two
-   * keywords <code><b>this</b></code> or <code><b>null</b></code>.
-   *
-   * @author Yossi Gil
-   * @since 2015-07-17
-   *
-   */
-  COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
-    @Override public boolean scopeIncludes(final InfixExpression e) {
-      return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      return Is.specific(e.getLeftOperand());
-    }
-    @Override Expression _replacement(final InfixExpression e) {
-      return flip(e);
-    }
-    boolean hasThisOrNull(final InfixExpression e) {
-      return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
-    }
-    private boolean hasOneSpecificArgument(final InfixExpression e) {
-      // One of the arguments must be specific, the other must not be.
-      return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
     }
   }), //
   /**
