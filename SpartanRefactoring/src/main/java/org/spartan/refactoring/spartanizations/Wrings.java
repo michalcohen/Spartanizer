@@ -319,16 +319,16 @@ public enum Wrings {
   }
   static Expression pushdownNot(final PrefixExpression e, final Expression inner) {
     Expression $;
-    return ($ = perhapsNotOfLiteral(e, inner)) != null//
+    return ($ = perhapsNotOfLiteral(e)) != null//
         || ($ = perhapsDoubleNegation(e, inner)) != null//
         || ($ = perhapsDeMorgan(e, inner)) != null//
         || ($ = perhapsComparison(e, inner)) != null //
             ? $ : null;
   }
-  static Expression perhapsNotOfLiteral(final PrefixExpression e, final Expression inner) {
-    return !Is.booleanLiteral(inner) ? null : notOfLiteral(e, asBooleanLiteral(inner));
+  static Expression perhapsNotOfLiteral(final Expression inner) {
+    return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));
   }
-  static Expression notOfLiteral(final PrefixExpression e, final BooleanLiteral l) {
+  static Expression notOfLiteral(final BooleanLiteral l) {
     final BooleanLiteral $ = duplicate(l);
     $.setBooleanValue(!l.booleanValue());
     return $;
@@ -336,19 +336,19 @@ public enum Wrings {
   static Expression perhapsDoubleNegation(final Expression e, final Expression inner) {
     return perhapsDoubleNegation(e, asNot(inner));
   }
-  static Expression perhapsDoubleNegation(final Expression e, final PrefixExpression inner) {
+  static Expression perhapsDoubleNegation(final PrefixExpression inner) {
     return inner == null ? null : inner.getOperand();
   }
   static Expression perhapsDeMorgan(final Expression e, final Expression inner) {
     return perhapsDeMorgan(e, asAndOrOr(inner));
   }
-  static Expression perhapsDeMorgan(final Expression e, final InfixExpression inner) {
-    return inner == null ? null : deMorgan(e, inner, getCoreLeft(inner), getCoreRight(inner));
+  static Expression perhapsDeMorgan(final InfixExpression inner) {
+    return inner == null ? null : deMorgan(inner, getCoreLeft(inner), getCoreRight(inner));
   }
-  static Expression deMorgan(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
-    return deMorgan1(e, inner, parenthesize(left), parenthesize(right));
+  static Expression deMorgan(final InfixExpression inner, final Expression left, final Expression right) {
+    return deMorgan1(inner, parenthesize(left), parenthesize(right));
   }
-  static Expression deMorgan1(final Expression e, final InfixExpression inner, final Expression left, final Expression right) {
+  static Expression deMorgan1(final InfixExpression inner, final Expression left, final Expression right) {
     return parenthesize( //
         addExtendedOperands(inner, //
             makeInfixExpression(not(left), conjugate(inner.getOperator()), not(right))));
@@ -365,10 +365,10 @@ public enum Wrings {
   static Expression perhapsComparison(final Expression e, final Expression inner) {
     return perhapsComparison(e, asComparison(inner));
   }
-  static Expression perhapsComparison(final Expression e, final InfixExpression inner) {
-    return inner == null ? null : comparison(e, inner);
+  static Expression perhapsComparison(final InfixExpression inner) {
+    return inner == null ? null : comparison(inner);
   }
-  static Expression comparison(final Expression e, final InfixExpression inner) {
+  static Expression comparison(final InfixExpression inner) {
     return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
   }
   static InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {

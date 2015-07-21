@@ -52,8 +52,8 @@ public class PUSHDOWN_NOT_Test {
     assertThat(inner, is(notNullValue()));
     assertThat(inner.toString(), is("false"));
     assertThat(Is.booleanLiteral(inner), is(true));
-    assertThat(Wrings.perhapsNotOfLiteral(e, inner), is(notNullValue()));
-    assertThat(Wrings.notOfLiteral(e, asBooleanLiteral(inner)), is(notNullValue()));
+    assertThat(Wrings.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(Wrings.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
     assertThat(Wrings.pushdownNot(e, inner), is(notNullValue()));
     assertThat(Wrings.pushdownNot(asNot(e)), is(notNullValue()));
     assertThat(WRING.replacement(e), is(notNullValue()));
