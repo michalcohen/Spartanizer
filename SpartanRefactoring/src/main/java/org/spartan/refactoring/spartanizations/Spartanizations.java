@@ -25,6 +25,7 @@ public enum Spartanizations {
   @SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
   @SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
   @SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
+  // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
   // TODO Clever chaining in 2 to 3 selected classes

@@ -84,7 +84,7 @@ public class InfixTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P2);
     final ShortestOperand shortestOperand = new ShortestOperand();
     final List<Range> $ = new ArrayList<>();
-    u.accept(shortestOperand.fillOpportunities($));
+    u.accept(shortestOperand.collectOpportunities($));
     final List<Range> findOpportunities = $;
     assertNotNull(findOpportunities);
     final int countOpportunities = findOpportunities.size();
@@ -103,7 +103,7 @@ public class InfixTest {
     final InfixExpression e = i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1");
     final ShortestOperand s = new ShortestOperand();
     final List<Range> opportunities = new ArrayList<>();
-    final ASTVisitor a = s.fillOpportunities(opportunities);
+    final ASTVisitor a = s.collectOpportunities(opportunities);
     final ASTVisitor x = Mockito.spy(a);
     a.visit(e);
     x.visit(e);
@@ -113,7 +113,7 @@ public class InfixTest {
     final InfixExpression e = i("1 + 2  + s < 3 ");
     final ShortestOperand s = new ShortestOperand();
     final List<Range> opportunities = new ArrayList<>();
-    final ASTVisitor a = s.fillOpportunities(opportunities);
+    final ASTVisitor a = s.collectOpportunities(opportunities);
     final ASTVisitor x = Mockito.spy(a);
     a.visit(e);
     x.visit(e);

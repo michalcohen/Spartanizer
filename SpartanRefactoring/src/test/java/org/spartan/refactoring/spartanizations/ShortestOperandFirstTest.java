@@ -73,7 +73,7 @@ public class ShortestOperandFirstTest {
     final String expected = output;
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new Wringer(), wrap);
+    final String unpeeled = apply(new Trimmer(), wrap);
     final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);

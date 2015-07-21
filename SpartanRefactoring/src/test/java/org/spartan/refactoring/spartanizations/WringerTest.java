@@ -243,15 +243,15 @@ public class WringerTest {
   }
   @Test public void oneOpportunityExample() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap(example));
-    assertEquals(u.toString(), 1, countOpportunities(new Wringer(), u));
+    assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
-    final Wring s = Wrings.find(e);
-    assertNotNull(s);
-    assertTrue(s.scopeIncludes(e));
-    assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final Wring w = Wrings.find(e);
+    assertNotNull(w);
+    assertTrue(w.scopeIncludes(e));
+    assertTrue(w.eligible(e));
+    final Expression replacement = w.replacement(e);
     assertNotNull(replacement);
     assertEquals("a != null", replacement.toString());
   }

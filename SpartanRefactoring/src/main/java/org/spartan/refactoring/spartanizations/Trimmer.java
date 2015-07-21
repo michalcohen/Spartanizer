@@ -1,18 +1,13 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
-import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
 import static org.spartan.refactoring.utils.Funcs.duplicateRight;
 import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.getCore;
 import static org.spartan.refactoring.utils.Funcs.remake;
+import static org.spartan.utils.Utils.removeDuplicates;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -22,8 +17,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
@@ -36,28 +29,20 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015/07/10
  */
-public class Wringer extends Spartanization {
+public class Trimmer extends Spartanization {
   /** Instantiates this class */
-  public Wringer() {
+  public Trimmer() {
     super("Expression simplifier", "Make the shortest operand first in a binary commutative or semi-commutative operator");
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
-      // TODO: this must be a bug.
       @Override public boolean visit(final PrefixExpression e) {
-        if (hasOpportunity(asNot(e)))
-          opportunities.add(new Range(e));
-        return true;
+        final Wring w = Wrings.find(e);
+        return w != null && w.noneligible(e) ? true : overrideInto(e, $);
       }
       @Override public boolean visit(final InfixExpression e) {
         final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) ? true : overrideInto(e, opportunities);
-      }
-      private boolean hasOpportunity(final PrefixExpression e) {
-        return e == null ? false : hasOpportunity(getCore(e.getOperand()));
-      }
-      private boolean hasOpportunity(final Expression inner) {
-        return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+        return w != null && w.noneligible(e) ? true : overrideInto(e, $);
       }
     };
   }
@@ -81,26 +66,13 @@ public class Wringer extends Spartanization {
       }
     });
   }
-  static boolean overrideInto(final InfixExpression e, final List<Range> rs) {
+  static boolean overrideInto(final Expression e, final List<Range> rs) {
     return overrideInto(new Range(e), rs);
   }
   private static boolean overrideInto(final Range r, final List<Range> rs) {
     r.pruneIncluders(rs);
     rs.add(r);
     return true;
-  }
-  /**
-   * Transpose infix expressions recursively. Makes the shortest operand first
-   * on every subtree of the node.
-   *
-   * @param e
-   *          The node.
-   * @return Number of abstract syntax tree nodes under the parameter.
-   */
-  public static InfixExpression transpose(final AST t, final InfixExpression e) {
-    final InfixExpression $ = flip(e);
-    sortInfix($, t);
-    return $;
   }
   /**
    * Tries to union the given range with one of the elements inside the given
@@ -125,26 +97,6 @@ public class Wringer extends Spartanization {
       }
     removeDuplicates(rs);
     return $;
-  }
-  protected static <T> void removeDuplicates(final List<T> ts) {
-    final Set<T> noDuplicates = new LinkedHashSet<>(ts);
-    ts.clear();
-    ts.addAll(noDuplicates);
-  }
-  static boolean stringReturningMethod(final InfixExpression n) {
-    for (ASTNode parent = n.getParent(); parent != null; parent = parent.getParent())
-      if (Is.retern(parent) && doesMthdRetString(parent))
-        return true;
-    return false;
-  }
-  private static boolean doesMthdRetString(final ASTNode n) {
-    for (ASTNode p = n.getParent(); p != null; p = p.getParent())
-      if (p.getNodeType() == ASTNode.METHOD_DECLARATION)
-        return ((MethodDeclaration) p).getReturnType2().toString().equals("String");
-    return false;
-  }
-  static boolean moreArguments(final MethodInvocation i1, final MethodInvocation i2) {
-    return i1.arguments().size() > i2.arguments().size();
   }
   static boolean sortInfix(final InfixExpression e, final AST t) {
     boolean $ = false;

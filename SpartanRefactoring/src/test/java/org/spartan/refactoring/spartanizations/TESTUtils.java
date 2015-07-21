@@ -73,7 +73,7 @@ public enum TESTUtils {
           ;
     return $;
   }
-  static String apply(final Wringer s, final String from) {
+  static String apply(final Trimmer s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
     final Document d = new Document(from);
@@ -137,7 +137,7 @@ public enum TESTUtils {
     assertTrue(s.eligible((InfixExpression) asExpression(expression)));
   }
   static void assertNoChange(final String input) {
-    assertSimilar(input, peel(apply(new Wringer(), wrap(input))));
+    assertSimilar(input, peel(apply(new Trimmer(), wrap(input))));
   }
   static void assertNotLegible(final Wring s, final InfixExpression e) {
     assertFalse(s.eligible(e));
@@ -156,7 +156,7 @@ public enum TESTUtils {
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new Wringer(), wrap);
+    final String unpeeled = apply(new Trimmer(), wrap);
     final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);

@@ -168,11 +168,11 @@ public class SimplifyLogicalNegation extends Spartanization {
     assert Is.deMorgan(o);
     return o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR : CONDITIONAL_AND;
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
         if (hasOpportunity(asNot(e)))
-          opportunities.add(new Range(e));
+          $.add(new Range(e));
         return true;
       }
       private boolean hasOpportunity(final PrefixExpression e) {

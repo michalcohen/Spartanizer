@@ -25,11 +25,11 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
   public ComparisonWithSpecific() {
     super("Specific comparison", "Specific values: 'null', 'this' and numerical literals should appear last in comparisons");
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
         if (withinDomain(e) && applicable(e))
-          opportunities.add(new Range(e));
+          $.add(new Range(e));
         return true;
       }
     };

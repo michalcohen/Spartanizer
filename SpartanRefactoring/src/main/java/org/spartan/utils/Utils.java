@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>
@@ -13,58 +15,6 @@ import java.util.List;
  */
 public enum Utils {
   ;
-  /**
-   * Impose an ordering on type <code><b>boolean</b></code> by which
-   * <code><b>true</b></code> is greater than <code><b>false</b></code>.
-   *
-   * @param b1
-   *          JD
-   * @param b2
-   *          JD
-   *
-   * @return an integer that is negative, zero or positive depending on whether
-   *         the first argument is less than, equal to or greater than the
-   *         second.
-   *
-   * @see Comparable
-   * @see Comparator
-   */
-  public static int compare(final boolean b1, final boolean b2) {
-    return b1 == b2 ? 0 : b1 ? 1 : -1;
-  }
-  public static String removeSuffix(final String s, final String postfix) {
-    for (String $ = s;; $ = $.substring(0, $.length() - postfix.length()))
-      if (!$.endsWith(postfix))
-        return $;
-  }
-  public static String removePrefix(final String s, final String prefix) {
-    for (String $ = s;; $ = $.substring(prefix.length()))
-      if (!$.startsWith(prefix))
-        return $;
-  }
-  /**
-   * Convert variadic list into an array
-   *
-   * @param os
-   *          _
-   * @return the parameter, as an array.
-   */
-  public static Object[] objects(final Object... os) {
-    return os;
-  }
-  /**
-   * determine whether there is a null in a sequence of object
-   *
-   * @param os
-   *          an unknown number of objects
-   * @return true if one of the objects is a null or false otherwise
-   */
-  public static boolean hasNull(final Object... os) {
-    for (final Object o : os)
-      if (o == null)
-        return true;
-    return false;
-  }
   /**
    * Appends an element to an array, by reallocating an array whose size is
    * greater by one and placing the element at the last position.
@@ -79,6 +29,41 @@ public enum Utils {
     final T[] $ = Arrays.copyOf(ts, 1 + ts.length);
     $[ts.length] = t;
     return $;
+  }
+  /**
+   * Convert multiple arguments into an array
+   *
+   * @param ts
+   *          a sequence of arguments of the same type
+   * @return an array representation of the parameter
+   */
+  @SafeVarargs public static <T> T[] asArray(final T... ts) {
+    return ts;
+  }
+  @SafeVarargs public static <T> Collection<T> asList(final T... ts) {
+    final Collection<T> $ = new ArrayList<>(ts.length);
+    for (final T t : ts)
+      $.add(t);
+    return $;
+  }
+  /**
+   * Impose an ordering on type <code><b>boolean</b></code> by which
+   * <code><b>true</b></code> is greater than <code><b>false</b></code>.
+   *
+   * @param b1
+   *          JD
+   * @param b2
+   *          JD
+   *
+   * @return an integer that is negative, zero or positive depending on whether
+   *         the first argument is less than, equal to, or greater than the
+   *         second.
+   *
+   * @see Comparable
+   * @see Comparator
+   */
+  public static int compare(final boolean b1, final boolean b2) {
+    return b1 == b2 ? 0 : b1 ? 1 : -1;
   }
   /**
    * Deletes a specified element from an array, by reallocating an array whose
@@ -96,38 +81,15 @@ public enum Utils {
     return $;
   }
   /**
-   * Sorts an array
+   * determine whether there is a null in a sequence of object
    *
-   * @param is
-   *          what to sort
-   * @return the given array with elements in sorted order
+   * @param os
+   *          an unknown number of objects
+   * @return true if one of the objects is a null or false otherwise
    */
-  public static int[] sort(final int[] is) {
-    Arrays.sort(is);
-    return is;
-  }
-  /**
-   * Convert multiple arguments into an array
-   *
-   * @param ts
-   *          a sequence of arguments of the same type
-   * @return an array representation of the parameter
-   */
-  @SafeVarargs public static <T> T[] asArray(final T... ts) {
-    return ts;
-  }
-  /**
-   * Determine if an integer can be found in a list of values
-   *
-   * @param candidate
-   *          what to search for
-   * @param is
-   *          where to search
-   * @return true if the the item is found in the list
-   */
-  @SafeVarargs public static boolean intIsIn(final int candidate, final int... is) {
-    for (final int i : is)
-      if (i == candidate)
+  public static boolean hasNull(final Object... os) {
+    for (final Object o : os)
+      if (o == null)
         return true;
     return false;
   }
@@ -159,13 +121,58 @@ public enum Utils {
   public static <T> boolean inRange(final int i, final List<T> ts) {
     return i >= 0 && i < ts.size();
   }
-  @SafeVarargs public static <T> Collection<T> asList(final T... ts) {
-    final Collection<T> $ = new ArrayList<>(ts.length);
-    for (final T t : ts)
-      $.add(t);
-    return $;
+  /**
+   * Determine if an integer can be found in a list of values
+   *
+   * @param candidate
+   *          what to search for
+   * @param is
+   *          where to search
+   * @return true if the the item is found in the list
+   */
+  @SafeVarargs public static boolean intIsIn(final int candidate, final int... is) {
+    for (final int i : is)
+      if (i == candidate)
+        return true;
+    return false;
+  }
+  /**
+   * Convert variadic list of arguments into an array
+   *
+   * @param os
+   *          JD _
+   * @return the parameter, as an array.
+   */
+  public static Object[] objects(final Object... os) {
+    return os;
+  }
+  public static <T> void removeDuplicates(final List<T> ts) {
+    final Set<T> noDuplicates = new LinkedHashSet<>(ts);
+    ts.clear();
+    ts.addAll(noDuplicates);
+  }
+  public static String removePrefix(final String s, final String prefix) {
+    for (String $ = s;; $ = $.substring(prefix.length()))
+      if (!$.startsWith(prefix))
+        return $;
+  }
+  public static String removeSuffix(final String s, final String postfix) {
+    for (String $ = s;; $ = $.substring(0, $.length() - postfix.length()))
+      if (!$.endsWith(postfix))
+        return $;
   }
   public static String removeWhites(final String s) {
     return s.replaceAll("\\s+", "");
+  }
+  /**
+   * Sorts an array
+   *
+   * @param is
+   *          what to sort
+   * @return the given array with elements in sorted order
+   */
+  public static int[] sort(final int[] is) {
+    Arrays.sort(is);
+    return is;
   }
 }

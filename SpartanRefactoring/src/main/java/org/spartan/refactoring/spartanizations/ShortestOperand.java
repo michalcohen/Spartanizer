@@ -9,10 +9,9 @@ import static org.spartan.refactoring.utils.Funcs.duplicateRight;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.remake;
 import static org.spartan.utils.Utils.hasNull;
+import static org.spartan.utils.Utils.removeDuplicates;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -218,15 +217,10 @@ public class ShortestOperand extends Spartanization {
     removeDuplicates(rs);
     return $;
   }
-  protected static <T> void removeDuplicates(final List<T> ts) {
-    final Set<T> noDuplicates = new LinkedHashSet<>(ts);
-    ts.clear();
-    ts.addAll(noDuplicates);
-  }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        return !outOfScope(e) && eligible(e) ? overrideInto(new Range(e), opportunities) : true;
+        return !outOfScope(e) && eligible(e) ? overrideInto(new Range(e), $) : true;
       }
     };
   }

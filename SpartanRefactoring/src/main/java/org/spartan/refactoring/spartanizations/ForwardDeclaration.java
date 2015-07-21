@@ -97,7 +97,7 @@ public class ForwardDeclaration extends Spartanization {
     }
     return false;
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> oppportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
         final ASTNode $ = n.getParent().getParent();
@@ -111,7 +111,7 @@ public class ForwardDeclaration extends Spartanization {
         if (nextNodeIsAlreadyFixed(b, n, declaredIdx))
           return true;
         if (declaredIdx < findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx))
-          oppportunities.add(new Range(n));
+          $.add(new Range(n));
         return true;
       }
     };

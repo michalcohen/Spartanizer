@@ -139,16 +139,16 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
 
   private static final int threshold = 1;
 
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final IfStatement n) {
         if (longerFirst(n))
-          opportunities.add(new Range(n));
+          $.add(new Range(n));
         return true;
       }
       @Override public boolean visit(final ConditionalExpression n) {
         if (longerFirst(n))
-          opportunities.add(new Range(n));
+          $.add(new Range(n));
         return true;
       }
     };

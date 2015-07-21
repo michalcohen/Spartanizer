@@ -45,19 +45,16 @@ import org.spartan.utils.Range;
 @SuppressWarnings("javadoc") //
 public abstract class AbstractWringTest {
   protected final Wring inner;
-  /**
-   * The name of the specific test for this transformation
-   */
+  /** The name of the specific test for this transformation */
   @Parameter(0) public String name;
-  /**
-   * Where the input text can be found
-   */
+  /** Where the input text can be found */
   @Parameter(1) public String input;
 
   /**
    * Instantiates the enclosing class ({@link AbstractWringTest})
    *
    * @param inner
+   *          JD
    */
   AbstractWringTest(final Wring inner) {
     this.inner = inner;
@@ -138,7 +135,7 @@ public abstract class AbstractWringTest {
       protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
       /** Where the expected output can be found? */
       @Parameter(2) public String output;
-      protected final Wringer wringer = new Wringer();
+      protected final Trimmer wringer = new Trimmer();
 
       /**
        * Instantiates the enclosing class ({@link Wringed})
@@ -213,7 +210,7 @@ public abstract class AbstractWringTest {
       super(inner);
     }
 
-    protected final Wringer wringer = new Wringer();
+    protected final Trimmer wringer = new Trimmer();
 
     @Test public void findsSimplifier() {
       assertNotNull(Wrings.find(asExpression()));
@@ -290,9 +287,7 @@ public abstract class AbstractWringTest {
   public static abstract class Wringed extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
-    /**
-     * What should the output be
-     */
+    /** What should the output be */
     @Parameter(2) public String expected;
 
     /**

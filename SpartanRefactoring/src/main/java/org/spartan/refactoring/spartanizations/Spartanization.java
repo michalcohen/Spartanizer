@@ -47,7 +47,7 @@ import org.spartan.utils.Range;
  * @since 2013/01/01
  */
 public abstract class Spartanization extends Refactoring {
-  protected abstract ASTVisitor fillOpportunities(final List<Range> opportunities);
+  protected abstract ASTVisitor collectOpportunities(final List<Range> $);
   protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
 
   private ITextSelection selection = null;
@@ -275,7 +275,7 @@ public abstract class Spartanization extends Refactoring {
    */
   public final List<Range> findOpportunities(final CompilationUnit cu) {
     final List<Range> $ = new ArrayList<>();
-    cu.accept(fillOpportunities($));
+    cu.accept(collectOpportunities($));
     return $;
   }
   @Override public final Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm)

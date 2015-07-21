@@ -69,7 +69,7 @@ public class InlineSingleUse extends Spartanization {
       }
     });
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
         return !(node.getParent() instanceof VariableDeclarationStatement) ? true : go(node, node.getName());
@@ -78,7 +78,7 @@ public class InlineSingleUse extends Spartanization {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
         if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1
             && (Is.isFinal(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
-          opportunities.add(new Range(v));
+          $.add(new Range(v));
         return true;
       }
     };

@@ -58,14 +58,14 @@ public class ComparisonWithBoolean extends Spartanization {
       }
     });
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression n) {
         if (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
           return true;
         if (ASTNode.BOOLEAN_LITERAL == n.getRightOperand().getNodeType()
             || ASTNode.BOOLEAN_LITERAL == n.getLeftOperand().getNodeType())
-          opportunities.add(new Range(n));
+          $.add(new Range(n));
         return true;
       }
     };

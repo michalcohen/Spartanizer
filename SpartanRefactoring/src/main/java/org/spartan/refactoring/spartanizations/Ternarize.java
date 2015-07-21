@@ -546,7 +546,7 @@ public class Ternarize extends Spartanization {
         return vs.indexOf(v);
     return -1;
   }
-  @Override protected ASTVisitor fillOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final IfStatement i) {
         return false //
@@ -559,7 +559,7 @@ public class Ternarize extends Spartanization {
         return r != null && add(r);
       }
       private boolean add(final Range r) {
-        opportunities.add(r);
+        $.add(r);
         return true;
       }
     };
