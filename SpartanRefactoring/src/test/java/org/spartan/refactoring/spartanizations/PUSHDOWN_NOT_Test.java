@@ -10,7 +10,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asNot;
-import static org.spartan.refactoring.utils.Funcs.getCore;
+import static org.spartan.refactoring.utils.Restructure.getCore;
 
 import java.util.Collection;
 
