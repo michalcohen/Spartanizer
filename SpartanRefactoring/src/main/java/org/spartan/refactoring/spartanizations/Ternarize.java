@@ -65,17 +65,35 @@ public class Ternarize extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final IfStatement i) {
-        return // try lot's of options, but finally return true.
+        return // try many alternatives, but finally return true.
         !inRange(m, i) // Stop here
             || perhapsAssignIfAssign(t, r, i) //
             || perhapsIfReturn(t, r, i) //
             || perhapsIfSameExpStmntOrRet(t, r, i) //
-            || true // current node is beyond hope, perhaps its children
+            || true // resisted our alternatives, perhaps children
             ;
       }
     });
   }
-  static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
+    return new ASTVisitor() {
+      @Override public boolean visit(final IfStatement i) {
+        return false //
+            || perhaps(detectAssignIfAssign(i)) //
+            || perhaps(detectIfReturn(i)) //
+            || perhaps(detectIfSameExpStmntOrRet(i))//
+            || true;
+      }
+      private boolean perhaps(final Range r) {
+        return r != null && add(r);
+      }
+      private boolean add(final Range r) {
+        $.add(r);
+        return true;
+      }
+    };
+  }
+  private static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
     return asBlock(i.getParent()) != null && treatIfReturn(t, r, i, statements(asBlock(i.getParent())));
   }
   private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<ASTNode> ns) {
@@ -113,7 +131,9 @@ public class Ternarize extends Spartanization {
   }
 
   /**
-   * @author Tomer Zeltzer contains both sides for the conditional expression
+   * contains both sides for the conditional expression
+   *
+   * @author Tomer Zeltzer
    */
   public static class TwoExpressions {
     final Expression then;
@@ -134,8 +154,10 @@ public class Ternarize extends Spartanization {
   }
 
   /**
-   * @author Tomer Zeltzer contains 2 nodes (used to store the 2 nodes that are
-   *         different in the then and else tree)
+   * contains 2 nodes (used to store the 2 nodes that are different in the then
+   * and else tree)
+   *
+   * @author Tomer Zeltzer
    */
   public static class TwoNodes {
     ASTNode then;
@@ -551,23 +573,5 @@ public class Ternarize extends Spartanization {
       if (same(v.getName(), name))
         return vs.indexOf(v);
     return -1;
-  }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
-    return new ASTVisitor() {
-      @Override public boolean visit(final IfStatement i) {
-        return false //
-            || perhaps(detectAssignIfAssign(i)) //
-            || perhaps(detectIfReturn(i)) //
-            || perhaps(detectIfSameExpStmntOrRet(i))//
-            || true;
-      }
-      private boolean perhaps(final Range r) {
-        return r != null && add(r);
-      }
-      private boolean add(final Range r) {
-        $.add(r);
-        return true;
-      }
-    };
   }
 }
