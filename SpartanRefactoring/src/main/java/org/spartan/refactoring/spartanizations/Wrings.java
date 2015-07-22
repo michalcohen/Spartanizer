@@ -1,27 +1,15 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
-import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
-import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.asNot;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.removeAll;
-import static org.spartan.refactoring.utils.Restructure.conjugate;
-import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.utils.Restructure.getCore;
-import static org.spartan.refactoring.utils.Restructure.refitOperands;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
@@ -116,7 +104,7 @@ public enum Wrings {
    * <pre>
    * (a && false) || (!a && c) == (!a && c)
    * </pre>
-   * 
+   *
    * if b is true than:
    *
    * <pre>
@@ -140,15 +128,72 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-20
    */
-  CONDITIONAL_TERNARY(new Wring.OfInfixExpression() {
-    @Override public boolean scopeIncludes(final InfixExpression e) {
+  ANDOR_TERNARY(new Wring.OfInfixExpression() {
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR)
+          && haveTernaryOfBooleanLitreral(All.operands(flatten(e)));
+    }
+    private boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
+      for (final Expression e : es)
+        if (isTernaryOfBooleanLitreral(e))
+          return true;
       return false;
     }
-    @Override boolean _eligible(final InfixExpression e) {
-      return false;
+    private boolean isTernaryOfBooleanLitreral(final Expression e) {
+      return isTernaryOfBooleanLitreral(asConditionalExpression(e));
+    }
+    private boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
+      return Have.booleanLiteral(getCore(e.getThenExpression()), getCore(e.getElseExpression()));
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
+      return true;
     }
     @Override Expression _replacement(final InfixExpression e) {
-      return null;
+      final List<Expression> operands = All.operands(flatten(e));
+      simplifyTernary(operands);
+      return refitOperands(e, operands);
+    }
+    /* <pre> a ? b : c </pre>
+     *
+     * is the same as
+     *
+     * <pre> (a && b) || (!a && c) </pre>
+     *
+     * if b is false than:
+     *
+     * <pre> (a && false) || (!a && c) == (!a && c) </pre>
+     *
+     * if b is true than:
+     *
+     * <pre> (a && true) || (!a && c) == a || (!a && c) == a || c </pre>
+     *
+     * if c is false than:
+     *
+     * <pre> (a && b) || (!a && false) == (!a && c) </pre>
+     *
+     * if c is true than
+     *
+     * <pre> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </pre> */
+    private void simplifyTernary(final List<Expression> es) {
+      for (int i = 0; i < es.size(); ++i) {
+        final Expression e = es.get(i);
+        if (!isTernaryOfBooleanLitreral(e))
+          continue;
+        es.remove(i);
+        es.add(i, simplifyTernary(asConditionalExpression(e)));
+      }
+    }
+    private Expression simplifyTernary(final ConditionalExpression e) {
+      final Expression then = getCore(e.getThenExpression());
+      final Expression elze = getCore(e.getElseExpression());
+      final Expression main = getCore(e.getExpression());
+      final Expression other = Is.booleanLiteral(then) ? elze : then;
+      final InfixExpression $ = e.getAST().newInfixExpression();
+      $.setRightOperand(other);
+      $.setLeftOperand(other == then ? main : not(main));
+      final boolean literal = asBooleanLiteral(other == then ? elze : then).booleanValue();
+      $.setOperator(literal ? Operator.OR : Operator.AND);
+      return $;
     }
   }), //
   /**

@@ -62,14 +62,24 @@ public enum Funcs {
     return Is.infix(e) && Is.deMorgan(asInfixExpression(e).getOperator()) ? asInfixExpression(e) : null;
   }
   /**
+   * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
+   *
+   * @param n JD
+   * @return the argument, but down-casted to a {@link ConditionalExpression},
+   *         or <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static ConditionalExpression asConditionalExpression(final ASTNode n) {
+    return !(n instanceof ConditionalExpression) ? null : (ConditionalExpression) n;
+  }
+  /**
    * Convert, is possible, an {@link ASTNode} to a {@link Block}
    *
-   * @param n what to convert
+   * @param $ JD
    * @return the argument, but down-casted to a {@link Block}, or
    *         <code><b>null</b></code> if no such down-cast is possible..
    */
-  public static Block asBlock(final ASTNode n) {
-    return !(n instanceof Block) ? null : (Block) n;
+  public static Block asBlock(final ASTNode $) {
+    return !($ instanceof Block) ? null : (Block) $;
   }
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}
