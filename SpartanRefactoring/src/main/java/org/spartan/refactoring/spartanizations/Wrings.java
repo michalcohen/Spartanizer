@@ -128,7 +128,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-20
    */
-  ANDOR_TERNARY(new Wring.OfInfixExpression() {
+  ANDOR_TERNARY_BOOLEAN_LITERAL(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR)
           && haveTernaryOfBooleanLitreral(All.operands(flatten(e)));
