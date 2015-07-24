@@ -36,7 +36,7 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class PUSHDOWN_NOT_Test {
+public class PUSHDOWN_NOT {
   /** The {@link Wring} under test */
   static final Wring WRING = Wrings.PUSHDOWN_NOT.inner;
 

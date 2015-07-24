@@ -40,7 +40,7 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum MULTIPLICATION_SORTER_Test {
+public enum MULTIPLICATION_SORTER {
   ;
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {

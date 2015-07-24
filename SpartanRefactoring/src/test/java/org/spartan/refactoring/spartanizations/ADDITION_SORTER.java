@@ -37,7 +37,7 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum ADDITION_SORTER_Test {
+public enum ADDITION_SORTER {
   ;
   static final Wring WRING = Wrings.ADDITION_SORTER.inner;
   static final ExpressionComparator COMPARATOR = ExpressionComparator.ADDITION;

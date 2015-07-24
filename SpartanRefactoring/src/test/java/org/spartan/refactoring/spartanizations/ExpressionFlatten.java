@@ -18,7 +18,7 @@ import org.spartan.refactoring.utils.Is;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class ExpressionFlattenTest {
+public class ExpressionFlatten {
   @Test public void flattenOfParenthesis() {
     final InfixExpression e = i("1+2+(3)");
     assertThat(flatten(e).extendedOperands().size(), is(1));

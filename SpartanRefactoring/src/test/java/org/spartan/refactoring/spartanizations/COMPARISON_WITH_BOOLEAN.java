@@ -36,7 +36,7 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum COMPARISON_WITH_BOOLEAN_Test {
+public enum COMPARISON_WITH_BOOLEAN {
   ;
   @RunWith(Parameterized.class) //
   public static class WringedInput extends AbstractWringTest.Wringed.Infix {

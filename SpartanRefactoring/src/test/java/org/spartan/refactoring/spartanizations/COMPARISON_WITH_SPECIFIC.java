@@ -34,7 +34,7 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum COMPARISON_WITH_SPECIFIC_Test {
+public enum COMPARISON_WITH_SPECIFIC {
   ;
   static final Wring WRING = Wrings.COMPARISON_WITH_SPECIFIC.inner;
 
