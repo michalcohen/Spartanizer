@@ -32,7 +32,7 @@ public class AsSpartanization extends Spartanization {
       @Override public boolean visit(final PrefixExpression e) {
         if (!inner.scopeIncludes(e))
           return true;
-        if (!inner.noneligible(e))
+        if (inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
@@ -44,7 +44,7 @@ public class AsSpartanization extends Spartanization {
       @Override public boolean visit(final InfixExpression e) {
         if (!inner.scopeIncludes(e))
           return true;
-        if (!inner.noneligible(e))
+        if (inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;

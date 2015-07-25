@@ -59,8 +59,7 @@ public enum Wrings {
    */
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), EQUALS, NOT_EQUALS)
-          && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
+      return in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     }
     @Override boolean _eligible(final InfixExpression e) {
       assert scopeIncludes(e);
@@ -153,27 +152,39 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-20
    */
-  ANDOR_TRUE(new Wring.OfInfixExpression() {
+  AND_TRUE(new Wring.OfInfixExpression() {
     @Override public String toString() {
-      return "%%/|| true";
+      return "&& true";
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return Is.deMorgan(e) && Have.trueLiteral(All.operands(flatten(e)));
+      return Is.conditionalAnd(e) && Have.trueLiteral(All.operands(flatten(e)));
     }
     @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
     }
     @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(flatten(e));
-      removeAll(true, operands);
-      switch (operands.size()) {
-        case 0:
-          return e.getAST().newBooleanLiteral(true);
-        case 1:
-          return duplicate(operands.get(0));
-        default:
-          return refitOperands(e, operands);
-      }
+      return eliminateLiteral(e, true);
+    }
+  }), //
+  /**
+   * A {@link Wring} that eliminate Boolean literals, when possible present on
+   * logical AND an logical OR.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-20
+   */
+  OR_FALSE(new Wring.OfInfixExpression() {
+    @Override public String toString() {
+      return "|| true";
+    }
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return Is.conditionalOr(e) && Have.falseLiteral(All.operands(flatten(e)));
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
+      return true;
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      return eliminateLiteral(e, false);
     }
   }), //
   /**
@@ -532,5 +543,17 @@ public enum Wrings {
   }
   static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+  }
+  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
+    final List<Expression> operands = All.operands(flatten(e));
+    removeAll(b, operands);
+    switch (operands.size()) {
+      case 0:
+        return e.getAST().newBooleanLiteral(b);
+      case 1:
+        return duplicate(operands.get(0));
+      default:
+        return refitOperands(e, operands);
+    }
   }
 }

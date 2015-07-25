@@ -1,5 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.spartanizations.Wrings.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,17 +19,20 @@ import org.spartan.refactoring.preferences.PreferencesFile;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-ComparisonWithBoolean(new ComparisonWithBoolean()), //
-  ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  ForwardDeclaration(new ForwardDeclaration()), //
-  InlineSingleUse(new InlineSingleUse()), //
-  RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  ShortestBranchFirst(new ShortestBranchFirst()), //
+  // ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  // ComparisonWithSpecific(new ComparisonWithSpecific()), //
+  // ForwardDeclaration(new ForwardDeclaration()), //
+  // InlineSingleUse(new InlineSingleUse()), //
+  // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+  // ShortestBranchFirst(new ShortestBranchFirst()), //
   Ternarize(new Ternarize()), //
-  ShortestOperand(new ShortestOperand()), //
-  SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
-  Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true", "Eliminate true")), //
-  PushDownNot(new AsSpartanization(Wrings.PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
+  AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from expression")), //
+  OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses from expression")), //
+  // ShortestOperand(new ShortestOperand()), //
+  SimplifyTernary(new AsSpartanization(TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
+  // Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true",
+  // "Eliminate true")), //
+  PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc

@@ -65,6 +65,9 @@ public class PUSHDOWN_NOT {
         Utils.asArray("Multiplication", "a*b"), //
         Utils.asArray("OR", "a||b"), //
         Utils.asArray("END", "a&&b"), //
+        Utils.asArray("Simple not", "!a"), //
+        Utils.asArray("Simple not of function", "!f(a)"), //
+        Utils.asArray("Actual example", "!inRange(m, e)"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -79,30 +82,6 @@ public class PUSHDOWN_NOT {
     @Parameters(name = DESCRIPTION) //
     public static Collection<Object[]> cases() {
       return collect(cases);
-    }
-  }
-
-  @RunWith(Parameterized.class) //
-  public static class Noneligible extends AbstractWringTest.Noneligible {
-    static String[][] cases = Utils.asArray(//
-        // Literal
-        Utils.asArray("Simple not", "!a"), //
-        Utils.asArray("Simple not of function", "!f(a)"), //
-        Utils.asArray("Actual example", "!inRange(m, e)"), //
-        null);
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION) //
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
-    /** Instantiates the enclosing class ({@link Noneligible}) */
-    public Noneligible() {
-      super(WRING);
     }
   }
 
@@ -146,7 +125,7 @@ public class PUSHDOWN_NOT {
       super(WRING);
     }
     @Test public void inputIsPrefixExpression() {
-      assertNotNull((asPrefixExpression()));
+      assertNotNull(asPrefixExpression());
     }
   }
 }
