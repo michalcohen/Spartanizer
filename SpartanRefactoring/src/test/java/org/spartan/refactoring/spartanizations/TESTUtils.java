@@ -160,10 +160,10 @@ public enum TESTUtils {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertEquals(u.toString(), 0, countOpportunities(s, u));
   }
-  static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
+  static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {
     try {
-      s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-      return d;
+      s.createRewrite(u, null).rewriteAST($, null).apply($);
+      return $;
     } catch (final MalformedTreeException e) {
       fail(e.getMessage());
     } catch (final IllegalArgumentException e) {

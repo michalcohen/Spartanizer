@@ -1,6 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.*;
 import static org.spartan.utils.Utils.in;
@@ -36,7 +37,7 @@ public enum Wrings {
    */
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
+      return in(e.getOperator(), EQUALS, NOT_EQUALS)
           && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     }
     @Override boolean _eligible(final InfixExpression e) {
@@ -56,10 +57,10 @@ public enum Wrings {
       return nonNegating(e, literal) ? nonliteral : negate(nonliteral);
     }
     private PrefixExpression negate(final ASTNode e) {
-      return makePrefixExpression(makeParenthesizedExpression((Expression) e), PrefixExpression.Operator.NOT);
+      return makePrefixExpression(makeParenthesizedExpression((Expression) e), NOT);
     }
     private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
-      return literal.booleanValue() == (e.getOperator() == Operator.EQUALS);
+      return literal.booleanValue() == (e.getOperator() == EQUALS);
     }
   }), //
   /**
@@ -89,41 +90,19 @@ public enum Wrings {
     }
   }), //
   /**
-   * <pre>
+   * <code>
    * a ? b : c
-   * </pre>
-   *
-   * is the same as
-   *
-   * <pre>
+   * </code> is the same as <code>
    * (a && b) || (!a && c)
-   * </pre>
-   *
-   * if b is false than:
-   *
-   * <pre>
+   * </code> if b is false than: <code>
    * (a && false) || (!a && c) == (!a && c)
-   * </pre>
-   *
-   * if b is true than:
-   *
-   * <pre>
+   * </code> if b is true than: <code>
    * (a && true) || (!a && c) == a || (!a && c) == a || c
-   * </pre>
-   *
-   * if c is false than:
-   *
-   * <pre>
+   * </code> if c is false than: <code>
    * (a && b) || (!a && false) == (!a && c)
-   * </pre>
-   *
-   * if c is true than
-   *
-   * <pre>
+   * </code> if c is true than <code>
    * (a && b) || (!a && true) == (a && b) || (!a) == !a || b
-   * </pre>
-   *
-   * keywords <code><b>this</b></code> or <code><b>null</b></code>.
+   * </code> keywords <code><b>this</b></code> or <code><b>null</b></code>.
    *
    * @author Yossi Gil
    * @since 2015-07-20
@@ -176,7 +155,7 @@ public enum Wrings {
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == Operator.PLUS;
+      return e.getOperator() == PLUS;
     }
     @Override boolean _eligible(final InfixExpression e) {
       return Are.notString(All.operands(flatten(e))) && tryToSort(e);
@@ -204,7 +183,7 @@ public enum Wrings {
    */
   PSEUDO_ADDITION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), Operator.OR);
+      return in(e.getOperator(), OR);
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -232,7 +211,7 @@ public enum Wrings {
    */
   MULTIPLICATION_SORTER(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), Operator.TIMES, Operator.XOR, Operator.AND);
+      return in(e.getOperator(), TIMES, XOR, AND);
     }
     @Override boolean _eligible(final InfixExpression e) {
       return tryToSort(e);
@@ -364,27 +343,27 @@ public enum Wrings {
         || ($ = perhapsComparison(inner)) != null //
             ? $ : null;
   }
-  /* <pre> a ? b : c </pre>
+  /* <code> a ? b : c </code>
    *
    * is the same as
    *
-   * <pre> (a && b) || (!a && c) </pre>
+   * <code> (a && b) || (!a && c) </code>
    *
    * if b is false than:
    *
-   * <pre> (a && false) || (!a && c) == (!a && c) </pre>
+   * <code> (a && false) || (!a && c) == (!a && c) </code>
    *
    * if b is true than:
    *
-   * <pre> (a && true) || (!a && c) == a || (!a && c) == a || c </pre>
+   * <code> (a && true) || (!a && c) == a || (!a && c) == a || c </code>
    *
    * if c is false than:
    *
-   * <pre> (a && b) || (!a && false) == (!a && c) </pre>
+   * <code> (a && b) || (!a && false) == (!a && c) </code>
    *
    * if c is true than
    *
-   * <pre> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </pre> */
+   * <code> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </code> */
   static void simplifyTernary(final List<Expression> es) {
     for (int i = 0; i < es.size(); ++i) {
       final Expression e = es.get(i);
@@ -394,17 +373,29 @@ public enum Wrings {
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
   }
-  private static Expression simplifyTernary(final ConditionalExpression e) {
+  /**
+   * Consider an expression <code> a ? b : c </code>; in a sense it is the same
+   * as <code> (a && b) || (!a && c) </code>
+   * <ol>
+   * <li>if b is false then: <code>
+  * (a && false) || (!a && c) == !a && c </code>
+   * <li>if b is true then:
+   * <code>(a && true) || (!a && c) == a || (!a && c) == a || c </code>
+   * <li>if c is false then: <code>(a && b) || (!a && false) == a && b </code>
+   * <li>if c is true then <code>(a && b) || (!a && true) == !a || b</code>
+   * </ol>
+   */
+  static Expression simplifyTernary(final ConditionalExpression e) {
     final Expression then = getCore(e.getThenExpression());
     final Expression elze = getCore(e.getElseExpression());
-    final Expression main = e.getExpression();
-    final Expression other = duplicate(Is.booleanLiteral(then) ? elze : then);
+    final Expression main = duplicate(e.getExpression());
+    final boolean takeThen = !Is.booleanLiteral(then);
+    final Expression other = takeThen ? then : elze;
     final InfixExpression $ = e.getAST().newInfixExpression();
-    $.setRightOperand(other);
-    $.setLeftOperand(other == then ? main : not(main));
-    assert Is.booleanLiteral(elze) || Is.booleanLiteral(then);
-    final boolean literal = asBooleanLiteral(other == then ? elze : then).booleanValue();
-    $.setOperator(literal ? Operator.OR : Operator.AND);
+    $.setRightOperand(duplicate(other));
+    final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
+    $.setOperator(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
+    $.setLeftOperand(takeThen != literal ? main : not(main));
     return $;
   }
   static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
