@@ -170,8 +170,7 @@ public enum ANDOR_TRUE {
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void isANDorOR() {
       final InfixExpression e = asInfixExpression();
@@ -179,8 +178,7 @@ public enum ANDOR_TRUE {
           is(anyOf(is(InfixExpression.Operator.CONDITIONAL_OR), is(InfixExpression.Operator.CONDITIONAL_AND))));
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
   static final Wring WRING = Wrings.ANDOR_TRUE.inner;

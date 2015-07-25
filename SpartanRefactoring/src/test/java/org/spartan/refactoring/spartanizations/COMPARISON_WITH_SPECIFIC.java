@@ -184,8 +184,7 @@ public enum COMPARISON_WITH_SPECIFIC {
       assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
     }
     @Test public void tryToSortTwiceMULTIPLICATION() {
-      final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
       Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION);
       assertFalse(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION));
     }

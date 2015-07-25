@@ -187,14 +187,13 @@ public class InfixTest {
     assertSimilar(expected, rewrite);
   }
   @Test public void one2true6() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final String expected = P1;
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
     final ComparisonWithSpecific s = s();
     final ASTRewrite r = s.createRewrite(u, null);
     r.rewriteAST(d, null).apply(d);
-    assertSimilar(expected, d);
+    assertSimilar(P1, d);
   }
   @Test public void one2true7() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String expected = P1;

@@ -83,8 +83,7 @@ public enum COMPARISON_WITH_BOOLEAN {
       assertNotNull(e);
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
     static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
       try {

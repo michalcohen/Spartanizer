@@ -153,8 +153,8 @@ public enum ADDITION_SORTER {
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
-      assertTrue(Wrings.tryToSort(operands, COMPARATOR));
-      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
+      assertTrue(e.toString(), Wrings.tryToSort(operands, COMPARATOR));
+      assertFalse(e.toString(), Wrings.tryToSort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
