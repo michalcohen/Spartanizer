@@ -353,9 +353,11 @@ public abstract class AbstractWringTest {
       Infix(final Wring w) {
         super(w);
       }
+      @Test public void hasReplacementAsInfix() {
+        assertNotNull(inner.replacement(asInfixExpression()));
+      }
       @Test public void inputIsInfixExpression() {
-        final InfixExpression e = asInfixExpression();
-        assertNotNull(e);
+        assertNotNull(asInfixExpression());
       }
       @Test public void flattenIsIdempotentt() {
         final InfixExpression flatten = flatten(asInfixExpression());

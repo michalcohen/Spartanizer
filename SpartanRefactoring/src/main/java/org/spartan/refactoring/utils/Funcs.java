@@ -557,7 +557,7 @@ public enum Funcs {
   public static <T> T last(final List<T> ts) {
     return ts.get(ts.size() - 1);
   }
-  private static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
+  public static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
     final Expression left = e.getLeftOperand();
     return !Precedence.same(o, left) || !Associativity.isLeftToRight(o) ? duplicate(left) : parenthesize(left);
   }
@@ -785,7 +785,7 @@ public enum Funcs {
   public static String removeWhites(final ASTNode n) {
     return Utils.removeWhites(n.toString());
   }
-  private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
+  public static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
     final Expression right = e.getRightOperand();
     return !Precedence.same(o, right) || !Associativity.isLeftToRight(o) ? duplicate(right) : parenthesize(right);
   }

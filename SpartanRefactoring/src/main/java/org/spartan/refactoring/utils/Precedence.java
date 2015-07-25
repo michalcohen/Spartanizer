@@ -106,8 +106,6 @@ public enum Precedence {
    * @return the precedence of the parameter
    */
   public static boolean same(final Expression e1, final Expression e2) {
-    assert Precedence.of(e1) != UNDEFINED;
-    assert Precedence.of(e2) != UNDEFINED;
     return Precedence.of(e1) == Precedence.of(e2);
   }
   /**
@@ -120,8 +118,6 @@ public enum Precedence {
    *         parameters is the same.
    */
   public static boolean same(final Operator o, final Expression e) {
-    assert Precedence.of(o) != UNDEFINED;
-    assert Precedence.of(e) != UNDEFINED;
     return Precedence.of(o) == Precedence.of(e);
   }
 }

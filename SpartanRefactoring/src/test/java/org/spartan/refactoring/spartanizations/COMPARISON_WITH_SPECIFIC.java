@@ -7,6 +7,8 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.utils.Funcs.*;
+
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -174,23 +177,41 @@ public enum COMPARISON_WITH_SPECIFIC {
     public Wringed() {
       super(WRING);
     }
-    @Test public void tryToSortTwice() {
+    @Test public void tryToSortTwiceADDITION() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
       Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
       assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
+    }
+    @Test public void tryToSortTwiceMULTIPLICATION() {
+      final InfixExpression e = asInfixExpression();
+      final List<Expression> operands = All.operands(flatten(e));
+      Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION);
+      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void twoOrMoreArguments() {
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+    }
+    @Test public void flipIsNotNull() {
+      assertNotNull(flip(asInfixExpression()));
+    }
+    @Test public void checkFlippingProcess() {
       final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      final Operator flip = flip(e.getOperator());
+      assertNotNull(e.toString(), flip);
+      final Expression left = rightMoveableToLeft(flip, e);
+      assertNotNull(left);
+      final Expression right = leftMoveableToRight(flip, e);
+      assertNotNull(right);
+      final Expression remake = remake(e.getAST().newInfixExpression(), left, flip, right);
+      assertNotNull(remake);
     }
   }
 }

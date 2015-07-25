@@ -55,7 +55,7 @@ public class TERNARY_BOOLEAN_LITERAL {
   }
   @Test public void hasTernaryOrBooleanLiteral1() {
     final InfixExpression flatten = flatten(i("A||(e?true:false)"));
-    assertThat(flatten.toString(), is("A||(e?true:false)"));
+    assertThat(flatten.toString(), is("A || (e ? true : false)"));
     final List<Expression> operands = All.operands(flatten);
     assertThat(operands.size(), is(2));
     assertThat(operands.get(0).toString(), is("A"));
@@ -86,7 +86,7 @@ public class TERNARY_BOOLEAN_LITERAL {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //
-        Utils.asArray("comparion", "next < values().length;"), //
+        Utils.asArray("Actual example", "next < values().length"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
