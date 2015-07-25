@@ -16,19 +16,19 @@ import org.spartan.refactoring.preferences.PreferencesFile;
  *         30.05.2014) (v3)
  * @since 2013/07/01
  */
+@SuppressWarnings("javadoc") //
 public enum Spartanizations {
-  @SuppressWarnings("javadoc") ComparisonWithBoolean(new ComparisonWithBoolean()), //
-  @SuppressWarnings("javadoc") ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  @SuppressWarnings("javadoc") ForwardDeclaration(new ForwardDeclaration()), //
-  @SuppressWarnings("javadoc") InlineSingleUse(new InlineSingleUse()), //
-  @SuppressWarnings("javadoc") RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  @SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
-  @SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
-  @SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
-  @SuppressWarnings("javadoc") SimplifyTernary(
-      new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
-  //
-  @SuppressWarnings("javadoc") Another(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true/false", "Simplify tautologies")), //
+ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  ComparisonWithSpecific(new ComparisonWithSpecific()), //
+  ForwardDeclaration(new ForwardDeclaration()), //
+  InlineSingleUse(new InlineSingleUse()), //
+  RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+  ShortestBranchFirst(new ShortestBranchFirst()), //
+  Ternarize(new Ternarize()), //
+  ShortestOperand(new ShortestOperand()), //
+  SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
+  Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true", "Eliminate true")), //
+  PushDownNot(new AsSpartanization(Wrings.PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
