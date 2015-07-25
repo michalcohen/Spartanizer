@@ -98,11 +98,11 @@ public class InfixTest {
     assertFalse(ShortestOperand.outOfScope(i(" 6 - 7 < 2 + 1")));
   }
   @Test public void t6() {
-    final InfixExpression e = i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1");
     final ShortestOperand s = new ShortestOperand();
     final List<Range> opportunities = new ArrayList<>();
     final ASTVisitor a = s.collectOpportunities(opportunities);
     final ASTVisitor x = Mockito.spy(a);
+    final InfixExpression e = i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1");
     a.visit(e);
     x.visit(e);
     assertFalse(ShortestOperand.outOfScope(e));
