@@ -172,6 +172,7 @@ public class TERNARY_BOOLEAN_LITERAL {
         Utils.asArray("T X", "a ? true : c", "a || c"), //
         Utils.asArray("X F", "a ? b : false", "a && b"), //
         Utils.asArray("X T", "a ? b : true", "!a || b"), //
+        Utils.asArray("Actual example", "!inRange(m, e) ? true : inner.go(r, e)", "!inRange(m, e) || inner.go(r, e)"), //
         null);
     /**
      * Generate test cases for this parameterized class.
