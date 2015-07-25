@@ -23,21 +23,21 @@ import org.spartan.utils.Range;
 public class AsSpartanization extends Spartanization {
   final Wring inner;
   /** Instantiates this class */
-  public AsSpartanization(final Wring wring) {
-    super("Trimmer", "Simiplifies expression once");
+  public AsSpartanization(final Wring wring, final String name, final String description) {
+    super(name, description);
     inner = wring;
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
-        return true && inner.noneligible(e) ? true : addTo(e, $);
+        return true && inner.noneligible(e) || addTo(e, $);
       }
       private boolean addTo(final Expression e, final List<Range> $) {
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final InfixExpression e) {
-        return true && inner.noneligible(e) ? true : addTo(e, $);
+        return true && inner.noneligible(e) || addTo(e, $);
       }
       @Override public boolean visit(final ConditionalExpression e) {
         return true && inner.noneligible(e) ? true : addTo(e, $);
@@ -49,7 +49,7 @@ public class AsSpartanization extends Spartanization {
       @Override public boolean visit(final InfixExpression e) {
         if (!inRange(m, e))
           return true;
-        return true ? inner.go(r, e) : true;
+        return !true ? true : inner.go(r, e);
       }
       @Override public boolean visit(final PrefixExpression e) {
         return !inRange(m, e) ? true : inner.go(r, e);

@@ -479,14 +479,14 @@ public enum Funcs {
   /**
    * Determine whether a variable declaration is final or not
    *
-   * @param v some declaration
+   * @param v JD
    * @return true if the variable is declared as final
    */
   public static boolean isFinal(final VariableDeclarationStatement v) {
     return (Modifier.FINAL & v.getModifiers()) != 0;
   }
   /**
-   * @param n node to check
+   * @param n JD
    * @return true if the given node is an infix expression or false otherwise
    */
   public static boolean isInfix(final ASTNode n) {
