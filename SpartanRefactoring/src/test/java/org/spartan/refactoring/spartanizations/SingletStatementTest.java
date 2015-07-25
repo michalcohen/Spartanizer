@@ -1,6 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.s;
 import static org.spartan.refactoring.utils.Restructure.singleStatement;

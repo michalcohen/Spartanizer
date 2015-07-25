@@ -79,16 +79,13 @@ public enum ADDITION_SORTER {
       assertNotNull(e);
     }
     @Test public void isPlus() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.PLUS);
+      assertTrue((asInfixExpression()).getOperator() == Operator.PLUS);
     }
     @Test public void tryToSort() {
-      final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.tryToSort(All.operands(flatten(e)), COMPARATOR));
+      assertFalse(Wrings.tryToSort(All.operands(flatten((asInfixExpression()))), COMPARATOR));
     }
     @Test public void tryToSortTwice() {
-      final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = All.operands(flatten((asInfixExpression())));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }
@@ -138,8 +135,7 @@ public enum ADDITION_SORTER {
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull((asInfixExpression()));
     }
     @Test public void isPlus() {
       final InfixExpression e = asInfixExpression();

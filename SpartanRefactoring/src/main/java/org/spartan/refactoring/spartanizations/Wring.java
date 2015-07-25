@@ -1,7 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -149,10 +150,6 @@ public abstract class Wring {
     }
     @Override boolean scopeIncludes(final PrefixExpression e) {
       return false;
-    }
-
-    @SuppressWarnings("unused") private static final class Checker extends Defaults {
-      // This emptiness of this class is intentional.
     }
   }
 

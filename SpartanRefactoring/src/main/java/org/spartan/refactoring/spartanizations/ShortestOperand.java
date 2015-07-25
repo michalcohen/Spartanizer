@@ -145,7 +145,7 @@ public class ShortestOperand extends Spartanization {
   private static boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
     if (Is.methodInvocation(rN))
       return true;
-    return (inOperandExceptions(rN, o) || o == PLUS && (Is.methodInvocation(rN) || Is.stringLiteral(rN)) ? true : Is.literal(rN));
+    return inOperandExceptions(rN, o) || o == PLUS && (Is.methodInvocation(rN) || Is.stringLiteral(rN)) ? true : Is.literal(rN);
   }
   private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
     return Is.literal(n) ? true : o == PLUS && Is.stringLiteral(n);
@@ -209,7 +209,7 @@ public class ShortestOperand extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        return (outOfScope(e) || !eligible(e) ? true : overrideInto(new Range(e), $));
+        return outOfScope(e) || !eligible(e) ? true : overrideInto(new Range(e), $);
       }
     };
   }
@@ -240,7 +240,7 @@ public class ShortestOperand extends Spartanization {
     final boolean characterWiseGreater = e1.getLength() > CHARACTER_THRESHOLD + e2.getLength();
     if (tokenWiseGreater && characterWiseGreater)
       return true;
-    return (!tokenWiseGreater && !characterWiseGreater ? false : moreArguments(e1, e2));
+    return !tokenWiseGreater && !characterWiseGreater ? false : moreArguments(e1, e2);
   }
   private static boolean moreArguments(final Expression e1, final Expression e2) {
     return Is.methodInvocation(e1) && Is.methodInvocation(e2) && moreArguments((MethodInvocation) e1, (MethodInvocation) e2);

@@ -14,8 +14,13 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.c;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.e;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
+import static org.spartan.refactoring.spartanizations.TESTUtils.p;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.List;

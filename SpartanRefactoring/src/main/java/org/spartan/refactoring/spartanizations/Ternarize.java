@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Restructure.*;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asReturn;
 import static org.spartan.refactoring.utils.Funcs.compatible;
@@ -21,6 +20,8 @@ import static org.spartan.refactoring.utils.Funcs.prev;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Funcs.statementsCount;
 import static org.spartan.refactoring.utils.Funcs.tryToNegateCond;
+import static org.spartan.refactoring.utils.Restructure.singleStatement;
+import static org.spartan.refactoring.utils.Restructure.statements;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;

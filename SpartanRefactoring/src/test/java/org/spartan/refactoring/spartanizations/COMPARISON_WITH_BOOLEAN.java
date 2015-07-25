@@ -70,8 +70,7 @@ public enum COMPARISON_WITH_BOOLEAN {
       return collect(cases);
     }
     @Test public void tryToSortTwice() {
-      final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
       Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
       assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
     }

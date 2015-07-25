@@ -1,9 +1,31 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Restructure.*;
+import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asNot;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
+import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.removeAll;
+import static org.spartan.refactoring.utils.Restructure.conjugate;
+import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -196,7 +218,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return (!tryToSort(operands) ? null : refitOperands(e, operands));
+      return !tryToSort(operands) ? null : refitOperands(e, operands);
     }
   }), //
   /**
@@ -222,7 +244,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return (!tryToSort(operands) ? null : refitOperands(e, operands));
+      return !tryToSort(operands) ? null : refitOperands(e, operands);
     }
   }), //
   /**

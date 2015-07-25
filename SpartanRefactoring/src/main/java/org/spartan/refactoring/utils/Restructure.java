@@ -3,10 +3,14 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
@@ -55,7 +59,7 @@ public enum Restructure {
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     if (Is.block(s))
       return statementsInto(asBlock(s), $);
-    return (Is.emptyStatement(s) ? $ : add(s, $));
+    return Is.emptyStatement(s) ? $ : add(s, $);
   }
   private static List<Statement> add(final Statement s, final List<Statement> $) {
     if (s != null)
@@ -86,7 +90,8 @@ public enum Restructure {
   }
   private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
     final Expression core = getCore(e);
-    return ((!Is.infix(core) || asInfixExpression(core).getOperator() != o ? add((!(Is.simple(core)) ? e : core), $) : flattenInto(o, All.operands(asInfixExpression(core)), $)));
+    return !Is.infix(core) || asInfixExpression(core).getOperator() != o ? add(!Is.simple(core) ? e : core, $)
+        : flattenInto(o, All.operands(asInfixExpression(core)), $);
   }
   private static List<Expression> add(final Expression e, final List<Expression> $) {
     $.add(e);

@@ -1,17 +1,20 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.c;
+import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.spartanizations.TESTUtils.e;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
+import static org.spartan.refactoring.spartanizations.Wrings.haveTernaryOfBooleanLitreral;
+import static org.spartan.refactoring.spartanizations.Wrings.isTernaryOfBooleanLitreral;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.spartanizations.Wrings.*;
 
-import static org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed.*;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +27,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -51,6 +57,7 @@ public class TERNARY_BOOLEAN_LITERAL {
   }
   @Test public void hasTernaryOrBooleanLiteral1() {
     final InfixExpression flatten = flatten(i("A||(e?true:false)"));
+    assertThat(flatten.toString(), is("A||(e?true:false)"));
     final List<Expression> operands = All.operands(flatten);
     assertThat(operands.size(), is(2));
     assertThat(operands.get(0).toString(), is("A"));

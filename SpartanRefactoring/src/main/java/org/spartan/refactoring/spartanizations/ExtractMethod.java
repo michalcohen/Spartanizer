@@ -2,8 +2,6 @@ package org.spartan.refactoring.spartanizations;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.spartan.utils.*;
-import org.spartan.refactoring.utils.*;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -16,6 +14,8 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.spartan.refactoring.utils.UnifiedGroup;
+import org.spartan.utils.Range;
 
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /

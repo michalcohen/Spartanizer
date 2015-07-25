@@ -102,9 +102,9 @@ public abstract class FileTestUtils {
      * @return a collection of all test cases generated in the traversal
      */
     public final Collection<Object[]> go() {
-      final List<Object[]> $ = new ArrayList<>();
       assertNotNull(location);
       assertNotNull(location.listFiles());
+      final List<Object[]> $ = new ArrayList<>();
       for (final File f : location.listFiles()) {
         assertNotNull(f);
         go($, f);
