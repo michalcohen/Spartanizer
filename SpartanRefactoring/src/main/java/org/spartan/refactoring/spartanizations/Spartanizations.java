@@ -25,6 +25,10 @@ public enum Spartanizations {
   @SuppressWarnings("javadoc") ShortestBranchFirst(new ShortestBranchFirst()), //
   @SuppressWarnings("javadoc") Ternarize(new Ternarize()), //
   @SuppressWarnings("javadoc") ShortestOperand(new ShortestOperand()), //
+  @SuppressWarnings("javadoc") SimplifyTernary(
+      new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
+  //
+  @SuppressWarnings("javadoc") Another(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true/false", "Simplify tautologies")), //
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
