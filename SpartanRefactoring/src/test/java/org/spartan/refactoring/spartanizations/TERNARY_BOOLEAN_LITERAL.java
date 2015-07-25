@@ -18,7 +18,6 @@ import static org.spartan.refactoring.utils.Restructure.flatten;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
@@ -52,8 +51,7 @@ public class TERNARY_BOOLEAN_LITERAL {
     assertTrue(isTernaryOfBooleanLitreral(e("(e?true:false)")));
   }
   @Test public void makeSurCoreIsExtracted1() {
-    final Expression e = e("(e?true:false)");
-    assertTrue(isTernaryOfBooleanLitreral(e));
+    assertTrue(isTernaryOfBooleanLitreral(e("(e?true:false)")));
   }
   @Test public void hasTernaryOrBooleanLiteral1() {
     final InfixExpression flatten = flatten(i("A||(e?true:false)"));
@@ -67,8 +65,7 @@ public class TERNARY_BOOLEAN_LITERAL {
     assertTrue(haveTernaryOfBooleanLitreral(operands));
   }
   @Test public void hasTernaryOrBooleanLiteral2() {
-    final InfixExpression flatten = flatten(i("A||(e?true:false)"));
-    final List<Expression> operands = All.operands(flatten);
+    final List<Expression> operands = All.operands(flatten(i("A||(e?true:false)")));
     assertThat(operands.size(), is(2));
     assertThat(operands.get(0).toString(), is("A"));
     assertThat(operands.get(1).toString(), is("(e ? true : false)"));
@@ -89,6 +86,7 @@ public class TERNARY_BOOLEAN_LITERAL {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //
+        Utils.asArray("comparion", "next < values().length;"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -155,12 +153,10 @@ public class TERNARY_BOOLEAN_LITERAL {
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
@@ -188,12 +184,9 @@ public class TERNARY_BOOLEAN_LITERAL {
       return collect(cases);
     }
     @Test public void inputIsConditionalfixExpression() {
-      final ConditionalExpression e = asConditionalExpression();
-      assertNotNull(e);
+      assertNotNull(asConditionalExpression());
     }
-    /**
-     * Instantiates the enclosing class ({@link Wringed})
-     */
+    /** Instantiates the enclosing class ({@link Wringed}) */
     public Wringed() {
       super(WRING);
     }

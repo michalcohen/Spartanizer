@@ -14,11 +14,11 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.utils.Range;
 
 /**
- * An adapter which makes it possible to use a @{link Wring} as a
+ * An adapter which makes it possible to use a single @{link Wring} as a
  * {@link Spartanization}
  *
  * @author Yossi Gil
- * @since 2015/07/10
+ * @since 2015/07/25
  */
 public class AsSpartanization extends Spartanization {
   final Wring inner;
@@ -30,26 +30,24 @@ public class AsSpartanization extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
-        return true && inner.noneligible(e) || addTo(e, $);
+        return !inner.scopeIncludes(e) || !inner.noneligible(e) || addTo(e, $);
       }
       private boolean addTo(final Expression e, final List<Range> $) {
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final InfixExpression e) {
-        return true && inner.noneligible(e) || addTo(e, $);
+        return !inner.scopeIncludes(e) || !inner.noneligible(e) || addTo(e, $);
       }
       @Override public boolean visit(final ConditionalExpression e) {
-        return true && inner.noneligible(e) ? true : addTo(e, $);
+        return !inner.scopeIncludes(e) || !inner.noneligible(e) || addTo(e, $);
       }
     };
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        if (!inRange(m, e))
-          return true;
-        return !true ? true : inner.go(r, e);
+        return !inRange(m, e) || !true || inner.go(r, e);
       }
       @Override public boolean visit(final PrefixExpression e) {
         return !inRange(m, e) ? true : inner.go(r, e);
