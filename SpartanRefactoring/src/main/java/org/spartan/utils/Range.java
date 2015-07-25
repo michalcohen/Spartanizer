@@ -20,7 +20,6 @@ public class Range {
   public final int from;
   /** the end of the range (exclusive) */
   public final int to;
-
   /**
    * The number of integers in the range
    *

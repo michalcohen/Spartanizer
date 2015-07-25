@@ -128,72 +128,15 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-20
    */
-  ANDOR_TERNARY_BOOLEAN_LITERAL(new Wring.OfInfixExpression() {
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR)
-          && haveTernaryOfBooleanLitreral(All.operands(flatten(e)));
+  TERNARY_BOOLEAN_LITERAL(new Wring.OfConditionalExpression() {
+    @Override boolean scopeIncludes(final ConditionalExpression e) {
+      return isTernaryOfBooleanLitreral(e);
     }
-    private boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
-      for (final Expression e : es)
-        if (isTernaryOfBooleanLitreral(e))
-          return true;
-      return false;
-    }
-    private boolean isTernaryOfBooleanLitreral(final Expression e) {
-      return isTernaryOfBooleanLitreral(asConditionalExpression(e));
-    }
-    private boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
-      return Have.booleanLiteral(getCore(e.getThenExpression()), getCore(e.getElseExpression()));
-    }
-    @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
+    @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
       return true;
     }
-    @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(flatten(e));
-      simplifyTernary(operands);
-      return refitOperands(e, operands);
-    }
-    /* <pre> a ? b : c </pre>
-     *
-     * is the same as
-     *
-     * <pre> (a && b) || (!a && c) </pre>
-     *
-     * if b is false than:
-     *
-     * <pre> (a && false) || (!a && c) == (!a && c) </pre>
-     *
-     * if b is true than:
-     *
-     * <pre> (a && true) || (!a && c) == a || (!a && c) == a || c </pre>
-     *
-     * if c is false than:
-     *
-     * <pre> (a && b) || (!a && false) == (!a && c) </pre>
-     *
-     * if c is true than
-     *
-     * <pre> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </pre> */
-    private void simplifyTernary(final List<Expression> es) {
-      for (int i = 0; i < es.size(); ++i) {
-        final Expression e = es.get(i);
-        if (!isTernaryOfBooleanLitreral(e))
-          continue;
-        es.remove(i);
-        es.add(i, simplifyTernary(asConditionalExpression(e)));
-      }
-    }
-    private Expression simplifyTernary(final ConditionalExpression e) {
-      final Expression then = getCore(e.getThenExpression());
-      final Expression elze = getCore(e.getElseExpression());
-      final Expression main = getCore(e.getExpression());
-      final Expression other = Is.booleanLiteral(then) ? elze : then;
-      final InfixExpression $ = e.getAST().newInfixExpression();
-      $.setRightOperand(other);
-      $.setLeftOperand(other == then ? main : not(main));
-      final boolean literal = asBooleanLiteral(other == then ? elze : then).booleanValue();
-      $.setOperator(literal ? Operator.OR : Operator.AND);
-      return $;
+    @Override Expression _replacement(final ConditionalExpression e) {
+      return simplifyTernary(e);
     }
   }), //
   /**
@@ -205,7 +148,7 @@ public enum Wrings {
    */
   ANDOR_TRUE(new Wring.OfInfixExpression() {
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), Operator.CONDITIONAL_AND, Operator.CONDITIONAL_OR) && Have.trueLiteral(All.operands(flatten(e)));
+      return Is.deMorgan(e) && Have.trueLiteral(All.operands(flatten(e)));
     }
     @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
@@ -328,7 +271,6 @@ public enum Wrings {
   //
   ;
   final Wring inner;
-
   Wrings(final Wring inner) {
     this.inner = inner;
   }
@@ -343,8 +285,24 @@ public enum Wrings {
     Wring $;
     return ($ = find(asInfixExpression(e))) != null//
         || ($ = find(asPrefixExpression(e))) != null//
+        || ($ = find(asConditionalExpression(e))) != null//
             //
             ? $ : null;
+  }
+  /**
+   * Find the first {@link Wring} appropriate for an {@link InfixExpression}
+   *
+   * @param e JD
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final ConditionalExpression e) {
+    if (e == null)
+      return null;
+    for (final Wrings s : values())
+      if (s.inner.scopeIncludes(e))
+        return s.inner;
+    return null;
   }
   /**
    * Find the first {@link Wring} appropriate for an {@link InfixExpression}
@@ -385,6 +343,7 @@ public enum Wrings {
         final Expression e1 = es.get(j + 1);
         if (c.compare(e0, e1) <= 0)
           continue;
+        // Replace locations i,j with e0 and e1
         es.get(j + 1);
         es.remove(j);
         es.remove(j);
@@ -404,6 +363,61 @@ public enum Wrings {
         || ($ = perhapsDeMorgan(inner)) != null//
         || ($ = perhapsComparison(inner)) != null //
             ? $ : null;
+  }
+  /* <pre> a ? b : c </pre>
+   *
+   * is the same as
+   *
+   * <pre> (a && b) || (!a && c) </pre>
+   *
+   * if b is false than:
+   *
+   * <pre> (a && false) || (!a && c) == (!a && c) </pre>
+   *
+   * if b is true than:
+   *
+   * <pre> (a && true) || (!a && c) == a || (!a && c) == a || c </pre>
+   *
+   * if c is false than:
+   *
+   * <pre> (a && b) || (!a && false) == (!a && c) </pre>
+   *
+   * if c is true than
+   *
+   * <pre> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </pre> */
+  static void simplifyTernary(final List<Expression> es) {
+    for (int i = 0; i < es.size(); ++i) {
+      final Expression e = es.get(i);
+      if (!isTernaryOfBooleanLitreral(e))
+        continue;
+      es.remove(i);
+      es.add(i, simplifyTernary(asConditionalExpression(e)));
+    }
+  }
+  private static Expression simplifyTernary(final ConditionalExpression e) {
+    final Expression then = getCore(e.getThenExpression());
+    final Expression elze = getCore(e.getElseExpression());
+    final Expression main = e.getExpression();
+    final Expression other = duplicate(Is.booleanLiteral(then) ? elze : then);
+    final InfixExpression $ = e.getAST().newInfixExpression();
+    $.setRightOperand(other);
+    $.setLeftOperand(other == then ? main : not(main));
+    assert Is.booleanLiteral(elze) || Is.booleanLiteral(then);
+    final boolean literal = asBooleanLiteral(other == then ? elze : then).booleanValue();
+    $.setOperator(literal ? Operator.OR : Operator.AND);
+    return $;
+  }
+  static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
+    for (final Expression e : es)
+      if (isTernaryOfBooleanLitreral(e))
+        return true;
+    return false;
+  }
+  static boolean isTernaryOfBooleanLitreral(final Expression e) {
+    return isTernaryOfBooleanLitreral(asConditionalExpression(getCore(e)));
+  }
+  static boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
+    return e != null && Have.booleanLiteral(getCore(e.getThenExpression()), getCore(e.getElseExpression()));
   }
   static Expression perhapsNotOfLiteral(final Expression inner) {
     return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));

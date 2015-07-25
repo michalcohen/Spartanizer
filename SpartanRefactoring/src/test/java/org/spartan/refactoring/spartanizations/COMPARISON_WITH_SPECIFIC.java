@@ -44,7 +44,6 @@ public enum COMPARISON_WITH_SPECIFIC {
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //
         null);
-
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -95,7 +94,6 @@ public enum COMPARISON_WITH_SPECIFIC {
         // Misc
         Utils.asArray("Correct order", "1 + 2 < 3 "), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -160,7 +158,6 @@ public enum COMPARISON_WITH_SPECIFIC {
         Utils.asArray("Crazy comparison", "null == this", "this == null"), //
         Utils.asArray("Crazy comparison", "null == 1", "1 == null"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *

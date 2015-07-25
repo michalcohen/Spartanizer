@@ -48,14 +48,12 @@ import org.spartan.utils.Range;
 public abstract class Spartanization extends Refactoring {
   protected abstract ASTVisitor collectOpportunities(final List<Range> $);
   protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
-
   private ITextSelection selection = null;
   private ICompilationUnit compilationUnit = null;
   private IMarker marker = null;
   final Collection<TextFileChange> changes = new ArrayList<>();
   private final String name;
   private final String message;
-
   /***
    * Instantiates this class, with message identical to name
    *

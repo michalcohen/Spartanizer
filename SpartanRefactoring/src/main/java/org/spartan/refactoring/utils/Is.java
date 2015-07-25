@@ -136,6 +136,17 @@ public enum Is {
     return false;
   }
   /**
+   * Check whether the operator of an expression is susceptible for applying one
+   * of the two de Morgan laws.
+   *
+   * @param o JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an operator on
+   *         which the de Morgan laws apply.
+   */
+  public static boolean deMorgan(final InfixExpression e) {
+    return Is.deMorgan(e.getOperator());
+  }
+  /**
    * Check whether an operator is susceptible for applying one of the two de
    * Morgan laws.
    *

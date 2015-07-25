@@ -11,7 +11,6 @@ import org.osgi.framework.BundleContext;
  */
 public class Plugin extends AbstractUIPlugin {
   private static Plugin plugin;
-
   /**
    * an empty c'tor. creates an instance of the plugin.
    */

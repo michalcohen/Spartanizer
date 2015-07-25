@@ -48,7 +48,6 @@ import org.spartan.utils.Utils;
 public enum Funcs {
   ;
   private static Map<Operator, Operator> conjugate = makeConjeguates();
-
   /**
    * Convert an {@link Expression} into {@link InfixExpression} whose operator
    * is either {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#AND} or
@@ -92,7 +91,7 @@ public enum Funcs {
     return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
   }
   /**
-   * Down-cast, if possible, to {@link BooleanLiteral}
+   * Down-cast, if possible, to {@link Statement}
    *
    * @param e JD
    * @return the parameter down-casted to the returned type, or
@@ -136,6 +135,16 @@ public enum Funcs {
       return null;
     final ASTNode $ = !Is.block(s) ? s : getBlockSingleStmnt(s);
     return !Is.expressionStatement($) ? null : (ExpressionStatement) $;
+  }
+  /**
+   * Down-cast, if possible, to {@link ConditionalExpression}
+   *
+   * @param e JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static ConditionalExpression asConditionalExpression(final Expression e) {
+    return !(e instanceof ConditionalExpression) ? null : (ConditionalExpression) e;
   }
   /**
    * Down-cast, if possible, to {@link InfixExpression}

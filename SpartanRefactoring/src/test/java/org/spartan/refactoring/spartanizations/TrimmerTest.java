@@ -44,7 +44,6 @@ import org.spartan.refactoring.utils.Is;
 @SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
-
   @Test public void chainCOmparisonTrueLast() {
     assertSimplifiesTo("a == b == c == true", "a == b == c");
   }

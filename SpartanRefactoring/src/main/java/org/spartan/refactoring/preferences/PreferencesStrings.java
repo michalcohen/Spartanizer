@@ -14,7 +14,6 @@ public final class PreferencesStrings {
   @SuppressWarnings("javadoc") public static class Strings {
     public static final String description = "Select for each type of tranformation suggestion if it will be shown\n\n";
   }
-
   /**
    * Strings for Shortest Operand First positioning options
    */

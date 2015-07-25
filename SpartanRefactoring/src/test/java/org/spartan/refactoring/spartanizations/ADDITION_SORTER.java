@@ -52,7 +52,6 @@ public enum ADDITION_SORTER {
         Utils.asArray("Plain addition plust constant", "5*a+b*c+12"), //
         Utils.asArray("Literal addition", "2+3"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -114,7 +113,6 @@ public enum ADDITION_SORTER {
         Utils.asArray("Literals of distinct length", "123+12+1", "1+12+123"), //
         Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *

@@ -90,9 +90,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
         countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
     );
   }
-
   static final int TOKEN_THRESHOLD = 1;
-
   /**
    * Counts the number of non-space characters in a tree rooted at a given node
    *

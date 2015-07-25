@@ -8,7 +8,6 @@ import java.util.Set;
 
 class ChainStringToIntMap {
   public Map<String, Integer> inner = new HashMap<>();
-
   public boolean containsKey(final String key) {
     return inner.containsKey(key);
   }

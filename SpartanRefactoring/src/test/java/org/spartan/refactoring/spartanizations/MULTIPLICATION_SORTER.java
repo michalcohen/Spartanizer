@@ -50,7 +50,6 @@ public enum MULTIPLICATION_SORTER {
         Utils.asArray("Plain product of three, sorted", "2*a*b"), //
         Utils.asArray("Plain product of four, sorted", "2*a*b*c"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -114,7 +113,6 @@ public enum MULTIPLICATION_SORTER {
         Utils.asArray("Long alphabetical sorting", "f(t)*g(h1,h2)*y*a*2*b*x", "2*a*b*x*y*f(t)*g(h1,h2)"), //
         Utils.asArray("Plain alphabetical sorting", "f(y)*f(x)", "f(x)*f(y)"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -163,7 +161,6 @@ public enum MULTIPLICATION_SORTER {
       assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
     }
   }
-
   static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
 }

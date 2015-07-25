@@ -59,7 +59,6 @@ public enum COMPARISON_WITH_BOOLEAN {
         Utils.asArray("", "true != false", "!(false)"), //
         Utils.asArray("", "true != true", "!(true)"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *

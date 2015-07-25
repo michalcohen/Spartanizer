@@ -62,7 +62,6 @@ public class InfixTest {
       " return a*b*c*d>d*e;\n" + //
       " }"//
       + "";
-
   @Test public void noOpportunitySp1() {
     assertNoOpportunity(new ShortestOperand(), P1);
   }

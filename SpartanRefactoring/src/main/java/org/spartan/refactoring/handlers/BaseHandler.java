@@ -38,9 +38,7 @@ public abstract class BaseHandler extends AbstractHandler {
   private static IWorkbenchWindow getCurrentWorkbenchWindow() {
     return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
-
   private final Spartanization refactoring;
-
   protected BaseHandler(final Spartanization refactoring) {
     this.refactoring = refactoring;
   }

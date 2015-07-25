@@ -36,7 +36,6 @@ public abstract class FileTestUtils {
    * Folder in which all test cases are found
    */
   public static final File location = new File("src/test/resources");
-
   static Spartanization makeSpartanizationObject(final File f) {
     return makeSpartanizationObject(f.getName());
   }
@@ -176,7 +175,6 @@ public abstract class FileTestUtils {
   enum TestDirection {
     In, Out
   }
-
   /**
    * Makes an Input file out of a Test file
    */

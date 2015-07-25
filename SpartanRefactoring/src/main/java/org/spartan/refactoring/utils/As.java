@@ -63,7 +63,6 @@ public enum As {
   STATEMENTS(ASTParser.K_STATEMENTS), //
   CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS);
   final int kind;
-
   private As(final int kind) {
     this.kind = kind;
   }

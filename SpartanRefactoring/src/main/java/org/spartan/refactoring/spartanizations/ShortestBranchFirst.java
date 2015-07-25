@@ -104,7 +104,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
     final Operator op = negate(e.getOperator());
     if (op == null)
       return null;
-    return op != CONDITIONAL_AND && op != CONDITIONAL_OR //
+    return !Is.deMorgan(op) //
         ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())//
         : makeInfixExpression(r, t, negateExp(t, r, e.getLeftOperand()), op, negateExp(t, r, e.getRightOperand()));
   }
@@ -130,15 +130,11 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
     $.put(CONDITIONAL_OR, CONDITIONAL_AND);
     return $;
   }
-
   private static Map<Operator, Operator> negate = makeNegation();
-
   private static Expression tryNegatePrefix(final ASTRewrite r, final PrefixExpression exp) {
     return !exp.getOperator().equals(NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
   }
-
   private static final int threshold = 1;
-
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final IfStatement n) {

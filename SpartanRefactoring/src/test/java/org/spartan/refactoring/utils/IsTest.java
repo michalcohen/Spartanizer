@@ -23,4 +23,19 @@ public class IsTest {
   @Test public void numericLiteralFalse2() {
     assertFalse(Is.numericLiteral(e("2*3")));
   }
+  @Test public void booleanLiteralTrueOnTrue() {
+    assertTrue(Is.booleanLiteral(e("true")));
+  }
+  @Test public void booleanLiteralTrueOnFalse() {
+    assertTrue(Is.booleanLiteral(e("false")));
+  }
+  @Test public void booleanLiteralFalseOnNumeric() {
+    assertFalse(Is.booleanLiteral(e("12")));
+  }
+  @Test public void booleanLiteralFalseOnThis() {
+    assertFalse(Is.booleanLiteral(e("this")));
+  }
+  @Test public void booleanLiteralFalseOnNull() {
+    assertFalse(Is.booleanLiteral(e("null")));
+  }
 }

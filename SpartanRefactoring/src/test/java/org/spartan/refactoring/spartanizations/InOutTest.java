@@ -40,7 +40,6 @@ public class InOutTest {
       assertSimilar(expected, rewrite.get());
     }
   }
-
   /**
    * An object describing the required transformation
    */
@@ -57,7 +56,6 @@ public class InOutTest {
    * Where the expected output can be found?
    */
   @Parameter(value = 3) public File output;
-
   /**
    * Runs a parameterized test case, based on the instance variables of this
    * instance

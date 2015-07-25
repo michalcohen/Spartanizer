@@ -31,9 +31,7 @@ public class ExtractMethod extends Spartanization {
   public ExtractMethod() {
     super("Split method", "Extract a new method from the current one based on Spartan hyuristics");
   }
-
   CompilationUnit oldCu;
-
   @Override protected ASTVisitor collectOpportunities(final List<Range> opportunities) {
     // No opportunities for now, if it's 2016 and not added yet, blame TODO Ofir
     return new ASTVisitor() {
@@ -43,10 +41,8 @@ public class ExtractMethod extends Spartanization {
       }
     };
   }
-
   final int MinimumGroupSizeForExtraction = 3;
   final int MaximunGroupRelativeToMethodSize = 3;
-
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @SuppressWarnings("boxing") @Override public boolean visit(final MethodDeclaration md) {

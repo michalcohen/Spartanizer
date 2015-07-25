@@ -38,7 +38,6 @@ public enum Precedence {
       return precedence >= 1 && precedence <= 15;
     }
   }
-
   private final static int UNDEFINED = -1;
   private static final ChainStringToIntMap of = new ChainStringToIntMap()//
       .putOn(1, "[]", ".", "() invoke", "++ post", "-- post") //
@@ -61,7 +60,6 @@ public enum Precedence {
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
   );
-
   private static int of(final Assignment a) {
     return of(a.getOperator());
   }

@@ -136,7 +136,6 @@ public class Ternarize extends Spartanization {
   public static class TwoExpressions {
     final Expression then;
     final Expression elze;
-
     /**
      * Instantiates the class with the given Expressions
      *
@@ -158,7 +157,6 @@ public class Ternarize extends Spartanization {
   public static class TwoNodes {
     ASTNode then;
     ASTNode elze;
-
     /**
      * Instantiates the class with the given nodes
      *
@@ -170,7 +168,6 @@ public class Ternarize extends Spartanization {
       elze = e;
     }
   }
-
   static boolean perhapsIfSameExpStmntOrRet(final AST t, final ASTRewrite r, final IfStatement i) {
     final Statement then = singleStatement(i.getThenStatement());
     final Statement elze = singleElse(i);

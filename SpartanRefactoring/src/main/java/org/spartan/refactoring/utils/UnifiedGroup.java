@@ -12,7 +12,6 @@ class ChainedHash<K, V> extends HashMap<K, LinkedList<V>> {
    * For serialization version control
    */
   private static final long serialVersionUID = -6008083316796560877L;
-
   public ChainedHash<K, V> chain(final K key, final V value) {
     if (!containsKey(key))
       put(key, new LinkedList<V>());
@@ -52,7 +51,6 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
   final ChainedHash<String, Integer> names = new ChainedHash<>();
   final int size;
   Base base = Base.OneBased; // Does the union find starts with 0 or 1
-
   /**
    * @param size - size of the group (number of lines)
    */
@@ -74,7 +72,6 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
                 */
     OneBased
   }
-
   /**
    * @param numOfLines - size of the group (number of lines)
    * @param countingBase - Counting base - type of the Base enum. Default value
@@ -120,7 +117,6 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
 class UnionFind {
   private final int[] parentOf; // parent for each number
   private final int[] sizeOf; // subtree dimension of the indexed element
-
   public UnionFind(final int size) {
     sizeOf = new int[size];
     Arrays.fill(sizeOf, 1);

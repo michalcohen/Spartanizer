@@ -39,7 +39,6 @@ import org.spartan.utils.Utils;
 public class PUSHDOWN_NOT {
   /** The {@link Wring} under test */
   static final Wring WRING = Wrings.PUSHDOWN_NOT.inner;
-
   @Test public void notOfFalse() {
     final PrefixExpression e = p("!false");
     assertThat(e, is(notNullValue()));
@@ -67,7 +66,6 @@ public class PUSHDOWN_NOT {
         Utils.asArray("OR", "a||b"), //
         Utils.asArray("END", "a&&b"), //
         null);
-
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -91,7 +89,6 @@ public class PUSHDOWN_NOT {
         Utils.asArray("Simple not", "!a"), //
         Utils.asArray("Simple not of function", "!f(a)"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -131,7 +128,6 @@ public class PUSHDOWN_NOT {
         Utils.asArray("2 level not of false", "!!false", "false"), //
         Utils.asArray("2 level not of true", "!!true", "true"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *

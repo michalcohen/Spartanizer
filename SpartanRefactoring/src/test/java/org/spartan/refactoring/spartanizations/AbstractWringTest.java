@@ -15,17 +15,14 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.e;
-import static org.spartan.refactoring.spartanizations.TESTUtils.i;
-import static org.spartan.refactoring.spartanizations.TESTUtils.p;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
+import static org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -34,6 +31,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.Test;
+import org.junit.internal.builders.IgnoredClassRunner;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.spartan.refactoring.utils.As;
 import org.spartan.utils.Range;
@@ -43,13 +42,13 @@ import org.spartan.utils.Range;
  * @since 2015-07-18
  */
 @SuppressWarnings("javadoc") //
+@RunWith(IgnoredClassRunner.class) //
 public abstract class AbstractWringTest {
   protected final Wring inner;
   /** The name of the specific test for this transformation */
   @Parameter(0) public String name;
   /** Where the input text can be found */
   @Parameter(1) public String input;
-
   /**
    * Instantiates the enclosing class ({@link AbstractWringTest})
    *
@@ -85,6 +84,11 @@ public abstract class AbstractWringTest {
     assertThat($, is(instanceOf(CompilationUnit.class)));
     return (CompilationUnit) $;
   }
+  protected ConditionalExpression asConditionalExpression() {
+    final ConditionalExpression $ = c(input);
+    assertNotNull($);
+    return $;
+  }
   protected Document asDocument() {
     return new Document(wrap(input));
   }
@@ -96,7 +100,6 @@ public abstract class AbstractWringTest {
   public static abstract class OutOfScope extends AbstractWringTest {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" N/A";
-
     /** Instantiates the enclosing class ({@link OutOfScope})@param inner */
     public OutOfScope(final Wring inner) {
       super(inner);
@@ -132,7 +135,6 @@ public abstract class AbstractWringTest {
       /** Where the expected output can be found? */
       @Parameter(2) public String output;
       protected final Trimmer trimmer = new Trimmer();
-
       /**
        * Instantiates the enclosing class ({@link Wringed})
        *
@@ -200,13 +202,10 @@ public abstract class AbstractWringTest {
         return null;
       }
     }
-
     InScope(final Wring inner) {
       super(inner);
     }
-
     protected final Trimmer wringer = new Trimmer();
-
     @Test public void findsSimplifier() {
       assertNotNull(Wrings.find(asExpression()));
     }
@@ -222,7 +221,6 @@ public abstract class AbstractWringTest {
   public static abstract class Noneligible extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==>|";
-
     /**
      * Instantiates the enclosing class ({@link Noneligible})
      *
@@ -277,11 +275,19 @@ public abstract class AbstractWringTest {
    * @since 2015-07-15
    */
   public static abstract class Wringed extends InScope {
+    public static class Conditional extends Wringed {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Conditional(final Wring w) {
+        super(w);
+      }
+      @Test public void inputIsConditionalExpression() {
+        assertNotNull(asConditionalExpression());
+      }
+    }
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
     /** What should the output be */
     @Parameter(2) public String expected;
-
     /**
      * Instantiates the enclosing class ({@link WringedInput})
      *
@@ -299,9 +305,12 @@ public abstract class AbstractWringTest {
     @Test public void peelableOutput() {
       assertEquals(expected, peel(wrap(expected)));
     }
-    @Test public void hasOpportunity() {
-      final CompilationUnit u = asCompilationUnit();
+    @Test public void scopeIncludes() {
       assertTrue(inner.scopeIncludes(asExpression()));
+    }
+    @Test public void hasOpportunity() {
+      assertTrue(inner.scopeIncludes(asExpression()));
+      final CompilationUnit u = asCompilationUnit();
       final List<Range> findOpportunities = wringer.findOpportunities(u);
       assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
     }
@@ -334,7 +343,7 @@ public abstract class AbstractWringTest {
       assertEquals(inner, Wrings.find(asExpression()));
     }
 
-    static abstract class Infix extends Wringed {
+    public static abstract class Infix extends Wringed {
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
       Infix(final Wring w) {
         super(w);

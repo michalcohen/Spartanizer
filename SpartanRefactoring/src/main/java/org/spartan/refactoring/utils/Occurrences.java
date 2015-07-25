@@ -105,7 +105,6 @@ public enum Occurrences {
       }
     };
   }
-
   static final ASTMatcher matcher = new ASTMatcher();
 
   /**
@@ -131,7 +130,6 @@ public enum Occurrences {
      */
     public abstract List<Expression> in(ASTNode n);
   }
-
   /**
    * Lists the required occurrences
    *
@@ -311,9 +309,7 @@ public enum Occurrences {
       private boolean repeated() {
         return !lexicalOnly && loopDepth > 0;
       }
-
       private int loopDepth = 0;
-
       private List<VariableDeclarationFragment> getFieldsOfClass(final ASTNode classNode) {
         final List<VariableDeclarationFragment> $ = new ArrayList<>();
         classNode.accept(new ASTVisitor() {

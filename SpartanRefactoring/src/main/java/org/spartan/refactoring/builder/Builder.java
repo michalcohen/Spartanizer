@@ -39,11 +39,9 @@ public class Builder extends IncrementalProjectBuilder {
    * Empty prefix for brevity
    */
   public static final String EMPTY_PREFIX = "";
-
   private static String prefix() {
     return SPARTANIZATION_SHORT_PREFIX;
   }
-
   /**
    * the ID under which this builder is registered
    */
@@ -54,7 +52,6 @@ public class Builder extends IncrementalProjectBuilder {
    * spartanization is stored
    */
   public static final String SPARTANIZATION_TYPE_KEY = "org.spartan.refactoring.spartanizationType";
-
   @Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
       final IProgressMonitor m) throws CoreException {
     if (m != null)

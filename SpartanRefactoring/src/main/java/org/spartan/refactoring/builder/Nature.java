@@ -16,7 +16,6 @@ public class Nature implements IProjectNature {
   public static final String NATURE_ID = "org.spartan.refactoring.Nature";
   /** The project to which we relate */
   private IProject project;
-
   /* (non-Javadoc)
    *
    * @see org.eclipse.core.resources.IProjectNature#configure() */

@@ -68,7 +68,6 @@ public enum ANDOR_TRUE {
         Utils.asArray("AND of 7 without boolean and multiple false value",
             "(a && (b && false)) && (c && (d && (e && (false && false))))"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -88,7 +87,6 @@ public enum ANDOR_TRUE {
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray();
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -156,7 +154,6 @@ public enum ANDOR_TRUE {
         Utils.asArray("AND of 7 with multiple true value", "(a && (b && true)) && (c && (d && (e && (true && true))))",
             "a&&b&&c&&d&&e"), //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -189,6 +186,5 @@ public enum ANDOR_TRUE {
       assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
     }
   }
-
   static final Wring WRING = Wrings.ANDOR_TRUE.inner;
 }

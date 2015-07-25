@@ -21,7 +21,6 @@ public enum Make {
   STATEMENTS(ASTParser.K_STATEMENTS), //
   CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS); //
   private final int kind;
-
   private Make(final int kind) {
     this.kind = kind;
   }

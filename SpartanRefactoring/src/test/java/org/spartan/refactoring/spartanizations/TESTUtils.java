@@ -1,5 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -13,8 +15,7 @@ import static org.spartan.utils.Utils.removeWhites;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -59,6 +60,20 @@ public enum TESTUtils {
     return (Statement) As.STATEMENTS.ast(statement);
   }
   /**
+   * Convert a given {@link String} into an {@link ConditionalExpression}, or
+   * fail the current test, if such a conversion is not possible
+   *
+   * @param conditionalExpression a {@link String} that represents a
+   *          "conditional" (also known as "ternary") expression.
+   * @return an {@link Statement} data structure representing the parameter.
+   */
+  public static ConditionalExpression c(final String conditionalExpression) {
+    final Expression $ = e(conditionalExpression);
+    assertThat(conditionalExpression, $, notNullValue());
+    assertThat(conditionalExpression, $, instanceOf(ConditionalExpression.class));
+    return (ConditionalExpression) $;
+  }
+  /**
    * Convert a given {@link String} into an {@link PrefixExpression}, or fail
    * the current test, if such a conversion is not possible
    *
@@ -79,9 +94,7 @@ public enum TESTUtils {
   public static Expression e(final String expression) {
     return (Expression) As.EXPRESSION.ast(expression);
   }
-
   static final String WHITES = "\\s+";
-
   static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
       assertEquals(removeWhites(expected), removeWhites(actual));
@@ -113,7 +126,6 @@ public enum TESTUtils {
     assertNotNull(d);
     return TESTUtils.rewrite(s, u, d).get();
   }
-
   private static final String PRE = //
   "package p; \n" + //
       "public class SpongeBob {\n" + //
@@ -125,7 +137,6 @@ public enum TESTUtils {
       " }" + //
       "}" + //
       "";
-
   static final String peel(final String s) {
     return removeSuffix(removePrefix(s, PRE), POST);
   }

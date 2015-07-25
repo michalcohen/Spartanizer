@@ -73,7 +73,6 @@ public class ShortestOperand extends Spartanization {
     Union, /** Do not swap literals */
     ShowAll
   }
-
   /** Instantiates this class */
   public ShortestOperand() {
     super("Shortest operand first", "Make the shortest operand first in a binary commutative or semi-commutative operator");
@@ -160,10 +159,8 @@ public class ShortestOperand extends Spartanization {
         || inOperandExceptions(ie.getRightOperand(), $) //
         || inRightOperandExceptions(ie.getRightOperand(), $);
   }
-
   private static final int TOKEN_THRESHOLD = 1;
   private static final int CHARACTER_THRESHOLD = 2;
-
   protected static boolean includeEachOther(final Range a, final Range b) {
     return includedIn(a, b) || includedIn(b, a);
   }

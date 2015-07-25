@@ -25,7 +25,6 @@ public class SpartanizationClassForFolderExists extends FileTestUtils {
    * class
    */
   @Parameter(value = 0) public String folderForClass;
-
   /**
    * Tests that {@link #folderForClass} is a valid class name
    */

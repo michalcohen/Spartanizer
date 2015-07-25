@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -33,6 +34,10 @@ public class Trimmer extends Spartanization {
         return w != null && w.noneligible(e) ? true : overrideInto(e, $);
       }
       @Override public boolean visit(final InfixExpression e) {
+        final Wring w = Wrings.find(e);
+        return w != null && w.noneligible(e) ? true : overrideInto(e, $);
+      }
+      @Override public boolean visit(final ConditionalExpression e) {
         final Wring w = Wrings.find(e);
         return w != null && w.noneligible(e) ? true : overrideInto(e, $);
       }

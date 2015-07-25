@@ -35,7 +35,6 @@ public enum Spartanizations {
   // TODO Use one letter name for local variables and parameters
   ;
   private final Spartanization value;
-
   private Spartanizations(final Spartanization value) {
     this.value = value;
   }
@@ -66,7 +65,6 @@ public enum Spartanizations {
       @Override public Iterator<Spartanization> iterator() {
         return new Iterator<Spartanization>() {
           int next;
-
           @Override public boolean hasNext() {
             return next < values().length;
           }
@@ -80,10 +78,8 @@ public enum Spartanizations {
       }
     };
   }
-
   private static String ignoreRuleStr = "false";
   private static final Map<String, Spartanization> all = new HashMap<>();
-
   private static void put(final Spartanization s) {
     all.put(s.toString(), s);
   }

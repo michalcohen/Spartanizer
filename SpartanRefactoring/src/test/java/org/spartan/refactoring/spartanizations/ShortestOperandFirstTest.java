@@ -50,7 +50,6 @@ public class ShortestOperandFirstTest {
    * Where the expected output can be found?
    */
   @Parameter(value = 2) public String output;
-
   @Test public void inputNotNull() {
     assertNotNull(input);
   }
@@ -92,7 +91,6 @@ public class ShortestOperandFirstTest {
   public static Collection<Object[]> cases() {
     return collect(cases);
   }
-
   static String[][] cases = Utils.asArray(//
       Utils.asArray("not of AND", "!(f() && f(5))", "(!f() || !f(5))"), //
       Utils.asArray("not of EQ", "!(3 == 5)", "3 != 5"), //

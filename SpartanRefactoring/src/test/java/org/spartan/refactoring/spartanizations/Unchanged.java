@@ -36,7 +36,6 @@ public class Unchanged {
    * Where the input text can be found
    */
   @Parameter(2) public File input;
-
   /**
    * Runs a parameterized test case, based on the instance variables of this
    * instance, and check that no opportunities are found.
