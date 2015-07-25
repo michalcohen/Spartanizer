@@ -102,16 +102,14 @@ public enum ANDOR_TRUE {
       super(WRING);
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull((asInfixExpression()));
     }
     @Test public void isTimes() {
       final InfixExpression e = asInfixExpression();
       assertTrue(e.getOperator() == Operator.TIMES);
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands((asInfixExpression())).size(), greaterThanOrEqualTo(2));
     }
   }
 

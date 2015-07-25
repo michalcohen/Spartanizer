@@ -152,6 +152,7 @@ public enum ADDITION_SORTER {
     @Test public void tryToSort() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
+      assertThat(operands.size(), greaterThanOrEqualTo(2));
       final boolean tryToSort = Wrings.tryToSort(operands, COMPARATOR);
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //

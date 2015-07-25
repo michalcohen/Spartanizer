@@ -16,8 +16,8 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.utils.Range;
 
 /**
- * Applies the the first applicable {@link Wring} object found in
- * <ode><b>enum</b></code> {@link Wrings} to a tree.
+ * Applies the first applicable {@link Wring} object found in
+ * <code><b>enum</b></code> {@link Wrings} to a tree.
  *
  * @author Yossi Gil
  * @since 2015/07/10
@@ -49,9 +49,7 @@ public class Trimmer extends Spartanization {
         if (!inRange(m, e))
           return true;
         final Wring w = Wrings.find(e);
-        if (w != null)
-          return w.go(r, e);
-        return true;
+        return w != null ? w.go(r, e) : true;
       }
       @Override public boolean visit(final PrefixExpression e) {
         if (!inRange(m, e))
@@ -65,9 +63,7 @@ public class Trimmer extends Spartanization {
         if (!inRange(m, e))
           return true;
         final Wring w = Wrings.find(e);
-        if (w != null)
-          return w.go(r, e);
-        return true;
+        return w != null ? w.go(r, e) : true;
       }
     });
   }
