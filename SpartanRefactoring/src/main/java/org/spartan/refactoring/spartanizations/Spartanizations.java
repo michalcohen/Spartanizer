@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.spartanizations.Wrings.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.spartan.refactoring.preferences.PreferencesFile;
+import static org.spartan.refactoring.spartanizations.Wrings.*;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -26,13 +26,16 @@ public enum Spartanizations {
   // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
   // ShortestBranchFirst(new ShortestBranchFirst()), //
   Ternarize(new Ternarize()), //
-  AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from expression")), //
-  OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses from expression")), //
+  // AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from
+  // expression")), //
+  // OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses
+  // from expression")), //
   // ShortestOperand(new ShortestOperand()), //
   SimplifyTernary(new AsSpartanization(TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
   // Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true",
   // "Eliminate true")), //
-  PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
+  // PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not",
+  // "Simplify not expression")), //
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
