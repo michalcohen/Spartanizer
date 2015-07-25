@@ -77,11 +77,7 @@ public class Ternarize extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final IfStatement i) {
-        return false //
-            || perhaps(detectAssignIfAssign(i)) //
-            || perhaps(detectIfReturn(i)) //
-            || perhaps(detectIfSameExpStmntOrRet(i))//
-            || true;
+        return perhaps(detectAssignIfAssign(i)) || perhaps(detectIfReturn(i)) || perhaps(detectIfSameExpStmntOrRet(i)) || true;
       }
       private boolean perhaps(final Range r) {
         return r != null && add(r);

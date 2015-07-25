@@ -19,6 +19,22 @@ import static org.spartan.refactoring.spartanizations.Wrings.*;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
+<<<<<<< HEAD
+  ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  ComparisonWithSpecific(new ComparisonWithSpecific()), //
+  ForwardDeclaration(new ForwardDeclaration()), //
+  InlineSingleUse(new InlineSingleUse()), //
+  RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+  ShortestBranchFirst(new ShortestBranchFirst()), //
+  Ternarize(new Ternarize()), //
+  ShortestOperand(new ShortestOperand()), //
+  // SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner,
+  // "Ternary", "Simplify complex ternary boolean expression")), //
+  // Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true",
+  // "Eliminate true")), //
+  // PushDownNot(new AsSpartanization(Wrings.PUSHDOWN_NOT.inner, "Pushdown not",
+  // "Simplify not expression")), //
+=======
   // ComparisonWithBoolean(new ComparisonWithBoolean()), //
   // ComparisonWithSpecific(new ComparisonWithSpecific()), //
   // ForwardDeclaration(new ForwardDeclaration()), //
@@ -34,8 +50,13 @@ public enum Spartanizations {
   SimplifyTernary(new AsSpartanization(TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
   // Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true",
   // "Eliminate true")), //
+<<<<<<< HEAD
   // PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not",
   // "Simplify not expression")), //
+=======
+  PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
+>>>>>>> 9bc365fe0e6ed8f876dc17a2c1f03433880a7574
+>>>>>>> 13211baf453325d9cf6da4c0a681cdb1502fe138
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
