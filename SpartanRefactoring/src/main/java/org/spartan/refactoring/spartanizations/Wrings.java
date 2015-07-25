@@ -277,10 +277,10 @@ public enum Wrings {
       return "Pushdown not";
     }
     @Override public boolean scopeIncludes(final PrefixExpression e) {
-      return e != null && asNot(e) != null;
+      return e != null && asNot(e) != null && hasOpportunity(asNot(e));
     }
     @Override boolean _eligible(final PrefixExpression e) {
-      return hasOpportunity(asNot(e));
+      return true;
     }
     @Override Expression _replacement(final PrefixExpression e) {
       return pushdownNot(asNot(e));
