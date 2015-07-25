@@ -49,17 +49,13 @@ public class Trimmer extends Spartanization {
         if (!inRange(m, e))
           return true;
         final Wring w = Wrings.find(e);
-        if (w != null)
-          return w.go(r, e);
-        return true;
+        return (w != null ? w.go(r, e) : true);
       }
       @Override public boolean visit(final PrefixExpression e) {
         if (!inRange(m, e))
           return true;
-        final Wring s = Wrings.find(e);
-        if (s != null)
-          return s.go(r, e);
-        return true;
+        final Wring w = Wrings.find(e);
+        return (w != null ? w.go(r, e) : true);
       }
     });
   }

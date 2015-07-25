@@ -80,11 +80,7 @@ public enum Precedence {
    * @return the precedence of the parameter
    */
   public static int of(final Expression e) {
-    if (e instanceof InfixExpression)
-      return of((InfixExpression) e);
-    if (e instanceof Assignment)
-      return of((Assignment) e);
-    return UNDEFINED;
+    return (e instanceof InfixExpression ? of((InfixExpression) e) : ((!(e instanceof Assignment) ? UNDEFINED : of((Assignment) e))));
   }
   private static int of(final InfixExpression e) {
     return of(e.getOperator());

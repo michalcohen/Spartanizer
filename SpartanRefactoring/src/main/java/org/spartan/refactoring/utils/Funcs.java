@@ -58,7 +58,7 @@ public enum Funcs {
    *         conversion is not possible for it
    */
   public static InfixExpression asAndOrOr(final Expression e) {
-    return Is.infix(e) && Is.deMorgan(asInfixExpression(e).getOperator()) ? asInfixExpression(e) : null;
+    return (!Is.infix(e) || !Is.deMorgan(asInfixExpression(e).getOperator()) ? null : asInfixExpression(e));
   }
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
@@ -558,7 +558,7 @@ public enum Funcs {
   }
   private static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
     final Expression left = e.getLeftOperand();
-    return Precedence.same(o, left) && Associativity.isLeftToRight(o) ? parenthesize(left) : duplicate(left);
+    return (!Precedence.same(o, left) || !Associativity.isLeftToRight(o) ? duplicate(left) : parenthesize(left));
   }
   /**
    * @param t the AST who is to own the new return statement
@@ -786,7 +786,7 @@ public enum Funcs {
   }
   private static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
     final Expression right = e.getRightOperand();
-    return Precedence.same(o, right) && Associativity.isLeftToRight(o) ? parenthesize(right) : duplicate(right);
+    return (!Precedence.same(o, right) || !Associativity.isLeftToRight(o) ? duplicate(right) : parenthesize(right));
   }
   /**
    * Determine whether two nodes are the same, in the sense that their textual

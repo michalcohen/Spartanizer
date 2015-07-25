@@ -164,8 +164,8 @@ public abstract class AbstractWringTest {
         assertNotNull(inner.replacement(asExpression()));
       }
       @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-        final CompilationUnit u = asCompilationUnit();
         final Document d = new Document(wrap(input));
+        final CompilationUnit u = asCompilationUnit();
         final ASTRewrite r = trimmer.createRewrite(u, null);
         assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
       }
@@ -318,8 +318,8 @@ public abstract class AbstractWringTest {
       assertNotNull(inner.replacement(asExpression()));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-      final CompilationUnit u = asCompilationUnit();
       final Document d = new Document(wrap(input));
+      final CompilationUnit u = asCompilationUnit();
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
     }

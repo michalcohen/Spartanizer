@@ -80,8 +80,8 @@ public class ExtractMethod extends Spartanization {
         // to preserve its initial state
         final ExtractMethodRefactoring tempR = new ExtractMethodRefactoring(newCu, begin, end - begin + 1);
         try {
-          final NullProgressMonitor pm = new NullProgressMonitor();
           tempR.setMethodName("newMethod" /* + rand.nextInt(50) */);
+          final NullProgressMonitor pm = new NullProgressMonitor();
           tempR.checkAllConditions(pm);
           final Change change = tempR.createChange(pm);
           change.perform(pm);

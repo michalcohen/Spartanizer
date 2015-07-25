@@ -55,9 +55,7 @@ public enum Restructure {
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     if (Is.block(s))
       return statementsInto(asBlock(s), $);
-    if (Is.emptyStatement(s))
-      return $;
-    return add(s, $);
+    return (Is.emptyStatement(s) ? $ : add(s, $));
   }
   private static List<Statement> add(final Statement s, final List<Statement> $) {
     if (s != null)
@@ -88,9 +86,7 @@ public enum Restructure {
   }
   private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
     final Expression core = getCore(e);
-    if (Is.infix(core) && asInfixExpression(core).getOperator() == o)
-      return flattenInto(o, All.operands(asInfixExpression(core)), $);
-    return add(Is.simple(core) ? core : e, $);
+    return ((!Is.infix(core) || asInfixExpression(core).getOperator() != o ? add((!(Is.simple(core)) ? e : core), $) : flattenInto(o, All.operands(asInfixExpression(core)), $)));
   }
   private static List<Expression> add(final Expression e, final List<Expression> $) {
     $.add(e);

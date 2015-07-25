@@ -217,9 +217,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      if (!tryToSort(operands))
-        return null;
-      return refitOperands(e, operands);
+      return (!tryToSort(operands) ? null : refitOperands(e, operands));
     }
   }), //
   /**
@@ -245,9 +243,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      if (!tryToSort(operands))
-        return null;
-      return refitOperands(e, operands);
+      return (!tryToSort(operands) ? null : refitOperands(e, operands));
     }
   }), //
   /**
