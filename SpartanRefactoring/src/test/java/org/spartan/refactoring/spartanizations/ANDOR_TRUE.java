@@ -105,7 +105,7 @@ public enum ANDOR_TRUE {
       assertNotNull(asInfixExpression());
     }
     @Test public void isTimes() {
-      assertTrue((asInfixExpression()).getOperator() == Operator.TIMES);
+      assertTrue(asInfixExpression().getOperator() == Operator.TIMES);
     }
     @Test public void twoOrMoreArguments() {
       assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));

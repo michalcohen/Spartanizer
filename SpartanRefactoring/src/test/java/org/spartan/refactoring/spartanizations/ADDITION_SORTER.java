@@ -67,7 +67,7 @@ public enum ADDITION_SORTER {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      assertTrue(Are.notString(All.operands((asInfixExpression()))));
+      assertTrue(Are.notString(All.operands(asInfixExpression())));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
@@ -77,13 +77,13 @@ public enum ADDITION_SORTER {
       assertNotNull(asInfixExpression());
     }
     @Test public void isPlus() {
-      assertTrue((asInfixExpression()).getOperator() == Operator.PLUS);
+      assertTrue(asInfixExpression().getOperator() == Operator.PLUS);
     }
     @Test public void tryToSort() {
-      assertFalse(Wrings.tryToSort(All.operands(flatten((asInfixExpression()))), COMPARATOR));
+      assertFalse(Wrings.tryToSort(All.operands(flatten(asInfixExpression())), COMPARATOR));
     }
     @Test public void tryToSortTwice() {
-      final List<Expression> operands = All.operands(flatten((asInfixExpression())));
+      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }
@@ -131,7 +131,7 @@ public enum ADDITION_SORTER {
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      assertNotNull((asInfixExpression()));
+      assertNotNull(asInfixExpression());
     }
     @Test public void isPlus() {
       assertTrue(asInfixExpression().getOperator() == Operator.PLUS);
