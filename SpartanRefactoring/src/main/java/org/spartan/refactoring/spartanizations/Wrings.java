@@ -94,6 +94,9 @@ public enum Wrings {
    * @since 2015-07-17
    */
   COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
+    @Override public String toString() {
+      return "Comparison WITH SPECIFIC";
+    }
     @Override public boolean scopeIncludes(final InfixExpression e) {
       return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
@@ -130,6 +133,9 @@ public enum Wrings {
    * @since 2015-07-20
    */
   TERNARY_BOOLEAN_LITERAL(new Wring.OfConditionalExpression() {
+    @Override public String toString() {
+      return "TERNARY_BOOLEAN_LITERAL";
+    }
     @Override boolean scopeIncludes(final ConditionalExpression e) {
       return isTernaryOfBooleanLitreral(e);
     }
@@ -148,6 +154,9 @@ public enum Wrings {
    * @since 2015-07-20
    */
   ANDOR_TRUE(new Wring.OfInfixExpression() {
+    @Override public String toString() {
+      return "%%/|| true";
+    }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return Is.deMorgan(e) && Have.trueLiteral(All.operands(flatten(e)));
     }
@@ -176,6 +185,9 @@ public enum Wrings {
    * @since 2015-07-17
    */
   ADDITION_SORTER(new Wring.OfInfixExpression() {
+    @Override public String toString() {
+      return "Addition sorter";
+    }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return e.getOperator() == PLUS;
     }
@@ -204,6 +216,9 @@ public enum Wrings {
    * @since 2015-07-17
    */
   PSEUDO_ADDITION_SORTER(new Wring.OfInfixExpression() {
+    @Override public String toString() {
+      return "pseudo addition sorter";
+    }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), OR);
     }
@@ -230,6 +245,9 @@ public enum Wrings {
    * @since 2015-07-17
    */
   MULTIPLICATION_SORTER(new Wring.OfInfixExpression() {
+    @Override public String toString() {
+      return "Multiplication sorter";
+    }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), TIMES, XOR, AND);
     }
@@ -255,6 +273,9 @@ public enum Wrings {
    * @since 2015-7-17
    */
   PUSHDOWN_NOT(new Wring.OfPrefixExpression() {
+    @Override public String toString() {
+      return "Pushdown not";
+    }
     @Override public boolean scopeIncludes(final PrefixExpression e) {
       return e != null && asNot(e) != null;
     }

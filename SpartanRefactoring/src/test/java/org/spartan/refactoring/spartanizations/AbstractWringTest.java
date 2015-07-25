@@ -272,6 +272,9 @@ public abstract class AbstractWringTest {
         final InfixExpression flatten = flatten(asInfixExpression());
         assertThat(flatten(flatten).toString(), is(flatten.toString()));
       }
+      @Test public void correctSimplifieInfix() {
+        assertThat(Wrings.find(asInfixExpression()), is(inner));
+      }
     }
   }
 

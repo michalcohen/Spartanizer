@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.c;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
@@ -26,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
 import org.spartan.refactoring.utils.All;
@@ -82,11 +80,12 @@ public class TERNARY_BOOLEAN_LITERAL {
   static final Wring WRING = Wrings.TERNARY_BOOLEAN_LITERAL.inner;
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Infix {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //
         Utils.asArray("Actual example", "next < values().length"), //
+        Utils.asArray("No boolean", "a?b:c"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -105,66 +104,6 @@ public class TERNARY_BOOLEAN_LITERAL {
   }
 
   @RunWith(Parameterized.class) //
-  public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
-    static String[][] cases = Utils.asArray(//
-        // Literal
-        Utils.asArray("LT/literal", "a<2"), //
-        Utils.asArray("LE/literal", "a<=2"), //
-        Utils.asArray("GT/literal", "a>2"), //
-        Utils.asArray("GE/literal", "a>=2"), //
-        Utils.asArray("EQ/literal", "a==2"), //
-        Utils.asArray("NE/literal", "a!=2"), //
-        // This
-        Utils.asArray("LT/this", "a<this"), //
-        Utils.asArray("LE/this", "a<=this"), //
-        Utils.asArray("GT/this", "a>this"), //
-        Utils.asArray("GE/this", "a>=this"), //
-        Utils.asArray("EQ/this", "a==this"), //
-        Utils.asArray("NE/this", "a!=this"), //
-        // Null
-        Utils.asArray("LT/null", "a<null"), //
-        Utils.asArray("LE/null", "a<=null"), //
-        Utils.asArray("GT/null", "a>null"), //
-        Utils.asArray("GE/null", "a>=null"), //
-        Utils.asArray("EQ/null", "a==null"), //
-        Utils.asArray("NE/null", "a!=null"), //
-        // Character literal
-        Utils.asArray("LT/character literal", "a<'a'"), //
-        Utils.asArray("LE/character literal", "a<='a'"), //
-        Utils.asArray("GT/character literal", "a>'a'"), //
-        Utils.asArray("GE/character literal", "a>='a'"), //
-        Utils.asArray("EQ/character literal", "a=='a'"), //
-        Utils.asArray("NE/character literal", "a!='a'"), //
-        // Misc
-        Utils.asArray("Correct order", "1 + 2 < 3 "), //
-        null);
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION) //
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
-    @Override @Test public void flattenIsIdempotentt() {
-      final InfixExpression flatten = flatten(asInfixExpression());
-      assertThat(flatten(flatten).toString(), is(flatten.toString()));
-    }
-    @Override @Test public void inputIsInfixExpression() {
-      assertNotNull(asInfixExpression());
-    }
-    @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
-    }
-    /** Instantiates the enclosing class ({@link Noneligible}) */
-    public Noneligible() {
-      super(WRING);
-    }
-  }
-
-  @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.Conditional {
     private static String[][] cases = Utils.asArray(//
@@ -172,6 +111,10 @@ public class TERNARY_BOOLEAN_LITERAL {
         Utils.asArray("T X", "a ? true : c", "a || c"), //
         Utils.asArray("X F", "a ? b : false", "a && b"), //
         Utils.asArray("X T", "a ? b : true", "!a || b"), //
+        Utils.asArray("() F X", "a ?( false) : c", "!a && c"), //
+        Utils.asArray("() T X", "a ? (((true ))): c", "a || c"), //
+        Utils.asArray("() X F", "a ? b : (false)", "a && b"), //
+        Utils.asArray("() X T", "a ? b : ((true))", "!a || b"), //
         Utils.asArray("Actual example", "!inRange(m, e) ? true : inner.go(r, e)", "!inRange(m, e) || inner.go(r, e)"), //
         null);
     /**

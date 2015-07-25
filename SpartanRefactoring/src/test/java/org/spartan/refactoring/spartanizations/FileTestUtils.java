@@ -18,9 +18,7 @@ import org.spartan.refactoring.utils.As;
  *
  * @author Yossi Gil
  * @since 2014/05/24
- */
-/**
- * @author yogi
+ * @author Yossi GIl
  */
 public abstract class FileTestUtils {
   /**
