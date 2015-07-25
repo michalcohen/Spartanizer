@@ -23,16 +23,16 @@ import org.spartan.utils.Range;
 public class AsSpartanization extends Spartanization {
   final Wring inner;
   /** Instantiates this class */
-  AsSpartanization(final Wring wring, final String name, final String description) {
+  AsSpartanization(final Wring inner, final String name, final String description) {
     super(name, description);
-    inner = wring;
+    this.inner = inner;
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
         if (!inner.scopeIncludes(e))
           return true;
-        if (!inner.noneligible(e))
+        if (inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
@@ -44,7 +44,7 @@ public class AsSpartanization extends Spartanization {
       @Override public boolean visit(final InfixExpression e) {
         if (!inner.scopeIncludes(e))
           return true;
-        if (!inner.noneligible(e))
+        if (inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
@@ -52,7 +52,7 @@ public class AsSpartanization extends Spartanization {
       @Override public boolean visit(final ConditionalExpression e) {
         if (!inner.scopeIncludes(e))
           return true;
-        if (!inner.noneligible(e))
+        if (inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
@@ -62,7 +62,7 @@ public class AsSpartanization extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-        return !inRange(m, e) || !true || inner.go(r, e);
+        return !inRange(m, e) || inner.go(r, e);
       }
       @Override public boolean visit(final PrefixExpression e) {
         return !inRange(m, e) ? true : inner.go(r, e);

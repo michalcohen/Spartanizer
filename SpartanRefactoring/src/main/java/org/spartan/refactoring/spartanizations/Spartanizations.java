@@ -18,7 +18,7 @@ import org.spartan.refactoring.preferences.PreferencesFile;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
   ForwardDeclaration(new ForwardDeclaration()), //
   InlineSingleUse(new InlineSingleUse()), //
@@ -26,9 +26,12 @@ ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ShortestBranchFirst(new ShortestBranchFirst()), //
   Ternarize(new Ternarize()), //
   ShortestOperand(new ShortestOperand()), //
-  SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
-  Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true", "Eliminate true")), //
-  PushDownNot(new AsSpartanization(Wrings.PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
+  // SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner,
+  // "Ternary", "Simplify complex ternary boolean expression")), //
+  // Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true",
+  // "Eliminate true")), //
+  // PushDownNot(new AsSpartanization(Wrings.PUSHDOWN_NOT.inner, "Pushdown not",
+  // "Simplify not expression")), //
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
