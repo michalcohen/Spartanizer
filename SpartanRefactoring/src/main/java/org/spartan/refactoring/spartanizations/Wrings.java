@@ -404,16 +404,19 @@ public enum Wrings {
    * </ol>
    */
   static Expression simplifyTernary(final ConditionalExpression e) {
-    final Expression then = getCore(e.getThenExpression());
-    final Expression elze = getCore(e.getElseExpression());
-    final Expression main = duplicate(e.getExpression());
+    return simplifyTernary(getCore(e.getThenExpression()), getCore(e.getElseExpression()), duplicate(e.getExpression()));
+  }
+  private static Expression simplifyTernary(final Expression then, final Expression elze, final Expression main) {
     final boolean takeThen = !Is.booleanLiteral(then);
-    final Expression other = takeThen ? then : elze;
-    final InfixExpression $ = e.getAST().newInfixExpression();
-    $.setRightOperand(duplicate(other));
+    final InfixExpression $ = makeWithOther(takeThen ? then : elze);
     final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
     $.setOperator(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
     $.setLeftOperand(takeThen != literal ? main : not(main));
+    return $;
+  }
+  private static InfixExpression makeWithOther(final Expression other) {
+    final InfixExpression $ = other.getAST().newInfixExpression();
+    $.setRightOperand(duplicate(other));
     return $;
   }
   static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {

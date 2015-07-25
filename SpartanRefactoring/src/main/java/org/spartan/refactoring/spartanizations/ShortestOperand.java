@@ -124,9 +124,9 @@ public class ShortestOperand extends Spartanization {
    * @return Number of abstract syntax tree nodes under the parameter.
    */
   public InfixExpression transpose(final AST t, final InfixExpression e) {
-    final InfixExpression $ = duplicate(t, e);
     if (eligible(e))
       flip(e);
+    final InfixExpression $ = duplicate(t, e);
     sortInfix($, t);
     return $;
   }

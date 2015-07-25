@@ -94,8 +94,7 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
   @SuppressWarnings("boxing") @Override public Iterator<LinkedList<Integer>> iterator() {
     final Iterator<Entry<String, LinkedList<Integer>>> it = names.entrySet().iterator();
     while (it.hasNext()) {
-      final Entry<String, LinkedList<Integer>> pair = it.next();
-      final String name = pair.getKey();
+      final String name = it.next().getKey();
       final int first = names.get(name).getFirst().intValue();
       for (final int i : names.get(name))
         unionFind.union(first, i);

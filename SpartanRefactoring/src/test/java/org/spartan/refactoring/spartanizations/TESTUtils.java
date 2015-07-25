@@ -204,9 +204,9 @@ public enum TESTUtils {
     final String wrap = wrap(from);
     assertEquals(from, peel(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
-    final String peeled = peel(unpeeled);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
+    final String peeled = peel(unpeeled);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))

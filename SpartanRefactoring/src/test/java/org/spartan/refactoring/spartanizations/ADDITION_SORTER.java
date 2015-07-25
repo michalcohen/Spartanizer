@@ -67,16 +67,14 @@ public enum ADDITION_SORTER {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(Are.notString(All.operands(e)));
+      assertTrue(Are.notString(All.operands((asInfixExpression()))));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void isPlus() {
       assertTrue((asInfixExpression()).getOperator() == Operator.PLUS);
@@ -90,8 +88,7 @@ public enum ADDITION_SORTER {
       assertFalse(Wrings.tryToSort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -127,8 +124,7 @@ public enum ADDITION_SORTER {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(Are.notString(All.operands(e)));
+      assertTrue(Are.notString(All.operands(asInfixExpression())));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
@@ -138,8 +134,7 @@ public enum ADDITION_SORTER {
       assertNotNull((asInfixExpression()));
     }
     @Test public void isPlus() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.PLUS);
+      assertTrue(asInfixExpression().getOperator() == Operator.PLUS);
     }
     @Test public void notString() {
       for (final Expression e : All.operands(flatten(asInfixExpression())))
