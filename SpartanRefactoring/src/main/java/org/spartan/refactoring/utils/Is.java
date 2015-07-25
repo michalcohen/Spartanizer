@@ -68,6 +68,16 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 public enum Is {
   ;
   /**
+   * Determine whether a variable declaration is final or not
+   *
+   * @param v some declaration
+   * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
+   *         final
+   */
+  public static boolean _final(final VariableDeclarationStatement v) {
+    return (Modifier.FINAL & v.getModifiers()) != 0;
+  }
+  /**
    * @param n the statement or block to check if it is an assignment
    * @return <code><b>true</b></code> if the parameter an assignment or false if
    *         the parameter not or if the block Contains more than one statement
@@ -75,16 +85,6 @@ public enum Is {
   public static boolean assignment(final ASTNode n) {
     return block(n) ? assignment(asExpressionStatement(Funcs.getBlockSingleStmnt((Block) n)))
         : expressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
-  }
-  /**
-   * Determine whether a node is an {@link EmptyStatement}
-   *
-   * @param n JD
-   * @return <code><b>true</b></code> <i>iff</i> the parameter is an
-   *         {@link EmptyStatement}
-   */
-  public static boolean emptyStatement(final ASTNode n) {
-    return is(n, EMPTY_STATEMENT);
   }
   /**
    * Determine whether a node is a {@link Block}
@@ -136,6 +136,28 @@ public enum Is {
     return false;
   }
   /**
+   * Check whether an expression is a "conditional and" (&&)
+   *
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
+   *         whose operator is
+   *         {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#CONDITIONAL_AND}
+   */
+  public static boolean conditionalAnd(final InfixExpression e) {
+    return e.getOperator() == CONDITIONAL_AND;
+  }
+  /**
+   * Check whether an expression is a "conditional or" (||)
+   *
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
+   *         whose operator is
+   *         {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#CONDITIONAL_OR}
+   */
+  public static boolean conditionalOr(final InfixExpression e) {
+    return e.getOperator() == CONDITIONAL_OR;
+  }
+  /**
    * Check whether the operator of an expression is susceptible for applying one
    * of the two de Morgan laws.
    *
@@ -156,6 +178,16 @@ public enum Is {
    */
   public static boolean deMorgan(final Operator o) {
     return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
+  }
+  /**
+   * Determine whether a node is an {@link EmptyStatement}
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an
+   *         {@link EmptyStatement}
+   */
+  public static boolean emptyStatement(final ASTNode n) {
+    return is(n, EMPTY_STATEMENT);
   }
   /**
    * Determine whether a node is an "expression statement"
@@ -194,19 +226,6 @@ public enum Is {
   public static boolean infix(final ASTNode n) {
     return is(n, ASTNode.INFIX_EXPRESSION);
   }
-  private static boolean is(final ASTNode n, final int type) {
-    return n != null && type == n.getNodeType();
-  }
-  /**
-   * Determine whether a variable declaration is final or not
-   *
-   * @param v some declaration
-   * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
-   *         final
-   */
-  public static boolean _final(final VariableDeclarationStatement v) {
-    return (Modifier.FINAL & v.getModifiers()) != 0;
-  }
   /**
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the node is an Expression
@@ -226,12 +245,6 @@ public enum Is {
       default:
         return false;
     }
-  }
-  private static boolean isOneOf(final int i, final int... is) {
-    for (final int j : is)
-      if (i == j)
-        return true;
-    return false;
   }
   /**
    * @param n JD
@@ -415,5 +428,14 @@ public enum Is {
    */
   public static boolean thisOrNull(final Expression e) {
     return Is.oneOf(e, NULL_LITERAL, THIS_EXPRESSION);
+  }
+  private static boolean is(final ASTNode n, final int type) {
+    return n != null && type == n.getNodeType();
+  }
+  private static boolean isOneOf(final int i, final int... is) {
+    for (final int j : is)
+      if (i == j)
+        return true;
+    return false;
   }
 }
