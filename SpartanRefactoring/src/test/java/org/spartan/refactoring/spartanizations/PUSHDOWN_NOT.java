@@ -88,6 +88,7 @@ public class PUSHDOWN_NOT {
         // Literal
         Utils.asArray("Simple not", "!a"), //
         Utils.asArray("Simple not of function", "!f(a)"), //
+        Utils.asArray("Actual example", "!inRange(m, e)"), //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -145,8 +146,7 @@ public class PUSHDOWN_NOT {
       super(WRING);
     }
     @Test public void inputIsPrefixExpression() {
-      final PrefixExpression e = asPrefixExpression();
-      assertNotNull(e);
+      assertNotNull((asPrefixExpression()));
     }
   }
 }
