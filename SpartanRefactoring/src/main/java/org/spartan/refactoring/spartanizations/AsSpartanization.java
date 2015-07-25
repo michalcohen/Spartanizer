@@ -23,24 +23,39 @@ import org.spartan.utils.Range;
 public class AsSpartanization extends Spartanization {
   final Wring inner;
   /** Instantiates this class */
-  public AsSpartanization(final Wring wring, final String name, final String description) {
+  AsSpartanization(final Wring wring, final String name, final String description) {
     super(name, description);
     inner = wring;
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
-        return !inner.scopeIncludes(e) || !inner.noneligible(e) || addTo(e, $);
+        if (!inner.scopeIncludes(e))
+          return true;
+        if (!inner.noneligible(e))
+          return true;
+        $.add(new Range(e));
+        return true;
       }
       private boolean addTo(final Expression e, final List<Range> $) {
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final InfixExpression e) {
-        return !inner.scopeIncludes(e) || !inner.noneligible(e) || addTo(e, $);
+        if (!inner.scopeIncludes(e))
+          return true;
+        if (!inner.noneligible(e))
+          return true;
+        $.add(new Range(e));
+        return true;
       }
       @Override public boolean visit(final ConditionalExpression e) {
-        return !inner.scopeIncludes(e) || !inner.noneligible(e) || addTo(e, $);
+        if (!inner.scopeIncludes(e))
+          return true;
+        if (!inner.noneligible(e))
+          return true;
+        $.add(new Range(e));
+        return true;
       }
     };
   }
