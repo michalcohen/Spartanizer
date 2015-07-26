@@ -113,7 +113,6 @@ public enum TESTUtils {
         .replaceAll("[ \t]+", " ") // Squeeze whites
         .replaceAll("[ \t]+$", "") // Remove trailing spaces
         .replaceAll("^[ \t]+", "") // Remove preliminary spaces
-        .replaceAll("^[ \t]+;", ";") // No space before ;
         ;
     for (final String operator : new String[] { ",", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
       $ = $ //
