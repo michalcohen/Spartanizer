@@ -40,22 +40,14 @@ public class InOutTest {
       assertSimilar(expected, rewrite.get());
     }
   }
-  /**
-   * An object describing the required transformation
-   */
-  @Parameter(value = 0) public Spartanization spartanization;
-  /**
-   * The name of the specific test for this transformation
-   */
-  @Parameter(value = 1) public String name;
-  /**
-   * Where the input text can be found
-   */
-  @Parameter(value = 2) public File input;
-  /**
-   * Where the expected output can be found?
-   */
-  @Parameter(value = 3) public File output;
+  /** An object describing the required transformation */
+  @Parameter(0) public Spartanization spartanization;
+  /** The name of the specific test for this transformation */
+  @Parameter(1) public String name;
+  /** Where the input text can be found */
+  @Parameter(2) public File input;
+  /** Where the expected output can be found? */
+  @Parameter(3) public File output;
   /**
    * Runs a parameterized test case, based on the instance variables of this
    * instance
