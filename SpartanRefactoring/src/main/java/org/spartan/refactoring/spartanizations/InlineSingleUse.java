@@ -72,7 +72,7 @@ public class InlineSingleUse extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
-        return !(node.getParent() instanceof VariableDeclarationStatement) ? true : go(node, node.getName());
+        return !(node.getParent() instanceof VariableDeclarationStatement) || go(node, node.getName());
       }
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();

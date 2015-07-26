@@ -31,15 +31,15 @@ public class Trimmer extends Spartanization {
     return new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
         final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) ? true : overrideInto(e, $);
+        return w != null && w.noneligible(e) || overrideInto(e, $);
       }
       @Override public boolean visit(final InfixExpression e) {
         final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) ? true : overrideInto(e, $);
+        return w != null && w.noneligible(e) || overrideInto(e, $);
       }
       @Override public boolean visit(final ConditionalExpression e) {
         final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) ? true : overrideInto(e, $);
+        return w != null && w.noneligible(e) || overrideInto(e, $);
       }
     };
   }
@@ -49,19 +49,19 @@ public class Trimmer extends Spartanization {
         if (!inRange(m, e))
           return true;
         final Wring w = Wrings.find(e);
-        return w == null ? true : w.go(r, e);
+        return w == null || w.go(r, e);
       }
       @Override public boolean visit(final PrefixExpression e) {
         if (!inRange(m, e))
           return true;
         final Wring w = Wrings.find(e);
-        return w == null ? true : w.go(r, e);
+        return w == null || w.go(r, e);
       }
       @Override public boolean visit(final ConditionalExpression e) {
         if (!inRange(m, e))
           return true;
         final Wring w = Wrings.find(e);
-        return w == null ? true : w.go(r, e);
+        return w == null || w.go(r, e);
       }
     });
   }

@@ -344,7 +344,7 @@ public enum Is {
    *         returns one of the types provided as parameters
    */
   public static boolean oneOf(final ASTNode n, final int... types) {
-    return n == null ? false : isOneOf(n.getNodeType(), types);
+    return n != null && isOneOf(n.getNodeType(), types);
   }
   /**
    * @param a the assignment who's operator we want to check

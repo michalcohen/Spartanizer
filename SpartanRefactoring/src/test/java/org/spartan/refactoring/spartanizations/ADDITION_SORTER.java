@@ -144,11 +144,10 @@ public enum ADDITION_SORTER {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
       assertThat(operands.size(), greaterThanOrEqualTo(2));
-      final boolean tryToSort = Wrings.tryToSort(operands, COMPARATOR);
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
               "After: " + operands + "\n", //
-          tryToSort, is(true));
+          Wrings.tryToSort(operands, COMPARATOR), is(true));
     }
     @Test public void tryToSortTwice() {
       final InfixExpression e = asInfixExpression();
@@ -157,8 +156,7 @@ public enum ADDITION_SORTER {
       assertFalse(e.toString(), Wrings.tryToSort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

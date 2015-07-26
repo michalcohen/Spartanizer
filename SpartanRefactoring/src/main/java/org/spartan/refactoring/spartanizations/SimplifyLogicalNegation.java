@@ -38,10 +38,10 @@ public class SimplifyLogicalNegation extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final PrefixExpression e) {
-        return !inRange(m, e) ? true : simplifyNot(asNot(e));
+        return !inRange(m, e) || simplifyNot(asNot(e));
       }
       private boolean simplifyNot(final PrefixExpression e) {
-        return e == null ? true : simplifyNot(e, getCore(e.getOperand()));
+        return e == null || simplifyNot(e, getCore(e.getOperand()));
       }
       private boolean simplifyNot(final PrefixExpression e, final Expression inner) {
         return perhapsDoubleNegation(e, inner) //
@@ -125,7 +125,7 @@ public class SimplifyLogicalNegation extends Spartanization {
         return true;
       }
       private boolean hasOpportunity(final PrefixExpression e) {
-        return e == null ? false : hasOpportunity(getCore(e.getOperand()));
+        return e != null && hasOpportunity(getCore(e.getOperand()));
       }
       private boolean hasOpportunity(final Expression inner) {
         return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;

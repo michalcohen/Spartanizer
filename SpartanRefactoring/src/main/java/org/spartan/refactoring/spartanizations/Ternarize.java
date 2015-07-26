@@ -114,9 +114,8 @@ public class Ternarize extends Spartanization {
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i,
       final ReturnStatement nextReturn) {
-    final ReturnStatement thenRet = asReturn(i.getThenStatement());
-    return thenRet == null || Is.conditional(thenRet.getExpression(), nextReturn.getExpression()) ? false
-        : rewriteIfToRetStmnt(t, r, i, thenRet.getExpression(), nextReturn.getExpression());
+    final ReturnStatement $ = asReturn(i.getThenStatement());
+    return ($ != null && !Is.conditional($.getExpression(), nextReturn.getExpression())) && rewriteIfToRetStmnt(t, r, i, $.getExpression(), nextReturn.getExpression());
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final Expression thenExp,
       final Expression nextExp) {
@@ -209,7 +208,7 @@ public class Ternarize extends Spartanization {
     return true;
   }
   private static boolean areExpsValid(final TwoNodes diffNodes) {
-    return diffNodes.then.getNodeType() != diffNodes.elze.getNodeType() ? false : areExpsValid(diffNodes, findDiffExps(diffNodes));
+    return diffNodes.then.getNodeType() == diffNodes.elze.getNodeType() && areExpsValid(diffNodes, findDiffExps(diffNodes));
   }
   private static boolean areExpsValid(final TwoNodes diffNodes, final TwoExpressions diffExps) {
     return diffExps != null && !Is.conditional(diffExps.then, diffExps.elze) && !containIncOrDecExp(diffExps.then, diffExps.elze)
@@ -232,8 +231,7 @@ public class Ternarize extends Spartanization {
     return $ == null ? null : new TwoExpressions((Expression) $.then, (Expression) $.elze);
   }
   private static boolean isExpOnlyDiff(final TwoNodes diffNodes, final TwoExpressions diffExps) {
-    return hasNull(diffNodes, diffNodes.then, diffNodes.elze) ? false //
-        : isExpOnlyDiff(diffNodes.then, diffNodes.elze, diffExps);
+    return !hasNull(diffNodes, diffNodes.then, diffNodes.elze) && isExpOnlyDiff(diffNodes.then, diffNodes.elze, diffExps);
   }
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final TwoExpressions diffExps) {
     return diffExps != null ? isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze)
@@ -307,8 +305,8 @@ public class Ternarize extends Spartanization {
     return true;
   }
   private static boolean canReplacePrevDecl(final Statement possiblePrevDecl, final TwoNodes diffNodes) {
-    return !Is.expressionStatement(diffNodes.then) || diffNodes.then.getNodeType() != diffNodes.elze.getNodeType() ? false
-        : canReplacePrevDecl(possiblePrevDecl, (ExpressionStatement) diffNodes.then, (ExpressionStatement) diffNodes.elze);
+    return (Is.expressionStatement(diffNodes.then) && diffNodes.then.getNodeType() == diffNodes.elze.getNodeType())
+        && canReplacePrevDecl(possiblePrevDecl, (ExpressionStatement) diffNodes.then, (ExpressionStatement) diffNodes.elze);
   }
   private static boolean canReplacePrevDecl(final Statement possiblePrevDecl, final ExpressionStatement thenExpStmt,
       final ExpressionStatement elseExpStmt) {
@@ -316,10 +314,7 @@ public class Ternarize extends Spartanization {
         : ((VariableDeclarationStatement) possiblePrevDecl).fragments();
     final Assignment then = getAssignment(thenExpStmt);
     final Assignment elze = getAssignment(elseExpStmt);
-    return hasNull(then, elze, frags) //
-        || !Is.plainAssignment(then) //
-        || !compatibleOps(then.getOperator(), elze.getOperator()) ? false //
-            : possibleToReplace(then, frags) && possibleToReplace(elze, frags);
+    return (!hasNull(then, elze, frags) && Is.plainAssignment(then) && compatibleOps(then.getOperator(), elze.getOperator())) && possibleToReplace(then, frags) && possibleToReplace(elze, frags);
   }
   private static boolean handleSubIfDiffAreAsgns(final AST t, final ASTRewrite r, final IfStatement i,
       final Statement possiblePrevDecl, final ASTNode thenNode, final Expression newExp) {

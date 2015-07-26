@@ -539,7 +539,7 @@ public enum Wrings {
     return getCore(e.getLeftOperand());
   }
   static boolean hasOpportunity(final PrefixExpression e) {
-    return e == null ? false : hasOpportunity(getCore(e.getOperand()));
+    return e != null && hasOpportunity(getCore(e.getOperand()));
   }
   static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;

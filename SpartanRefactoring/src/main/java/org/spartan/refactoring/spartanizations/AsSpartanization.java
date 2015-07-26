@@ -65,10 +65,10 @@ public class AsSpartanization extends Spartanization {
         return !inRange(m, e) || inner.go(r, e);
       }
       @Override public boolean visit(final PrefixExpression e) {
-        return !inRange(m, e) ? true : inner.go(r, e);
+        return !inRange(m, e) || inner.go(r, e);
       }
       @Override public boolean visit(final ConditionalExpression e) {
-        return !inRange(m, e) ? true : inner.go(r, e);
+        return !inRange(m, e) || inner.go(r, e);
       }
     });
   }

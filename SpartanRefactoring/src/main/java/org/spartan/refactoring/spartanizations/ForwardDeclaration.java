@@ -101,7 +101,7 @@ public class ForwardDeclaration extends Spartanization {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
         final ASTNode $ = n.getParent().getParent();
-        return !($ instanceof Block) ? true : moverForward(n, (Block) $);
+        return !($ instanceof Block) || moverForward(n, (Block) $);
       }
       private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
         final int firstUseIdx = findFirstUse(b, n.getName());
