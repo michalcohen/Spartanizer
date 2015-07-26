@@ -7,8 +7,10 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
-import static org.spartan.refactoring.utils.Funcs.*;
-
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.leftMoveableToRight;
+import static org.spartan.refactoring.utils.Funcs.remake;
+import static org.spartan.refactoring.utils.Funcs.rightMoveableToLeft;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;

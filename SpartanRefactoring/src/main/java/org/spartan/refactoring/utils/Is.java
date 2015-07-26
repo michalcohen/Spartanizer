@@ -238,8 +238,7 @@ public enum Is {
       case ASTNode.EXPRESSION_STATEMENT:
         return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
       case ASTNode.POSTFIX_EXPRESSION:
-        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT,
-            PostfixExpression.Operator.DECREMENT);
+        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT);
       case ASTNode.PREFIX_EXPRESSION:
         return in(asPrefixExpression(n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
       default:

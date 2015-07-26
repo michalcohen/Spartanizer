@@ -27,7 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.spartan.utils.Utils;
 
 /**
- * Unit tests for {@link PUSHDOWN_NOT}.
+ * Unit tests for {@link Ternarize}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
@@ -35,7 +35,7 @@ import org.spartan.utils.Utils;
 @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc" }) //
-public class ShortestOperandFirstTest {
+public class TernarizeTest {
   /** The name of the specific test for this transformation */
   @Parameter(0) public String name;
   /** Where the input text can be found */

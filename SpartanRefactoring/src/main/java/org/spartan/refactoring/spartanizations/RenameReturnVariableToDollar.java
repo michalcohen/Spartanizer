@@ -87,7 +87,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
   }
   static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
     final List<VariableDeclarationFragment> vs = getCandidates(m);
-    return (vs == null || vs.isEmpty() || hasDollar(vs) ? null : selectReturnVariable(vs, prune(getReturnStatements(m))));
+    return vs == null || vs.isEmpty() || hasDollar(vs) ? null : selectReturnVariable(vs, prune(getReturnStatements(m)));
   }
   private static VariableDeclarationFragment selectReturnVariable(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
     return rs == null || rs.isEmpty() ? null : bestCandidate(vs, rs);
@@ -111,8 +111,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
     }
     return $;
   }
-  private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs,
-      final List<ReturnStatement> rs) {
+  private static VariableDeclarationFragment bestCandidate(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
     final int bestScore = bestScore(vs, rs);
     if (bestScore > 0)
       for (final VariableDeclarationFragment v : vs)
@@ -120,8 +119,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
           return noRivals(v, vs, rs) ? v : null;
     return null;
   }
-  private static boolean noRivals(final VariableDeclarationFragment candidate, final List<VariableDeclarationFragment> vs,
-      final List<ReturnStatement> rs) {
+  private static boolean noRivals(final VariableDeclarationFragment candidate, final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
     for (final VariableDeclarationFragment rival : vs)
       if (rival != candidate && score(rival, rs) >= score(candidate, rs))
         return false;

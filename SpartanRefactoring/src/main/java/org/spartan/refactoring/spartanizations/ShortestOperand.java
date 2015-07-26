@@ -96,8 +96,7 @@ public class ShortestOperand extends Spartanization {
         ;
   }
   static boolean invalid(final InfixExpression n) {
-    return n == null || n.getLeftOperand() == null || n.getRightOperand() == null || stringReturningMethod(n)
-        || containsStringLiteral(n);
+    return n == null || n.getLeftOperand() == null || n.getRightOperand() == null || stringReturningMethod(n) || containsStringLiteral(n);
   }
   static boolean containsStringLiteral(final ASTNode n) {
     if (n == null || !Is.infix(n))
@@ -143,15 +142,14 @@ public class ShortestOperand extends Spartanization {
       ie.setRightOperand(transpose(t, (InfixExpression) r));
   }
   private static boolean inRightOperandExceptions(final ASTNode rN, final Operator o) {
-    return (Is.methodInvocation(rN) || inOperandExceptions(rN, o) || o == PLUS && (Is.methodInvocation(rN) || Is.stringLiteral(rN)) || Is.literal(rN));
+    return Is.methodInvocation(rN) || inOperandExceptions(rN, o) || o == PLUS && (Is.methodInvocation(rN) || Is.stringLiteral(rN)) || Is.literal(rN);
   }
   private static boolean inOperandExceptions(final ASTNode n, final Operator o) {
     return Is.literal(n) || o == PLUS && Is.stringLiteral(n);
   }
   private static boolean inInfixExceptions(final InfixExpression ie) {
     final Operator $ = ie.getOperator();
-    return Is.methodInvocation(ie.getLeftOperand()) && Is.methodInvocation(ie.getRightOperand())
-        || inOperandExceptions(ie.getLeftOperand(), $) //
+    return Is.methodInvocation(ie.getLeftOperand()) && Is.methodInvocation(ie.getRightOperand()) || inOperandExceptions(ie.getLeftOperand(), $) //
         || inOperandExceptions(ie.getRightOperand(), $) //
         || inRightOperandExceptions(ie.getRightOperand(), $);
   }
@@ -236,7 +234,7 @@ public class ShortestOperand extends Spartanization {
       return false;
     final boolean tokenWiseGreater = countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2);
     final boolean characterWiseGreater = e1.getLength() > CHARACTER_THRESHOLD + e2.getLength();
-    return (tokenWiseGreater && characterWiseGreater || (tokenWiseGreater || characterWiseGreater) && moreArguments(e1, e2));
+    return tokenWiseGreater && characterWiseGreater || (tokenWiseGreater || characterWiseGreater) && moreArguments(e1, e2);
   }
   private static boolean moreArguments(final Expression e1, final Expression e2) {
     return Is.methodInvocation(e1) && Is.methodInvocation(e2) && moreArguments((MethodInvocation) e1, (MethodInvocation) e2);
@@ -304,8 +302,8 @@ public class ShortestOperand extends Spartanization {
     return $;
   }
   private static boolean areValid(final Operator o, final Expression l, final Expression s) {
-    return isLonger(l, s) && !Is.methodInvocation(l) && !Is.methodInvocation(s) && !inOperandExceptions(l, o)
-        && !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o) && !inRightOperandExceptions(s, o);
+    return isLonger(l, s) && !Is.methodInvocation(l) && !Is.methodInvocation(s) && !inOperandExceptions(l, o) && !inOperandExceptions(s, o) && !inRightOperandExceptions(l, o)
+        && !inRightOperandExceptions(s, o);
   }
   private static boolean sortExpressionList(final List<Expression> es, final AST t, final Operator o) {
     return moveMethodsToTheBack(es, t, o) | sortOperandList(es, t, o);

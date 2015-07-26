@@ -76,8 +76,7 @@ public class InlineSingleUse extends Spartanization {
       }
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
-        if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1
-            && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
+        if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
           $.add(new Range(v));
         return true;
       }

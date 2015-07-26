@@ -216,8 +216,7 @@ public enum Funcs {
     if (hasNull(base, as))
       return false;
     for (final Assignment a : as)
-      if (a == null || !compatibleOps(base.getOperator(), a.getOperator())
-          || !compatibleNames(base.getLeftHandSide(), a.getLeftHandSide()))
+      if (a == null || !compatibleOps(base.getOperator(), a.getOperator()) || !compatibleNames(base.getLeftHandSide(), a.getLeftHandSide()))
         return false;
     return true;
   }
@@ -232,8 +231,7 @@ public enum Funcs {
     if (hasNull(cmpTo, names) || cmpTo.getNodeType() != ASTNode.SIMPLE_NAME)
       return false;
     for (final Expression name : names)
-      if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME
-          || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
+      if (name == null || name.getNodeType() != ASTNode.SIMPLE_NAME || !((SimpleName) name).getIdentifier().equals(((SimpleName) cmpTo).getIdentifier()))
         return false;
     return true;
   }
@@ -393,9 +391,8 @@ public enum Funcs {
    *         (or if s or name are null)
    */
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
-    return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT
-        || name.getNodeType() != ASTNode.SIMPLE_NAME ? null
-            : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
+    return hasNull(n, name) || n.getNodeType() != ASTNode.VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != ASTNode.SIMPLE_NAME ? null
+        : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)
@@ -511,8 +508,7 @@ public enum Funcs {
       case ASTNode.EXPRESSION_STATEMENT:
         return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
       case ASTNode.POSTFIX_EXPRESSION:
-        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT,
-            PostfixExpression.Operator.DECREMENT);
+        return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT);
       case ASTNode.PREFIX_EXPRESSION:
         return in(asPrefixExpression(n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
       default:
@@ -569,8 +565,7 @@ public enum Funcs {
    * @param left left side of the assignment, usually a variable name
    * @return the new assignment
    */
-  public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Assignment.Operator o, final Expression right,
-      final Expression left) {
+  public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Assignment.Operator o, final Expression right, final Expression left) {
     if (hasNull(t, r, o, right, left))
       return null;
     final Assignment $ = t.newAssignment();
@@ -595,8 +590,7 @@ public enum Funcs {
    * @param elseStmnt the else statement to set in the If Statement
    * @return a new if Statement
    */
-  public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt,
-      final Statement elseStmnt) {
+  public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt, final Statement elseStmnt) {
     if (hasNull(t, r, cond, thenStmnt, elseStmnt))
       return null;
     final IfStatement $ = t.newIfStatement();
@@ -613,8 +607,7 @@ public enum Funcs {
    * @param right the right expression
    * @return the new infix expression
    */
-  public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o,
-      final Expression left, final Expression right) {
+  public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o, final Expression left, final Expression right) {
     if (hasNull(t, r, o, right, left))
       return null;
     final InfixExpression $ = t.newInfixExpression();
@@ -631,8 +624,7 @@ public enum Funcs {
    * @param right the right expression
    * @return the new infix expression
    */
-  public static InfixExpression makeInfixExpression(final ASTRewrite r, final AST t, final Expression left, final Operator o,
-      final Expression right) {
+  public static InfixExpression makeInfixExpression(final ASTRewrite r, final AST t, final Expression left, final Operator o, final Expression right) {
     if (hasNull(t, r, o, right, left))
       return null;
     final InfixExpression $ = t.newInfixExpression();
@@ -649,8 +641,7 @@ public enum Funcs {
    * @param elseExp the else statement to set in the conditional
    * @return a parenthesized conditional expression
    */
-  public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond,
-      final Expression thenExp, final Expression elseExp) {
+  public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
     if (hasNull(t, r, cond, thenExp, elseExp))
       return null;
     final ConditionalExpression $ = t.newConditionalExpression();
@@ -723,8 +714,7 @@ public enum Funcs {
    * @return the new variable declaration fragment or null if one of the given
    *         parameters was null
    */
-  public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName,
-      final Expression initalizer) {
+  public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName, final Expression initalizer) {
     if (hasNull(t, r, varName, initalizer))
       return null;
     final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
@@ -754,8 +744,7 @@ public enum Funcs {
   public static <T> T prev(final int i, final List<T> ts) {
     return ts.get(i < 1 ? 0 : i - 1);
   }
-  public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o,
-      final Expression right) {
+  public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o, final Expression right) {
     $.setLeftOperand(left);
     $.setOperator(o);
     $.setRightOperand(right);

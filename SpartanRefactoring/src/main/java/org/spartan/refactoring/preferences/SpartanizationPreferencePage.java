@@ -56,8 +56,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
     for (final String rule : allRulesNames())
       addField(new BooleanFieldEditor(rule, rule + ":", getFieldEditorParent()));
     addField(new RadioGroupFieldEditor(bothLiteralsHeader, bothLiteralsHeader, 1, BothLiteralsOptions, getFieldEditorParent()));
-    addField(new RadioGroupFieldEditor(repositionRightLiteralsHeader, repositionRightLiteralsHeader, 1, rightLiteralOptions,
-        getFieldEditorParent()));
+    addField(new RadioGroupFieldEditor(repositionRightLiteralsHeader, repositionRightLiteralsHeader, 1, rightLiteralOptions, getFieldEditorParent()));
     addField(new RadioGroupFieldEditor(nullAndBoolHeader, nullAndBoolHeader, 1, NullAndBoolOptions, getFieldEditorParent()));
     addField(new RadioGroupFieldEditor(swapMessageHeader, swapMessageHeader, 1, swapMessageOptions, getFieldEditorParent()));
   }

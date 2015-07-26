@@ -27,19 +27,17 @@ public final class PreferencesStrings {
   @SuppressWarnings("javadoc") public static final String repositionLiterals = "Reposition Literals";
   @SuppressWarnings("javadoc") public static final String repositionAllLiterals = repositionLiterals;
   @SuppressWarnings("javadoc") public static final String doNotRepositionLiterals = "Do not " + repositionLiterals;
-  @SuppressWarnings("javadoc") public static final String[][] BothLiteralsOptions = {
-      { repositionAllLiterals, repositionAllLiterals }, { doNotRepositionLiterals, doNotRepositionLiterals } };
+  @SuppressWarnings("javadoc") public static final String[][] BothLiteralsOptions = { { repositionAllLiterals, repositionAllLiterals },
+      { doNotRepositionLiterals, doNotRepositionLiterals } };
   /**
    * Strings for right Literals positioning options
    */
   public static final String repositionRightLiteralsHeader = "Behavior On Right Operand Literals";
   @SuppressWarnings("javadoc") public static final String repositionRightLiterals = "Reposition right literals";
-  @SuppressWarnings("javadoc") public static final String repositionRightException = repositionRightLiterals
-      + " except boolean and null (Overrides Null and Boolean option)";
+  @SuppressWarnings("javadoc") public static final String repositionRightException = repositionRightLiterals + " except boolean and null (Overrides Null and Boolean option)";
   @SuppressWarnings("javadoc") public static final String doNotRepositionRightLiterals = "Do not reposition right literals";
-  @SuppressWarnings("javadoc") public static final String[][] rightLiteralOptions = {
-      { repositionRightLiterals, repositionRightLiterals }, { repositionRightException, repositionRightException },
-      { doNotRepositionRightLiterals, doNotRepositionRightLiterals } };
+  @SuppressWarnings("javadoc") public static final String[][] rightLiteralOptions = { { repositionRightLiterals, repositionRightLiterals },
+      { repositionRightException, repositionRightException }, { doNotRepositionRightLiterals, doNotRepositionRightLiterals } };
   /**
    * Strings for Null and Boolean positioning options
    */
@@ -48,14 +46,13 @@ public final class PreferencesStrings {
   @SuppressWarnings("javadoc") public static final String NullAndBoolAtEnd = NullAndBool + atEndString;
   @SuppressWarnings("javadoc") public static final String NullAndBoolAtStart = NullAndBool + atStartString;
   @SuppressWarnings("javadoc") public static final String NullAndBoolAtNone = Shortest;
-  @SuppressWarnings("javadoc") public static final String[][] NullAndBoolOptions = { { NullAndBoolAtEnd, NullAndBoolAtEnd },
-      { NullAndBoolAtStart, NullAndBoolAtStart }, { NullAndBoolAtNone, NullAndBoolAtNone } };
+  @SuppressWarnings("javadoc") public static final String[][] NullAndBoolOptions = { { NullAndBoolAtEnd, NullAndBoolAtEnd }, { NullAndBoolAtStart, NullAndBoolAtStart },
+      { NullAndBoolAtNone, NullAndBoolAtNone } };
   /**
    * Strings for Shortest Operand resolution
    */
   public static final String swapMessageHeader = "Operand Swap Messages";
   @SuppressWarnings("javadoc") public static final String showOneSwap = "One message per expression that contains operand swap";
   @SuppressWarnings("javadoc") public static final String showEverySwap = "Show message for every operand swap";
-  @SuppressWarnings("javadoc") public static final String[][] swapMessageOptions = { { showOneSwap, showOneSwap },
-      { showEverySwap, showEverySwap } };
+  @SuppressWarnings("javadoc") public static final String[][] swapMessageOptions = { { showOneSwap, showOneSwap }, { showEverySwap, showEverySwap } };
 }

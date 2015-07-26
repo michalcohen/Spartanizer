@@ -108,8 +108,7 @@ public class TrimmerTest {
     assertFalse(Is.booleanLiteral(e.getRightOperand()));
     assertFalse(Is.booleanLiteral(e.getLeftOperand()));
     assertFalse(Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
-    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
-        && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand())));
+    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand())));
   }
   @Test public void comparisonWithSpecific0Legibiliy1() {
     assertTrue(Is.specific(i("this != a").getLeftOperand()));

@@ -52,8 +52,7 @@ public class Builder extends IncrementalProjectBuilder {
    * spartanization is stored
    */
   public static final String SPARTANIZATION_TYPE_KEY = "org.spartan.refactoring.spartanizationType";
-  @Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args,
-      final IProgressMonitor m) throws CoreException {
+  @Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map args, final IProgressMonitor m) throws CoreException {
     if (m != null)
       m.beginTask("Checking for spartanization opportunities", IProgressMonitor.UNKNOWN);
     build(kind);

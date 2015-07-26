@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.utils.Utils.removePrefix;
 import static org.spartan.utils.Utils.removeSuffix;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,10 +112,9 @@ public enum TESTUtils {
         .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
         .replaceAll("[ \t]+", " ") // Squeeze whites
         .replaceAll("[ \t]+$", "") // Remove trailing spaces
-        .replaceAll("^[ \t]+$", "") // No space at line beginnings
-        .replaceAll("^[ \t]+;", ";") // No space before ;
+        .replaceAll("^[ \t]+$", "") // Remove preliminary sapces
         ;
-    for (final String operator : new String[] { ",", "\\+", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
+    for (final String operator : new String[] { ",", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
       $ = $ //
           .replaceAll(WHITES + operator, operator) // Preceding whites
           .replaceAll(operator + WHITES, operator) // Trailing whites

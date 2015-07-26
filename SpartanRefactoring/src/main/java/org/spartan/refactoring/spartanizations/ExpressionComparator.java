@@ -60,8 +60,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return round(countNodes(e1) - countNodes(e2), TOKEN_THRESHOLD);
   }
   static int argumentsCompare(final Expression e1, final Expression e2) {
-    return !Is.methodInvocation(e1) || !Is.methodInvocation(e2) ? 0
-        : argumentsCompare((MethodInvocation) e1, (MethodInvocation) e2);
+    return !Is.methodInvocation(e1) || !Is.methodInvocation(e2) ? 0 : argumentsCompare((MethodInvocation) e1, (MethodInvocation) e2);
   }
   static int argumentsCompare(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() - i2.arguments().size();
