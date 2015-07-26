@@ -27,9 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.spartan.utils.Utils;
 
 /**
- * * Unit tests for the nesting class Unit test for the containing class. Note
- * our naming convention: a) test methods do not use the redundant "test"
- * prefix. b) test methods begin with the name of the method they check.
+ * Unit tests for {@link PUSHDOWN_NOT}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
@@ -38,18 +36,12 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc" }) //
 public class ShortestOperandFirstTest {
-  /**
-   * The name of the specific test for this transformation
-   */
-  @Parameter(value = 0) public String name;
-  /**
-   * Where the input text can be found
-   */
-  @Parameter(value = 1) public String input;
-  /**
-   * Where the expected output can be found?
-   */
-  @Parameter(value = 2) public String output;
+  /** The name of the specific test for this transformation */
+  @Parameter(0) public String name;
+  /** Where the input text can be found */
+  @Parameter(1) public String input;
+  /** Where the expected output can be found? */
+  @Parameter(2) public String output;
   @Test public void inputNotNull() {
     assertNotNull(input);
   }
@@ -103,7 +95,7 @@ public class ShortestOperandFirstTest {
       Utils.asArray("not of LT", "!(3 < 5)", "3 >= 5"), //
       Utils.asArray("not of AND", "!(a && b && c)", "(!a || !b || !c)"), //
       Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
-      Utils.asArray("double not", "!!f()", "f()"), //
+      Utils.asArray("double NOT", "!!f()", "f()"), //
       Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
       null);
 }
