@@ -558,8 +558,8 @@ public enum Funcs {
     return ts.get(ts.size() - 1);
   }
   public static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
-    final Expression left = e.getLeftOperand();
-    return !Precedence.same(o, left) || !Associativity.isLeftToRight(o) ? duplicate(left) : parenthesize(left);
+    final Expression $ = e.getLeftOperand();
+    return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
   /**
    * @param t the AST who is to own the new return statement
@@ -786,8 +786,8 @@ public enum Funcs {
     return Utils.removeWhites(n.toString());
   }
   public static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
-    final Expression right = e.getRightOperand();
-    return !Precedence.same(o, right) || !Associativity.isLeftToRight(o) ? duplicate(right) : parenthesize(right);
+    final Expression $ = e.getRightOperand();
+    return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
   /**
    * Determine whether two nodes are the same, in the sense that their textual

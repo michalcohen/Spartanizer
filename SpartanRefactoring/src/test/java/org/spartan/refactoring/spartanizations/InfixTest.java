@@ -101,10 +101,9 @@ public class InfixTest {
     final ShortestOperand s = new ShortestOperand();
     final List<Range> opportunities = new ArrayList<>();
     final ASTVisitor a = s.collectOpportunities(opportunities);
-    final ASTVisitor x = Mockito.spy(a);
     final InfixExpression e = i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1");
     a.visit(e);
-    x.visit(e);
+    (Mockito.spy(a)).visit(e);
     assertFalse(ShortestOperand.outOfScope(e));
   }
   @Test public void t7() {
