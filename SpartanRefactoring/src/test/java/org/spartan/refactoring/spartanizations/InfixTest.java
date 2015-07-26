@@ -149,12 +149,10 @@ public class InfixTest {
     assertNotNull(u);
   }
   @Test public void one2true1() {
-    final String expected = P1;
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    final Document rewrite = rewrite(s(), u, d);
-    assertSimilar(expected, rewrite);
+    assertSimilar(P1, rewrite(s(), u, d));
   }
   @Test public void one2true2() {
     final Document d = new Document(P0);
@@ -178,13 +176,9 @@ public class InfixTest {
     assertSimilar(expected, rewrite);
   }
   @Test public void one2true5() {
-    final String expected = P1;
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    final ComparisonWithSpecific s = s();
-    final Document rewrite = rewrite(s, u, d);
-    assertSimilar(expected, rewrite);
+    assertSimilar(P1, rewrite(s(), (CompilationUnit) As.COMPILIATION_UNIT.ast(P0), d));
   }
   @Test public void one2true6() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
@@ -192,6 +186,7 @@ public class InfixTest {
     assertNotNull(d);
     final ComparisonWithSpecific s = s();
     final ASTRewrite r = s.createRewrite(u, null);
+    assertNotNull(r);
     r.rewriteAST(d, null).apply(d);
     assertSimilar(P1, d);
   }
@@ -209,11 +204,10 @@ public class InfixTest {
     return new ComparisonWithSpecific();
   }
   @Test public void one2false() {
-    final String expected = P0;
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document rewrite = rewrite(s(), u, new Document(P0));
     assertNotNull(rewrite);
-    assertNotEvenSimilar(expected, rewrite.get());
+    assertNotEvenSimilar(P0, rewrite.get());
   }
   @Test public void canMakeExpression() {
     e("2+2");

@@ -87,9 +87,9 @@ public class RenameReturnVariableToDollar extends Spartanization {
   }
   static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
     final List<VariableDeclarationFragment> vs = getCandidates(m);
-    if (vs == null || vs.isEmpty() || hasDollar(vs))
-      return null;
-    final List<ReturnStatement> rs = prune(getReturnStatements(m));
+    return (vs == null || vs.isEmpty() || hasDollar(vs) ? null : selectReturnVariable(vs, prune(getReturnStatements(m))));
+  }
+  private static VariableDeclarationFragment selectReturnVariable(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
     return rs == null || rs.isEmpty() ? null : bestCandidate(vs, rs);
   }
   private static boolean hasDollar(final List<VariableDeclarationFragment> vs) {

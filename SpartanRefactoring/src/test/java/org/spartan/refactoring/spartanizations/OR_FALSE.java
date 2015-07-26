@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -11,7 +10,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
-
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -140,7 +139,7 @@ public enum OR_FALSE {
     }
     @Test public void isANDorOR() {
       final InfixExpression e = asInfixExpression();
-      assertThat(e.getOperator(), is(anyOf(is(InfixExpression.Operator.CONDITIONAL_OR), is(InfixExpression.Operator.CONDITIONAL_AND))));
+      assertThat(e.getOperator(), is(CONDITIONAL_OR));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));

@@ -53,8 +53,7 @@ public enum Restructure {
    *         {@link Statement}
    */
   public static List<Statement> statements(final ASTNode s) {
-    final List<Statement> $ = new ArrayList<>();
-    return statementsInto(asStatement(s), $);
+    return statementsInto(asStatement(s), new ArrayList<Statement>());
   }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     if (Is.block(s))
@@ -90,8 +89,7 @@ public enum Restructure {
   }
   private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
     final Expression core = getCore(e);
-    return !Is.infix(core) || asInfixExpression(core).getOperator() != o ? add(!Is.simple(core) ? e : core, $)
-        : flattenInto(o, All.operands(asInfixExpression(core)), $);
+    return !Is.infix(core) || asInfixExpression(core).getOperator() != o ? add(!Is.simple(core) ? e : core, $) : flattenInto(o, All.operands(asInfixExpression(core)), $);
   }
   private static List<Expression> add(final Expression e, final List<Expression> $) {
     $.add(e);
