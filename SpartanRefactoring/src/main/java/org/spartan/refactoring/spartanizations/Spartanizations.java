@@ -19,32 +19,19 @@ import static org.spartan.refactoring.spartanizations.Wrings.*;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
+  AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from expression")), //
+  ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
   ForwardDeclaration(new ForwardDeclaration()), //
   InlineSingleUse(new InlineSingleUse()), //
+  OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses kddfrom expression")), //
+  PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
   RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
   ShortestBranchFirst(new ShortestBranchFirst()), //
-  Ternarize(new Ternarize()), //
   ShortestOperand(new ShortestOperand()), //
   SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
-  PushDownNot(new AsSpartanization(Wrings.PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
-  ComparisonWithBoolean(new ComparisonWithBoolean()), //
-  // ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  // ForwardDeclaration(new ForwardDeclaration()), //
-  // InlineSingleUse(new InlineSingleUse()), //
-  // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  // ShortestBranchFirst(new ShortestBranchFirst()), //
-  // AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from
-  // expression")), //
-  // OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses
-  // from expression")), //
-  AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from expression")), //
-  OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses from expression")), //
-  // ShortestOperand(new ShortestOperand()), //
-  // Tautologies(new AsSpartanization(Wrings.ANDOR_TRUE.inner, "&&/|| true",
-  // "Eliminate true")), //
-  // PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not",
-  // "Simplify not expression")), //
+  Ternarize(new Ternarize()), //
+  ;
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
   // TODO Check for mentions of arguments in JavaDoc
@@ -53,7 +40,6 @@ public enum Spartanizations {
   // are used in between
   // TODO Add safe operations as source menu item for safe operations.
   // TODO Use one letter name for local variables and parameters
-  ;
   private final Spartanization value;
   private Spartanizations(final Spartanization value) {
     this.value = value;
@@ -70,8 +56,8 @@ public enum Spartanizations {
    */
   @SuppressWarnings("unchecked") //
   public static <T extends Spartanization> T findInstance(final Class<? extends T> c) {
-    for (final Spartanizations a : Spartanizations.values()) {
-      final Spartanization $ = a.value();
+    for (final Spartanizations s : Spartanizations.values()) {
+      final Spartanization $ = s.value();
       if ($.getClass().equals(c))
         return (T) $;
     }
@@ -84,7 +70,7 @@ public enum Spartanizations {
     return new Iterable<Spartanization>() {
       @Override public Iterator<Spartanization> iterator() {
         return new Iterator<Spartanization>() {
-          int next;
+          int next = 0;
           @Override public boolean hasNext() {
             return next < values().length;
           }
