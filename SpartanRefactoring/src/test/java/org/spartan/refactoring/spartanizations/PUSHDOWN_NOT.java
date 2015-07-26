@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
 import org.spartan.refactoring.utils.Is;
@@ -89,24 +88,25 @@ public class PUSHDOWN_NOT {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("not of AND", "!(f() && f(5))", "(!f() || !f(5))"), //
-        Utils.asArray("not of EQ", "!(3 == 5)", "3 != 5"), //
-        Utils.asArray("not of AND nested", "!(f() && (f(5)))", "(!f() || !f(5))"), //
-        Utils.asArray("not of EQ nested", "!((((3 == 5))))", "3 != 5"), //
-        Utils.asArray("not of GE", "!(3 >= 5)", "3 < 5"), //
-        Utils.asArray("not of GT", "!(3 > 5)", "3 <= 5"), //
-        Utils.asArray("not of NE", "!(3 != 5)", "3 == 5"), //
-        Utils.asArray("not of LE", "!(3 <= 5)", "3 > 5"), //
-        Utils.asArray("not of LT", "!(3 < 5)", "3 >= 5"), //
-        Utils.asArray("not of AND", "!(a && b && c)", "(!a || !b || !c)"), //
-        Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
-        Utils.asArray("double not", "!!f()", "f()"), //
-        Utils.asArray("double not nested", "!(!f())", "f()"), //
-        Utils.asArray("double not deeply nested", "!(((!f())))", "f()"), //
-        Utils.asArray("not of false", "!false", "true"), //
-        Utils.asArray("not of true", "!true", "false"), //
         Utils.asArray("2 level not of false", "!!false", "false"), //
         Utils.asArray("2 level not of true", "!!true", "true"), //
+        Utils.asArray("double not deeply nested", "!(((!f())))", "f()"), //
+        Utils.asArray("double not", "!!f()", "f()"), //
+        Utils.asArray("double not nested", "!(!f())", "f()"), //
+        Utils.asArray("not of AND", "!(a && b && c)", "(!a || !b || !c)"), //
+        Utils.asArray("not of AND", "!(f() && f(5))", "(!f() || !f(5))"), //
+        Utils.asArray("not of AND nested", "!(f() && (f(5)))", "(!f() || !f(5))"), //
+        Utils.asArray("not of EQ", "!(3 == 5)", "3 != 5"), //
+        Utils.asArray("not of EQ nested", "!((((3 == 5))))", "3 != 5"), //
+        Utils.asArray("not of false", "!false", "true"), //
+        Utils.asArray("not of GE", "!(3 >= 5)", "3 < 5"), //
+        Utils.asArray("not of GT", "!(3 > 5)", "3 <= 5"), //
+        Utils.asArray("not of LE", "!(3 <= 5)", "3 > 5"), //
+        Utils.asArray("not of LT", "!(3 < 5)", "3 >= 5"), //
+        Utils.asArray("not of NE", "!(3 != 5)", "3 == 5"), //
+        Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
+        Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
+        Utils.asArray("not of true", "!true", "false"), //
         null);
     /**
      * Generate test cases for this parameterized class.
