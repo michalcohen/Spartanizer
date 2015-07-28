@@ -128,22 +128,28 @@ public enum TESTUtils {
     assertNotNull(d);
     return TESTUtils.rewrite(s, u, d).get();
   }
-  private static final String PRE = //
-  "package p; \n" + //
-      "public class SpongeBob {\n" + //
-      " public boolean squarePants() {\n" + //
-      "   return ";
-  private static final String POST = //
+  private static final String PRE_STATEMENT = //
+  "package p;public class SpongeBob {\n" + //
+      "public boolean squarePants(){\n" + //
+      "";
+  private static final String POST_STATEMENT = //
   "" + //
-      ";\n" + //
-      " }" + //
+      "}" + //
       "}" + //
       "";
-  static final String peel(final String s) {
-    return removeSuffix(removePrefix(s, PRE), POST);
+  private static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
+  private static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;
+  static final String peelExpression(final String s) {
+    return removeSuffix(removePrefix(s, PRE_EXPRESSION), POST_EXPRESSION);
   }
-  static final String wrap(final String s) {
-    return PRE + s + POST;
+  static final String wrapExpression(final String s) {
+    return PRE_EXPRESSION + s + POST_EXPRESSION;
+  }
+  static final String peelStatement(final String s) {
+    return removeSuffix(removePrefix(s, PRE_STATEMENT), POST_STATEMENT);
+  }
+  static final String wrapStatement(final String s) {
+    return PRE_STATEMENT + s + POST_STATEMENT;
   }
   static int countOppportunities(final Spartanization s, final File f) {
     return countOppportunities(s, As.string(f));
@@ -183,7 +189,7 @@ public enum TESTUtils {
     assertTrue(s.eligible((InfixExpression) asExpression(expression)));
   }
   static void assertNoChange(final String input) {
-    assertSimilar(input, peel(apply(new Trimmer(), wrap(input))));
+    assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
   }
   static void assertNotLegible(final Wring s, final InfixExpression e) {
     assertFalse(s.eligible(e));
@@ -200,12 +206,12 @@ public enum TESTUtils {
     assertNotWithinScope(s, e);
   }
   static void assertSimplifiesTo(final String from, final String expected) {
-    final String wrap = wrap(from);
-    assertEquals(from, peel(wrap));
+    final String wrap = wrapExpression(from);
+    assertEquals(from, peelExpression(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
-    final String peeled = peel(unpeeled);
+    final String peeled = peelExpression(unpeeled);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))

@@ -3,20 +3,22 @@ package org.spartan.refactoring.spartanizations;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.spartan.refactoring.spartanizations.TESTUtils.apply;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.p;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
-import static org.spartan.refactoring.spartanizations.Wrings.PUSHDOWN_NOT;
-
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
 import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +26,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.utils.As;
 import org.spartan.utils.Utils;
 
 /**
@@ -35,44 +38,46 @@ import org.spartan.utils.Utils;
 @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc" }) //
-public class TernarizeTest {
-  /** The name of the specific test for this transformation */
-  @Parameter(0) public String name;
-  /** Where the input text can be found */
-  @Parameter(1) public String input;
+public class TernarizeTest extends AbstractTestBase {
   /** Where the expected output can be found? */
   @Parameter(2) public String output;
-  @Test public void inputNotNull() {
-    assertNotNull(input);
+  @Test public void peelableOutput() {
+    assertEquals(output, peelExpression(wrapExpression(output)));
+    assertEquals(output, peelStatement(wrapStatement(output)));
   }
-  @Test public void applicable() {
-    final PrefixExpression p = p(input);
-    assertNotNull(p);
-  }
-  @Test public void withinScopeOfNegation() {
-    assertTrue(PUSHDOWN_NOT.inner.scopeIncludes(p(input)));
-  }
-  @Test public void eligibleForNegation() {
-    assertTrue(PUSHDOWN_NOT.inner.eligible(p(input)));
-  }
-  @Test public void hasReplacement() {
-    assertNotNull(PUSHDOWN_NOT.inner.replacement(p(input)));
-  }
-  @Test public void simiplifies() {
-    final String from = input;
-    final String expected = output;
-    final String wrap = wrap(from);
-    assertEquals(from, peel(wrap));
-    final String unpeeled = apply(new Trimmer(), wrap);
-    final String peeled = peel(unpeeled);
+  @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+    final String wrap = wrapStatement(input);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
+    final Document d = new Document(wrap);
+    assertNotNull(d);
+    final ASTRewrite r = inner.createRewrite(u, null);
+    r.rewriteAST(d, null).apply(d);
+    final String unpeeled = d.get();
     if (wrap.equals(unpeeled))
-      fail("Nothing done on " + from);
-    if (peeled.equals(from))
-      assertNotEquals("No similification of " + from, from, peeled);
-    if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
-    assertSimilar(expected, peeled);
+      fail("Nothing done on " + input);
+    final String peeled = peelStatement(unpeeled);
+    if (peeled.equals(input))
+      assertNotEquals("No similification of " + input, input, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(input)))
+      assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
+    assertSimilar(output, peeled);
+    assertSimilar(wrapStatement(output), d);
   }
+  @Test public void rewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+    final String wrap = wrapStatement(input);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
+    final Document d = new Document(wrap);
+    assertNotNull(d);
+    final AST t = u.getAST();
+    assertNotNull(t);
+    final ASTRewrite r = ASTRewrite.create(t);
+    inner.fillRewrite(r, t, u, null);
+    r.rewriteAST(d, null).apply(d);
+    final String unpeeled = d.get();
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + input);
+  }
+  final static Spartanization inner = new Ternarize();
   /**
    * Generate test cases for this parameterized class.
    *
@@ -84,18 +89,25 @@ public class TernarizeTest {
     return collect(cases);
   }
   static String[][] cases = Utils.asArray(//
-      Utils.asArray("not of AND", "!(f() && f(5))", "(!f() || !f(5))"), //
-      Utils.asArray("not of EQ", "!(3 == 5)", "3 != 5"), //
-      Utils.asArray("not of AND nested", "!(f() && (f(5)))", "(!f() || !f(5))"), //
-      Utils.asArray("not of EQ nested", "!((((3 == 5))))", "3 != 5"), //
-      Utils.asArray("not of GE", "!(3 >= 5)", "3 < 5"), //
-      Utils.asArray("not of GT", "!(3 > 5)", "3 <= 5"), //
-      Utils.asArray("not of NE", "!(3 != 5)", "3 == 5"), //
-      Utils.asArray("not of LE", "!(3 <= 5)", "3 > 5"), //
-      Utils.asArray("not of LT", "!(3 < 5)", "3 >= 5"), //
-      Utils.asArray("not of AND", "!(a && b && c)", "(!a || !b || !c)"), //
-      Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
-      Utils.asArray("double NOT", "!!f()", "f()"), //
-      Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
+      // Utils.asArray(
+      // " String res = s;\n" + //
+      // "xif (s.equals(\"yada\")==true)\n" + //
+      // " res = s + \" blah\";\n" + //
+      // "else\n" + //
+      // "res = \"spam\";" + //
+      // "",
+      // "" + //
+      // "String res = (s.equals(\"yada\")==true ? s + \" blah\" : \"spam\");\n"
+      // + //
+      // "System.out.println(res);"), //
+      Utils.asArray("04.test",
+          "" + //
+              "int res=0;      " + //
+              "if (s.equals(xxx)) res+=6;      " + //
+              "else res+=9;      " + //
+              "return res;", //
+          "" + //
+              "int res = 0;\n" + //
+              "res += (s.equals(xxx) ? 6 : 9);"), //
       null);
 }
