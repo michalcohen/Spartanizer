@@ -20,10 +20,10 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015/07/25
  */
-public class AsSpartanization extends Spartanization {
+public class AsRefactoring extends Spartanization {
   final Wring inner;
   /** Instantiates this class */
-  AsSpartanization(final Wring inner, final String name, final String description) {
+  AsRefactoring(final Wring inner, final String name, final String description) {
     super(name, description);
     this.inner = inner;
   }

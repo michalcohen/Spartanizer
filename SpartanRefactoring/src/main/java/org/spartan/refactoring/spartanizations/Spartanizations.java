@@ -19,17 +19,17 @@ import static org.spartan.refactoring.spartanizations.Wrings.*;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-  AndTrue(new AsSpartanization(AND_TRUE.inner, "and true", "remove trues from expression")), //
+  AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
   ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
   ForwardDeclaration(new ForwardDeclaration()), //
   InlineSingleUse(new InlineSingleUse()), //
-  OrFalse(new AsSpartanization(OR_FALSE.inner, "or false", "remove falses kddfrom expression")), //
-  PushDownNot(new AsSpartanization(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
+  OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses kddfrom expression")), //
+  PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
   RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
   ShortestBranchFirst(new ShortestBranchFirst()), //
   ShortestOperand(new ShortestOperand()), //
-  SimplifyTernary(new AsSpartanization(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
+  SimplifyTernary(new AsRefactoring(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
   Ternarize(new Ternarize()), //
   ;
   // TODO break that simply returns

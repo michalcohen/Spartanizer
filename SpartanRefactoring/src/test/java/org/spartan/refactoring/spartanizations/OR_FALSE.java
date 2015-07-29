@@ -114,7 +114,7 @@ public enum OR_FALSE {
         Utils.asArray("OR of 4 with false", "a || b || false || c", "a || b || c"), //
         Utils.asArray("OR of 5 with false", "a || b || c || d || false", "a || b || c || d"), //
         Utils.asArray("OR of 6 with two false", "a || false || b || false || c || d || e", "a || b || c || d || e"), //
-        Utils.asArray("OR of 6 with false with parenthesis", "(a || b) || false || (c || false || (d || e || false))", "a || b || c || d || e "), //
+        Utils.asArray("OR of 6 with false with parenthesis", "(a || b) || false || (c || false || (d || e || false))", "a || b || c || d || e"), //
         null);
     /**
      * Generate test cases for this parameterized class.
