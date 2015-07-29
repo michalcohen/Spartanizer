@@ -14,8 +14,8 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifies
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertWithinScope;
 import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peel;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrap;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
 import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
 import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.spartanizations.Wrings.MULTIPLICATION_SORTER;
@@ -108,8 +108,7 @@ public class TrimmerTest {
     assertFalse(Is.booleanLiteral(e.getRightOperand()));
     assertFalse(Is.booleanLiteral(e.getLeftOperand()));
     assertFalse(Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
-    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS)
-        && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand())));
+    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand())));
   }
   @Test public void comparisonWithSpecific0Legibiliy1() {
     assertTrue(Is.specific(i("this != a").getLeftOperand()));
@@ -240,7 +239,7 @@ public class TrimmerTest {
     assertSimplifiesTo("f(a,b,c,d,e) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d,e)");
   }
   @Test public void oneOpportunityExample() {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap(example));
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrapExpression(example));
     assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
@@ -263,7 +262,7 @@ public class TrimmerTest {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void testPeel() {
-    assertEquals(example, peel(wrap(example)));
+    assertEquals(example, peelExpression(wrapExpression(example)));
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) & f()", "f() & f(a,b,c,d)");

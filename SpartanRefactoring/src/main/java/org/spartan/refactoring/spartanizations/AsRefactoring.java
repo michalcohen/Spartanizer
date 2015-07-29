@@ -7,7 +7,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -34,10 +33,6 @@ public class AsRefactoring extends Spartanization {
           return true;
         if (inner.noneligible(e))
           return true;
-        $.add(new Range(e));
-        return true;
-      }
-      private boolean addTo(final Expression e, final List<Range> $) {
         $.add(new Range(e));
         return true;
       }

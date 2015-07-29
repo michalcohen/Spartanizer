@@ -40,9 +40,7 @@ import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
- * * Unit tests for the nesting class Unit test for the containing class. Note
- * our naming convention: a) test methods do not use the redundant "test"
- * prefix. b) test methods begin with the name of the method they check.
+ * * Unit tests for {@link ComparisonWithSpecific}
  *
  * @author Yossi Gil
  * @since 2014-07-10
@@ -53,7 +51,7 @@ import org.spartan.utils.Range;
 // Expression.class, }) //
 @FixMethodOrder(MethodSorters.JVM) //
 @SuppressWarnings({ "static-method", "javadoc" }) //
-public class InfixTest {
+public class ComparisonWithSpecificTest {
   private static final String P0 = "package p; public class Blah { public void y() {  if (null == a)  return;}}";
   private static final String P1 = "package p; public class Blah { public void y() {  if (a == null)  return;}}";
   private static final String P2 = "package p; \n" + //
@@ -103,7 +101,7 @@ public class InfixTest {
     final ASTVisitor a = s.collectOpportunities(opportunities);
     final InfixExpression e = i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1");
     a.visit(e);
-    (Mockito.spy(a)).visit(e);
+    Mockito.spy(a).visit(e);
     assertFalse(ShortestOperand.outOfScope(e));
   }
   @Test public void t7() {
@@ -125,33 +123,31 @@ public class InfixTest {
     assertNotNull(e);
     assertFalse(hasNull(e.getLeftOperand(), e.getRightOperand()));
     assertFalse(ComparisonWithSpecific.withinDomain(e));
-    assertFalse(ShortestOperand.stringReturningMethod(e));
-    assertFalse(ShortestOperand.containsStringLiteral(e));
   }
   @Test public void one() {
-    assertOneOpportunity(s(), P0);
+    assertOneOpportunity(inner(), P0);
   }
   @Test public void one1() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
-    final Document rewrite = rewrite(s(), u, new Document(P0));
+    final Document rewrite = rewrite(inner(), u, new Document(P0));
     assertNotNull(rewrite);
   }
   @Test public void one2true() {
     final String expected = P1;
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
-    final Document rewrite = rewrite(s(), u, new Document(P0));
+    final Document rewrite = rewrite(inner(), u, new Document(P0));
     assertSimilar(expected, rewrite);
   }
   @Test public void one2true0() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
-    rewrite(s(), u, new Document(P0));
+    rewrite(inner(), u, new Document(P0));
     assertNotNull(u);
   }
   @Test public void one2true1() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    assertSimilar(P1, rewrite(s(), u, d));
+    assertSimilar(P1, rewrite(inner(), u, d));
   }
   @Test public void one2true2() {
     final Document d = new Document(P0);
@@ -168,7 +164,7 @@ public class InfixTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    final ComparisonWithSpecific s = s();
+    final ComparisonWithSpecific s = inner();
     final Document rewrite;
     s.createRewrite(u, null).rewriteAST(d, null).apply(d);
     rewrite = d;
@@ -177,13 +173,13 @@ public class InfixTest {
   @Test public void one2true5() {
     final Document d = new Document(P0);
     assertNotNull(d);
-    assertSimilar(P1, rewrite(s(), (CompilationUnit) As.COMPILIATION_UNIT.ast(P0), d));
+    assertSimilar(P1, rewrite(inner(), (CompilationUnit) As.COMPILIATION_UNIT.ast(P0), d));
   }
   @Test public void one2true6() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    final ComparisonWithSpecific s = s();
+    final ComparisonWithSpecific s = inner();
     final ASTRewrite r = s.createRewrite(u, null);
     assertNotNull(r);
     r.rewriteAST(d, null).apply(d);
@@ -194,17 +190,17 @@ public class InfixTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    final ComparisonWithSpecific s = s();
+    final ComparisonWithSpecific s = inner();
     final ASTRewrite r = s.createRewrite(u, null);
     r.rewriteAST(d, null).apply(d);
     assertSimilar(expected, d);
   }
-  private ComparisonWithSpecific s() {
+  private ComparisonWithSpecific inner() {
     return new ComparisonWithSpecific();
   }
   @Test public void one2false() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
-    final Document rewrite = rewrite(s(), u, new Document(P0));
+    final Document rewrite = rewrite(inner(), u, new Document(P0));
     assertNotNull(rewrite);
     assertNotEvenSimilar(P0, rewrite.get());
   }

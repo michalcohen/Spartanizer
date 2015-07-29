@@ -11,14 +11,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.spartanizations.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.getBlockSingleStmnt;
-import static org.spartan.refactoring.utils.Funcs.makeIfStmnt;
-import static org.spartan.refactoring.utils.Funcs.makeInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.statementsCount;
-
+import static org.spartan.refactoring.utils.Funcs.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +31,7 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.*;
 import org.spartan.utils.Range;
 
 /**
@@ -50,8 +43,7 @@ import org.spartan.utils.Range;
 public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
   public ShortestBranchFirst() {
-    super("Shortest Branch First",
-        "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
+    super("Shortest Branch First", "Negate the expression of a conditional, and change the order of branches so that shortest branch occurs first");
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
@@ -77,7 +69,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
           return null;
         final Statement elseStmnt = n.getElseStatement();
         final Statement thenStmnt = n.getThenStatement();
-        if (statementsCount(elseStmnt) == 1 && ASTNode.IF_STATEMENT == getBlockSingleStmnt(elseStmnt).getNodeType()) {
+        if (statementsCount(elseStmnt) == 1 && ASTNode.IF_STATEMENT == Extract.singleStatement(elseStmnt).getNodeType()) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
           return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStmnt);
@@ -85,8 +77,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         return makeIfStmnt(t, r, negatedOp, elseStmnt, thenStmnt);
       }
       private ParenthesizedExpression transpose(final ConditionalExpression n) {
-        return n == null ? null
-            : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
+        return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
       }
     });
   }
@@ -97,8 +88,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
     if (e instanceof InfixExpression)
       return tryNegateComparison(t, r, (InfixExpression) e);
-    return e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e))
-        : makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
+    return e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e)) : makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
   }
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
     final Operator op = negate(e.getOperator());
