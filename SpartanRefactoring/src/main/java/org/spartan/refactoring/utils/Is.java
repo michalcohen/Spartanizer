@@ -1,10 +1,7 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
@@ -19,9 +16,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
-import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
-import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.intIsIn;
 
@@ -83,8 +77,7 @@ public enum Is {
    *         the parameter not or if the block Contains more than one statement
    */
   public static boolean assignment(final ASTNode n) {
-    return block(n) ? assignment(asExpressionStatement(Funcs.getBlockSingleStmnt((Block) n)))
-        : expressionStatement(n) && ASTNode.ASSIGNMENT == ((ExpressionStatement) n).getExpression().getNodeType();
+    return is(n, ASSIGNMENT);
   }
   /**
    * Determine whether a node is a {@link Block}
@@ -94,7 +87,7 @@ public enum Is {
    *         statement
    */
   public static boolean block(final ASTNode n) {
-    return is(n, ASTNode.BLOCK);
+    return is(n, BLOCK);
   }
   /**
    * Determine whether a node is a boolean literal
@@ -126,10 +119,10 @@ public enum Is {
       switch (e.getNodeType()) {
         default:
           break;
-        case ASTNode.CONDITIONAL_EXPRESSION:
+        case CONDITIONAL_EXPRESSION:
           return true;
-        case ASTNode.PARENTHESIZED_EXPRESSION:
-          if (ASTNode.CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
+        case PARENTHESIZED_EXPRESSION:
+          if (CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
             return true;
       }
     }
@@ -197,7 +190,7 @@ public enum Is {
    *         {@link ExpressionStatement} statement
    */
   public static boolean expressionStatement(final ASTNode n) {
-    return is(n, ASTNode.EXPRESSION_STATEMENT);
+    return is(n, EXPRESSION_STATEMENT);
   }
   /**
    * @param o The operator to check
@@ -224,7 +217,7 @@ public enum Is {
    *         expression.
    */
   public static boolean infix(final ASTNode n) {
-    return is(n, ASTNode.INFIX_EXPRESSION);
+    return is(n, INFIX_EXPRESSION);
   }
   /**
    * @param n JD
@@ -235,11 +228,11 @@ public enum Is {
    */
   public static boolean isNodeIncOrDecExp(final ASTNode n) {
     switch (n.getNodeType()) {
-      case ASTNode.EXPRESSION_STATEMENT:
+      case EXPRESSION_STATEMENT:
         return isNodeIncOrDecExp(((ExpressionStatement) n).getExpression());
-      case ASTNode.POSTFIX_EXPRESSION:
+      case POSTFIX_EXPRESSION:
         return in(((PostfixExpression) n).getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT);
-      case ASTNode.PREFIX_EXPRESSION:
+      case PREFIX_EXPRESSION:
         return in(asPrefixExpression(n).getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
       default:
         return false;
@@ -251,7 +244,7 @@ public enum Is {
    *         declaration statement.
    */
   public static boolean isVarDeclStmt(final ASTNode n) {
-    return is(n, ASTNode.VARIABLE_DECLARATION_STATEMENT);
+    return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
   /**
    * Determine whether an item is the last one in a list
@@ -270,11 +263,11 @@ public enum Is {
    */
   public static boolean literal(final ASTNode n) {
     return intIsIn(n.getNodeType(), //
-        ASTNode.NULL_LITERAL, //
-        ASTNode.CHARACTER_LITERAL, //
-        ASTNode.NUMBER_LITERAL, //
-        ASTNode.STRING_LITERAL, //
-        ASTNode.BOOLEAN_LITERAL //
+        NULL_LITERAL, //
+        CHARACTER_LITERAL, //
+        NUMBER_LITERAL, //
+        STRING_LITERAL, //
+        BOOLEAN_LITERAL //
     );
   }
   /**
@@ -291,7 +284,7 @@ public enum Is {
    *         invocation.
    */
   public static boolean methodInvocation(final ASTNode n) {
-    return is(n, ASTNode.METHOD_INVOCATION);
+    return is(n, METHOD_INVOCATION);
   }
   /**
    * @param e JD
@@ -302,14 +295,14 @@ public enum Is {
    */
   public static boolean notString(final Expression e) {
     return intIsIn(e.getNodeType(), //
-        ASTNode.NULL_LITERAL, // null + null is an error, not a string.
-        ASTNode.CHARACTER_LITERAL, //
-        ASTNode.NUMBER_LITERAL, //
-        ASTNode.BOOLEAN_LITERAL, //
-        ASTNode.PREFIX_EXPRESSION, //
-        ASTNode.INFIX_EXPRESSION, //
-        ASTNode.ARRAY_CREATION, //
-        ASTNode.INSTANCEOF_EXPRESSION//
+        NULL_LITERAL, // null + null is an error, not a string.
+        CHARACTER_LITERAL, //
+        NUMBER_LITERAL, //
+        BOOLEAN_LITERAL, //
+        PREFIX_EXPRESSION, //
+        INFIX_EXPRESSION, //
+        ARRAY_CREATION, //
+        INSTANCEOF_EXPRESSION//
     //
     ) || notString(asInfixExpression(e));
   }
@@ -358,7 +351,7 @@ public enum Is {
    *         expression.
    */
   public static boolean prefix(final ASTNode n) {
-    return is(n, ASTNode.PREFIX_EXPRESSION);
+    return is(n, PREFIX_EXPRESSION);
   }
   /**
    * Determine whether a node is a return statement
@@ -368,7 +361,7 @@ public enum Is {
    *         statement.
    */
   public static boolean retern(final ASTNode n) {
-    return is(n, ASTNode.RETURN_STATEMENT);
+    return is(n, RETURN_STATEMENT);
   }
   /**
    * Determine whether an {@link Expression} is so basic that it never needs to
@@ -415,7 +408,7 @@ public enum Is {
    *         literal
    */
   public static boolean stringLiteral(final ASTNode n) {
-    return n != null && n.getNodeType() == ASTNode.STRING_LITERAL;
+    return n != null && n.getNodeType() == STRING_LITERAL;
   }
   /**
    * Determine whether a node is <code><b>this</b></code> or
