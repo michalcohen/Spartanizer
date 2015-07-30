@@ -4,12 +4,13 @@ import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 
-import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.utils.Range;
 
 /**
  * Reifying the notion of a simplifier; all concrete simplification are found in
@@ -23,6 +24,9 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
  * @since 2015-07-09
  */
 public abstract class Wring {
+  public Range range(final ASTNode e) {
+    return new Range(e);
+  }
   /**
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
@@ -32,12 +36,6 @@ public abstract class Wring {
   final boolean eligible(final Expression e) {
     return eligible(asInfixExpression(e)) || eligible(asPrefixExpression(e)) || eligible(asConditionalExpression(e));
   }
-  /**
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
-   *         the simplification offered by this object.
-   */
-  abstract boolean eligible(final Statement i);
   /**
    * Determines whether this {@link Wring} object is applicable to a given
    * {@link PrefixExpression}, also said that it is within the "scope" of this .
@@ -55,8 +53,13 @@ public abstract class Wring {
    *         the simplification offered by this object.
    */
   abstract boolean eligible(final PrefixExpression e);
+  /**
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
+   *         the simplification offered by this object.
+   */
+  abstract boolean eligible(final IfStatement i);
   abstract boolean go(ASTRewrite r, ConditionalExpression e);
-  abstract boolean go(ASTRewrite r, Statement e);
   /**
    * Record a rewrite
    *
@@ -67,6 +70,7 @@ public abstract class Wring {
    */
   abstract boolean go(final ASTRewrite r, final InfixExpression e);
   abstract boolean go(ASTRewrite r, PrefixExpression e);
+  abstract boolean go(ASTRewrite r, IfStatement e);
   /**
    * Determines whether this {@link Wring} object is not applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
@@ -81,7 +85,7 @@ public abstract class Wring {
   final boolean noneligible(final Expression e) {
     return !eligible(e);
   }
-  final boolean noneligible(final Statement s) {
+  final boolean noneligible(final IfStatement s) {
     return !eligible(s);
   }
   abstract Expression replacement(final ConditionalExpression e);
@@ -92,9 +96,9 @@ public abstract class Wring {
         || ($ = replacement(asConditionalExpression(e))) != null //
             ? $ : null;
   }
-  abstract Statement replacement(final Statement e);
   abstract Expression replacement(final InfixExpression e);
   abstract Expression replacement(final PrefixExpression e);
+  abstract Statement replacement(final IfStatement e);
   abstract boolean scopeIncludes(ConditionalExpression e);
   /**
    * Determines whether this {@link Wring} object is applicable for a given
@@ -109,7 +113,6 @@ public abstract class Wring {
   final boolean scopeIncludes(final Expression e) {
     return scopeIncludes(asInfixExpression(e)) || scopeIncludes(asPrefixExpression(e)) || scopeIncludes(asConditionalExpression(e));
   }
-  abstract boolean scopeIncludes(final Statement i);
   /**
    * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
@@ -122,12 +125,10 @@ public abstract class Wring {
    */
   abstract boolean scopeIncludes(InfixExpression e);
   abstract boolean scopeIncludes(PrefixExpression e);
+  abstract boolean scopeIncludes(final IfStatement i);
 
   @SuppressWarnings("unused") abstract static class Defaults extends Wring {
     @Override boolean eligible(final ConditionalExpression e) {
-      return false;
-    }
-    @Override boolean eligible(final Statement i) {
       return false;
     }
     @Override boolean eligible(final InfixExpression e) {
@@ -136,10 +137,10 @@ public abstract class Wring {
     @Override boolean eligible(final PrefixExpression e) {
       return false;
     }
-    @Override boolean go(final ASTRewrite r, final ConditionalExpression e) {
+    @Override boolean eligible(final IfStatement i) {
       return false;
     }
-    @Override boolean go(final ASTRewrite r, final Statement e) {
+    @Override boolean go(final ASTRewrite r, final ConditionalExpression e) {
       return false;
     }
     @Override boolean go(final ASTRewrite r, final InfixExpression e) {
@@ -148,10 +149,10 @@ public abstract class Wring {
     @Override boolean go(final ASTRewrite r, final PrefixExpression e) {
       return false;
     }
-    @Override Expression replacement(final ConditionalExpression e) {
-      return null;
+    @Override boolean go(final ASTRewrite r, final IfStatement e) {
+      return false;
     }
-    @Override Statement replacement(final Statement e) {
+    @Override Expression replacement(final ConditionalExpression e) {
       return null;
     }
     @Override Expression replacement(final InfixExpression e) {
@@ -160,16 +161,19 @@ public abstract class Wring {
     @Override Expression replacement(final PrefixExpression e) {
       return null;
     }
-    @Override boolean scopeIncludes(final ConditionalExpression e) {
-      return false;
+    @Override Statement replacement(final IfStatement e) {
+      return null;
     }
-    @Override boolean scopeIncludes(final Statement i) {
+    @Override boolean scopeIncludes(final ConditionalExpression e) {
       return false;
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return false;
     }
     @Override boolean scopeIncludes(final PrefixExpression e) {
+      return false;
+    }
+    @Override boolean scopeIncludes(final IfStatement i) {
       return false;
     }
 
@@ -195,24 +199,6 @@ public abstract class Wring {
       return _replacement(e);
     }
     @Override abstract boolean scopeIncludes(final ConditionalExpression e);
-  }
-
-  static abstract class OfStatement extends Wring.Defaults {
-    abstract boolean _eligible(final Statement s);
-    abstract Statement _replacement(final Statement s);
-    @Override final boolean eligible(final Statement s) {
-      assert scopeIncludes(s);
-      return _eligible(s);
-    }
-    @Override final boolean go(final ASTRewrite r, final Statement i) {
-      if (eligible(i))
-        r.replace(i, replacement(i), null);
-      return true;
-    }
-    @Override final Statement replacement(final Statement e) {
-      assert eligible(e);
-      return _replacement(e);
-    }
   }
 
   static abstract class OfInfixExpression extends Defaults {
@@ -250,5 +236,38 @@ public abstract class Wring {
       assert eligible(e);
       return _replacement(e);
     }
+  }
+
+  static abstract class OfStatement extends Wring.Defaults {
+    abstract boolean _eligible(final Statement s);
+    abstract Statement _replacement(final Statement s);
+    @Override final boolean eligible(final IfStatement s) {
+      assert scopeIncludes(s);
+      return _eligible(s);
+    }
+    @Override final boolean go(final ASTRewrite r, final IfStatement i) {
+      if (eligible(i))
+        r.replace(i, replacement(i), null);
+      return true;
+    }
+    @Override final Statement replacement(final IfStatement e) {
+      assert eligible(e);
+      return _replacement(e);
+    }
+  }
+
+  static abstract class OfStatement2 extends Wring.Defaults {
+    abstract boolean _eligible(final Statement s);
+    abstract Statement _replacement(final IfStatement s);
+    @Override final boolean eligible(final IfStatement s) {
+      assert scopeIncludes(s);
+      return _eligible(s);
+    }
+    @Override final boolean go(final ASTRewrite r, final IfStatement i) {
+      if (eligible(i))
+        fillReplacement(i, r);
+      return true;
+    }
+    abstract void fillReplacement(Statement i, ASTRewrite r);
   }
 }

@@ -62,16 +62,45 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
+  IF_THEN_RETURN_REMOVE_ELSE(new Wring.OfStatement() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
+      return true;
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return false;
+    }
+    @Override Statement _replacement(final Statement s) {
+      return null;
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   a += 3;
+   * else
+   *   a += 9;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * a += x ? 3 : 9;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
   IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
     @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
       return true;
     }
-    @Override boolean scopeIncludes(final Statement s) {
-      final IfStatement i = asIfStatement(s);
-      if (i == null)
+    @Override boolean scopeIncludes(final IfStatement s) {
+      if (s == null)
         return false;
-      final Assignment then = Extract.assignment(i.getThenStatement());
-      final Assignment elze = Extract.assignment(i.getElseStatement());
+      final Assignment then = Extract.assignment(s.getThenStatement());
+      final Assignment elze = Extract.assignment(s.getElseStatement());
       return compatible(then, elze);
     }
     @Override Statement _replacement(final Statement s) {
@@ -124,7 +153,7 @@ public enum Wrings {
       System.out.println("Replacing " + s + "BY " + $);
       return $;
     }
-    @Override boolean scopeIncludes(final Statement e) {
+    @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
       if (i == null)
         return false;
@@ -420,7 +449,7 @@ public enum Wrings {
    * @return the first {@link Wring} for which the parameter is within scope, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
-  public static Wring find(final Statement i) {
+  public static Wring find(final IfStatement i) {
     if (i == null)
       return null;
     for (final Wrings w : values())

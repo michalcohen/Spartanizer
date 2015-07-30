@@ -44,7 +44,7 @@ public class IF_ASSIGNX_ELSE_ASSIGNY {
     final Assignment elze = Extract.assignment(i.getElseStatement());
     assertNotNull(elze);
     assertThat(compatible(then, elze), is(true));
-    assertThat(WRING.scopeIncludes(s), is(true));
+    assertThat(WRING.scopeIncludes(i), is(true));
   }
 
   @RunWith(Parameterized.class) //

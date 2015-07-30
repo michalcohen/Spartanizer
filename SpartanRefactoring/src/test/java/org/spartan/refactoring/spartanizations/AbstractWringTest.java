@@ -15,10 +15,11 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -112,7 +113,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       return (CompilationUnit) $;
     }
     @Override @Test public void correctSimplifier() {
-      assertEquals(inner, Wrings.find(asStatement()));
+      assertEquals(inner, Wrings.find(asIfStatement(asStatement())));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final Document d = new Document(wrapStatement(input));
@@ -121,29 +122,29 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
     }
     @Test public void eligible() {
-      final Statement s = asStatement();
+      final IfStatement s = asIfStatement(asIfStatement(asStatement()));
       assertTrue(inner.eligible(s));
     }
     @Override @Test public void findsSimplifier() {
-      assertNotNull(Wrings.find(asStatement()));
+      assertNotNull(Wrings.find(asIfStatement(asStatement())));
     }
     @Test public void hasOpportunity() {
-      assertTrue(inner.scopeIncludes(asStatement()));
+      assertTrue(inner.scopeIncludes(asIfStatement(asStatement())));
       final CompilationUnit u = asCompilationUnit();
       final List<Range> findOpportunities = wringer.findOpportunities(u);
       assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
     }
     @Test public void hasReplacement() {
-      assertNotNull(inner.replacement(asStatement()));
+      assertNotNull(inner.replacement(asIfStatement(asStatement())));
     }
     @Test public void noneligible() {
-      assertFalse(inner.noneligible(asStatement()));
+      assertFalse(inner.noneligible(asIfStatement(asStatement())));
     }
     @Test public void peelableOutput() {
       assertEquals(expected, peelStatement(wrapStatement(expected)));
     }
     @Test public void scopeIncludes() {
-      assertTrue(inner.scopeIncludes(asStatement()));
+      assertTrue(inner.scopeIncludes(asIfStatement(asStatement())));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
