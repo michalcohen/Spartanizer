@@ -309,7 +309,7 @@ public enum Funcs {
    * @param root the node whose children we return
    * @return A list containing all the nodes in the given root's sub tree
    */
-  public static List<ASTNode> getChildren(final ASTNode root) {
+  public static List<ASTNode> collectDescendants(final ASTNode root) {
     if (root == null)
       return null;
     final List<ASTNode> $ = new ArrayList<>();
