@@ -23,7 +23,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Is;
@@ -94,7 +94,7 @@ public enum ADDITION_SORTER {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed.Infix {
+  public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("Add 1 to 2*3", "1+2*3", "2*3+1"), //
         Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
@@ -118,7 +118,7 @@ public enum ADDITION_SORTER {
       return collect(cases);
     }
     /**
-     * Instantiates the enclosing class ({@link Wringed})
+     * Instantiates the enclosing class ({@link WringedExpression})
      */
     public Wringed() {
       super(WRING);

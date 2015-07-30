@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -35,7 +35,7 @@ public enum AND_TRUE {
   static final Wring WRING = Wrings.AND_TRUE.inner;
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Infix {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("F || F", "false ||false"), //
         Utils.asArray("3 OR TRUE", "true || true || true"), //
@@ -98,7 +98,7 @@ public enum AND_TRUE {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed.Infix {
+  public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     static String[][] cases = Utils.asArray(//
         new String[] { "Many parenthesis", "a && (((true)))  && b", "a && b" }, //
         Utils.asArray("true && true", "true && true", "true"), //
@@ -125,7 +125,7 @@ public enum AND_TRUE {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    /** Instantiates the enclosing class ({@link Wringed}) */
+    /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);
     }

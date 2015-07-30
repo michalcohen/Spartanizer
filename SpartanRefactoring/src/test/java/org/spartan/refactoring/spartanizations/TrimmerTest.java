@@ -256,7 +256,7 @@ public class TrimmerTest {
     assertEquals(COMPARISON_WITH_SPECIFIC.inner, Wrings.find(i("null != a")));
   }
   @Test public void shorterChainParenthesisComparisonLast() {
-    assertSimplifiesTo("a * b * c * d * e * f * g * h == b", "b == a * b * c * d * e * f * g * h == a");
+    assertSimplifiesTo("b == a * b * c * d * e * f * g * h == a", "a * b * c * d * e * f * g * h == b");
   }
   @Test public void simplifiesTo() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");

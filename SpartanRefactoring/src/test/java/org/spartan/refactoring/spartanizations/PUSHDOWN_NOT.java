@@ -23,7 +23,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Utils;
 
@@ -58,7 +58,7 @@ public class PUSHDOWN_NOT {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Summation", "a+b"), //
         Utils.asArray("Multiplication", "a*b"), //
@@ -86,7 +86,7 @@ public class PUSHDOWN_NOT {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed {
+  public static class Wringed extends AbstractWringTest.WringedExpression {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("2 level not of false", "!!false", "false"), //
         Utils.asArray("2 level not of true", "!!true", "true"), //
@@ -119,7 +119,7 @@ public class PUSHDOWN_NOT {
       return collect(cases);
     }
     /**
-     * Instantiates the enclosing class ({@link Wringed})
+     * Instantiates the enclosing class ({@link WringedExpression})
      */
     public Wringed() {
       super(WRING);

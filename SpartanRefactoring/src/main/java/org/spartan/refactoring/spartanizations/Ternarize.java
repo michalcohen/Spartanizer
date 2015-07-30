@@ -91,10 +91,10 @@ public class Ternarize extends Spartanization {
     return statementsCount(s) == 1;
   }
   private static ReturnStatement nextStatement(final List<Statement> ns, final int n) {
-    return n + 1 >= ns.size() ? null : asReturn(ns.get(n + 1));
+    return n + 1 >= ns.size() ? null : asReturnStatement(ns.get(n + 1));
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final ReturnStatement nextReturn) {
-    final ReturnStatement $ = asReturn(i.getThenStatement());
+    final ReturnStatement $ = asReturnStatement(i.getThenStatement());
     return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(t, r, i, $.getExpression(), nextReturn.getExpression());
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
@@ -440,11 +440,11 @@ public class Ternarize extends Spartanization {
     return Is.last(s, ss) ? null : detectIfReturn(s.getThenStatement(), s.getElseStatement(), ss, ss.indexOf(s));
   }
   private static Range detectIfReturn(final Statement thenStmt, final Statement elseStmt, final List<Statement> ss, final int ifIdx) {
-    final ReturnStatement nextRet = asReturn(ss.get(1 + ifIdx));
+    final ReturnStatement nextRet = asReturnStatement(ss.get(1 + ifIdx));
     if (nextRet == null || Is.conditional(nextRet.getExpression()))
       return null;
-    final ReturnStatement then = asReturn(thenStmt);
-    final ReturnStatement elze = asReturn(elseStmt);
+    final ReturnStatement then = asReturnStatement(thenStmt);
+    final ReturnStatement elze = asReturnStatement(elseStmt);
     return (then == null || elze != null || Is.conditional(then.getExpression())) && (then != null || elze == null || Is.conditional(elze.getExpression())) ? null
         : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
   }

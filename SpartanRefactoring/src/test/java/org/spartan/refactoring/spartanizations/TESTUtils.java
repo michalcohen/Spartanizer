@@ -15,7 +15,7 @@ import static org.spartan.utils.Utils.removeSuffix;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -26,6 +26,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Extract;
 
 /**
  * @author Yossi Gil
@@ -59,7 +60,10 @@ public enum TESTUtils {
    * @return an {@link Statement} data structure representing the parameter.
    */
   public static Statement s(final String statement) {
-    return (Statement) As.STATEMENTS.ast(statement);
+    assertThat(statement, notNullValue());
+    final ASTNode n = As.STATEMENTS.ast(statement);
+    assertThat(n, notNullValue());
+    return Extract.singleStatement(n);
   }
   /**
    * Convert a given {@link String} into an {@link ConditionalExpression}, or

@@ -27,7 +27,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -44,7 +44,7 @@ public enum COMPARISON_WITH_SPECIFIC {
   static final Wring WRING = Wrings.COMPARISON_WITH_SPECIFIC.inner;
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Infix {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //
@@ -129,7 +129,7 @@ public enum COMPARISON_WITH_SPECIFIC {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed.Infix {
+  public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
         // Literal
         Utils.asArray("LT/literal", "2<a", "a>2"), //
@@ -174,7 +174,7 @@ public enum COMPARISON_WITH_SPECIFIC {
       return collect(cases);
     }
     /**
-     * Instantiates the enclosing class ({@link Wringed})
+     * Instantiates the enclosing class ({@link WringedExpression})
      */
     public Wringed() {
       super(WRING);

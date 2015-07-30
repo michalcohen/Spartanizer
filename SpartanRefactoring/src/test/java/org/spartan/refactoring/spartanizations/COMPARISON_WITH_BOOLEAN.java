@@ -39,7 +39,7 @@ import org.spartan.utils.Utils;
 public enum COMPARISON_WITH_BOOLEAN {
   ;
   @RunWith(Parameterized.class) //
-  public static class WringedInput extends AbstractWringTest.Wringed.Infix {
+  public static class WringedInput extends AbstractWringTest.WringedExpression.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("", "a == b == c == true", "a == b == c"), //
         Utils.asArray("", "a == true", "a"), //

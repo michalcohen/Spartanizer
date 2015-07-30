@@ -1,5 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 
+import org.spartan.refactoring.utils.Extract;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -11,17 +12,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
-import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
-import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
-import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.asNot;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.removeAll;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.refactoring.utils.Restructure.getCore;
@@ -34,10 +25,12 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.Statement;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Have;
@@ -51,6 +44,42 @@ import org.spartan.refactoring.utils.Is;
  */
 public enum Wrings {
   /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   return b;
+   * else
+   *   return c;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * return x x? b : c
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_RETURN_A_ELSE_RETURN_B(new Wring.OfStatement() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
+      return true;
+    }
+    @Override Statement _replacement(final Statement e) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+    @Override boolean scopeIncludes(final Statement e) {
+      final IfStatement i = asIfStatement(e);
+      if (i == null)
+        return false;
+      final Expression then = Extract.returnExpression(i.getThenStatement());
+      final Expression elze = Extract.returnExpression(i.getElseStatement());
+      return then != null && elze != null;
+    }
+  }), //
+  /**
    * A {@link Wring} that eliminates redundant comparison with the two boolean
    * literals: <code><b>true</b></code> and <code><b>false</b></code>.
    *
@@ -60,6 +89,12 @@ public enum Wrings {
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
+    }
+    private PrefixExpression negate(final ASTNode e) {
+      return makePrefixExpression(makeParenthesizedExpression((Expression) e), NOT);
+    }
+    private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
+      return literal.booleanValue() == (e.getOperator() == EQUALS);
     }
     @Override boolean _eligible(final InfixExpression e) {
       assert scopeIncludes(e);
@@ -77,12 +112,6 @@ public enum Wrings {
       }
       return nonNegating(e, literal) ? nonliteral : negate(nonliteral);
     }
-    private PrefixExpression negate(final ASTNode e) {
-      return makePrefixExpression(makeParenthesizedExpression((Expression) e), NOT);
-    }
-    private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
-      return literal.booleanValue() == (e.getOperator() == EQUALS);
-    }
   }), //
   /**
    * A {@link Wring} that reorder comparisons so that the specific value is
@@ -93,11 +122,15 @@ public enum Wrings {
    * @since 2015-07-17
    */
   COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
+    @Override public boolean scopeIncludes(final InfixExpression e) {
+      return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+    }
     @Override public String toString() {
       return "Comparison WITH SPECIFIC";
     }
-    @Override public boolean scopeIncludes(final InfixExpression e) {
-      return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+    private boolean hasOneSpecificArgument(final InfixExpression e) {
+      // One of the arguments must be specific, the other must not be.
+      return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
     }
     @Override boolean _eligible(final InfixExpression e) {
       return Is.specific(e.getLeftOperand());
@@ -107,10 +140,6 @@ public enum Wrings {
     }
     boolean hasThisOrNull(final InfixExpression e) {
       return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
-    }
-    private boolean hasOneSpecificArgument(final InfixExpression e) {
-      // One of the arguments must be specific, the other must not be.
-      return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
     }
   }), //
   /**
@@ -135,14 +164,14 @@ public enum Wrings {
     @Override public String toString() {
       return "TERNARY_BOOLEAN_LITERAL";
     }
-    @Override boolean scopeIncludes(final ConditionalExpression e) {
-      return isTernaryOfBooleanLitreral(e);
-    }
     @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
       return true;
     }
     @Override Expression _replacement(final ConditionalExpression e) {
       return simplifyTernary(e);
+    }
+    @Override boolean scopeIncludes(final ConditionalExpression e) {
+      return isTernaryOfBooleanLitreral(e);
     }
   }), //
   /**
@@ -156,14 +185,14 @@ public enum Wrings {
     @Override public String toString() {
       return "&& true";
     }
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return Is.conditionalAnd(e) && Have.trueLiteral(All.operands(flatten(e)));
-    }
     @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
     }
     @Override Expression _replacement(final InfixExpression e) {
       return eliminateLiteral(e, true);
+    }
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return Is.conditionalAnd(e) && Have.trueLiteral(All.operands(flatten(e)));
     }
   }), //
   /**
@@ -177,14 +206,14 @@ public enum Wrings {
     @Override public String toString() {
       return "|| true";
     }
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return Is.conditionalOr(e) && Have.falseLiteral(All.operands(flatten(e)));
-    }
     @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
     }
     @Override Expression _replacement(final InfixExpression e) {
       return eliminateLiteral(e, false);
+    }
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return Is.conditionalOr(e) && Have.falseLiteral(All.operands(flatten(e)));
     }
   }), //
   /**
@@ -199,21 +228,21 @@ public enum Wrings {
     @Override public String toString() {
       return "Addition sorter";
     }
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return e.getOperator() == PLUS;
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      return Are.notString(All.operands(flatten(e))) && tryToSort(e);
-    }
     private boolean tryToSort(final InfixExpression e) {
       return tryToSort(All.operands(flatten(e)));
     }
     private boolean tryToSort(final List<Expression> es) {
       return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
     }
+    @Override boolean _eligible(final InfixExpression e) {
+      return Are.notString(All.operands(flatten(e))) && tryToSort(e);
+    }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
       return !Are.notString(operands) || !tryToSort(operands) ? null : refitOperands(e, operands);
+    }
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return e.getOperator() == PLUS;
     }
   }), //
   /**
@@ -230,21 +259,21 @@ public enum Wrings {
     @Override public String toString() {
       return "pseudo addition sorter";
     }
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), OR);
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      return tryToSort(e);
-    }
     private boolean tryToSort(final InfixExpression e) {
       return tryToSort(All.operands(flatten(e)));
     }
     private boolean tryToSort(final List<Expression> es) {
       return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
     }
+    @Override boolean _eligible(final InfixExpression e) {
+      return tryToSort(e);
+    }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
       return !tryToSort(operands) ? null : refitOperands(e, operands);
+    }
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return in(e.getOperator(), OR);
     }
   }), //
   /**
@@ -259,21 +288,21 @@ public enum Wrings {
     @Override public String toString() {
       return "Multiplication sorter";
     }
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), TIMES, XOR, AND);
-    }
-    @Override boolean _eligible(final InfixExpression e) {
-      return tryToSort(e);
-    }
     private boolean tryToSort(final InfixExpression e) {
       return tryToSort(All.operands(flatten(e)));
     }
     private boolean tryToSort(final List<Expression> es) {
       return Wrings.tryToSort(es, ExpressionComparator.MULTIPLICATION);
     }
+    @Override boolean _eligible(final InfixExpression e) {
+      return tryToSort(e);
+    }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
       return !tryToSort(operands) ? null : refitOperands(e, operands);
+    }
+    @Override boolean scopeIncludes(final InfixExpression e) {
+      return in(e.getOperator(), TIMES, XOR, AND);
     }
   }), //
   /**
@@ -284,11 +313,11 @@ public enum Wrings {
    * @since 2015-7-17
    */
   PUSHDOWN_NOT(new Wring.OfPrefixExpression() {
-    @Override public String toString() {
-      return "Pushdown not";
-    }
     @Override public boolean scopeIncludes(final PrefixExpression e) {
       return e != null && asNot(e) != null && hasOpportunity(asNot(e));
+    }
+    @Override public String toString() {
+      return "Pushdown not";
     }
     @Override boolean _eligible(final PrefixExpression e) {
       return true;
@@ -299,12 +328,24 @@ public enum Wrings {
   }),
   //
   ;
-  final Wring inner;
-  Wrings(final Wring inner) {
-    this.inner = inner;
+  /**
+   * Find the first {@link Wring} appropriate for an
+   * {@link ConditionalExpression}
+   *
+   * @param e JD
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final ConditionalExpression e) {
+    if (e == null)
+      return null;
+    for (final Wrings s : values())
+      if (s.inner.scopeIncludes(e))
+        return s.inner;
+    return null;
   }
   /**
-   * Find the first {@link Wring} appropriate for an {@link InfixExpression}
+   * Find the first {@link Wring} appropriate for an {@link Expression}
    *
    * @param e JD
    * @return the first {@link Wring} for which the parameter is eligible, or
@@ -319,18 +360,18 @@ public enum Wrings {
             ? $ : null;
   }
   /**
-   * Find the first {@link Wring} appropriate for an {@link InfixExpression}
+   * Find the first {@link Wring} appropriate for an {@link IfStatement}
    *
    * @param e JD
    * @return the first {@link Wring} for which the parameter is eligible, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
-  public static Wring find(final ConditionalExpression e) {
-    if (e == null)
+  public static Wring find(final Statement i) {
+    if (i == null)
       return null;
-    for (final Wrings s : values())
-      if (s.inner.scopeIncludes(e))
-        return s.inner;
+    for (final Wrings w : values())
+      if (w.inner.scopeIncludes(i))
+        return w.inner;
     return null;
   }
   /**
@@ -363,27 +404,123 @@ public enum Wrings {
         return s.inner;
     return null;
   }
-  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
-    boolean $ = false;
-    // Bubble sort, duplicating in each case of swap
-    for (int i = 0, size = es.size(); i < size; i++)
-      for (int j = 0; j < size - 1; j++) {
-        final Expression e0 = es.get(j);
-        final Expression e1 = es.get(j + 1);
-        if (c.compare(e0, e1) <= 0)
-          continue;
-        // Replace locations i,j with e0 and e1
-        es.get(j + 1);
-        es.remove(j);
-        es.remove(j);
-        es.add(j, e0);
-        es.add(j, e1);
-        $ = true;
-      }
+  private static InfixExpression makeWithOther(final Expression other) {
+    final InfixExpression $ = other.getAST().newInfixExpression();
+    $.setRightOperand(duplicate(other));
     return $;
   }
-  static Expression pushdownNot(final PrefixExpression e) {
-    return e == null ? null : pushdownNot(getCore(e.getOperand()));
+  private static Expression simplifyTernary(final Expression then, final Expression elze, final Expression main) {
+    final boolean takeThen = !Is.booleanLiteral(then);
+    final InfixExpression $ = makeWithOther(takeThen ? then : elze);
+    final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
+    $.setOperator(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
+    $.setLeftOperand(takeThen != literal ? main : not(main));
+    return $;
+  }
+  static InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
+    if (from.hasExtendedOperands())
+      addExtendedOperands(from.extendedOperands(), $.extendedOperands());
+    return $;
+  }
+  static void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
+    for (final Expression e : from)
+      to.add(not(e));
+  }
+  static InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
+    return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
+  }
+  static Expression comparison(final InfixExpression inner) {
+    return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
+  }
+  static Expression deMorgan(final InfixExpression inner, final Expression left, final Expression right) {
+    return deMorgan1(inner, parenthesize(left), parenthesize(right));
+  }
+  static Expression deMorgan1(final InfixExpression inner, final Expression left, final Expression right) {
+    return parenthesize( //
+        addExtendedOperands(inner, //
+            makeInfixExpression(not(left), conjugate(inner), not(right))));
+  }
+  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
+    final List<Expression> operands = All.operands(flatten(e));
+    removeAll(b, operands);
+    switch (operands.size()) {
+      case 0:
+        return e.getAST().newBooleanLiteral(b);
+      case 1:
+        return duplicate(operands.get(0));
+      default:
+        return refitOperands(e, operands);
+    }
+  }
+  static Expression getCoreLeft(final InfixExpression e) {
+    return getCore(e.getLeftOperand());
+  }
+  static Expression getCoreRight(final InfixExpression e) {
+    return getCore(e.getRightOperand());
+  }
+  static boolean hasOpportunity(final Expression inner) {
+    return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+  }
+  static boolean hasOpportunity(final PrefixExpression e) {
+    return e != null && hasOpportunity(getCore(e.getOperand()));
+  }
+  static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
+    for (final Expression e : es)
+      if (isTernaryOfBooleanLitreral(e))
+        return true;
+    return false;
+  }
+  static boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
+    return e != null && Have.booleanLiteral(getCore(e.getThenExpression()), getCore(e.getElseExpression()));
+  }
+  static boolean isTernaryOfBooleanLitreral(final Expression e) {
+    return isTernaryOfBooleanLitreral(asConditionalExpression(getCore(e)));
+  }
+  static InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
+    final InfixExpression $ = left.getAST().newInfixExpression();
+    $.setLeftOperand(duplicate(left));
+    $.setOperator(o);
+    $.setRightOperand(duplicate(right));
+    return $;
+  }
+  static PrefixExpression not(final Expression e) {
+    final PrefixExpression $ = e.getAST().newPrefixExpression();
+    $.setOperator(NOT);
+    $.setOperand(parenthesize(e));
+    return $;
+  }
+  static Expression notOfLiteral(final BooleanLiteral l) {
+    final BooleanLiteral $ = duplicate(l);
+    $.setBooleanValue(!l.booleanValue());
+    return $;
+  }
+  static Expression parenthesize(final Expression e) {
+    if (Is.simple(e))
+      return duplicate(e);
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(duplicate(getCore(e)));
+    return $;
+  }
+  static Expression perhapsComparison(final Expression inner) {
+    return perhapsComparison(asComparison(inner));
+  }
+  static Expression perhapsComparison(final InfixExpression inner) {
+    return inner == null ? null : comparison(inner);
+  }
+  static Expression perhapsDeMorgan(final Expression e) {
+    return perhapsDeMorgan(asAndOrOr(e));
+  }
+  static Expression perhapsDeMorgan(final InfixExpression e) {
+    return e == null ? null : deMorgan(e, getCoreLeft(e), getCoreRight(e));
+  }
+  static Expression perhapsDoubleNegation(final Expression inner) {
+    return perhapsDoubleNegation(asNot(inner));
+  }
+  static Expression perhapsDoubleNegation(final PrefixExpression inner) {
+    return inner == null ? null : inner.getOperand();
+  }
+  static Expression perhapsNotOfLiteral(final Expression inner) {
+    return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));
   }
   static Expression pushdownNot(final Expression inner) {
     Expression $;
@@ -392,6 +529,24 @@ public enum Wrings {
         || ($ = perhapsDeMorgan(inner)) != null//
         || ($ = perhapsComparison(inner)) != null //
             ? $ : null;
+  }
+  static Expression pushdownNot(final PrefixExpression e) {
+    return e == null ? null : pushdownNot(getCore(e.getOperand()));
+  }
+  /**
+   * Consider an expression <code> a ? b : c </code>; in a sense it is the same
+   * as <code> (a && b) || (!a && c) </code>
+   * <ol>
+   * <li>if b is false then: <code>
+  * (a && false) || (!a && c) == !a && c </code>
+   * <li>if b is true then:
+   * <code>(a && true) || (!a && c) == a || (!a && c) == a || c </code>
+   * <li>if c is false then: <code>(a && b) || (!a && false) == a && b </code>
+   * <li>if c is true then <code>(a && b) || (!a && true) == !a || b</code>
+   * </ol>
+   */
+  static Expression simplifyTernary(final ConditionalExpression e) {
+    return simplifyTernary(getCore(e.getThenExpression()), getCore(e.getElseExpression()), duplicate(e.getExpression()));
   }
   /* <code> a ? b : c </code>
    *
@@ -423,137 +578,27 @@ public enum Wrings {
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
   }
-  /**
-   * Consider an expression <code> a ? b : c </code>; in a sense it is the same
-   * as <code> (a && b) || (!a && c) </code>
-   * <ol>
-   * <li>if b is false then: <code>
-  * (a && false) || (!a && c) == !a && c </code>
-   * <li>if b is true then:
-   * <code>(a && true) || (!a && c) == a || (!a && c) == a || c </code>
-   * <li>if c is false then: <code>(a && b) || (!a && false) == a && b </code>
-   * <li>if c is true then <code>(a && b) || (!a && true) == !a || b</code>
-   * </ol>
-   */
-  static Expression simplifyTernary(final ConditionalExpression e) {
-    return simplifyTernary(getCore(e.getThenExpression()), getCore(e.getElseExpression()), duplicate(e.getExpression()));
-  }
-  private static Expression simplifyTernary(final Expression then, final Expression elze, final Expression main) {
-    final boolean takeThen = !Is.booleanLiteral(then);
-    final InfixExpression $ = makeWithOther(takeThen ? then : elze);
-    final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
-    $.setOperator(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
-    $.setLeftOperand(takeThen != literal ? main : not(main));
+  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
+    boolean $ = false;
+    // Bubble sort, duplicating in each case of swap
+    for (int i = 0, size = es.size(); i < size; i++)
+      for (int j = 0; j < size - 1; j++) {
+        final Expression e0 = es.get(j);
+        final Expression e1 = es.get(j + 1);
+        if (c.compare(e0, e1) <= 0)
+          continue;
+        // Replace locations i,j with e0 and e1
+        es.get(j + 1);
+        es.remove(j);
+        es.remove(j);
+        es.add(j, e0);
+        es.add(j, e1);
+        $ = true;
+      }
     return $;
   }
-  private static InfixExpression makeWithOther(final Expression other) {
-    final InfixExpression $ = other.getAST().newInfixExpression();
-    $.setRightOperand(duplicate(other));
-    return $;
-  }
-  static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
-    for (final Expression e : es)
-      if (isTernaryOfBooleanLitreral(e))
-        return true;
-    return false;
-  }
-  static boolean isTernaryOfBooleanLitreral(final Expression e) {
-    return isTernaryOfBooleanLitreral(asConditionalExpression(getCore(e)));
-  }
-  static boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
-    return e != null && Have.booleanLiteral(getCore(e.getThenExpression()), getCore(e.getElseExpression()));
-  }
-  static Expression perhapsNotOfLiteral(final Expression inner) {
-    return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));
-  }
-  static Expression notOfLiteral(final BooleanLiteral l) {
-    final BooleanLiteral $ = duplicate(l);
-    $.setBooleanValue(!l.booleanValue());
-    return $;
-  }
-  static Expression perhapsDoubleNegation(final Expression inner) {
-    return perhapsDoubleNegation(asNot(inner));
-  }
-  static Expression perhapsDoubleNegation(final PrefixExpression inner) {
-    return inner == null ? null : inner.getOperand();
-  }
-  static Expression perhapsDeMorgan(final Expression e) {
-    return perhapsDeMorgan(asAndOrOr(e));
-  }
-  static Expression perhapsDeMorgan(final InfixExpression e) {
-    return e == null ? null : deMorgan(e, getCoreLeft(e), getCoreRight(e));
-  }
-  static Expression deMorgan(final InfixExpression inner, final Expression left, final Expression right) {
-    return deMorgan1(inner, parenthesize(left), parenthesize(right));
-  }
-  static Expression deMorgan1(final InfixExpression inner, final Expression left, final Expression right) {
-    return parenthesize( //
-        addExtendedOperands(inner, //
-            makeInfixExpression(not(left), conjugate(inner), not(right))));
-  }
-  static InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
-    if (from.hasExtendedOperands())
-      addExtendedOperands(from.extendedOperands(), $.extendedOperands());
-    return $;
-  }
-  static void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
-    for (final Expression e : from)
-      to.add(not(e));
-  }
-  static Expression perhapsComparison(final Expression inner) {
-    return perhapsComparison(asComparison(inner));
-  }
-  static Expression perhapsComparison(final InfixExpression inner) {
-    return inner == null ? null : comparison(inner);
-  }
-  static Expression comparison(final InfixExpression inner) {
-    return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
-  }
-  static InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
-    return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
-  }
-  static Expression parenthesize(final Expression e) {
-    if (Is.simple(e))
-      return duplicate(e);
-    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(duplicate(getCore(e)));
-    return $;
-  }
-  static PrefixExpression not(final Expression e) {
-    final PrefixExpression $ = e.getAST().newPrefixExpression();
-    $.setOperator(NOT);
-    $.setOperand(parenthesize(e));
-    return $;
-  }
-  static InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
-    final InfixExpression $ = left.getAST().newInfixExpression();
-    $.setLeftOperand(duplicate(left));
-    $.setOperator(o);
-    $.setRightOperand(duplicate(right));
-    return $;
-  }
-  static Expression getCoreRight(final InfixExpression e) {
-    return getCore(e.getRightOperand());
-  }
-  static Expression getCoreLeft(final InfixExpression e) {
-    return getCore(e.getLeftOperand());
-  }
-  static boolean hasOpportunity(final PrefixExpression e) {
-    return e != null && hasOpportunity(getCore(e.getOperand()));
-  }
-  static boolean hasOpportunity(final Expression inner) {
-    return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
-  }
-  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
-    final List<Expression> operands = All.operands(flatten(e));
-    removeAll(b, operands);
-    switch (operands.size()) {
-      case 0:
-        return e.getAST().newBooleanLiteral(b);
-      case 1:
-        return duplicate(operands.get(0));
-      default:
-        return refitOperands(e, operands);
-    }
+  final Wring inner;
+  Wrings(final Wring inner) {
+    this.inner = inner;
   }
 }

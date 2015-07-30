@@ -26,7 +26,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -105,7 +105,7 @@ public class TERNARY_BOOLEAN_LITERAL {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed.Conditional {
+  public static class Wringed extends AbstractWringTest.WringedExpression.Conditional {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("F X", "a ? false : c", "!a && c"), //
         Utils.asArray("T X", "a ? true : c", "a || c"), //
@@ -130,7 +130,7 @@ public class TERNARY_BOOLEAN_LITERAL {
     @Test public void inputIsConditionalfixExpression() {
       assertNotNull(asConditionalExpression());
     }
-    /** Instantiates the enclosing class ({@link Wringed}) */
+    /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);
     }

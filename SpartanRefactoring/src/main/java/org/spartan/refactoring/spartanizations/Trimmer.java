@@ -6,10 +6,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -23,51 +24,6 @@ import org.spartan.utils.Range;
  * @since 2015/07/10
  */
 public class Trimmer extends Spartanization {
-  /** Instantiates this class */
-  public Trimmer() {
-    super("Trimmer", "Simiplifies expression once");
-  }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
-    return new ASTVisitor() {
-      @Override public boolean visit(final PrefixExpression e) {
-        final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) || overrideInto(e, $);
-      }
-      @Override public boolean visit(final InfixExpression e) {
-        final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) || overrideInto(e, $);
-      }
-      @Override public boolean visit(final ConditionalExpression e) {
-        final Wring w = Wrings.find(e);
-        return w != null && w.noneligible(e) || overrideInto(e, $);
-      }
-    };
-  }
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
-    u.accept(new ASTVisitor() {
-      @Override public boolean visit(final InfixExpression e) {
-        if (!inRange(m, e))
-          return true;
-        final Wring w = Wrings.find(e);
-        return w == null || w.go(r, e);
-      }
-      @Override public boolean visit(final PrefixExpression e) {
-        if (!inRange(m, e))
-          return true;
-        final Wring w = Wrings.find(e);
-        return w == null || w.go(r, e);
-      }
-      @Override public boolean visit(final ConditionalExpression e) {
-        if (!inRange(m, e))
-          return true;
-        final Wring w = Wrings.find(e);
-        return w == null || w.go(r, e);
-      }
-    });
-  }
-  static boolean overrideInto(final Expression e, final List<Range> rs) {
-    return overrideInto(new Range(e), rs);
-  }
   private static boolean overrideInto(final Range r, final List<Range> rs) {
     r.pruneIncluders(rs);
     rs.add(r);
@@ -94,5 +50,60 @@ public class Trimmer extends Spartanization {
       }
     removeDuplicates(rs);
     return $;
+  }
+  static boolean overrideInto(final ASTNode e, final List<Range> rs) {
+    return overrideInto(new Range(e), rs);
+  }
+  /** Instantiates this class */
+  public Trimmer() {
+    super("Trimmer", "Simiplifies expression once");
+  }
+  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
+    return new ASTVisitor() {
+      @Override public boolean visit(final ConditionalExpression e) {
+        final Wring w = Wrings.find(e);
+        return w != null && w.noneligible(e) || overrideInto(e, $);
+      }
+      @Override public boolean visit(final IfStatement i) {
+        final Wring w = Wrings.find(i);
+        return w != null && w.noneligible(i) || overrideInto(i, $);
+      }
+      @Override public boolean visit(final InfixExpression e) {
+        final Wring w = Wrings.find(e);
+        return w != null && w.noneligible(e) || overrideInto(e, $);
+      }
+      @Override public boolean visit(final PrefixExpression e) {
+        final Wring w = Wrings.find(e);
+        return w != null && w.noneligible(e) || overrideInto(e, $);
+      }
+    };
+  }
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
+    u.accept(new ASTVisitor() {
+      @Override public boolean visit(final ConditionalExpression e) {
+        if (!inRange(m, e))
+          return true;
+        final Wring w = Wrings.find(e);
+        return w == null || w.go(r, e);
+      }
+      @Override public boolean visit(final IfStatement i) {
+        if (!inRange(m, i))
+          return true;
+        final Wring w = Wrings.find(i);
+        return w == null || w.go(r, i);
+      }
+      @Override public boolean visit(final InfixExpression e) {
+        if (!inRange(m, e))
+          return true;
+        final Wring w = Wrings.find(e);
+        return w == null || w.go(r, e);
+      }
+      @Override public boolean visit(final PrefixExpression e) {
+        if (!inRange(m, e))
+          return true;
+        final Wring w = Wrings.find(e);
+        return w == null || w.go(r, e);
+      }
+    });
   }
 }

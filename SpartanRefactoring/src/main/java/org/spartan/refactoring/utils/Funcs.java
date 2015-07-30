@@ -69,7 +69,7 @@ public enum Funcs {
    *         <code><b>null</b></code> if the downcast is impossible.
    */
   public static Assignment asAssignment(final ASTNode $) {
-    return is($, ASSIGNMENT) ? null : (Assignment) $;
+    return !is($, ASSIGNMENT) ? null : (Assignment) $;
   }
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link Block}
@@ -80,6 +80,16 @@ public enum Funcs {
    */
   public static Block asBlock(final ASTNode $) {
     return $.getNodeType() != BLOCK ? null : (Block) $;
+  }
+  /**
+   * Down-cast, if possible, to {@link IfStatement}
+   *
+   * @param $ JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static IfStatement asIfStatement(final Statement $) {
+    return $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
   }
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}
@@ -177,21 +187,12 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link ReturnStatement}
    *
-   * @param n JD
+   * @param $ JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
-  public static ReturnStatement asReturn(final ASTNode n) {
-    if (n == null)
-      return null;
-    switch (n.getNodeType()) {
-      case BLOCK:
-        return asReturn((Block) n);
-      case RETURN_STATEMENT:
-        return (ReturnStatement) n;
-      default:
-        return null;
-    }
+  public static ReturnStatement asReturnStatement(final ASTNode $) {
+    return $ == null || $.getNodeType() != RETURN_STATEMENT ? null : (ReturnStatement) $;
   }
   /**
    * Down-cast, if possible, to {@link Statement}
@@ -763,7 +764,7 @@ public enum Funcs {
     ) ? e : null;
   }
   private static ReturnStatement asReturn(final Block b) {
-    return b.statements().size() != 1 ? null : asReturn((Statement) b.statements().get(0));
+    return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)

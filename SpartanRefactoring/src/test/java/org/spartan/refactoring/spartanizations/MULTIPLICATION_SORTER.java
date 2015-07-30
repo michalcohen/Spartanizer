@@ -28,7 +28,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -103,7 +103,7 @@ public enum MULTIPLICATION_SORTER {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.Wringed.Infix {
+  public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("Constant first", "a*2", "2*a"), //
         Utils.asArray("Constant first two arguments", "a*2*b", "2*a*b"), //
@@ -124,7 +124,7 @@ public enum MULTIPLICATION_SORTER {
       return collect(cases);
     }
     /**
-     * Instantiates the enclosing class ({@link Wringed})
+     * Instantiates the enclosing class ({@link WringedExpression})
      */
     public Wringed() {
       super(WRING);

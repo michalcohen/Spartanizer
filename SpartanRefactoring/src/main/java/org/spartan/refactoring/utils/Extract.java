@@ -25,6 +25,15 @@ import org.eclipse.jdt.core.dom.Statement;
 public enum Extract {
   ;
   /**
+   * @param n a node to extract an expression from
+   * @return null if the statement is not an expression or return statement or
+   *         the expression if they are
+   */
+  public static Expression returnExpression(final ASTNode n) {
+    final ReturnStatement $ = asReturnStatement(Extract.singleStatement(n));
+    return $ == null ? null : $.getExpression();
+  }
+  /**
    * @param node a node to extract an expression from
    * @return null if the statement is not an expression or return statement or
    *         the expression if they are
@@ -86,6 +95,7 @@ public enum Extract {
       case BLOCK:
         return Extract.statementsInto((Block) s, $);
       default:
+        $.add(s);
         return $;
     }
   }
