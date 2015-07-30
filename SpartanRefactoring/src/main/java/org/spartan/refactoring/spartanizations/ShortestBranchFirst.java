@@ -77,7 +77,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         return makeIfStmnt(t, r, negatedOp, elseStmnt, thenStmnt);
       }
       private ParenthesizedExpression transpose(final ConditionalExpression n) {
-        return n == null ? null : makeParenthesizedConditionalExp(t, r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
+        return n == null ? null : makeParenthesizedConditionalExp(r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
       }
     });
   }
@@ -88,7 +88,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
     if (e instanceof InfixExpression)
       return tryNegateComparison(t, r, (InfixExpression) e);
-    return e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e)) : makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
+    return e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e)) : makePrefixExpression(t, makeParenthesizedExpression(e), NOT);
   }
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
     final Operator op = negate(e.getOperator());
@@ -100,7 +100,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   }
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
     if (Is.infix(e))
-      return makePrefixExpression(t, makeParenthesizedExpression(t, e), NOT);
+      return makePrefixExpression(t, makeParenthesizedExpression(e), NOT);
     return !Is.prefix(e) || !asPrefixExpression(e).getOperator().equals(NOT) //
         ? makePrefixExpression(t, e, NOT) //
         : (Expression) r.createCopyTarget(asPrefixExpression(e).getOperand());

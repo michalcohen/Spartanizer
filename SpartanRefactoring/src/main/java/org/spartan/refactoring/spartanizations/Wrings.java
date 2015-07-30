@@ -11,7 +11,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.flatten;
@@ -66,9 +65,25 @@ public enum Wrings {
     @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
       return true;
     }
-    @Override Statement _replacement(final Statement e) {
-      // TODO Auto-generated method stub
-      return null;
+    @Override Statement _replacement(final Statement s) {
+      final IfStatement i = asIfStatement(s);
+      if (i == null)
+        return null;
+      final Expression condition = i.getExpression();
+      final Expression then = Extract.returnExpression(i.getThenStatement());
+      final Expression elze = Extract.returnExpression(i.getElseStatement());
+      if (then == null || elze == null)
+        return null;
+      final Statement $ = makeReturnStatement(makeConditionalExpression(condition, then, elze));
+      System.out.println("Replacing " + s + "BY " + $);
+      return $;
+    }
+    private ConditionalExpression makeConditionalExpression(final Expression condition, final Expression then, final Expression elze) {
+      final ConditionalExpression $ = condition.getAST().newConditionalExpression();
+      $.setExpression(frugalDuplicate(condition));
+      $.setThenExpression(frugalDuplicate(then));
+      $.setElseExpression(frugalDuplicate(elze));
+      return $;
     }
     @Override boolean scopeIncludes(final Statement e) {
       final IfStatement i = asIfStatement(e);

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -34,7 +33,6 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.mockito.Mockito;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
@@ -94,25 +92,6 @@ public class ComparisonWithSpecificTest {
   }
   @Test public void t5() {
     assertFalse(ShortestOperand.outOfScope(i(" 6 - 7 < 2 + 1")));
-  }
-  @Test public void t6() {
-    final ShortestOperand s = new ShortestOperand();
-    final List<Range> opportunities = new ArrayList<>();
-    final ASTVisitor a = s.collectOpportunities(opportunities);
-    final InfixExpression e = i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1");
-    a.visit(e);
-    Mockito.spy(a).visit(e);
-    assertFalse(ShortestOperand.outOfScope(e));
-  }
-  @Test public void t7() {
-    final InfixExpression e = i("1 + 2  + s < 3 ");
-    final ShortestOperand s = new ShortestOperand();
-    final List<Range> opportunities = new ArrayList<>();
-    final ASTVisitor a = s.collectOpportunities(opportunities);
-    final ASTVisitor x = Mockito.spy(a);
-    a.visit(e);
-    x.visit(e);
-    assertTrue(ShortestOperand.outOfScope(e));
   }
   @Test public void t8() {
     final InfixExpression e = i("1 + 2  + 3 < 3 ");

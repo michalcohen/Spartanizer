@@ -22,6 +22,8 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.spartanizations.ExpressionComparator;
+import org.spartan.refactoring.spartanizations.Wrings;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Funcs;
 

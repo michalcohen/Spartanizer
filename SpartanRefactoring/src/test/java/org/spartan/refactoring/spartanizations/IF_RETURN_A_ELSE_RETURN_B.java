@@ -49,7 +49,9 @@ public enum IF_RETURN_A_ELSE_RETURN_B {
   public static class Wringed extends AbstractWringTest.WringedStatement {
     private static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("LT/literal", "if (a) return b; else return c;", "return a ? b: c;"), //
+        Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
+        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", "{return a ? b : c;}"), //
+        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"), //
         null);
     /**
      * Generate test cases for this parameterized class.

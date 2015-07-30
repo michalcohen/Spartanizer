@@ -82,16 +82,6 @@ public enum Funcs {
     return $.getNodeType() != BLOCK ? null : (Block) $;
   }
   /**
-   * Down-cast, if possible, to {@link IfStatement}
-   *
-   * @param $ JD
-   * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
-  public static IfStatement asIfStatement(final Statement $) {
-    return $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
-  }
-  /**
    * Down-cast, if possible, to {@link BooleanLiteral}
    *
    * @param e JD
@@ -144,6 +134,16 @@ public enum Funcs {
     return !(n instanceof ExpressionStatement) ? null : (ExpressionStatement) n;
   }
   /**
+   * Down-cast, if possible, to {@link IfStatement}
+   *
+   * @param $ JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static IfStatement asIfStatement(final Statement $) {
+    return $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
+  }
+  /**
    * Down-cast, if possible, to {@link InfixExpression}
    *
    * @param e JD
@@ -152,6 +152,16 @@ public enum Funcs {
    */
   public static InfixExpression asInfixExpression(final Expression e) {
     return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
+  }
+  /**
+   * Down-cast, if possible, to {@link MethodInvocation}
+   *
+   * @param e JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static MethodInvocation asMethodInvocation(final Expression e) {
+    return !(e instanceof MethodInvocation) ? null : (MethodInvocation) e;
   }
   /**
    * Convert an {@link Expression} into a {@link PrefixExpression} whose
@@ -163,16 +173,6 @@ public enum Funcs {
    */
   public static PrefixExpression asNot(final Expression e) {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
-  }
-  /**
-   * Down-cast, if possible, to {@link MethodInvocation}
-   *
-   * @param e JD
-   * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
-  public static MethodInvocation asMethodInvocation(final Expression e) {
-    return !(e instanceof MethodInvocation) ? null : (MethodInvocation) e;
   }
   /**
    * Down-cast, if possible, to {@link PrefixExpression}
@@ -203,6 +203,22 @@ public enum Funcs {
    */
   public static Statement asStatement(final ASTNode e) {
     return !(e instanceof Statement) ? null : (Statement) e;
+  }
+  /**
+   * @param root the node whose children we return
+   * @return A list containing all the nodes in the given root's sub tree
+   */
+  public static List<ASTNode> collectDescendants(final ASTNode root) {
+    if (root == null)
+      return null;
+    final List<ASTNode> $ = new ArrayList<>();
+    root.accept(new ASTVisitor() {
+      @Override public void preVisit(final ASTNode node) {
+        $.add(node);
+      }
+    });
+    $.remove(0);
+    return $;
   }
   /**
    * the function checks if all the given assignments has the same left hand
@@ -305,22 +321,6 @@ public enum Funcs {
    */
   public static Operator flip(final Operator o) {
     return !conjugate.containsKey(o) ? o : conjugate.get(o);
-  }
-  /**
-   * @param root the node whose children we return
-   * @return A list containing all the nodes in the given root's sub tree
-   */
-  public static List<ASTNode> collectDescendants(final ASTNode root) {
-    if (root == null)
-      return null;
-    final List<ASTNode> $ = new ArrayList<>();
-    root.accept(new ASTVisitor() {
-      @Override public void preVisit(final ASTNode node) {
-        $.add(node);
-      }
-    });
-    $.remove(0);
-    return $;
   }
   /**
    * Get the containing node by type. Say we want to find the first block that
@@ -507,8 +507,8 @@ public enum Funcs {
       return null;
     final Assignment $ = t.newAssignment();
     $.setOperator(o);
-    $.setRightHandSide(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
-    $.setLeftHandSide(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+    $.setRightHandSide(frugalDuplicate(right));
+    $.setLeftHandSide(frugalDuplicate(left));
     return $;
   }
   /**
@@ -523,7 +523,7 @@ public enum Funcs {
     if (hasNull(t, r, cond, thenStmnt, elseStmnt))
       return null;
     final IfStatement $ = t.newIfStatement();
-    $.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
+    $.setExpression(frugalDuplicate(cond));
     $.setThenStatement(thenStmnt.getParent() == null ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
     $.setElseStatement(elseStmnt.getParent() == null ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
     return $;
@@ -541,8 +541,8 @@ public enum Funcs {
       return null;
     final InfixExpression $ = t.newInfixExpression();
     $.setOperator(o);
-    $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
-    $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+    $.setRightOperand(frugalDuplicate(right));
+    $.setLeftOperand(frugalDuplicate(left));
     return $;
   }
   /**
@@ -557,46 +557,35 @@ public enum Funcs {
     if (hasNull(t, r, o, right, left))
       return null;
     final InfixExpression $ = t.newInfixExpression();
-    $.setLeftOperand(left.getParent() == null ? left : (Expression) r.createCopyTarget(left));
+    $.setLeftOperand(frugalDuplicate(left));
     $.setOperator(o);
-    $.setRightOperand(right.getParent() == null ? right : (Expression) r.createCopyTarget(right));
+    $.setRightOperand(frugalDuplicate(right));
     return $;
   }
   /**
-   * @param t the AST who is to own the new parenthesized conditional expression
    * @param r ASTRewrite for the given AST
    * @param cond the condition
    * @param thenExp the then statement to set in the conditional
    * @param elseExp the else statement to set in the conditional
    * @return a parenthesized conditional expression
    */
-  public static ParenthesizedExpression makeParenthesizedConditionalExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
-    if (hasNull(t, r, cond, thenExp, elseExp))
+  public static ParenthesizedExpression makeParenthesizedConditionalExp(final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
+    if (hasNull(r, cond, thenExp, elseExp))
       return null;
-    final ConditionalExpression $ = t.newConditionalExpression();
-    $.setExpression(cond.getParent() == null ? cond : (Expression) r.createCopyTarget(cond));
-    $.setThenExpression(thenExp.getParent() == null ? thenExp : (Expression) r.createCopyTarget(thenExp));
-    $.setElseExpression(elseExp.getParent() == null ? elseExp : (Expression) r.createCopyTarget(elseExp));
-    return makeParenthesizedExpression(t, $);
-  }
-  /**
-   * @param t the AST who is to own the new return statement
-   * @param exp the expression to put in parenthesis
-   * @return the given expression with parenthesis
-   */
-  public static ParenthesizedExpression makeParenthesizedExpression(final AST t, final Expression exp) {
-    if (hasNull(t, exp))
-      return null;
-    final ParenthesizedExpression $ = t.newParenthesizedExpression();
-    $.setExpression(exp.getParent() == null ? exp : (Expression) duplicate(exp));
-    return $;
+    final ConditionalExpression $ = cond.getAST().newConditionalExpression();
+    $.setExpression(frugalDuplicate(cond));
+    $.setThenExpression(frugalDuplicate(thenExp));
+    $.setElseExpression(frugalDuplicate(elseExp));
+    return makeParenthesizedExpression($);
   }
   /**
    * @param e the expression to put in parenthesis
    * @return the given expression with parenthesis
    */
   public static ParenthesizedExpression makeParenthesizedExpression(final Expression e) {
-    return makeParenthesizedExpression(e.getAST(), e);
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(frugalDuplicate(e));
+    return $;
   }
   /**
    * @param t the AST to own the newly created expression
@@ -610,7 +599,7 @@ public enum Funcs {
       return null;
     final PrefixExpression $ = t.newPrefixExpression();
     $.setOperator(o);
-    $.setOperand(e.getParent() == null ? e : duplicate(e));
+    $.setOperand(frugalDuplicate(e));
     return $;
   }
   /**
@@ -632,7 +621,12 @@ public enum Funcs {
     if (hasNull(t, r))
       return null;
     final ReturnStatement $ = t.newReturnStatement();
-    $.setExpression(e == null || e.getParent() == null ? e : (Expression) r.createCopyTarget(e));
+    $.setExpression(frugalDuplicate(e));
+    return $;
+  }
+  public static Statement makeReturnStatement(final Expression e) {
+    final ReturnStatement $ = e.getAST().newReturnStatement();
+    $.setExpression(frugalDuplicate(e));
     return $;
   }
   /**
@@ -647,7 +641,7 @@ public enum Funcs {
     if (hasNull(t, r, varName, initalizer))
       return null;
     final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
-    $.setInitializer(initalizer.getParent() == null ? initalizer : (Expression) r.createCopyTarget(initalizer));
+    $.setInitializer(frugalDuplicate(initalizer));
     $.setName(varName.getParent() == null ? varName : (SimpleName) r.createCopyTarget(varName));
     return $;
   }
@@ -751,7 +745,7 @@ public enum Funcs {
   public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
     if (hasNull(t, cond))
       return null;
-    return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(t, cond), PrefixExpression.Operator.NOT);
+    return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(cond), PrefixExpression.Operator.NOT);
   }
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
@@ -765,6 +759,9 @@ public enum Funcs {
   }
   private static ReturnStatement asReturn(final Block b) {
     return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
+  }
+  public static Expression frugalDuplicate(final Expression e) {
+    return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)

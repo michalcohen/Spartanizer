@@ -1,8 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;

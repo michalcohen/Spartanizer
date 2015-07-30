@@ -89,7 +89,8 @@ public enum Extract {
     return n == null || !(n instanceof Statement) ? $ : Extract.statementsInto((Statement) n, $);
   }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
-    switch (s.getNodeType()) {
+    int nodeType = s.getNodeType();
+    switch (nodeType) {
       case EMPTY_STATEMENT:
         return $;
       case BLOCK:

@@ -308,7 +308,7 @@ public class Ternarize extends Spartanization {
     return true;
   }
   private static Expression determineNewExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
-    return !Is.booleanLiteral(thenExp) || !Is.booleanLiteral(elseExp) ? makeParenthesizedConditionalExp(t, r, cond, thenExp, elseExp)
+    return !Is.booleanLiteral(thenExp) || !Is.booleanLiteral(elseExp) ? makeParenthesizedConditionalExp(r, cond, thenExp, elseExp)
         : tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue());
   }
   static boolean perhapsAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i) {
@@ -332,7 +332,7 @@ public class Ternarize extends Spartanization {
       final VariableDeclarationFragment prevDecl) {
     if (!isNoNextNoPrevAsgnPossible(i, then, prevAsgn, nextAsgn, prevDecl))
       return false;
-    r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), makeParenthesizedConditionalExp(t, r, i.getExpression(), then.getRightHandSide(), prevDecl.getInitializer())), null);
+    r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), makeParenthesizedConditionalExp(r, i.getExpression(), then.getRightHandSide(), prevDecl.getInitializer())), null);
     r.remove(i, null);
     return true;
   }
@@ -387,7 +387,7 @@ public class Ternarize extends Spartanization {
         return handleNoPrevDecl(t, r, i, then, prevAsgn);
     } else {
       r.replace(prevDecl,
-          makeVarDeclFrag(t, r, (SimpleName) prevAsgn.getLeftHandSide(), makeParenthesizedConditionalExp(t, r, i.getExpression(), then.getRightHandSide(), prevAsgn.getRightHandSide())),
+          makeVarDeclFrag(t, r, (SimpleName) prevAsgn.getLeftHandSide(), makeParenthesizedConditionalExp(r, i.getExpression(), then.getRightHandSide(), prevAsgn.getRightHandSide())),
           null);
       r.remove(i, null);
       r.remove(prevAsgn.getParent(), null);
@@ -430,7 +430,7 @@ public class Ternarize extends Spartanization {
   }
   private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Expression otherAsgnExp) {
     final Expression thenSideExp = Is.plainAssignment(then) ? then.getRightHandSide() : Funcs.makeInfixExpression(r, t, then.getRightHandSide(), InfixExpression.Operator.PLUS, otherAsgnExp);
-    final Expression newCond = makeParenthesizedConditionalExp(t, r, i.getExpression(), thenSideExp, otherAsgnExp);
+    final Expression newCond = makeParenthesizedConditionalExp(r, i.getExpression(), thenSideExp, otherAsgnExp);
     r.replace(i, t.newExpressionStatement(makeAssigment(t, r, then.getOperator(), newCond, then.getLeftHandSide())), null);
   }
   static Range detectIfReturn(final IfStatement i) {
