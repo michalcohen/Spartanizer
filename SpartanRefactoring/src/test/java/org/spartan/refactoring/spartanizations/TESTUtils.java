@@ -59,11 +59,25 @@ public enum TESTUtils {
    * @param statement a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter.
    */
-  public static Statement s(final String statement) {
+  public static Statement asSingle(final String statement) {
     assertThat(statement, notNullValue());
     final ASTNode n = As.STATEMENTS.ast(statement);
     assertThat(n, notNullValue());
     return Extract.singleStatement(n);
+  }
+  /**
+   * Convert a given {@link String} into an {@link statement}, or fail the
+   * current test, if such a conversion is not possible
+   *
+   * @param statement a {@link String} that represents a Java statement
+   * @return an {@link Statement} data structure representing the parameter.
+   */
+  public static Statement s(final String statement) {
+    assertThat(statement, notNullValue());
+    final ASTNode n = As.STATEMENTS.ast(statement);
+    assertThat(statement, n, notNullValue());
+    assertThat(statement, n, instanceOf(Statement.class));
+    return (Statement) n;
   }
   /**
    * Convert a given {@link String} into an {@link ConditionalExpression}, or

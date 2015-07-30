@@ -1,8 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Extract.*;
-import static org.spartan.refactoring.utils.Restructure.statements;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;
@@ -12,7 +10,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -70,7 +69,7 @@ public class Ternarize extends Spartanization {
     };
   }
   static boolean perhapsIfReturn(final AST t, final ASTRewrite r, final IfStatement i) {
-    return asBlock(i.getParent()) != null && treatIfReturn(t, r, i, statements(asBlock(i.getParent())));
+    return asBlock(i.getParent()) != null && treatIfReturn(t, r, i, siblings(i));
   }
   private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> ss) {
     if (!hasReturn(i.getThenStatement()))
@@ -98,7 +97,7 @@ public class Ternarize extends Spartanization {
     return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(t, r, i, $.getExpression(), nextReturn.getExpression());
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
-    r.replace(i, makeReturnStatement(t, r, determineNewExp(t, r, i.getExpression(), thenExp, nextExp)), null);
+    r.replace(i, makeReturnStatement(determineNewExp(t, r, i.getExpression(), thenExp, nextExp)), null);
     r.remove(nextExp.getParent(), null);
     return true;
   }
@@ -159,7 +158,7 @@ public class Ternarize extends Spartanization {
     if (!isDiffListValid(diffList))
       return false;
     final int ifIdx = whichChildAreYou(ifStmt);
-    final Statement possiblePrevDecl = statements(ifStmt.getParent()).get(ifIdx < 1 ? ifIdx : ifIdx - 1);
+    final Statement possiblePrevDecl = Extract.statements(ifStmt.getParent()).get(ifIdx < 1 ? ifIdx : ifIdx - 1);
     boolean wasPrevDeclReplaced = false;
     for (int i = 0; i < diffList.size(); i++) {
       final TwoExpressions diffExps = findSingleDifference(diffList.get(i).then, diffList.get(i).elze);
@@ -175,7 +174,7 @@ public class Ternarize extends Spartanization {
     return true;
   }
   private static int whichChildAreYou(final IfStatement ifStmt) {
-    return statements(ifStmt.getParent()).indexOf(ifStmt);
+    return Extract.statements(ifStmt.getParent()).indexOf(ifStmt);
   }
   private static boolean isDiffListValid(final List<Pair> diffList) {
     if (diffList == null)
@@ -209,7 +208,7 @@ public class Ternarize extends Spartanization {
     if (Is.expressionStatement(diffNodes.then))
       return $;
     return $ == null || !Is.retern(diffNodes.then) ? null //
-        : new TwoExpressions(expression(diffNodes.then), expression(diffNodes.elze));
+        : new TwoExpressions(Extract.expression(diffNodes.then), Extract.expression(diffNodes.elze));
   }
   private static TwoExpressions findDiffExps(final Pair diffNodes) {
     Pair $ = findDiffNodes(diffNodes.then, diffNodes.elze);
@@ -224,12 +223,12 @@ public class Ternarize extends Spartanization {
     return diffExps != null ? isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze)
         : !Is.assignment(then) //
             || !Is.assignment(elze) //
-            || compatible(assignment(then), assignment(elze));
+            || compatible(Extract.assignment(then), Extract.assignment(elze));
   }
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final Expression thenExp, final Expression elseExp) {
     return !Is.assignment(then) || !Is.assignment(elze)//
         ? same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp)) //
-        : compatible(assignment(then), assignment(elze));
+        : compatible(Extract.assignment(then), Extract.assignment(elze));
   }
   private static List<ASTNode> prepareSubTree(final ASTNode n, final Expression e) {
     final List<ASTNode> $ = collectDescendants(n);
@@ -283,7 +282,7 @@ public class Ternarize extends Spartanization {
     final Pair diffNodes = !isExpStmntOrRet(then) ? findDiffNodes(then, elze) : new Pair(then, elze);
     final Expression newExp = determineNewExp(t, r, i.getExpression(), diff.then, diff.elze);
     if (Is.assignment(diffNodes.then) && Is.assignment(diffNodes.elze))
-      if (!compatible(assignment(diffNodes.then), assignment(diffNodes.elze)))
+      if (!compatible(Extract.assignment(diffNodes.then), Extract.assignment(diffNodes.elze)))
         return false;
       else if (canReplacePrevDecl(possiblePrevDecl, diffNodes))
         return handleSubIfDiffAreAsgns(t, r, i, possiblePrevDecl, diffNodes.then, newExp);
@@ -296,13 +295,13 @@ public class Ternarize extends Spartanization {
   }
   private static boolean canReplacePrevDecl(final Statement possiblePrevDecl, final ExpressionStatement thenExpStmt, final ExpressionStatement elseExpStmt) {
     final List<VariableDeclarationFragment> frags = !Is.isVarDeclStmt(possiblePrevDecl) ? null : ((VariableDeclarationStatement) possiblePrevDecl).fragments();
-    final Assignment then = assignment(thenExpStmt);
-    final Assignment elze = assignment(elseExpStmt);
+    final Assignment then = Extract.assignment(thenExpStmt);
+    final Assignment elze = Extract.assignment(elseExpStmt);
     return !hasNull(then, elze, frags) && Is.plainAssignment(then) && compatibleOps(then.getOperator(), elze.getOperator()) && possibleToReplace(then, frags)
         && possibleToReplace(elze, frags);
   }
   private static boolean handleSubIfDiffAreAsgns(final AST t, final ASTRewrite r, final IfStatement i, final Statement possiblePrevDecl, final ASTNode thenNode, final Expression newExp) {
-    final VariableDeclarationFragment prevDecl = getVarDeclFrag(possiblePrevDecl, assignment(thenNode).getLeftHandSide());
+    final VariableDeclarationFragment prevDecl = getVarDeclFrag(possiblePrevDecl, Extract.assignment(thenNode).getLeftHandSide());
     r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), newExp), null);
     r.remove(i, null);
     return true;
@@ -312,15 +311,19 @@ public class Ternarize extends Spartanization {
         : tryToNegateCond(t, r, cond, ((BooleanLiteral) thenExp).booleanValue());
   }
   static boolean perhapsAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i) {
-    return asBlock(i.getParent()) != null && treatAssignIfAssign(t, r, i, statements(asBlock(i.getParent())));
+    return asBlock(i.getParent()) != null && treatAssignIfAssign(t, r, i, siblings(i));
+  }
+  private static List<Statement> siblings(final IfStatement i) {
+    final ASTNode parent = i.getParent();
+    return parent == null ? null : Extract.statements(asBlock(parent));
   }
   private static boolean treatAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> stmts) {
     detectAssignIfAssign(i);
     final int where = stmts.indexOf(i);
-    final Assignment then = assignment(i.getThenStatement());
+    final Assignment then = Extract.assignment(i.getThenStatement());
     if (then == null || i.getElseStatement() != null || where < 1)
       return false;
-    final Assignment prevAsgn = assignment(stmts.get(where - 1));
+    final Assignment prevAsgn = Extract.assignment(stmts.get(where - 1));
     final Assignment nextAsgn = 1 + where >= stmts.size() ? null : Extract.assignment(stmts.get(1 + where));
     final VariableDeclarationFragment prevDecl = findPrevDecl(stmts, where, then, prevAsgn, nextAsgn);
     return tryHandleNextAndPrevAsgnExist(r, i, then, prevAsgn, nextAsgn, prevDecl) //
@@ -387,8 +390,7 @@ public class Ternarize extends Spartanization {
         return handleNoPrevDecl(t, r, i, then, prevAsgn);
     } else {
       r.replace(prevDecl,
-          makeVarDeclFrag(t, r, (SimpleName) prevAsgn.getLeftHandSide(), makeParenthesizedConditionalExp(r, i.getExpression(), then.getRightHandSide(), prevAsgn.getRightHandSide())),
-          null);
+          makeVarDeclFrag(t, r, (SimpleName) prevAsgn.getLeftHandSide(), makeParenthesizedConditionalExp(r, i.getExpression(), then.getRightHandSide(), prevAsgn.getRightHandSide())), null);
       r.remove(i, null);
       r.remove(prevAsgn.getParent(), null);
       return true;
@@ -431,10 +433,10 @@ public class Ternarize extends Spartanization {
   private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Expression otherAsgnExp) {
     final Expression thenSideExp = Is.plainAssignment(then) ? then.getRightHandSide() : Funcs.makeInfixExpression(r, t, then.getRightHandSide(), InfixExpression.Operator.PLUS, otherAsgnExp);
     final Expression newCond = makeParenthesizedConditionalExp(r, i.getExpression(), thenSideExp, otherAsgnExp);
-    r.replace(i, t.newExpressionStatement(makeAssigment(t, r, then.getOperator(), newCond, then.getLeftHandSide())), null);
+    r.replace(i, t.newExpressionStatement(makeAssigment(then.getOperator(), then.getLeftHandSide(), newCond)), null);
   }
   static Range detectIfReturn(final IfStatement i) {
-    return statements(i.getParent()) == null ? null : detectIfReturn(i, statements(i.getParent()));
+    return Extract.statements(i.getParent()) == null ? null : detectIfReturn(i, Extract.statements(i.getParent()));
   }
   private static Range detectIfReturn(final IfStatement s, final List<Statement> ss) {
     return Is.last(s, ss) ? null : detectIfReturn(s.getThenStatement(), s.getElseStatement(), ss, ss.indexOf(s));
@@ -454,10 +456,13 @@ public class Ternarize extends Spartanization {
     return !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
   }
   static Range detectAssignIfAssign(final IfStatement i) {
-    return asBlock(i.getParent()) == null ? null : detectAssignIfAssign(i, statements(asBlock(i.getParent())));
+    return detectAssignIfAssign(asBlock(i.getParent()), i);
+  }
+  private static Range detectAssignIfAssign(final Block parent, final IfStatement i) {
+    return parent == null ? null : detectAssignIfAssign(i, siblings(i));
   }
   private static Range detectAssignIfAssign(final IfStatement i, final List<Statement> ss) {
-    final Assignment then = assignment(i.getThenStatement());
+    final Assignment then = Extract.assignment(i.getThenStatement());
     if (then == null || i.getElseStatement() != null)
       return null;
     final int ifIdx = ss.indexOf(i);

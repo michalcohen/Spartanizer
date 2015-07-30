@@ -221,7 +221,7 @@ public enum Funcs {
     return $;
   }
   /**
-   * the function checks if all the given assignments has the same left hand
+   * the function checks if all the given assignments have the same left hand
    * side(variable) and operator
    *
    * @param base The assignment to compare all others to
@@ -321,6 +321,9 @@ public enum Funcs {
    */
   public static Operator flip(final Operator o) {
     return !conjugate.containsKey(o) ? o : conjugate.get(o);
+  }
+  public static Expression frugalDuplicate(final Expression e) {
+    return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
   /**
    * Get the containing node by type. Say we want to find the first block that
@@ -495,20 +498,37 @@ public enum Funcs {
     return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
   /**
-   * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param o the assignment operator
    * @param right right side of the assignment, usually an expression
    * @param left left side of the assignment, usually a variable name
    * @return the new assignment
    */
-  public static Assignment makeAssigment(final AST t, final ASTRewrite r, final Assignment.Operator o, final Expression right, final Expression left) {
-    if (hasNull(t, r, o, right, left))
+  public static Assignment makeAssigment(final Assignment.Operator o, final Expression left, final Expression right) {
+    if (hasNull(o, right, left))
       return null;
-    final Assignment $ = t.newAssignment();
+    final Assignment $ = right.getAST().newAssignment();
     $.setOperator(o);
     $.setRightHandSide(frugalDuplicate(right));
     $.setLeftHandSide(frugalDuplicate(left));
+    return $;
+  }
+  public static Statement makeExpressionStatement(final Expression e) {
+    return e.getAST().newExpressionStatement(frugalDuplicate(e));
+  }
+  /**
+   * Create a new {@link ConditionalExpression}
+   *
+   * @param condition JD
+   * @param then JD
+   * @param elze JD
+   * @return a newly created, unparenthesized {@link ConditionalExpression} with
+   *         the specified arguments.
+   */
+  public static ConditionalExpression makeConditionalExpression(final Expression condition, final Expression then, final Expression elze) {
+    final ConditionalExpression $ = condition.getAST().newConditionalExpression();
+    $.setExpression(frugalDuplicate(condition));
+    $.setThenExpression(frugalDuplicate(then));
+    $.setElseExpression(frugalDuplicate(elze));
     return $;
   }
   /**
@@ -617,13 +637,6 @@ public enum Funcs {
    * @param e the expression to return in the return statement
    * @return the new return statement
    */
-  public static ReturnStatement makeReturnStatement(final AST t, final ASTRewrite r, final Expression e) {
-    if (hasNull(t, r))
-      return null;
-    final ReturnStatement $ = t.newReturnStatement();
-    $.setExpression(frugalDuplicate(e));
-    return $;
-  }
   public static Statement makeReturnStatement(final Expression e) {
     final ReturnStatement $ = e.getAST().newReturnStatement();
     $.setExpression(frugalDuplicate(e));
@@ -759,9 +772,6 @@ public enum Funcs {
   }
   private static ReturnStatement asReturn(final Block b) {
     return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
-  }
-  public static Expression frugalDuplicate(final Expression e) {
-    return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)

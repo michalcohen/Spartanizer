@@ -100,6 +100,11 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     WringedStatement(final Wring inner) {
       super(inner);
     }
+    @Override protected Statement asStatement() {
+      final Statement $ = asSingle(input);
+      assertNotNull($);
+      return $;
+    }
     @Override protected CompilationUnit asCompilationUnit() {
       final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
       assertThat($, is(notNullValue()));
@@ -117,12 +122,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
     @Test public void eligible() {
       final Statement s = asStatement();
-      assertTrue(inner.eligible(s));
-    }
-    @Test public void eligibleExpanded() {
-      final Statement $ = s(input);
-      assertNotNull($);
-      final Statement s = $;
       assertTrue(inner.eligible(s));
     }
     @Override @Test public void findsSimplifier() {

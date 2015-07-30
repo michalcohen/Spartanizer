@@ -3,16 +3,13 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
@@ -37,38 +34,8 @@ public enum Restructure {
    *         <code><b>null</b></code> if not value exists.
    */
   public static Statement singleStatement(final ASTNode n) {
-    final List<Statement> $ = statements(n);
+    final List<Statement> $ = Extract.statements(n);
     return $.size() != 1 ? null : $.get(0);
-  }
-  /**
-   * Compute a flattened list of statements nested within a statement. This
-   * lists includes only statements nested within plain curly brackets
-   * <code><b>{}</b></code>. Therefore, statements nested within control
-   * statements, e.g., <code><b>for</b></code> and <code><b>if</b></code>, or
-   * within anonymous and inner classes are not flattened here.
-   *
-   * @param s JD
-   * @return a flattened list of all {@link Statement}s found within the
-   *         parameter, or an empty list, if the parameter is not a
-   *         {@link Statement}
-   */
-  public static List<Statement> statements(final ASTNode s) {
-    return statementsInto(asStatement(s), new ArrayList<Statement>());
-  }
-  private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
-    if (Is.block(s))
-      return statementsInto(asBlock(s), $);
-    return Is.emptyStatement(s) ? $ : add(s, $);
-  }
-  private static List<Statement> add(final Statement s, final List<Statement> $) {
-    if (s != null)
-      $.add(s);
-    return $;
-  }
-  private static List<Statement> statementsInto(final Block b, final List<Statement> $) {
-    for (final Object o : b.statements())
-      statementsInto((Statement) o, $);
-    return $;
   }
   /**
    * Flatten the list of arguments to an {@link InfixExpression}, e.g., convert

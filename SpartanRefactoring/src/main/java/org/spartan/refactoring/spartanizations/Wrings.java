@@ -21,6 +21,7 @@ import static org.spartan.utils.Utils.in;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -42,6 +43,51 @@ import org.spartan.refactoring.utils.Is;
  * @since 2015-07-17
  */
 public enum Wrings {
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   a += 3;
+   * else
+   *   a += 9;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * a += x ? 3 : 9;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
+      return true;
+    }
+    @Override boolean scopeIncludes(final Statement s) {
+      final IfStatement i = asIfStatement(s);
+      if (i == null)
+        return false;
+      final Assignment then = Extract.assignment(i.getThenStatement());
+      final Assignment elze = Extract.assignment(i.getElseStatement());
+      return compatible(then, elze);
+    }
+    @Override Statement _replacement(final Statement s) {
+      asBlock(s);
+      final IfStatement i = asIfStatement(s);
+      if (i == null)
+        return null;
+      final Assignment then = Extract.assignment(i.getThenStatement());
+      final Assignment elze = Extract.assignment(i.getElseStatement());
+      if (!compatible(then, elze))
+        return null;
+      final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
+      final Assignment a = makeAssigment(then.getOperator(), then.getLeftHandSide(), e);
+      return makeExpressionStatement(a);
+    }
+  }), //
   /**
    * A {@link Wring} to convert
    *
@@ -76,13 +122,6 @@ public enum Wrings {
         return null;
       final Statement $ = makeReturnStatement(makeConditionalExpression(condition, then, elze));
       System.out.println("Replacing " + s + "BY " + $);
-      return $;
-    }
-    private ConditionalExpression makeConditionalExpression(final Expression condition, final Expression then, final Expression elze) {
-      final ConditionalExpression $ = condition.getAST().newConditionalExpression();
-      $.setExpression(frugalDuplicate(condition));
-      $.setThenExpression(frugalDuplicate(then));
-      $.setElseExpression(frugalDuplicate(elze));
       return $;
     }
     @Override boolean scopeIncludes(final Statement e) {
@@ -340,7 +379,7 @@ public enum Wrings {
     @Override Expression _replacement(final PrefixExpression e) {
       return pushdownNot(asNot(e));
     }
-  }),
+  }), //
   //
   ;
   /**
@@ -377,8 +416,8 @@ public enum Wrings {
   /**
    * Find the first {@link Wring} appropriate for an {@link IfStatement}
    *
-   * @param e JD
-   * @return the first {@link Wring} for which the parameter is eligible, or
+   * @param i JD
+   * @return the first {@link Wring} for which the parameter is within scope, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
   public static Wring find(final Statement i) {
@@ -595,7 +634,7 @@ public enum Wrings {
   }
   static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
-    // Bubble sort, duplicating in each case of swap
+    // Bubble sort
     for (int i = 0, size = es.size(); i < size; i++)
       for (int j = 0; j < size - 1; j++) {
         final Expression e0 = es.get(j);
@@ -603,7 +642,6 @@ public enum Wrings {
         if (c.compare(e0, e1) <= 0)
           continue;
         // Replace locations i,j with e0 and e1
-        es.get(j + 1);
         es.remove(j);
         es.remove(j);
         es.add(j, e0);

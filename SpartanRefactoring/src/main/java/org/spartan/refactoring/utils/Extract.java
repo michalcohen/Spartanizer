@@ -64,7 +64,8 @@ public enum Extract {
    *         statement is not an assignment or the assignment if it exists
    */
   public static Assignment assignment(final ASTNode n) {
-    return asAssignment(Extract.expressionStatement(n));
+    final ExpressionStatement e = Extract.expressionStatement(n);
+    return e == null ? null : asAssignment(e.getExpression());
   }
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link ExpressionStatement}
@@ -78,8 +79,8 @@ public enum Extract {
     return n == null ? null : asExpressionStatement(Extract.singleStatement(n));
   }
   /**
-   * Extract the list of non-empty statements embedded in the first level of a
-   * node.
+   * Extract the list of non-empty statements embedded in node (nesting within
+   * control structure such as <code><b>if</b></code> are not removed.)
    *
    * @param n JD
    * @return the list of such statements.
@@ -89,7 +90,7 @@ public enum Extract {
     return n == null || !(n instanceof Statement) ? $ : Extract.statementsInto((Statement) n, $);
   }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
-    int nodeType = s.getNodeType();
+    final int nodeType = s.getNodeType();
     switch (nodeType) {
       case EMPTY_STATEMENT:
         return $;
