@@ -16,7 +16,6 @@ import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
@@ -38,7 +37,7 @@ import org.spartan.refactoring.utils.Funcs;
 public class RefitTest {
   @Test public void refitDoesNotIntroduceList() {
     final InfixExpression e = i("1+2");
-    final List<Expression> operands = All.operands(Funcs.duplicate(e.getAST(), i("a*b")));
+    final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b")));
     assertThat(operands.size(), is(2));
     final InfixExpression refit = refitOperands(e, operands);
     assertThat(refit.hasExtendedOperands(), is(false));
@@ -46,12 +45,12 @@ public class RefitTest {
   }
   @Test public void refitIsCorrecct() {
     final InfixExpression e = i("1+2+3");
-    final List<Expression> operands = All.operands(Funcs.duplicate(e.getAST(), i("a*b*c")));
+    final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b*c")));
     assertThat(refitOperands(e, operands).toString(), is("a + b + c"));
   }
   @Test public void refitNotNull() {
     final InfixExpression e = i("1+2+3");
-    final List<Expression> operands = All.operands(Funcs.duplicate(e.getAST(), i("a+b+c")));
+    final List<Expression> operands = All.operands(Funcs.duplicate(i("a+b+c")));
     assertThat(refitOperands(e, operands), notNullValue());
   }
   @Test public void refitWithSort() {
@@ -70,9 +69,8 @@ public class RefitTest {
   @Test public void refitPreservesOrder() {
     final InfixExpression e = i("1 + 2 * 3");
     final List<Expression> operands = new ArrayList<>();
-    final AST t = e.getAST();
-    operands.add(duplicate(t, e("3*4")));
-    operands.add(duplicate(t, e("5")));
+    operands.add(duplicate(e("3*4")));
+    operands.add(duplicate(e("5")));
     final InfixExpression refit = refitOperands(e, operands);
     assertThat(refit, is(not(e)));
     assertThat(refit.toString(), is("3 * 4 + 5"));

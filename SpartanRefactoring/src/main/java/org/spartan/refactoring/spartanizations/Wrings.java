@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -31,6 +32,7 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Have;
@@ -62,15 +64,28 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THEN_RETURN_REMOVE_ELSE(new Wring.OfStatement() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
+  IF_THEN_COMMANDS_SEQUENCERS_ELSE_SOMETHING(new Wring.OfStatementAndSurrounding() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
     @Override boolean scopeIncludes(final IfStatement s) {
-      return false;
+      final List<Statement> then = Extract.statements(s.getThenStatement());
+      Extract.statements(s.getElseStatement());
+      final Statement last = last(then);
+      return s.getElseStatement() != null && Is.sequencer(last);
     }
-    @Override Statement _replacement(final Statement s) {
-      return null;
+    @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+      final List<Statement> then = Extract.statements(s.getThenStatement());
+      Extract.statements(s.getElseStatement());
+      final Statement last = last(then);
+      if (s.getElseStatement() != null && Is.sequencer(last))
+        return r;
+      final IfStatement $ = duplicate(s);
+      $.setElseStatement(null);
+      final Block parent = asBlock(s.getParent());
+      if (parent == null)
+        return r;
+      return r;
     }
   }), //
   /**
@@ -93,7 +108,7 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
     @Override boolean scopeIncludes(final IfStatement s) {
@@ -103,7 +118,7 @@ public enum Wrings {
       final Assignment elze = Extract.assignment(s.getElseStatement());
       return compatible(then, elze);
     }
-    @Override Statement _replacement(final Statement s) {
+    @Override Statement _replacement(final IfStatement s) {
       asBlock(s);
       final IfStatement i = asIfStatement(s);
       if (i == null)
@@ -137,29 +152,22 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IF_RETURN_A_ELSE_RETURN_B(new Wring.OfStatement() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final Statement _) {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
-    @Override Statement _replacement(final Statement s) {
-      final IfStatement i = asIfStatement(s);
-      if (i == null)
-        return null;
+    @Override Statement _replacement(final IfStatement i) {
       final Expression condition = i.getExpression();
       final Expression then = Extract.returnExpression(i.getThenStatement());
       final Expression elze = Extract.returnExpression(i.getElseStatement());
       if (then == null || elze == null)
         return null;
-      final Statement $ = makeReturnStatement(makeConditionalExpression(condition, then, elze));
-      System.out.println("Replacing " + s + "BY " + $);
-      return $;
+      return makeReturnStatement(makeConditionalExpression(condition, then, elze));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
       if (i == null)
         return false;
-      final Expression then = Extract.returnExpression(i.getThenStatement());
-      final Expression elze = Extract.returnExpression(i.getElseStatement());
-      return then != null && elze != null;
+      return Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null;
     }
   }), //
   /**

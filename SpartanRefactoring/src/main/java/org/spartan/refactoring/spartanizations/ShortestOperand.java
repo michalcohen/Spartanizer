@@ -125,7 +125,7 @@ public class ShortestOperand extends Spartanization {
   public InfixExpression transpose(final AST t, final InfixExpression e) {
     if (eligible(e))
       flip(e);
-    final InfixExpression $ = duplicate(t, e);
+    final InfixExpression $ = duplicate(e);
     sortInfix($, t);
     return $;
   }

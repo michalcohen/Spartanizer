@@ -396,11 +396,21 @@ public enum Is {
    * <code><b>this</b></code> or literal.
    *
    * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
-   *         statement
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a "specific"
    */
   public static boolean specific(final Expression e) {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+  }
+  /**
+   * Determine whether a node is a "sequencer", i.e., <code><b>return</b></code>
+   * , <code><b>break</b></code>, <code><b>continue</b></code> or
+   * <code><b>throw</b></code>
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a sequencer
+   */
+  public static boolean sequencer(final ASTNode n) {
+    return Is.oneOf(n, RETURN_STATEMENT, BREAK_STATEMENT, CONTINUE_STATEMENT, THROW_STATEMENT);
   }
   /**
    * @param n JD

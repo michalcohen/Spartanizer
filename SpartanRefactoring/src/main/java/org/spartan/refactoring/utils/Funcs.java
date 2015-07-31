@@ -126,7 +126,7 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link ExpressionStatement}
    *
-   * @param nn JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
@@ -279,24 +279,70 @@ public enum Funcs {
         return true;
     return false;
   }
-  public static Expression duplicate(final AST t, final Expression e) {
-    return (Expression) copySubtree(t, e);
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static BooleanLiteral duplicate(final BooleanLiteral b) {
+    return (BooleanLiteral) copySubtree(b.getAST(), b);
   }
-  public static InfixExpression duplicate(final AST t, final InfixExpression e) {
-    return (InfixExpression) copySubtree(t, e);
-  }
-  public static BooleanLiteral duplicate(final BooleanLiteral e) {
-    return (BooleanLiteral) copySubtree(e.getAST(), e);
-  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static Expression duplicate(final Expression e) {
     return (Expression) copySubtree(e.getAST(), e);
   }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static IfStatement duplicate(final IfStatement e) {
+    return (IfStatement) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static InfixExpression duplicate(final InfixExpression e) {
     return (InfixExpression) copySubtree(e.getAST(), e);
   }
+  /**
+   * Make a duplicate of, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static Expression duplicateLeft(final InfixExpression e) {
     return duplicate(e.getLeftOperand());
   }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the right hand side of the
+   * parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static Expression duplicateRight(final InfixExpression e) {
     return duplicate(e.getRightOperand());
   }
