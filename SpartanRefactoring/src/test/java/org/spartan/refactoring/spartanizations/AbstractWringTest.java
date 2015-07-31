@@ -13,16 +13,30 @@ import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.c;
+import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
+import static org.spartan.refactoring.spartanizations.TESTUtils.e;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
+import static org.spartan.refactoring.spartanizations.TESTUtils.p;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
+import static org.spartan.refactoring.spartanizations.TESTUtils.s;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
@@ -34,6 +48,7 @@ import org.junit.Test;
 import org.junit.internal.builders.IgnoredClassRunner;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
+import org.spartan.refactoring.spartanizations.AbstractWringTest.WringedExpression.Infix;
 import org.spartan.refactoring.utils.As;
 import org.spartan.utils.Range;
 
@@ -88,7 +103,221 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     return $;
   }
 
-  public static abstract class WringedStatement extends InScope {
+  public static abstract class Wringed extends InScope {
+    /** Description of a test case for {@link Parameter} annotation */
+    protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
+    /** What should the output be */
+    @Parameter(2) public String expected;
+    Wringed(final Wring inner) {
+      super(inner);
+    }
+
+    public static abstract class IfStatementAndSurrounding extends Wringed {
+      /**
+       * Instantiates the enclosing class ({@link WringedInput})
+       *
+       * @param inner
+       */
+      IfStatementAndSurrounding(final Wring inner) {
+        super(inner);
+      }
+      @Override protected Statement asStatement() {
+        final Statement $ = asSingle(input);
+        assertNotNull($);
+        return $;
+      }
+      @Override protected CompilationUnit asCompilationUnit() {
+        final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+        assertThat($, is(notNullValue()));
+        assertThat($, is(instanceOf(CompilationUnit.class)));
+        return (CompilationUnit) $;
+      }
+      @Override @Test public void correctSimplifier() {
+        assertEquals(inner, Wrings.find(asIfStatement(asStatement())));
+      }
+      @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+        final Document d = new Document(wrapStatement(input));
+        final CompilationUnit u = asCompilationUnit();
+        final ASTRewrite r = wringer.createRewrite(u, null);
+        assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
+      }
+      @Test public void eligible() {
+        final IfStatement s = asIfStatement(asIfStatement(asStatement()));
+        assertTrue(inner.eligible(s));
+      }
+      @Override @Test public void findsSimplifier() {
+        assertNotNull(Wrings.find(asIfStatement(asStatement())));
+      }
+      @Test public void hasOpportunity() {
+        assertTrue(inner.scopeIncludes(asIfStatement(asStatement())));
+        final CompilationUnit u = asCompilationUnit();
+        final List<Range> findOpportunities = wringer.findOpportunities(u);
+        assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+      }
+      @Test public void noneligible() {
+        assertFalse(inner.noneligible(asIfStatement(asStatement())));
+      }
+      @Test public void peelableOutput() {
+        assertEquals(expected, peelStatement(wrapStatement(expected)));
+      }
+      @Test public void scopeIncludes() {
+        assertTrue(inner.scopeIncludes(asIfStatement(asStatement())));
+      }
+      @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
+        final CompilationUnit u = asCompilationUnit();
+        final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
+        final String peeled = peelStatement(excpected.get());
+        if (expected.equals(peeled))
+          return;
+        if (input.equals(peeled))
+          fail("Nothing done on " + input);
+        if (compressSpaces(peeled).equals(compressSpaces(input)))
+          assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
+        assertSimilar(expected, peeled);
+        assertSimilar(wrapStatement(expected), excpected);
+      }
+    }
+
+    public static class Conditional extends WringedExpression {
+      /**
+       * Instantiates the enclosing class ({@link Infix})
+       *
+       * @param w JD
+       */
+      Conditional(final Wring w) {
+        super(w);
+      }
+      @Test public void inputIsConditionalExpression() {
+        assertNotNull(asConditionalExpression());
+      }
+    }
+
+    public static abstract class Infix extends WringedExpression {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Infix(final Wring w) {
+        super(w);
+      }
+      @Test public void flattenIsIdempotentt() {
+        final InfixExpression flatten = flatten(asInfixExpression());
+        assertThat(flatten(flatten).toString(), is(flatten.toString()));
+      }
+      @Test public void hasReplacementAsInfix() {
+        assertNotNull(inner.replacement(asInfixExpression()));
+      }
+      @Test public void inputIsInfixExpression() {
+        assertNotNull(asInfixExpression());
+      }
+    }
+  }
+
+  public static abstract class WringedBlock extends InScope {
+    /** Description of a test case for {@link Parameter} annotation */
+    protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
+    /** What should the output be */
+    @Parameter(2) public String expected;
+    /**
+     * Instantiates the enclosing class ({@link WringedBlock})
+     *
+     * @param inner
+     */
+    WringedBlock(final Wring inner) {
+      super(inner);
+    }
+    @Override protected Block asStatement() {
+      final Statement s = s(input);
+      assertNotNull(s);
+      final Block b = asBlock(s);
+      assertNotNull(b);
+      return b;
+    }
+    @Override protected CompilationUnit asCompilationUnit() {
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+      assertThat($, is(notNullValue()));
+      assertThat($, is(instanceOf(CompilationUnit.class)));
+      return (CompilationUnit) $;
+    }
+    @Override @Test public void correctSimplifier() {
+      assertEquals(inner, Wrings.find(asBlock(asStatement())));
+    }
+    @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+      final Document d = new Document(wrapStatement(input));
+      final CompilationUnit u = asCompilationUnit();
+      final ASTRewrite r = wringer.createRewrite(u, null);
+      assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
+    }
+    @Test public void eligible() {
+      final Block s = asBlock(asStatement());
+      assertTrue(inner.eligible(s));
+    }
+    @Override @Test public void findsSimplifier() {
+      assertNotNull(Wrings.find(asStatement()));
+    }
+    @Test public void hasOpportunity() {
+      assertTrue(inner.scopeIncludes(asStatement()));
+      final CompilationUnit u = asCompilationUnit();
+      final List<Range> findOpportunities = wringer.findOpportunities(u);
+      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+    }
+    @Test public void hasReplacement() {
+      final Block b = asStatement();
+      assertNotNull(inner.replacement(b));
+    }
+    @Test public void noneligible() {
+      assertFalse(inner.noneligible(asStatement()));
+    }
+    @Test public void peelableOutput() {
+      assertEquals(expected, peelStatement(wrapStatement(expected)));
+    }
+    @Test public void scopeIncludes() {
+      assertTrue(inner.scopeIncludes(asStatement()));
+    }
+    @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
+      final CompilationUnit u = asCompilationUnit();
+      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
+      final String peeled = peelStatement(excpected.get());
+      if (expected.equals(peeled))
+        return;
+      if (input.equals(peeled))
+        fail("Nothing done on " + input);
+      if (compressSpaces(peeled).equals(compressSpaces(input)))
+        assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
+      assertSimilar(expected, peeled);
+      assertSimilar(wrapStatement(expected), excpected);
+    }
+
+    public static class Conditional extends WringedExpression {
+      /**
+       * Instantiates the enclosing class ({@link Infix})
+       *
+       * @param w JD
+       */
+      Conditional(final Wring w) {
+        super(w);
+      }
+      @Test public void inputIsConditionalExpression() {
+        assertNotNull(asConditionalExpression());
+      }
+    }
+
+    public static abstract class Infix extends WringedExpression {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Infix(final Wring w) {
+        super(w);
+      }
+      @Test public void flattenIsIdempotentt() {
+        final InfixExpression flatten = flatten(asInfixExpression());
+        assertThat(flatten(flatten).toString(), is(flatten.toString()));
+      }
+      @Test public void hasReplacementAsInfix() {
+        assertNotNull(inner.replacement(asInfixExpression()));
+      }
+      @Test public void inputIsInfixExpression() {
+        assertNotNull(asInfixExpression());
+      }
+    }
+  }
+
+  public static abstract class WringedIfStatement extends InScope {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
     /** What should the output be */
@@ -98,7 +327,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
      *
      * @param inner
      */
-    WringedStatement(final Wring inner) {
+    WringedIfStatement(final Wring inner) {
       super(inner);
     }
     @Override protected Statement asStatement() {
@@ -122,7 +351,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
     }
     @Test public void eligible() {
-      final IfStatement s = asIfStatement(asIfStatement(asStatement()));
+      final IfStatement s = asIfStatement(asStatement());
       assertTrue(inner.eligible(s));
     }
     @Override @Test public void findsSimplifier() {

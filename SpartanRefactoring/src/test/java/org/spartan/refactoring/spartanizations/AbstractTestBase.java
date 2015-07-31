@@ -2,7 +2,11 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
+import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
+
 import org.junit.Test;
 import org.junit.internal.builders.IgnoredClassRunner;
 import org.junit.runner.RunWith;

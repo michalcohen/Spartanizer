@@ -1,6 +1,20 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
+import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.EXPRESSION_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
+import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -309,6 +323,17 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
+  public static Statement duplicate(final Statement e) {
+    return (Statement) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static IfStatement duplicate(final IfStatement e) {
     return (IfStatement) copySubtree(e.getAST(), e);
   }
@@ -534,10 +559,11 @@ public enum Funcs {
   }
   /**
    * @param ts a list
-   * @return the last item in a list
+   * @return the last item in a list or <code><b>null</b></code> if the
+   *         parameter is <code><b>null</b></code> or empty
    */
   public static <T> T last(final List<T> ts) {
-    return ts.get(ts.size() - 1);
+    return ts == null || ts.isEmpty() ? null : ts.get(ts.size() - 1);
   }
   public static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
     final Expression $ = e.getLeftOperand();

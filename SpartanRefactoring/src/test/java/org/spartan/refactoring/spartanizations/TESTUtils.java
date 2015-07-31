@@ -1,8 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -15,6 +15,7 @@ import static org.spartan.utils.Utils.removeSuffix;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
@@ -39,6 +40,8 @@ public enum TESTUtils {
     for (final String[] t : cases)
       if (t != null)
         $.add(t);
+      else
+        break;
     return $;
   }
   /**
@@ -114,7 +117,7 @@ public enum TESTUtils {
   public static Expression e(final String expression) {
     return (Expression) As.EXPRESSION.ast(expression);
   }
-  static final String WHITES = "\\s+";
+  static final String WHITES = "(?m)\\s+";
   static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
       assertEquals(compressSpaces(expected), compressSpaces(actual));
@@ -127,12 +130,9 @@ public enum TESTUtils {
   }
   static String compressSpaces(final String s) {
     String $ = s//
-        .replaceAll("(?m)^[ \t]*\r?\n", "") // Remove empty lines
-        .replaceAll("[ \t]+", " ") // Squeeze whites
-        .replaceAll("[ \t]+$", "") // Remove trailing spaces
-        .replaceAll("^[ \t]+", "") // Remove preliminary spaces
+        .replaceAll("(?m)\\s+", " ") // Squeeze whites
         ;
-    for (final String operator : new String[] { ",", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "^" })
+    for (final String operator : new String[] { ",", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "[\\^]" })
       $ = $ //
           .replaceAll(WHITES + operator, operator) // Preceding whites
           .replaceAll(operator + WHITES, operator) // Trailing whites
@@ -152,8 +152,8 @@ public enum TESTUtils {
       "";
   private static final String POST_STATEMENT = //
   "" + //
-      "}" + //
-      "}" + //
+      "} // END OF METHO\n" + //
+      "} // END OF PACKAGE\n" + //
       "";
   private static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
   private static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;

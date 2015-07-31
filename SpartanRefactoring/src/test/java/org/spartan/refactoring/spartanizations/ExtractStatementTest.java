@@ -8,12 +8,12 @@ import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.s;
-import org.spartan.refactoring.utils.Extract;
 
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.utils.Extract;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //

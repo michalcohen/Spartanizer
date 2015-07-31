@@ -1,10 +1,15 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
+import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
+import static org.spartan.refactoring.utils.Funcs.asAssignment;
+import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
+import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;

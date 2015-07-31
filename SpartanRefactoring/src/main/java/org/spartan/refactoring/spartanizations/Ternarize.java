@@ -1,6 +1,23 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.collectDescendants;
+import static org.spartan.refactoring.utils.Funcs.compatible;
+import static org.spartan.refactoring.utils.Funcs.compatibleNames;
+import static org.spartan.refactoring.utils.Funcs.compatibleOps;
+import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
+import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
+import static org.spartan.refactoring.utils.Funcs.hasReturn;
+import static org.spartan.refactoring.utils.Funcs.makeAssigment;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
+import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.makeVarDeclFrag;
+import static org.spartan.refactoring.utils.Funcs.next;
+import static org.spartan.refactoring.utils.Funcs.prev;
+import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.statementsCount;
+import static org.spartan.refactoring.utils.Funcs.tryToNegateCond;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;
@@ -10,7 +27,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -24,8 +41,9 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
-import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
 

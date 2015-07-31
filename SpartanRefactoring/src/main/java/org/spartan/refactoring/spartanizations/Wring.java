@@ -4,7 +4,14 @@ import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.utils.Range;
 
@@ -23,6 +30,12 @@ public abstract class Wring {
   public Range range(final ASTNode e) {
     return new Range(e);
   }
+  /**
+   * @param b JD
+   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
+   *         the simplification offered by this object.
+   */
+  abstract boolean eligible(final Block b);
   /**
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
@@ -67,6 +80,7 @@ public abstract class Wring {
    */
   abstract boolean go(final ASTRewrite r, final InfixExpression e);
   abstract boolean go(ASTRewrite r, PrefixExpression e);
+  abstract boolean go(ASTRewrite r, Block b);
   /**
    * Determines whether this {@link Wring} object is not applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
@@ -84,6 +98,10 @@ public abstract class Wring {
   final boolean noneligible(final IfStatement s) {
     return !eligible(s);
   }
+  final boolean noneligible(final Block b) {
+    return !eligible(b);
+  }
+  abstract Statement replacement(final Block b);
   abstract Expression replacement(final ConditionalExpression e);
   final Expression replacement(final Expression e) {
     Expression $;
@@ -96,6 +114,7 @@ public abstract class Wring {
   abstract Expression replacement(final InfixExpression e);
   abstract Expression replacement(final PrefixExpression e);
   abstract boolean scopeIncludes(ConditionalExpression e);
+  abstract boolean scopeIncludes(Block b);
   /**
    * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
@@ -172,6 +191,18 @@ public abstract class Wring {
     @Override boolean scopeIncludes(final PrefixExpression e) {
       return false;
     }
+    @Override boolean eligible(final Block b) {
+      return false;
+    }
+    @Override boolean go(final ASTRewrite r, final Block b) {
+      return false;
+    }
+    @Override Statement replacement(final Block b) {
+      return null;
+    }
+    @Override boolean scopeIncludes(final Block b) {
+      return false;
+    }
 
     public static final class Checker extends Defaults {
       // Body of this class must be empty!
@@ -195,6 +226,25 @@ public abstract class Wring {
       return _replacement(e);
     }
     @Override abstract boolean scopeIncludes(final ConditionalExpression e);
+  }
+
+  static abstract class OfBlock extends Defaults {
+    abstract boolean _eligible(final Block e);
+    abstract Statement _replacement(final Block e);
+    @Override final boolean eligible(final Block e) {
+      assert scopeIncludes(e);
+      return _eligible(e);
+    }
+    @Override final boolean go(final ASTRewrite r, final Block b) {
+      if (eligible(b))
+        r.replace(b, replacement(b), null);
+      return true;
+    }
+    @Override final Statement replacement(final Block b) {
+      assert eligible(b);
+      return _replacement(b);
+    }
+    @Override abstract boolean scopeIncludes(final Block b);
   }
 
   static abstract class OfInfixExpression extends Defaults {

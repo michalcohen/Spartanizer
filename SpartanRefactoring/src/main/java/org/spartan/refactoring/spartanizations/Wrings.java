@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import org.spartan.refactoring.utils.Extract;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -11,8 +10,28 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
+import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asNot;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.compatible;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.last;
+import static org.spartan.refactoring.utils.Funcs.makeAssigment;
+import static org.spartan.refactoring.utils.Funcs.makeConditionalExpression;
+import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
+import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
+import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
@@ -35,6 +54,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
 
@@ -49,87 +69,53 @@ public enum Wrings {
    * A {@link Wring} to convert
    *
    * <pre>
-   * if (x)
-   *   a += 3;
-   * else
-   *   a += 9;
+   * {;; g(); {}{;{;{;}};} }
    * </pre>
    *
    * into
    *
    * <pre>
-   * a += x ? 3 : 9;
+   * g();
    * </pre>
    *
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THEN_COMMANDS_SEQUENCERS_ELSE_SOMETHING(new Wring.OfStatementAndSurrounding() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
-    @Override boolean scopeIncludes(final IfStatement s) {
-      final List<Statement> then = Extract.statements(s.getThenStatement());
-      Extract.statements(s.getElseStatement());
-      final Statement last = last(then);
-      return s.getElseStatement() != null && Is.sequencer(last);
-    }
-    @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
-      final List<Statement> then = Extract.statements(s.getThenStatement());
-      Extract.statements(s.getElseStatement());
-      final Statement last = last(then);
-      if (s.getElseStatement() != null && Is.sequencer(last))
-        return r;
-      final IfStatement $ = duplicate(s);
-      $.setElseStatement(null);
-      final Block parent = asBlock(s.getParent());
-      if (parent == null)
-        return r;
-      return r;
-    }
-  }), //
-  /**
-   * A {@link Wring} to convert
-   *
-   * <pre>
-   * if (x)
-   *   a += 3;
-   * else
-   *   a += 9;
-   * </pre>
-   *
-   * into
-   *
-   * <pre>
-   * a += x ? 3 : 9;
-   * </pre>
-   *
-   * @author Yossi Gil
-   * @since 2015-07-29
-   */
-  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
-    @Override boolean scopeIncludes(final IfStatement s) {
-      if (s == null)
+  SIMPLIFY_BLOCK(new Wring.OfBlock() {
+    private boolean identical(final List<Statement> os1 , final List<Statement> os2) {
+      if (os1.size() != os2.size())
         return false;
-      final Assignment then = Extract.assignment(s.getThenStatement());
-      final Assignment elze = Extract.assignment(s.getElseStatement());
-      return compatible(then, elze);
+      for (int i = 0; i < os1.size(); ++i)
+        if (os1.get(i) != os2.get(i))
+          return false;
+      return true;
     }
-    @Override Statement _replacement(final IfStatement s) {
-      asBlock(s);
-      final IfStatement i = asIfStatement(s);
-      if (i == null)
+    private Statement rebuildBlock(final Block b) {
+      final Block $ = b.getAST().newBlock();
+      duplicateInto(Extract.statements(b),$.statements());
+      return $;
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final Block _) {
+      return true;
+    }
+    @Override Statement _replacement(final Block b) {
+      if (b == null)
         return null;
-      final Assignment then = Extract.assignment(i.getThenStatement());
-      final Assignment elze = Extract.assignment(i.getElseStatement());
-      if (!compatible(then, elze))
+      if (identical(Extract.statements(b), b.statements()))
         return null;
-      final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
-      final Assignment a = makeAssigment(then.getOperator(), then.getLeftHandSide(), e);
-      return makeExpressionStatement(a);
+      if (!Is.statement(b.getParent()))
+        return rebuildBlock(b);
+      switch (Extract.statements(b).size()) {
+        case 0:
+          return b.getAST().newEmptyStatement();
+        case 1:
+          return duplicate(Extract.singleStatement(b));
+        default:
+          return rebuildBlock(b);
+      }
+    }
+    @Override boolean scopeIncludes(final Block b) {
+     return !identical(Extract.statements(b), b.statements());
     }
   }), //
   /**
@@ -168,6 +154,118 @@ public enum Wrings {
       if (i == null)
         return false;
       return Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null;
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x) {
+   *   ;
+   *   f();
+   *   return a;
+   * } else {
+   *   ;
+   *   g();
+   *   {
+   *   }
+   * }
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * if (x) {
+   *   f();
+   *   return a;
+   * }
+   * g();
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfStatementAndSurrounding() {
+    private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {
+      for (final Statement t : from)
+        if (t != substitute)
+          duplicateInto(t, to);
+        else {
+          duplicateInto(by1, to);
+          duplicateInto(by2, to);
+        }
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+  @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+      if (s.getElseStatement() == null || !Is.sequencer(last(Extract.statements(s.getThenStatement()))))
+        return r;
+      final IfStatement newlyCreatedIf = duplicate(s);
+      newlyCreatedIf.setElseStatement(null);
+      final List<Statement> remainder = Extract.statements(s.getElseStatement());
+      if (remainder.size() == 0) {
+        r.replace(s, newlyCreatedIf, null);
+        return r;
+      }
+      final Block parent = asBlock(s.getParent());
+      final Block newParent = s.getAST().newBlock();
+      if (parent != null) {
+        addAllReplacing(newParent.statements(), parent.statements(), s, newlyCreatedIf, remainder);
+        r.replace(parent, newParent, null);
+      } else {
+        newParent.statements().add(newlyCreatedIf);
+        newParent.statements().addAll(remainder);
+        r.replace(s, newParent, null);
+      }
+      return r;
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return s.getElseStatement() != null && Is.sequencer(last(Extract.statements(s.getThenStatement())));
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   a += 3;
+   * else
+   *   a += 9;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * a += x ? 3 : 9;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+    @Override Statement _replacement(final IfStatement s) {
+      asBlock(s);
+      final IfStatement i = asIfStatement(s);
+      if (i == null)
+        return null;
+      final Assignment then = Extract.assignment(i.getThenStatement());
+      final Assignment elze = Extract.assignment(i.getElseStatement());
+      if (!compatible(then, elze))
+        return null;
+      final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
+      final Assignment a = makeAssigment(then.getOperator(), then.getLeftHandSide(), e);
+      return makeExpressionStatement(a);
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      if (s == null)
+        return false;
+      final Assignment then = Extract.assignment(s.getThenStatement());
+      final Assignment elze = Extract.assignment(s.getElseStatement());
+      return compatible(then, elze);
     }
   }), //
   /**
@@ -410,7 +508,7 @@ public enum Wrings {
     @Override public String toString() {
       return "Pushdown not";
     }
-    @Override boolean _eligible(final PrefixExpression e) {
+    @Override boolean _eligible(@SuppressWarnings("unused") final PrefixExpression _) {
       return true;
     }
     @Override Expression _replacement(final PrefixExpression e) {
@@ -419,6 +517,21 @@ public enum Wrings {
   }), //
   //
   ;
+  /**
+   * Find the first {@link Wring} appropriate for an {@link IfStatement}
+   *
+   * @param b JD
+   * @return the first {@link Wring} for which the parameter is within scope, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final Block b) {
+    if (b == null)
+      return null;
+    for (final Wrings w : values())
+      if (w.inner.scopeIncludes(b))
+        return w.inner;
+    return null;
+  }
   /**
    * Find the first {@link Wring} appropriate for an
    * {@link ConditionalExpression}

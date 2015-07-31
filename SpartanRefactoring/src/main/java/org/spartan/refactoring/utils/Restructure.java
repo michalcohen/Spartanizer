@@ -25,6 +25,13 @@ import org.eclipse.jdt.core.dom.Statement;
  */
 public enum Restructure {
   ;
+  public static void duplicateInto(final List<Statement> ss, final List<Statement> into) {
+    for (final Statement s : ss)
+      duplicateInto(s, into);
+  }
+  public static void duplicateInto(final Statement s, final List<Statement> into) {
+    into.add(duplicate(s));
+  }
   /**
    * Determine whether a give {@link ASTNode} includes precisely one
    * {@link Statement}, and return this statement.
