@@ -5,10 +5,12 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.rebase;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -25,12 +27,24 @@ import org.eclipse.jdt.core.dom.Statement;
  */
 public enum Restructure {
   ;
-  public static void duplicateInto(final List<Statement> ss, final List<Statement> into) {
-    for (final Statement s : ss)
+  /**
+   * Duplicate all a {@link Statement} in a given list into another list.
+   *
+   * @param from JD
+   * @param into JD
+   */
+  public static void duplicateInto(final List<Statement> from, final List<Statement> into) {
+    for (final Statement s : from)
       duplicateInto(s, into);
   }
-  public static void duplicateInto(final Statement s, final List<Statement> into) {
-    into.add(duplicate(s));
+  /**
+   * Duplicate a {@link Statement} into another list.
+   *
+   * @param from JD
+   * @param into JD
+   */
+  public static void duplicateInto(final Statement from, final List<Statement> into) {
+    into.add(duplicate(from));
   }
   /**
    * Determine whether a give {@link ASTNode} includes precisely one
@@ -79,15 +93,16 @@ public enum Restructure {
    */
   public static InfixExpression refitOperands(final InfixExpression e, final List<Expression> es) {
     assert es.size() >= 2;
-    final InfixExpression $ = e.getAST().newInfixExpression();
+    final AST t = e.getAST();
+    final InfixExpression $ = t.newInfixExpression();
     $.setOperator(e.getOperator());
-    $.setLeftOperand(duplicate(es.get(0)));
-    $.setRightOperand(duplicate(es.get(1)));
+    $.setLeftOperand(rebase(es.get(0), t));
+    $.setRightOperand(rebase(es.get(1), t));
     es.remove(0);
     es.remove(0);
     if (!es.isEmpty())
       for (final Expression operand : es)
-        $.extendedOperands().add(duplicate(operand));
+        $.extendedOperands().add(rebase(operand, t));
     return $;
   }
   /**

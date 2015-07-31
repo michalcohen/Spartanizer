@@ -38,7 +38,7 @@ public enum SIMPLIFY_BLOCK {
         Utils.asArray("Simple if assign", "if (a) a = b; else a = c;"), //
         Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;"), //
         Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
+        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         null);

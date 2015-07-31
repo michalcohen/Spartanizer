@@ -312,6 +312,17 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
+  public static Expression rebase(final Expression e, final AST t) {
+    return (Expression) copySubtree(t, e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static Expression duplicate(final Expression e) {
     return (Expression) copySubtree(e.getAST(), e);
   }

@@ -53,7 +53,7 @@ public enum IF_RETURN_A_ELSE_RETURN_B {
     private static String[][] cases = Utils.asArray(//
         // Literal
         Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", "{return a ? b : c;}"), //
+        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"), //
         null);
     /**
