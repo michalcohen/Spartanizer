@@ -496,8 +496,14 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       public Expression(final Wring inner) {
         super(inner);
       }
-      @Test public void scopeDoesNotInclude() {
+      @Test public void scopeDoesNotIncludeAsExpression() {
         assertThat(inner.scopeIncludes(asExpression()), is(false));
+      }
+      @Test public void scopeDoesNotIncludeAsBlock() {
+        assertThat(inner.scopeIncludes(asBlock(asStatement())), is(false));
+      }
+      @Test public void scopeDoesNotIncludeAsIfStatement() {
+        assertThat(inner.scopeIncludes(asBlock(asStatement())), is(false));
       }
 
       public static abstract class Infix extends OutOfScope.Expression {

@@ -1,5 +1,5 @@
 package org.spartan.refactoring.spartanizations;
-
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -48,6 +48,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
@@ -331,7 +332,59 @@ public enum Wrings {
       return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
     }
   }), //
-  /**
+  ELIMINATE_TERNARY(new Wring.OfConditionalExpression() {
+    @Override boolean _eligible(final ConditionalExpression e) {
+       return true;
+    }
+    @Override Expression _replacement(final ConditionalExpression e) {
+      return duplicate(e.getThenExpression());
+    }
+      @Override boolean scopeIncludes(final ConditionalExpression e) {
+        if (e == null)
+          return false;
+         return same (e.getThenExpression(), e.getElseExpression());
+      }
+    }), //
+  PUSHDOWN_TERNARY(new Wring.OfConditionalExpression() {
+    private Expression match(Expression e1, Expression e2, Expression $) {
+      if (e1.getNodeType() != e2.getNodeType())
+  return null;
+      switch(e1.getNodeType()) {
+        case METHOD_INVOCATION:
+          return match((MethodInvocation)e1,(MethodInvocation)e1,$);
+          default:
+            return null;
+      }
+    }
+    private Expression match(MethodInvocation e1, MethodInvocation e2, Expression $) {
+      if (!same(e1.getName(),e2.getName()))
+          return null;
+      if (e1.arguments().size() != 1) 
+        return null;
+      return 
+      (Expression) e1.arguments().get(0);
+    }
+    private boolean scopeIncludes(Expression thenExpression, Expression elseExpression) {
+      return match (thenExpression, elseExpression, null) != null;
+    }
+    @Override boolean _eligible(final ConditionalExpression e) {
+       return true;
+    }
+    @Override Expression _replacement(final ConditionalExpression e) {
+      return null;
+    }
+      @Override boolean scopeIncludes(final ConditionalExpression e) {
+        if (e == null)
+          return false;
+         Expression thenExpression = e.getThenExpression();
+        Expression elseExpression = e.getElseExpression();
+        return scopeIncludes(thenExpression, elseExpression);
+      }
+
+      
+
+    }), //
+ /**
    * <code>
    * a ? b : c
    * </code> is the same as <code>
@@ -514,7 +567,7 @@ public enum Wrings {
     @Override Expression _replacement(final PrefixExpression e) {
       return pushdownNot(asNot(e));
     }
-  }), //
+  }), 
   //
   ;
   /**
@@ -736,6 +789,9 @@ public enum Wrings {
   }
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(getCore(e.getOperand()));
+  }
+  static boolean same(ASTNode e1, ASTNode e2){
+    return e1 == e2 || e1.getNodeType() == e2.getNodeType() && e1.toString().equals(e2.toString());
   }
   /**
    * Consider an expression <code> a ? b : c </code>; in a sense it is the same
