@@ -22,12 +22,13 @@ import org.spartan.refactoring.preferences.PreferencesFile;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
+  Trimmer(new Trimmer()), //
   AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
   ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
   ForwardDeclaration(new ForwardDeclaration()), //
   InlineSingleUse(new InlineSingleUse()), //
-  OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses kddfrom expression")), //
+  OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses from expression")), //
   PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
   RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
   ShortestBranchFirst(new ShortestBranchFirst()), //
