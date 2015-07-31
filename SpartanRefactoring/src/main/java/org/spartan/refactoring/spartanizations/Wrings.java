@@ -145,15 +145,11 @@ public enum Wrings {
       final Expression condition = i.getExpression();
       final Expression then = Extract.returnExpression(i.getThenStatement());
       final Expression elze = Extract.returnExpression(i.getElseStatement());
-      if (then == null || elze == null)
-        return null;
-      return makeReturnStatement(makeConditionalExpression(condition, then, elze));
+      return (then == null || elze == null ? null : makeReturnStatement(makeConditionalExpression(condition, then, elze)));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
-      if (i == null)
-        return false;
-      return Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null;
+      return (i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null);
     }
   }), //
   /**
