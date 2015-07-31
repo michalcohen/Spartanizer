@@ -151,8 +151,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       @Test public void hasOpportunity() {
         assertTrue(inner.scopeIncludes(asIfStatement(asStatement())));
         final CompilationUnit u = asCompilationUnit();
-        final List<Range> findOpportunities = wringer.findOpportunities(u);
-        assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+        assertThat(u.toString(), wringer.findOpportunities(u).size(), is(greaterThanOrEqualTo(0)));
       }
       @Test public void noneligible() {
         assertFalse(inner.noneligible(asIfStatement(asStatement())));
@@ -246,8 +245,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
     }
     @Test public void eligible() {
-      final Block s = asBlock(asStatement());
-      assertTrue(inner.eligible(s));
+      assertTrue(inner.eligible(asStatement()));
     }
     @Override @Test public void findsSimplifier() {
       assertNotNull(Wrings.find(asStatement()));
@@ -255,12 +253,10 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void hasOpportunity() {
       assertTrue(inner.scopeIncludes(asStatement()));
       final CompilationUnit u = asCompilationUnit();
-      final List<Range> findOpportunities = wringer.findOpportunities(u);
-      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+      assertThat(u.toString(), wringer.findOpportunities(u).size(), is(greaterThanOrEqualTo(0)));
     }
     @Test public void hasReplacement() {
-      final Block b = asStatement();
-      assertNotNull(inner.replacement(b));
+      assertNotNull(inner.replacement(asStatement()));
     }
     @Test public void noneligible() {
       assertFalse(inner.noneligible(asStatement()));

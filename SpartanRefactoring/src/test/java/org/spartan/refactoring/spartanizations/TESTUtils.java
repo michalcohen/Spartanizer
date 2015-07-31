@@ -37,11 +37,11 @@ public enum TESTUtils {
   ;
   static Collection<Object[]> collect(final String[][] cases) {
     final Collection<Object[]> $ = new ArrayList<>(cases.length);
-    for (final String[] t : cases)
-      if (t != null)
-        $.add(t);
-      else
+    for (final String[] t : cases) {
+      if (t == null)
         break;
+      $.add(t);
+    }
     return $;
   }
   /**
@@ -69,7 +69,7 @@ public enum TESTUtils {
     return Extract.singleStatement(n);
   }
   /**
-   * Convert a given {@link String} into an {@link statement}, or fail the
+   * Convert a given {@link String} into an {@link Statement}, or fail the
    * current test, if such a conversion is not possible
    *
    * @param statement a {@link String} that represents a Java statement

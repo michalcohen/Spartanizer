@@ -244,9 +244,9 @@ public class Ternarize extends Spartanization {
             || compatible(Extract.assignment(then), Extract.assignment(elze));
   }
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final Expression thenExp, final Expression elseExp) {
-    return !Is.assignment(then) || !Is.assignment(elze)//
-        ? same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp)) //
-        : compatible(Extract.assignment(then), Extract.assignment(elze));
+    return Is.assignment(then) && Is.assignment(elze)//
+ ? compatible(Extract.assignment(then), Extract.assignment(elze)) //
+     : same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp));
   }
   private static List<ASTNode> prepareSubTree(final ASTNode n, final Expression e) {
     final List<ASTNode> $ = collectDescendants(n);
@@ -297,7 +297,7 @@ public class Ternarize extends Spartanization {
   private static boolean substitute(final AST t, final ASTRewrite r, final IfStatement i, final TwoExpressions diff, final Statement possiblePrevDecl) {
     final Statement elze = singleElse(i);
     final Statement then = singleThen(i);
-    final Pair diffNodes = !isExpStmntOrRet(then) ? findDiffNodes(then, elze) : new Pair(then, elze);
+    final Pair diffNodes = isExpStmntOrRet(then) ? new Pair(then, elze) : findDiffNodes(then, elze);
     final Expression newExp = determineNewExp(t, r, i.getExpression(), diff.then, diff.elze);
     if (Is.assignment(diffNodes.then) && Is.assignment(diffNodes.elze))
       if (!compatible(Extract.assignment(diffNodes.then), Extract.assignment(diffNodes.elze)))
