@@ -139,7 +139,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_RETURN_A_ELSE_RETURN_B(new Wring.OfStatement() {
+  IF_RETURN_A_ELSE_RETURN_B(new Wring.OfIfStatement() {
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
@@ -183,7 +183,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfStatementAndSurrounding() {
+  IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSurrounding() {
     private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {
       for (final Statement t : from)
         if (t != substitute)
@@ -213,7 +213,7 @@ public enum Wrings {
         r.replace(parent, newParent, null);
       } else {
         newParent.statements().add(newlyCreatedIf);
-        newParent.statements().addAll(remainder);
+        duplicateInto(remainder, newParent.statements());
         r.replace(s, newParent, null);
       }
       return r;
@@ -241,7 +241,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
+  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfIfStatement() {
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }

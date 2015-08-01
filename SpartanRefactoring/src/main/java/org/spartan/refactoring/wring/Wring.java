@@ -284,7 +284,7 @@ public abstract class Wring {
     }
   }
 
-  static abstract class OfStatement extends Wring.Defaults {
+  static abstract class OfIfStatement extends Wring.Defaults {
     abstract boolean _eligible(final IfStatement s);
     abstract Statement _replacement(final IfStatement s);
     @Override final boolean eligible(final IfStatement s) {
@@ -302,7 +302,7 @@ public abstract class Wring {
     }
   }
 
-  static abstract class OfStatementAndSurrounding extends Wring.Defaults {
+  static abstract class OfIfStatementAndSurrounding extends Wring.Defaults {
     abstract boolean _eligible(final IfStatement s);
     @Override final boolean eligible(final IfStatement s) {
       assert scopeIncludes(s);

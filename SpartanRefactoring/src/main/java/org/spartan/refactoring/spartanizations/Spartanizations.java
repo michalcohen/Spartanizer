@@ -25,17 +25,17 @@ import org.spartan.refactoring.wring.Wrings;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
+  SequencerEndingThen(new AsRefactoring(IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch ends with a sequencer", "Eliminate redundant else")), //
   // Trimmer(new Trimmer()), //
   // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
   // ternary", "in cases")), //
   // PushdownTernary(new AsRefactoring(PUSHDOWN_TERNARY.inner, "pushdown
-  // ternary", "pushdownternary")), //
+  // ternary", "???")), //
   IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true", "remove trues from expression")), //
-  // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
-  // expression")), //
+  AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
   ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  ForwardDeclaration(new ForwardDeclaration()), //
+  // ForwardDeclaration(new ForwardDeclaration()), //
   InlineSingleUse(new InlineSingleUse()), //
   OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses from expression")), //
   PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
@@ -117,9 +117,10 @@ public enum Spartanizations {
     final boolean useAll = str == null;
     int i = 0;
     for (final Spartanization rule : allAvailableSpartanizations()) {
-      if (useAll || str != null && str.length >= i + offset && !ignored(str[i + offset]))
-        put(rule);
-      i++;
+      // if (useAll || str != null && str.length >= i + offset && !ignored(str[i
+      // + offset]))
+      put(rule);
+      // i++;
     }
     put(new SimplifyLogicalNegation());
   }
