@@ -595,6 +595,20 @@ public enum Wrings {
     return null;
   }
   /**
+   * Find the first {@link Wring} appropriate for an {@link Statement}
+   *
+   * @param s JD
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final Statement s) {
+    Wring $;
+    return ($ = find(asIfStatement(s))) != null//
+        || ($ = find(asBlock(s))) != null//
+            //
+            ? $ : null;
+  }
+  /**
    * Find the first {@link Wring} appropriate for an {@link Expression}
    *
    * @param e JD
