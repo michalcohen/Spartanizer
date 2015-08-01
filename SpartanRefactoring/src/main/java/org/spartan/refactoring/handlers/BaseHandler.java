@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -26,7 +27,7 @@ import org.spartan.refactoring.spartanizations.Wizard;
  * @since 2013/07/01
  */
 public abstract class BaseHandler extends AbstractHandler {
-  private static ICompilationUnit getCompilationUnit() {
+  static ICompilationUnit getCompilationUnit() {
     return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
   }
   private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
@@ -41,6 +42,10 @@ public abstract class BaseHandler extends AbstractHandler {
   private final Spartanization refactoring;
   protected BaseHandler(final Spartanization refactoring) {
     this.refactoring = refactoring;
+  }
+  public void executeWithoutDialog() {
+    final IMarkerResolution mr = refactoring.getFix();// .run(null);
+    mr.toString();
   }
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     try {
