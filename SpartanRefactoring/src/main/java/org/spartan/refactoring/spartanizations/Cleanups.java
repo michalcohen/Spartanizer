@@ -1,5 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
+import org.spartan.refactoring.wring.Wrings;
+
 public class Cleanups {
   ;
   public static AsCleanup[] all = { //

@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.wring.ExpressionComparator;
 
 /**
  * Test class for {@link ExpressionComparator}

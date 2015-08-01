@@ -1,8 +1,9 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.spartanizations.Wrings.*;
-import static org.spartan.refactoring.spartanizations.Wrings.OR_FALSE;
-import static org.spartan.refactoring.spartanizations.Wrings.PUSHDOWN_NOT;
+import static org.spartan.refactoring.wring.Wrings.AND_TRUE;
+import static org.spartan.refactoring.wring.Wrings.ELIMINATE_TERNARY;
+import static org.spartan.refactoring.wring.Wrings.OR_FALSE;
+import static org.spartan.refactoring.wring.Wrings.PUSHDOWN_NOT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.spartan.refactoring.preferences.PreferencesFile;
+import org.spartan.refactoring.wring.AsRefactoring;
+import org.spartan.refactoring.wring.Wrings;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)

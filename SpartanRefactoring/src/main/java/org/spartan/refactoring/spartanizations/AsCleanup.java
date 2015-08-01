@@ -1,5 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
+import org.spartan.refactoring.wring.Wring;
+
 /**
  * An adapter which makes it possible to use a single @{link Wring} as a
  * {@link Cleanup}

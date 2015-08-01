@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.utils.Range;
 
 /**
@@ -23,8 +24,14 @@ import org.spartan.utils.Range;
  */
 public class AsRefactoring extends Spartanization {
   final Wring inner;
-  /** Instantiates this class */
-  AsRefactoring(final Wring inner, final String name, final String description) {
+  /**
+   * Instantiates this class
+   * 
+   * @param inner
+   * @param name
+   * @param description
+   */
+  public AsRefactoring(final Wring inner, final String name, final String description) {
     super(name, description);
     this.inner = inner;
   }

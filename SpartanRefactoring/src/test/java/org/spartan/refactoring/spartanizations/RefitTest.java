@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Funcs;
+import org.spartan.refactoring.wring.ExpressionComparator;
+import org.spartan.refactoring.wring.Wrings;
 
 /**
  * Test suite for {@link Wrings}

@@ -1,6 +1,7 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -8,8 +9,9 @@ import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +29,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
+import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
 import org.spartan.utils.Utils;
 
 /**
@@ -37,10 +40,30 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum MULTIPLICATION_SORTER {
-  ;
+@SuppressWarnings({ "javadoc", "static-method" }) //
+public class MULTIPLICATION_SORTER extends AbstractWringTest {
+  static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
+  static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
+  MULTIPLICATION_SORTER() {
+    super(WRING);
+  }
+  @Test public void legibleOnShorterChainParenthesisComparisonLast() {
+    assertLegible("z * 2 * a * b * c * d * e * f * g * h");
+  }
+  @Test public void oneMultiplication0() {
+    final InfixExpression e = i("f(a,b,c,d) ^ f(a,b,c)");
+    assertEquals("f(a,b,c)", e.getRightOperand().toString());
+    final Wring s = Wrings.find(e);
+    assertEquals(s, MULTIPLICATION_SORTER.inner);
+    assertNotNull(s);
+    assertTrue(s.scopeIncludes(e));
+    assertTrue(s.eligible(e));
+    final Expression replacement = s.replacement(e);
+    assertNotNull(replacement);
+    assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
+  }
+
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
@@ -160,6 +183,4 @@ public enum MULTIPLICATION_SORTER {
       assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
     }
   }
-  static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
-  static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
 }

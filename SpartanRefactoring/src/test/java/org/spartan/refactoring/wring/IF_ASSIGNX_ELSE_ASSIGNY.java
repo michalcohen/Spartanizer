@@ -1,16 +1,27 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.junit.Assert.assertNotNull;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
+import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.compatible;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
 /**
@@ -19,11 +30,23 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings("javadoc") //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum SIMPLIFY_BLOCK {
-  ;
-  static final Wring WRING = Wrings.SIMPLIFY_BLOCK.inner;
+@RunWith(BlockJUnit4ClassRunner.class) //
+public class IF_ASSIGNX_ELSE_ASSIGNY {
+  static final Wring WRING = Wrings.IF_ASSIGNX_ELSE_ASSIGNY.inner;
+  @Test public void checkSteps() {
+    final Statement s = asSingle("if (a) a = b; else a = c;");
+    assertNotNull(s);
+    final IfStatement i = asIfStatement(s);
+    assertNotNull(i);
+    final Assignment then = Extract.assignment(i.getThenStatement());
+    assertNotNull(i.getThenStatement().toString(), then);
+    final Assignment elze = Extract.assignment(i.getElseStatement());
+    assertNotNull(elze);
+    assertThat(compatible(then, elze), is(true));
+    assertThat(WRING.scopeIncludes(i), is(true));
+  }
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
@@ -35,13 +58,11 @@ public enum SIMPLIFY_BLOCK {
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         Utils.asArray("Not same assignment", "if (a) a /= b; else a /= c;"), //
         Utils.asArray("Another distinct assignment", "if (a) a /= b; else a %= c;"), //
-        Utils.asArray("Simple if assign", "if (a) a = b; else a = c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         null);
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
+    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -52,23 +73,16 @@ public enum SIMPLIFY_BLOCK {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
   }
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.WringedBlock {
+  public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("Empty", "{;;}", ""), //
-        Utils.asArray("Complex empty", "{;;{;{{}}}{;}{};}", ""), //
-        Utils.asArray("Deeply nested return", " {{{;return c;};;};}", " return c;"), //
-        Utils.asArray("Singleton", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
-        Utils.asArray("Complex singleton", "{;{{;;return b; }}}", " return b;"), //
-        Utils.asArray("Three statements ", "{i++;{{;;return b; }}j++;}", " i++;return b;j++;"), //
+        Utils.asArray("Simple if assign", "if (a) a = b; else a = c;", "a = a ? b : c;"), //
+        Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;", "a += a ? b : c;"), //
+        Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;", "a *= a ? b : c;"), //
         null);
     /**
      * Generate test cases for this parameterized class.

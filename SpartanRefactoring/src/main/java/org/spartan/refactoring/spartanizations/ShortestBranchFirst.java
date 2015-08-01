@@ -9,7 +9,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.spartanizations.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeIfStmnt;
 import static org.spartan.refactoring.utils.Funcs.makeInfixExpression;
@@ -17,6 +16,7 @@ import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalEx
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.statementsCount;
+import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -112,7 +112,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         ? makePrefixExpression(t, e, NOT) //
         : (Expression) r.createCopyTarget(asPrefixExpression(e).getOperand());
   }
-  static Operator negate(final Operator o) {
+  public static Operator negate(final Operator o) {
     return !negate.containsKey(o) ? null : negate.get(o);
   }
   private static Map<Operator, Operator> makeNegation() {

@@ -1,12 +1,14 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.leftMoveableToRight;
 import static org.spartan.refactoring.utils.Funcs.remake;
@@ -25,9 +27,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Noneligible;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
 
 /**
@@ -38,8 +41,48 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum COMPARISON_WITH_SPECIFIC {
-  ;
+public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
+  /** Instantiates this class */
+  public COMPARISON_WITH_SPECIFIC() {
+    super(WRING);
+  }
+  @Test public void comparisonWithSpecificNoChange() {
+    assertNoChange("a != this");
+    assertNoChange("a != null");
+    assertNoChange("a == this");
+    assertNoChange("a == null");
+    assertNoChange("a <= this");
+    assertNoChange("a <= null");
+    assertNoChange("a >= this");
+    assertNoChange("a >= null");
+  }
+  @Test public void comparisonWithSpecificNoChangeWithLongEpxressions() {
+    assertNoChange("very(complicate,func,-ction,call) != this");
+    assertNoChange("very(complicate,func,-ction,call) != null");
+    assertNoChange("very(complicate,func,-ction,call) == this");
+    assertNoChange("very(complicate,func,-ction,call) == null");
+    assertNoChange("very(complicate,func,-ction,call) <= this");
+    assertNoChange("very(complicate,func,-ction,call) <= null");
+    assertNoChange("very(complicate,func,-ction,call) >= this");
+    assertNoChange("very(complicate,func,-ction,call) >= null");
+  }
+  @Test public void comparisonWithSpecific0Legibiliy1() {
+    assertTrue(Is.specific(i("this != a").getLeftOperand()));
+    assertNotLegible("a != this");
+  }
+  @Test public void comparisonWithSpecific0Legibiliy1withinScope() {
+    assertNotWithinScope("this != a");
+  }
+  @Test public void comparisonWithSpecific0Legibiliy2() {
+    assertTrue(Is.specific(i("this != a").getLeftOperand()));
+    assertLegible("this != a");
+  }
+  @Test public void comparisonWithSpecific0z0() {
+    assertWithinScope("this != a");
+  }
+  @Test public void comparisonWithSpecific0z1() {
+    assertLegible("this != a");
+  }
   static final Wring WRING = Wrings.COMPARISON_WITH_SPECIFIC.inner;
 
   @RunWith(Parameterized.class) //

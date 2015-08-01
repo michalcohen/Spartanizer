@@ -1,11 +1,11 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.TESTUtils.asExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
-import static org.spartan.refactoring.spartanizations.Wrings.MULTIPLICATION_SORTER;
+import static org.spartan.refactoring.spartanizations.TESTUtils.i;
+import static org.spartan.refactoring.wring.TrimmerTest.assertSimplifiesTo;
+import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -31,7 +31,7 @@ public class SimplificationEngineTestChainExpressions {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   @Test public void chainComparison0() {
-    final InfixExpression e = (InfixExpression) asExpression("a == true == b == c");
+    final InfixExpression e = i("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
     final Wring s = Wrings.find(e);
     assertEquals(s, MULTIPLICATION_SORTER);
@@ -41,17 +41,5 @@ public class SimplificationEngineTestChainExpressions {
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("a == b == c", replacement);
-  }
-  @Test public void longChainComparison() {
-    assertSimplifiesTo("a == b == c == d", "a == b == c == d");
-  }
-  @Test public void longChainParenthesisComparison() {
-    assertSimplifiesTo("(a == b == c) == d", "d == (a == b == c)");
-  }
-  @Test public void longChainParenthesisNotComparison() {
-    assertSimplifiesTo("(a == b == c) != d", "d != (a == b == c )");
-  }
-  @Test public void longerChainParenthesisComparison() {
-    assertSimplifiesTo("(a == b == c == d == e) == d", "d == (a == b == c == d == e)");
   }
 }

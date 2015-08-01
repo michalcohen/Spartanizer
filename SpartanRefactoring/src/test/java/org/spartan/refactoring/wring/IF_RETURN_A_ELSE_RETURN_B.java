@@ -1,6 +1,4 @@
-package org.spartan.refactoring.spartanizations;
-
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
+package org.spartan.refactoring.wring;
 
 import java.util.Collection;
 
@@ -9,8 +7,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.Wringed;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
 /**

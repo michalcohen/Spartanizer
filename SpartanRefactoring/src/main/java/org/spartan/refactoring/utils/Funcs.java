@@ -148,13 +148,23 @@ public enum Funcs {
     return !(n instanceof ExpressionStatement) ? null : (ExpressionStatement) n;
   }
   /**
+   * Down-cast, if possible, to {@link Expression}
+   *
+   * @param n JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static Expression asExpression(final ASTNode n) {
+    return !(n instanceof Expression) ? null : (Expression) n;
+  }
+  /**
    * Down-cast, if possible, to {@link IfStatement}
    *
    * @param $ JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
-  public static IfStatement asIfStatement(final Statement $) {
+  public static IfStatement asIfStatement(final ASTNode $) {
     return $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
   }
   /**
@@ -382,7 +392,7 @@ public enum Funcs {
   public static Expression duplicateRight(final InfixExpression e) {
     return duplicate(e.getRightOperand());
   }
-  public static Expression find(final boolean b, final List<Expression> es) {
+  private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)
       if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
         return e;
