@@ -336,10 +336,9 @@ public enum Wrings {
       return duplicate(e.getThenExpression());
     }
       @Override boolean scopeIncludes(final ConditionalExpression e) {
-        if (e == null)
-          return false;
-         return same (e.getThenExpression(), e.getElseExpression());
+        return (e != null && same(e.getThenExpression(), e.getElseExpression()));
       }
+      
     }), //
   PUSHDOWN_TERNARY(new Wring.OfConditionalExpression() {
     private Expression match(Expression e1, Expression e2, Expression $) {
@@ -355,10 +354,7 @@ public enum Wrings {
     private Expression match(MethodInvocation e1, MethodInvocation e2, Expression $) {
       if (!same(e1.getName(),e2.getName()))
           return null;
-      if (e1.arguments().size() != 1) 
-        return null;
-      return 
-      (Expression) e1.arguments().get(0);
+      return (e1.arguments().size() != 1 ? null : (Expression) e1.arguments().get(0));
     }
     private boolean scopeIncludes(Expression thenExpression, Expression elseExpression) {
       return match (thenExpression, elseExpression, null) != null;

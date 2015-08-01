@@ -79,9 +79,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     assertNotNull($);
     return $;
   }
-  protected Document asDocument() {
-    return new Document(wrapExpression(input));
-  }
+  protected abstract Document asDocument();
   protected Expression asExpression() {
     final Expression $ = e(input);
     assertNotNull($);
@@ -136,10 +134,11 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertEquals(inner, Wrings.find(asIfStatement(asStatement())));
       }
       @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-        final Document d = new Document(wrapStatement(input));
-        final CompilationUnit u = asCompilationUnit();
-        final ASTRewrite r = wringer.createRewrite(u, null);
-        assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
+        final Document d = asDocument();
+        assertThat(makeRewrite().rewriteAST(d, null).apply(d), is(notNullValue()));
+      }
+      private ASTRewrite makeRewrite() {
+        return wringer.createRewrite((asCompilationUnit()), null);
       }
       @Test public void eligible() {
         final IfStatement s = asIfStatement(asIfStatement(asStatement()));
@@ -164,7 +163,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       }
       @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
         final CompilationUnit u = asCompilationUnit();
-        final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
+        final Document excpected = TESTUtils.rewrite(wringer, u, asDocument());
         final String peeled = peelStatement(excpected.get());
         if (expected.equals(peeled))
           return;
@@ -221,6 +220,9 @@ public abstract class AbstractWringTest extends AbstractTestBase {
      */
     WringedBlock(final Wring inner) {
       super(inner);
+    }
+    protected Document asDocument() {
+      return new Document(wrapStatement(input));
     }
     @Override protected Block asStatement() {
       final Statement s = s(input);
@@ -325,6 +327,9 @@ public abstract class AbstractWringTest extends AbstractTestBase {
      */
     WringedIfStatement(final Wring inner) {
       super(inner);
+    }
+    protected Document asDocument() {
+      return new Document(wrapStatement(input));
     }
     @Override protected Statement asStatement() {
       final Statement $ = asSingle(input);

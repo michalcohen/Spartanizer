@@ -144,10 +144,8 @@ public class ComparisonWithSpecificTest {
     final Document d = new Document(P0);
     assertNotNull(d);
     final ComparisonWithSpecific s = inner();
-    final Document rewrite;
     s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-    rewrite = d;
-    assertSimilar(expected, rewrite);
+    assertSimilar(expected, d);
   }
   @Test public void one2true5() {
     final Document d = new Document(P0);
