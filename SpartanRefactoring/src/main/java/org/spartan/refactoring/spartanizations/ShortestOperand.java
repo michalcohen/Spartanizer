@@ -306,6 +306,6 @@ public class ShortestOperand extends Spartanization {
         && !inRightOperandExceptions(s, o);
   }
   private static boolean sortExpressionList(final List<Expression> es, final AST t, final Operator o) {
-    return moveMethodsToTheBack(es, t, o) | sortOperandList(es, t, o);
+    return moveMethodsToTheBack(es, t, o) || sortOperandList(es, t, o);
   }
 }

@@ -86,9 +86,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
       return null;
     Expression then = getCore(e.getThenExpression());
     Expression elze = getCore(e.getElseExpression());
-    if (Wrings.same(then, elze))
-      return null;
-    return pushdown(e, then, elze);
+    return (Wrings.same(then, elze) ? null : pushdown(e, then, elze));
   }
   private Expression pushdown(ConditionalExpression e, Expression e1, Expression e2) {
     if (e1.getNodeType() != e2.getNodeType())

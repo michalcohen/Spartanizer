@@ -40,9 +40,9 @@ public class ComparisonWithBoolean extends Spartanization {
         if (Is.booleanLiteral(n.getRightOperand()) && !Is.booleanLiteral(n.getLeftOperand())) {
           nonliteral = r.createMoveTarget(n.getLeftOperand());
           literal = (BooleanLiteral) n.getRightOperand();
-        } else if (!Is.booleanLiteral(n.getLeftOperand()) && !Is.booleanLiteral(n.getRightOperand()))
-          return true;
-        else {
+        } else {
+          if (!Is.booleanLiteral(n.getLeftOperand()) && !Is.booleanLiteral(n.getRightOperand()))
+            return true;
           nonliteral = r.createMoveTarget(n.getRightOperand());
           literal = (BooleanLiteral) n.getLeftOperand();
         }
