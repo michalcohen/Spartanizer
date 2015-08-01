@@ -44,6 +44,18 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class MULTIPLICATION_SORTER extends AbstractWringTest {
   static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
+  @Test public void chainComparison0() {
+    final InfixExpression e = i("a == true == b == c");
+    assertEquals("c", e.getRightOperand().toString());
+    final Wring s = Wrings.find(e);
+    assertEquals(s, MULTIPLICATION_SORTER);
+    assertNotNull(s);
+    assertTrue(s.scopeIncludes(e));
+    assertTrue(s.eligible(e));
+    final Expression replacement = s.replacement(e);
+    assertNotNull(replacement);
+    assertEquals("a == b == c", replacement);
+  }
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
   MULTIPLICATION_SORTER() {
     super(WRING);

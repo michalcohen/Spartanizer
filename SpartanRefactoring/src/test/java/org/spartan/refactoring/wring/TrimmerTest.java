@@ -13,6 +13,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
 import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
+import static org.spartan.refactoring.wring.TrimmerTest.assertSimplifiesTo;
 import static org.spartan.refactoring.wring.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 import static org.spartan.utils.Utils.hasNull;
@@ -234,7 +235,7 @@ public class TrimmerTest {
     assertEquals(COMPARISON_WITH_SPECIFIC.inner, Wrings.find(i("null != a")));
   }
   @Test public void shorterChainParenthesisComparisonLast() {
-    assertSimplifiesTo("b == a * b * c * d * e * f * g * h == a", "a * b * c * d * e * f * g * h == b");
+    assertNoChange("b == a * b * c * d * e * f * g * h == a");
   }
   @Test public void simplifiesTo() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
@@ -246,15 +247,21 @@ public class TrimmerTest {
     assertSimplifiesTo("f(a,b,c,d) & f()", "f() & f(a,b,c,d)");
   }
   @Test public void longChainComparison() {
-    assertSimplifiesTo("a == b == c == d", "a == b == c == d");
+    assertNoChange("a == b == c == d");
   }
   @Test public void longChainParenthesisComparison() {
-    assertSimplifiesTo("(a == b == c) == d", "d == (a == b == c)");
+    assertNoChange("(a == b == c) == d");
   }
   @Test public void longChainParenthesisNotComparison() {
-    assertSimplifiesTo("(a == b == c) != d", "d != (a == b == c )");
+    assertNoChange("(a == b == c) != d");
   }
   @Test public void longerChainParenthesisComparison() {
-    assertSimplifiesTo("(a == b == c == d == e) == d", "d == (a == b == c == d == e)");
+    assertNoChange("(a == b == c == d == e) == d");
+  }
+  @Test public void shorterChainParenthesisComparison() {
+    assertNoChange("a == b == c");
+  }
+  @Test public void chainComparison() {
+    assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
 }
