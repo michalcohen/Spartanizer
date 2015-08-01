@@ -1,7 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.wring.Wrings.AND_TRUE;
-import static org.spartan.refactoring.wring.Wrings.ELIMINATE_TERNARY;
+import static org.spartan.refactoring.wring.Wrings.*;
 import static org.spartan.refactoring.wring.Wrings.OR_FALSE;
 import static org.spartan.refactoring.wring.Wrings.PUSHDOWN_NOT;
 
@@ -26,10 +26,13 @@ import org.spartan.refactoring.wring.Wrings;
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
   // Trimmer(new Trimmer()), //
-  EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate ternary", "in cases")), //
+  // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
+  // ternary", "in cases")), //
   // PushdownTernary(new AsRefactoring(PUSHDOWN_TERNARY.inner, "pushdown
   // ternary", "pushdownternary")), //
-  AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
+  IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true", "remove trues from expression")), //
+  // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
+  // expression")), //
   ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
   ForwardDeclaration(new ForwardDeclaration()), //
