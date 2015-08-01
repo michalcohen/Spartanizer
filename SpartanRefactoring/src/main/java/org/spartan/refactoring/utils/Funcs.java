@@ -38,9 +38,11 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
@@ -52,6 +54,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -126,6 +129,16 @@ public enum Funcs {
    */
   public static ConditionalExpression asConditionalExpression(final ASTNode n) {
     return !(n instanceof ConditionalExpression) ? null : (ConditionalExpression) n;
+  }
+  /**
+   * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
+   *
+   * @param n JD
+   * @return the argument, but down-casted to a {@link ConditionalExpression},
+   *         or <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static ThrowStatement asThrowStatement(final ASTNode n) {
+    return !(n instanceof ThrowStatement) ? null : (ThrowStatement) n;
   }
   /**
    * Down-cast, if possible, to {@link ConditionalExpression}
@@ -346,6 +359,28 @@ public enum Funcs {
    */
   public static Expression duplicate(final Expression e) {
     return (Expression) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static ClassInstanceCreation duplicate(final ClassInstanceCreation e) {
+    return (ClassInstanceCreation) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static FieldAccess duplicate(final FieldAccess e) {
+    return (FieldAccess) copySubtree(e.getAST(), e);
   }
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
@@ -752,6 +787,17 @@ public enum Funcs {
     return $;
   }
   /**
+   * @param t the AST who is to own the new return statement
+   * @param r ASTRewrite for the given AST
+   * @param e the expression to return in the return statement
+   * @return the new return statement
+   */
+  public static ThrowStatement makeThrowStatement(final Expression e) {
+    final ThrowStatement $ = e.getAST().newThrowStatement();
+    $.setExpression(frugalDuplicate(e));
+    return $;
+  }
+  /**
    * @param t the AST who is to own the new variable declaration fragment
    * @param r the ASTRewrite for the given AST
    * @param varName the variable name for the new fragment
@@ -889,9 +935,6 @@ public enum Funcs {
         EQUALS, //
         NOT_EQUALS //
     ) ? e : null;
-  }
-  private static ReturnStatement asReturn(final Block b) {
-    return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)

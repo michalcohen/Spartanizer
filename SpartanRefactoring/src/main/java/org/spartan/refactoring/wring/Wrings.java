@@ -9,7 +9,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
@@ -28,6 +28,7 @@ import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
@@ -49,6 +50,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
@@ -123,6 +125,40 @@ public enum Wrings {
    *
    * <pre>
    * if (x)
+   *   throw b;
+   * else
+   *   throw c;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * throw x? b : c
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_THROW_A_ELSE_THROW_B(new Wring.OfIfStatement() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+    @Override Statement _replacement(final IfStatement i) {
+      final Expression condition = i.getExpression();
+      final Expression then = Extract.throwExpression(i.getThenStatement());
+      final Expression elze = Extract.throwExpression(i.getElseStatement());
+      return (then == null || elze == null ? null : makeThrowStatement(makeConditionalExpression(condition, then, elze)));
+    }
+    @Override boolean scopeIncludes(final IfStatement e) {
+      final IfStatement i = asIfStatement(e);
+      return (i != null && Extract.throwExpression(i.getThenStatement()) != null && Extract.throwExpression(i.getElseStatement()) != null);
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
    *   return b;
    * else
    *   return c;
@@ -150,6 +186,63 @@ public enum Wrings {
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
       return (i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null);
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x) {
+   *   ;
+   *   f();
+   *   return a;
+   * } else {
+   *   ;
+   *   g();
+   *   {
+   *   }
+   * }
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * if (x) {
+   *   f();
+   *   return a;
+   * }
+   * g();
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_RETURN_NO_ELSE_RETURN(new Wring.OfIfStatementAndSurrounding() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+  @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+    ReturnStatement then = Extract.returnStatement(s.getThenStatement());
+    ReturnStatement elze = Extract.nextReturn(s);
+    if ( Extract.statements(s.getElseStatement()).size() == 0 &&  then != null && elze != null)
+      return r;
+    Block parent = asBlock(s.getParent());
+    final Statement $ = makeExpressionStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze)));
+      final Block newParent = s.getAST().newBlock();
+        addAllReplacing(newParent.statements(), parent.statements(), s, $);
+        r.replace(parent, newParent, null);
+      return r;
+    }
+  private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
+    for (final Statement t : from)
+      if (t != substitute)
+        duplicateInto(t, to);
+      else {
+        duplicateInto(by, to);
+      }
+  }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return Extract.statements(s.getElseStatement()).size() == 0 &&  Extract.returnStatement(s.getThenStatement()) != null && Extract.nextReturn(s) != null;
     }
   }), //
   /**
@@ -500,7 +593,7 @@ public enum Wrings {
       return !tryToSort(operands) ? null : refitOperands(e, operands);
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), TIMES, XOR, AND);
+      return in(e.getOperator(), TIMES);
     }
   }), //
   /**

@@ -88,31 +88,22 @@ public class Builder extends IncrementalProjectBuilder {
       addMarkers((IFile) r);
   }
   private static void addMarkers(final IFile f) throws CoreException {
+    Spartanizations.reset();
     deleteMarkers(f);
     addMarkers(f, (CompilationUnit) As.COMPILIATION_UNIT.ast(f));
   }
-  private static void addMarkers(final IFile f, final CompilationUnit cu) throws CoreException {
-    Spartanizations.reset();
+  private static void addMarkers(final IFile f, final CompilationUnit u) throws CoreException {
     for (final Spartanization s : Spartanizations.all())
-      for (final Range r : s.findOpportunities(cu))
+      for (final Range r : s.findOpportunities(u))
         if (r != null)
-          addMarker(f, s, r);
+          addMarker(s, r, f.createMarker(MARKER_TYPE));
   }
-  private static void addMarker(final IFile f, final Spartanization s, final Range r) throws CoreException {
-    addMarker(f.createMarker(MARKER_TYPE), s, r);
-  }
-  private static void addMarker(final IMarker m, final Spartanization s, final Range r) throws CoreException {
+  private static void addMarker(final Spartanization s, final Range r, final IMarker m) throws CoreException {
     m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-    addMarker(m, s);
-    addMarker(m, r);
-  }
-  private static void addMarker(final IMarker m, final Range r) throws CoreException {
-    m.setAttribute(IMarker.CHAR_START, r.from);
-    m.setAttribute(IMarker.CHAR_END, r.to);
-  }
-  private static void addMarker(final IMarker m, final Spartanization s) throws CoreException {
     m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
     m.setAttribute(IMarker.MESSAGE, prefix() + s.getMessage());
+    m.setAttribute(IMarker.CHAR_START, r.from);
+    m.setAttribute(IMarker.CHAR_END, r.to);
   }
   /**
    * deletes all spartanization suggestion markers

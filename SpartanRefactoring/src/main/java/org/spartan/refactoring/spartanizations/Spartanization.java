@@ -248,13 +248,13 @@ public abstract class Spartanization extends Refactoring {
    * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
    * spartanization suggestions
    *
-   * @param cu what to check
+   * @param u what to check
    * @return a collection of {@link Range} objects each containing a
    *         spartanization opportunity
    */
-  public final List<Range> findOpportunities(final CompilationUnit cu) {
+  public final List<Range> findOpportunities(final CompilationUnit u) {
     final List<Range> $ = new ArrayList<>();
-    cu.accept(collectOpportunities($));
+    u.accept(collectOpportunities($));
     return $;
   }
   @Override public final Change createChange(@SuppressWarnings("unused") final IProgressMonitor pm) throws OperationCanceledException {

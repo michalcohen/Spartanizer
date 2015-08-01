@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
@@ -12,8 +12,10 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.spartan.refactoring.utils.All;
@@ -48,6 +50,14 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     $.setRightHandSide(makeConditional(e, e1.getRightHandSide(), e2.getRightHandSide()));
     return p(e.getParent(), $);
   }
+  private static Expression pushdown(ConditionalExpression e, FieldAccess e1, FieldAccess e2) {
+    if (!Wrings.same(e1.getName(), e2.getName()))
+      return null;
+    System.out.println("Field access" + e1 + e2);
+    final FieldAccess $ = duplicate(e1);
+    $.setExpression(parenthesize(makeConditional(e, e1.getExpression(), e2.getExpression())));
+    return $;
+  }
   private static Expression pushdown(ConditionalExpression e, InfixExpression e1, InfixExpression e2) {
     if (e1.getOperator() != e2.getOperator())
       return null;
@@ -81,6 +91,23 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     $.arguments().add(i, makeConditional(e, es1.get(i), es2.get(i)));
     return $;
   }
+  private static Expression pushdown(ConditionalExpression e, ClassInstanceCreation e1, ClassInstanceCreation e2) {
+    if (!Wrings.same(e1.getType(), e2.getType()))
+      return null;
+    if (!Wrings.same(e1.getExpression(), e2.getExpression()))
+      return null;
+    List<Expression> es1 = e1.arguments();
+    List<Expression> es2 = e2.arguments();
+    if (es1.size() != es2.size())
+      return null;
+    int i = findSingleDifference(es1, es2);
+    if (i < 0)
+      return null;
+    ClassInstanceCreation $ = duplicate(e1);
+    $.arguments().remove(i);
+    $.arguments().add(i, makeConditional(e, es1.get(i), es2.get(i)));
+    return $;
+  }
   private Expression pushdown(ConditionalExpression e) {
     if (e == null)
       return null;
@@ -89,6 +116,8 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return (Wrings.same(then, elze) ? null : pushdown(e, then, elze));
   }
   private Expression pushdown(ConditionalExpression e, Expression e1, Expression e2) {
+    System.out.println("Help" + e1.getClass());
+    System.out.println("Help" + e2.getClass());
     if (e1.getNodeType() != e2.getNodeType())
       return null;
     switch (e1.getNodeType()) {
@@ -98,6 +127,10 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
         return pushdown(e, (InfixExpression) e1, (InfixExpression) e2);
       case ASSIGNMENT:
         return pushdown(e, (Assignment) e1, (Assignment) e2);
+      case FIELD_ACCESS:
+        return pushdown(e, (FieldAccess) e1, (FieldAccess) e2);
+      case CLASS_INSTANCE_CREATION:
+        return pushdown(e, (ClassInstanceCreation) e1, (ClassInstanceCreation) e2);
       default:
         return null;
     }

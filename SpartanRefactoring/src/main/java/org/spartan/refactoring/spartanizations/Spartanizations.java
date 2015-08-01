@@ -1,10 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.wring.Wrings.AND_TRUE;
-import static org.spartan.refactoring.wring.Wrings.*;
-import static org.spartan.refactoring.wring.Wrings.OR_FALSE;
-import static org.spartan.refactoring.wring.Wrings.PUSHDOWN_NOT;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.spartan.refactoring.preferences.PreferencesFile;
-import org.spartan.refactoring.wring.AsRefactoring;
-import org.spartan.refactoring.wring.Wrings;
 import org.spartan.refactoring.wring.Trimmer;
 
 /**
@@ -26,25 +19,30 @@ import org.spartan.refactoring.wring.Trimmer;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-  SequencerEndingThen(new AsRefactoring(IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch ends with a sequencer", "Eliminate redundant else")), //
+  // SequencerEndingThen(new
+  // AsRefactoring(IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch
+  // ends with a sequencer", "Eliminate redundant else")), //
   Trimmer(new Trimmer()), //
   // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
   // ternary", "in cases")), //
-  // PushdownTernary(new AsRefactoring(PUSHDOWN_TERNARY.inner, "pushdown
-  // ternary", "???")), //
-  IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true", "remove trues from expression")), //
-  AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
-  ComparisonWithBoolean(new ComparisonWithBoolean()), //
-  ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  // ForwardDeclaration(new ForwardDeclaration()), //
-  InlineSingleUse(new InlineSingleUse()), //
-  OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses from expression")), //
-  PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
-  RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  ShortestBranchFirst(new ShortestBranchFirst()), //
-  ShortestOperand(new ShortestOperand()), //
-  SimplifyTernary(new AsRefactoring(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
-  Ternarize(new Ternarize()), //
+  // IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true",
+  // "remove trues from expression")), //
+  // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
+  // expression")), //
+  //// ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  // ComparisonWithSpecific(new ComparisonWithSpecific()), //
+  // // ForwardDeclaration(new ForwardDeclaration()), //
+  // InlineSingleUse(new InlineSingleUse()), //
+  // OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses from
+  // expression")), //
+  // PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify
+  // not expression")), //
+  // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+  // ShortestBranchFirst(new ShortestBranchFirst()), //
+  // ShortestOperand(new ShortestOperand()), //
+  // SimplifyTernary(new AsRefactoring(Wrings.TERNARY_BOOLEAN_LITERAL.inner,
+  // "Ternary", "Simplify complex ternary boolean expression")), //
+  // // Ternarize(new Ternarize()), //
   ;
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
@@ -116,14 +114,12 @@ public enum Spartanizations {
     final int offset = PreferencesFile.getSpartanTitle().length;
     final String[] str = PreferencesFile.parsePrefFile();
     final boolean useAll = str == null;
-    int i = 0;
-    for (final Spartanization rule : allAvailableSpartanizations()) {
+    final int i = 0;
+    for (final Spartanization rule : allAvailableSpartanizations())
       // if (useAll || str != null && str.length >= i + offset && !ignored(str[i
       // + offset]))
       put(rule);
-      // i++;
-    }
-    put(new SimplifyLogicalNegation());
+    // i++;
   }
   /**
    * @param name the name of the spartanization
