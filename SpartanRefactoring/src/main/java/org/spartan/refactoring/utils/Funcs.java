@@ -138,16 +138,6 @@ public enum Funcs {
     return !(e instanceof ConditionalExpression) ? null : (ConditionalExpression) e;
   }
   /**
-   * Down-cast, if possible, to {@link ExpressionStatement}
-   *
-   * @param n JD
-   * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
-  public static ExpressionStatement asExpressionStatement(final ASTNode n) {
-    return !(n instanceof ExpressionStatement) ? null : (ExpressionStatement) n;
-  }
-  /**
    * Down-cast, if possible, to {@link Expression}
    *
    * @param n JD
@@ -156,6 +146,16 @@ public enum Funcs {
    */
   public static Expression asExpression(final ASTNode n) {
     return !(n instanceof Expression) ? null : (Expression) n;
+  }
+  /**
+   * Down-cast, if possible, to {@link ExpressionStatement}
+   *
+   * @param n JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static ExpressionStatement asExpressionStatement(final ASTNode n) {
+    return !(n instanceof ExpressionStatement) ? null : (ExpressionStatement) n;
   }
   /**
    * Down-cast, if possible, to {@link IfStatement}
@@ -322,8 +322,19 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
-  public static Expression rebase(final Expression e, final AST t) {
-    return (Expression) copySubtree(t, e);
+  public static ConditionalExpression duplicate(final ConditionalExpression e) {
+    return (ConditionalExpression) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param a JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static Assignment duplicate(final Assignment a) {
+    return (Assignment) copySubtree(a.getAST(), a);
   }
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
@@ -335,17 +346,6 @@ public enum Funcs {
    */
   public static Expression duplicate(final Expression e) {
     return (Expression) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static Statement duplicate(final Statement e) {
-    return (Statement) copySubtree(e.getAST(), e);
   }
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
@@ -370,6 +370,28 @@ public enum Funcs {
     return (InfixExpression) copySubtree(e.getAST(), e);
   }
   /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static MethodInvocation duplicate(final MethodInvocation i) {
+    return (MethodInvocation) copySubtree(i.getAST(), i);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static Statement duplicate(final Statement e) {
+    return (Statement) copySubtree(e.getAST(), e);
+  }
+  /**
    * Make a duplicate of, suitable for tree rewrite, of the parameter
    *
    * @param e JD
@@ -391,12 +413,6 @@ public enum Funcs {
    */
   public static Expression duplicateRight(final InfixExpression e) {
     return duplicate(e.getRightOperand());
-  }
-  private static Expression find(final boolean b, final List<Expression> es) {
-    for (final Expression e : es)
-      if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
-        return e;
-    return null;
   }
   public static InfixExpression flip(final InfixExpression e) {
     final Operator flip = flip(e.getOperator());
@@ -605,9 +621,6 @@ public enum Funcs {
     $.setLeftHandSide(frugalDuplicate(left));
     return $;
   }
-  public static Statement makeExpressionStatement(final Expression e) {
-    return e.getAST().newExpressionStatement(frugalDuplicate(e));
-  }
   /**
    * Create a new {@link ConditionalExpression}
    *
@@ -623,6 +636,9 @@ public enum Funcs {
     $.setThenExpression(frugalDuplicate(then));
     $.setElseExpression(frugalDuplicate(elze));
     return $;
+  }
+  public static Statement makeExpressionStatement(final Expression e) {
+    return e.getAST().newExpressionStatement(frugalDuplicate(e));
   }
   /**
    * @param t the AST who is to own the new If Statement
@@ -773,6 +789,17 @@ public enum Funcs {
   public static <T> T prev(final int i, final List<T> ts) {
     return ts.get(i < 1 ? 0 : i - 1);
   }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static Expression rebase(final Expression e, final AST t) {
+    return (Expression) copySubtree(t, e);
+  }
   public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o, final Expression right) {
     $.setLeftOperand(left);
     $.setOperator(o);
@@ -865,6 +892,12 @@ public enum Funcs {
   }
   private static ReturnStatement asReturn(final Block b) {
     return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
+  }
+  private static Expression find(final boolean b, final List<Expression> es) {
+    for (final Expression e : es)
+      if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
+        return e;
+    return null;
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)

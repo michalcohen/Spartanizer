@@ -1,5 +1,4 @@
 package org.spartan.refactoring.wring;
-import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -48,7 +47,6 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
@@ -341,42 +339,7 @@ public enum Wrings {
       }
       
     }), //
-  PUSHDOWN_TERNARY(new Wring.OfConditionalExpression() {
-    private Expression match(Expression e1, Expression e2, Expression $) {
-      if (e1.getNodeType() != e2.getNodeType())
-  return null;
-      switch(e1.getNodeType()) {
-        case METHOD_INVOCATION:
-          return match((MethodInvocation)e1,(MethodInvocation)e1,$);
-          default:
-            return null;
-      }
-    }
-    private Expression match(MethodInvocation e1, MethodInvocation e2, Expression $) {
-      if (!same(e1.getName(),e2.getName()))
-          return null;
-      return (e1.arguments().size() != 1 ? null : (Expression) e1.arguments().get(0));
-    }
-    private boolean scopeIncludes(Expression thenExpression, Expression elseExpression) {
-      return match (thenExpression, elseExpression, null) != null;
-    }
-    @Override boolean _eligible(final ConditionalExpression e) {
-       return true;
-    }
-    @Override Expression _replacement(final ConditionalExpression e) {
-      return null;
-    }
-      @Override boolean scopeIncludes(final ConditionalExpression e) {
-        if (e == null)
-          return false;
-         Expression thenExpression = e.getThenExpression();
-        Expression elseExpression = e.getElseExpression();
-        return scopeIncludes(thenExpression, elseExpression);
-      }
-
-      
-
-    }), //
+  PUSHDOWN_TERNARY(new PushdownTernary()), //
  /**
    * <code>
    * a ? b : c
@@ -595,20 +558,6 @@ public enum Wrings {
     return null;
   }
   /**
-   * Find the first {@link Wring} appropriate for an {@link Statement}
-   *
-   * @param s JD
-   * @return the first {@link Wring} for which the parameter is eligible, or
-   *         <code><b>null</b></code>i if no such {@link Wring} is found.
-   */
-  public static Wring find(final Statement s) {
-    Wring $;
-    return ($ = find(asIfStatement(s))) != null//
-        || ($ = find(asBlock(s))) != null//
-            //
-            ? $ : null;
-  }
-  /**
    * Find the first {@link Wring} appropriate for an {@link Expression}
    *
    * @param e JD
@@ -667,6 +616,39 @@ public enum Wrings {
       if (s.inner.scopeIncludes(e))
         return s.inner;
     return null;
+  }
+  /**
+   * Find the first {@link Wring} appropriate for an {@link Statement}
+   *
+   * @param s JD
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final Statement s) {
+    Wring $;
+    return ($ = find(asIfStatement(s))) != null//
+        || ($ = find(asBlock(s))) != null//
+            //
+            ? $ : null;
+  }
+  public 
+  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
+    boolean $ = false;
+    // Bubble sort
+    for (int i = 0, size = es.size(); i < size; i++)
+      for (int j = 0; j < size - 1; j++) {
+        final Expression e0 = es.get(j);
+        final Expression e1 = es.get(j + 1);
+        if (c.compare(e0, e1) <= 0)
+          continue;
+        // Replace locations i,j with e0 and e1
+        es.remove(j);
+        es.remove(j);
+        es.add(j, e0);
+        es.add(j, e1);
+        $ = true;
+      }
+    return $;
   }
   private static InfixExpression makeWithOther(final Expression other) {
     final InfixExpression $ = other.getAST().newInfixExpression();
@@ -844,25 +826,6 @@ public enum Wrings {
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
-  }
-  public 
-  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
-    boolean $ = false;
-    // Bubble sort
-    for (int i = 0, size = es.size(); i < size; i++)
-      for (int j = 0; j < size - 1; j++) {
-        final Expression e0 = es.get(j);
-        final Expression e1 = es.get(j + 1);
-        if (c.compare(e0, e1) <= 0)
-          continue;
-        // Replace locations i,j with e0 and e1
-        es.remove(j);
-        es.remove(j);
-        es.add(j, e0);
-        es.add(j, e1);
-        $ = true;
-      }
-    return $;
   }
   public final Wring inner;
   Wrings(final Wring inner) {

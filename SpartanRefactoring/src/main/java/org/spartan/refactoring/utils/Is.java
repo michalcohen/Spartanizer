@@ -222,6 +222,16 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an
    *         {@link ExpressionStatement} statement
    */
+  public static boolean expression(final ASTNode n) {
+    return n != null && n instanceof Expression;
+  }
+  /**
+   * Determine whether a node is an "expression statement"
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an
+   *         {@link ExpressionStatement} statement
+   */
   public static boolean expressionStatement(final ASTNode n) {
     return is(n, EXPRESSION_STATEMENT);
   }

@@ -39,7 +39,7 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings("javadoc") //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
   /** Instantiates this class */

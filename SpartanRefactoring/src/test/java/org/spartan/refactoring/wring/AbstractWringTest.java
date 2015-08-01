@@ -314,7 +314,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertThat(inner.scopeIncludes(asExpression()), is(false));
       }
       @Test public void scopeDoesNotIncludeAsIfStatement() {
-        assertThat(inner.scopeIncludes(asBlock(asMe())), is(false));
+        assertThat(inner.scopeIncludes(asIfStatement(asMe())), is(false));
       }
 
       public static abstract class Infix extends OutOfScope.Expression {
@@ -571,7 +571,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertTrue(inner.scopeIncludes(asExpression()));
       final CompilationUnit u = asCompilationUnit();
       final List<Range> findOpportunities = wringer.findOpportunities(u);
-      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(1)));
     }
     @Test public void hasReplacement() {
       assertNotNull(inner.replacement(asExpression()));
@@ -637,7 +637,11 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         super(w);
       }
       @Test public void inputIsConditionalExpression() {
+        assertThat(asExpression(), instanceOf(ConditionalExpression.class));
         assertNotNull(asConditionalExpression());
+      }
+      @Test public void scopeIncludesAsConditionalExpression() {
+        assertTrue(inner.scopeIncludes(asConditionalExpression()));
       }
     }
 

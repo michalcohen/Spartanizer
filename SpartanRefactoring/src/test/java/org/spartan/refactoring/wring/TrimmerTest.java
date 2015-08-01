@@ -13,7 +13,6 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
 import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
-import static org.spartan.refactoring.wring.TrimmerTest.assertSimplifiesTo;
 import static org.spartan.refactoring.wring.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 import static org.spartan.utils.Utils.hasNull;

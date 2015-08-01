@@ -14,6 +14,7 @@ import java.util.Map;
 import org.spartan.refactoring.preferences.PreferencesFile;
 import org.spartan.refactoring.wring.AsRefactoring;
 import org.spartan.refactoring.wring.Wrings;
+import org.spartan.refactoring.wring.Trimmer;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -26,7 +27,7 @@ import org.spartan.refactoring.wring.Wrings;
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
   SequencerEndingThen(new AsRefactoring(IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch ends with a sequencer", "Eliminate redundant else")), //
-  // Trimmer(new Trimmer()), //
+  Trimmer(new Trimmer()), //
   // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
   // ternary", "in cases")), //
   // PushdownTernary(new AsRefactoring(PUSHDOWN_TERNARY.inner, "pushdown
