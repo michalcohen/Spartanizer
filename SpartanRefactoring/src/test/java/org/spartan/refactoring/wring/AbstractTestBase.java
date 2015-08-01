@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,6 +6,9 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.internal.builders.IgnoredClassRunner;
@@ -25,5 +28,14 @@ public abstract class AbstractTestBase {
   @Test public void peelableinput() {
     assertEquals(input, peelExpression(wrapExpression(input)));
     assertEquals(input, peelStatement(wrapStatement(input)));
+  }
+  protected static Collection<Object[]> collect(final String[][] cases) {
+    final Collection<Object[]> $ = new ArrayList<>(cases.length);
+    for (final String[] t : cases) {
+      if (t == null)
+        break;
+      $.add(t);
+    }
+    return $;
   }
 }

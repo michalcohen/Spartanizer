@@ -1,8 +1,9 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.spartanizations.Wrings.AND_TRUE;
-import static org.spartan.refactoring.spartanizations.Wrings.OR_FALSE;
-import static org.spartan.refactoring.spartanizations.Wrings.PUSHDOWN_NOT;
+import static org.spartan.refactoring.wring.Wrings.AND_TRUE;
+import static org.spartan.refactoring.wring.Wrings.*;
+import static org.spartan.refactoring.wring.Wrings.OR_FALSE;
+import static org.spartan.refactoring.wring.Wrings.PUSHDOWN_NOT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.spartan.refactoring.preferences.PreferencesFile;
+import org.spartan.refactoring.wring.AsRefactoring;
+import org.spartan.refactoring.wring.Wrings;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -22,8 +25,14 @@ import org.spartan.refactoring.preferences.PreferencesFile;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-  Trimmer(new Trimmer()), //
-  AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
+  // Trimmer(new Trimmer()), //
+  // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
+  // ternary", "in cases")), //
+  // PushdownTernary(new AsRefactoring(PUSHDOWN_TERNARY.inner, "pushdown
+  // ternary", "pushdownternary")), //
+  IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true", "remove trues from expression")), //
+  // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
+  // expression")), //
   ComparisonWithBoolean(new ComparisonWithBoolean()), //
   ComparisonWithSpecific(new ComparisonWithSpecific()), //
   ForwardDeclaration(new ForwardDeclaration()), //

@@ -13,9 +13,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.ExpressionComparator.countNonWhites;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.wring.ExpressionComparator.countNonWhites;
 
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;

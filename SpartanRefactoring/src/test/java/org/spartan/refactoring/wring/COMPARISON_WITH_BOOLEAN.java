@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
@@ -25,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -34,10 +34,18 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum COMPARISON_WITH_BOOLEAN {
-  ;
+@SuppressWarnings({ "javadoc", }) //
+public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
+  private static final Wring WRING = Wrings.COMPARISON_WITH_BOOLEAN.inner;
+
+  public COMPARISON_WITH_BOOLEAN() {
+    super(WRING);
+  }
+  @Test public void comparisonWithSpecific0Legibiliy0() {
+    assertNotWithinScope("this != a");
+  }
+
   @RunWith(Parameterized.class) //
   public static class WringedInput extends AbstractWringTest.WringedExpression.Infix {
     static String[][] cases = Utils.asArray(//
@@ -69,22 +77,6 @@ public enum COMPARISON_WITH_BOOLEAN {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    @Test public void tryToSortTwice() {
-      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
-      Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
-    }
-    @Override @Test public void flattenIsIdempotentt() {
-      final InfixExpression flatten = flatten(asInfixExpression());
-      assertThat(flatten(flatten).toString(), is(flatten.toString()));
-    }
-    @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
-    }
-    @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
-    }
     static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
       try {
         s.createRewrite(u, null).rewriteAST(d, null).apply(d);
@@ -99,7 +91,23 @@ public enum COMPARISON_WITH_BOOLEAN {
       return null;
     }
     public WringedInput() {
-      super(Wrings.COMPARISON_WITH_BOOLEAN.inner);
+      super(WRING);
+    }
+    @Override @Test public void flattenIsIdempotentt() {
+      final InfixExpression flatten = flatten(asInfixExpression());
+      assertThat(flatten(flatten).toString(), is(flatten.toString()));
+    }
+    @Override @Test public void inputIsInfixExpression() {
+      final InfixExpression e = asInfixExpression();
+      assertNotNull(e);
+    }
+    @Test public void tryToSortTwice() {
+      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
+      Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
+      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
+    }
+    @Test public void twoOrMoreArguments() {
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

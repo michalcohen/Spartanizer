@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
 import static org.spartan.utils.Utils.hasNull;

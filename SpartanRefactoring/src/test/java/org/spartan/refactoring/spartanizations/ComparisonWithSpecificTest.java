@@ -14,10 +14,10 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoOpportun
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotEvenSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
+import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;

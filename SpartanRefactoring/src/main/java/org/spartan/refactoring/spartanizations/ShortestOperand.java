@@ -2,12 +2,12 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.spartan.refactoring.spartanizations.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
 import static org.spartan.refactoring.utils.Funcs.duplicateRight;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.remake;
+import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.removeDuplicates;
 

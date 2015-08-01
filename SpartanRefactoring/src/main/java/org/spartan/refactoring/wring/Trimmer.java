@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.spartan.utils.Utils.removeDuplicates;
 
@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.utils.Range;
 
 /**

@@ -1,5 +1,5 @@
-package org.spartan.refactoring.spartanizations;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+package org.spartan.refactoring.wring;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -53,6 +53,7 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Extract;
@@ -830,6 +831,7 @@ public enum Wrings {
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
   }
+  public 
   static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
@@ -848,7 +850,7 @@ public enum Wrings {
       }
     return $;
   }
-  final Wring inner;
+  public final Wring inner;
   Wrings(final Wring inner) {
     this.inner = inner;
   }

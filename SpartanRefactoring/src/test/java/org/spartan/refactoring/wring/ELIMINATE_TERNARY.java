@@ -1,7 +1,6 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.junit.Assert.assertNotNull;
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 
 import java.util.Collection;
 
@@ -11,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
 
 /**
@@ -67,11 +66,11 @@ public class ELIMINATE_TERNARY {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedExpression.Conditional {
     private static String[][] cases = Utils.asArray(//
-        new String[] { "idnetical method call", "a ? y.f(b) :y.f(b)", "y.f(b)" }, //
-        new String[] { "idnetical function call", "a ? f(b) :f(b)", "f(b)" }, //
-        new String[] { "idnetical assignment", "a ? (b=c) :(b=c)", "(b = c)" }, //
-        new String[] { "idnetical increment", "a ? b++ :b++", "b++" }, //
-        new String[] { "idnetical addition", "a ? b+d :b+ d", "b+d" }, //
+        new String[] { "identical method call", "a ? y.f(b) :y.f(b)", "y.f(b)" }, //
+        new String[] { "identical function call", "a ? f(b) :f(b)", "f(b)" }, //
+        new String[] { "identical assignment", "a ? (b=c) :(b=c)", "(b = c)" }, //
+        new String[] { "identical increment", "a ? b++ :b++", "b++" }, //
+        new String[] { "identical addition", "a ? b+d :b+ d", "b+d" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

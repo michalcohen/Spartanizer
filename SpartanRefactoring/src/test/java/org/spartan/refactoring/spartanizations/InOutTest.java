@@ -3,6 +3,7 @@ package org.spartan.refactoring.spartanizations;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 import static org.spartan.utils.Utils.objects;
 
 import java.io.File;
@@ -28,7 +29,7 @@ import org.spartan.refactoring.utils.As;
 public class InOutTest {
   protected static void go(final Spartanization s, final File from, final File to) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(FileTestUtils.makeInFile(from));
-    assertEquals(u.toString(), 1, TESTUtils.countOpportunities(s, u));
+    assertEquals(u.toString(), 1, countOpportunities(s, u));
     TESTUtils.assertOneOpportunity(s, As.string(from));
     if (from.getName().endsWith(FileTestUtils.testSuffix)) {
       final String expected = As.string(FileTestUtils.makeOutFile(to));
