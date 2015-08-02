@@ -93,24 +93,19 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
    *         expression.
    */
   static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
-    if (e instanceof InfixExpression)
-      return tryNegateComparison(t, r, (InfixExpression) e);
-    return e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e)) : makePrefixExpression(t, makeParenthesizedExpression(e), NOT);
+    return e instanceof InfixExpression ? tryNegateComparison(t, r, (InfixExpression) e) //
+        : e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e)) //
+            : makePrefixExpression(t, makeParenthesizedExpression(e), NOT);
   }
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
     final Operator op = negate(e.getOperator());
-    if (op == null)
-      return null;
-    return !Is.deMorgan(op) //
-        ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())//
-        : makeInfixExpression(r, t, negateExp(t, r, e.getLeftOperand()), op, negateExp(t, r, e.getRightOperand()));
+    return op == null ? null
+        : !Is.deMorgan(op) ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())
+            : makeInfixExpression(r, t, negateExp(t, r, e.getLeftOperand()), op, negateExp(t, r, e.getRightOperand()));
   }
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
-    if (Is.infix(e))
-      return makePrefixExpression(t, makeParenthesizedExpression(e), NOT);
-    return !Is.prefix(e) || !asPrefixExpression(e).getOperator().equals(NOT) //
-        ? makePrefixExpression(t, e, NOT) //
-        : (Expression) r.createCopyTarget(asPrefixExpression(e).getOperand());
+    return Is.infix(e) ? makePrefixExpression(t, makeParenthesizedExpression(e), NOT)
+        : !Is.prefix(e) || !asPrefixExpression(e).getOperator().equals(NOT) ? makePrefixExpression(t, e, NOT) : (Expression) r.createCopyTarget(asPrefixExpression(e).getOperand());
   }
   public static Operator negate(final Operator o) {
     return !negate.containsKey(o) ? null : negate.get(o);

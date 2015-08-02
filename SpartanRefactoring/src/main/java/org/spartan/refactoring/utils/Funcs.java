@@ -956,9 +956,7 @@ public enum Funcs {
    *         was false (or null if any of the given parameter were null)
    */
   public static Expression tryToNegateCond(final AST t, final Expression cond, final boolean thenValue) {
-    if (hasNull(t, cond))
-      return null;
-    return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(cond), PrefixExpression.Operator.NOT);
+    return hasNull(t, cond) ? null : thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(cond), PrefixExpression.Operator.NOT);
   }
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //

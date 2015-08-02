@@ -76,11 +76,8 @@ public class Unchanged {
   public static Collection<Object[]> cases() {
     return new FileTestUtils.Files() {
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
-        if (name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword))
-          return objects(s, name, makeInFile(f));
-        if (!name.endsWith(".in"))
-          return null;
-        return dotOutExists(d, name) ? null : objects(name.replaceAll("\\.in$", ""), s, f);
+        return name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f))
+            : !name.endsWith(".in") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll("\\.in$", ""), s, f);
       }
       private boolean dotOutExists(final File d, final String name) {
         return new File(d, name.replaceAll("\\.in$", ".out")).exists();

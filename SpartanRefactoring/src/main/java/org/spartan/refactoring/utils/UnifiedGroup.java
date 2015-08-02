@@ -125,9 +125,7 @@ class UnionFind {
   public int union(final int n1, final int n2) {
     final int root1 = find(n1);
     final int root2 = find(n2);
-    if (root1 == root2)
-      return root1;
-    return sizeOf[root1] < sizeOf[root2] ? hookOn(root1, root2) : hookOn(root2, root1);
+    return root1 == root2 ? root1 : sizeOf[root1] < sizeOf[root2] ? hookOn(root1, root2) : hookOn(root2, root1);
   }
   private int hookOn(final int child, final int root) {
     sizeOf[root] += sizeOf[child];

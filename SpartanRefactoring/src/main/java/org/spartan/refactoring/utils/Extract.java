@@ -170,9 +170,7 @@ public enum Extract {
   }
   private static Statement next(Statement s) {
     final Block b = asBlock(s.getParent());
-    if (b == null)
-      return null;
-    return next(s, Extract.statements(b));
+    return b == null ? null : next(s, Extract.statements(b));
   }
   private static Statement next(Statement s, List<Statement> ss) {
     for (int i = 0; i < ss.size() - 1; ++i)
