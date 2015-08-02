@@ -3,20 +3,15 @@ package org.spartan.refactoring.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Wizard;
+import org.spartan.refactoring.utils.Funcs;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>:
@@ -26,18 +21,6 @@ import org.spartan.refactoring.spartanizations.Wizard;
  * @since 2013/07/01
  */
 public abstract class BaseHandler extends AbstractHandler {
-  private static ICompilationUnit getCompilationUnit() {
-    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
-  }
-  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
-    return ep == null ? null : getCompilationUnit((IResource) ep.getEditorInput().getAdapter(IResource.class));
-  }
-  private static ICompilationUnit getCompilationUnit(final IResource r) {
-    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
-  }
-  private static IWorkbenchWindow getCurrentWorkbenchWindow() {
-    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-  }
   private final Spartanization refactoring;
   protected BaseHandler(final Spartanization refactoring) {
     this.refactoring = refactoring;
@@ -53,10 +36,10 @@ public abstract class BaseHandler extends AbstractHandler {
     return !(s instanceof ITextSelection) ? null : execute((ITextSelection) s);
   }
   private Void execute(final ITextSelection textSelect) throws InterruptedException {
-    return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
+    return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, Funcs.getCompilationUnit())));
   }
   private Void execute(final RefactoringWizardOpenOperation wop) throws InterruptedException {
-    wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
+    wop.run(Funcs.getCurrentWorkbenchWindow().getShell(), getDialogTitle());
     return null;
   }
   protected final String getDialogTitle() {

@@ -32,6 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -58,6 +62,9 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.spartan.utils.Utils;
 
 /**
@@ -317,9 +324,10 @@ public enum Funcs {
     return false;
   }
   /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
+   * Make a duplicate, suitable for tree rewrite, of the parameter <<<<<<< HEAD
    *
-   * @param a JD
+   * @param a JD =======
+   * @param b JD >>>>>>> c911307ccbe2ee8c985cd803d1b32815bbce674b
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite
@@ -418,7 +426,7 @@ public enum Funcs {
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
-   * @param e JD
+   * @param i MethodInvocation
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite
@@ -787,8 +795,6 @@ public enum Funcs {
     return makePrefixExpression(e.getAST(), e, o);
   }
   /**
-   * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param e the expression to return in the return statement
    * @return the new return statement
    */
@@ -798,8 +804,6 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param e the expression to return in the return statement
    * @return the new return statement
    */
@@ -850,6 +854,7 @@ public enum Funcs {
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
    * @param e JD
+   * @param t JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite
@@ -926,13 +931,12 @@ public enum Funcs {
    * the proper condition (its negation if thenValue is false)
    *
    * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param cond the condition to try to negate
    * @param thenValue the then value
    * @return the original condition if thenValue was true or its negation if it
    *         was false (or null if any of the given parameter were null)
    */
-  public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
+  public static Expression tryToNegateCond(final AST t, final Expression cond, final boolean thenValue) {
     if (hasNull(t, cond))
       return null;
     return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(cond), PrefixExpression.Operator.NOT);
@@ -972,5 +976,21 @@ public enum Funcs {
   }
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
+  }
+  // TODO for Yossi review - not sure if funcs is the right place for
+  // getCompilationUnit(), getCurrentWorkbenchWindow() - because it serves both
+  // spartanization and command handlers but actually kind of part of the
+  // builder.
+  public static ICompilationUnit getCompilationUnit() {
+    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
+  }
+  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
+    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
+  }
+  private static ICompilationUnit getCompilationUnit(final IResource r) {
+    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
+  }
+  public static IWorkbenchWindow getCurrentWorkbenchWindow() {
+    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
 }

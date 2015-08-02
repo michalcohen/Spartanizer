@@ -82,6 +82,9 @@ public enum Wrings {
    * @since 2015-07-29
    */
   SIMPLIFY_BLOCK(new Wring.OfBlock() {
+    @Override public final String toString() {
+      return "Simplify block (" + super.toString() + ")";
+    }
     private boolean identical(final List<Statement> os1 , final List<Statement> os2) {
       if (os1.size() != os2.size())
         return false;
@@ -138,6 +141,9 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IF_THROW_A_ELSE_THROW_B(new Wring.OfIfStatement() {
+    @Override public final String toString() {
+      return "IF_THROW_A_ELSE_THROW_B (" + super.toString() + ")";
+    }
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
@@ -172,6 +178,9 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IF_RETURN_A_ELSE_RETURN_B(new Wring.OfIfStatement() {
+    @Override public final String toString() {
+      return "IF_RETURN_A_ELSE_RETURN_B (" + super.toString() + ")";
+    }
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
@@ -206,7 +215,10 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-08-01
    */
-  IF_THENX_ELSEEMPTY (new Wring.OfIfStatement() {
+  IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE (new Wring.OfIfStatement() {
+    @Override public final String toString() {
+      return "IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE  (" + super.toString() + ")";
+    }
     @Override boolean _eligible(IfStatement s) {
       return true;
     }
@@ -216,8 +228,7 @@ public enum Wrings {
       return $;
     }
     @Override boolean scopeIncludes(final IfStatement s) {
-      System.out.println("Scope " + s);
-      return s != null && s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
+      return s != null && existingEmptyElse(s);
     }
   }),//
   /**
@@ -249,13 +260,17 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_RETURN_NO_ELSE_RETURN(new Wring.OfIfStatementAndSurrounding() {
+  IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(new Wring.OfIfStatementAndSurrounding() {
+    @Override public final String toString() {
+      return " IF_RETURN_NO_ELSE_RETURN (" + super.toString() + ")";
+    }
     private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
       for (final Statement t : from)
         if (t != substitute)
           duplicateInto(t, to);
         else 
-          duplicateInto(by, to);     
+          duplicateInto(by, to);
+     
     }
   @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
@@ -306,6 +321,9 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSurrounding() {
+    @Override public final String toString() {
+      return "IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING (" + super.toString() + ")";
+    }
     private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {
       for (final Statement t : from)
         if (t != substitute)
@@ -431,11 +449,11 @@ public enum Wrings {
    * @since 2015-07-17
    */
   COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
+    @Override public final String toString() {
+      return "COMPARISON_WITH_SPECIFIC (" + super.toString() + ")";
+    }
     @Override public boolean scopeIncludes(final InfixExpression e) {
       return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
-    }
-    @Override public String toString() {
-      return "Comparison WITH SPECIFIC";
     }
     private boolean hasOneSpecificArgument(final InfixExpression e) {
       // One of the arguments must be specific, the other must not be.
@@ -452,6 +470,9 @@ public enum Wrings {
     }
   }), //
   ELIMINATE_TERNARY(new Wring.OfConditionalExpression() {
+    @Override public final String toString() {
+      return " ELIMINATE_TERNARY (" + super.toString() + ")";
+    }
     @Override boolean _eligible(final ConditionalExpression e) {
        return true;
     }
@@ -505,7 +526,7 @@ public enum Wrings {
    */
   AND_TRUE(new Wring.OfInfixExpression() {
     @Override public String toString() {
-      return "&& true";
+      return "TERNARY_BOOLEAN_LITERAL";
     }
     @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
@@ -950,6 +971,9 @@ public enum Wrings {
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
+  }
+   static boolean existingEmptyElse(final IfStatement s) {
+    return s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
   }
   public final Wring inner;
   Wrings(final Wring inner) {

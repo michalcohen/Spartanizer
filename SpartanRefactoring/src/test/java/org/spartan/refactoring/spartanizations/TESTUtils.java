@@ -61,7 +61,7 @@ public enum TESTUtils {
       assertEquals(compressSpaces(expected), compressSpaces(actual));
   }
   /**
-   * Convert a given {@link String} into an {@link statement}, or fail the
+   * Convert a given {@link String} into an {@link Statement}, or fail the
    * current test, if such a conversion is not possible
    *
    * @param statement a {@link String} that represents a Java statement
@@ -90,12 +90,12 @@ public enum TESTUtils {
   public static String compressSpaces(final String s) {
     String $ = s//
         .replaceAll("(?m)\\s+", " ") // Squeeze whites
-        ;
+    ;
     for (final String operator : new String[] { ",", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)", "[\\^]" })
       $ = $ //
           .replaceAll(WHITES + operator, operator) // Preceding whites
           .replaceAll(operator + WHITES, operator) // Trailing whites
-          ;
+    ;
     return $;
   }
   /**

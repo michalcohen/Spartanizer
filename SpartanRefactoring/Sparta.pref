@@ -9,7 +9,11 @@ true
 true
 true
 true
-
-
-
-
+true
+true
+true
+true
+Null and Boolean at Start
+Reposition Literals
+Reposition right literals
+One message per expression that contains operand swap

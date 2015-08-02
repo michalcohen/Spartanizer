@@ -3,8 +3,12 @@ package org.spartan.refactoring.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.spartan.refactoring.spartanizations.Spartanization;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -31,5 +35,16 @@ public enum All {
     if (e.hasExtendedOperands())
       $.addAll(e.extendedOperands());
     return $;
+  }
+  /**
+   * @return List of all compilation units in the current project
+   */
+  public static List<ICompilationUnit> compilationUnits() {
+    try {
+      return Spartanization.getAllProjectCompilationUnits(Funcs.getCompilationUnit(), new NullProgressMonitor());
+    } catch (final JavaModelException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

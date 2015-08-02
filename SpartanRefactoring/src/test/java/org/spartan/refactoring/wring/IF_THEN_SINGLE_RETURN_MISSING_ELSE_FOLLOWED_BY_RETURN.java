@@ -1,35 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.c;
-import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.e;
-import static org.spartan.refactoring.spartanizations.TESTUtils.i;
-import static org.spartan.refactoring.spartanizations.TESTUtils.p;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
-import static org.spartan.refactoring.spartanizations.TESTUtils.s;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
-import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 
@@ -48,30 +22,43 @@ import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
 /**
- * Unit tests for {@link Wrings#ADDITION_SORTER}.
+ * Unit tests for
+ * {@link Wrings#IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IF_RETURN_NO_ELSE_RETURN {
+public enum IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN {
   ;
-  static final Wring WRING = Wrings.IF_RETURN_NO_ELSE_RETURN.inner;
+  static final Wring WRING = Wrings.IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN.inner;
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
     static String[][] cases = Utils.asArray(//
+        new String[] { "Another distinct assignment", "if (a) a /= b; else a %= c;" }, //
         new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
-        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
-        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
-        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
         new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
-        new String[] { "Simple if throw", "if (a) throw b; else throw c;" }, //
-        new String[] { "Simply nested if throw", "{if (a)  throw b; else throw c;}" }, //
         new String[] { "Nested if return", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}" }, //
-        new String[] { "Vanilla if-then-no-else", "if (a) return b;" }, //
+        new String[] { "Not same assignment", "if (a) a /= b; else a /= c;" }, //
+        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
+        new String[] { "Simple if assign", "if (a) a = b; else a = c;" }, //
+        new String[] { "Simple if plus assign", "if (a) a *= b; else a *= c;" }, //
+        new String[] { "Simple if plus assign", "if (a) a += b; else a += c;" }, //
+        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
+        new String[] { "Simple if throw", "if (a) throw b; else throw c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Simply nested if throw", "{if (a)  throw b; else throw c;}" }, //
         new String[] { "Vanilla if-then-else", "if (a) return b;" }, //
+        new String[] { "Vanilla if-then-no-else", "if (a) return b;" }, //
+        new String[] { "Vanilla {}", "if (a) return b; else {}", "if (a) return b;" }, //
+        new String[] { "Vanilla ; ", "if (a) return b; else ;", "if (a) return b;" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}}" }, //
+        new String[] { "Vanilla {}", "if (a) return b; else {}", }, //
+        new String[] { "Vanilla ; ", "if (a) return b; else ;" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}}" }, //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -93,8 +80,8 @@ public enum IF_RETURN_NO_ELSE_RETURN {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = new String[][] { //
-        new String[] { "Vanilla {}", "if (a) return b; else {}", "if (a) return b;" }, //
-        new String[] { "Vanilla ; ", "if (a) return b; else ;", "if (a) return b;" }, //
+        new String[] { "Vanilla {}", "if (a) return b; return a();", "if (a) return b;" }, //
+        new String[] { "Vanilla ; ", "if (a) return b; a(); b(); c();", "if (a) return b;" }, //
         new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}}", "if (a) return b;" }, //
         null };
     /**

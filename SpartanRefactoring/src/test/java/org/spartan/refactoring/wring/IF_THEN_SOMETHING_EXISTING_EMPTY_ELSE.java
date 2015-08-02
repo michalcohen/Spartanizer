@@ -19,15 +19,18 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IF_THENX_ELSEEMPTY {
+public enum IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE {
   ;
-  static final Wring WRING = Wrings.IF_THENX_ELSEEMPTY.inner;
+  static final Wring WRING = Wrings.IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE.inner;
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
+        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
+        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
+        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -49,10 +52,9 @@ public enum IF_THENX_ELSEEMPTY {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
-        // Literal
-        Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"), //
+        new String[] { "Vanilla {}", "if (a) return b; else {}", "if (a) return b;" }, //
+        new String[] { "Vanilla ; ", "if (a) return b; else ;", "if (a) return b;" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}}", "if (a) return b;" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

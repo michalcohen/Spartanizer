@@ -187,7 +187,7 @@ public enum Is {
    * Check whether the operator of an expression is susceptible for applying one
    * of the two de Morgan laws.
    *
-   * @param o JD
+   * @param e InfixExpression
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an operator on
    *         which the de Morgan laws apply.
    */
@@ -346,8 +346,9 @@ public enum Is {
         INFIX_EXPRESSION, //
         ARRAY_CREATION, //
         INSTANCEOF_EXPRESSION//
-    //
-    ) || notString(asInfixExpression(e));
+        //
+        )
+        || notString(asInfixExpression(e));
   }
   /**
    * @param e JD

@@ -53,7 +53,7 @@ public class InlineSingleUse extends Spartanization {
   public InlineSingleUse() {
     super("Inline Single Use", "Inline variable used once");
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
         if (!inRange(m, n) || !(n.getParent() instanceof VariableDeclarationStatement))

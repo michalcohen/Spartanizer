@@ -34,7 +34,7 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
       }
     };
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
         if (inRange(m, e) && withinDomain(e) && applicable(e))

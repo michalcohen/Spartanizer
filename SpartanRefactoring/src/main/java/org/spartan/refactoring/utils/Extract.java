@@ -154,6 +154,14 @@ public enum Extract {
     final List<Statement> $ = Extract.statements(n);
     return $.size() != 1 ? null : (Statement) $.get(0);
   }
+  /**
+   * Find a subsequent return statement
+   * 
+   * @param s JD
+   * @return the subsequent {@link ReturnStatement}, or <code><b>null</b> if
+   *         there is not subsequent statement or if its type is not
+   *         {@link ReturnStatement}
+   */
   public static ReturnStatement nextReturn(Statement s) {
     return asReturnStatement(next(s));
   }

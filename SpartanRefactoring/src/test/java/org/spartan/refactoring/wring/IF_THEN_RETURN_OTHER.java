@@ -20,7 +20,7 @@ import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
 /**
- * Unit tests for {@link Wrings#ADDITION_SORTER}.
+ * Unit tests for {@link Wrings#IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
@@ -29,7 +29,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class IF_THEN_RETURN_OTHER {
-  static final Wring WRING = Wrings.IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner;
+  static final Wring WRING = Wrings.IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN.inner;
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) return a = b; else a = c;");
     assertNotNull(s);

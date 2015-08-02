@@ -27,16 +27,8 @@ import org.spartan.utils.Range;
  * @since 2015-07-09
  */
 public abstract class Wring {
-  public Wring(String name) {
-    this.name = name;
-  }
   public Range range(final ASTNode e) {
     return new Range(e);
-  }
-  private final String name;
-  @Override public final String toString() {
-    // TODO Auto-generated method stub
-    return name + "(" + super.toString() + ")";
   }
   /**
    * @param b JD
