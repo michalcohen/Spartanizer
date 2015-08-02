@@ -13,14 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.spartan.utils.Wrapper;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -176,5 +179,25 @@ public enum Extract {
       if (ss.get(i) == s)
         return ss.get(i + 1);
     return null;
+  }
+  /**
+   * Search for an {@link IfStatement} in the tree rooted at an {@link ASTNode}.
+   * 
+   * @param n JD
+   * @return the first {@link IfStatement} found in an {@link ASTNode n}, or
+   *         <code><b>null</b> if there is no such statement.
+   */
+  public static IfStatement firstIfStatement(final ASTNode n) {
+    if (n == null)
+      return null;
+    final Wrapper<IfStatement> $ = new Wrapper<>();
+    n.accept(new ASTVisitor() {
+      @Override public boolean visit(IfStatement i) {
+        if ($.get() == null)
+          $.set(i);
+        return false;
+      }
+    });
+    return $.get();
   }
 }

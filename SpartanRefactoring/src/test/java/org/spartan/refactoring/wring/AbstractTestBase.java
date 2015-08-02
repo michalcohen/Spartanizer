@@ -18,6 +18,15 @@ import org.junit.runners.Parameterized.Parameter;
 @SuppressWarnings({ "javadoc", "restriction" }) //
 @RunWith(IgnoredClassRunner.class) //
 public abstract class AbstractTestBase {
+  protected static Collection<Object[]> collect(final String[][] cases) {
+    final Collection<Object[]> $ = new ArrayList<>(cases.length);
+    for (final String[] t : cases) {
+      if (t == null)
+        break;
+      $.add(t);
+    }
+    return $;
+  }
   /** The name of the specific test for this transformation */
   @Parameter(0) public String name;
   /** Where the input text can be found */
@@ -28,14 +37,5 @@ public abstract class AbstractTestBase {
   @Test public void peelableinput() {
     assertEquals(input, peelExpression(wrapExpression(input)));
     assertEquals(input, peelStatement(wrapStatement(input)));
-  }
-  protected static Collection<Object[]> collect(final String[][] cases) {
-    final Collection<Object[]> $ = new ArrayList<>(cases.length);
-    for (final String[] t : cases) {
-      if (t == null)
-        break;
-      $.add(t);
-    }
-    return $;
   }
 }

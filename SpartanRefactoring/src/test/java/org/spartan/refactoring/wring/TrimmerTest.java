@@ -45,6 +45,22 @@ import org.spartan.refactoring.utils.Is;
 @SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
+  public static void assertNoChange(final String input) {
+    assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
+  }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
+  }
+  protected static int countOppportunities(final Spartanization s, final String input) {
+    return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
+  }
+  static String apply(final Trimmer t, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(t, u, d).get();
+  }
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = wrapExpression(from);
     assertEquals(from, peelExpression(wrap));
@@ -58,15 +74,11 @@ public class TrimmerTest {
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  public static void assertNoChange(final String input) {
-    assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
+  static int countOppportunities(final Spartanization s, final File f) {
+    return countOppportunities(s, As.string(f));
   }
-  static String apply(final Trimmer t, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    return TESTUtils.rewrite(t, u, d).get();
+  @Test public void chainComparison() {
+    assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   @Test public void chainCOmparisonTrueLast() {
     assertSimplifiesTo("a == b == c == true", "a == b == c");
@@ -186,6 +198,18 @@ public class TrimmerTest {
     assertNotNull(replacement);
     assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
   }
+  @Test public void longChainComparison() {
+    assertNoChange("a == b == c == d");
+  }
+  @Test public void longChainParenthesisComparison() {
+    assertNoChange("(a == b == c) == d");
+  }
+  @Test public void longChainParenthesisNotComparison() {
+    assertNoChange("(a == b == c) != d");
+  }
+  @Test public void longerChainParenthesisComparison() {
+    assertNoChange("(a == b == c == d == e) == d");
+  }
   @Test public void noChange() {
     assertNoChange("12");
     assertNoChange("true");
@@ -207,15 +231,6 @@ public class TrimmerTest {
   @Test public void oneMultiplicationAlternate() {
     assertSimplifiesTo("f(a,b,c,d,e) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d,e)");
   }
-  protected static int countOppportunities(final Spartanization s, final String input) {
-    return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
-  }
-  static int countOppportunities(final Spartanization s, final File f) {
-    return countOppportunities(s, As.string(f));
-  }
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
-  }
   @Test public void oneOpportunityExample() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrapExpression(example));
     assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
@@ -233,6 +248,9 @@ public class TrimmerTest {
   @Test public void rightSipmlificatioForNulNNVariable() {
     assertEquals(COMPARISON_WITH_SPECIFIC.inner, Wrings.find(i("null != a")));
   }
+  @Test public void shorterChainParenthesisComparison() {
+    assertNoChange("a == b == c");
+  }
   @Test public void shorterChainParenthesisComparisonLast() {
     assertNoChange("b == a * b * c * d * e * f * g * h == a");
   }
@@ -244,23 +262,5 @@ public class TrimmerTest {
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) & f()", "f() & f(a,b,c,d)");
-  }
-  @Test public void longChainComparison() {
-    assertNoChange("a == b == c == d");
-  }
-  @Test public void longChainParenthesisComparison() {
-    assertNoChange("(a == b == c) == d");
-  }
-  @Test public void longChainParenthesisNotComparison() {
-    assertNoChange("(a == b == c) != d");
-  }
-  @Test public void longerChainParenthesisComparison() {
-    assertNoChange("(a == b == c == d == e) == d");
-  }
-  @Test public void shorterChainParenthesisComparison() {
-    assertNoChange("a == b == c");
-  }
-  @Test public void chainComparison() {
-    assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
 }

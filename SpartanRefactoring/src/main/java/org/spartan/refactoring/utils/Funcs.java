@@ -812,10 +812,12 @@ public enum Funcs {
     return makePrefixExpression(e.getAST(), e, o);
   }
   /**
-   * @param e the expression to return in the return statement
+   * Create a new {@link ReturnStatement} with a specific expression to return
+   * 
+   * @param e what to return
    * @return the new return statement
    */
-  public static Statement makeReturnStatement(final Expression e) {
+  public static ReturnStatement makeReturnStatement(final Expression e) {
     final ReturnStatement $ = e.getAST().newReturnStatement();
     $.setExpression(frugalDuplicate(e));
     return $;

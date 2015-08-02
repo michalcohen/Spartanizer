@@ -72,6 +72,7 @@ public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("Simple if return", "if (a) return b; else a();", "if(a)return b;a();"), //
+        Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();", "if(a)return b;a(); f();"), //
         null, //
         Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
         null, //

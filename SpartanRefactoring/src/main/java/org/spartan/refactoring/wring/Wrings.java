@@ -195,42 +195,7 @@ public enum Wrings {
       return (i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null);
     }
   }), //
-  /**
-  /**
-   * A {@link Wring} to convert
-   *
-   * <pre>
-   * if (x)
-   *   return b;
-   * else
-   *   p
-   * </pre>
-   *
-   * into
-   *
-   * <pre>
-   * if(x) return b;
-   * </pre>
-   *
-   * @author Yossi Gil
-   * @since 2015-08-01
-   */
-  IFX_SOMETHING_EXISTING_EMPTY_ELSE (new Wring.OfIfStatement() {
-    @Override public final String toString() {
-      return "IFX_SOMETHING_EXISTING_EMPTY_ELSE  (" + super.toString() + ")";
-    }
-    @Override boolean _eligible(IfStatement s) {
-      return true;
-    }
-    @Override Statement _replacement(IfStatement s) {
-      final IfStatement $ = duplicate(s);
-      $.setElseStatement(null);
-      return $;
-    }
-    @Override boolean scopeIncludes(final IfStatement s) {
-      return s != null && existingEmptyElse(s);
-    }
-  }),//
+
   /**
    * A {@link Wring} to convert
    *
@@ -262,15 +227,7 @@ public enum Wrings {
    */
   IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(new Wring.OfIfStatementAndSurrounding() {
     @Override public final String toString() {
-      return " IFX_RETURN_NO_ELSE_RETURN (" + super.toString() + ")";
-    }
-    private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
-      for (final Statement t : from)
-        if (t != substitute)
-          duplicateInto(t, to);
-        else 
-          duplicateInto(by, to);
-     
+      return "IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(" + super.toString() + ")";
     }
   @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
@@ -278,19 +235,65 @@ public enum Wrings {
   @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
     ReturnStatement then = Extract.returnStatement(s.getThenStatement());
     ReturnStatement elze = Extract.nextReturn(s);
-    if ( Extract.statements(s.getElseStatement()).size() == 0 &&  then != null && elze != null)
-      return r;
     final Block parent = asBlock(s.getParent());
-    final Statement $ = makeExpressionStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze)));
-      final Block newParent =  duplicate(parent);
-        addAllReplacing(parent.statements(), newParent.statements(), s, $);
-        r.replace(parent, newParent, null);
+    final List<Statement> siblings = Extract.statements(parent);
+    
+
+   final int i = siblings.indexOf(s);
+   siblings.remove(i);
+   siblings.remove(i);
+   siblings.add(i, makeReturnStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze))));
+
+        final Block $ =  parent.getAST().newBlock();
+        duplicateInto(siblings, $.statements());
+        r.replace(parent, $, null);
       return r;
     }
     @Override boolean scopeIncludes(final IfStatement s) {
-      return Extract.statements(s.getElseStatement()).size() == 0 &&  Extract.returnStatement(s.getThenStatement()) != null && Extract.nextReturn(s) != null;
+      ReturnStatement then = Extract.returnStatement(s.getThenStatement());
+      ReturnStatement elze = Extract.nextReturn(s);
+      return ( elseIsEmpty(s) &&  then != null && elze != null  );
+    }
+    private  boolean elseIsEmpty(final IfStatement s) {
+      return Extract.statements(s.getElseStatement()).size() == 0;
     }
   }), //
+  /**
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   return b;
+   * else
+   *   {}
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * if(x) return b;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-08-01
+   */
+  IFX_SOMETHING_EXISTING_EMPTY_ELSE (new Wring.OfIfStatement() {
+    @Override public final String toString() {
+      return "IFX_SOMETHING_EXISTING_EMPTY_ELSE  (" + super.toString() + ")";
+    }
+    @Override boolean _eligible(IfStatement s) {
+      return true;
+    }
+    @Override Statement _replacement(IfStatement s) {
+      final IfStatement $ = duplicate(s);
+      $.setElseStatement(null);
+      return $;
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return s != null && existingEmptyElse(s);
+    }
+  }),//
   /**
    * A {@link Wring} to convert
    *
@@ -382,6 +385,9 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IFX_ASSIGNX_ELSE_ASSIGNY(new Wring.OfIfStatement() {
+    @Override public final String toString() {
+      return " IFX_ASSIGNX_ELSE_ASSIGNY (" + super.toString() + ")";
+    }
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
