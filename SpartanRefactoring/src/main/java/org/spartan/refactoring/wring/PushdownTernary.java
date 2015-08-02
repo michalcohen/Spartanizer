@@ -3,7 +3,7 @@ package org.spartan.refactoring.wring;
 import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
@@ -30,12 +30,6 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
           $ = i;
         else
           return -1;
-    return $;
-  }
-  private static ConditionalExpression makeConditional(ConditionalExpression e, Expression then, Expression elze) {
-    ConditionalExpression $ = duplicate(e);
-    $.setThenExpression(duplicate(then));
-    $.setElseExpression(duplicate(elze));
     return $;
   }
   @SuppressWarnings("unchecked") private static <T extends Expression> T p(ASTNode e, T $) {

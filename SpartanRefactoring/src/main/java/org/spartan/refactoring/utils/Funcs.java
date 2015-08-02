@@ -22,6 +22,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
@@ -487,6 +488,13 @@ public enum Funcs {
   public static Expression frugalDuplicate(final Expression e) {
     return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
+  // TODO for Yossi review - not sure if funcs is the right place for
+  // getCompilationUnit(), getCurrentWorkbenchWindow() - because it serves both
+  // spartanization and command handlers but actually kind of part of the
+  // builder.
+  public static ICompilationUnit getCompilationUnit() {
+    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
+  }
   /**
    * Get the containing node by type. Say we want to find the first block that
    * wraps our node: getContainerByNodeType(node, BLOCK);
@@ -503,6 +511,9 @@ public enum Funcs {
       if ($.getParent() == $.getRoot())
         break;
     return $;
+  }
+  public static IWorkbenchWindow getCurrentWorkbenchWindow() {
+    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
   /**
    * @param n the node from which to extract the proper fragment
@@ -673,6 +684,12 @@ public enum Funcs {
     $.setOperator(o);
     $.setRightHandSide(frugalDuplicate(right));
     $.setLeftHandSide(frugalDuplicate(left));
+    return $;
+  }
+  public static ConditionalExpression makeConditional(ConditionalExpression e, Expression then, Expression elze) {
+    ConditionalExpression $ = duplicate(e);
+    $.setThenExpression(duplicate(then));
+    $.setElseExpression(duplicate(elze));
     return $;
   }
   /**
@@ -957,6 +974,12 @@ public enum Funcs {
         return e;
     return null;
   }
+  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
+    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
+  }
+  private static ICompilationUnit getCompilationUnit(final IResource r) {
+    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
+  }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)
       if (same(name, o.getName()))
@@ -976,21 +999,5 @@ public enum Funcs {
   }
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
-  }
-  // TODO for Yossi review - not sure if funcs is the right place for
-  // getCompilationUnit(), getCurrentWorkbenchWindow() - because it serves both
-  // spartanization and command handlers but actually kind of part of the
-  // builder.
-  public static ICompilationUnit getCompilationUnit() {
-    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
-  }
-  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
-    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
-  }
-  private static ICompilationUnit getCompilationUnit(final IResource r) {
-    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
-  }
-  public static IWorkbenchWindow getCurrentWorkbenchWindow() {
-    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
 }
