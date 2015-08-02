@@ -325,8 +325,8 @@ public enum Funcs {
   }
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
+   * 
+   * @param b JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite
@@ -414,7 +414,7 @@ public enum Funcs {
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
-   * @param e JD
+   * @param i MethodInvocation
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite
@@ -499,8 +499,8 @@ public enum Funcs {
    *         (or if s or name are null)
    */
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
-    return hasNull(n, name) || n.getNodeType() != VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),
-        (SimpleName) name);
+    return hasNull(n, name) || n.getNodeType() != VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != SIMPLE_NAME ? null : getVarDeclFrag(
+        ((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
   }
   /**
    * @param b the block to check
@@ -783,8 +783,6 @@ public enum Funcs {
     return makePrefixExpression(e.getAST(), e, o);
   }
   /**
-   * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param e the expression to return in the return statement
    * @return the new return statement
    */
@@ -794,8 +792,6 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param e the expression to return in the return statement
    * @return the new return statement
    */
@@ -846,6 +842,7 @@ public enum Funcs {
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
    * @param e JD
+   * @param t JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite
@@ -922,13 +919,12 @@ public enum Funcs {
    * the proper condition (its negation if thenValue is false)
    *
    * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
    * @param cond the condition to try to negate
    * @param thenValue the then value
    * @return the original condition if thenValue was true or its negation if it
    *         was false (or null if any of the given parameter were null)
    */
-  public static Expression tryToNegateCond(final AST t, final ASTRewrite r, final Expression cond, final boolean thenValue) {
+  public static Expression tryToNegateCond(final AST t, final Expression cond, final boolean thenValue) {
     if (hasNull(t, cond))
       return null;
     return thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(cond), PrefixExpression.Operator.NOT);
@@ -941,7 +937,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-        ) ? e : null;
+    ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)

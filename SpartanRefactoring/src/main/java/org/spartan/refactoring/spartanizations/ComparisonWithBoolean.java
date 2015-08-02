@@ -28,7 +28,7 @@ public class ComparisonWithBoolean extends Spartanization {
   public ComparisonWithBoolean() {
     super("Comparison With Boolean", "Eliminate reduntant comparison to boolean constant");
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression n) {
         if (!inRange(m, n))

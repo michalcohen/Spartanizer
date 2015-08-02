@@ -32,6 +32,9 @@ import org.eclipse.jdt.core.dom.Statement;
  * @since 2015-07-16
  */
 public enum As {
+  /**
+   * Converts file, string or marker to compilation unit.
+   */
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT) {
     @Override public CompilationUnit ast(final File f) {
       return ast(string(f));
@@ -46,6 +49,9 @@ public enum As {
       return (CompilationUnit) Make.COMPILIATION_UNIT.parser(f).createAST(null);
     }
   },
+  /**
+   * Converts file, string or marker to expression.
+   */
   EXPRESSION(ASTParser.K_EXPRESSION) {
     @Override public Expression ast(final File f) {
       return ast(string(f));
@@ -60,27 +66,69 @@ public enum As {
       return (Expression) Make.EXPRESSION.parser(f).createAST(null);
     }
   },
+  /**
+   * Constant used in order to get the source as a sequence of statements.
+   */
   STATEMENTS(ASTParser.K_STATEMENTS), //
+  /**
+   * Constant used in order to get the source as a sequence of class body
+   * declarations.
+   */
   CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS);
   final int kind;
   private As(final int kind) {
     this.kind = kind;
   }
+  /**
+   * File -> ASTNode converter
+   * 
+   * @param f File
+   * @return ASTNode
+   */
   public ASTNode ast(final File f) {
     return ast(string(f));
   }
+  /**
+   * String -> ASTNode converter
+   * 
+   * @param s String
+   * @return ASTNode
+   */
   public ASTNode ast(final String s) {
     return makeParser(s).createAST(null);
   }
+  /**
+   * IMarker -> ICompilationUnit converter
+   * 
+   * @param m IMarker
+   * @return CompilationUnit
+   */
   public static ICompilationUnit iCompilationUnit(final IMarker m) {
     return iCompilationUnit((IFile) m.getResource());
   }
+  /**
+   * IFile -> ICompilationUnit converter
+   * 
+   * @param f File
+   * @return ICompilationUnit
+   */
   public static ICompilationUnit iCompilationUnit(final IFile f) {
     return JavaCore.createCompilationUnitFrom(f);
   }
+  /**
+   * IMarker, SubProgressMonitor -> ASTNode converter
+   * 
+   * @param m Marker
+   * @param pm ProgressMonitor
+   * @return ASTNode
+   */
   public ASTNode ast(final IMarker m, final SubProgressMonitor pm) {
     return Make.of(this).parser(m).createAST(pm);
   }
+  /**
+   * @param f IFile
+   * @return ASTNode
+   */
   public ASTNode ast(final IFile f) {
     return Make.of(this).parser(f).createAST(null);
   }

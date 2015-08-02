@@ -27,9 +27,9 @@ public class AsRefactoring extends Spartanization {
   /**
    * Instantiates this class
    * 
-   * @param inner
-   * @param name
-   * @param description
+   * @param inner The wring we wish to convert
+   * @param name The title of the refactoring
+   * @param description One line description of the refactoring
    */
   public AsRefactoring(final Wring inner, final String name, final String description) {
     super(name, description);
@@ -79,7 +79,7 @@ public class AsRefactoring extends Spartanization {
       }
     };
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final Block e) {
         return !inRange(m, e) || inner.go(r, e);
