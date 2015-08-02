@@ -166,7 +166,7 @@ public abstract class Spartanization extends Refactoring {
   }
   private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
     if (!isTextSelected())
-      return getAllProjectCompilationUnits(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+      return getAllProjectCompilationUnits(compilationUnit, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     final List<ICompilationUnit> $ = new ArrayList<>();
     $.add(compilationUnit);
     return $;
@@ -216,6 +216,16 @@ public abstract class Spartanization extends Refactoring {
       changes.add(textChange);
     m.done();
   }
+  public void performRule(final ICompilationUnit cu, final IProgressMonitor pm) throws CoreException {
+    pm.beginTask("Creating change for a single compilation unit...", 2);
+    final TextFileChange textChange = new TextFileChange(cu.getElementName(), (IFile) cu.getResource());
+    textChange.setTextType("java");
+    final SubProgressMonitor subProgressMonitor = new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+    textChange.setEdit(createRewrite((CompilationUnit) Make.COMPILIATION_UNIT.parser(cu).createAST(subProgressMonitor), subProgressMonitor).rewriteAST());
+    if (textChange.getEdit().getLength() != 0)
+      textChange.perform(pm);
+    pm.done();
+  }
   protected void scanCompilationUnitForMarkerFix(final IMarker m, final IProgressMonitor pm, final boolean preview) throws CoreException {
     pm.beginTask("Creating change(s) for a single compilation unit...", 2);
     final ICompilationUnit u = As.iCompilationUnit(m);
@@ -233,10 +243,10 @@ public abstract class Spartanization extends Refactoring {
    * @param units
    * @throws JavaModelException
    */
-  protected final List<ICompilationUnit> getAllProjectCompilationUnits(final IProgressMonitor pm) throws JavaModelException {
+  public static final List<ICompilationUnit> getAllProjectCompilationUnits(final ICompilationUnit cu, final IProgressMonitor pm) throws JavaModelException {
     pm.beginTask("Gathering project information...", 1);
     final List<ICompilationUnit> $ = new ArrayList<>();
-    for (final IPackageFragmentRoot r : compilationUnit.getJavaProject().getPackageFragmentRoots())
+    for (final IPackageFragmentRoot r : cu.getJavaProject().getPackageFragmentRoots())
       if (r.getKind() == IPackageFragmentRoot.K_SOURCE)
         for (final IJavaElement e : r.getChildren())
           if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT)

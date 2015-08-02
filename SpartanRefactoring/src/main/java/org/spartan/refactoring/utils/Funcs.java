@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -41,6 +45,9 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.spartan.utils.Utils;
 
 /**
@@ -395,8 +402,8 @@ public enum Funcs {
    *         (or if s or name are null)
    */
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
-    return hasNull(n, name) || n.getNodeType() != VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != SIMPLE_NAME ? null
-        : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
+    return hasNull(n, name) || n.getNodeType() != VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != SIMPLE_NAME ? null : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(),
+        (SimpleName) name);
   }
   /**
    * @param b the block to check
@@ -814,7 +821,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-    ) ? e : null;
+        ) ? e : null;
   }
   private static ReturnStatement asReturn(final Block b) {
     return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
@@ -838,5 +845,21 @@ public enum Funcs {
   }
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
+  }
+  // TODO for Yossi review - not sure if funcs is the right place for
+  // getCompilationUnit(), getCurrentWorkbenchWindow() - because it serves both
+  // spartanization and command handlers but actually kind of part of the
+  // builder.
+  public static ICompilationUnit getCompilationUnit() {
+    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
+  }
+  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
+    return ep == null ? null : getCompilationUnit((IResource) ep.getEditorInput().getAdapter(IResource.class));
+  }
+  private static ICompilationUnit getCompilationUnit(final IResource r) {
+    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
+  }
+  public static IWorkbenchWindow getCurrentWorkbenchWindow() {
+    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
 }
