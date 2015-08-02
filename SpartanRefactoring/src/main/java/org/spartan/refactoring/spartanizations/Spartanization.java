@@ -240,8 +240,13 @@ public abstract class Spartanization extends Refactoring {
     pm.done();
   }
   /**
-   * @param units
-   * @throws JavaModelException
+   * @param cu A compilation unit for reference - you give me an arbitrary
+   *          compilation unit from the project and I'll find the root of the
+   *          project and do my magic.
+   * @param A standard ProgressMonitor - if you don't care about operation times
+   *          put a "new NullProgressMonitor()"
+   * @return List of all compilation units in the current project
+   * @throws JavaModelException don't forget to catch
    */
   public static final List<ICompilationUnit> getAllProjectCompilationUnits(final ICompilationUnit cu, final IProgressMonitor pm) throws JavaModelException {
     pm.beginTask("Gathering project information...", 1);

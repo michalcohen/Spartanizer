@@ -36,11 +36,13 @@ public enum All {
       $.addAll(e.extendedOperands());
     return $;
   }
+  /**
+   * @return List of all compilation units in the current project
+   */
   public static List<ICompilationUnit> compilationUnits() {
     try {
       return Spartanization.getAllProjectCompilationUnits(Funcs.getCompilationUnit(), new NullProgressMonitor());
     } catch (final JavaModelException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;
