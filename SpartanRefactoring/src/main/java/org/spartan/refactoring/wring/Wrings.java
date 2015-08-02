@@ -1,5 +1,4 @@
 package org.spartan.refactoring.wring;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
@@ -7,9 +6,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
@@ -189,6 +187,40 @@ public enum Wrings {
     }
   }), //
   /**
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   return b;
+   * else
+   *   p
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * if(x) return b;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-08-01
+   */
+  IF_THENX_ELSEEMPTY (new Wring.OfIfStatement() {
+    @Override boolean _eligible(IfStatement s) {
+      return true;
+    }
+    @Override Statement _replacement(IfStatement s) {
+      final IfStatement $ = duplicate(s);
+      $.setElseStatement(null);
+      return $;
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      System.out.println("Scope " + s);
+      return s != null && s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
+    }
+  }),//
+  /**
    * A {@link Wring} to convert
    *
    * <pre>
@@ -218,29 +250,28 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IF_RETURN_NO_ELSE_RETURN(new Wring.OfIfStatementAndSurrounding() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
+    private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
+      for (final Statement t : from)
+        if (t != substitute)
+          duplicateInto(t, to);
+        else 
+          duplicateInto(by, to);     
     }
+  @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+    return true;
+  }
   @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
     ReturnStatement then = Extract.returnStatement(s.getThenStatement());
     ReturnStatement elze = Extract.nextReturn(s);
     if ( Extract.statements(s.getElseStatement()).size() == 0 &&  then != null && elze != null)
       return r;
-    Block parent = asBlock(s.getParent());
+    final Block parent = asBlock(s.getParent());
     final Statement $ = makeExpressionStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze)));
-      final Block newParent = s.getAST().newBlock();
-        addAllReplacing(newParent.statements(), parent.statements(), s, $);
+      final Block newParent =  duplicate(parent);
+        addAllReplacing(parent.statements(), newParent.statements(), s, $);
         r.replace(parent, newParent, null);
       return r;
     }
-  private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
-    for (final Statement t : from)
-      if (t != substitute)
-        duplicateInto(t, to);
-      else {
-        duplicateInto(by, to);
-      }
-  }
     @Override boolean scopeIncludes(final IfStatement s) {
       return Extract.statements(s.getElseStatement()).size() == 0 &&  Extract.returnStatement(s.getThenStatement()) != null && Extract.nextReturn(s) != null;
     }

@@ -1,7 +1,6 @@
 package org.spartan.refactoring.wring;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -341,7 +340,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
 
     public static class Conditional extends WringedExpression {
       /**
-       * Instantiates the enclosing class ({@link Infix})
+       * Instantiates the enclosing class ({@link Conditional})
        *
        * @param w JD
        */
@@ -355,7 +354,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
 
     public static abstract class IfStatementAndSurrounding extends WringedIfStatement {
       /**
-       * Instantiates the enclosing class ({@link WringedInput})
+       * Instantiates the enclosing class ({@link IfStatementAndSurrounding})
        *
        * @param inner
        */
@@ -677,7 +676,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       super(inner);
     }
     @Override @Test public void correctSimplifier() {
-      assertEquals(inner, Wrings.find(asMe()));
+      assertThat(Wrings.find(asMe()), is(inner));
     }
     @Override protected IfStatement asMe() {
       final Statement $ = asSingle(input);
@@ -712,7 +711,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void peelableOutput() {
       assertEquals(expected, peelStatement(wrapStatement(expected)));
     }
-    @Test public void scopeIncludes() {
+    @Test public void scopeIncludesAsMe() {
+      assertThat(asMe(), notNullValue());
       assertTrue(inner.scopeIncludes(asMe()));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {

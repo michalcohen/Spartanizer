@@ -70,6 +70,10 @@ public class Trimmer extends Spartanization {
         final Wring w = Wrings.find(i);
         return w == null || w.noneligible(i) || overrideInto(w.range(i), $);
       }
+      @Override public boolean visit(final Block b) {
+        final Wring w = Wrings.find(b);
+        return w == null || w.noneligible(b) || overrideInto(w.range(b), $);
+      }
       @Override public boolean visit(final InfixExpression e) {
         final Wring w = Wrings.find(e);
         return w == null || w.noneligible(e) || overrideInto(w.range(e), $);

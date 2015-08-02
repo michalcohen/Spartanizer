@@ -27,8 +27,16 @@ import org.spartan.utils.Range;
  * @since 2015-07-09
  */
 public abstract class Wring {
+  public Wring(String name) {
+    this.name = name;
+  }
   public Range range(final ASTNode e) {
     return new Range(e);
+  }
+  private final String name;
+  @Override public final String toString() {
+    // TODO Auto-generated method stub
+    return name + "(" + super.toString() + ")";
   }
   /**
    * @param b JD
@@ -287,6 +295,7 @@ public abstract class Wring {
   static abstract class OfIfStatement extends Wring.Defaults {
     abstract boolean _eligible(final IfStatement s);
     abstract Statement _replacement(final IfStatement s);
+    @Override abstract boolean scopeIncludes(final IfStatement i);
     @Override final boolean eligible(final IfStatement s) {
       assert scopeIncludes(s);
       return _eligible(s);

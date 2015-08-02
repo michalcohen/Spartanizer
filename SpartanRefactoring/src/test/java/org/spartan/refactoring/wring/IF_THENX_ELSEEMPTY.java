@@ -19,18 +19,15 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IF_THROW_A_ELSE_THROW_B {
+public enum IF_THENX_ELSEEMPTY {
   ;
-  static final Wring WRING = Wrings.IF_THROW_A_ELSE_THROW_B.inner;
+  static final Wring WRING = Wrings.IF_THENX_ELSEEMPTY.inner;
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -53,9 +50,9 @@ public enum IF_THROW_A_ELSE_THROW_B {
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("Simple if throw", "if (a) throw b; else throw c;", "throw a ? b : c;"), //
-        Utils.asArray("Simply nested if throw", "{if (a)  throw b; else throw c;}", " if(a)throw b;throw c;"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}", "throw a ? b : c;"), //
+        Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
+        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
+        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"), //
         null);
     /**
      * Generate test cases for this parameterized class.
