@@ -28,8 +28,8 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
-public class IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING {
-  static final Wring WRING = Wrings.IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner;
+public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
+  static final Wring WRING = Wrings.IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner;
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) return a = b; else a = c;");
     assertNotNull(s);
@@ -51,10 +51,6 @@ public class IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING {
         Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;"), //
         Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
         null);
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -65,13 +61,17 @@ public class IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
+    }
   }
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("Simple if return", "if (a) return b; else a();", "if (a) return b; a();"), //
+        Utils.asArray("Simple if return", "if (a) return b; else a();", "if(a)return b;a();"), //
         null, //
         Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
         null, //

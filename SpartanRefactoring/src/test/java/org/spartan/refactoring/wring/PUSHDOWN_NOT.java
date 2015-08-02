@@ -66,10 +66,6 @@ public class PUSHDOWN_NOT {
         Utils.asArray("Simple not of function", "!f(a)"), //
         Utils.asArray("Actual example", "!inRange(m, e)"), //
         null);
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -79,6 +75,10 @@ public class PUSHDOWN_NOT {
     @Parameters(name = DESCRIPTION) //
     public static Collection<Object[]> cases() {
       return collect(cases);
+    }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
     }
   }
 

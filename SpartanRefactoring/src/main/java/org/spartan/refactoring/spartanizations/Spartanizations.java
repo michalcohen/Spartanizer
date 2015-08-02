@@ -20,12 +20,12 @@ import org.spartan.refactoring.wring.Trimmer;
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
   // SequencerEndingThen(new
-  // AsRefactoring(IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch
+  // AsRefactoring(IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch
   // ends with a sequencer", "Eliminate redundant else")), //
   Trimmer(new Trimmer()), //
   // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
   // ternary", "in cases")), //
-  // IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true",
+  // IfAssign(new AsRefactoring(IFX_ASSIGNX_ELSE_ASSIGNY.inner, "and true",
   // "remove trues from expression")), //
   // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
   // expression")), //

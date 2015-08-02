@@ -44,6 +44,10 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class MULTIPLICATION_SORTER extends AbstractWringTest {
   static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
+  static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
+  MULTIPLICATION_SORTER() {
+    super(WRING);
+  }
   @Test public void chainComparison0() {
     final InfixExpression e = i("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
@@ -55,10 +59,6 @@ public class MULTIPLICATION_SORTER extends AbstractWringTest {
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("a == b == c", replacement);
-  }
-  static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
-  MULTIPLICATION_SORTER() {
-    super(WRING);
   }
   @Test public void legibleOnShorterChainParenthesisComparisonLast() {
     assertLegible("z * 2 * a * b * c * d * e * f * g * h");

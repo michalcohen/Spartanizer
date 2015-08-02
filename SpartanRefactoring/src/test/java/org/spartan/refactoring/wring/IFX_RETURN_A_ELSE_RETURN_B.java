@@ -19,23 +19,16 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE {
+public enum IFX_RETURN_A_ELSE_RETURN_B {
   ;
-  static final Wring WRING = Wrings.IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE.inner;
+  static final Wring WRING = Wrings.IFX_RETURN_A_ELSE_RETURN_B.inner;
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         null);
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -46,15 +39,20 @@ public enum IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
+    }
   }
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
-        new String[] { "Vanilla {}", "if (a) return b; else {}", "if (a) return b;" }, //
-        new String[] { "Vanilla ; ", "if (a) return b; else ;", "if (a) return b;" }, //
-        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}}", "if (a) return b;" }, //
+        // Literal
+        Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
+        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
+        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"), //
         null);
     /**
      * Generate test cases for this parameterized class.

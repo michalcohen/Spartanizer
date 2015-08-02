@@ -140,9 +140,9 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THROW_A_ELSE_THROW_B(new Wring.OfIfStatement() {
+  IFX_THROW_A_ELSE_THROW_B(new Wring.OfIfStatement() {
     @Override public final String toString() {
-      return "IF_THROW_A_ELSE_THROW_B (" + super.toString() + ")";
+      return "IFX_THROW_A_ELSE_THROW_B (" + super.toString() + ")";
     }
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
@@ -155,7 +155,7 @@ public enum Wrings {
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
-      return (i != null && Extract.throwExpression(i.getThenStatement()) != null && Extract.throwExpression(i.getElseStatement()) != null);
+      return i != null && Extract.throwExpression(i.getThenStatement()) != null && Extract.throwExpression(i.getElseStatement()) != null;
     }
   }), //
   /**
@@ -177,9 +177,9 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_RETURN_A_ELSE_RETURN_B(new Wring.OfIfStatement() {
+  IFX_RETURN_A_ELSE_RETURN_B(new Wring.OfIfStatement() {
     @Override public final String toString() {
-      return "IF_RETURN_A_ELSE_RETURN_B (" + super.toString() + ")";
+      return "IFX_RETURN_A_ELSE_RETURN_B (" + super.toString() + ")";
     }
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
@@ -215,9 +215,9 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-08-01
    */
-  IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE (new Wring.OfIfStatement() {
+  IFX_SOMETHING_EXISTING_EMPTY_ELSE (new Wring.OfIfStatement() {
     @Override public final String toString() {
-      return "IF_THEN_SOMETHING_EXISTING_EMPTY_ELSE  (" + super.toString() + ")";
+      return "IFX_SOMETHING_EXISTING_EMPTY_ELSE  (" + super.toString() + ")";
     }
     @Override boolean _eligible(IfStatement s) {
       return true;
@@ -260,9 +260,9 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THEN_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(new Wring.OfIfStatementAndSurrounding() {
+  IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(new Wring.OfIfStatementAndSurrounding() {
     @Override public final String toString() {
-      return " IF_RETURN_NO_ELSE_RETURN (" + super.toString() + ")";
+      return " IFX_RETURN_NO_ELSE_RETURN (" + super.toString() + ")";
     }
     private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
       for (final Statement t : from)
@@ -320,9 +320,9 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSurrounding() {
+  IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSurrounding() {
     @Override public final String toString() {
-      return "IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING (" + super.toString() + ")";
+      return "IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING (" + super.toString() + ")";
     }
     private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {
       for (final Statement t : from)
@@ -381,7 +381,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfIfStatement() {
+  IFX_ASSIGNX_ELSE_ASSIGNY(new Wring.OfIfStatement() {
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }

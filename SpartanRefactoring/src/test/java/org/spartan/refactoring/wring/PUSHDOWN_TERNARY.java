@@ -57,10 +57,6 @@ public class PUSHDOWN_TERNARY {
         new String[] { "Into constructor not same arity", "a ? new S(a,new Integer(4),b) : new S(new Ineger(3))" }, //
         new String[] { "field refernece", "externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action", }, //
         null);
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -70,6 +66,10 @@ public class PUSHDOWN_TERNARY {
     @Parameters(name = DESCRIPTION) //
     public static Collection<Object[]> cases() {
       return collect(cases);
+    }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
     }
   }
 

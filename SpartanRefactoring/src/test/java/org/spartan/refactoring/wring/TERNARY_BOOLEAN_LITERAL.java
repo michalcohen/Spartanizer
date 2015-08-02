@@ -37,17 +37,9 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class TERNARY_BOOLEAN_LITERAL {
-  @Test public void hasTernaryOrBooleanLiteralFalse() {
-    assertFalse(haveTernaryOfBooleanLitreral(All.operands(flatten(i("A||B")))));
-  }
+  static final Wring WRING = Wrings.TERNARY_BOOLEAN_LITERAL.inner;
   @Test public void hasTernaryOrBooleanLiteral() {
     assertTrue(haveTernaryOfBooleanLitreral(All.operands(flatten(i("A||(e?true:false)")))));
-  }
-  @Test public void makeSurCoreIsExtracted() {
-    assertTrue(isTernaryOfBooleanLitreral(e("(e?true:false)")));
-  }
-  @Test public void makeSurCoreIsExtracted1() {
-    assertTrue(isTernaryOfBooleanLitreral(e("(e?true:false)")));
   }
   @Test public void hasTernaryOrBooleanLiteral1() {
     final InfixExpression flatten = flatten(i("A||(e?true:false)"));
@@ -69,13 +61,21 @@ public class TERNARY_BOOLEAN_LITERAL {
     assertTrue(isTernaryOfBooleanLitreral(operands.get(1)));
     assertTrue(haveTernaryOfBooleanLitreral(operands));
   }
-  @Test public void isTernaryOrBooleanLiteralOnExpression() {
-    assertTrue(isTernaryOfBooleanLitreral(e("e?true:false")));
+  @Test public void hasTernaryOrBooleanLiteralFalse() {
+    assertFalse(haveTernaryOfBooleanLitreral(All.operands(flatten(i("A||B")))));
   }
   @Test public void isTernaryOrBooleanLiteralOnConditional() {
     assertTrue(isTernaryOfBooleanLitreral(c("e?true:false")));
   }
-  static final Wring WRING = Wrings.TERNARY_BOOLEAN_LITERAL.inner;
+  @Test public void isTernaryOrBooleanLiteralOnExpression() {
+    assertTrue(isTernaryOfBooleanLitreral(e("e?true:false")));
+  }
+  @Test public void makeSurCoreIsExtracted() {
+    assertTrue(isTernaryOfBooleanLitreral(e("(e?true:false)")));
+  }
+  @Test public void makeSurCoreIsExtracted1() {
+    assertTrue(isTernaryOfBooleanLitreral(e("(e?true:false)")));
+  }
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
@@ -85,10 +85,6 @@ public class TERNARY_BOOLEAN_LITERAL {
         Utils.asArray("Actual example", "next < values().length"), //
         Utils.asArray("No boolean", "a?b:c"), //
         null);
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -98,6 +94,10 @@ public class TERNARY_BOOLEAN_LITERAL {
     @Parameters(name = DESCRIPTION) //
     public static Collection<Object[]> cases() {
       return collect(cases);
+    }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
     }
   }
 
@@ -125,12 +125,12 @@ public class TERNARY_BOOLEAN_LITERAL {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    @Test public void inputIsConditionalfixExpression() {
-      assertNotNull(asConditionalExpression());
-    }
     /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);
+    }
+    @Test public void inputIsConditionalfixExpression() {
+      assertNotNull(asConditionalExpression());
     }
   }
 }

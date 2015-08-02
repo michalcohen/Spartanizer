@@ -38,7 +38,6 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", }) //
 public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
   private static final Wring WRING = Wrings.COMPARISON_WITH_BOOLEAN.inner;
-
   public COMPARISON_WITH_BOOLEAN() {
     super(WRING);
   }

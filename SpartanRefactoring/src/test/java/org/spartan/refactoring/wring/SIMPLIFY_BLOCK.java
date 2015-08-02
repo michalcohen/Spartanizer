@@ -39,6 +39,7 @@ public enum SIMPLIFY_BLOCK {
         Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
+        Utils.asArray("Simple block", "{a(); b(); c();}"), //
         null);
     /**
      * Generate test cases for this parameterized class.

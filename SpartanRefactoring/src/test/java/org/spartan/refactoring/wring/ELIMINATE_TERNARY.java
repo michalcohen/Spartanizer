@@ -46,10 +46,6 @@ public class ELIMINATE_TERNARY {
         new String[] { "function call", "a ? f(b) : f(c)" }, //
         new String[] { "a method call", "a ? y.f(b) :y.f(c)" }, //
         null);
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
     /**
      * Generate test cases for this parameterized class.
      *
@@ -59,6 +55,10 @@ public class ELIMINATE_TERNARY {
     @Parameters(name = DESCRIPTION) //
     public static Collection<Object[]> cases() {
       return collect(cases);
+    }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
     }
   }
 
@@ -82,12 +82,12 @@ public class ELIMINATE_TERNARY {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    @Test public void inputIsConditionalfixExpression() {
-      assertNotNull(asConditionalExpression());
-    }
     /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);
+    }
+    @Test public void inputIsConditionalfixExpression() {
+      assertNotNull(asConditionalExpression());
     }
   }
 }
