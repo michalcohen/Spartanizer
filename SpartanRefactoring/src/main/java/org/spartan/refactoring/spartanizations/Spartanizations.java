@@ -1,9 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.spartanizations.Wrings.AND_TRUE;
-import static org.spartan.refactoring.spartanizations.Wrings.OR_FALSE;
-import static org.spartan.refactoring.spartanizations.Wrings.PUSHDOWN_NOT;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.spartan.refactoring.preferences.PreferencesFile;
+import org.spartan.refactoring.wring.Trimmer;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
@@ -22,18 +19,30 @@ import org.spartan.refactoring.preferences.PreferencesFile;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-  AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from expression")), //
-  ComparisonWithBoolean(new ComparisonWithBoolean()), //
-  ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  ForwardDeclaration(new ForwardDeclaration()), //
-  InlineSingleUse(new InlineSingleUse()), //
-  OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses kddfrom expression")), //
-  PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify not expression")), //
-  RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  ShortestBranchFirst(new ShortestBranchFirst()), //
-  ShortestOperand(new ShortestOperand()), //
-  SimplifyTernary(new AsRefactoring(Wrings.TERNARY_BOOLEAN_LITERAL.inner, "Ternary", "Simplify complex ternary boolean expression")), //
-  Ternarize(new Ternarize()), //
+  // SequencerEndingThen(new
+  // AsRefactoring(IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch
+  // ends with a sequencer", "Eliminate redundant else")), //
+  Trimmer(new Trimmer()), //
+  // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
+  // ternary", "in cases")), //
+  // IfAssign(new AsRefactoring(IF_ASSIGNX_ELSE_ASSIGNY.inner, "and true",
+  // "remove trues from expression")), //
+  // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
+  // expression")), //
+  //// ComparisonWithBoolean(new ComparisonWithBoolean()), //
+  // ComparisonWithSpecific(new ComparisonWithSpecific()), //
+  // // ForwardDeclaration(new ForwardDeclaration()), //
+  // InlineSingleUse(new InlineSingleUse()), //
+  // OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses from
+  // expression")), //
+  // PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify
+  // not expression")), //
+  // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
+  // ShortestBranchFirst(new ShortestBranchFirst()), //
+  // ShortestOperand(new ShortestOperand()), //
+  // SimplifyTernary(new AsRefactoring(Wrings.TERNARY_BOOLEAN_LITERAL.inner,
+  // "Ternary", "Simplify complex ternary boolean expression")), //
+  // // Ternarize(new Ternarize()), //
   ;
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
@@ -105,13 +114,12 @@ public enum Spartanizations {
     final int offset = PreferencesFile.getSpartanTitle().length;
     final String[] str = PreferencesFile.parsePrefFile();
     final boolean useAll = str == null;
-    int i = 0;
-    for (final Spartanization rule : allAvailableSpartanizations()) {
-      if (useAll || str != null && str.length >= i + offset && !ignored(str[i + offset]))
-        put(rule);
-      i++;
-    }
-    put(new SimplifyLogicalNegation());
+    final int i = 0;
+    for (final Spartanization rule : allAvailableSpartanizations())
+      // if (useAll || str != null && str.length >= i + offset && !ignored(str[i
+      // + offset]))
+      put(rule);
+    // i++;
   }
   /**
    * @param name the name of the spartanization

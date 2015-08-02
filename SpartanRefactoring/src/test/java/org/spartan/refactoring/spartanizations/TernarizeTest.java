@@ -5,12 +5,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
+
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.AST;
@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.wring.AbstractTestBase;
 import org.spartan.utils.Utils;
 
 /**

@@ -1,6 +1,20 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
+import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.EXPRESSION_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
+import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -28,9 +42,11 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
@@ -42,6 +58,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -121,6 +138,16 @@ public enum Funcs {
     return !(n instanceof ConditionalExpression) ? null : (ConditionalExpression) n;
   }
   /**
+   * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
+   *
+   * @param n JD
+   * @return the argument, but down-casted to a {@link ConditionalExpression},
+   *         or <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static ThrowStatement asThrowStatement(final ASTNode n) {
+    return !(n instanceof ThrowStatement) ? null : (ThrowStatement) n;
+  }
+  /**
    * Down-cast, if possible, to {@link ConditionalExpression}
    *
    * @param e JD
@@ -129,6 +156,16 @@ public enum Funcs {
    */
   public static ConditionalExpression asConditionalExpression(final Expression e) {
     return !(e instanceof ConditionalExpression) ? null : (ConditionalExpression) e;
+  }
+  /**
+   * Down-cast, if possible, to {@link Expression}
+   *
+   * @param n JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static Expression asExpression(final ASTNode n) {
+    return !(n instanceof Expression) ? null : (Expression) n;
   }
   /**
    * Down-cast, if possible, to {@link ExpressionStatement}
@@ -147,7 +184,7 @@ public enum Funcs {
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
-  public static IfStatement asIfStatement(final Statement $) {
+  public static IfStatement asIfStatement(final ASTNode $) {
     return $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
   }
   /**
@@ -305,8 +342,52 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
+  public static ConditionalExpression duplicate(final ConditionalExpression e) {
+    return (ConditionalExpression) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param a JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static Assignment duplicate(final Assignment a) {
+    return (Assignment) copySubtree(a.getAST(), a);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
   public static Expression duplicate(final Expression e) {
     return (Expression) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static ClassInstanceCreation duplicate(final ClassInstanceCreation e) {
+    return (ClassInstanceCreation) copySubtree(e.getAST(), e);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static FieldAccess duplicate(final FieldAccess e) {
+    return (FieldAccess) copySubtree(e.getAST(), e);
   }
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
@@ -331,6 +412,28 @@ public enum Funcs {
     return (InfixExpression) copySubtree(e.getAST(), e);
   }
   /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static MethodInvocation duplicate(final MethodInvocation i) {
+    return (MethodInvocation) copySubtree(i.getAST(), i);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static Statement duplicate(final Statement e) {
+    return (Statement) copySubtree(e.getAST(), e);
+  }
+  /**
    * Make a duplicate of, suitable for tree rewrite, of the parameter
    *
    * @param e JD
@@ -352,12 +455,6 @@ public enum Funcs {
    */
   public static Expression duplicateRight(final InfixExpression e) {
     return duplicate(e.getRightOperand());
-  }
-  public static Expression find(final boolean b, final List<Expression> es) {
-    for (final Expression e : es)
-      if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
-        return e;
-    return null;
   }
   public static InfixExpression flip(final InfixExpression e) {
     final Operator flip = flip(e.getOperator());
@@ -541,10 +638,11 @@ public enum Funcs {
   }
   /**
    * @param ts a list
-   * @return the last item in a list
+   * @return the last item in a list or <code><b>null</b></code> if the
+   *         parameter is <code><b>null</b></code> or empty
    */
   public static <T> T last(final List<T> ts) {
-    return ts.get(ts.size() - 1);
+    return ts == null || ts.isEmpty() ? null : ts.get(ts.size() - 1);
   }
   public static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
     final Expression $ = e.getLeftOperand();
@@ -565,9 +663,6 @@ public enum Funcs {
     $.setLeftHandSide(frugalDuplicate(left));
     return $;
   }
-  public static Statement makeExpressionStatement(final Expression e) {
-    return e.getAST().newExpressionStatement(frugalDuplicate(e));
-  }
   /**
    * Create a new {@link ConditionalExpression}
    *
@@ -583,6 +678,9 @@ public enum Funcs {
     $.setThenExpression(frugalDuplicate(then));
     $.setElseExpression(frugalDuplicate(elze));
     return $;
+  }
+  public static Statement makeExpressionStatement(final Expression e) {
+    return e.getAST().newExpressionStatement(frugalDuplicate(e));
   }
   /**
    * @param t the AST who is to own the new If Statement
@@ -696,6 +794,17 @@ public enum Funcs {
     return $;
   }
   /**
+   * @param t the AST who is to own the new return statement
+   * @param r ASTRewrite for the given AST
+   * @param e the expression to return in the return statement
+   * @return the new return statement
+   */
+  public static ThrowStatement makeThrowStatement(final Expression e) {
+    final ThrowStatement $ = e.getAST().newThrowStatement();
+    $.setExpression(frugalDuplicate(e));
+    return $;
+  }
+  /**
    * @param t the AST who is to own the new variable declaration fragment
    * @param r the ASTRewrite for the given AST
    * @param varName the variable name for the new fragment
@@ -732,6 +841,17 @@ public enum Funcs {
    */
   public static <T> T prev(final int i, final List<T> ts) {
     return ts.get(i < 1 ? 0 : i - 1);
+  }
+  /**
+   * Make a duplicate, suitable for tree rewrite, of the parameter
+   *
+   * @param e JD
+   * @return a duplicate of the parameter, downcasted to the returned type.
+   * @see ASTNode#copySubtree
+   * @see ASTRewrite
+   */
+  public static Expression rebase(final Expression e, final AST t) {
+    return (Expression) copySubtree(t, e);
   }
   public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o, final Expression right) {
     $.setLeftOperand(left);
@@ -823,8 +943,11 @@ public enum Funcs {
         NOT_EQUALS //
         ) ? e : null;
   }
-  private static ReturnStatement asReturn(final Block b) {
-    return b.statements().size() != 1 ? null : asReturnStatement((Statement) b.statements().get(0));
+  private static Expression find(final boolean b, final List<Expression> es) {
+    for (final Expression e : es)
+      if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
+        return e;
+    return null;
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)

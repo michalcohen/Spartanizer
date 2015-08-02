@@ -14,10 +14,10 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoOpportun
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotEvenSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
+import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;
@@ -144,10 +144,8 @@ public class ComparisonWithSpecificTest {
     final Document d = new Document(P0);
     assertNotNull(d);
     final ComparisonWithSpecific s = inner();
-    final Document rewrite;
     s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-    rewrite = d;
-    assertSimilar(expected, rewrite);
+    assertSimilar(expected, d);
   }
   @Test public void one2true5() {
     final Document d = new Document(P0);

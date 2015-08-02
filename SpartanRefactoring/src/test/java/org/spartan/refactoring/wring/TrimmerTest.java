@@ -1,34 +1,35 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.ExpressionComparator.TOKEN_THRESHOLD;
-import static org.spartan.refactoring.spartanizations.ExpressionComparator.countNodes;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertLegible;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotLegible;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotWithinScope;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimplifiesTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertWithinScope;
-import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
+import static org.junit.Assert.fail;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
-import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_BOOLEAN;
-import static org.spartan.refactoring.spartanizations.Wrings.COMPARISON_WITH_SPECIFIC;
-import static org.spartan.refactoring.spartanizations.Wrings.MULTIPLICATION_SORTER;
+import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
+import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
+import static org.spartan.refactoring.wring.Wrings.COMPARISON_WITH_SPECIFIC;
+import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
+
+import java.io.File;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jface.text.Document;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 
@@ -44,6 +45,29 @@ import org.spartan.refactoring.utils.Is;
 @SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
+  static void assertSimplifiesTo(final String from, final String expected) {
+    final String wrap = wrapExpression(from);
+    assertEquals(from, peelExpression(wrap));
+    final String unpeeled = apply(new Trimmer(), wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    final String peeled = peelExpression(unpeeled);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
+  }
+  public static void assertNoChange(final String input) {
+    assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
+  }
+  static String apply(final Trimmer t, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(t, u, d).get();
+  }
   @Test public void chainCOmparisonTrueLast() {
     assertSimplifiesTo("a == b == c == true", "a == b == c");
   }
@@ -99,9 +123,6 @@ public class TrimmerTest {
   @Test public void comparisonWithSpecific0() {
     assertSimplifiesTo("this != a", "a != this");
   }
-  @Test public void comparisonWithSpecific0Legibiliy0() {
-    assertNotWithinScope(COMPARISON_WITH_BOOLEAN.inner, "this != a");
-  }
   @Test public void comparisonWithSpecific0Legibiliy00() {
     final InfixExpression e = i("this != a");
     assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
@@ -109,23 +130,6 @@ public class TrimmerTest {
     assertFalse(Is.booleanLiteral(e.getLeftOperand()));
     assertFalse(Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand())));
-  }
-  @Test public void comparisonWithSpecific0Legibiliy1() {
-    assertTrue(Is.specific(i("this != a").getLeftOperand()));
-    assertNotLegible(Wrings.COMPARISON_WITH_SPECIFIC.inner, "a != this");
-  }
-  @Test public void comparisonWithSpecific0Legibiliy1withinScope() {
-    assertNotWithinScope(Wrings.COMPARISON_WITH_BOOLEAN.inner, "this != a");
-  }
-  @Test public void comparisonWithSpecific0Legibiliy2() {
-    assertTrue(Is.specific(i("this != a").getLeftOperand()));
-    assertLegible(Wrings.COMPARISON_WITH_SPECIFIC.inner, "this != a");
-  }
-  @Test public void comparisonWithSpecific0z0() {
-    assertWithinScope(Wrings.COMPARISON_WITH_SPECIFIC.inner, "this != a");
-  }
-  @Test public void comparisonWithSpecific0z1() {
-    assertLegible(Wrings.COMPARISON_WITH_SPECIFIC.inner, "this != a");
   }
   @Test public void comparisonWithSpecific1() {
     assertSimplifiesTo("null != a", "a != null");
@@ -138,26 +142,6 @@ public class TrimmerTest {
     assertSimplifiesTo("null >= a", "a <= null");
     assertSimplifiesTo("this <= a", "a >= this");
     assertSimplifiesTo("null <= a", "a >= null");
-  }
-  @Test public void comparisonWithSpecificNoChange() {
-    assertNoChange("a != this");
-    assertNoChange("a != null");
-    assertNoChange("a == this");
-    assertNoChange("a == null");
-    assertNoChange("a <= this");
-    assertNoChange("a <= null");
-    assertNoChange("a >= this");
-    assertNoChange("a >= null");
-  }
-  @Test public void comparisonWithSpecificNoChangeWithLongEpxressions() {
-    assertNoChange("very(complicate,func,-ction,call) != this");
-    assertNoChange("very(complicate,func,-ction,call) != null");
-    assertNoChange("very(complicate,func,-ction,call) == this");
-    assertNoChange("very(complicate,func,-ction,call) == null");
-    assertNoChange("very(complicate,func,-ction,call) <= this");
-    assertNoChange("very(complicate,func,-ction,call) <= null");
-    assertNoChange("very(complicate,func,-ction,call) >= this");
-    assertNoChange("very(complicate,func,-ction,call) >= null");
   }
   @Test public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion != the * plain + kludge", "no*of*on*notion*nothion!=the*plain+kludge");
@@ -202,9 +186,6 @@ public class TrimmerTest {
     assertNotNull(replacement);
     assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
   }
-  @Test public void legibleOnShorterChainParenthesisComparisonLast() {
-    assertLegible(MULTIPLICATION_SORTER.inner, "z * 2 * a * b * c * d * e * f * g * h");
-  }
   @Test public void noChange() {
     assertNoChange("12");
     assertNoChange("true");
@@ -223,20 +204,17 @@ public class TrimmerTest {
   @Test public void oneMultiplication() {
     assertSimplifiesTo("f(a,b,c,d) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d)");
   }
-  @Test public void oneMultiplication0() {
-    final InfixExpression e = i("f(a,b,c,d) ^ f(a,b,c)");
-    assertEquals("f(a,b,c)", e.getRightOperand().toString());
-    final Wring s = Wrings.find(e);
-    assertEquals(s, MULTIPLICATION_SORTER.inner);
-    assertNotNull(s);
-    assertTrue(s.scopeIncludes(e));
-    assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(e);
-    assertNotNull(replacement);
-    assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
-  }
   @Test public void oneMultiplicationAlternate() {
     assertSimplifiesTo("f(a,b,c,d,e) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d,e)");
+  }
+  protected static int countOppportunities(final Spartanization s, final String input) {
+    return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
+  }
+  static int countOppportunities(final Spartanization s, final File f) {
+    return countOppportunities(s, As.string(f));
+  }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
   }
   @Test public void oneOpportunityExample() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrapExpression(example));
@@ -256,7 +234,7 @@ public class TrimmerTest {
     assertEquals(COMPARISON_WITH_SPECIFIC.inner, Wrings.find(i("null != a")));
   }
   @Test public void shorterChainParenthesisComparisonLast() {
-    assertSimplifiesTo("b == a * b * c * d * e * f * g * h == a", "a * b * c * d * e * f * g * h == b");
+    assertNoChange("b == a * b * c * d * e * f * g * h == a");
   }
   @Test public void simplifiesTo() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
@@ -266,5 +244,23 @@ public class TrimmerTest {
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) & f()", "f() & f(a,b,c,d)");
+  }
+  @Test public void longChainComparison() {
+    assertNoChange("a == b == c == d");
+  }
+  @Test public void longChainParenthesisComparison() {
+    assertNoChange("(a == b == c) == d");
+  }
+  @Test public void longChainParenthesisNotComparison() {
+    assertNoChange("(a == b == c) != d");
+  }
+  @Test public void longerChainParenthesisComparison() {
+    assertNoChange("(a == b == c == d == e) == d");
+  }
+  @Test public void shorterChainParenthesisComparison() {
+    assertNoChange("a == b == c");
+  }
+  @Test public void chainComparison() {
+    assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
 }

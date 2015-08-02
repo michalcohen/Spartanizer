@@ -1,5 +1,10 @@
 package org.spartan.refactoring.utils;
 
+import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.spartan.refactoring.utils.Funcs.asExpression;
+
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -17,30 +22,9 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
  */
 public enum Precedence {
   ;
-  /**
-   * *An empty <code><b>enum</b></code> for fluent programming. The name should
-   * say it all: The name, followed by a dot, followed by a method name, should
-   * read like a sentence phrase.
-   *
-   * @author Yossi Gil
-   * @since 2015-07-14
-   */
-  public enum Is {
-    ;
-    /**
-     * determine whether an integer falls within the legal range of precedences.
-     *
-     * @param precedence JD
-     * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
-     *         precedence of Java.
-     */
-    public static boolean legal(final int precedence) {
-      return precedence >= 1 && precedence <= 15;
-    }
-  }
   private final static int UNDEFINED = -1;
   private static final ChainStringToIntMap of = new ChainStringToIntMap()//
-      .putOn(1, "[]", ".", "() invoke", "++ post", "-- post") //
+      .putOn(1, "[]", ".", "() invoke", "++ post", "-- post", "MethodInvocation") //
       .putOn(2, "++ pre", "-- pre", "+ unary", "- unary", "!", "~") //
       .putOn(3, "() cast", "new") //
       .putOn(4, "*", "/", "%") // multiplicative
@@ -53,16 +37,13 @@ public enum Precedence {
       .putOn(11, "|") // bitwise OR
       .putOn(12, "&&") // conditional AND
       .putOn(13, "||") // conditional OR
-      .putOn(14, "?", ":") // conditional
+      .putOn(14, "?", ":", "ConditionalExpression") // conditional
       .putOn(15, "=", // assignment
           "+=", "-=", // assignment, additive
           "*= ", "/=", "%=", // assignment, multiplicative
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
   );
-  private static int of(final Assignment a) {
-    return of(a.getOperator());
-  }
   /**
    * Determine the precedence of an
    * {@link org.eclipse.jdt.core.dom.Assignment.Operator}
@@ -73,6 +54,9 @@ public enum Precedence {
   public static int of(final Assignment.Operator o) {
     return of(o.toString());
   }
+  public static int of(ASTNode n) {
+    return org.spartan.refactoring.utils.Is.expression(n) ? Precedence.of(asExpression(n)) : UNDEFINED;
+  }
   /**
    * Determine the precedence of the operator present on an {@link Expression}
    *
@@ -80,10 +64,14 @@ public enum Precedence {
    * @return the precedence of the parameter
    */
   public static int of(final Expression e) {
-    return e instanceof InfixExpression ? of((InfixExpression) e) : !(e instanceof Assignment) ? UNDEFINED : of((Assignment) e);
-  }
-  private static int of(final InfixExpression e) {
-    return of(e.getOperator());
+    switch (e.getNodeType()) {
+      case INFIX_EXPRESSION:
+        return of((InfixExpression) e);
+      case ASSIGNMENT:
+        return of((Assignment) e);
+      default:
+        return of(e.getClass().getSimpleName());
+    }
   }
   /**
    * Determine the precedence of an
@@ -94,9 +82,6 @@ public enum Precedence {
    */
   public static int of(final InfixExpression.Operator o) {
     return of(o.toString());
-  }
-  private static int of(final String key) {
-    return of.containsKey(key) ? of.get(key) : UNDEFINED;
   }
   /**
    * Determine the precedence of two expressions is the same.
@@ -119,5 +104,36 @@ public enum Precedence {
    */
   public static boolean same(final Operator o, final Expression e) {
     return Precedence.of(o) == Precedence.of(e);
+  }
+  private static int of(final Assignment a) {
+    return of(a.getOperator());
+  }
+  private static int of(final InfixExpression e) {
+    return of(e.getOperator());
+  }
+  private static int of(final String key) {
+    return of.containsKey(key) ? of.get(key) : UNDEFINED;
+  }
+
+  /**
+   * *An empty <code><b>enum</b></code> for fluent programming. The name should
+   * say it all: The name, followed by a dot, followed by a method name, should
+   * read like a sentence phrase.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-14
+   */
+  public enum Is {
+    ;
+    /**
+     * determine whether an integer falls within the legal range of precedences.
+     *
+     * @param precedence JD
+     * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
+     *         precedence of Java.
+     */
+    public static boolean legal(final int precedence) {
+      return precedence >= 1 && precedence <= 15;
+    }
   }
 }

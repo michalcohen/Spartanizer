@@ -2,12 +2,12 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-import static org.spartan.refactoring.spartanizations.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
 import static org.spartan.refactoring.utils.Funcs.duplicateRight;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.remake;
+import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.removeDuplicates;
 
@@ -306,6 +306,6 @@ public class ShortestOperand extends Spartanization {
         && !inRightOperandExceptions(s, o);
   }
   private static boolean sortExpressionList(final List<Expression> es, final AST t, final Operator o) {
-    return moveMethodsToTheBack(es, t, o) | sortOperandList(es, t, o);
+    return moveMethodsToTheBack(es, t, o) || sortOperandList(es, t, o);
   }
 }

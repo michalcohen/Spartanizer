@@ -1,10 +1,17 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
+import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
+import static org.spartan.refactoring.utils.Funcs.asAssignment;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
+import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
@@ -13,6 +20,7 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -30,7 +38,36 @@ public enum Extract {
    *         the expression if they are
    */
   public static Expression returnExpression(final ASTNode n) {
-    final ReturnStatement $ = asReturnStatement(Extract.singleStatement(n));
+    final ReturnStatement $ = returnStatement(n);
+    return $ == null ? null : $.getExpression();
+  }
+  /**
+   * Extract the single {@link ReturnStatement} embedded in a node.
+   * 
+   * @param n JD
+   * @return the single {@link ReturnStatement} embedded in the parameter, and
+   *         return it; <code><b>null</b></code> if not such statements exists.
+   */
+  public static ReturnStatement returnStatement(final ASTNode n) {
+    return asReturnStatement(Extract.singleStatement(n));
+  }
+  /**
+   * Extract the single {@link ThrowStatement} embedded in a node.
+   * 
+   * @param n JD
+   * @return the single {@link ThrowStatement} embedded in the parameter, and
+   *         return it; <code><b>null</b></code> if not such statements exists.
+   */
+  public static ThrowStatement throwStatement(final ASTNode n) {
+    return asThrowStatement(Extract.singleStatement(n));
+  }
+  /**
+   * @param n a node to extract an expression from
+   * @return null if the statement is not an expression or return statement or
+   *         the expression if they are
+   */
+  public static Expression throwExpression(final ASTNode n) {
+    final ThrowStatement $ = asThrowStatement(Extract.singleStatement(n));
     return $ == null ? null : $.getExpression();
   }
   /**
@@ -46,6 +83,8 @@ public enum Extract {
         return ((ExpressionStatement) node).getExpression();
       case ASTNode.RETURN_STATEMENT:
         return ((ReturnStatement) node).getExpression();
+      case ASTNode.THROW_STATEMENT:
+        return ((ThrowStatement) node).getExpression();
       default:
         return null;
     }
@@ -114,5 +153,20 @@ public enum Extract {
   public static Statement singleStatement(final ASTNode n) {
     final List<Statement> $ = Extract.statements(n);
     return $.size() != 1 ? null : (Statement) $.get(0);
+  }
+  public static ReturnStatement nextReturn(Statement s) {
+    return asReturnStatement(next(s));
+  }
+  private static Statement next(Statement s) {
+    final Block b = asBlock(s.getParent());
+    if (b == null)
+      return null;
+    return next(s, Extract.statements(b));
+  }
+  private static Statement next(Statement s, List<Statement> ss) {
+    for (int i = 0; i < ss.size() - 1; ++i)
+      if (ss.get(i) == s)
+        return ss.get(i + 1);
+    return null;
   }
 }

@@ -1,6 +1,4 @@
-package org.spartan.refactoring.spartanizations;
-
-import org.spartan.refactoring.utils.Extract;
+package org.spartan.refactoring.wring;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -12,7 +10,28 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
+import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asNot;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.compatible;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.last;
+import static org.spartan.refactoring.utils.Funcs.makeAssigment;
+import static org.spartan.refactoring.utils.Funcs.makeConditionalExpression;
+import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
+import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
+import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
+import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
@@ -31,10 +50,13 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
 
@@ -49,43 +71,53 @@ public enum Wrings {
    * A {@link Wring} to convert
    *
    * <pre>
-   * if (x)
-   *   a += 3;
-   * else
-   *   a += 9;
+   * {;; g(); {}{;{;{;}};} }
    * </pre>
    *
    * into
    *
    * <pre>
-   * a += x ? 3 : 9;
+   * g();
    * </pre>
    *
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_THEN_COMMANDS_SEQUENCERS_ELSE_SOMETHING(new Wring.OfStatementAndSurrounding() {
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+  SIMPLIFY_BLOCK(new Wring.OfBlock() {
+    private boolean identical(final List<Statement> os1 , final List<Statement> os2) {
+      if (os1.size() != os2.size())
+        return false;
+      for (int i = 0; i < os1.size(); ++i)
+        if (os1.get(i) != os2.get(i))
+          return false;
       return true;
     }
-    @Override boolean scopeIncludes(final IfStatement s) {
-      final List<Statement> then = Extract.statements(s.getThenStatement());
-      Extract.statements(s.getElseStatement());
-      final Statement last = last(then);
-      return s.getElseStatement() != null && Is.sequencer(last);
+    private Statement rebuildBlock(final Block b) {
+      final Block $ = b.getAST().newBlock();
+      duplicateInto(Extract.statements(b),$.statements());
+      return $;
     }
-    @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
-      final List<Statement> then = Extract.statements(s.getThenStatement());
-      Extract.statements(s.getElseStatement());
-      final Statement last = last(then);
-      if (s.getElseStatement() != null && Is.sequencer(last))
-        return r;
-      final IfStatement $ = duplicate(s);
-      $.setElseStatement(null);
-      final Block parent = asBlock(s.getParent());
-      if (parent == null)
-        return r;
-      return r;
+    @Override boolean _eligible(@SuppressWarnings("unused") final Block _) {
+      return true;
+    }
+    @Override Statement _replacement(final Block b) {
+      if (b == null)
+        return null;
+      if (identical(Extract.statements(b), b.statements()))
+        return null;
+      if (!Is.statement(b.getParent()))
+        return rebuildBlock(b);
+      switch (Extract.statements(b).size()) {
+        case 0:
+          return b.getAST().newEmptyStatement();
+        case 1:
+          return duplicate(Extract.singleStatement(b));
+        default:
+          return rebuildBlock(b);
+      }
+    }
+    @Override boolean scopeIncludes(final Block b) {
+     return !identical(Extract.statements(b), b.statements());
     }
   }), //
   /**
@@ -93,43 +125,33 @@ public enum Wrings {
    *
    * <pre>
    * if (x)
-   *   a += 3;
+   *   throw b;
    * else
-   *   a += 9;
+   *   throw c;
    * </pre>
    *
    * into
    *
    * <pre>
-   * a += x ? 3 : 9;
+   * throw x? b : c
    * </pre>
    *
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfStatement() {
+  IF_THROW_A_ELSE_THROW_B(new Wring.OfIfStatement() {
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
-    @Override boolean scopeIncludes(final IfStatement s) {
-      if (s == null)
-        return false;
-      final Assignment then = Extract.assignment(s.getThenStatement());
-      final Assignment elze = Extract.assignment(s.getElseStatement());
-      return compatible(then, elze);
+    @Override Statement _replacement(final IfStatement i) {
+      final Expression condition = i.getExpression();
+      final Expression then = Extract.throwExpression(i.getThenStatement());
+      final Expression elze = Extract.throwExpression(i.getElseStatement());
+      return (then == null || elze == null ? null : makeThrowStatement(makeConditionalExpression(condition, then, elze)));
     }
-    @Override Statement _replacement(final IfStatement s) {
-      asBlock(s);
-      final IfStatement i = asIfStatement(s);
-      if (i == null)
-        return null;
-      final Assignment then = Extract.assignment(i.getThenStatement());
-      final Assignment elze = Extract.assignment(i.getElseStatement());
-      if (!compatible(then, elze))
-        return null;
-      final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
-      final Assignment a = makeAssigment(then.getOperator(), then.getLeftHandSide(), e);
-      return makeExpressionStatement(a);
+    @Override boolean scopeIncludes(final IfStatement e) {
+      final IfStatement i = asIfStatement(e);
+      return (i != null && Extract.throwExpression(i.getThenStatement()) != null && Extract.throwExpression(i.getElseStatement()) != null);
     }
   }), //
   /**
@@ -151,7 +173,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IF_RETURN_A_ELSE_RETURN_B(new Wring.OfStatement() {
+  IF_RETURN_A_ELSE_RETURN_B(new Wring.OfIfStatement() {
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
@@ -159,15 +181,180 @@ public enum Wrings {
       final Expression condition = i.getExpression();
       final Expression then = Extract.returnExpression(i.getThenStatement());
       final Expression elze = Extract.returnExpression(i.getElseStatement());
-      if (then == null || elze == null)
-        return null;
-      return makeReturnStatement(makeConditionalExpression(condition, then, elze));
+      return (then == null || elze == null ? null : makeReturnStatement(makeConditionalExpression(condition, then, elze)));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
+      return (i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null);
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x) {
+   *   ;
+   *   f();
+   *   return a;
+   * } else {
+   *   ;
+   *   g();
+   *   {
+   *   }
+   * }
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * if (x) {
+   *   f();
+   *   return a;
+   * }
+   * g();
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_RETURN_NO_ELSE_RETURN(new Wring.OfIfStatementAndSurrounding() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+  @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+    ReturnStatement then = Extract.returnStatement(s.getThenStatement());
+    ReturnStatement elze = Extract.nextReturn(s);
+    if ( Extract.statements(s.getElseStatement()).size() == 0 &&  then != null && elze != null)
+      return r;
+    Block parent = asBlock(s.getParent());
+    final Statement $ = makeExpressionStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze)));
+      final Block newParent = s.getAST().newBlock();
+        addAllReplacing(newParent.statements(), parent.statements(), s, $);
+        r.replace(parent, newParent, null);
+      return r;
+    }
+  private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by) {
+    for (final Statement t : from)
+      if (t != substitute)
+        duplicateInto(t, to);
+      else {
+        duplicateInto(by, to);
+      }
+  }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return Extract.statements(s.getElseStatement()).size() == 0 &&  Extract.returnStatement(s.getThenStatement()) != null && Extract.nextReturn(s) != null;
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x) {
+   *   ;
+   *   f();
+   *   return a;
+   * } else {
+   *   ;
+   *   g();
+   *   {
+   *   }
+   * }
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * if (x) {
+   *   f();
+   *   return a;
+   * }
+   * g();
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_THEN_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSurrounding() {
+    private void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {
+      for (final Statement t : from)
+        if (t != substitute)
+          duplicateInto(t, to);
+        else {
+          duplicateInto(by1, to);
+          duplicateInto(by2, to);
+        }
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+  @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+      if (s.getElseStatement() == null || !Is.sequencer(last(Extract.statements(s.getThenStatement()))))
+        return r;
+      final IfStatement newlyCreatedIf = duplicate(s);
+      newlyCreatedIf.setElseStatement(null);
+      final List<Statement> remainder = Extract.statements(s.getElseStatement());
+      if (remainder.size() == 0) {
+        r.replace(s, newlyCreatedIf, null);
+        return r;
+      }
+      final Block parent = asBlock(s.getParent());
+      final Block newParent = s.getAST().newBlock();
+      if (parent != null) {
+        addAllReplacing(newParent.statements(), parent.statements(), s, newlyCreatedIf, remainder);
+        r.replace(parent, newParent, null);
+      } else {
+        newParent.statements().add(newlyCreatedIf);
+        duplicateInto(remainder, newParent.statements());
+        r.replace(s, newParent, null);
+      }
+      return r;
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return s.getElseStatement() != null && Is.sequencer(last(Extract.statements(s.getThenStatement())));
+    }
+  }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * if (x)
+   *   a += 3;
+   * else
+   *   a += 9;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * a += x ? 3 : 9;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-07-29
+   */
+  IF_ASSIGNX_ELSE_ASSIGNY(new Wring.OfIfStatement() {
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+    @Override Statement _replacement(final IfStatement s) {
+      asBlock(s);
+      final IfStatement i = asIfStatement(s);
       if (i == null)
+        return null;
+      final Assignment then = Extract.assignment(i.getThenStatement());
+      final Assignment elze = Extract.assignment(i.getElseStatement());
+      if (!compatible(then, elze))
+        return null;
+      final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
+      final Assignment a = makeAssigment(then.getOperator(), then.getLeftHandSide(), e);
+      return makeExpressionStatement(a);
+    }
+    @Override boolean scopeIncludes(final IfStatement s) {
+      if (s == null)
         return false;
-      return Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null;
+      final Assignment then = Extract.assignment(s.getThenStatement());
+      final Assignment elze = Extract.assignment(s.getElseStatement());
+      return compatible(then, elze);
     }
   }), //
   /**
@@ -233,7 +420,20 @@ public enum Wrings {
       return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
     }
   }), //
-  /**
+  ELIMINATE_TERNARY(new Wring.OfConditionalExpression() {
+    @Override boolean _eligible(final ConditionalExpression e) {
+       return true;
+    }
+    @Override Expression _replacement(final ConditionalExpression e) {
+      return duplicate(e.getThenExpression());
+    }
+      @Override boolean scopeIncludes(final ConditionalExpression e) {
+        return (e != null && same(e.getThenExpression(), e.getElseExpression()));
+      }
+      
+    }), //
+  PUSHDOWN_TERNARY(new PushdownTernary()), //
+ /**
    * <code>
    * a ? b : c
    * </code> is the same as <code>
@@ -393,7 +593,7 @@ public enum Wrings {
       return !tryToSort(operands) ? null : refitOperands(e, operands);
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), TIMES, XOR, AND);
+      return in(e.getOperator(), TIMES);
     }
   }), //
   /**
@@ -410,15 +610,30 @@ public enum Wrings {
     @Override public String toString() {
       return "Pushdown not";
     }
-    @Override boolean _eligible(final PrefixExpression e) {
+    @Override boolean _eligible(@SuppressWarnings("unused") final PrefixExpression _) {
       return true;
     }
     @Override Expression _replacement(final PrefixExpression e) {
       return pushdownNot(asNot(e));
     }
-  }), //
+  }), 
   //
   ;
+  /**
+   * Find the first {@link Wring} appropriate for an {@link IfStatement}
+   *
+   * @param b JD
+   * @return the first {@link Wring} for which the parameter is within scope, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final Block b) {
+    if (b == null)
+      return null;
+    for (final Wrings w : values())
+      if (w.inner.scopeIncludes(b))
+        return w.inner;
+    return null;
+  }
   /**
    * Find the first {@link Wring} appropriate for an
    * {@link ConditionalExpression}
@@ -494,6 +709,39 @@ public enum Wrings {
       if (s.inner.scopeIncludes(e))
         return s.inner;
     return null;
+  }
+  /**
+   * Find the first {@link Wring} appropriate for an {@link Statement}
+   *
+   * @param s JD
+   * @return the first {@link Wring} for which the parameter is eligible, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final Statement s) {
+    Wring $;
+    return ($ = find(asIfStatement(s))) != null//
+        || ($ = find(asBlock(s))) != null//
+            //
+            ? $ : null;
+  }
+  public 
+  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
+    boolean $ = false;
+    // Bubble sort
+    for (int i = 0, size = es.size(); i < size; i++)
+      for (int j = 0; j < size - 1; j++) {
+        final Expression e0 = es.get(j);
+        final Expression e1 = es.get(j + 1);
+        if (c.compare(e0, e1) <= 0)
+          continue;
+        // Replace locations i,j with e0 and e1
+        es.remove(j);
+        es.remove(j);
+        es.add(j, e0);
+        es.add(j, e1);
+        $ = true;
+      }
+    return $;
   }
   private static InfixExpression makeWithOther(final Expression other) {
     final InfixExpression $ = other.getAST().newInfixExpression();
@@ -624,6 +872,9 @@ public enum Wrings {
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(getCore(e.getOperand()));
   }
+  static boolean same(ASTNode e1, ASTNode e2){
+    return e1 == e2 || e1.getNodeType() == e2.getNodeType() && e1.toString().equals(e2.toString());
+  }
   /**
    * Consider an expression <code> a ? b : c </code>; in a sense it is the same
    * as <code> (a && b) || (!a && c) </code>
@@ -669,25 +920,7 @@ public enum Wrings {
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
   }
-  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
-    boolean $ = false;
-    // Bubble sort
-    for (int i = 0, size = es.size(); i < size; i++)
-      for (int j = 0; j < size - 1; j++) {
-        final Expression e0 = es.get(j);
-        final Expression e1 = es.get(j + 1);
-        if (c.compare(e0, e1) <= 0)
-          continue;
-        // Replace locations i,j with e0 and e1
-        es.remove(j);
-        es.remove(j);
-        es.add(j, e0);
-        es.add(j, e1);
-        $ = true;
-      }
-    return $;
-  }
-  final Wring inner;
+  public final Wring inner;
   Wrings(final Wring inner) {
     this.inner = inner;
   }

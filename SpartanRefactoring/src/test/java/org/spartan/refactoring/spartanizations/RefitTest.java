@@ -21,10 +21,10 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.spartanizations.ExpressionComparator;
-import org.spartan.refactoring.spartanizations.Wrings;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Funcs;
+import org.spartan.refactoring.wring.ExpressionComparator;
+import org.spartan.refactoring.wring.Wrings;
 
 /**
  * Test suite for {@link Wrings}
@@ -43,7 +43,7 @@ public class RefitTest {
     assertThat(refit.hasExtendedOperands(), is(false));
     assertThat(refit.toString(), is("a + b"));
   }
-  @Test public void refitIsCorrecct() {
+  @Test public void refitIsCorrect() {
     final InfixExpression e = i("1+2+3");
     final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b*c")));
     assertThat(refitOperands(e, operands).toString(), is("a + b + c"));

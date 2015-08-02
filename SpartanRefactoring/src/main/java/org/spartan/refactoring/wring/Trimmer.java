@@ -1,19 +1,21 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.spartan.utils.Utils.removeDuplicates;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.utils.Range;
 
 /**
@@ -91,6 +93,12 @@ public class Trimmer extends Spartanization {
           return true;
         final Wring w = Wrings.find(i);
         return w == null || w.go(r, i);
+      }
+      @Override public boolean visit(final Block b) {
+        if (!inRange(m, b))
+          return true;
+        final Wring w = Wrings.find(b);
+        return w == null || w.go(r, b);
       }
       @Override public boolean visit(final InfixExpression e) {
         if (!inRange(m, e))

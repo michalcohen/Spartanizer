@@ -1,13 +1,14 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.spartanizations.TESTUtils.collect;
 import java.util.Collection;
+
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
 /**
@@ -26,7 +27,7 @@ public enum IF_RETURN_A_ELSE_RETURN_B {
   public static class OutOfScope extends AbstractWringTest.OutOfScope {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
-        Utils.asArray("Literal vs. Literal", "if (a) return b; else c;"), //
+        Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
         null);
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
@@ -46,11 +47,11 @@ public enum IF_RETURN_A_ELSE_RETURN_B {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.WringedStatement {
+  public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
         // Literal
         Utils.asArray("Simple if return", "if (a) return b; else return c;", "return a ? b : c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", "{return a ? b : c;}"), //
+        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"), //
         null);
     /**

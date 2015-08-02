@@ -13,9 +13,9 @@ import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.wit
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.countOpportunities;
 import static org.spartan.refactoring.spartanizations.TESTUtils.e;
 import static org.spartan.refactoring.spartanizations.TESTUtils.i;
+import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;

@@ -1,8 +1,28 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_CREATION;
+import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
+import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.BREAK_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.CONDITIONAL_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.CONTINUE_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.EXPRESSION_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.INSTANCEOF_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.THROW_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
@@ -16,6 +36,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
+import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.intIsIn;
 
@@ -44,6 +66,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
@@ -88,6 +111,16 @@ public enum Is {
    */
   public static boolean block(final ASTNode n) {
     return is(n, BLOCK);
+  }
+  /**
+   * Determine whether a node is a {@link Block}
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
+   *         statement
+   */
+  public static boolean statement(final ASTNode n) {
+    return n instanceof Statement;
   }
   /**
    * Determine whether a node is a boolean literal
@@ -181,6 +214,16 @@ public enum Is {
    */
   public static boolean emptyStatement(final ASTNode n) {
     return is(n, EMPTY_STATEMENT);
+  }
+  /**
+   * Determine whether a node is an "expression statement"
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an
+   *         {@link ExpressionStatement} statement
+   */
+  public static boolean expression(final ASTNode n) {
+    return n != null && n instanceof Expression;
   }
   /**
    * Determine whether a node is an "expression statement"
