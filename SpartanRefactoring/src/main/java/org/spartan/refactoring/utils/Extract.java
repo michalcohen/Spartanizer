@@ -145,14 +145,24 @@ public enum Extract {
   /**
    * Extract the {@link Statement} that immediately follows a given node.
    *
-   * @param s JD
+   * @param n JD
    * @return the {@link Statement} that immediately follows the parameter, or
    *         <code><b>null</b></code>, if no such statement exists.
    */
   public static Statement nextStatement(final ASTNode n) {
+    return nextStatement(Extract.statement(n));
+  }
+  /**
+   * Extract the {@link Statement} that contains a given node.
+   *
+   * @param n JD
+   * @return the inner most {@link Statement} in which the parameter is nested,
+   *         or <code><b>null</b></code>, if no such statement exists.
+   */
+  public static Statement statement(ASTNode n) {
     for (ASTNode $ = n; $ != null; $ = $.getParent())
       if (Is.statement($))
-        return nextStatement(asStatement($));
+        return (asStatement($));
     return null;
   }
   /**

@@ -324,126 +324,13 @@ public enum Funcs {
     return false;
   }
   /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter <<<<<<< HEAD
-   *
-   * @param a JD =======
-   * @param b JD >>>>>>> c911307ccbe2ee8c985cd803d1b32815bbce674b
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static Assignment duplicate(final Assignment a) {
-    return (Assignment) copySubtree(a.getAST(), a);
-  }
-  /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param b JD
+   * 
+   * @param n JD
    * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
    */
-  public static Block duplicate(final Block b) {
-    return (Block) copySubtree(b.getAST(), b);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static BooleanLiteral duplicate(final BooleanLiteral b) {
-    return (BooleanLiteral) copySubtree(b.getAST(), b);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static ClassInstanceCreation duplicate(final ClassInstanceCreation e) {
-    return (ClassInstanceCreation) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static ConditionalExpression duplicate(final ConditionalExpression e) {
-    return (ConditionalExpression) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static Expression duplicate(final Expression e) {
-    return (Expression) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static FieldAccess duplicate(final FieldAccess e) {
-    return (FieldAccess) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static IfStatement duplicate(final IfStatement e) {
-    return (IfStatement) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static InfixExpression duplicate(final InfixExpression e) {
-    return (InfixExpression) copySubtree(e.getAST(), e);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param i MethodInvocation
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static MethodInvocation duplicate(final MethodInvocation i) {
-    return (MethodInvocation) copySubtree(i.getAST(), i);
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
-   *
-   * @param s JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static Statement duplicate(final Statement s) {
-    return (Statement) copySubtree(s.getAST(), s);
+  @SuppressWarnings("unchecked") public static <N extends ASTNode> N duplicate(final N n) {
+    return (N) copySubtree(n.getAST(), n);
   }
   /**
    * Make a duplicate of, suitable for tree rewrite, of the parameter

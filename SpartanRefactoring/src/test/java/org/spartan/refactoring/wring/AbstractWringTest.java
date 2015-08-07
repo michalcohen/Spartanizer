@@ -712,9 +712,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       final List<Range> findOpportunities = wringer.findOpportunities(u);
       assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
     }
-    @Test public void hasReplacement() {
-      assertNotNull(inner.replacement(asMe()));
-    }
     @Test public void hasSimplifier() {
       assertThat(asMe().toString(), Wrings.find(asMe()), is(notNullValue()));
     }
