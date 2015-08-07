@@ -1046,7 +1046,7 @@ public enum Wrings {
       final InfixExpression condition = s1.getAST().newInfixExpression();
       condition.setOperator(CONDITIONAL_OR);
       condition.setLeftOperand(parenthesize(s1));
-      condition.setLeftOperand(parenthesize(s2));
+      condition.setRightOperand(parenthesize(s2));
       return condition;
     }
   public final Wring inner;
