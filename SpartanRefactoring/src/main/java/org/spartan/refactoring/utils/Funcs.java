@@ -176,7 +176,7 @@ public enum Funcs {
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
   public static IfStatement asIfStatement(final ASTNode $) {
-    return $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
+    return $ == null || $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
   }
   /**
    * Down-cast, if possible, to {@link InfixExpression}
@@ -686,6 +686,15 @@ public enum Funcs {
     $.setLeftHandSide(frugalDuplicate(left));
     return $;
   }
+  /**
+   * Create a new {@link ConditionalExpression}
+   *
+   * @param e JD
+   * @param then JD
+   * @param elze JD
+   * @return a newly created, unparenthesized {@link ConditionalExpression} with
+   *         the specified arguments.
+   */
   public static ConditionalExpression makeConditional(ConditionalExpression e, Expression then, Expression elze) {
     ConditionalExpression $ = duplicate(e);
     $.setThenExpression(duplicate(then));
@@ -714,18 +723,18 @@ public enum Funcs {
   /**
    * @param t the AST who is to own the new If Statement
    * @param r ASTRewrite for the given AST
-   * @param cond the condition
-   * @param thenStmnt the then statement to set in the If Statement
-   * @param elseStmnt the else statement to set in the If Statement
+   * @param condition the condition
+   * @param then the then statement to set in the If Statement
+   * @param elze the else statement to set in the If Statement
    * @return a new if Statement
    */
-  public static IfStatement makeIfStmnt(final AST t, final ASTRewrite r, final Expression cond, final Statement thenStmnt, final Statement elseStmnt) {
-    if (hasNull(t, r, cond, thenStmnt, elseStmnt))
+  public static IfStatement makeIfStatement(final AST t, final ASTRewrite r, final Expression condition, final Statement then, final Statement elze) {
+    if (hasNull(t, r, condition, then, elze))
       return null;
     final IfStatement $ = t.newIfStatement();
-    $.setExpression(frugalDuplicate(cond));
-    $.setThenStatement(thenStmnt.getParent() == null ? thenStmnt : (Statement) r.createCopyTarget(thenStmnt));
-    $.setElseStatement(elseStmnt.getParent() == null ? elseStmnt : (Statement) r.createCopyTarget(elseStmnt));
+    $.setExpression(frugalDuplicate(condition));
+    $.setThenStatement(then.getParent() == null ? then : (Statement) r.createCopyTarget(then));
+    $.setElseStatement(elze.getParent() == null ? elze : (Statement) r.createCopyTarget(elze));
     return $;
   }
   /**

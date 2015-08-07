@@ -10,7 +10,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.makeIfStmnt;
+import static org.spartan.refactoring.utils.Funcs.makeIfStatement;
 import static org.spartan.refactoring.utils.Funcs.makeInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
@@ -79,9 +79,9 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         if (statementsCount(elseStmnt) == 1 && ASTNode.IF_STATEMENT == Extract.singleStatement(elseStmnt).getNodeType()) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
-          return makeIfStmnt(t, r, negatedOp, newElseBlock, thenStmnt);
+          return makeIfStatement(t, r, negatedOp, newElseBlock, thenStmnt);
         }
-        return makeIfStmnt(t, r, negatedOp, elseStmnt, thenStmnt);
+        return makeIfStatement(t, r, negatedOp, elseStmnt, thenStmnt);
       }
       private ParenthesizedExpression transpose(final ConditionalExpression n) {
         return n == null ? null : makeParenthesizedConditionalExp(r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());

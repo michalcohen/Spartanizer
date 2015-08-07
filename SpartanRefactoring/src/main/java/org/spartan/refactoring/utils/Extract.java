@@ -4,10 +4,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.spartan.refactoring.utils.Funcs.asAssignment;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
-import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
-import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
-import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
+import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,7 +155,7 @@ public enum Extract {
     return $.size() != 1 ? null : (Statement) $.get(0);
   }
   /**
-   * Find a subsequent return statement
+   * Find the subsequent return statement
    * 
    * @param s JD
    * @return the subsequent {@link ReturnStatement}, or <code><b>null</b> if
@@ -167,6 +164,17 @@ public enum Extract {
    */
   public static ReturnStatement nextReturn(Statement s) {
     return asReturnStatement(next(s));
+  }
+  /**
+   * Find the subsequent {@link IfStatement}
+   * 
+   * @param s JD
+   * @return the subsequent {@link IfStatement}, or <code><b>null</b> if there
+   *         is not subsequent statement or if its type is not
+   *         {@link IfStatement}
+   */
+  public static IfStatement nextIfStatement(Statement s) {
+    return asIfStatement(next(s));
   }
   private static Statement next(Statement s) {
     final Block b = asBlock(s.getParent());

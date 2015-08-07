@@ -115,7 +115,7 @@ public enum Restructure {
    *         wrapped in these parenthesis.
    */
   public static Expression getCore(final Expression $) {
-    return PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
+    return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
   }
   /**
    * Parenthesize an expression (if necessary).
