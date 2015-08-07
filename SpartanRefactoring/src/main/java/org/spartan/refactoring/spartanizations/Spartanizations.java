@@ -20,8 +20,8 @@ import org.spartan.refactoring.wring.Trimmer;
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
   Trimmer(new Trimmer()), //
-  ForwardDeclaration(new ForwardDeclaration()), //
-  InlineSingleUse(new InlineSingleUse()), //
+  // ForwardDeclaration(new ForwardDeclaration()), //
+  // InlineSingleUse(new InlineSingleUse()), //
   // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
   ShortestBranchFirst(new ShortestBranchFirst()), //
   // ShortestOperand(new ShortestOperand()), //

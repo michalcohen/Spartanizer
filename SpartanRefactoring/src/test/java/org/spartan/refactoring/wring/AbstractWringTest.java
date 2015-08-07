@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -92,10 +93,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     assertNotNull($);
     return $;
   }
-  protected Statement asMe() {
-    final Statement $ = s(input);
-    assertNotNull($);
-    return $;
+  @SuppressWarnings("static-method") protected ASTNode asMe() {
+    return null;
   }
   protected PrefixExpression asPrefixExpression() {
     final PrefixExpression $ = p(input);
@@ -175,6 +174,11 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
 
     public static abstract class Infix extends Noneligible {
+      @Override protected InfixExpression asMe() {
+        InfixExpression $ = i(input);
+        assertNotNull($);
+        return $;
+      }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
       Infix(final Wring w) {
         super(w);
@@ -204,8 +208,13 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       super(inner);
     }
 
-    public static abstract class Expression extends OutOfScope {
-      public Expression(final Wring inner) {
+    public static abstract class Exprezzion extends OutOfScope {
+      @Override protected Expression asMe() {
+        Expression $ = e(input);
+        assertNotNull($);
+        return $;
+      }
+      public Exprezzion(final Wring inner) {
         super(inner);
       }
       @Test public void scopeDoesNotIncludeAsBlock() {
@@ -218,7 +227,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertThat(inner.scopeIncludes(asIfStatement(asMe())), is(false));
       }
 
-      public static abstract class Infix extends OutOfScope.Expression {
+      public static abstract class Infix extends OutOfScope.Exprezzion {
         /** Instantiates the enclosing class ({@link Infix})@param simplifier */
         Infix(final Wring w) {
           super(w);
@@ -649,7 +658,115 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
   }
 
+  public static abstract class WringedVariableDeclarationFragmentAndSurrounding extends Wringed {
+    /**
+     * Instantiates the enclosing class ({@link WringedInput})
+     *
+     * @param inner
+     */
+    @Override protected final Document asDocument() {
+      return new Document(wrapStatement(input));
+    }
+    WringedVariableDeclarationFragmentAndSurrounding(final Wring inner) {
+      super(inner);
+    }
+    @Override @Test public void correctSimplifier() {
+      assertThat(asMe().toString(), Wrings.find(asMe()), is(inner));
+    }
+    @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+      final Document d = new Document(wrapStatement(input));
+      final CompilationUnit u = asCompilationUnit();
+      final ASTRewrite r = wringer.createRewrite(u, null);
+      assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
+    }
+    @Test public void eligible() {
+      final VariableDeclarationFragment s = asMe();
+      assertTrue(s.toString(), inner.eligible(s));
+    }
+    @Override @Test public void findsSimplifier() {
+      assertNotNull(Wrings.find(asMe()));
+    }
+    @Test public void hasOpportunity() {
+      assertTrue(inner.scopeIncludes(asMe()));
+      final CompilationUnit u = asCompilationUnit();
+      final List<Range> findOpportunities = wringer.findOpportunities(u);
+      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+    }
+    @Test public void hasReplacement() {
+      assertNotNull(inner.replacement(asMe()));
+    }
+    @Test public void hasSimplifier() {
+      assertThat(asMe().toString(), Wrings.find(asMe()), is(notNullValue()));
+    }
+    @Test public void noneligible() {
+      assertFalse(inner.noneligible(asMe()));
+    }
+    @Test public void peelableOutput() {
+      assertEquals(expected, peelStatement(wrapStatement(expected)));
+    }
+    @Test public void scopeIncludesAsMe() {
+      boolean scopeIncludes = inner.scopeIncludes(asMe());
+      assertThat(asMe().toString(), scopeIncludes, is(true));
+    }
+    @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
+      final CompilationUnit u = asCompilationUnit();
+      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
+      final String peeled = peelStatement(excpected.get());
+      if (expected.equals(peeled))
+        return;
+      if (input.equals(peeled))
+        fail("Nothing done on " + input);
+      if (compressSpaces(peeled).equals(compressSpaces(input)))
+        assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
+      assertSimilar(expected, peeled);
+      assertSimilar(wrapStatement(expected), excpected);
+    }
+    /**
+     * In case of an IfStatemnet and surrounding, we search and then find the
+     * first If statement in the input.
+     */
+    @Override protected VariableDeclarationFragment asMe() {
+      return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
+    }
+
+    public static class Conditional extends WringedExpression {
+      /**
+       * Instantiates the enclosing class ({@link Infix})
+       *
+       * @param w JD
+       */
+      Conditional(final Wring w) {
+        super(w);
+      }
+      @Test public void inputIsConditionalExpression() {
+        assertNotNull(asConditionalExpression());
+      }
+    }
+
+    public static abstract class Infix extends WringedExpression {
+      /** Instantiates the enclosing class ({@link Infix})@param simplifier */
+      Infix(final Wring w) {
+        super(w);
+      }
+      @Test public void flattenIsIdempotentt() {
+        final InfixExpression flatten = flatten(asInfixExpression());
+        assertThat(flatten(flatten).toString(), is(flatten.toString()));
+      }
+      @Test public void hasReplacementAsInfix() {
+        assertNotNull(inner.replacement(asInfixExpression()));
+      }
+      @Test public void inputIsInfixExpression() {
+        assertNotNull(asInfixExpression());
+      }
+    }
+  }
+
   public static abstract class WringedStatement extends InScope {
+    @Override protected Statement asMe() {
+      final Statement $ = s(input);
+      assertNotNull($);
+      return $;
+    }
     WringedStatement(final Wring inner) {
       super(inner);
     }

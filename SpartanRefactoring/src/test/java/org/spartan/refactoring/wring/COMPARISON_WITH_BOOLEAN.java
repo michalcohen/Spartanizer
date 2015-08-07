@@ -12,6 +12,7 @@ import static org.spartan.refactoring.utils.Restructure.flatten;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;

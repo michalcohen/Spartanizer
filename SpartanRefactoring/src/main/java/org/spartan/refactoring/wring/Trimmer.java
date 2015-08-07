@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.utils.Range;
@@ -66,6 +67,10 @@ public class Trimmer extends Spartanization {
         final Wring w = Wrings.find(e);
         return w == null || w.noneligible(e) || overrideInto(w.range(e), $);
       }
+      @Override public boolean visit(final VariableDeclarationFragment it) {
+        final Wring w = Wrings.find(it);
+        return w == null || w.noneligible(it) || overrideInto(w.range(it), $);
+      }
       @Override public boolean visit(final IfStatement i) {
         final Wring w = Wrings.find(i);
         return w == null || w.noneligible(i) || overrideInto(w.range(i), $);
@@ -97,6 +102,12 @@ public class Trimmer extends Spartanization {
           return true;
         final Wring w = Wrings.find(i);
         return w == null || w.go(r, i);
+      }
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        if (!inRange(m, f))
+          return true;
+        final Wring w = Wrings.find(f);
+        return w == null || w.go(r, f);
       }
       @Override public boolean visit(final Block b) {
         if (!inRange(m, b))

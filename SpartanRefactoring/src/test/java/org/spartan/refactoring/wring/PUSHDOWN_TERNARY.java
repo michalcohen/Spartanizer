@@ -22,7 +22,7 @@ public class PUSHDOWN_TERNARY {
   static final Wring WRING = Wrings.PUSHDOWN_TERNARY.inner;
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "1 < 102333"), //

@@ -33,7 +33,7 @@ public enum AND_TRUE {
   static final Wring WRING = Wrings.AND_TRUE.inner;
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression.Infix {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("F || F", "false ||false"), //
         Utils.asArray("3 OR TRUE", "true || true || true"), //

@@ -2,7 +2,8 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
@@ -12,6 +13,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.utils.Range;
@@ -29,15 +31,9 @@ import org.spartan.utils.Range;
  */
 public abstract class Wring {
   /**
-   * Determine the {@link Range} of characters managed by this instance.
-   * 
-   * @param e JD
-   * @return
-   */
-  @SuppressWarnings("static-method") Range range(final ASTNode e) {
-    return new Range(e);
-  }
-  /**
+   * Determine whether the parameter is "eligible" for application of this
+   * instance. The parameter must be within the scope of the current instance.
+   *
    * @param b JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object.
@@ -75,6 +71,7 @@ public abstract class Wring {
    *         the simplification offered by this object.
    */
   abstract boolean eligible(final PrefixExpression e);
+  abstract boolean eligible(VariableDeclarationFragment f);
   abstract boolean go(ASTRewrite r, Block b);
   abstract boolean go(ASTRewrite r, ConditionalExpression e);
   abstract boolean go(ASTRewrite r, IfStatement e);
@@ -88,6 +85,7 @@ public abstract class Wring {
    */
   abstract boolean go(final ASTRewrite r, final InfixExpression e);
   abstract boolean go(ASTRewrite r, PrefixExpression e);
+  abstract boolean go(ASTRewrite r, VariableDeclarationFragment f);
   final boolean noneligible(final Block b) {
     return !eligible(b);
   }
@@ -108,6 +106,18 @@ public abstract class Wring {
   final boolean noneligible(final IfStatement s) {
     return !eligible(s);
   }
+  final boolean noneligible(final VariableDeclarationFragment s) {
+    return !eligible(s);
+  }
+  /**
+   * Determine the {@link Range} of characters managed by this instance.
+   *
+   * @param e JD
+   * @return
+   */
+  @SuppressWarnings("static-method") Range range(final ASTNode e) {
+    return new Range(e);
+  }
   abstract Statement replacement(final Block b);
   abstract Expression replacement(final ConditionalExpression e);
   final Expression replacement(final Expression e) {
@@ -120,6 +130,7 @@ public abstract class Wring {
   abstract Statement replacement(final IfStatement e);
   abstract Expression replacement(final InfixExpression e);
   abstract Expression replacement(final PrefixExpression e);
+  abstract Statement replacement(final VariableDeclarationFragment f);
   abstract boolean scopeIncludes(Block b);
   abstract boolean scopeIncludes(ConditionalExpression e);
   /**
@@ -148,6 +159,7 @@ public abstract class Wring {
    */
   abstract boolean scopeIncludes(InfixExpression e);
   abstract boolean scopeIncludes(PrefixExpression e);
+  abstract boolean scopeIncludes(VariableDeclarationFragment f);
 
   @SuppressWarnings("unused") abstract static class Defaults extends Wring {
     @Override boolean eligible(final Block b) {
@@ -165,6 +177,9 @@ public abstract class Wring {
     @Override boolean eligible(final PrefixExpression e) {
       return false;
     }
+    @Override boolean eligible(final VariableDeclarationFragment f) {
+      return false;
+    }
     @Override boolean go(final ASTRewrite r, final Block b) {
       return false;
     }
@@ -178,6 +193,10 @@ public abstract class Wring {
       return false;
     }
     @Override boolean go(final ASTRewrite r, final PrefixExpression e) {
+      return false;
+    }
+    @Override boolean go(final ASTRewrite r, final VariableDeclarationFragment f) {
+      // TODO Auto-generated method stub
       return false;
     }
     @Override Statement replacement(final Block b) {
@@ -195,6 +214,9 @@ public abstract class Wring {
     @Override Expression replacement(final PrefixExpression e) {
       return null;
     }
+    @Override Statement replacement(VariableDeclarationFragment f) {
+      return null;
+    }
     @Override boolean scopeIncludes(final Block b) {
       return false;
     }
@@ -210,8 +232,11 @@ public abstract class Wring {
     @Override boolean scopeIncludes(final PrefixExpression e) {
       return false;
     }
+    @Override boolean scopeIncludes(final VariableDeclarationFragment s) {
+      return false;
+    }
 
-    public static final class Checker extends Defaults {
+    static final class Checker extends Defaults {
       // Body of this class must be empty!
     }
   }
@@ -285,10 +310,10 @@ public abstract class Wring {
         fillReplacement(i, r);
       return true;
     }
-    @Override abstract boolean scopeIncludes(final IfStatement s);
     @Override Range range(final ASTNode e) {
       return new Range(e).merge(new Range(Extract.nextStatement(asStatement(e))));
     }
+    @Override abstract boolean scopeIncludes(final IfStatement s);
   }
 
   static abstract class OfInfixExpression extends Defaults {
@@ -326,5 +351,23 @@ public abstract class Wring {
       assert eligible(e);
       return _replacement(e);
     }
+  }
+
+  abstract static class OfVariableDeclarationFragmentAndSurrounding extends Wring.Defaults {
+    abstract boolean _eligible(final VariableDeclarationFragment s);
+    @Override final boolean eligible(final VariableDeclarationFragment f) {
+      assert scopeIncludes(f);
+      return _eligible(f);
+    }
+    abstract ASTRewrite fillReplacement(VariableDeclarationFragment s, ASTRewrite r);
+    @Override final boolean go(final ASTRewrite r, final VariableDeclarationFragment f) {
+      if (eligible(f))
+        fillReplacement(f, r);
+      return true;
+    }
+    @Override Range range(final ASTNode e) {
+      return new Range(e).merge(new Range(Extract.nextStatement(asStatement(e))));
+    }
+    @Override abstract boolean scopeIncludes(final VariableDeclarationFragment s);
   }
 }

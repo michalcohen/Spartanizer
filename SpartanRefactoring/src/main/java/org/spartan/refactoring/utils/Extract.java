@@ -5,6 +5,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.spartan.refactoring.utils.Funcs.asAssignment;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
@@ -24,6 +25,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.spartan.utils.Wrapper;
 
 /**
@@ -95,6 +97,19 @@ public enum Extract {
     });
     return $.get();
   }
+  public static VariableDeclarationFragment firstVariableDeclarationFragment(ASTNode n) {
+    if (n == null)
+      return null;
+    final Wrapper<VariableDeclarationFragment> $ = new Wrapper<>();
+    n.accept(new ASTVisitor() {
+      @Override public boolean visit(final VariableDeclarationFragment i) {
+        if ($.get() == null)
+          $.set(i);
+        return false;
+      }
+    });
+    return $.get();
+  }
   /**
    * @param n JD
    * @return the method invocation if it exists or null if it doesn't or if the
@@ -103,16 +118,8 @@ public enum Extract {
   public static MethodInvocation methodInvocation(final ASTNode n) {
     return asMethodInvocation(Extract.expressionStatement(n).getExpression());
   }
-  /**
-   * Extract the {@link Statement} that immediately follows a given statement
-   * 
-   * @param s JD
-   * @return the {@link Statement} that immediately follows the parameter, or
-   *         <code><b>null</b></code>, if no such statement exists.
-   */
-  public static Statement nextStatement(final Statement s) {
-    final Block b = asBlock(s.getParent());
-    return b == null ? null : next(s, Extract.statements(b));
+  public static Assignment nextAssignment(ASTNode n) {
+    return Extract.assignment(nextStatement(n));
   }
   /**
    * Extract the {@link IfStatement} that immediately follows a given statement
@@ -134,6 +141,30 @@ public enum Extract {
    */
   public static ReturnStatement nextReturn(final Statement s) {
     return asReturnStatement(nextStatement(s));
+  }
+  /**
+   * Extract the {@link Statement} that immediately follows a given node.
+   * 
+   * @param s JD
+   * @return the {@link Statement} that immediately follows the parameter, or
+   *         <code><b>null</b></code>, if no such statement exists.
+   */
+  public static Statement nextStatement(final ASTNode n) {
+    for (ASTNode $ = n; $ != null; $ = $.getParent())
+      if (Is.statement($))
+        return nextStatement(asStatement($));
+    return null;
+  }
+  /**
+   * Extract the {@link Statement} that immediately follows a given statement
+   * 
+   * @param s JD
+   * @return the {@link Statement} that immediately follows the parameter, or
+   *         <code><b>null</b></code>, if no such statement exists.
+   */
+  public static Statement nextStatement(final Statement s) {
+    final Block b = asBlock(s.getParent());
+    return b == null ? null : next(s, Extract.statements(b));
   }
   /**
    * @param n a node to extract an expression from

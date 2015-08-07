@@ -56,7 +56,7 @@ public class PUSHDOWN_NOT {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Summation", "a+b"), //
         Utils.asArray("Multiplication", "a*b"), //

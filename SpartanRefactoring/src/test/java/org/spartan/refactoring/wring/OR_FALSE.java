@@ -33,7 +33,7 @@ public enum OR_FALSE {
   static final Wring WRING = Wrings.OR_FALSE.inner;
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Expression.Infix {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Product is not AND/OR", "2*a"), //
         Utils.asArray("AND without boolean", "b && a"), //

@@ -8,6 +8,7 @@ import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jface.text.Document;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;

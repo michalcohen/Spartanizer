@@ -51,6 +51,7 @@ import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 import org.spartan.refactoring.utils.All;
@@ -68,6 +69,44 @@ import org.spartan.utils.Range;
  * @since 2015-07-17
  */
 public enum Wrings {
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * int a; a = 3;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * int a = 3;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-08-07
+   */
+  DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE(new Wring.OfVariableDeclarationFragmentAndSurrounding(){
+    @Override public final String toString() {
+      return "IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(" + super.toString() + ")";
+    }
+    @Override boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
+      return true;
+    }
+    @Override boolean scopeIncludes(VariableDeclarationFragment f) {
+      return fillReplacement(f, ASTRewrite.create(f.getAST())) != null;
+    }
+    @Override ASTRewrite fillReplacement(VariableDeclarationFragment f, ASTRewrite r) {
+      Expression initializer = f.getInitializer();
+      if (initializer != null)
+        return null;
+      final Assignment a = Extract.nextAssignment(f);
+      if (a == null)
+        return null;
+      if (!same(f.getName(), a.getLeftHandSide()))
+        return null;
+      return r;
+    }
+    }), //
   /**
    * A {@link Wring} to convert
    *
@@ -244,7 +283,8 @@ public enum Wrings {
     }
     @Override boolean scopeIncludes(IfStatement s) {
       return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;
-    }}), 
+    }
+  }), 
   /**
    * A {@link Wring} to convert
    *
@@ -708,7 +748,7 @@ public enum Wrings {
     @Override Expression _replacement(final PrefixExpression e) {
       return pushdownNot(asNot(e));
     }
-  }), 
+  }), //
   //
   ;
   /**
@@ -723,6 +763,21 @@ public enum Wrings {
       return null;
     for (final Wrings w : values())
       if (w.inner.scopeIncludes(b))
+        return w.inner;
+    return null;
+  }
+  /**
+   * Find the first {@link Wring} appropriate for an {@link IfStatement}
+   *
+   * @param b JD
+   * @return the first {@link Wring} for which the parameter is within scope, or
+   *         <code><b>null</b></code>i if no such {@link Wring} is found.
+   */
+  public static Wring find(final VariableDeclarationFragment f) {
+    if (f == null)
+      return null;
+    for (final Wrings w : values())
+      if (w.inner.scopeIncludes(f))
         return w.inner;
     return null;
   }
@@ -1069,7 +1124,7 @@ public enum Wrings {
         return reorganizeStatement(s);
     }
   }
-  private static Block reorganizeStatement(final Statement s) {
+  static Block reorganizeStatement(final Statement s) {
     final List<Statement> ss = Extract.statements(s);
     final Block $ = s.getAST().newBlock();
     duplicateInto(ss,$.statements());
