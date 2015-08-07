@@ -54,8 +54,8 @@ public enum Precedence {
   public static int of(final Assignment.Operator o) {
     return of(o.toString());
   }
-  public static int of(ASTNode n) {
-    return org.spartan.refactoring.utils.Is.expression(n) ? Precedence.of(asExpression(n)) : UNDEFINED;
+  public static int of(final ASTNode n) {
+    return !org.spartan.refactoring.utils.Is.expression(n) ? UNDEFINED : Precedence.of(asExpression(n));
   }
   /**
    * Determine the precedence of the operator present on an {@link Expression}

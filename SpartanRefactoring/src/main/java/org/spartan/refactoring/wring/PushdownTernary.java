@@ -33,7 +33,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return $;
   }
   @SuppressWarnings("unchecked") private static <T extends Expression> T p(ASTNode e, T $) {
-    return Precedence.Is.legal(Precedence.of(e)) && Precedence.of(e) < Precedence.of($) ? (T) parenthesize($) : $;
+    return (!Precedence.Is.legal(Precedence.of(e)) || !(Precedence.of(e) < Precedence.of($)) ? $ : (T) parenthesize($));
   }
   private static Expression pushdown(ConditionalExpression e, Assignment e1, Assignment e2) {
     if (e1.getOperator() != e2.getOperator())
