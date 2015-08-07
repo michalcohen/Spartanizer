@@ -261,6 +261,6 @@ public class TrimmerTest {
     assertEquals(example, peelExpression(wrapExpression(example)));
   }
   @Test public void twoMultiplication1() {
-    assertSimplifiesTo("f(a,b,c,d) & f()", "f() & f(a,b,c,d)");
+    assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
   }
 }
