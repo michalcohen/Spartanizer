@@ -19,30 +19,12 @@ import org.spartan.refactoring.wring.Trimmer;
  */
 @SuppressWarnings("javadoc") //
 public enum Spartanizations {
-  // SequencerEndingThen(new
-  // AsRefactoring(IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner, "Then branch
-  // ends with a sequencer", "Eliminate redundant else")), //
   Trimmer(new Trimmer()), //
-  // EliminateTernary(new AsRefactoring(ELIMINATE_TERNARY.inner, "eliminate
-  // ternary", "in cases")), //
-  // IfAssign(new AsRefactoring(IFX_ASSIGNX_ELSE_ASSIGNY.inner, "and true",
-  // "remove trues from expression")), //
-  // AndTrue(new AsRefactoring(AND_TRUE.inner, "and true", "remove trues from
-  // expression")), //
-  //// ComparisonWithBoolean(new ComparisonWithBoolean()), //
-  // ComparisonWithSpecific(new ComparisonWithSpecific()), //
-  // // ForwardDeclaration(new ForwardDeclaration()), //
-  // InlineSingleUse(new InlineSingleUse()), //
-  // OrFalse(new AsRefactoring(OR_FALSE.inner, "or false", "remove falses from
-  // expression")), //
-  // PushDownNot(new AsRefactoring(PUSHDOWN_NOT.inner, "Pushdown not", "Simplify
-  // not expression")), //
+  ForwardDeclaration(new ForwardDeclaration()), //
+  InlineSingleUse(new InlineSingleUse()), //
   // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  // ShortestBranchFirst(new ShortestBranchFirst()), //
+  ShortestBranchFirst(new ShortestBranchFirst()), //
   // ShortestOperand(new ShortestOperand()), //
-  // SimplifyTernary(new AsRefactoring(Wrings.TERNARY_BOOLEAN_LITERAL.inner,
-  // "Ternary", "Simplify complex ternary boolean expression")), //
-  // // Ternarize(new Ternarize()), //
   ;
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible
