@@ -40,55 +40,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc" }) //
 public class TernarizeTest extends AbstractTestBase {
-  /** Where the expected output can be found? */
-  @Parameter(2) public String output;
-  @Test public void peelableOutput() {
-    assertEquals(output, peelExpression(wrapExpression(output)));
-    assertEquals(output, peelStatement(wrapStatement(output)));
-  }
-  @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final String wrap = wrapStatement(input);
-    final Document d = new Document(wrap);
-    assertNotNull(d);
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
-    final ASTRewrite r = inner.createRewrite(u, null);
-    r.rewriteAST(d, null).apply(d);
-    final String unpeeled = d.get();
-    if (wrap.equals(unpeeled))
-      fail("Nothing done on " + input);
-    final String peeled = peelStatement(unpeeled);
-    if (peeled.equals(input))
-      assertNotEquals("No similification of " + input, input, peeled);
-    if (compressSpaces(peeled).equals(compressSpaces(input)))
-      assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
-    assertSimilar(output, peeled);
-    assertSimilar(wrapStatement(output), d);
-  }
-  @Test public void rewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final String wrap = wrapStatement(input);
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
-    final Document d = new Document(wrap);
-    assertNotNull(d);
-    final AST t = u.getAST();
-    assertNotNull(t);
-    final ASTRewrite r = ASTRewrite.create(t);
-    inner.fillRewrite(r, t, u, null);
-    r.rewriteAST(d, null).apply(d);
-    final String unpeeled = d.get();
-    if (wrap.equals(unpeeled))
-      fail("Nothing done on " + input);
-  }
   final static Spartanization inner = new Ternarize();
-  /**
-   * Generate test cases for this parameterized class.
-   *
-   * @return a collection of cases, where each case is an array of three
-   *         objects, the test case name, the input, and the file.
-   */
-  @Parameters(name = "{index}: {0} {1}") //
-  public static Collection<Object[]> cases() {
-    return collect(cases);
-  }
   static String[][] cases = Utils.asArray(//
       // Utils.asArray(
       // " String res = s;\n" + //
@@ -111,4 +63,52 @@ public class TernarizeTest extends AbstractTestBase {
               "int res = 0;\n" + //
               "res += (s.equals(xxx) ? 6 : 9);"), //
       null);
+  /**
+   * Generate test cases for this parameterized class.
+   *
+   * @return a collection of cases, where each case is an array of three
+   *         objects, the test case name, the input, and the file.
+   */
+  @Parameters(name = "{index}: {0} {1}") //
+  public static Collection<Object[]> cases() {
+    return collect(cases);
+  }
+  /** Where the expected output can be found? */
+  @Parameter(2) public String output;
+  @Test public void peelableOutput() {
+    assertEquals(output, peelExpression(wrapExpression(output)));
+    assertEquals(output, peelStatement(wrapStatement(output)));
+  }
+  @Test public void rewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+    final String wrap = wrapStatement(input);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
+    final Document d = new Document(wrap);
+    assertNotNull(d);
+    final AST t = u.getAST();
+    assertNotNull(t);
+    final ASTRewrite r = ASTRewrite.create(t);
+    inner.fillRewrite(r, t, u, null);
+    r.rewriteAST(d, null).apply(d);
+    final String unpeeled = d.get();
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + input);
+  }
+  @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
+    final String wrap = wrapStatement(input);
+    final Document d = new Document(wrap);
+    assertNotNull(d);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
+    final ASTRewrite r = inner.createRewrite(u, null);
+    r.rewriteAST(d, null).apply(d);
+    final String unpeeled = d.get();
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + input);
+    final String peeled = peelStatement(unpeeled);
+    if (peeled.equals(input))
+      assertNotEquals("No similification of " + input, input, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(input)))
+      assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
+    assertSimilar(output, peeled);
+    assertSimilar(wrapStatement(output), d);
+  }
 }

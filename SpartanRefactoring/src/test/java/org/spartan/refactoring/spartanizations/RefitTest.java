@@ -53,6 +53,15 @@ public class RefitTest {
     final List<Expression> operands = All.operands(Funcs.duplicate(i("a+b+c")));
     assertThat(refitOperands(e, operands), notNullValue());
   }
+  @Test public void refitPreservesOrder() {
+    final InfixExpression e = i("1 + 2 * 3");
+    final List<Expression> operands = new ArrayList<>();
+    operands.add(duplicate(e("3*4")));
+    operands.add(duplicate(e("5")));
+    final InfixExpression refit = refitOperands(e, operands);
+    assertThat(refit, is(not(e)));
+    assertThat(refit.toString(), is("3 * 4 + 5"));
+  }
   @Test public void refitWithSort() {
     final InfixExpression e = i("1 + 2 * 3");
     final List<Expression> operands = All.operands(flatten(e));
@@ -65,14 +74,5 @@ public class RefitTest {
     final InfixExpression refit = refitOperands(e, operands);
     assertThat(refit, is(not(e)));
     assertThat(refit.toString(), is("2 * 3 + 1"));
-  }
-  @Test public void refitPreservesOrder() {
-    final InfixExpression e = i("1 + 2 * 3");
-    final List<Expression> operands = new ArrayList<>();
-    operands.add(duplicate(e("3*4")));
-    operands.add(duplicate(e("5")));
-    final InfixExpression refit = refitOperands(e, operands);
-    assertThat(refit, is(not(e)));
-    assertThat(refit.toString(), is("3 * 4 + 5"));
   }
 }

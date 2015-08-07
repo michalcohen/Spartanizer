@@ -14,20 +14,8 @@ import org.junit.Test;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class IsTest {
-  @Test public void numericLiteralTrue() {
-    assertTrue(Is.numericLiteral(e("1")));
-  }
-  @Test public void numericLiteralFalse1() {
-    assertFalse(Is.numericLiteral(e("2*3")));
-  }
-  @Test public void numericLiteralFalse2() {
-    assertFalse(Is.numericLiteral(e("2*3")));
-  }
-  @Test public void booleanLiteralTrueOnTrue() {
-    assertTrue(Is.booleanLiteral(e("true")));
-  }
-  @Test public void booleanLiteralTrueOnFalse() {
-    assertTrue(Is.booleanLiteral(e("false")));
+  @Test public void booleanLiteralFalseOnNull() {
+    assertFalse(Is.booleanLiteral(e("null")));
   }
   @Test public void booleanLiteralFalseOnNumeric() {
     assertFalse(Is.booleanLiteral(e("12")));
@@ -35,7 +23,19 @@ public class IsTest {
   @Test public void booleanLiteralFalseOnThis() {
     assertFalse(Is.booleanLiteral(e("this")));
   }
-  @Test public void booleanLiteralFalseOnNull() {
-    assertFalse(Is.booleanLiteral(e("null")));
+  @Test public void booleanLiteralTrueOnFalse() {
+    assertTrue(Is.booleanLiteral(e("false")));
+  }
+  @Test public void booleanLiteralTrueOnTrue() {
+    assertTrue(Is.booleanLiteral(e("true")));
+  }
+  @Test public void numericLiteralFalse1() {
+    assertFalse(Is.numericLiteral(e("2*3")));
+  }
+  @Test public void numericLiteralFalse2() {
+    assertFalse(Is.numericLiteral(e("2*3")));
+  }
+  @Test public void numericLiteralTrue() {
+    assertTrue(Is.numericLiteral(e("1")));
   }
 }

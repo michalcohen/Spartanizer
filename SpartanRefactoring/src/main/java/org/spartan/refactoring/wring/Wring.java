@@ -214,7 +214,7 @@ public abstract class Wring {
     @Override Expression replacement(final PrefixExpression e) {
       return null;
     }
-    @Override Statement replacement(VariableDeclarationFragment f) {
+    @Override Statement replacement(final VariableDeclarationFragment f) {
       return null;
     }
     @Override boolean scopeIncludes(final Block b) {

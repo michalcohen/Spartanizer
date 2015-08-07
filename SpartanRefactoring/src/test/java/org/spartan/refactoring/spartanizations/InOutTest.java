@@ -27,6 +27,26 @@ import org.spartan.refactoring.utils.As;
  */
 @RunWith(Parameterized.class) //
 public class InOutTest {
+  /**
+   * Generate test cases for this parameterized class.
+   *
+   * @return a collection of cases, where each case is an array of four objects,
+   *         the spartanization, the test case name, the input file, and the
+   *         output file.
+   */
+  @Parameters(name = "{index}) \"{0}\" =={2}==>> \"{1}\"") //
+  public static Collection<Object[]> cases() {
+    return new FileTestUtils.Files() {
+      @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
+        if (name.endsWith(testSuffix) && As.stringBuilder(input).indexOf(testKeyword) > 0)
+          return objects(s, name, input, makeOutFile(input));
+        if (!name.endsWith(".in"))
+          return null;
+        final File output = new File(folder, name.replaceAll("\\.in$", ".out"));
+        return !output.exists() ? null : objects(s, name.replaceAll("\\.in$", ""), input, output);
+      }
+    }.go();
+  }
   protected static void go(final Spartanization s, final File from, final File to) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(FileTestUtils.makeInFile(from));
     assertEquals(u.toString(), 1, countOpportunities(s, u));
@@ -56,25 +76,5 @@ public class InOutTest {
   @Test public void go() {
     assertNotNull("Cannot instantiate Spartanization object", spartanization);
     go(spartanization, input, output);
-  }
-  /**
-   * Generate test cases for this parameterized class.
-   *
-   * @return a collection of cases, where each case is an array of four objects,
-   *         the spartanization, the test case name, the input file, and the
-   *         output file.
-   */
-  @Parameters(name = "{index}) \"{0}\" =={2}==>> \"{1}\"") //
-  public static Collection<Object[]> cases() {
-    return new FileTestUtils.Files() {
-      @Override Object[] makeCase(final Spartanization s, final File folder, final File input, final String name) {
-        if (name.endsWith(testSuffix) && As.stringBuilder(input).indexOf(testKeyword) > 0)
-          return objects(s, name, input, makeOutFile(input));
-        if (!name.endsWith(".in"))
-          return null;
-        final File output = new File(folder, name.replaceAll("\\.in$", ".out"));
-        return !output.exists() ? null : objects(s, name.replaceAll("\\.in$", ""), input, output);
-      }
-    }.go();
   }
 }

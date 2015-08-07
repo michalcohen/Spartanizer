@@ -21,13 +21,13 @@ public class PrecedenceTest {
   @Test public void existsTernary() {
     Precedence.of(c("A?b:c"));
   }
-  @Test public void ternaryIsNotNegative() {
-    assertThat(Precedence.of(c("A?b:c")), greaterThanOrEqualTo(0));
-  }
   @Test public void methodInvocationIsNotNegative() {
     assertThat(Precedence.of(e("f(a,b,c)")), greaterThanOrEqualTo(0));
   }
   @Test public void methodInvocationIsNotTernary() {
     assertThat(Precedence.of(e("f(a,b,c)")), not(comparesEqualTo(Precedence.of(e("a?b:c")))));
+  }
+  @Test public void ternaryIsNotNegative() {
+    assertThat(Precedence.of(c("A?b:c")), greaterThanOrEqualTo(0));
   }
 }

@@ -54,6 +54,8 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
+import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Conditional;
+import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Infix;
 import org.spartan.utils.Range;
 
 /**
@@ -174,11 +176,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
 
     public static abstract class Infix extends Noneligible {
-      @Override protected InfixExpression asMe() {
-        InfixExpression $ = i(input);
-        assertNotNull($);
-        return $;
-      }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
       Infix(final Wring w) {
         super(w);
@@ -192,6 +189,11 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       }
       @Test public void inputIsInfixExpression() {
         assertNotNull(asInfixExpression());
+      }
+      @Override protected InfixExpression asMe() {
+        final InfixExpression $ = i(input);
+        assertNotNull($);
+        return $;
       }
     }
   }
@@ -209,11 +211,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
 
     public static abstract class Exprezzion extends OutOfScope {
-      @Override protected Expression asMe() {
-        Expression $ = e(input);
-        assertNotNull($);
-        return $;
-      }
       public Exprezzion(final Wring inner) {
         super(inner);
       }
@@ -225,6 +222,11 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       }
       @Test public void scopeDoesNotIncludeAsIfStatement() {
         assertThat(inner.scopeIncludes(asIfStatement(asMe())), is(false));
+      }
+      @Override protected Expression asMe() {
+        final Expression $ = e(input);
+        assertNotNull($);
+        return $;
       }
 
       public static abstract class Infix extends OutOfScope.Exprezzion {
@@ -658,15 +660,33 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
   }
 
-  public static abstract class WringedVariableDeclarationFragmentAndSurrounding extends Wringed {
-    /**
-     * Instantiates the enclosing class ({@link WringedInput})
-     *
-     * @param inner
-     */
+  public static abstract class WringedStatement extends InScope {
+    WringedStatement(final Wring inner) {
+      super(inner);
+    }
+    @Override @Test public void correctSimplifier() {
+      assertEquals(inner, Wrings.find(asMe()));
+    }
+    @Override @Test public void findsSimplifier() {
+      assertNotNull(Wrings.find(asMe()));
+    }
+    @Override protected final CompilationUnit asCompilationUnit() {
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+      assertThat($, is(notNullValue()));
+      assertThat($, is(instanceOf(CompilationUnit.class)));
+      return (CompilationUnit) $;
+    }
     @Override protected final Document asDocument() {
       return new Document(wrapStatement(input));
     }
+    @Override protected Statement asMe() {
+      final Statement $ = s(input);
+      assertNotNull($);
+      return $;
+    }
+  }
+
+  public static abstract class WringedVariableDeclarationFragmentAndSurrounding extends Wringed {
     WringedVariableDeclarationFragmentAndSurrounding(final Wring inner) {
       super(inner);
     }
@@ -705,7 +725,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertEquals(expected, peelStatement(wrapStatement(expected)));
     }
     @Test public void scopeIncludesAsMe() {
-      boolean scopeIncludes = inner.scopeIncludes(asMe());
+      final boolean scopeIncludes = inner.scopeIncludes(asMe());
       assertThat(asMe().toString(), scopeIncludes, is(true));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
@@ -720,6 +740,14 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
       assertSimilar(wrapStatement(expected), excpected);
+    }
+    /**
+     * Instantiates the enclosing class ({@link WringedInput})
+     *
+     * @param inner
+     */
+    @Override protected final Document asDocument() {
+      return new Document(wrapStatement(input));
     }
     /**
      * In case of an IfStatemnet and surrounding, we search and then find the
@@ -758,32 +786,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       @Test public void inputIsInfixExpression() {
         assertNotNull(asInfixExpression());
       }
-    }
-  }
-
-  public static abstract class WringedStatement extends InScope {
-    @Override protected Statement asMe() {
-      final Statement $ = s(input);
-      assertNotNull($);
-      return $;
-    }
-    WringedStatement(final Wring inner) {
-      super(inner);
-    }
-    @Override @Test public void correctSimplifier() {
-      assertEquals(inner, Wrings.find(asMe()));
-    }
-    @Override @Test public void findsSimplifier() {
-      assertNotNull(Wrings.find(asMe()));
-    }
-    @Override protected final CompilationUnit asCompilationUnit() {
-      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
-      assertThat($, is(notNullValue()));
-      assertThat($, is(instanceOf(CompilationUnit.class)));
-      return (CompilationUnit) $;
-    }
-    @Override protected final Document asDocument() {
-      return new Document(wrapStatement(input));
     }
   }
 

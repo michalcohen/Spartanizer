@@ -346,9 +346,8 @@ public enum Is {
         INFIX_EXPRESSION, //
         ARRAY_CREATION, //
         INSTANCEOF_EXPRESSION//
-        //
-        )
-        || notString(asInfixExpression(e));
+    //
+    ) || notString(asInfixExpression(e));
   }
   /**
    * @param e JD

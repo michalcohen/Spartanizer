@@ -81,7 +81,7 @@ public enum As {
   }
   /**
    * File -> ASTNode converter
-   * 
+   *
    * @param f File
    * @return ASTNode
    */
@@ -90,7 +90,7 @@ public enum As {
   }
   /**
    * String -> ASTNode converter
-   * 
+   *
    * @param s String
    * @return ASTNode
    */
@@ -99,7 +99,7 @@ public enum As {
   }
   /**
    * IMarker -> ICompilationUnit converter
-   * 
+   *
    * @param m IMarker
    * @return CompilationUnit
    */
@@ -108,7 +108,7 @@ public enum As {
   }
   /**
    * IFile -> ICompilationUnit converter
-   * 
+   *
    * @param f File
    * @return ICompilationUnit
    */
@@ -117,7 +117,7 @@ public enum As {
   }
   /**
    * IMarker, SubProgressMonitor -> ASTNode converter
-   * 
+   *
    * @param m Marker
    * @param pm ProgressMonitor
    * @return ASTNode

@@ -81,11 +81,11 @@ public class IFX_SOMETHING_EXISTING_EMPTY_ELSE {
       super(WRING);
     }
     @Test public void isfStatementElseIsEmpty() {
-      IfStatement i = asMe();
+      final IfStatement i = asMe();
       assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
     }
     @Test public void isfStatementElseNotNull() {
-      IfStatement i = asMe();
+      final IfStatement i = asMe();
       assertNotNull(i.getElseStatement());
     }
     @Test public void isIfStatement() {

@@ -694,8 +694,8 @@ public enum Funcs {
    * @return a newly created, unparenthesized {@link ConditionalExpression} with
    *         the specified arguments.
    */
-  public static ConditionalExpression makeConditional(ConditionalExpression e, Expression then, Expression elze) {
-    ConditionalExpression $ = duplicate(e);
+  public static ConditionalExpression makeConditional(final ConditionalExpression e, final Expression then, final Expression elze) {
+    final ConditionalExpression $ = duplicate(e);
     $.setThenExpression(duplicate(then));
     $.setElseExpression(duplicate(elze));
     return $;
@@ -821,7 +821,7 @@ public enum Funcs {
   }
   /**
    * Create a new {@link ReturnStatement} with a specific expression to return
-   * 
+   *
    * @param e what to return
    * @return the new return statement
    */

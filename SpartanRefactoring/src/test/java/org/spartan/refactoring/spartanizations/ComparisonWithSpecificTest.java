@@ -58,11 +58,36 @@ public class ComparisonWithSpecificTest {
       " return a*b*c*d>d*e;\n" + //
       " }"//
       + "";
-  @Test public void noOpportunitySp1() {
-    assertNoOpportunity(new ShortestOperand(), P1);
+  @Test public void applicableCompareWithThis() {
+    assertFalse(applicable(i("a == this")));
   }
-  @Test public void oneOpportunitySP2() {
-    assertOneOpportunity(new ShortestOperand(), P2);
+  @Test public void applicableThisCompareWithThis() {
+    assertTrue(applicable(i("this ==this")));
+  }
+  @Test public void breakExpression() {
+    final InfixExpression i = i("a == this");
+    assertEquals(ASTNode.INFIX_EXPRESSION, i.getNodeType());
+  }
+  @Test public void callIsSpecific() {
+    Is.specific(e("2+2"));
+  }
+  @Test public void callIsSpecificFalse() {
+    assertFalse(Is.specific(e("2+2")));
+  }
+  @Test public void callIsSpecificTrue() {
+    assertTrue(Is.specific(e("this")));
+  }
+  @Test public void canMakeExpression() {
+    e("2+2");
+  }
+  @Test public void cisSpecificFalse1() {
+    assertFalse(Is.specific(e("a")));
+  }
+  @Test public void getNodeType() {
+    assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
+  }
+  @Test public void isOneOf() {
+    assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
   }
   @Test public void noOpportunity0() {
     assertNoOpportunity(new ShortestOperand(), P0);
@@ -70,38 +95,8 @@ public class ComparisonWithSpecificTest {
   @Test public void noOpportunity1() {
     assertOneOpportunity(new ShortestOperand(), P2);
   }
-  @Test public void t1() {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P2);
-    assertEquals(u.toString(), 1, countOpportunities(new ShortestOperand(), u));
-  }
-  @Test public void t2() {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P2);
-    final ShortestOperand shortestOperand = new ShortestOperand();
-    final List<Range> $ = new ArrayList<>();
-    u.accept(shortestOperand.collectOpportunities($));
-    final List<Range> findOpportunities = $;
-    assertNotNull(findOpportunities);
-    final int countOpportunities = findOpportunities.size();
-    assertEquals(u.toString(), 1, countOpportunities);
-  }
-  @Test public void t3() {
-    assertFalse(ShortestOperand.outOfScope(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
-  }
-  @Test public void t4() {
-    assertFalse(ShortestOperand.outOfScope(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
-  }
-  @Test public void t5() {
-    assertFalse(ShortestOperand.outOfScope(i(" 6 - 7 < 2 + 1")));
-  }
-  @Test public void t8() {
-    final InfixExpression e = i("1 + 2  + 3 < 3 ");
-    assertTrue(ShortestOperand.outOfScope(e));
-  }
-  @Test public void t9() {
-    final InfixExpression e = i("1 + 2  + 3 < 3 -4");
-    assertNotNull(e);
-    assertFalse(hasNull(e.getLeftOperand(), e.getRightOperand()));
-    assertFalse(ComparisonWithSpecific.withinDomain(e));
+  @Test public void noOpportunitySp1() {
+    assertNoOpportunity(new ShortestOperand(), P1);
   }
   @Test public void one() {
     assertOneOpportunity(inner(), P0);
@@ -110,6 +105,12 @@ public class ComparisonWithSpecificTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document rewrite = rewrite(inner(), u, new Document(P0));
     assertNotNull(rewrite);
+  }
+  @Test public void one2false() {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
+    final Document rewrite = rewrite(inner(), u, new Document(P0));
+    assertNotNull(rewrite);
+    assertNotEvenSimilar(P0, rewrite.get());
   }
   @Test public void one2true() {
     final String expected = P1;
@@ -170,57 +171,41 @@ public class ComparisonWithSpecificTest {
     r.rewriteAST(d, null).apply(d);
     assertSimilar(expected, d);
   }
-  private ComparisonWithSpecific inner() {
-    return new ComparisonWithSpecific();
+  @Test public void oneOpportunitySP2() {
+    assertOneOpportunity(new ShortestOperand(), P2);
   }
-  @Test public void one2false() {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
-    final Document rewrite = rewrite(inner(), u, new Document(P0));
-    assertNotNull(rewrite);
-    assertNotEvenSimilar(P0, rewrite.get());
+  @Test public void t1() {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P2);
+    assertEquals(u.toString(), 1, countOpportunities(new ShortestOperand(), u));
   }
-  @Test public void canMakeExpression() {
-    e("2+2");
+  @Test public void t2() {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P2);
+    final ShortestOperand shortestOperand = new ShortestOperand();
+    final List<Range> $ = new ArrayList<>();
+    u.accept(shortestOperand.collectOpportunities($));
+    final List<Range> findOpportunities = $;
+    assertNotNull(findOpportunities);
+    final int countOpportunities = findOpportunities.size();
+    assertEquals(u.toString(), 1, countOpportunities);
   }
-  @Test public void callIsSpecific() {
-    Is.specific(e("2+2"));
+  @Test public void t3() {
+    assertFalse(ShortestOperand.outOfScope(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
   }
-  @Test public void callIsSpecificFalse() {
-    assertFalse(Is.specific(e("2+2")));
+  @Test public void t4() {
+    assertFalse(ShortestOperand.outOfScope(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
   }
-  @Test public void getNodeType() {
-    assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
+  @Test public void t5() {
+    assertFalse(ShortestOperand.outOfScope(i(" 6 - 7 < 2 + 1")));
   }
-  @Test public void isOneOf() {
-    assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
+  @Test public void t8() {
+    final InfixExpression e = i("1 + 2  + 3 < 3 ");
+    assertTrue(ShortestOperand.outOfScope(e));
   }
-  @Test public void callIsSpecificTrue() {
-    assertTrue(Is.specific(e("this")));
-  }
-  @Test public void cisSpecificFalse1() {
-    assertFalse(Is.specific(e("a")));
-  }
-  @Test public void breakExpression() {
-    final InfixExpression i = i("a == this");
-    assertEquals(ASTNode.INFIX_EXPRESSION, i.getNodeType());
-  }
-  @Test public void applicableCompareWithThis() {
-    assertFalse(applicable(i("a == this")));
-  }
-  @Test public void applicableThisCompareWithThis() {
-    assertTrue(applicable(i("this ==this")));
-  }
-  @Test public void withinDomainTrue1() {
-    assertTrue(withinDomain(i("a == this")));
-  }
-  @Test public void withinDomainTrue2() {
-    assertTrue(withinDomain(i("this == null")));
-  }
-  @Test public void withinDomainTrue3() {
-    assertTrue(withinDomain(i("12 == this")));
-  }
-  @Test public void withinDomainTrue4() {
-    assertTrue(withinDomain(i("a == 11")));
+  @Test public void t9() {
+    final InfixExpression e = i("1 + 2  + 3 < 3 -4");
+    assertNotNull(e);
+    assertFalse(hasNull(e.getLeftOperand(), e.getRightOperand()));
+    assertFalse(ComparisonWithSpecific.withinDomain(e));
   }
   @Test public void withinDomainFalse0() {
     assertFalse(withinDomain(i("13455643294 < 22")));
@@ -251,5 +236,20 @@ public class ComparisonWithSpecificTest {
   }
   @Test public void withinDomainFalse9() {
     assertFalse(withinDomain(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void withinDomainTrue1() {
+    assertTrue(withinDomain(i("a == this")));
+  }
+  @Test public void withinDomainTrue2() {
+    assertTrue(withinDomain(i("this == null")));
+  }
+  @Test public void withinDomainTrue3() {
+    assertTrue(withinDomain(i("12 == this")));
+  }
+  @Test public void withinDomainTrue4() {
+    assertTrue(withinDomain(i("a == 11")));
+  }
+  private ComparisonWithSpecific inner() {
+    return new ComparisonWithSpecific();
   }
 }

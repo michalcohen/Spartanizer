@@ -23,7 +23,7 @@ public class CleanupHandler extends BaseHandler {
   public CleanupHandler() {
     super(null);
   }
-  private final Spartanization[] safeSpartanizations = {//
+  private final Spartanization[] safeSpartanizations = { //
       new ComparisonWithBoolean(), //
       new RenameReturnVariableToDollar(), //
       new ShortestBranchFirst() //

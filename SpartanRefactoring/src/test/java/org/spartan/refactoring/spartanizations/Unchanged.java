@@ -29,6 +29,22 @@ import org.spartan.refactoring.utils.As;
 @RunWith(Parameterized.class) //
 public class Unchanged {
   /**
+   * @return a collection of cases, where each cases is an array of three
+   *         objects, the spartanization, the test case name, and the input file
+   */
+  @Parameters(name = "{index}: {0} {1}") //
+  public static Collection<Object[]> cases() {
+    return new FileTestUtils.Files() {
+      private boolean dotOutExists(final File d, final String name) {
+        return new File(d, name.replaceAll("\\.in$", ".out")).exists();
+      }
+      @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
+        return name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f))
+            : !name.endsWith(".in") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll("\\.in$", ""), s, f);
+      }
+    }.go();
+  }
+  /**
    * An object describing the required transformation
    */
   @Parameter(0) public Spartanization spartanization;
@@ -42,18 +58,6 @@ public class Unchanged {
   @Parameter(2) public File input;
   /**
    * Runs a parameterized test case, based on the instance variables of this
-   * instance, and check that no opportunities are found.
-   */
-  @Test public void checkNoOpportunities() {
-    assertNotNull("Cannot instantiate Spartanization object", spartanization);
-    final ASTNode n = As.COMPILIATION_UNIT.ast(input);
-    assertNotNull(n);
-    assertThat(n, is(instanceOf(CompilationUnit.class)));
-    final CompilationUnit u = (CompilationUnit) n;
-    assertEquals(0, spartanization.findOpportunities(u).size());
-  }
-  /**
-   * Runs a parameterized test case, based on the instance variables of this
    * instance, and check that no matter what, even if the number of
    * opportunities is zero, the input does not change.
    */
@@ -65,23 +69,19 @@ public class Unchanged {
       assertEquals(As.string(FileTestUtils.makeInFile(input)),
           TESTUtils.rewrite(spartanization, (CompilationUnit) As.COMPILIATION_UNIT.ast(input), new Document(As.string(FileTestUtils.makeInFile(input)))).get());
   }
+  /**
+   * Runs a parameterized test case, based on the instance variables of this
+   * instance, and check that no opportunities are found.
+   */
+  @Test public void checkNoOpportunities() {
+    assertNotNull("Cannot instantiate Spartanization object", spartanization);
+    final ASTNode n = As.COMPILIATION_UNIT.ast(input);
+    assertNotNull(n);
+    assertThat(n, is(instanceOf(CompilationUnit.class)));
+    final CompilationUnit u = (CompilationUnit) n;
+    assertEquals(0, spartanization.findOpportunities(u).size());
+  }
   private String input() {
     return As.string(input);
-  }
-  /**
-   * @return a collection of cases, where each cases is an array of three
-   *         objects, the spartanization, the test case name, and the input file
-   */
-  @Parameters(name = "{index}: {0} {1}") //
-  public static Collection<Object[]> cases() {
-    return new FileTestUtils.Files() {
-      @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
-        return name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f))
-            : !name.endsWith(".in") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll("\\.in$", ""), s, f);
-      }
-      private boolean dotOutExists(final File d, final String name) {
-        return new File(d, name.replaceAll("\\.in$", ".out")).exists();
-      }
-    }.go();
   }
 }

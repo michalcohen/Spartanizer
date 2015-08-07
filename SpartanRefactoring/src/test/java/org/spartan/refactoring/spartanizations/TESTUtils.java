@@ -46,16 +46,9 @@ public enum TESTUtils {
   public static void assertNoChange(final String input) {
     assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
   }
-  static String apply(final Trimmer t, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    return TESTUtils.rewrite(t, u, d).get();
-  }
   /**
    * A test to check that that the actual output is similar to the actual value.
-   * 
+   *
    * @param expected JD
    * @param actual JD
    */
@@ -145,6 +138,20 @@ public enum TESTUtils {
   public static final String peelStatement(final String s) {
     return removeSuffix(removePrefix(s, PRE_STATEMENT), POST_STATEMENT);
   }
+  public static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {
+    try {
+      s.createRewrite(u, null).rewriteAST($, null).apply($);
+      return $;
+    } catch (final MalformedTreeException e) {
+      fail(e.getMessage());
+    } catch (final IllegalArgumentException e) {
+      e.printStackTrace();
+      fail(e.getMessage());
+    } catch (final BadLocationException e) {
+      fail(e.getMessage());
+    }
+    return null;
+  }
   /**
    * Convert a given {@link String} into an {@link Statement}, or fail the
    * current test, if such a conversion is not possible
@@ -165,6 +172,13 @@ public enum TESTUtils {
   public static final String wrapStatement(final String s) {
     return PRE_STATEMENT + s + POST_STATEMENT;
   }
+  static String apply(final Trimmer t, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(t, u, d).get();
+  }
   static void assertNoOpportunity(final Spartanization s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertEquals(u.toString(), 0, countOpportunities(s, u));
@@ -175,19 +189,5 @@ public enum TESTUtils {
   static void assertOneOpportunity(final Spartanization s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertEquals(u.toString(), 1, countOpportunities(s, u));
-  }
-  public static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {
-    try {
-      s.createRewrite(u, null).rewriteAST($, null).apply($);
-      return $;
-    } catch (final MalformedTreeException e) {
-      fail(e.getMessage());
-    } catch (final IllegalArgumentException e) {
-      e.printStackTrace();
-      fail(e.getMessage());
-    } catch (final BadLocationException e) {
-      fail(e.getMessage());
-    }
-    return null;
   }
 }

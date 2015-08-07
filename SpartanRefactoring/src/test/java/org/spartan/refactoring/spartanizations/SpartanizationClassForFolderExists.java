@@ -21,17 +21,6 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class) //
 public class SpartanizationClassForFolderExists extends FileTestUtils {
   /**
-   * A name of a folder whose name should represent a {@link Spartanization}
-   * class
-   */
-  @Parameter(value = 0) public String folderForClass;
-  /**
-   * Tests that {@link #folderForClass} is a valid class name
-   */
-  @Test public void validClassName() {
-    makeSpartanizationObject(folderForClass);
-  }
-  /**
    * @return a collection of cases, where each case is an array of length 1
    *         containing the name of a in the test suite
    */
@@ -42,5 +31,16 @@ public class SpartanizationClassForFolderExists extends FileTestUtils {
         return objects(folder.getName());
       }
     }.go();
+  }
+  /**
+   * A name of a folder whose name should represent a {@link Spartanization}
+   * class
+   */
+  @Parameter(value = 0) public String folderForClass;
+  /**
+   * Tests that {@link #folderForClass} is a valid class name
+   */
+  @Test public void validClassName() {
+    makeSpartanizationObject(folderForClass);
   }
 }

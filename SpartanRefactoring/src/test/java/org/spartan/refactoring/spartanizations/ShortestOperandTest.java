@@ -54,16 +54,47 @@ public class ShortestOperandTest {
       " return a*b*c*d>d*e;\n" + //
       " }"//
       + "";
-  @Test public void noOpportunitySp1() {
-    assertNoOpportunity(new ShortestOperand(), P1);
+  @Test public void applicableCompareWithThis() {
+    assertFalse(applicable(i("a == this")));
   }
-  @Test public void oneOpportunitySP2() {
-    assertOneOpportunity(new ShortestOperand(), P2);
+  @Test public void applicableThisCompareWithThis() {
+    assertTrue(applicable(i("this ==this")));
+  }
+  @Test public void breakExpression() {
+    assertEquals(ASTNode.INFIX_EXPRESSION, i("a == this").getNodeType());
+  }
+  @Test public void callIsSpecificTrue() {
+    assertTrue(Is.specific(e("this")));
+  }
+  @Test public void cisSpecificFalse1() {
+    assertFalse(Is.specific(e("a")));
+  }
+  @Test public void getNodeType() {
+    assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
+  }
+  @Test public void isOneOf() {
+    assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
   }
   @Test public void noOpportunity0() {
     assertNoOpportunity(new ShortestOperand(), P0);
   }
   @Test public void noOpportunity1() {
+    assertOneOpportunity(new ShortestOperand(), P2);
+  }
+  @Test public void noOpportunitySp1() {
+    assertNoOpportunity(new ShortestOperand(), P1);
+  }
+  @Test public void one2true2() {
+    final Document d = new Document(P0);
+    assertNotNull(d);
+    assertSimilar(P0, d);
+  }
+  @Test public void one2true3() {
+    final Document d = new Document(P0);
+    assertNotNull(d);
+    assertEquals(P0, d.get());
+  }
+  @Test public void oneOpportunitySP2() {
     assertOneOpportunity(new ShortestOperand(), P2);
   }
   @Test public void t1() {
@@ -116,49 +147,6 @@ public class ShortestOperandTest {
     assertFalse(ShortestOperand.stringReturningMethod(e));
     assertFalse(ShortestOperand.containsStringLiteral(e));
   }
-  @Test public void one2true2() {
-    final Document d = new Document(P0);
-    assertNotNull(d);
-    assertSimilar(P0, d);
-  }
-  @Test public void one2true3() {
-    final Document d = new Document(P0);
-    assertNotNull(d);
-    assertEquals(P0, d.get());
-  }
-  @Test public void getNodeType() {
-    assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
-  }
-  @Test public void isOneOf() {
-    assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
-  }
-  @Test public void callIsSpecificTrue() {
-    assertTrue(Is.specific(e("this")));
-  }
-  @Test public void cisSpecificFalse1() {
-    assertFalse(Is.specific(e("a")));
-  }
-  @Test public void breakExpression() {
-    assertEquals(ASTNode.INFIX_EXPRESSION, i("a == this").getNodeType());
-  }
-  @Test public void applicableCompareWithThis() {
-    assertFalse(applicable(i("a == this")));
-  }
-  @Test public void applicableThisCompareWithThis() {
-    assertTrue(applicable(i("this ==this")));
-  }
-  @Test public void withinDomainTrue1() {
-    assertTrue(withinDomain(i("a == this")));
-  }
-  @Test public void withinDomainTrue2() {
-    assertTrue(withinDomain(i("this == null")));
-  }
-  @Test public void withinDomainTrue3() {
-    assertTrue(withinDomain(i("12 == this")));
-  }
-  @Test public void withinDomainTrue4() {
-    assertTrue(withinDomain(i("a == 11")));
-  }
   @Test public void withinDomainFalse0() {
     assertFalse(withinDomain(i("13455643294 < 22")));
   }
@@ -188,5 +176,17 @@ public class ShortestOperandTest {
   }
   @Test public void withinDomainFalse9() {
     assertFalse(withinDomain(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void withinDomainTrue1() {
+    assertTrue(withinDomain(i("a == this")));
+  }
+  @Test public void withinDomainTrue2() {
+    assertTrue(withinDomain(i("this == null")));
+  }
+  @Test public void withinDomainTrue3() {
+    assertTrue(withinDomain(i("12 == this")));
+  }
+  @Test public void withinDomainTrue4() {
+    assertTrue(withinDomain(i("a == 11")));
   }
 }

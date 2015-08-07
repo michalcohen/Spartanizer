@@ -83,9 +83,6 @@ public enum Spartanizations {
   private static void put(final Spartanization s) {
     all.put(s.toString(), s);
   }
-  private static boolean ignored(final String sparta) {
-    return sparta.indexOf(ignoreRuleStr) >= 0;
-  }
   /**
    * Resets the enumeration with the current values from the preferences file.
    * Letting the rules notification decisions be updated without restarting

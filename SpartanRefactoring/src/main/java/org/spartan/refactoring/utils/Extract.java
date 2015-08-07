@@ -5,10 +5,10 @@ import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.spartan.refactoring.utils.Funcs.asAssignment;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
-import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public enum Extract {
     });
     return $.get();
   }
-  public static VariableDeclarationFragment firstVariableDeclarationFragment(ASTNode n) {
+  public static VariableDeclarationFragment firstVariableDeclarationFragment(final ASTNode n) {
     if (n == null)
       return null;
     final Wrapper<VariableDeclarationFragment> $ = new Wrapper<>();
@@ -118,12 +118,12 @@ public enum Extract {
   public static MethodInvocation methodInvocation(final ASTNode n) {
     return asMethodInvocation(Extract.expressionStatement(n).getExpression());
   }
-  public static Assignment nextAssignment(ASTNode n) {
+  public static Assignment nextAssignment(final ASTNode n) {
     return Extract.assignment(nextStatement(n));
   }
   /**
    * Extract the {@link IfStatement} that immediately follows a given statement
-   * 
+   *
    * @param s JD
    * @return the {@link IfStatement} that immediately follows the parameter, or
    *         <code><b>null</b></code>, if no such statement exists.
@@ -134,7 +134,7 @@ public enum Extract {
   /**
    * Extract the {@link ReturnStatement} that immediately follows a given
    * statement
-   * 
+   *
    * @param s JD
    * @return the {@link ReturnStatement} that immediately follows the parameter,
    *         or <code><b>null</b></code>, if no such statement exists.
@@ -144,7 +144,7 @@ public enum Extract {
   }
   /**
    * Extract the {@link Statement} that immediately follows a given node.
-   * 
+   *
    * @param s JD
    * @return the {@link Statement} that immediately follows the parameter, or
    *         <code><b>null</b></code>, if no such statement exists.
@@ -157,7 +157,7 @@ public enum Extract {
   }
   /**
    * Extract the {@link Statement} that immediately follows a given statement
-   * 
+   *
    * @param s JD
    * @return the {@link Statement} that immediately follows the parameter, or
    *         <code><b>null</b></code>, if no such statement exists.

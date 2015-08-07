@@ -4,7 +4,7 @@ import org.spartan.refactoring.wring.Wrings;
 
 /**
  * Stores a list of active cleanups.
- * 
+ *
  * @author Ofir Elmakias
  * @since 2015-08-02
  */

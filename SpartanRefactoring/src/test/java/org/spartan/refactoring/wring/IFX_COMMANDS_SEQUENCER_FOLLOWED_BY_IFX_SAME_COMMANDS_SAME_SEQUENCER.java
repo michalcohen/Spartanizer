@@ -36,21 +36,21 @@ import org.spartan.utils.Utils;
 public class IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER {
   static final Wring WRING = Wrings.IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER.inner;
   @Test public void checkFirstIfStatement1() {
-    String s = "if (a) return b; if (b) return b;";
-    ASTNode n = As.STATEMENTS.ast(s);
+    final String s = "if (a) return b; if (b) return b;";
+    final ASTNode n = As.STATEMENTS.ast(s);
     assertNotNull(n);
     final IfStatement i = Extract.firstIfStatement(n);
     assertThat(n.toString(), i, notNullValue());
     assertThat(i.toString(), WRING.scopeIncludes(i), is(true));
   }
   @Test public void checkFirstIfStatement2() {
-    String s = "if (a) return b; else return a();";
+    final String s = "if (a) return b; else return a();";
     final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(s));
     assertNotNull(i);
     assertThat(i.toString(), WRING.scopeIncludes(i), is(false));
   }
   @Test public void checkFirstIfStatement3() {
-    String s = "if (a) a= b; else a=c;";
+    final String s = "if (a) a= b; else a=c;";
     final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(s));
     assertNotNull(i);
     assertThat(i.toString(), WRING.scopeIncludes(i), is(false));
@@ -160,7 +160,7 @@ public class IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER
       assertThat(Extract.nextIfStatement(asMe()), notNullValue());
     }
     @Test public void isfStatementElseIsEmpty() {
-      IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
+      final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
       assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
     }
     @Test public void isIfStatement() {

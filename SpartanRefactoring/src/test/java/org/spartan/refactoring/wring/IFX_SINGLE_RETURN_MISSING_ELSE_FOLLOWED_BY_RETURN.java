@@ -35,19 +35,19 @@ import org.spartan.utils.Utils;
 public class IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN {
   static final Wring WRING = Wrings.IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN.inner;
   @Test public void checkFirstIfStatement1() {
-    String s = "if (a) return b; return a();";
+    final String s = "if (a) return b; return a();";
     final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(s));
     assertNotNull(i);
     assertThat(i.toString(), WRING.scopeIncludes(i), is(true));
   }
   @Test public void checkFirstIfStatement2() {
-    String s = "if (a) return b; else return a();";
+    final String s = "if (a) return b; else return a();";
     final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(s));
     assertNotNull(i);
     assertThat(i.toString(), WRING.scopeIncludes(i), is(false));
   }
   @Test public void checkFirstIfStatement3() {
-    String s = "if (a) a= b; else a=c;";
+    final String s = "if (a) a= b; else a=c;";
     final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(s));
     assertNotNull(i);
     assertThat(i.toString(), WRING.scopeIncludes(i), is(false));
@@ -161,7 +161,7 @@ public class IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN {
       assertThat(Extract.nextReturn(asMe()), notNullValue());
     }
     @Test public void isfStatementElseIsEmpty() {
-      IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
+      final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
       assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
     }
     @Test public void isIfStatement() {

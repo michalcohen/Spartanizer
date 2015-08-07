@@ -21,12 +21,6 @@ import org.spartan.refactoring.wring.ExpressionComparator;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class ExpressionComparatorTest {
-  @Test public void twoFunctionAddition() {
-    assertThat(ExpressionComparator.ADDITION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
-  }
-  @Test public void twoFunctionMultiplication() {
-    assertThat(ExpressionComparator.MULTIPLICATION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
-  }
   @Test public void literalAndProductAddition() {
     final Expression e1 = e("1");
     final Expression e2 = e("2*3");
@@ -37,14 +31,20 @@ public class ExpressionComparatorTest {
     final Expression e2 = e("2*3");
     assertThat(ExpressionComparator.MULTIPLICATION.compare(e1, e2), lessThan(0));
   }
+  @Test public void longLiteralShortLiteralAddition() {
+    final Expression e1 = e("1");
+    final Expression e2 = e("12");
+    assertThat(ExpressionComparator.ADDITION.compare(e1, e2), lessThan(0));
+  }
   @Test public void longLiteralShortLiteralMultiplication() {
     final Expression e1 = e("1");
     final Expression e2 = e("12");
     assertThat(ExpressionComparator.MULTIPLICATION.compare(e1, e2), lessThan(0));
   }
-  @Test public void longLiteralShortLiteralAddition() {
-    final Expression e1 = e("1");
-    final Expression e2 = e("12");
-    assertThat(ExpressionComparator.ADDITION.compare(e1, e2), lessThan(0));
+  @Test public void twoFunctionAddition() {
+    assertThat(ExpressionComparator.ADDITION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
+  }
+  @Test public void twoFunctionMultiplication() {
+    assertThat(ExpressionComparator.MULTIPLICATION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));
   }
 }

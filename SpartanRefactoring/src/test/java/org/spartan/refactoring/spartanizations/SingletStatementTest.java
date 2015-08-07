@@ -23,12 +23,6 @@ import org.spartan.refactoring.utils.Extract;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class SingletStatementTest {
-  @Test public void nullGivesNull() {
-    assertThat(singleStatement(null), nullValue());
-  }
-  @Test public void twoFunctionCallsNullValue() {
-    assertThat(singleStatement(s("{b(); a();}")), nullValue());
-  }
   @Test public void declarationAndStatementIsNull() {
     assertThat(singleStatement(s("{int a; a();}")), nullValue());
   }
@@ -44,11 +38,20 @@ public class SingletStatementTest {
   @Test public void emptyStatementIsNull() {
     assertThat(singleStatement(s(";")), nullValue());
   }
+  @Test public void fiveIsCorrectSize() {
+    assertThat(singleStatement(s("{{a();b();}{a(); b(); {}{}{{}} c();}}")), nullValue());
+  }
   @Test public void manyEmptyStatementInBlockIsNull() {
     assertThat(singleStatement(s("{;};{;;{;;}};")), nullValue());
   }
   @Test public void manyIsNull() {
     assertThat(singleStatement(s("a(); b(); c();")), nullValue());
+  }
+  @Test public void nestedTwoIsCorrectSize() {
+    assertThat(singleStatement(s("{a();b();}")), nullValue());
+  }
+  @Test public void nullGivesNull() {
+    assertThat(singleStatement(null), nullValue());
   }
   @Test public void oneInCurlyIsNotNull() {
     assertThat(singleStatement(s("{a();}")), notNullValue());
@@ -56,17 +59,14 @@ public class SingletStatementTest {
   @Test public void oneIsNotNull() {
     assertThat(singleStatement(s("{a();}")), notNullValue());
   }
-  @Test public void twoInCurlyIsNull() {
-    assertThat(singleStatement(s("{a();b();}")), nullValue());
-  }
-  @Test public void twoNullValue() {
-    assertThat(singleStatement(s("a();b();")), nullValue());
-  }
-  @Test public void nestedTwoIsCorrectSize() {
-    assertThat(singleStatement(s("{a();b();}")), nullValue());
-  }
-  @Test public void fiveIsCorrectSize() {
-    assertThat(singleStatement(s("{{a();b();}{a(); b(); {}{}{{}} c();}}")), nullValue());
+  @Test public void peelIf() {
+    final ASTNode n = As.STATEMENTS.ast("{if (a) return b; else return c;}");
+    assertThat(n, notNullValue());
+    final List<Statement> ss = Extract.statements(n);
+    assertThat(ss, notNullValue());
+    assertThat(ss.size(), is(1));
+    final Statement $ = Extract.singleStatement(n);
+    assertNotNull($);
   }
   @Test public void peelIPlusPlus() {
     final ASTNode n = As.STATEMENTS.ast("{i++;}");
@@ -77,13 +77,13 @@ public class SingletStatementTest {
     final Statement $ = Extract.singleStatement(n);
     assertNotNull($);
   }
-  @Test public void peelIf() {
-    final ASTNode n = As.STATEMENTS.ast("{if (a) return b; else return c;}");
-    assertThat(n, notNullValue());
-    final List<Statement> ss = Extract.statements(n);
-    assertThat(ss, notNullValue());
-    assertThat(ss.size(), is(1));
-    final Statement $ = Extract.singleStatement(n);
-    assertNotNull($);
+  @Test public void twoFunctionCallsNullValue() {
+    assertThat(singleStatement(s("{b(); a();}")), nullValue());
+  }
+  @Test public void twoInCurlyIsNull() {
+    assertThat(singleStatement(s("{a();b();}")), nullValue());
+  }
+  @Test public void twoNullValue() {
+    assertThat(singleStatement(s("a();b();")), nullValue());
   }
 }
