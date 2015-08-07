@@ -121,6 +121,6 @@ public class Range {
    * @return A newly created range representing the merge.
    */
   public Range merge(final Range r) {
-    return new Range(from < r.from ? from : r.from, to > r.to ? to : r.to);
+    return new Range(Math.min(from, r.from), Math.max(to, r.to));
   }
 }

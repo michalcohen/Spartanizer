@@ -2,7 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.*;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.utils.Range;
 
 /**
@@ -28,7 +29,13 @@ import org.spartan.utils.Range;
  * @since 2015-07-09
  */
 public abstract class Wring {
-  public Range range(final ASTNode e) {
+  /**
+   * Determine the {@link Range} of characters managed by this instance.
+   * 
+   * @param e JD
+   * @return
+   */
+  @SuppressWarnings("static-method") Range range(final ASTNode e) {
     return new Range(e);
   }
   /**
@@ -267,9 +274,8 @@ public abstract class Wring {
     @Override abstract boolean scopeIncludes(final IfStatement i);
   }
 
-  static abstract class OfIfStatementAndSurrounding extends Wring.Defaults {
+  static abstract class OfIfStatementAndSubsequentStatement extends Wring.Defaults {
     abstract boolean _eligible(final IfStatement s);
-    @Override abstract boolean scopeIncludes(final IfStatement s);
     @Override final boolean eligible(final IfStatement s) {
       assert scopeIncludes(s);
       return _eligible(s);
@@ -279,6 +285,10 @@ public abstract class Wring {
       if (eligible(i))
         fillReplacement(i, r);
       return true;
+    }
+    @Override abstract boolean scopeIncludes(final IfStatement s);
+    @Override Range range(final ASTNode e) {
+      return new Range(e).merge(new Range(Extract.nextStatement(asStatement(e))));
     }
   }
 

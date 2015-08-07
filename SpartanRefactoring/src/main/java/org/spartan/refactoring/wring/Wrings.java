@@ -215,7 +215,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME(new Wring.OfIfStatementAndSurrounding(){
+  IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME(new Wring.OfIfStatementAndSubsequentStatement(){
     @Override public final String toString() {
       return "IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME(" + super.toString() + ")";
     }
@@ -282,7 +282,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(new Wring.OfIfStatementAndSurrounding() {
+  IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(new Wring.OfIfStatementAndSubsequentStatement() {
     @Override public final String toString() {
       return "IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(" + super.toString() + ")";
     }
@@ -367,7 +367,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSurrounding() {
+  IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSubsequentStatement() {
     @Override public final String toString() {
       return "IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING (" + super.toString() + ")";
     }
