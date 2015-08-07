@@ -168,7 +168,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final Document d = asDocument();
-      (wringer.createRewrite(asCompilationUnit(), null)).rewriteAST(d, null).apply(d);
+      wringer.createRewrite(asCompilationUnit(), null).rewriteAST(d, null).apply(d);
       assertSimilar(compressSpaces(peelExpression(d.get())), compressSpaces(input));
       assertSimilar(wrapExpression(input), d.get());
     }
@@ -226,7 +226,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
           super(w);
         }
         @Test public void inputIsInfixExpression() {
-          assertNotNull((asInfixExpression()));
+          assertNotNull(asInfixExpression());
         }
       }
     }
@@ -444,8 +444,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void hasOpportunity() {
       assertTrue(inner.scopeIncludes(asExpression()));
       final CompilationUnit u = asCompilationUnit();
-      final List<Range> findOpportunities = wringer.findOpportunities(u);
-      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(1)));
+      assertThat(u.toString(), wringer.findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
     }
     @Test public void hasReplacement() {
       assertNotNull(inner.replacement(asExpression()));

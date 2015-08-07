@@ -102,7 +102,7 @@ public enum Wrings {
       return true;
     }
     @Override Statement _replacement(final Block b) {
-      if ((b == null) || identical(Extract.statements(b), b.statements()))
+      if (b == null || identical(Extract.statements(b), b.statements()))
         return null;
       if (!Is.statement(b.getParent()))
         return rebuildBlock(b);
@@ -149,7 +149,7 @@ public enum Wrings {
       final Expression condition = i.getExpression();
       final Expression then = Extract.throwExpression(i.getThenStatement());
       final Expression elze = Extract.throwExpression(i.getElseStatement());
-      return (then == null || elze == null ? null : makeThrowStatement(makeConditionalExpression(condition, then, elze)));
+      return then == null || elze == null ? null : makeThrowStatement(makeConditionalExpression(condition, then, elze));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
@@ -186,11 +186,11 @@ public enum Wrings {
       final Expression condition = i.getExpression();
       final Expression then = Extract.returnExpression(i.getThenStatement());
       final Expression elze = Extract.returnExpression(i.getElseStatement());
-      return (then == null || elze == null ? null : makeReturnStatement(makeConditionalExpression(condition, then, elze)));
+      return then == null || elze == null ? null : makeReturnStatement(makeConditionalExpression(condition, then, elze));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
-      return (i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null);
+      return i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null;
     }
   }), //
   /**
@@ -222,7 +222,7 @@ public enum Wrings {
   }
 
     @Override ASTRewrite fillReplacement(IfStatement s, ASTRewrite r) {
-      if ((s == null) || (!elseIsEmpty(s)))
+      if (s == null || !elseIsEmpty(s))
         return null;
       ReturnStatement thenReturn = Extract.returnStatement(s.getThenStatement());
       if (thenReturn == null)
@@ -291,7 +291,7 @@ public enum Wrings {
     @Override boolean scopeIncludes(final IfStatement s) {
       ReturnStatement then = Extract.returnStatement(s.getThenStatement());
       ReturnStatement elze = Extract.nextReturn(s);
-      return ( elseIsEmpty(s) &&  then != null && elze != null  );
+      return elseIsEmpty(s) &&  then != null && elze != null;
     }
 
   }), //
@@ -438,15 +438,10 @@ public enum Wrings {
       if (!compatible(then, elze))
         return null;
       final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
-      final Assignment a = makeAssigment(then.getOperator(), then.getLeftHandSide(), e);
-      return makeExpressionStatement(a);
-    }
+      return makeExpressionStatement(makeAssigment(then.getOperator(), then.getLeftHandSide(), e));
+    } 
     @Override boolean scopeIncludes(final IfStatement s) {
-      if (s == null)
-        return false;
-      final Assignment then = Extract.assignment(s.getThenStatement());
-      final Assignment elze = Extract.assignment(s.getElseStatement());
-      return compatible(then, elze);
+      return !(s == null) && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
     }
   }), //
   /**
@@ -523,7 +518,7 @@ public enum Wrings {
       return duplicate(e.getThenExpression());
     }
       @Override boolean scopeIncludes(final ConditionalExpression e) {
-        return (e != null && same(e.getThenExpression(), e.getElseExpression()));
+        return e != null && same(e.getThenExpression(), e.getElseExpression());
       }
       
     }), //

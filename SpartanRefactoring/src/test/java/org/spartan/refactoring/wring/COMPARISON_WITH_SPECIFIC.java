@@ -138,12 +138,10 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -229,8 +227,7 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
       assertNotNull(left);
       final Expression right = leftMoveableToRight(flip, e);
       assertNotNull(right);
-      final Expression remake = remake(e.getAST().newInfixExpression(), left, flip, right);
-      assertNotNull(remake);
+      assertNotNull(remake(e.getAST().newInfixExpression(), left, flip, right));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());

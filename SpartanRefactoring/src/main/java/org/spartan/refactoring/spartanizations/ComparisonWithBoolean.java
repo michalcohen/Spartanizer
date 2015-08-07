@@ -31,7 +31,7 @@ public class ComparisonWithBoolean extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression n) {
-        if ((!inRange(m, n)) || (n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS))
+        if (!inRange(m, n) || n.getOperator() != Operator.EQUALS && n.getOperator() != Operator.NOT_EQUALS)
           return true;
         ASTNode nonliteral;
         BooleanLiteral literal;

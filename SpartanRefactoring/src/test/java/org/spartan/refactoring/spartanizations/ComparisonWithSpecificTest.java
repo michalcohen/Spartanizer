@@ -125,7 +125,7 @@ public class ComparisonWithSpecificTest {
   @Test public void one2true1() {
     final Document d = new Document(P0);
     assertNotNull(d);
-    assertSimilar(P1, rewrite(inner(), ((CompilationUnit) As.COMPILIATION_UNIT.ast(P0)), d));
+    assertSimilar(P1, rewrite(inner(), (CompilationUnit) As.COMPILIATION_UNIT.ast(P0), d));
   }
   @Test public void one2true2() {
     final Document d = new Document(P0);
@@ -162,9 +162,9 @@ public class ComparisonWithSpecificTest {
   }
   @Test public void one2true7() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String expected = P1;
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final ComparisonWithSpecific s = inner();
     final ASTRewrite r = s.createRewrite(u, null);
     r.rewriteAST(d, null).apply(d);

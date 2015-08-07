@@ -97,8 +97,7 @@ public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void tryToSortTwice() {
       final List<Expression> operands = All.operands(flatten(asInfixExpression()));

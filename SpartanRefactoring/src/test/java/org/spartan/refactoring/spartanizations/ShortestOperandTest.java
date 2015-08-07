@@ -139,8 +139,7 @@ public class ShortestOperandTest {
     assertFalse(Is.specific(e("a")));
   }
   @Test public void breakExpression() {
-    final InfixExpression i = i("a == this");
-    assertEquals(ASTNode.INFIX_EXPRESSION, i.getNodeType());
+    assertEquals(ASTNode.INFIX_EXPRESSION, i("a == this").getNodeType());
   }
   @Test public void applicableCompareWithThis() {
     assertFalse(applicable(i("a == this")));

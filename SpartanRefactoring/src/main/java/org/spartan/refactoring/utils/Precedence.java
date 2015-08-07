@@ -112,7 +112,7 @@ public enum Precedence {
     return of(e.getOperator());
   }
   private static int of(final String key) {
-    return of.containsKey(key) ? of.get(key) : UNDEFINED;
+    return !of.containsKey(key) ? UNDEFINED : of.get(key);
   }
 
   /**

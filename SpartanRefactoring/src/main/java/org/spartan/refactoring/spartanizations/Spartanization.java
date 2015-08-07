@@ -300,7 +300,7 @@ public abstract class Spartanization extends Refactoring {
     this.compilationUnit = compilationUnit;
   }
   public final boolean inRange(final IMarker m, final ASTNode n) {
-    return ((m != null ? !isNodeOutsideMarker(n, m) : !isTextSelected() || !isNodeOutsideSelection(n)));
+    return m != null ? !isNodeOutsideMarker(n, m) : !isTextSelected() || !isNodeOutsideSelection(n);
   }
   @Override public String toString() {
     return name;

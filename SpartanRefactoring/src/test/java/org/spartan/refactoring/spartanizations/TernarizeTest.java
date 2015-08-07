@@ -48,9 +48,9 @@ public class TernarizeTest extends AbstractTestBase {
   }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String wrap = wrapStatement(input);
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
     final Document d = new Document(wrap);
     assertNotNull(d);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
     final ASTRewrite r = inner.createRewrite(u, null);
     r.rewriteAST(d, null).apply(d);
     final String unpeeled = d.get();
