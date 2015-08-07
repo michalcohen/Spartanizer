@@ -4,7 +4,11 @@ import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.spartan.refactoring.utils.Funcs.asAssignment;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
+import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
+import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,42 +37,13 @@ import org.spartan.utils.Wrapper;
 public enum Extract {
   ;
   /**
-   * @param n a node to extract an expression from
-   * @return null if the statement is not an expression or return statement or
-   *         the expression if they are
+   * @param n a statement or block to extract the assignment from
+   * @return null if the block contains more than one statement or if the
+   *         statement is not an assignment or the assignment if it exists
    */
-  public static Expression returnExpression(final ASTNode n) {
-    final ReturnStatement $ = returnStatement(n);
-    return $ == null ? null : $.getExpression();
-  }
-  /**
-   * Extract the single {@link ReturnStatement} embedded in a node.
-   * 
-   * @param n JD
-   * @return the single {@link ReturnStatement} embedded in the parameter, and
-   *         return it; <code><b>null</b></code> if not such statements exists.
-   */
-  public static ReturnStatement returnStatement(final ASTNode n) {
-    return asReturnStatement(Extract.singleStatement(n));
-  }
-  /**
-   * Extract the single {@link ThrowStatement} embedded in a node.
-   * 
-   * @param n JD
-   * @return the single {@link ThrowStatement} embedded in the parameter, and
-   *         return it; <code><b>null</b></code> if not such statements exists.
-   */
-  public static ThrowStatement throwStatement(final ASTNode n) {
-    return asThrowStatement(Extract.singleStatement(n));
-  }
-  /**
-   * @param n a node to extract an expression from
-   * @return null if the statement is not an expression or return statement or
-   *         the expression if they are
-   */
-  public static Expression throwExpression(final ASTNode n) {
-    final ThrowStatement $ = asThrowStatement(Extract.singleStatement(n));
-    return $ == null ? null : $.getExpression();
+  public static Assignment assignment(final ASTNode n) {
+    final ExpressionStatement e = Extract.expressionStatement(n);
+    return e == null ? null : asAssignment(e.getExpression());
   }
   /**
    * @param node a node to extract an expression from
@@ -90,23 +65,6 @@ public enum Extract {
     }
   }
   /**
-   * @param n JD
-   * @return the method invocation if it exists or null if it doesn't or if the
-   *         block contains more than one statement
-   */
-  public static MethodInvocation methodInvocation(final ASTNode n) {
-    return asMethodInvocation(Extract.expressionStatement(n).getExpression());
-  }
-  /**
-   * @param n a statement or block to extract the assignment from
-   * @return null if the block contains more than one statement or if the
-   *         statement is not an assignment or the assignment if it exists
-   */
-  public static Assignment assignment(final ASTNode n) {
-    final ExpressionStatement e = Extract.expressionStatement(n);
-    return e == null ? null : asAssignment(e.getExpression());
-  }
-  /**
    * Convert, is possible, an {@link ASTNode} to a {@link ExpressionStatement}
    *
    * @param n a statement or a block to extract the expression statement from
@@ -116,6 +74,94 @@ public enum Extract {
    */
   public static ExpressionStatement expressionStatement(final ASTNode n) {
     return n == null ? null : asExpressionStatement(Extract.singleStatement(n));
+  }
+  /**
+   * Search for an {@link IfStatement} in the tree rooted at an {@link ASTNode}.
+   *
+   * @param n JD
+   * @return the first {@link IfStatement} found in an {@link ASTNode n}, or
+   *         <code><b>null</b> if there is no such statement.
+   */
+  public static IfStatement firstIfStatement(final ASTNode n) {
+    if (n == null)
+      return null;
+    final Wrapper<IfStatement> $ = new Wrapper<>();
+    n.accept(new ASTVisitor() {
+      @Override public boolean visit(final IfStatement i) {
+        if ($.get() == null)
+          $.set(i);
+        return false;
+      }
+    });
+    return $.get();
+  }
+  /**
+   * @param n JD
+   * @return the method invocation if it exists or null if it doesn't or if the
+   *         block contains more than one statement
+   */
+  public static MethodInvocation methodInvocation(final ASTNode n) {
+    return asMethodInvocation(Extract.expressionStatement(n).getExpression());
+  }
+  /**
+   * Extract the {@link Statement} that immediately follows a given statement
+   * 
+   * @param s JD
+   * @return the {@link Statement} that immediately follows the parameter, or
+   *         <code><b>null</b></code>, if no such statement exists.
+   */
+  public static Statement nextStatement(final Statement s) {
+    final Block b = asBlock(s.getParent());
+    return b == null ? null : next(s, Extract.statements(b));
+  }
+  /**
+   * Extract the {@link IfStatement} that immediately follows a given statement
+   * 
+   * @param s JD
+   * @return the {@link IfStatement} that immediately follows the parameter, or
+   *         <code><b>null</b></code>, if no such statement exists.
+   */
+  public static IfStatement nextIfStatement(final Statement s) {
+    return asIfStatement(nextStatement(s));
+  }
+  /**
+   * Extract the {@link ReturnStatement} that immediately follows a given
+   * statement
+   * 
+   * @param s JD
+   * @return the {@link ReturnStatement} that immediately follows the parameter,
+   *         or <code><b>null</b></code>, if no such statement exists.
+   */
+  public static ReturnStatement nextReturn(final Statement s) {
+    return asReturnStatement(nextStatement(s));
+  }
+  /**
+   * @param n a node to extract an expression from
+   * @return null if the statement is not an expression or return statement or
+   *         the expression if they are
+   */
+  public static Expression returnExpression(final ASTNode n) {
+    final ReturnStatement $ = returnStatement(n);
+    return $ == null ? null : $.getExpression();
+  }
+  /**
+   * Extract the single {@link ReturnStatement} embedded in a node.
+   *
+   * @param n JD
+   * @return the single {@link ReturnStatement} embedded in the parameter, and
+   *         return it; <code><b>null</b></code> if not such statements exists.
+   */
+  public static ReturnStatement returnStatement(final ASTNode n) {
+    return asReturnStatement(Extract.singleStatement(n));
+  }
+  /**
+   * @param n JD
+   * @return if b is a block with just 1 statement it returns that statement, if
+   *         b is statement it returns b and if b is null it returns a null
+   */
+  public static Statement singleStatement(final ASTNode n) {
+    final List<Statement> $ = Extract.statements(n);
+    return $.size() != 1 ? null : (Statement) $.get(0);
   }
   /**
    * Extract the list of non-empty statements embedded in node (nesting within
@@ -128,6 +174,36 @@ public enum Extract {
     final List<Statement> $ = new ArrayList<>();
     return n == null || !(n instanceof Statement) ? $ : Extract.statementsInto((Statement) n, $);
   }
+  /**
+   * @param n a node to extract an expression from
+   * @return null if the statement is not an expression or return statement or
+   *         the expression if they are
+   */
+  public static Expression throwExpression(final ASTNode n) {
+    final ThrowStatement $ = asThrowStatement(Extract.singleStatement(n));
+    return $ == null ? null : $.getExpression();
+  }
+  /**
+   * Extract the single {@link ThrowStatement} embedded in a node.
+   *
+   * @param n JD
+   * @return the single {@link ThrowStatement} embedded in the parameter, and
+   *         return it; <code><b>null</b></code> if not such statements exists.
+   */
+  public static ThrowStatement throwStatement(final ASTNode n) {
+    return asThrowStatement(Extract.singleStatement(n));
+  }
+  private static Statement next(final Statement s, final List<Statement> ss) {
+    for (int i = 0; i < ss.size() - 1; ++i)
+      if (ss.get(i) == s)
+        return ss.get(i + 1);
+    return null;
+  }
+  private static List<Statement> statementsInto(final Block b, final List<Statement> $) {
+    for (final Object statement : b.statements())
+      Extract.statementsInto((Statement) statement, $);
+    return $;
+  }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     final int nodeType = s.getNodeType();
     switch (nodeType) {
@@ -139,71 +215,5 @@ public enum Extract {
         $.add(s);
         return $;
     }
-  }
-  private static List<Statement> statementsInto(final Block b, final List<Statement> $) {
-    for (final Object statement : b.statements())
-      Extract.statementsInto((Statement) statement, $);
-    return $;
-  }
-  /**
-   * @param n JD
-   * @return if b is a block with just 1 statement it returns that statement, if
-   *         b is statement it returns b and if b is null it returns a null
-   */
-  public static Statement singleStatement(final ASTNode n) {
-    final List<Statement> $ = Extract.statements(n);
-    return $.size() != 1 ? null : (Statement) $.get(0);
-  }
-  /**
-   * Find the subsequent return statement
-   * 
-   * @param s JD
-   * @return the subsequent {@link ReturnStatement}, or <code><b>null</b> if
-   *         there is not subsequent statement or if its type is not
-   *         {@link ReturnStatement}
-   */
-  public static ReturnStatement nextReturn(Statement s) {
-    return asReturnStatement(next(s));
-  }
-  /**
-   * Find the subsequent {@link IfStatement}
-   * 
-   * @param s JD
-   * @return the subsequent {@link IfStatement}, or <code><b>null</b> if there
-   *         is not subsequent statement or if its type is not
-   *         {@link IfStatement}
-   */
-  public static IfStatement nextIfStatement(Statement s) {
-    return asIfStatement(next(s));
-  }
-  private static Statement next(Statement s) {
-    final Block b = asBlock(s.getParent());
-    return b == null ? null : next(s, Extract.statements(b));
-  }
-  private static Statement next(Statement s, List<Statement> ss) {
-    for (int i = 0; i < ss.size() - 1; ++i)
-      if (ss.get(i) == s)
-        return ss.get(i + 1);
-    return null;
-  }
-  /**
-   * Search for an {@link IfStatement} in the tree rooted at an {@link ASTNode}.
-   * 
-   * @param n JD
-   * @return the first {@link IfStatement} found in an {@link ASTNode n}, or
-   *         <code><b>null</b> if there is no such statement.
-   */
-  public static IfStatement firstIfStatement(final ASTNode n) {
-    if (n == null)
-      return null;
-    final Wrapper<IfStatement> $ = new Wrapper<>();
-    n.accept(new ASTVisitor() {
-      @Override public boolean visit(IfStatement i) {
-        if ($.get() == null)
-          $.set(i);
-        return false;
-      }
-    });
-    return $.get();
   }
 }
