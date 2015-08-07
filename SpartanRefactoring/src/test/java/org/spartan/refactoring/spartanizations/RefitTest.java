@@ -36,9 +36,9 @@ import org.spartan.refactoring.wring.Wrings;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class RefitTest {
   @Test public void refitDoesNotIntroduceList() {
-    final InfixExpression e = i("1+2");
     final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b")));
     assertThat(operands.size(), is(2));
+    final InfixExpression e = i("1+2");
     final InfixExpression refit = refitOperands(e, operands);
     assertThat(refit.hasExtendedOperands(), is(false));
     assertThat(refit.toString(), is("a + b"));

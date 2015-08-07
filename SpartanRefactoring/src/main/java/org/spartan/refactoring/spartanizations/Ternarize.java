@@ -223,10 +223,8 @@ public class Ternarize extends Spartanization {
     if (!handleCaseDiffNodesAreBlocks(diffNodes))
       return null;
     final TwoExpressions $ = findDiffExps(diffNodes);
-    if (Is.expressionStatement(diffNodes.then))
-      return $;
-    return $ == null || !Is.retern(diffNodes.then) ? null //
-        : new TwoExpressions(Extract.expression(diffNodes.then), Extract.expression(diffNodes.elze));
+    return Is.expressionStatement(diffNodes.then) ? $
+        : $ == null || !Is.retern(diffNodes.then) ? null : new TwoExpressions(Extract.expression(diffNodes.then), Extract.expression(diffNodes.elze));
   }
   private static TwoExpressions findDiffExps(final Pair diffNodes) {
     Pair $ = findDiffNodes(diffNodes.then, diffNodes.elze);
@@ -474,9 +472,7 @@ public class Ternarize extends Spartanization {
         thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
   }
   static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-    if (hasNull(singleThen(i), singleElse(i), asBlock(i.getParent())))
-      return null;
-    return !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
+    return hasNull(singleThen(i), singleElse(i), asBlock(i.getParent())) ? null : !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
   }
   static Range detectAssignIfAssign(final IfStatement i) {
     return detectAssignIfAssign(asBlock(i.getParent()), i);
@@ -512,9 +508,7 @@ public class Ternarize extends Spartanization {
     if (nextAsgn == null || !compatible(nextAsgn, then))
       return null;
     return //
-    prevDecl == null || dependsOn(prevDecl.getName(), nextAsgn.getRightHandSide()) //
-    ? new Range(i, nextAsgn) //
-        : new Range(prevDecl, nextAsgn);
+    new Range(prevDecl == null || dependsOn(prevDecl.getName(), nextAsgn.getRightHandSide()) ? i : prevDecl, nextAsgn);
   }
   private static Range detecOnlyPrevAsgnExist(final IfStatement i, final Assignment then, final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
     if (prevAsgn == null || dependsOn(prevAsgn.getLeftHandSide(), i.getExpression()) || !compatible(prevAsgn, then))

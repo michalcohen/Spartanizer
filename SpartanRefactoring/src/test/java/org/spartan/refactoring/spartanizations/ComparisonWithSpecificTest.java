@@ -123,10 +123,9 @@ public class ComparisonWithSpecificTest {
     assertNotNull(u);
   }
   @Test public void one2true1() {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
-    assertSimilar(P1, rewrite(inner(), u, d));
+    assertSimilar(P1, rewrite(inner(), ((CompilationUnit) As.COMPILIATION_UNIT.ast(P0)), d));
   }
   @Test public void one2true2() {
     final Document d = new Document(P0);
@@ -139,13 +138,12 @@ public class ComparisonWithSpecificTest {
     assertEquals(P0, d.get());
   }
   @Test public void one2true4() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final String expected = P1;
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final ComparisonWithSpecific s = inner();
     s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-    assertSimilar(expected, d);
+    assertSimilar(P1, d);
   }
   @Test public void one2true5() {
     final Document d = new Document(P0);
@@ -153,9 +151,9 @@ public class ComparisonWithSpecificTest {
     assertSimilar(P1, rewrite(inner(), (CompilationUnit) As.COMPILIATION_UNIT.ast(P0), d));
   }
   @Test public void one2true6() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final Document d = new Document(P0);
     assertNotNull(d);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(P0);
     final ComparisonWithSpecific s = inner();
     final ASTRewrite r = s.createRewrite(u, null);
     assertNotNull(r);

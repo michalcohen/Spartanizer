@@ -26,7 +26,7 @@ public class AsRefactoring extends Spartanization {
   final Wring inner;
   /**
    * Instantiates this class
-   * 
+   *
    * @param inner The wring we wish to convert
    * @param name The title of the refactoring
    * @param description One line description of the refactoring
@@ -38,33 +38,31 @@ public class AsRefactoring extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final Block e) {
-        if ((!inner.scopeIncludes(e)) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final ConditionalExpression e) {
-        if ((!inner.scopeIncludes(e)) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final IfStatement e) {
-        if ((!inner.scopeIncludes(e)) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final InfixExpression e) {
-        if ((!inner.scopeIncludes(e)) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final PrefixExpression e) {
-        if (!inner.scopeIncludes(e))
-          return true;
-        if (inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.noneligible(e))
           return true;
         $.add(new Range(e));
         return true;

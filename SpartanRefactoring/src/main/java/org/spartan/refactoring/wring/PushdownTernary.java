@@ -33,12 +33,10 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return $;
   }
   @SuppressWarnings("unchecked") private static <T extends Expression> T p(ASTNode e, T $) {
-    return (!Precedence.Is.legal(Precedence.of(e)) || !(Precedence.of(e) < Precedence.of($)) ? $ : (T) parenthesize($));
+    return (!Precedence.Is.legal(Precedence.of(e)) || Precedence.of(e) >= Precedence.of($) ? $ : (T) parenthesize($));
   }
   private static Expression pushdown(ConditionalExpression e, Assignment e1, Assignment e2) {
-    if (e1.getOperator() != e2.getOperator())
-      return null;
-    if (!Wrings.same(e1.getLeftHandSide(), e2.getLeftHandSide()))
+    if ((e1.getOperator() != e2.getOperator()) || (!Wrings.same(e1.getLeftHandSide(), e2.getLeftHandSide())))
       return null;
     final Assignment $ = duplicate(e1);
     $.setRightHandSide(makeConditional(e, e1.getRightHandSide(), e2.getRightHandSide()));
@@ -69,9 +67,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return p(e, refitOperands($, operands));
   }
   private static Expression pushdown(ConditionalExpression e, MethodInvocation e1, MethodInvocation e2) {
-    if (!Wrings.same(e1.getName(), e2.getName()))
-      return null;
-    if (!Wrings.same(e1.getExpression(), e2.getExpression()))
+    if ((!Wrings.same(e1.getName(), e2.getName())) || (!Wrings.same(e1.getExpression(), e2.getExpression())))
       return null;
     List<Expression> es1 = e1.arguments();
     List<Expression> es2 = e2.arguments();
@@ -86,9 +82,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return $;
   }
   private static Expression pushdown(ConditionalExpression e, ClassInstanceCreation e1, ClassInstanceCreation e2) {
-    if (!Wrings.same(e1.getType(), e2.getType()))
-      return null;
-    if (!Wrings.same(e1.getExpression(), e2.getExpression()))
+    if ((!Wrings.same(e1.getType(), e2.getType())) || (!Wrings.same(e1.getExpression(), e2.getExpression())))
       return null;
     List<Expression> es1 = e1.arguments();
     List<Expression> es2 = e2.arguments();

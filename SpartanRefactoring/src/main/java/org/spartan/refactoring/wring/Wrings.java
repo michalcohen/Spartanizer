@@ -102,9 +102,7 @@ public enum Wrings {
       return true;
     }
     @Override Statement _replacement(final Block b) {
-      if (b == null)
-        return null;
-      if (identical(Extract.statements(b), b.statements()))
+      if ((b == null) || identical(Extract.statements(b), b.statements()))
         return null;
       if (!Is.statement(b.getParent()))
         return rebuildBlock(b);
@@ -224,24 +222,19 @@ public enum Wrings {
   }
 
     @Override ASTRewrite fillReplacement(IfStatement s, ASTRewrite r) {
-      if (s == null)
-        return null;
-      if (!elseIsEmpty(s))
+      if ((s == null) || (!elseIsEmpty(s)))
         return null;
       ReturnStatement thenReturn = Extract.returnStatement(s.getThenStatement());
       if (thenReturn == null)
         return null;
-      IfStatement  nextIf = Extract.nextIfStatement(s);
-      if (nextIf == null)
-        return null;
-      if (!elseIsEmpty(nextIf))
+      IfStatement nextIf = Extract.nextIfStatement(s);
+      if (nextIf == null || !elseIsEmpty(nextIf))
         return null;
       final ReturnStatement nextThenReturn = Extract.returnStatement(nextIf.getThenStatement());
       if (nextThenReturn == null)
         return null;
-      if (!same(getCore(thenReturn.getExpression()), getCore(nextThenReturn.getExpression())))
-        return null;
-      return replaceTwoStatements(r, s, makeIfWithoutElse(thenReturn, makeOR(s.getExpression(), nextIf.getExpression())));
+      return !same(getCore(thenReturn.getExpression()), getCore(nextThenReturn.getExpression())) ? null
+          : replaceTwoStatements(r, s, makeIfWithoutElse(thenReturn, makeOR(s.getExpression(), nextIf.getExpression())));
     }
     private IfStatement makeIfWithoutElse(ReturnStatement thenReturn, final InfixExpression condition) {
       final IfStatement $ = condition.getAST().newIfStatement();
