@@ -102,11 +102,9 @@ public enum Wrings {
         return null;
       if (!same(f.getName(), a.getLeftHandSide()))
         return null;
-      VariableDeclarationFragment newF = duplicate(f);
-      newF.setInitializer(a.getRightHandSide());
-      r.replace(newF,f,null);
-      return 
-      removeStatement(r, Extract.statement(a));
+      r.replace(f, makeVariableDeclarationFragement(f, a.getRightHandSide()),null);
+      r.remove(Extract.statement(a),null);
+      return r;
     }
     @Override boolean scopeIncludes(VariableDeclarationFragment f) {
       return fillReplacement(f, ASTRewrite.create(f.getAST())) != null;
@@ -997,6 +995,11 @@ public enum Wrings {
   static InfixExpression makeOR(Expression s1, Expression s2) {
     return makeInfix(CONDITIONAL_OR, s1, s2);
   }
+  static VariableDeclarationFragment makeVariableDeclarationFragement(VariableDeclarationFragment f, final Expression e) {
+    VariableDeclarationFragment $ = duplicate(f);
+    $.setInitializer(duplicate(e));
+    return $;
+  }
   static PrefixExpression not(final Expression e) {
     final PrefixExpression $ = e.getAST().newPrefixExpression();
     $.setOperator(NOT);
@@ -1044,10 +1047,19 @@ public enum Wrings {
         || ($ = perhapsComparison(inner)) != null //
         ? $ : null;
   }
+
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(getCore(e.getOperand()));
   }
-
+  static ASTRewrite removeStatement(ASTRewrite r, Statement s) {
+    final Block parent = asBlock(s.getParent());
+    final List<Statement> siblings = Extract.statements(parent);
+    siblings.remove(siblings.indexOf(s));
+    final Block newParent$ =  parent.getAST().newBlock();
+    duplicateInto(siblings, newParent$.statements());
+    r.replace(parent, newParent$, null);
+    return r;
+  }
   static Statement reorganizeNestedStatement(final Statement s) {
     final List<Statement> ss = Extract.statements(s); 
     switch (ss.size()) {
@@ -1134,15 +1146,6 @@ public enum Wrings {
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
-  }
-  static ASTRewrite removeStatement(ASTRewrite r, Statement s) {
-    final Block parent = asBlock(s.getParent());
-    final List<Statement> siblings = Extract.statements(parent);
-    siblings.remove(siblings.indexOf(s));
-    final Block newParent$ =  parent.getAST().newBlock();
-    duplicateInto(siblings, newParent$.statements());
-    r.replace(parent, newParent$, null);
-    return r;
   }
   public final Wring inner;
   Wrings(final Wring inner) {

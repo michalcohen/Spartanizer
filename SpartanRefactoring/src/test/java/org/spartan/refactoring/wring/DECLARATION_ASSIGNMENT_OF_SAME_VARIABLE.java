@@ -30,11 +30,7 @@ import org.spartan.utils.Utils;
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE {
   static final Wring WRING = Wrings.DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE.inner;
-  @Test public void checkSteps() {
-    final Statement s = asSingle("if (a) return a = b; else a = c;");
-    assertNotNull(s);
-    final IfStatement i = asIfStatement(s);
-    assertNotNull(i);
+  @Test public void placeHolde() {
   }
 
   @RunWith(Parameterized.class) //
@@ -73,39 +69,7 @@ public class DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.WringedVariableDeclarationFragmentAndSurrounding {
     private static String[][] cases = Utils.asArray(//
-        new String[] { "Vanilla", "int a; a =3;", "int a=3;" }, null, //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
-        null, //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"), //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
-            "" + //
-                " if (x) {\n" + //
-                "   f();\n" + //
-                "   return a;\n" + //
-                " }\n" + //
-                " g();\n" + //
-                ""),
-        null, //
-        Utils.asArray("Complex with many junk statements",
-            "" + //
-                " if (x) {\n" + //
-                "   ;\n" + //
-                "   f();\n" + //
-                "   return a;\n" + //
-                " } else {\n" + //
-                "   ;\n" + //
-                "   g();\n" + //
-                "   {\n" + //
-                "   }\n" + //
-                " }\n" + //
-                "",
-            "" + //
-                " if (x) {\n" + //
-                "   f();\n" + //
-                "   return a;\n" + //
-                " }\n" + //
-                " g();\n" + //
-                ""),
+        new String[] { "Vanilla", "int a; a =3;", "int a=3;" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -365,8 +365,8 @@ public abstract class Wring {
         fillReplacement(f, r);
       return true;
     }
-    @Override Range range(final ASTNode e) {
-      return new Range(e).merge(new Range(Extract.nextStatement(asStatement(e))));
+    @Override Range range(final ASTNode n) {
+      return new Range(n).merge(new Range(Extract.nextStatement((n))));
     }
     @Override abstract boolean scopeIncludes(final VariableDeclarationFragment s);
   }

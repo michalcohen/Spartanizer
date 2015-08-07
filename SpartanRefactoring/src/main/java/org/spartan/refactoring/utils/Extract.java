@@ -173,6 +173,8 @@ public enum Extract {
    *         <code><b>null</b></code>, if no such statement exists.
    */
   public static Statement nextStatement(final Statement s) {
+    if (s == null)
+      return null;
     final Block b = asBlock(s.getParent());
     return b == null ? null : next(s, Extract.statements(b));
   }

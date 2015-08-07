@@ -142,12 +142,7 @@ public enum TESTUtils {
     try {
       s.createRewrite(u, null).rewriteAST($, null).apply($);
       return $;
-    } catch (final MalformedTreeException e) {
-      fail(e.getMessage());
-    } catch (final IllegalArgumentException e) {
-      e.printStackTrace();
-      fail(e.getMessage());
-    } catch (final BadLocationException e) {
+    } catch (final Exception e) {
       fail(e.getMessage());
     }
     return null;

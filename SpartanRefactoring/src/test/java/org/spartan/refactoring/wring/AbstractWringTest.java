@@ -690,6 +690,12 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     WringedVariableDeclarationFragmentAndSurrounding(final Wring inner) {
       super(inner);
     }
+    protected CompilationUnit asCompilationUnit() {
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+      assertThat($, is(notNullValue()));
+      assertThat($, is(instanceOf(CompilationUnit.class)));
+      return (CompilationUnit) $;
+    }
     @Override @Test public void correctSimplifier() {
       assertThat(asMe().toString(), Wrings.find(asMe()), is(inner));
     }
@@ -710,7 +716,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertTrue(inner.scopeIncludes(asMe()));
       final CompilationUnit u = asCompilationUnit();
       final List<Range> findOpportunities = wringer.findOpportunities(u);
-      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(0)));
+      assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(1)));
     }
     @Test public void hasSimplifier() {
       assertThat(asMe().toString(), Wrings.find(asMe()), is(notNullValue()));
@@ -725,10 +731,15 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       final boolean scopeIncludes = inner.scopeIncludes(asMe());
       assertThat(asMe().toString(), scopeIncludes, is(true));
     }
+    @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
+      final CompilationUnit u = asCompilationUnit();
+      ASTRewrite r = wringer.createRewrite(u, null);
+      assertNotNull(r);
+    }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
-      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
-      final String peeled = peelStatement(excpected.get());
+      final Document actual = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
+      final String peeled = peelStatement(actual.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -736,7 +747,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapStatement(expected), excpected);
+      assertSimilar(wrapStatement(expected), actual);
     }
     /**
      * Instantiates the enclosing class ({@link WringedInput})
