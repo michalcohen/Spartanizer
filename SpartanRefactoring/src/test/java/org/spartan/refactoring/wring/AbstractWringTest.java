@@ -53,8 +53,6 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Conditional;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Infix;
 import org.spartan.utils.Range;
 
 /**
@@ -354,8 +352,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
-      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
-      final String peeled = peelStatement(excpected.get());
+      final Document output = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
+      final String peeled = peelStatement(output.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -363,7 +361,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapStatement(expected), excpected);
+      assertSimilar(wrapStatement(expected), output);
     }
     @Override protected Block asMe() {
       final Statement s = s(input);

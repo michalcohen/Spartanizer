@@ -54,7 +54,7 @@ public enum IFX_THROW_A_ELSE_THROW_B {
     private static String[][] cases = Utils.asArray(//
         // Literal
         Utils.asArray("Simple if throw", "if (a) throw b; else throw c;", "throw a ? b : c;"), //
-        Utils.asArray("Simply nested if throw", "{if (a)  throw b; else throw c;}", " if(a)throw b;else throw c;"), //
+        Utils.asArray("Simply nested if throw", "{if (a)  throw b; else throw c;}", "if(a)throw b;else throw c;"), //
         Utils.asArray("Nested if throw", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}", "throw a ? b : c;"), //
         null);
     /**

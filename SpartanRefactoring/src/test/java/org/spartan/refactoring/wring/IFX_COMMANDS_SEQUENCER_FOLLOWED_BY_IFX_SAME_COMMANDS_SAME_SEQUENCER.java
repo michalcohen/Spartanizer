@@ -33,8 +33,8 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
-public class IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME {
-  static final Wring WRING = Wrings.IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME.inner;
+public class IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER {
+  static final Wring WRING = Wrings.IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER.inner;
   @Test public void checkFirstIfStatement1() {
     String s = "if (a) return b; if (b) return b;";
     ASTNode n = As.STATEMENTS.ast(s);
@@ -123,7 +123,19 @@ public class IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = new String[][] { //
-        new String[] { "Vanilla", "if (a) return a; if (b) return a;", "if (a || b) return a;" }, //
+        new String[] { "Return expression", "if (a) return a; if (b) return a;", "if (a || b) return a;" }, //
+        new String[] { "Return empty", "if (a) return; if (b) return;", "if (a || b) return;" }, //
+        new String[] { "Break expression", "if (a) break a; if (b) break a;", "if (a || b) break a;" }, //
+        new String[] { "Break empty", "if (a) break; if (b) break;", "if (a || b) break;" }, //
+        new String[] { "Continue expression", "if (a) continue a; if (b) continue a;", "if (a || b) continue a;" }, //
+        new String[] { "Continue empty", "if (a) continue; if (b) continue;", "if (a || b) continue;" }, //
+        new String[] { "Throw expression", "if (a) throw e; if (b) throw e;", "if (a || b) throw e;" }, //
+        new String[] { "Single statement is nested", "if (a) {{{; return a; }}} if (b) {;{;return a;};;}", "if (a || b) return a;" }, //
+        new String[] { "Parenthesis where necesary", "if (a=b) return a; if (b=a) return a;", "if ((a=b) || (b =a)) return a;" }, //
+        new String[] { "No parenthesis for == ", "if (a==b) return a; if (b==a) return a;", "if (a==b || b ==a) return a;" }, //
+        new String[] { "No parenthesis for  && and ||", "if (a&&b) return a; if (b||a) return a;", "if (a&&b || b ||a) return a;" }, //
+        new String[] { "No parenthesis for OR", "if (a||b||c) return a; if (a||b||c||d) return a;", "if (a||b||c||a||b||c||d) return a;" }, //
+        new String[] { "Two statements", "if (a) { f(); return a; } if (b) {f(); return a;}", "if (a || b) {f(); return a;}" }, //
         null };
     /**
      * Generate test cases for this parameterized class.
@@ -162,9 +174,6 @@ public class IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME {
     }
     @Test public void noElse() {
       assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
-    }
-    @Test public void thenIsSingleReturn() {
-      assertThat(Extract.returnStatement(asMe().getThenStatement()), notNullValue());
     }
   }
 }

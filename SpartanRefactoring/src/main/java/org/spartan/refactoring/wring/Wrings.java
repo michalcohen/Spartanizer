@@ -8,8 +8,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Funcs.makeIfStatement;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
@@ -32,6 +32,7 @@ import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import static org.spartan.utils.Utils.in;
 
@@ -57,6 +58,8 @@ import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Precedence;
+import org.spartan.utils.Range;
 
 /**
  * This enum represents an ordered list of all {@link Wring} objects.
@@ -93,11 +96,7 @@ public enum Wrings {
           return false;
       return true;
     }
-    private Statement rebuildBlock(final Block b) {
-      final Block $ = b.getAST().newBlock();
-      duplicateInto(Extract.statements(b),$.statements());
-      return $;
-    }
+
     @Override boolean _eligible(@SuppressWarnings("unused") final Block _) {
       return true;
     }
@@ -105,18 +104,18 @@ public enum Wrings {
       if (b == null || identical(Extract.statements(b), b.statements()))
         return null;
       if (!Is.statement(b.getParent()))
-        return rebuildBlock(b);
+        return reorganizeStatement(b);
       switch (Extract.statements(b).size()) {
         case 0:
           return b.getAST().newEmptyStatement();
         case 1:
           return duplicate(Extract.singleStatement(b));
         default:
-          return rebuildBlock(b);
+          return reorganizeNestedStatement(b);
       }
     }
     @Override boolean scopeIncludes(final Block b) {
-     return !identical(Extract.statements(b), b.statements());
+      return !identical(Extract.statements(b), b.statements());
     }
   }), //
   /**
@@ -213,33 +212,33 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-07-29
    */
-  IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME(new Wring.OfIfStatementAndSubsequentStatement(){
+  IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER(new Wring.OfIfStatementAndSubsequentStatement(){
     @Override public final String toString() {
-      return "IFX_RETURN_SOMETHING_FOLLOWED_BY_IFX_RETURN_SAME(" + super.toString() + ")";
+      return "IFX_COMMANDS_SEQUENCER_FOLLOWED_BY_IFX_SAME_COMMANDS_SAME_SEQUENCER(" + super.toString() + ")";
     }
-  @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-    return true;
-  }
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
 
-    @Override ASTRewrite fillReplacement(IfStatement s, ASTRewrite r) {
-      if (s == null || !elseIsEmpty(s))
+    @Override ASTRewrite fillReplacement(IfStatement s1, ASTRewrite r) {
+      if (s1 == null || !elseIsEmpty(s1))
         return null;
-      ReturnStatement thenReturn = Extract.returnStatement(s.getThenStatement());
-      if (thenReturn == null)
+      final IfStatement s2 = Extract.nextIfStatement(s1);
+      if (s2 == null || !elseIsEmpty(s2))
         return null;
-      IfStatement nextIf = Extract.nextIfStatement(s);
-      if (nextIf == null || !elseIsEmpty(nextIf))
+      final Statement then = s1.getThenStatement();
+      final List<Statement> ss1 = Extract.statements(then);
+      final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
+      if (!same(ss1, ss2))
         return null;
-      final ReturnStatement nextThenReturn = Extract.returnStatement(nextIf.getThenStatement());
-      if (nextThenReturn == null)
+      if (!Is.sequencer(last(ss1)))
         return null;
-      return !same(getCore(thenReturn.getExpression()), getCore(nextThenReturn.getExpression())) ? null
-          : replaceTwoStatements(r, s, makeIfWithoutElse(thenReturn, makeOR(s.getExpression(), nextIf.getExpression())));
+      return replaceTwoStatements(r, s1, makeIfWithoutElse( reorganizeNestedStatement(then), makeOR(s1.getExpression(), s2.getExpression())));
     }
-    private IfStatement makeIfWithoutElse(ReturnStatement thenReturn, final InfixExpression condition) {
+    private IfStatement makeIfWithoutElse(Statement s, final InfixExpression condition) {
       final IfStatement $ = condition.getAST().newIfStatement();
       $.setExpression(condition);
-      $.setThenStatement(duplicate(thenReturn));
+      $.setThenStatement(s);
       $.setElseStatement(null);
       return $;
     }
@@ -279,13 +278,13 @@ public enum Wrings {
     @Override public final String toString() {
       return "IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(" + super.toString() + ")";
     }
-  @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-    return true;
-  }
-  @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
-    ReturnStatement then = Extract.returnStatement(s.getThenStatement());
-    ReturnStatement elze = Extract.nextReturn(s);
-    return replaceTwoStatements(r, s, makeReturnStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze))));
+    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
+    @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+      ReturnStatement then = Extract.returnStatement(s.getThenStatement());
+      ReturnStatement elze = Extract.nextReturn(s);
+      return replaceTwoStatements(r, s, makeReturnStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze))));
     }
 
     @Override boolean scopeIncludes(final IfStatement s) {
@@ -361,6 +360,9 @@ public enum Wrings {
    * @since 2015-07-29
    */
   IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING(new Wring.OfIfStatementAndSubsequentStatement() {
+    @Override Range range(ASTNode e) {
+      return new Range(e);
+    }
     @Override public final String toString() {
       return "IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING (" + super.toString() + ")";
     }
@@ -376,7 +378,7 @@ public enum Wrings {
     @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
-  @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
+    @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
       if (s.getElseStatement() == null || !Is.sequencer(last(Extract.statements(s.getThenStatement()))))
         return r;
       final IfStatement newlyCreatedIf = duplicate(s);
@@ -512,18 +514,18 @@ public enum Wrings {
       return " ELIMINATE_TERNARY (" + super.toString() + ")";
     }
     @Override boolean _eligible(final ConditionalExpression e) {
-       return true;
+      return true;
     }
     @Override Expression _replacement(final ConditionalExpression e) {
       return duplicate(e.getThenExpression());
     }
-      @Override boolean scopeIncludes(final ConditionalExpression e) {
-        return e != null && same(e.getThenExpression(), e.getElseExpression());
-      }
-      
-    }), //
+    @Override boolean scopeIncludes(final ConditionalExpression e) {
+      return e != null && same(e.getThenExpression(), e.getElseExpression());
+    }
+
+  }), //
   PUSHDOWN_TERNARY(new PushdownTernary()), //
- /**
+  /**
    * <code>
    * a ? b : c
    * </code> is the same as <code>
@@ -752,8 +754,8 @@ public enum Wrings {
     return ($ = find(asInfixExpression(e))) != null//
         || ($ = find(asPrefixExpression(e))) != null//
         || ($ = find(asConditionalExpression(e))) != null//
-            //
-            ? $ : null;
+        //
+        ? $ : null;
   }
   /**
    * Find the first {@link Wring} appropriate for an {@link IfStatement}
@@ -811,8 +813,8 @@ public enum Wrings {
     Wring $;
     return ($ = find(asIfStatement(s))) != null//
         || ($ = find(asBlock(s))) != null//
-            //
-            ? $ : null;
+        //
+        ? $ : null;
   }
   public 
   static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
@@ -957,10 +959,19 @@ public enum Wrings {
         || ($ = perhapsDoubleNegation(inner)) != null//
         || ($ = perhapsDeMorgan(inner)) != null//
         || ($ = perhapsComparison(inner)) != null //
-            ? $ : null;
+        ? $ : null;
   }
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(getCore(e.getOperand()));
+  }
+  static <T extends ASTNode> boolean same(List<T> ns1, List<T> ns2){
+    if (ns1 == ns2) return true;
+    if (ns1.size()  != ns2.size())
+      return false;
+    for (int i = 0; i < ns1.size(); ++i )
+      if (!same(ns1.get(i), ns2.get(i)))
+        return false;
+    return true;
   }
   static boolean same(ASTNode e1, ASTNode e2){
     return e1 == e2 || e1.getNodeType() == e2.getNodeType() && e1.toString().equals(e2.toString());
@@ -970,7 +981,7 @@ public enum Wrings {
    * as <code> (a && b) || (!a && c) </code>
    * <ol>
    * <li>if b is false then: <code>
-  * (a && false) || (!a && c) == !a && c </code>
+   * (a && false) || (!a && c) == !a && c </code>
    * <li>if b is true then:
    * <code>(a && true) || (!a && c) == a || (!a && c) == a || c </code>
    * <li>if c is false then: <code>(a && b) || (!a && false) == a && b </code>
@@ -1010,33 +1021,60 @@ public enum Wrings {
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
   }
-   static boolean existingEmptyElse(final IfStatement s) {
+  static boolean existingEmptyElse(final IfStatement s) {
     return s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
   }
-     static boolean elseIsEmpty(final IfStatement s) {
-     return Extract.statements(s.getElseStatement()).size() == 0;
-   }
-     
-     static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, Statement by) {
-       final Block parent = asBlock(what.getParent());
-       final List<Statement> siblings = Extract.statements(parent);
-      final int i = siblings.indexOf(what);
-      siblings.remove(i);
-      siblings.remove(i);
+  static boolean elseIsEmpty(final IfStatement s) {
+    return Extract.statements(s.getElseStatement()).size() == 0;
+  }
 
-      siblings.add(i, by );
-           final Block $ =  parent.getAST().newBlock();
-           duplicateInto(siblings, $.statements());
-           r.replace(parent, $, null);
-         return r;
-     }
+  static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, Statement by) {
+    final Block parent = asBlock(what.getParent());
+    final List<Statement> siblings = Extract.statements(parent);
+    final int i = siblings.indexOf(what);
+    siblings.remove(i);
+    siblings.remove(i);
+
+    siblings.add(i, by );
+    final Block $ =  parent.getAST().newBlock();
+    duplicateInto(siblings, $.statements());
+    r.replace(parent, $, null);
+    return r;
+  }
   static InfixExpression makeOR(Expression s1, Expression s2) {
-      final InfixExpression condition = s1.getAST().newInfixExpression();
-      condition.setOperator(CONDITIONAL_OR);
-      condition.setLeftOperand(parenthesize(s1));
-      condition.setRightOperand(parenthesize(s2));
-      return condition;
+    return makeInfix(CONDITIONAL_OR, s1, s2);
+  }
+  private static InfixExpression makeInfix(Operator o, Expression left, Expression right) {
+    final InfixExpression condition = left.getAST().newInfixExpression();
+    condition.setOperator(o);
+    condition.setLeftOperand(parenthesize(o, left));
+    condition.setRightOperand(parenthesize(o, right));
+    return condition;
+  }
+  private static Expression parenthesize(Operator o, Expression $) {
+    return parenthesize(Precedence.of(o), $);
+  }
+  @SuppressWarnings("unchecked") private  static <T extends Expression>  Expression parenthesize(int precedence, T $) {
+    return Precedence.Is.legal(Precedence.of($)) &&  precedence < Precedence.of($) ? (T) parenthesize($) : duplicate($) ;
+
+  }
+  static Statement reorganizeNestedStatement(final Statement s) {
+    final List<Statement> ss = Extract.statements(s); 
+    switch (ss.size()) {
+      case 0: 
+        return s.getAST().newEmptyStatement();
+      case 1:
+        return duplicate(ss.get(0));
+      default:
+        return reorganizeStatement(s);
     }
+  }
+  private static Block reorganizeStatement(final Statement s) {
+    final List<Statement> ss = Extract.statements(s);
+    final Block $ = s.getAST().newBlock();
+    duplicateInto(ss,$.statements());
+    return $;
+  }
   public final Wring inner;
   Wrings(final Wring inner) {
     this.inner = inner;
