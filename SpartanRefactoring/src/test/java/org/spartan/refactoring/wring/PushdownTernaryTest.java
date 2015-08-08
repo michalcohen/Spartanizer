@@ -18,7 +18,7 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class PUSHDOWN_TERNARY {
+public class PushdownTernaryTest {
   static final Wring WRING = Wrings.PUSHDOWN_TERNARY.inner;
 
   @RunWith(Parameterized.class) //

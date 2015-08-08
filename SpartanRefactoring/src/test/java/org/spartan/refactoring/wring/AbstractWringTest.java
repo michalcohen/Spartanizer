@@ -262,6 +262,9 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       @Test public void inputIsConditionalExpression() {
         assertNotNull(asConditionalExpression());
       }
+      @Test public void isConditionalExpression() {
+        assertThat(asMe(), instanceOf(ConditionalExpression.class));
+      }
     }
 
     public static abstract class IfStatementAndSurrounding extends WringedIfStatement {
@@ -517,8 +520,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Override protected Document asDocument() {
       return new Document(wrapExpression(input));
     }
-    @Override protected Statement asMe() {
-      final Statement $ = asSingle(input);
+    @Override protected Expression asMe() {
+      final Expression $ = e(input);
       assertNotNull($);
       return $;
     }
