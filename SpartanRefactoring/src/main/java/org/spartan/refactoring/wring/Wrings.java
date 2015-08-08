@@ -20,8 +20,6 @@ import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.last;
-import static org.spartan.refactoring.utils.Funcs.makeAssigment;
-import static org.spartan.refactoring.utils.Funcs.makeConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
@@ -187,7 +185,7 @@ public enum Wrings {
       final Expression condition = i.getExpression();
       final Expression then = Extract.throwExpression(i.getThenStatement());
       final Expression elze = Extract.throwExpression(i.getElseStatement());
-      return then == null || elze == null ? null : makeThrowStatement(makeConditionalExpression(condition, then, elze));
+      return then == null || elze == null ? null : makeThrowStatement(new Subject.Pair(then, elze).toCondition(condition));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
@@ -224,7 +222,7 @@ public enum Wrings {
       final Expression condition = i.getExpression();
       final Expression then = Extract.returnExpression(i.getThenStatement());
       final Expression elze = Extract.returnExpression(i.getElseStatement());
-      return then == null || elze == null ? null : makeReturnStatement(makeConditionalExpression(condition, then, elze));
+      return then == null || elze == null ? null : makeReturnStatement(new Subject.Pair(then, elze).toCondition(condition));
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
@@ -276,7 +274,7 @@ public enum Wrings {
       final List<Statement> ss1 = Extract.statements(then);
       final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
       return !same(ss1, ss2) ? null
-          : !Is.sequencer(last(ss1)) ? null : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), Subject.pair(s1.getExpression(),s2.getExpression()).to(CONDITIONAL_OR)));
+          : !Is.sequencer(last(ss1)) ? null : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), new Subject.Pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;
@@ -321,7 +319,7 @@ public enum Wrings {
     @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
       final ReturnStatement then = Extract.returnStatement(s.getThenStatement());
       final ReturnStatement elze = Extract.nextReturn(s);
-      return replaceTwoStatements(r, s, makeReturnStatement(makeConditionalExpression(s.getExpression(), Extract.expression(then), Extract.expression(elze))));
+      return replaceTwoStatements(r, s, makeReturnStatement(new Subject.Pair(Extract.expression(then), Extract.expression(elze)).toCondition(s.getExpression())));
     }
 
     @Override boolean scopeIncludes(final IfStatement s) {
@@ -476,8 +474,8 @@ public enum Wrings {
       final Assignment elze = Extract.assignment(i.getElseStatement());
       if (!compatible(then, elze))
         return null;
-      final ConditionalExpression e = makeConditionalExpression(i.getExpression(), then.getRightHandSide(), elze.getRightHandSide());
-      return makeExpressionStatement(makeAssigment(then.getOperator(), then.getLeftHandSide(), e));
+      final ConditionalExpression e = new Subject.Pair(then.getRightHandSide(), elze.getRightHandSide()).toCondition(i.getExpression());
+      return makeExpressionStatement(new Subject.Pair(then.getLeftHandSide(), e).to(then.getOperator()));
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));

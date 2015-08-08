@@ -557,24 +557,9 @@ public enum Funcs {
     return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
   public static InfixExpression makeAND(final Expression s1, final Expression s2) {
-    return Subject.pair(s1,s2).to(CONDITIONAL_AND);
+    return new Subject.Pair(s1, s2).to(CONDITIONAL_AND);
   }
-  /**
-   * @param o the assignment operator
-   * @param right right side of the assignment, usually an expression
-   * @param left left side of the assignment, usually a variable name
-   * @return the new assignment
-   */
-  public static Assignment makeAssigment(final Assignment.Operator o, final Expression left, final Expression right) {
-    if (hasNull(o, right, left))
-      return null;
-    final Assignment $ = right.getAST().newAssignment();
-    $.setOperator(o);
-    $.setRightHandSide(frugalDuplicate(right));
-    $.setLeftHandSide(frugalDuplicate(left));
-    return $;
-  }
-  /**
+   /**
    * Create a new {@link ConditionalExpression}
    *
    * @param e JD
@@ -587,22 +572,6 @@ public enum Funcs {
     final ConditionalExpression $ = duplicate(e);
     $.setThenExpression(duplicate(then));
     $.setElseExpression(duplicate(elze));
-    return $;
-  }
-  /**
-   * Create a new {@link ConditionalExpression}
-   *
-   * @param condition JD
-   * @param then JD
-   * @param elze JD
-   * @return a newly created, unparenthesized {@link ConditionalExpression} with
-   *         the specified arguments.
-   */
-  public static ConditionalExpression makeConditionalExpression(final Expression condition, final Expression then, final Expression elze) {
-    final ConditionalExpression $ = condition.getAST().newConditionalExpression();
-    $.setExpression(frugalDuplicate(condition));
-    $.setThenExpression(frugalDuplicate(then));
-    $.setElseExpression(frugalDuplicate(elze));
     return $;
   }
   public static Statement makeExpressionStatement(final Expression e) {

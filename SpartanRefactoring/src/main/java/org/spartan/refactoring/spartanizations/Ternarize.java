@@ -9,7 +9,6 @@ import static org.spartan.refactoring.utils.Funcs.compatibleOps;
 import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.hasReturn;
-import static org.spartan.refactoring.utils.Funcs.makeAssigment;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
 import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.makeVarDeclFrag;
@@ -451,9 +450,9 @@ public class Ternarize extends Spartanization {
   }
   private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Expression otherAsgnExp) {
     final Expression thenSideExp = Is.plainAssignment(then) ? then.getRightHandSide()
-        : Subject.pair(then.getRightHandSide(), otherAsgnExp).to(InfixExpression.Operator.PLUS);
+        : new Subject.Pair(then.getRightHandSide(), otherAsgnExp).to(InfixExpression.Operator.PLUS);
     final Expression newCond = makeParenthesizedConditionalExp(r, i.getExpression(), thenSideExp, otherAsgnExp);
-    r.replace(i, t.newExpressionStatement(makeAssigment(then.getOperator(), then.getLeftHandSide(), newCond)), null);
+    r.replace(i, t.newExpressionStatement(new Subject.Pair(then.getLeftHandSide(), newCond).to(then.getOperator())), null);
   }
   static Range detectIfReturn(final IfStatement i) {
     return Extract.statements(i.getParent()) == null ? null : detectIfReturn(i, Extract.statements(i.getParent()));
