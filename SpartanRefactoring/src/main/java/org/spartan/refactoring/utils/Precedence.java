@@ -2,16 +2,14 @@ package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.asExpression;
 
-import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
 
 /**
  * *An empty <code><b>enum</b></code> for fluent programming. The name should
@@ -25,15 +23,16 @@ import org.eclipse.jdt.core.dom.PostfixExpression;
  */
 public enum Precedence {
   ;
+
   private final static int UNDEFINED = -1;
   private static final ChainStringToIntMap of = new ChainStringToIntMap()//
-      .putOn(1, "[]", ".", "() invoke", "++ post", "-- post", "MethodInvocation") //
-      .putOn(2, "++ pre", "-- pre", "+ unary", "- unary", "!", "~") //
-      .putOn(3, "() cast", "new") //
+      .putOn(1, "[]", ".", "() invoke", "++ post", "-- post", "MethodInvocation", "PostfixExpression", "ArrayAccess", "FieldAccess", "QualifiedName") //
+      .putOn(2, "++ pre", "-- pre", "+ unary", "- unary", "!", "~", "PrefixExpression") //
+      .putOn(3, "() cast", "new", "ArrayCreation", "ClassInstanceCreation", "CastExpression") //
       .putOn(4, "*", "/", "%") // multiplicative
       .putOn(5, "+", "-") // additive
       .putOn(6, ">>", "<<", ">>>") // shift
-      .putOn(7, "<", "<=", ">", ">=", "instanceof") // relational
+      .putOn(7, "<", "<=", ">", ">=", "instanceof", "InstanceofExpression") // relational
       .putOn(8, "==", "!=") // equality
       .putOn(9, "&") // bitwise AND
       .putOn(10, "^") // bitwise XOR
@@ -43,7 +42,7 @@ public enum Precedence {
       .putOn(14, "?", ":", "ConditionalExpression") // conditional
       .putOn(15, "=", // assignment
           "+=", "-=", // assignment, additive
-          "*= ", "/=", "%=", // assignment, multiplicative
+          "*=", "/=", "%=", // assignment, multiplicative
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
   );
@@ -72,10 +71,6 @@ public enum Precedence {
         return of((InfixExpression) e);
       case ASSIGNMENT:
         return of((Assignment) e);
-      case PREFIX_EXPRESSION:
-        return -4;
-      case POSTFIX_EXPRESSION:
-        return -4;
       default:
         return of(e.getClass().getSimpleName());
     }
@@ -90,9 +85,23 @@ public enum Precedence {
   public static int of(final InfixExpression.Operator o) {
     return of(o.toString());
   }
-  public static Operator of(final PostfixExpression.Operator o) {
-    // TODO Auto-generated method stub
-    return null;
+  /**
+   * Determine the precedence of a given {@link org.eclipse.jdt.core.dom.PostfixExpression.Operator}
+   *
+   * @param o JD
+   * @return the precedence of the parameter
+   */
+  public static int of(final PostfixExpression.Operator o) {
+    return of(o.toString());
+  }
+  /**
+   * Determine the precedence of a given {@link org.eclipse.jdt.core.dom.PrefixExpression.Operator}
+   *
+   * @param o JD
+   * @return the precedence of the parameter
+   */
+  public static int of(final PrefixExpression.Operator o) {
+    return of(o.toString());
   }
   /**
    * Determine the precedence of two expressions is the same.
@@ -113,7 +122,7 @@ public enum Precedence {
    * @return <code><b>true</b></code> <i>iff</i> the precedence of the two
    *         parameters is the same.
    */
-  public static boolean same(final Operator o, final Expression e) {
+  public static boolean same(final InfixExpression.Operator o, final Expression e) {
     return Precedence.of(o) == Precedence.of(e);
   }
   private static int of(final Assignment a) {
@@ -122,7 +131,6 @@ public enum Precedence {
   private static int of(final InfixExpression e) {
     return of(e.getOperator());
   }
-
   private static int of(final String key) {
     return !of.containsKey(key) ? UNDEFINED : of.get(key);
   }

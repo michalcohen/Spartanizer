@@ -10,6 +10,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -116,22 +117,15 @@ public enum Into {
     assertThat(statement, n, instanceOf(Statement.class));
     return (Statement) n;
   }
-  static String apply(final Trimmer t, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    return rewrite(t, u, d).get();
+  /**
+   * Convert a given {@link String} into an {@link Assignment}, or fail the
+   * current test, if such a conversion is not possible
+   *
+   * @param expression a {@link String} that represents a Java statement
+   * @return an {@link Statement} data structure representing the parameter.
+   */
+  public static Assignment a(final String expression) {
+    return (Assignment) e(expression);
   }
-  static void assertNoOpportunity(final Spartanization s, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertEquals(u.toString(), 0, countOpportunities(s, u));
-  }
-  static void assertNotEvenSimilar(final String expected, final String actual) {
-    assertNotEquals(compressSpaces(expected), compressSpaces(actual));
-  }
-  static void assertOneOpportunity(final Spartanization s, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertEquals(u.toString(), 1, countOpportunities(s, u));
-  }
+
 }

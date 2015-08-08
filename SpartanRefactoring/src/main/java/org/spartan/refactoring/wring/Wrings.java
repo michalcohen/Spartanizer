@@ -23,7 +23,6 @@ import static org.spartan.refactoring.utils.Funcs.last;
 import static org.spartan.refactoring.utils.Funcs.makeAssigment;
 import static org.spartan.refactoring.utils.Funcs.makeConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
-import static org.spartan.refactoring.utils.Funcs.makeOR;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
@@ -60,6 +59,7 @@ import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
 /**
@@ -276,7 +276,7 @@ public enum Wrings {
       final List<Statement> ss1 = Extract.statements(then);
       final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
       return !same(ss1, ss2) ? null
-          : !Is.sequencer(last(ss1)) ? null : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), makeOR(s1.getExpression(), s2.getExpression())));
+          : !Is.sequencer(last(ss1)) ? null : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), Subject.pair(s1.getExpression(),s2.getExpression()).to(CONDITIONAL_OR)));
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;

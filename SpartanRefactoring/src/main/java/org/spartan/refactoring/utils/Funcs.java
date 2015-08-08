@@ -72,16 +72,6 @@ import org.spartan.utils.Utils;
  */
 public enum Funcs {
   ;
-  /**
-   * @param e JD
-   * @return the parameter, but logcially negated.
-   */
-  public static PrefixExpression not(final Expression e) {
-    final PrefixExpression $ = e.getAST().newPrefixExpression();
-    $.setOperator(NOT);
-    $.setOperand(parenthesize(e));
-    return $;
-  }
   private static Map<Operator, Operator> conjugate = makeConjeguates();
   /**
    * Convert an {@link Expression} into {@link InfixExpression} whose operator
@@ -567,6 +557,9 @@ public enum Funcs {
     final Expression $ = e.getLeftOperand();
     return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
+  public static InfixExpression makeAND(final Expression s1, final Expression s2) {
+    return Subject.pair(s1,s2).to(CONDITIONAL_AND);
+  }
   /**
    * @param o the assignment operator
    * @param right right side of the assignment, usually an expression
@@ -631,23 +624,6 @@ public enum Funcs {
     $.setExpression(frugalDuplicate(condition));
     $.setThenStatement(then.getParent() == null ? then : (Statement) r.createCopyTarget(then));
     $.setElseStatement(elze.getParent() == null ? elze : (Statement) r.createCopyTarget(elze));
-    return $;
-  }
-  /**
-   * @param t the AST who is to own the new return statement
-   * @param r ASTRewrite for the given AST
-   * @param o the operator for the new infix expression
-   * @param left the left expression
-   * @param right the right expression
-   * @return the new infix expression
-   */
-  public static InfixExpression makeInfixExpression(final AST t, final ASTRewrite r, final InfixExpression.Operator o, final Expression left, final Expression right) {
-    if (hasNull(t, r, o, right, left))
-      return null;
-    final InfixExpression $ = t.newInfixExpression();
-    $.setOperator(o);
-    $.setRightOperand(frugalDuplicate(right));
-    $.setLeftOperand(frugalDuplicate(left));
     return $;
   }
   /**
@@ -763,6 +739,17 @@ public enum Funcs {
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
   }
+
+   /**
+   * @param e JD
+   * @return the parameter, but logcially negated.
+   */
+  public static PrefixExpression not(final Expression e) {
+    final PrefixExpression $ = e.getAST().newPrefixExpression();
+    $.setOperator(NOT);
+    $.setOperand(parenthesize(e));
+    return $;
+  }
   /**
    * Parenthesize an {@link Expression}
    *
@@ -775,32 +762,6 @@ public enum Funcs {
     final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
     $.setExpression(duplicate(getCore(e)));
     return $;
-  }
-  private static Expression parenthesize(final InfixExpression.Operator o, final Expression $) {
-    return parenthesize(Precedence.of(o), $);
-  }
-
-   static Expression parenthesize(final PostfixExpression.Operator o, final Expression $) {
-    return parenthesize(Precedence.of(o), $);
-  }
-  public static InfixExpression makeInfix(final Operator o, final Expression left, final Expression right) {
-    final InfixExpression condition = left.getAST().newInfixExpression();
-    condition.setOperator(o);
-    condition.setLeftOperand(parenthesize(o, left));
-    condition.setRightOperand(parenthesize(o, right));
-    return condition;
-  }
-  public static InfixExpression makeOR(final Expression s1, final Expression s2) {
-    return makeInfix(CONDITIONAL_OR, s1, s2);
-  }
-  public static InfixExpression makeAND(final Expression s1, final Expression s2) {
-    return makeInfix(CONDITIONAL_AND, s1, s2);
-  }
-  private static Expression parenthesize(final Assignment.Operator o, final Expression $) {
-    return parenthesize(Precedence.of(o), $);
-  }
-  @SuppressWarnings("unchecked") private static <T extends Expression> Expression parenthesize(final int precedence, final T $) {
-    return !Precedence.Is.legal(Precedence.of($)) || precedence >= Precedence.of($) ? duplicate($) : (T) parenthesize($);
   }
   /**
    * Retrieve previous item in a list
@@ -941,7 +902,11 @@ public enum Funcs {
     $.put(LESS_EQUALS, GREATER_EQUALS);
     return $;
   }
+
+
+
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
   }
+
 }
