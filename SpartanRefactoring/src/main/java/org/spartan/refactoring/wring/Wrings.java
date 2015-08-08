@@ -98,12 +98,10 @@ public enum Wrings {
       if (initializer != null)
         return null;
       final Assignment a = Extract.nextAssignment(f);
-      if (a == null)
+      if (a == null || !same(f.getName(), a.getLeftHandSide()))
         return null;
-      if (!same(f.getName(), a.getLeftHandSide()))
-        return null;
-      r.replace(f, makeVariableDeclarationFragement(f, a.getRightHandSide()),null);
-      r.remove(Extract.statement(a),null);
+      r.replace(f, makeVariableDeclarationFragement(f, a.getRightHandSide()), null);
+      r.remove(Extract.statement(a), null);
       return r;
     }
     @Override boolean scopeIncludes(VariableDeclarationFragment f) {
@@ -278,11 +276,8 @@ public enum Wrings {
       final Statement then = s1.getThenStatement();
       final List<Statement> ss1 = Extract.statements(then);
       final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
-      if (!same(ss1, ss2))
-        return null;
-      if (!Is.sequencer(last(ss1)))
-        return null;
-      return replaceTwoStatements(r, s1, makeIfWithoutElse( reorganizeNestedStatement(then), makeOR(s1.getExpression(), s2.getExpression())));
+      return !same(ss1, ss2) ? null
+          : !Is.sequencer(last(ss1)) ? null : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), makeOR(s1.getExpression(), s2.getExpression())));
     }
     @Override boolean scopeIncludes(IfStatement s) {
       return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;
@@ -486,7 +481,7 @@ public enum Wrings {
       return makeExpressionStatement(makeAssigment(then.getOperator(), then.getLeftHandSide(), e));
     } 
     @Override boolean scopeIncludes(final IfStatement s) {
-      return !(s == null) && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
+      return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
     }
   }), //
   /**
@@ -926,7 +921,7 @@ public enum Wrings {
     return $;
   }
   @SuppressWarnings("unchecked") private  static <T extends Expression>  Expression parenthesize(int precedence, T $) {
-    return Precedence.Is.legal(Precedence.of($)) &&  precedence < Precedence.of($) ? (T) parenthesize($) : duplicate($) ;
+    return (!Precedence.Is.legal(Precedence.of($)) || precedence >= Precedence.of($) ? duplicate($) : (T) parenthesize($)) ;
 
   }
   private static Expression parenthesize(Operator o, Expression $) {
