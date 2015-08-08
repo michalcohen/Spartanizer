@@ -1,7 +1,7 @@
 package org.spartan.refactoring.utils;
 
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
-import static org.spartan.refactoring.utils.Restructure.getCore;
 
 import java.util.List;
 
@@ -104,7 +104,7 @@ public enum Have {
    */
   public static boolean trueLiteral(final List<Expression> es) {
     for (final Expression e : es)
-      if (Is.booleanLiteral(getCore(e)) && asBooleanLiteral(getCore(e)).booleanValue())
+      if (Is.booleanLiteral(core(e)) && asBooleanLiteral(core(e)).booleanValue())
         return true;
     return false;
   }
@@ -117,7 +117,7 @@ public enum Have {
    */
   public static boolean falseLiteral(final List<Expression> es) {
     for (final Expression e : es)
-      if (Is.booleanLiteral(getCore(e)) && !asBooleanLiteral(getCore(e)).booleanValue())
+      if (Is.booleanLiteral(core(e)) && !asBooleanLiteral(core(e)).booleanValue())
         return true;
     return false;
   }

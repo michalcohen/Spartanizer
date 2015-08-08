@@ -11,6 +11,19 @@ package org.spartan.utils;
 public class Wrapper<T> {
   private T t = null;
   /**
+   * Instantiates this class
+   * @param t JD
+   */
+  public Wrapper(final T t) {
+    this.t = t;
+  }
+  /**
+   * Instantiates this class
+   */
+  public Wrapper() {
+    //
+  }
+  /**
    * Set the value wrapped in this object.
    *
    * @param t JD

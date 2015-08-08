@@ -1,13 +1,13 @@
 package org.spartan.refactoring.wring;
-
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.CLASS_INSTANCE_CREATION;
 import static org.eclipse.jdt.core.dom.ASTNode.FIELD_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.makeConditional;
-import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
 
@@ -102,8 +102,8 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
   private Expression pushdown(final ConditionalExpression e) {
     if (e == null)
       return null;
-    final Expression then = getCore(e.getThenExpression());
-    final Expression elze = getCore(e.getElseExpression());
+    final Expression then = core(e.getThenExpression());
+    final Expression elze = core(e.getElseExpression());
     return Wrings.same(then, elze) ? null : pushdown(e, then, elze);
   }
   private Expression pushdown(final ConditionalExpression e, final Expression e1, final Expression e2) {

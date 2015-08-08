@@ -1,6 +1,6 @@
 package org.spartan.refactoring.utils;
-
-import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
+import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
@@ -76,7 +76,7 @@ public enum Restructure {
     return $;
   }
   private static List<Expression> flattenInto(final Operator o, final Expression e, final List<Expression> $) {
-    final Expression core = getCore(e);
+    final Expression core = core(e);
     return !Is.infix(core) || asInfixExpression(core).getOperator() != o ? add(!Is.simple(core) ? e : core, $) : flattenInto(o, All.operands(asInfixExpression(core)), $);
   }
   private static List<Expression> add(final Expression e, final List<Expression> $) {
@@ -104,18 +104,6 @@ public enum Restructure {
       for (final Expression operand : es)
         $.extendedOperands().add(rebase(operand, t));
     return $;
-  }
-  /**
-   * Find the "core" of a given {@link Expression}, by peeling of any
-   * parenthesis that may wrap it.
-   *
-   * @param $ JD
-   * @return the parameter itself, if not parenthesized, or the result of
-   *         applying this function (@link {@link #getClass()}) to whatever is
-   *         wrapped in these parenthesis.
-   */
-  public static Expression getCore(final Expression $) {
-    return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : getCore(((ParenthesizedExpression) $).getExpression());
   }
   /**
    * Parenthesize an expression (if necessary).

@@ -2,8 +2,10 @@ package org.spartan.refactoring.utils;
 
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.rebase;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -12,14 +14,14 @@ import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 
 @SuppressWarnings("javadoc") public class Subject {
-  public static Subject.Operand operand(final Expression inner) {
+  public static Operand operand(final Expression inner) {
     return new Operand(inner);
   }
-  public static Subject.Pair pair(final Expression left, final Expression right) {
-    return new Pair(left,right);
+  public static Pair pair(final Expression left, final Expression right) {
+    return new Pair(left, right);
   }
-  public static Subject.Several operands(final Expression... operands) {
-    return new Subject.Several(operands);
+  public static Several operands(final Expression... operands) {
+    return new Several(operands);
   }
   private static ParenthesizedExpression parenthesize(final Expression e) {
     final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
@@ -27,54 +29,66 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     return $;
   }
   static Expression parenthesize(final int precedence, final Expression $) {
-    return !Precedence.Is.legal(Precedence.of($)) || precedence >= Precedence.of($) ? duplicate($) : parenthesize($);
+    return !Precedence.Is.legal(Precedence.of($)) || precedence >= Precedence.of($) ? $ : parenthesize($);
   }
   static Expression parenthesize(final Expression host, final Expression $) {
     return parenthesize(Precedence.of(host), $);
   }
 
-  public static class Operand {
+  static class Claimer {
+    protected final AST ast;
+    public Claimer(final ASTNode n) {
+      ast = n.getAST();
+    }
+    Expression claim(final Expression e) {
+      return rebase(duplicate(Extract.core(e)), ast);
+    }
+  }
+
+  public static class Operand  extends Claimer {
     private final Expression inner;
     Operand(final Expression inner) {
-      this.inner = inner;
+      super(inner);
+      this.inner = claim(inner);
     }
     public Expression to(final PostfixExpression.Operator o) {
-      final PostfixExpression $ = inner.getAST().newPostfixExpression();
+      final PostfixExpression $ = ast.newPostfixExpression();
       $.setOperator(o);
       $.setOperand(parenthesize(Precedence.of($), inner));
       return $;
     }
     public PrefixExpression to(final PrefixExpression.Operator o) {
-      final PrefixExpression $ = inner.getAST().newPrefixExpression();
+      final PrefixExpression $ = ast.newPrefixExpression();
       $.setOperator(o);
       $.setOperand(parenthesize(Precedence.of($), inner));
       return $;
     }
   }
 
-  public static class Pair {
+  public static class Pair extends Claimer {
     final Expression left, right;
-     Pair(final Expression left, final Expression right) {
-      this.left = left;
-      this.right = right;
+    Pair(final Expression left, final Expression right) {
+      super(left);
+      this.left = claim(left);
+      this.right = claim(right);
     }
     public Assignment to(final Assignment.Operator o) {
-      final Assignment $ = left.getAST().newAssignment();
+      final Assignment $ = ast.newAssignment();
       $.setOperator(o);
       $.setLeftHandSide(parenthesize($, left));
-      $.setRightHandSide(rebase(parenthesize($, right),$.getAST()));
+      $.setRightHandSide(parenthesize($, right));
       return $;
     }
     public InfixExpression to(final InfixExpression.Operator o) {
-      final InfixExpression $ = left.getAST().newInfixExpression();
+      final InfixExpression $ = ast.newInfixExpression();
       $.setOperator(o);
       $.setLeftOperand(parenthesize($, left));
-      $.setRightOperand(rebase(parenthesize($, right), $.getAST()));
+      $.setRightOperand(parenthesize($, right));
       return $;
     }
     public ConditionalExpression toCondition(final Expression condition) {
-      final ConditionalExpression $ = condition.getAST().newConditionalExpression();
-      $.setExpression(parenthesize($, condition));
+      final ConditionalExpression $ = ast.newConditionalExpression();
+      $.setExpression(parenthesize($, claim(condition)));
       $.setThenExpression(parenthesize($, left));
       $.setElseExpression(parenthesize($, right));
       return $;
@@ -82,10 +96,9 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
   }
 
   public static class Several {
-     private final Expression[] operands;
-
+    private final Expression[] operands;
     Several(final Expression... operands) {
-       this.operands=operands;
+      this.operands = operands;
     }
   }
 }

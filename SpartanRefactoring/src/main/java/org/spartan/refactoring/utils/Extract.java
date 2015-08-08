@@ -2,6 +2,7 @@ package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.asAssignment;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -159,10 +161,10 @@ public enum Extract {
    * @return the inner most {@link Statement} in which the parameter is nested,
    *         or <code><b>null</b></code>, if no such statement exists.
    */
-  public static Statement statement(ASTNode n) {
+  public static Statement statement(final ASTNode n) {
     for (ASTNode $ = n; $ != null; $ = $.getParent())
       if (Is.statement($))
-        return (asStatement($));
+        return asStatement($);
     return null;
   }
   /**
@@ -258,5 +260,17 @@ public enum Extract {
         $.add(s);
         return $;
     }
+  }
+  /**
+   * Find the "core" of a given {@link Expression}, by peeling of any
+   * parenthesis that may wrap it.
+   *
+   * @param $ JD
+   * @return the parameter itself, if not parenthesized, or the result of
+   *         applying this function (@link {@link #getClass()}) to whatever is
+   *         wrapped in these parenthesis.
+   */
+  public static Expression core(final Expression $) {
+    return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : core(((ParenthesizedExpression) $).getExpression());
   }
 }

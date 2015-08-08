@@ -7,6 +7,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
@@ -31,7 +33,6 @@ import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import static org.spartan.utils.Utils.in;
 
@@ -963,16 +964,16 @@ public enum Wrings {
     return s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
   }
   static Expression getCoreLeft(final InfixExpression e) {
-    return getCore(e.getLeftOperand());
+    return core(e.getLeftOperand());
   }
   static Expression getCoreRight(final InfixExpression e) {
-    return getCore(e.getRightOperand());
+    return core(e.getRightOperand());
   }
   static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
   }
   static boolean hasOpportunity(final PrefixExpression e) {
-    return e != null && hasOpportunity(getCore(e.getOperand()));
+    return e != null && hasOpportunity(core(e.getOperand()));
   }
   static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
     for (final Expression e : es)
@@ -981,10 +982,10 @@ public enum Wrings {
     return false;
   }
   static boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
-    return e != null && Have.booleanLiteral(getCore(e.getThenExpression()), getCore(e.getElseExpression()));
+    return e != null && Have.booleanLiteral(core(e.getThenExpression()), core(e.getElseExpression()));
   }
   static boolean isTernaryOfBooleanLitreral(final Expression e) {
-    return isTernaryOfBooleanLitreral(asConditionalExpression(getCore(e)));
+    return isTernaryOfBooleanLitreral(asConditionalExpression(core(e)));
   }
   static InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
     final InfixExpression $ = left.getAST().newInfixExpression();
@@ -1036,7 +1037,7 @@ public enum Wrings {
   }
 
   static Expression pushdownNot(final PrefixExpression e) {
-    return e == null ? null : pushdownNot(getCore(e.getOperand()));
+    return e == null ? null : pushdownNot(core(e.getOperand()));
   }
   static ASTRewrite removeStatement(final ASTRewrite r, final Statement s) {
     final Block parent = asBlock(s.getParent());
@@ -1102,7 +1103,7 @@ public enum Wrings {
    * </ol>
    */
   static Expression simplifyTernary(final ConditionalExpression e) {
-    return simplifyTernary(getCore(e.getThenExpression()), getCore(e.getElseExpression()), duplicate(e.getExpression()));
+    return simplifyTernary(core(e.getThenExpression()), core(e.getElseExpression()), duplicate(e.getExpression()));
   }
   /* <code> a ? b : c </code>
    *

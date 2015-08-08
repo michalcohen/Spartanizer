@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.Into.p;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asNot;
-import static org.spartan.refactoring.utils.Restructure.getCore;
 
 import java.util.Collection;
 
@@ -42,7 +42,7 @@ public class PUSHDOWN_NOT {
     assertThat(WRING.eligible(e), is(true));
     assertThat(Wrings.hasOpportunity(e), is(true));
     assertThat(asNot(e), is(notNullValue()));
-    final Expression inner = getCore(e.getOperand());
+    final Expression inner = core(e.getOperand());
     assertThat(inner, is(notNullValue()));
     assertThat(inner.toString(), is("false"));
     assertThat(Is.booleanLiteral(inner), is(true));

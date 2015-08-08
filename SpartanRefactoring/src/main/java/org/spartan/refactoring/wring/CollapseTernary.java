@@ -3,7 +3,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Extract.core;
 
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -17,12 +17,12 @@ final class CollapseTernary extends Wring.OfConditionalExpression {
     return ($ = collapseOnElse(e)) != null || ($ = collaspeOnThen(e)) != null ? $ : null;
   }
   private static Expression collaspeOnThen(final ConditionalExpression e) {
-    final ConditionalExpression then = asConditionalExpression(getCore(e.getThenExpression()));
+    final ConditionalExpression then = asConditionalExpression(core(e.getThenExpression()));
     if (then == null)
       return null;
-    final Expression elze = getCore(e.getElseExpression());
-    final Expression thenThen = getCore(then.getThenExpression());
-    final Expression thenElse = getCore(then.getElseExpression());
+    final Expression elze = core(e.getElseExpression());
+    final Expression thenThen = core(then.getThenExpression());
+    final Expression thenElse = core(then.getElseExpression());
     if (same(thenElse, elze))
       return Subject.pair(thenThen, elze).toCondition(Subject.pair(e.getExpression(), then.getExpression()).to(CONDITIONAL_AND));
     if (same(thenThen, elze))
@@ -30,12 +30,12 @@ final class CollapseTernary extends Wring.OfConditionalExpression {
     return null;
   }
   private static Expression collapseOnElse(final ConditionalExpression e) {
-    final ConditionalExpression elze = asConditionalExpression(getCore(e.getElseExpression()));
+    final ConditionalExpression elze = asConditionalExpression(core(e.getElseExpression()));
     if (elze == null)
       return null;
-    final Expression then = getCore(e.getThenExpression());
-    final Expression elseThen = getCore(elze.getThenExpression());
-    final Expression elseElse = getCore(elze.getElseExpression());
+    final Expression then = core(e.getThenExpression());
+    final Expression elseThen = core(elze.getThenExpression());
+    final Expression elseElse = core(elze.getElseExpression());
     if (same(then, elseElse))
       return Subject.pair(elseThen, then).toCondition(Subject.pair(not(e.getExpression()), elze.getExpression()).to(CONDITIONAL_AND));
     if (same(then, elseThen))

@@ -2,9 +2,10 @@ package org.spartan.refactoring.wring;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.spartanizations.Into.c;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.Collection;
 
@@ -32,13 +33,13 @@ public class CollapseTernaryTest {
   @Test public void steps() {
     final ConditionalExpression e = c("a ? b ? x : z :z");
     assertNotNull(e);
-    final ConditionalExpression then = asConditionalExpression(getCore(e.getThenExpression()));
+    final ConditionalExpression then = asConditionalExpression(core(e.getThenExpression()));
     assertNotNull(then);
-    final Expression elze = getCore(e.getElseExpression());
+    final Expression elze = core(e.getElseExpression());
     assertNotNull(elze);
-    final Expression thenThen = getCore(then.getThenExpression());
+    final Expression thenThen = core(then.getThenExpression());
     assertNotNull(thenThen);
-    final Expression thenElse = getCore(then.getElseExpression());
+    final Expression thenElse = core(then.getElseExpression());
     assertNotNull(thenElse);
     assertTrue(same(thenElse, elze));
   }

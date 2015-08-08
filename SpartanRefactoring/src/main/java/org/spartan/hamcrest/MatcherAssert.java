@@ -1,6 +1,8 @@
 package org.spartan.hamcrest;
 
+import static org.spartan.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matcher;
+import org.spartan.utils.Wrapper;
 
 /**
  * Non-auto-boxing version for all primitive types of the family of Hamcrest
@@ -266,4 +268,25 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
   public static void assertThat(final String reason, final short s, final Matcher<? super Short> m) {
     assertThat(reason, Short.valueOf(s), m);
   }
+  public static void assertThat(final Object expected, final Wrapper<String> actual) {
+    assertThat(compressSpaces(expected+""), is(compressSpaces(actual.get())));
+  }
+  public static final Wrapper<String> iz(final String s) {
+    return new Wrapper<>(s);
+  }
+  private static String compressSpaces(final String s) {
+    String $ = s//
+        .replaceAll("(?m)\\s+", " ") // Squeeze whites
+        .replaceAll("^\\s", "") // Opening whites
+        .replaceAll("\\s$", "") // Closing whites
+        ;
+    for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
+        "[\\^]" })
+      $ = $ //
+          .replaceAll(WHITES + operator, operator) // Preceding whites
+          .replaceAll(operator + WHITES, operator) // Trailing whites
+          ;
+    return $;
+  }
+  static final String WHITES = "(?m)\\s+";
 }

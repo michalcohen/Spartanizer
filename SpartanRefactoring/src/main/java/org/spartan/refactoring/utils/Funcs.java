@@ -15,7 +15,6 @@ import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
 import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -23,7 +22,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Restructure.getCore;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
@@ -708,7 +707,7 @@ public enum Funcs {
     if (Is.simple(e))
       return duplicate(e);
     final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(duplicate(getCore(e)));
+    $.setExpression(duplicate(core(e)));
     return $;
   }
   /**

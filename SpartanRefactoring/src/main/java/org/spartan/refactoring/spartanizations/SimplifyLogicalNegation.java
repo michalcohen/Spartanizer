@@ -1,11 +1,11 @@
 package org.spartan.refactoring.spartanizations;
-
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
-import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 import static org.spartan.utils.Utils.hasNull;
 
@@ -41,7 +41,7 @@ public class SimplifyLogicalNegation extends Spartanization {
         return !inRange(m, e) || simplifyNot(asNot(e));
       }
       private boolean simplifyNot(final PrefixExpression e) {
-        return e == null || simplifyNot(e, getCore(e.getOperand()));
+        return e == null || simplifyNot(e, core(e.getOperand()));
       }
       private boolean simplifyNot(final PrefixExpression e, final Expression inner) {
         return perhapsDoubleNegation(e, inner) //
@@ -112,10 +112,10 @@ public class SimplifyLogicalNegation extends Spartanization {
     });
   }
   static Expression getCoreRight(final InfixExpression e) {
-    return getCore(e.getRightOperand());
+    return core(e.getRightOperand());
   }
   static Expression getCoreLeft(final InfixExpression e) {
-    return getCore(e.getLeftOperand());
+    return core(e.getLeftOperand());
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
@@ -125,7 +125,7 @@ public class SimplifyLogicalNegation extends Spartanization {
         return true;
       }
       private boolean hasOpportunity(final PrefixExpression e) {
-        return e != null && hasOpportunity(getCore(e.getOperand()));
+        return e != null && hasOpportunity(core(e.getOperand()));
       }
       private boolean hasOpportunity(final Expression inner) {
         return asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
