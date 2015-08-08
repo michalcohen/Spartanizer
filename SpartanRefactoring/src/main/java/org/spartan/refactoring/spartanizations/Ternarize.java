@@ -450,9 +450,9 @@ public class Ternarize extends Spartanization {
   }
   private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Expression otherAsgnExp) {
     final Expression thenSideExp = Is.plainAssignment(then) ? then.getRightHandSide()
-        : new Subject.Pair(then.getRightHandSide(), otherAsgnExp).to(InfixExpression.Operator.PLUS);
+        : Subject.pair(then.getRightHandSide(), otherAsgnExp).to(InfixExpression.Operator.PLUS);
     final Expression newCond = makeParenthesizedConditionalExp(r, i.getExpression(), thenSideExp, otherAsgnExp);
-    r.replace(i, t.newExpressionStatement(new Subject.Pair(then.getLeftHandSide(), newCond).to(then.getOperator())), null);
+    r.replace(i, t.newExpressionStatement(Subject.pair(then.getLeftHandSide(), newCond).to(then.getOperator())), null);
   }
   static Range detectIfReturn(final IfStatement i) {
     return Extract.statements(i.getParent()) == null ? null : detectIfReturn(i, Extract.statements(i.getParent()));

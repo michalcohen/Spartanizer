@@ -556,10 +556,7 @@ public enum Funcs {
     final Expression $ = e.getLeftOperand();
     return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
-  public static InfixExpression makeAND(final Expression s1, final Expression s2) {
-    return new Subject.Pair(s1, s2).to(CONDITIONAL_AND);
-  }
-   /**
+  /**
    * Create a new {@link ConditionalExpression}
    *
    * @param e JD

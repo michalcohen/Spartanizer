@@ -100,8 +100,8 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
     final Operator op = negate(e.getOperator());
     return op == null ? null
-        : !Is.deMorgan(op) ? new Subject.Pair(e.getLeftOperand(), e.getRightOperand()).to(op)
-            : new Subject.Pair(negateExp(t, r, e.getLeftOperand()), negateExp(t, r, e.getRightOperand())).to(op);
+        : !Is.deMorgan(op) ? Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(op)
+            : Subject.pair(negateExp(t, r, e.getLeftOperand()), negateExp(t, r, e.getRightOperand())).to(op);
   }
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
     return Is.infix(e) ? makePrefixExpression(t, makeParenthesizedExpression(e), NOT)

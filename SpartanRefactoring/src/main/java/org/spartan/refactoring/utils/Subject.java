@@ -15,6 +15,9 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
   public static Subject.Operand operand(final Expression inner) {
     return new Operand(inner);
   }
+  public static Subject.Pair pair(final Expression left, final Expression right) {
+    return new Pair(left,right);
+  }
   public static Subject.Several operands(final Expression... operands) {
     return new Subject.Several(operands);
   }
@@ -51,7 +54,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 
   public static class Pair {
     final Expression left, right;
-    public Pair(final Expression left, final Expression right) {
+     Pair(final Expression left, final Expression right) {
       this.left = left;
       this.right = right;
     }
@@ -79,7 +82,10 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
   }
 
   public static class Several {
-    public Several(final Expression... operands) {
+     private final Expression[] operands;
+
+    Several(final Expression... operands) {
+       this.operands=operands;
     }
   }
 }

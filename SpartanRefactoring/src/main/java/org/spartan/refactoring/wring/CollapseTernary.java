@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
-import static org.spartan.refactoring.utils.Funcs.makeAND;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.getCore;
@@ -24,9 +24,9 @@ final class CollapseTernary extends Wring.OfConditionalExpression {
     final Expression thenThen = getCore(then.getThenExpression());
     final Expression thenElse = getCore(then.getElseExpression());
     if (same(thenElse, elze))
-      return new Subject.Pair(thenThen, elze).toCondition(makeAND(e.getExpression(), then.getExpression()));
+      return Subject.pair(thenThen, elze).toCondition(Subject.pair(e.getExpression(), then.getExpression()).to(CONDITIONAL_AND));
     if (same(thenThen, elze))
-      return new Subject.Pair(thenElse, elze).toCondition(makeAND(e.getExpression(), not(then.getExpression())));
+      return Subject.pair(thenElse, elze).toCondition(Subject.pair(e.getExpression(), not(then.getExpression())).to(CONDITIONAL_AND));
     return null;
   }
   private static Expression collapseOnElse(final ConditionalExpression e) {
@@ -37,9 +37,9 @@ final class CollapseTernary extends Wring.OfConditionalExpression {
     final Expression elseThen = getCore(elze.getThenExpression());
     final Expression elseElse = getCore(elze.getElseExpression());
     if (same(then, elseElse))
-      return new Subject.Pair(elseThen, then).toCondition(makeAND(not(e.getExpression()), elze.getExpression()));
+      return Subject.pair(elseThen, then).toCondition(Subject.pair(not(e.getExpression()), elze.getExpression()).to(CONDITIONAL_AND));
     if (same(then, elseThen))
-      return new Subject.Pair(elseElse, then).toCondition(makeAND(not(e.getExpression()), not(elze.getExpression())));
+      return Subject.pair(elseElse, then).toCondition(Subject.pair(not(e.getExpression()), not(elze.getExpression())).to(CONDITIONAL_AND));
     return null;
   }
   @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
