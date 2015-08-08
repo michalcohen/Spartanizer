@@ -13,16 +13,16 @@ import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
+import static org.spartan.refactoring.spartanizations.Into.c;
+import static org.spartan.refactoring.spartanizations.Into.e;
+import static org.spartan.refactoring.spartanizations.Into.i;
+import static org.spartan.refactoring.spartanizations.Into.p;
+import static org.spartan.refactoring.spartanizations.Into.s;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.c;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.e;
-import static org.spartan.refactoring.spartanizations.TESTUtils.i;
-import static org.spartan.refactoring.spartanizations.TESTUtils.p;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
-import static org.spartan.refactoring.spartanizations.TESTUtils.s;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
 import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
@@ -54,8 +54,6 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Conditional;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Infix;
 import org.spartan.utils.Range;
 
 /**
@@ -693,7 +691,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     WringedVariableDeclarationFragmentAndSurrounding(final Wring inner) {
       super(inner);
     }
-    protected CompilationUnit asCompilationUnit() {
+    @Override protected CompilationUnit asCompilationUnit() {
       final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
       assertThat($, is(notNullValue()));
       assertThat($, is(instanceOf(CompilationUnit.class)));
@@ -736,7 +734,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
     @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
-      ASTRewrite r = wringer.createRewrite(u, null);
+      final ASTRewrite r = wringer.createRewrite(u, null);
       assertNotNull(r);
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {

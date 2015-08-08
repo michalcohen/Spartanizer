@@ -1,13 +1,7 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.assertNotNull;
-import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-
 import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +24,8 @@ import org.spartan.utils.Utils;
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE {
   static final Wring WRING = Wrings.DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE.inner;
-  @Test public void placeHolde() {
+  @Test public void placeHolder() {
+    // Place holder for future tests
   }
 
   @RunWith(Parameterized.class) //

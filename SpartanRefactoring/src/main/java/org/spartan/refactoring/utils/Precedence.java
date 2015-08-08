@@ -2,6 +2,8 @@ package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.asExpression;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -9,6 +11,7 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.PostfixExpression;
 
 /**
  * *An empty <code><b>enum</b></code> for fluent programming. The name should
@@ -69,6 +72,10 @@ public enum Precedence {
         return of((InfixExpression) e);
       case ASSIGNMENT:
         return of((Assignment) e);
+      case PREFIX_EXPRESSION:
+        return -4;
+      case POSTFIX_EXPRESSION:
+        return -4;
       default:
         return of(e.getClass().getSimpleName());
     }
@@ -82,6 +89,10 @@ public enum Precedence {
    */
   public static int of(final InfixExpression.Operator o) {
     return of(o.toString());
+  }
+  public static Operator of(final PostfixExpression.Operator o) {
+    // TODO Auto-generated method stub
+    return null;
   }
   /**
    * Determine the precedence of two expressions is the same.
@@ -111,6 +122,7 @@ public enum Precedence {
   private static int of(final InfixExpression e) {
     return of(e.getOperator());
   }
+
   private static int of(final String key) {
     return !of.containsKey(key) ? UNDEFINED : of.get(key);
   }

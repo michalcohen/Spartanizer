@@ -1,12 +1,11 @@
 package org.spartan.refactoring.wring;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.TESTUtils.p;
+import static org.spartan.refactoring.spartanizations.Into.p;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Restructure.getCore;

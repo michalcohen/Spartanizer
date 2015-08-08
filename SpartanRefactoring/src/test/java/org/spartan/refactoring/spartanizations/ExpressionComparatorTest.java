@@ -4,7 +4,7 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThan;
 import static org.spartan.hamcrest.OrderingComparison.lessThan;
-import static org.spartan.refactoring.spartanizations.TESTUtils.e;
+import static org.spartan.refactoring.spartanizations.Into.e;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.junit.FixMethodOrder;

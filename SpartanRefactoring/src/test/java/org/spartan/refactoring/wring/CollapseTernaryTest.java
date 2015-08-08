@@ -1,10 +1,8 @@
 package org.spartan.refactoring.wring;
-
-import static org.spartan.refactoring.spartanizations.TESTUtils.c;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.spartan.refactoring.spartanizations.Into.c;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.getCore;
 
@@ -32,7 +30,7 @@ import org.spartan.utils.Utils;
 public class CollapseTernaryTest {
   static final Wring WRING = Wrings.COLLAPSE_TERNARY.inner;
   @Test public void steps() {
-    ConditionalExpression e = c("a ? b ? x : z :z");
+    final ConditionalExpression e = c("a ? b ? x : z :z");
     assertNotNull(e);
     final ConditionalExpression then = asConditionalExpression(getCore(e.getThenExpression()));
     assertNotNull(then);

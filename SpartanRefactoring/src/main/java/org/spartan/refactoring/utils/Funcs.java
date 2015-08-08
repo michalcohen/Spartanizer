@@ -15,6 +15,8 @@ import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
 import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -22,7 +24,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Restructure.parenthesize;
+import static org.spartan.refactoring.utils.Restructure.getCore;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
@@ -42,11 +44,9 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
@@ -72,6 +72,16 @@ import org.spartan.utils.Utils;
  */
 public enum Funcs {
   ;
+  /**
+   * @param e JD
+   * @return the parameter, but logcially negated.
+   */
+  public static PrefixExpression not(final Expression e) {
+    final PrefixExpression $ = e.getAST().newPrefixExpression();
+    $.setOperator(NOT);
+    $.setOperand(parenthesize(e));
+    return $;
+  }
   private static Map<Operator, Operator> conjugate = makeConjeguates();
   /**
    * Convert an {@link Expression} into {@link InfixExpression} whose operator
@@ -325,7 +335,7 @@ public enum Funcs {
   }
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
-   * 
+   *
    * @param n JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    */
@@ -752,6 +762,45 @@ public enum Funcs {
    */
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
+  }
+  /**
+   * Parenthesize an {@link Expression}
+   *
+   * @param e JD
+   * @return a duplicate of parameter, wrapped in parenthesis
+   */
+  public static Expression parenthesize(final Expression e) {
+    if (Is.simple(e))
+      return duplicate(e);
+    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
+    $.setExpression(duplicate(getCore(e)));
+    return $;
+  }
+  private static Expression parenthesize(final InfixExpression.Operator o, final Expression $) {
+    return parenthesize(Precedence.of(o), $);
+  }
+
+   static Expression parenthesize(final PostfixExpression.Operator o, final Expression $) {
+    return parenthesize(Precedence.of(o), $);
+  }
+  public static InfixExpression makeInfix(final Operator o, final Expression left, final Expression right) {
+    final InfixExpression condition = left.getAST().newInfixExpression();
+    condition.setOperator(o);
+    condition.setLeftOperand(parenthesize(o, left));
+    condition.setRightOperand(parenthesize(o, right));
+    return condition;
+  }
+  public static InfixExpression makeOR(final Expression s1, final Expression s2) {
+    return makeInfix(CONDITIONAL_OR, s1, s2);
+  }
+  public static InfixExpression makeAND(final Expression s1, final Expression s2) {
+    return makeInfix(CONDITIONAL_AND, s1, s2);
+  }
+  private static Expression parenthesize(final Assignment.Operator o, final Expression $) {
+    return parenthesize(Precedence.of(o), $);
+  }
+  @SuppressWarnings("unchecked") private static <T extends Expression> Expression parenthesize(final int precedence, final T $) {
+    return !Precedence.Is.legal(Precedence.of($)) || precedence >= Precedence.of($) ? duplicate($) : (T) parenthesize($);
   }
   /**
    * Retrieve previous item in a list

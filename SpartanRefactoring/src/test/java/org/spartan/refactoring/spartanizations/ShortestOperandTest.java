@@ -1,5 +1,4 @@
 package org.spartan.refactoring.spartanizations;
-
 import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
@@ -10,11 +9,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.applicable;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.withinDomain;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoOpportunity;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
+import static org.spartan.refactoring.spartanizations.Into.assertNoOpportunity;
+import static org.spartan.refactoring.spartanizations.Into.assertOneOpportunity;
+import static org.spartan.refactoring.spartanizations.Into.e;
+import static org.spartan.refactoring.spartanizations.Into.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.e;
-import static org.spartan.refactoring.spartanizations.TESTUtils.i;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 import static org.spartan.utils.Utils.hasNull;
 
@@ -32,7 +31,6 @@ import org.junit.runners.MethodSorters;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
-
 /**
  * * Unit tests for {@link ShortestOperand}
  *

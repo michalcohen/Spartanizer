@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.TESTUtils.s;
+import static org.spartan.refactoring.spartanizations.Into.s;
 import static org.spartan.refactoring.utils.Restructure.singleStatement;
 
 import java.util.List;

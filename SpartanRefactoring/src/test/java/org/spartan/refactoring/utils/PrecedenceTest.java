@@ -4,8 +4,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.comparesEqualTo;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.c;
-import static org.spartan.refactoring.spartanizations.TESTUtils.e;
+import static org.spartan.refactoring.spartanizations.Into.c;
+import static org.spartan.refactoring.spartanizations.Into.e;
+import static org.spartan.refactoring.spartanizations.Into.p;
 
 import org.junit.Test;
 
@@ -20,6 +21,9 @@ public class PrecedenceTest {
   }
   @Test public void existsTernary() {
     Precedence.of(c("A?b:c"));
+  }
+  @Test public void existsPrefix() {
+    Precedence.of(p("!a"));
   }
   @Test public void methodInvocationIsNotNegative() {
     assertThat(Precedence.of(e("f(a,b,c)")), greaterThanOrEqualTo(0));
