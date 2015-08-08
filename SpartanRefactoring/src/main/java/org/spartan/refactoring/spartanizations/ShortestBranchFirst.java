@@ -11,7 +11,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeIfStatement;
-import static org.spartan.refactoring.utils.Funcs.makeInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
@@ -39,6 +38,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
 /**
@@ -100,8 +100,8 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
   private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
     final Operator op = negate(e.getOperator());
     return op == null ? null
-        : !Is.deMorgan(op) ? makeInfixExpression(r, t, e.getLeftOperand(), op, e.getRightOperand())
-            : makeInfixExpression(r, t, negateExp(t, r, e.getLeftOperand()), op, negateExp(t, r, e.getRightOperand()));
+        : !Is.deMorgan(op) ? Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(op)
+            : Subject.pair(negateExp(t, r, e.getLeftOperand()), negateExp(t, r, e.getRightOperand())).to(op);
   }
   private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
     return Is.infix(e) ? makePrefixExpression(t, makeParenthesizedExpression(e), NOT)

@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.applicable;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.withinDomain;
 import static org.spartan.refactoring.spartanizations.Into.e;

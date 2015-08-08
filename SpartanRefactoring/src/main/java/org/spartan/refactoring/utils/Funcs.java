@@ -16,7 +16,6 @@ import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -624,23 +623,6 @@ public enum Funcs {
     $.setExpression(frugalDuplicate(condition));
     $.setThenStatement(then.getParent() == null ? then : (Statement) r.createCopyTarget(then));
     $.setElseStatement(elze.getParent() == null ? elze : (Statement) r.createCopyTarget(elze));
-    return $;
-  }
-  /**
-   * @param r ASTRewrite for the given AST
-   * @param t the AST who is to own the new return statement
-   * @param left the left expression
-   * @param o the operator for the new infix expression
-   * @param right the right expression
-   * @return the new infix expression
-   */
-  public static InfixExpression makeInfixExpression(final ASTRewrite r, final AST t, final Expression left, final Operator o, final Expression right) {
-    if (hasNull(t, r, o, right, left))
-      return null;
-    final InfixExpression $ = t.newInfixExpression();
-    $.setLeftOperand(frugalDuplicate(left));
-    $.setOperator(o);
-    $.setRightOperand(frugalDuplicate(right));
     return $;
   }
   /**

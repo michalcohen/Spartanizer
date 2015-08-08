@@ -54,6 +54,8 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
+import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Conditional;
+import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Infix;
 import org.spartan.utils.Range;
 
 /**

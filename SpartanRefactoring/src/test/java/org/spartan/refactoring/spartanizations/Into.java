@@ -3,23 +3,15 @@ package org.spartan.refactoring.spartanizations;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
-import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jface.text.Document;
 import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.wring.Trimmer;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
