@@ -8,10 +8,8 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Subject.Pair;
-import org.junit.Test;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class SubjectTest {
   @Test public void vanilla() {
@@ -33,10 +31,15 @@ import org.junit.Test;
     assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator.ASSIGN), iz("a=b"));
     assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator.PLUS_ASSIGN), iz("a+=b"));
     assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator. RIGHT_SHIFT_UNSIGNED_ASSIGN), iz("a>>>=b"));
-
   }
-  @Test public void substractionsNotAssociate() {
-    assertThat(Subject.pair(e("a-B"), e("c-d")).to(InfixExpression.Operator.MINUS), iz("a - B - c + d"));
+  @Test public void substractionsDoesntAssociate() {
+    assertThat(Subject.pair(e("a-B"), e("c-d")).to(InfixExpression.Operator.MINUS), iz("(a - B) - (c - d)"));
+  }
+  @Test public void divisionDoesntAssociate() {
+    assertThat(Subject.pair(e("a*B"), e("c*d")).to(InfixExpression.Operator.DIVIDE), iz("(a * B) / (c * d)"));
+  }
+  @Test public void remainderDoesntAssociate() {
+    assertThat(Subject.pair(e("a*B"), e("c*d")).to(InfixExpression.Operator.REMAINDER), iz("(a * B) % (c * d)"));
   }
   @Test public void extractcoreLeft() {
     assertThat(Subject.pair(e("((a-B))"), e("c-d")).to(InfixExpression.Operator.PLUS), iz("a - B + c - d"));

@@ -47,6 +47,16 @@ public enum Precedence {
           "<<=", ">>=", ">>>="// assignment, shift
   );
   /**
+   * determine whether the precedence of a given {@link Expression} can be determined.
+   *
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
+   *         precedence of Java.
+   */
+  public static boolean known(final Expression e) {
+    return Is.legal(Precedence.of(e));
+  }
+  /**
    * Determine the precedence of an
    * {@link org.eclipse.jdt.core.dom.Assignment.Operator}
    *
@@ -131,10 +141,10 @@ public enum Precedence {
   private static int of(final InfixExpression e) {
     return of(e.getOperator());
   }
+
   private static int of(final String key) {
     return !of.containsKey(key) ? UNDEFINED : of.get(key);
   }
-
   /**
    * *An empty <code><b>enum</b></code> for fluent programming. The name should
    * say it all: The name, followed by a dot, followed by a method name, should
@@ -149,7 +159,7 @@ public enum Precedence {
      * determine whether an integer falls within the legal range of precedences.
      *
      * @param precedence JD
-     * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
+     * @return <code><b>true</b></code> <i>iff</i> the parameter is a legal
      *         precedence of Java.
      */
     public static boolean legal(final int precedence) {

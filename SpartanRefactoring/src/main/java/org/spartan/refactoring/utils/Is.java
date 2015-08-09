@@ -23,7 +23,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.THROW_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
@@ -73,6 +73,7 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.mockito.invocation.DescribedInvocation;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -111,16 +112,6 @@ public enum Is {
    */
   public static boolean block(final ASTNode n) {
     return is(n, BLOCK);
-  }
-  /**
-   * Determine whether a node is a {@link Block}
-   *
-   * @param n JD
-   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
-   *         statement
-   */
-  public static boolean statement(final ASTNode n) {
-    return n instanceof Statement;
   }
   /**
    * Determine whether a node is a boolean literal
@@ -329,6 +320,12 @@ public enum Is {
   public static boolean methodInvocation(final ASTNode n) {
     return is(n, METHOD_INVOCATION);
   }
+  public static boolean nonAssociative(final Expression e) {
+    return nonAssociative(asInfixExpression(e));
+  }
+  public static boolean nonAssociative(final InfixExpression e) {
+    return e != null && in(e.getOperator(),MINUS, DIVIDE, REMAINDER);
+  }
   /**
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
@@ -407,6 +404,17 @@ public enum Is {
     return is(n, RETURN_STATEMENT);
   }
   /**
+   * Determine whether a node is a "sequencer", i.e., <code><b>return</b></code>
+   * , <code><b>break</b></code>, <code><b>continue</b></code> or
+   * <code><b>throw</b></code>
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a sequencer
+   */
+  public static boolean sequencer(final ASTNode n) {
+    return Is.oneOf(n, RETURN_STATEMENT, BREAK_STATEMENT, CONTINUE_STATEMENT, THROW_STATEMENT);
+  }
+  /**
    * Determine whether an {@link Expression} is so basic that it never needs to
    * be placed in parenthesis.
    *
@@ -445,15 +453,14 @@ public enum Is {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
   }
   /**
-   * Determine whether a node is a "sequencer", i.e., <code><b>return</b></code>
-   * , <code><b>break</b></code>, <code><b>continue</b></code> or
-   * <code><b>throw</b></code>
+   * Determine whether a node is a {@link Block}
    *
    * @param n JD
-   * @return <code><b>true</b></code> <i>iff</i> the parameter is a sequencer
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
+   *         statement
    */
-  public static boolean sequencer(final ASTNode n) {
-    return Is.oneOf(n, RETURN_STATEMENT, BREAK_STATEMENT, CONTINUE_STATEMENT, THROW_STATEMENT);
+  public static boolean statement(final ASTNode n) {
+    return n instanceof Statement;
   }
   /**
    * @param n JD

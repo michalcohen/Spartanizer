@@ -23,17 +23,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
   public static Several operands(final Expression... operands) {
     return new Several(operands);
   }
-  private static ParenthesizedExpression parenthesize(final Expression e) {
-    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(duplicate(e));
-    return $;
-  }
-  static Expression parenthesize(final int precedence, final Expression $) {
-    return !Precedence.Is.legal(Precedence.of($)) || precedence >= Precedence.of($) ? $ : parenthesize($);
-  }
-  static Expression parenthesize(final Expression host, final Expression $) {
-    return parenthesize(Precedence.of(host), $);
-  }
+
 
   static class Claimer {
     protected final AST ast;
@@ -43,9 +33,25 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     Expression claim(final Expression e) {
       return rebase(duplicate(Extract.core(e)), ast);
     }
+    private  ParenthesizedExpression parenthesize(final Expression e) {
+      final ParenthesizedExpression $ = ast.newParenthesizedExpression();
+      $.setExpression(duplicate(e));
+      return $;
+    }
+     Expression parenthesize(final Expression host, final Expression $) {
+      if (!Precedence.known($))
+        return $;
+      if (Precedence.of(host) > Precedence.of($))
+        return $;
+      if (Precedence.of(host) < Precedence.of($))
+        return parenthesize($);
+      if (Is.nonAssociative(host))
+        return parenthesize($);
+      return $;
+    }
   }
 
-  public static class Operand  extends Claimer {
+  public static class Operand extends Claimer {
     private final Expression inner;
     Operand(final Expression inner) {
       super(inner);
@@ -54,13 +60,13 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     public Expression to(final PostfixExpression.Operator o) {
       final PostfixExpression $ = ast.newPostfixExpression();
       $.setOperator(o);
-      $.setOperand(parenthesize(Precedence.of($), inner));
+      $.setOperand(parenthesize($, inner));
       return $;
     }
     public PrefixExpression to(final PrefixExpression.Operator o) {
       final PrefixExpression $ = ast.newPrefixExpression();
       $.setOperator(o);
-      $.setOperand(parenthesize(Precedence.of($), inner));
+      $.setOperand(parenthesize($, inner));
       return $;
     }
   }

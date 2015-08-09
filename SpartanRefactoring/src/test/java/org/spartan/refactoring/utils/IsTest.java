@@ -37,4 +37,14 @@ public class IsTest {
   @Test public void numericLiteralTrue() {
     assertTrue(Is.numericLiteral(e("1")));
   }
+  @Test public void nonnAssociative() {
+    assertFalse(Is.nonAssociative(e("1")));
+    assertFalse(Is.nonAssociative(e("-1")));
+    assertFalse(Is.nonAssociative(e("-1+2")));
+    assertFalse(Is.nonAssociative(e("1+2")));
+    assertTrue(Is.nonAssociative(e("2-1")));
+    assertTrue(Is.nonAssociative(e("2/1")));
+    assertTrue(Is.nonAssociative(e("2%1")));
+    assertFalse(Is.nonAssociative(e("2*1")));
+  }
 }
