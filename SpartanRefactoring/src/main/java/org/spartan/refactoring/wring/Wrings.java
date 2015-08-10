@@ -97,7 +97,7 @@ public enum Wrings {
     final IfStatement s = Extract.nextIfStatement(f);
     if (s == null)
       return null;
-    if (Extract.statements(s.getElseStatement()).size() != 0)
+    if (!elseIsEmpty(s))
       return null;
     final Assignment a = Extract.assignment(s.getThenStatement());
     if (a == null)
@@ -974,11 +974,8 @@ public enum Wrings {
     for (final Expression e : from)
       to.add(not(e));
   }
-  static InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
-    return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
-  }
   static Expression comparison(final InfixExpression inner) {
-    return cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator()));
+    return Subject.pair(getCoreLeft(inner), getCoreRight(inner)).to(ShortestBranchFirst.negate(inner.getOperator()));
   }
   static Expression deMorgan(final InfixExpression inner, final Expression left, final Expression right) {
     return deMorgan1(inner, parenthesize(left), parenthesize(right));
@@ -986,7 +983,7 @@ public enum Wrings {
   static Expression deMorgan1(final InfixExpression inner, final Expression left, final Expression right) {
     return parenthesize( //
         addExtendedOperands(inner, //
-            makeInfixExpression(not(left), conjugate(inner), not(right))));
+            Subject.pair(not(left), not(right)).to(conjugate(inner))));
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = All.operands(flatten(e));
@@ -1030,14 +1027,6 @@ public enum Wrings {
   static boolean isTernaryOfBooleanLitreral(final Expression e) {
     return isTernaryOfBooleanLitreral(asConditionalExpression(core(e)));
   }
-  static InfixExpression makeInfixExpression(final Expression left, final Operator o, final Expression right) {
-    final InfixExpression $ = left.getAST().newInfixExpression();
-    $.setLeftOperand(duplicate(left));
-    $.setOperator(o);
-    $.setRightOperand(duplicate(right));
-    return $;
-  }
-
   static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
     final VariableDeclarationFragment $ = duplicate(f);
     $.setInitializer(duplicate(e));
