@@ -124,14 +124,14 @@ public enum Extract {
     return Extract.assignment(nextStatement(n));
   }
   /**
-   * Extract the {@link IfStatement} that immediately follows a given statement
+   * Extract the {@link IfStatement} that immediately follows a given node
    *
-   * @param s JD
+   * @param n JD
    * @return the {@link IfStatement} that immediately follows the parameter, or
    *         <code><b>null</b></code>, if no such statement exists.
    */
-  public static IfStatement nextIfStatement(final Statement s) {
-    return asIfStatement(nextStatement(s));
+  public static IfStatement nextIfStatement(final ASTNode n) {
+    return asIfStatement(nextStatement(n));
   }
   /**
    * Extract the {@link ReturnStatement} that immediately follows a given

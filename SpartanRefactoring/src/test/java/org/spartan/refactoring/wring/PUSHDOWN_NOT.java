@@ -103,7 +103,9 @@ public class PUSHDOWN_NOT {
         Utils.asArray("not of NE", "!(3 != 5)", "3 == 5"), //
         Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
         Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
+        Utils.asArray("not of wrapped OR", "!((a) || b || c)", "(!a && !b && !c)"), //
         Utils.asArray("not of true", "!true", "false"), //
+        Utils.asArray("not of true", "!!true", "true"), //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -693,12 +693,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     WringedVariableDeclarationFragmentAndSurrounding(final Wring inner) {
       super(inner);
     }
-    @Override protected CompilationUnit asCompilationUnit() {
-      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
-      assertThat($, is(notNullValue()));
-      assertThat($, is(instanceOf(CompilationUnit.class)));
-      return (CompilationUnit) $;
-    }
     @Override @Test public void correctSimplifier() {
       assertThat(asMe().toString(), Wrings.find(asMe()), is(inner));
     }
@@ -730,14 +724,14 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void peelableOutput() {
       assertEquals(expected, peelStatement(wrapStatement(expected)));
     }
-    @Test public void scopeIncludesAsMe() {
-      final boolean scopeIncludes = inner.scopeIncludes(asMe());
-      assertThat(asMe().toString(), scopeIncludes, is(true));
-    }
     @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertNotNull(r);
+    }
+    @Test public void scopeIncludesAsMe() {
+      final boolean scopeIncludes = inner.scopeIncludes(asMe());
+      assertThat(asMe().toString(), scopeIncludes, is(true));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
@@ -752,6 +746,12 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertSimilar(expected, peeled);
       assertSimilar(wrapStatement(expected), actual);
     }
+    @Override protected CompilationUnit asCompilationUnit() {
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+      assertThat($, is(notNullValue()));
+      assertThat($, is(instanceOf(CompilationUnit.class)));
+      return (CompilationUnit) $;
+    }
     /**
      * Instantiates the enclosing class ({@link WringedInput})
      *
@@ -760,10 +760,6 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Override protected final Document asDocument() {
       return new Document(wrapStatement(input));
     }
-    /**
-     * In case of an IfStatemnet and surrounding, we search and then find the
-     * first If statement in the input.
-     */
     @Override protected VariableDeclarationFragment asMe() {
       return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
     }

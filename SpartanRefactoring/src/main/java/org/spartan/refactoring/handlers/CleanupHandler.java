@@ -10,6 +10,7 @@ import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Spartanizations;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.wring.Trimmer;
 
 /**
  * A handler for {@link Spartanizations} This handler executes all safe
@@ -26,15 +27,16 @@ public class CleanupHandler extends BaseHandler {
   private final Spartanization[] safeSpartanizations = { //
       new ComparisonWithBoolean(), //
       new RenameReturnVariableToDollar(), //
-      new ShortestBranchFirst() //
+      new ShortestBranchFirst(), //
+      new Trimmer(),
   };
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) {
     for (final ICompilationUnit cu : All.compilationUnits())
       for (final Spartanization s : safeSpartanizations)
-        performRule(cu, s);
+        execute(cu, s);
     return null;
   }
-  private static void performRule(final ICompilationUnit cu, final Spartanization s) {
+  private static void execute(final ICompilationUnit cu, final Spartanization s) {
     try {
       // TODO We might want a real ProgressMonitor for large projects
       s.performRule(cu, new NullProgressMonitor());

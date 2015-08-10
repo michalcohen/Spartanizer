@@ -8,7 +8,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
@@ -72,6 +71,51 @@ public enum Wrings {
    * A {@link Wring} to convert
    *
    * <pre>
+   * int a = 2; if (b) a = 3;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * int a =  b ? 3: 2;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-08-07
+   */
+  DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE(new Wring.OfVariableDeclarationFragmentAndSurrounding(){
+  @Override public final String toString() {
+    return "DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE(" + super.toString() + ")";
+  }
+  @Override boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
+    return true;
+  }
+  @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
+    final Expression initializer = f.getInitializer();
+    if (initializer == null)
+      return null;
+    final IfStatement s = Extract.nextIfStatement(f);
+    if (s == null)
+      return null;
+    if (Extract.statements(s.getElseStatement()).size() != 0)
+      return null;
+    final Assignment a = Extract.assignment(s.getThenStatement());
+    if (a == null)
+      return null;
+    if (!same(a.getLeftHandSide(),f.getName()))
+      return null;
+    r.replace(initializer,Subject.pair(a.getRightHandSide(),initializer).toCondition(s.getExpression()),null);
+    r.remove(s,null);
+    return r;
+  }
+  @Override boolean scopeIncludes(final VariableDeclarationFragment f) {
+    return fillReplacement(f, ASTRewrite.create(f.getAST())) != null;
+  }
+  }),
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
    * int a; a = 3;
    * </pre>
    *
@@ -92,8 +136,7 @@ public enum Wrings {
       return true;
     }
     @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
-      final Expression initializer = f.getInitializer();
-      if (initializer != null)
+      if (f.getInitializer() != null)
         return null;
       final Assignment a = Extract.nextAssignment(f);
       if (a == null || !same(f.getName(), a.getLeftHandSide()))
@@ -764,7 +807,7 @@ public enum Wrings {
     @Override Expression _replacement(final PrefixExpression e) {
       return pushdownNot(asNot(e));
     }
-  }), //
+  }),  //
   //
   ;
   /**
