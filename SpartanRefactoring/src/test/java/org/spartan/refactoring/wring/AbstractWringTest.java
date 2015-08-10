@@ -21,13 +21,13 @@ import static org.spartan.refactoring.spartanizations.Into.s;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
+import static org.spartan.refactoring.spartanizations.Wrap.POST_EXPRESSION;
+import static org.spartan.refactoring.spartanizations.Wrap.PRE_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.utils.Utils.removePrefix;
+import static org.spartan.utils.Utils.removeSuffix;
 
 import java.util.List;
 
@@ -51,6 +51,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.TESTUtils;
+import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
@@ -75,7 +76,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     this.inner = inner;
   }
   protected CompilationUnit asCompilationUnit() {
-    final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapExpression(input));
+    final String s = input;
+    final ASTNode $ = As.COMPILIATION_UNIT.ast(Wrap.Expression.on(s));
     assertThat($, is(notNullValue()));
     assertThat($, is(instanceOf(CompilationUnit.class)));
     return (CompilationUnit) $;
@@ -168,11 +170,13 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final Document d = asDocument();
       wringer.createRewrite(asCompilationUnit(), null).rewriteAST(d, null).apply(d);
-      assertSimilar(compressSpaces(peelExpression(d.get())), compressSpaces(input));
-      assertSimilar(wrapExpression(input), d.get());
+      assertSimilar(compressSpaces(removeSuffix(removePrefix(d.get(), PRE_EXPRESSION), POST_EXPRESSION)), compressSpaces(input));
+      final String s = input;
+      assertSimilar(Wrap.Expression.on(s), d.get());
     }
     @Override protected final Document asDocument() {
-      return new Document(wrapExpression(input));
+      final String s = input;
+      return new Document(Wrap.Expression.on(s));
     }
 
     public static abstract class Infix extends Noneligible {
@@ -282,7 +286,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       @Override @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
         final CompilationUnit u = asCompilationUnit();
         final Document excpected = TESTUtils.rewrite(wringer, u, asDocument());
-        final String peeled = peelStatement(excpected.get());
+        final String peeled = Wrap.Statement.off(excpected.get());
         if (expected.equals(peeled))
           return;
         if (input.equals(peeled))
@@ -290,7 +294,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         if (compressSpaces(peeled).equals(compressSpaces(input)))
           assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
         assertSimilar(expected, peeled);
-        assertSimilar(wrapStatement(expected), excpected);
+        final String s = expected;
+        assertSimilar(Wrap.Statement.on(s), excpected);
       }
       /**
        * In case of an IfStatemnet and surrounding, we search and then find the
@@ -336,7 +341,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertEquals(inner, Wrings.find(asBlock(asMe())));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-      final Document d = new Document(wrapStatement(input));
+      final String s = input;
+      final Document d = new Document(Wrap.Statement.on(s));
       final CompilationUnit u = asCompilationUnit();
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
@@ -359,15 +365,17 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertFalse(inner.noneligible(asMe()));
     }
     @Test public void peelableOutput() {
-      assertEquals(expected, peelStatement(wrapStatement(expected)));
+      final String s = expected;
+      assertEquals(expected, Wrap.Statement.off(Wrap.Statement.on(s)));
     }
     @Test public void scopeIncludes() {
       assertTrue(inner.scopeIncludes(asMe()));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
-      final Document output = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
-      final String peeled = peelStatement(output.get());
+      final String s = input;
+      final Document output = TESTUtils.rewrite(wringer, u, new Document(Wrap.Statement.on(s)));
+      final String peeled = Wrap.Statement.off(output.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -375,7 +383,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapStatement(expected), output);
+      final String s1 = expected;
+      assertSimilar(Wrap.Statement.on(s1), output);
     }
     @Override protected Block asMe() {
       final Statement s = s(input);
@@ -415,7 +424,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertNotNull(asInfixExpression());
       }
       @Override protected final CompilationUnit asCompilationUnit() {
-        final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+        final String s = input;
+        final ASTNode $ = As.COMPILIATION_UNIT.ast(Wrap.Statement.on(s));
         assertThat($, is(notNullValue()));
         assertThat($, is(instanceOf(CompilationUnit.class)));
         return (CompilationUnit) $;
@@ -442,7 +452,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertEquals(inner, Wrings.find(asExpression()));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-      final Document d = new Document(wrapExpression(input));
+      final String s = input;
+      final Document d = new Document(Wrap.Expression.on(s));
       final CompilationUnit u = asCompilationUnit();
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
@@ -465,7 +476,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertFalse(inner.noneligible(asExpression()));
     }
     @Test public void peelableOutput() {
-      assertEquals(expected, peelExpression(wrapExpression(expected)));
+      final String s = expected;
+      assertEquals(expected, removeSuffix(removePrefix(Wrap.Expression.on(s), PRE_EXPRESSION), POST_EXPRESSION));
     }
     @Test public void scopeIncludes() {
       assertTrue(inner.scopeIncludes(asExpression()));
@@ -473,7 +485,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
       final Document actual = TESTUtils.rewrite(wringer, u, asDocument());
-      final String peeled = peelExpression(actual.get());
+      final String peeled = removeSuffix(removePrefix(actual.get(), PRE_EXPRESSION), POST_EXPRESSION);
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -481,7 +493,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapExpression(expected), actual);
+      final String s = expected;
+      assertSimilar(Wrap.Expression.on(s), actual);
     }
     @Test public void simiplifiesExpanded() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
@@ -501,7 +514,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       }
       if (actual == null)
         return;
-      final String peeled = peelExpression(actual.get());
+      final String peeled = removeSuffix(removePrefix(actual.get(), PRE_EXPRESSION), POST_EXPRESSION);
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -509,16 +522,19 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapExpression(expected), actual);
+      final String s = expected;
+      assertSimilar(Wrap.Expression.on(s), actual);
     }
     @Override protected CompilationUnit asCompilationUnit() {
-      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapExpression(input));
+      final String s = input;
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(Wrap.Expression.on(s));
       assertThat($, is(notNullValue()));
       assertThat($, is(instanceOf(CompilationUnit.class)));
       return (CompilationUnit) $;
     }
     @Override protected Document asDocument() {
-      return new Document(wrapExpression(input));
+      final String s = input;
+      return new Document(Wrap.Expression.on(s));
     }
     @Override protected Expression asMe() {
       final Expression $ = e(input);
@@ -579,7 +595,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertThat(asMe().toString(), Wrings.find(asMe()), is(inner));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-      final Document d = new Document(wrapStatement(input));
+      final String s = input;
+      final Document d = new Document(Wrap.Statement.on(s));
       final CompilationUnit u = asCompilationUnit();
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
@@ -607,15 +624,17 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertFalse(inner.noneligible(asMe()));
     }
     @Test public void peelableOutput() {
-      assertEquals(expected, peelStatement(wrapStatement(expected)));
+      final String s = expected;
+      assertEquals(expected, Wrap.Statement.off(Wrap.Statement.on(s)));
     }
     @Test public void scopeIncludesAsMe() {
       assertThat(asMe().toString(), inner.scopeIncludes(asMe()), is(true));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
-      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
-      final String peeled = peelStatement(excpected.get());
+      final String s = input;
+      final Document excpected = TESTUtils.rewrite(wringer, u, new Document(Wrap.Statement.on(s)));
+      final String peeled = Wrap.Statement.off(excpected.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -623,7 +642,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapStatement(expected), excpected);
+      final String s1 = expected;
+      assertSimilar(Wrap.Statement.on(s1), excpected);
     }
     @Override protected IfStatement asMe() {
       final Statement $ = asSingle(input);
@@ -674,13 +694,15 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertNotNull(Wrings.find(asMe()));
     }
     @Override protected final CompilationUnit asCompilationUnit() {
-      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+      final String s = input;
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(Wrap.Statement.on(s));
       assertThat($, is(notNullValue()));
       assertThat($, is(instanceOf(CompilationUnit.class)));
       return (CompilationUnit) $;
     }
     @Override protected final Document asDocument() {
-      return new Document(wrapStatement(input));
+      final String s = input;
+      return new Document(Wrap.Statement.on(s));
     }
     @Override protected Statement asMe() {
       final Statement $ = s(input);
@@ -697,7 +719,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertThat(asMe().toString(), Wrings.find(asMe()), is(inner));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-      final Document d = new Document(wrapStatement(input));
+      final String s = input;
+      final Document d = new Document(Wrap.Statement.on(s));
       final CompilationUnit u = asCompilationUnit();
       final ASTRewrite r = wringer.createRewrite(u, null);
       assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
@@ -722,7 +745,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertFalse(inner.noneligible(asMe()));
     }
     @Test public void peelableOutput() {
-      assertEquals(expected, peelStatement(wrapStatement(expected)));
+      final String s = expected;
+      assertEquals(expected, Wrap.Statement.off(Wrap.Statement.on(s)));
     }
     @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
@@ -735,8 +759,9 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
-      final Document actual = TESTUtils.rewrite(wringer, u, new Document(wrapStatement(input)));
-      final String peeled = peelStatement(actual.get());
+      final String s = input;
+      final Document actual = TESTUtils.rewrite(wringer, u, new Document(Wrap.Statement.on(s)));
+      final String peeled = Wrap.Statement.off(actual.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -744,10 +769,12 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       if (compressSpaces(peeled).equals(compressSpaces(input)))
         assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
       assertSimilar(expected, peeled);
-      assertSimilar(wrapStatement(expected), actual);
+      final String s1 = expected;
+      assertSimilar(Wrap.Statement.on(s1), actual);
     }
     @Override protected CompilationUnit asCompilationUnit() {
-      final ASTNode $ = As.COMPILIATION_UNIT.ast(wrapStatement(input));
+      final String s = input;
+      final ASTNode $ = As.COMPILIATION_UNIT.ast(Wrap.Statement.on(s));
       assertThat($, is(notNullValue()));
       assertThat($, is(instanceOf(CompilationUnit.class)));
       return (CompilationUnit) $;
@@ -758,7 +785,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
      * @param inner
      */
     @Override protected final Document asDocument() {
-      return new Document(wrapStatement(input));
+      final String s = input;
+      return new Document(Wrap.Statement.on(s));
     }
     @Override protected VariableDeclarationFragment asMe() {
       return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
@@ -848,7 +876,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertEquals(inner, Wrings.find(asExpression()));
       }
       @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-        final Document d = new Document(wrapExpression(input));
+        final String s = input;
+        final Document d = new Document(Wrap.Expression.on(s));
         final CompilationUnit u = asCompilationUnit();
         final ASTRewrite r = trimmer.createRewrite(u, null);
         assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
@@ -871,15 +900,17 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertTrue(inner.scopeIncludes(asExpression()));
       }
       @Test public void peelableOutput() {
-        assertEquals(output, peelExpression(wrapExpression(output)));
+        final String s = output;
+        assertEquals(output, removeSuffix(removePrefix(Wrap.Expression.on(s), PRE_EXPRESSION), POST_EXPRESSION));
       }
       @Test public void scopeIncludes() {
         assertFalse(inner.scopeIncludes(asExpression()));
       }
       @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
         final CompilationUnit u = asCompilationUnit();
-        final Document excpected = TESTUtils.rewrite(trimmer, u, new Document(wrapExpression(input)));
-        final String peeled = peelExpression(excpected.get());
+        final String s = input;
+        final Document excpected = TESTUtils.rewrite(trimmer, u, new Document(Wrap.Expression.on(s)));
+        final String peeled = removeSuffix(removePrefix(excpected.get(), PRE_EXPRESSION), POST_EXPRESSION);
         if (output.equals(peeled))
           return;
         if (input.equals(peeled))
@@ -887,7 +918,8 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         if (compressSpaces(peeled).equals(compressSpaces(input)))
           assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
         assertSimilar(output, peeled);
-        assertSimilar(wrapExpression(output), excpected);
+        final String s1 = output;
+        assertSimilar(Wrap.Expression.on(s1), excpected);
       }
       protected abstract Document asDocument();
     }

@@ -6,10 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelStatement;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapStatement;
+import static org.spartan.refactoring.spartanizations.Wrap.POST_EXPRESSION;
+import static org.spartan.refactoring.spartanizations.Wrap.PRE_EXPRESSION;
+import static org.spartan.utils.Utils.removePrefix;
+import static org.spartan.utils.Utils.removeSuffix;
 
 import java.util.Collection;
 
@@ -76,11 +76,14 @@ public class TernarizeTest extends AbstractTestBase {
   /** Where the expected output can be found? */
   @Parameter(2) public String output;
   @Test public void peelableOutput() {
-    assertEquals(output, peelExpression(wrapExpression(output)));
-    assertEquals(output, peelStatement(wrapStatement(output)));
+    final String s = output;
+    assertEquals(output, removeSuffix(removePrefix(Wrap.Expression.on(s), PRE_EXPRESSION), POST_EXPRESSION));
+    final String s1 = output;
+    assertEquals(output, Wrap.Statement.off(Wrap.Statement.on(s1)));
   }
   @Test public void rewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final String wrap = wrapStatement(input);
+    final String s = input;
+    final String wrap = Wrap.Statement.on(s);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
     final Document d = new Document(wrap);
     assertNotNull(d);
@@ -94,7 +97,8 @@ public class TernarizeTest extends AbstractTestBase {
       fail("Nothing done on " + input);
   }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
-    final String wrap = wrapStatement(input);
+    final String s = input;
+    final String wrap = Wrap.Statement.on(s);
     final Document d = new Document(wrap);
     assertNotNull(d);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
@@ -103,12 +107,13 @@ public class TernarizeTest extends AbstractTestBase {
     final String unpeeled = d.get();
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + input);
-    final String peeled = peelStatement(unpeeled);
+    final String peeled = Wrap.Statement.off(unpeeled);
     if (peeled.equals(input))
       assertNotEquals("No similification of " + input, input, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(input)))
       assertNotEquals("Simpification of " + input + " is just reformatting", compressSpaces(peeled), compressSpaces(input));
     assertSimilar(output, peeled);
-    assertSimilar(wrapStatement(output), d);
+    final String s1 = output;
+    assertSimilar(Wrap.Statement.on(s1), d);
   }
 }

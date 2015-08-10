@@ -1,9 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Funcs.asBlock;
 
 import java.util.Collection;
 

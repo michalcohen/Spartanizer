@@ -1,7 +1,9 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.hamcrest.MatcherAssert.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.spartanizations.Into.e;
 
 import org.eclipse.jdt.core.dom.Assignment;

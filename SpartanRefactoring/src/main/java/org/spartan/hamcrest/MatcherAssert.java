@@ -1,6 +1,7 @@
 package org.spartan.hamcrest;
 
 import static org.spartan.hamcrest.CoreMatchers.is;
+
 import org.hamcrest.Matcher;
 import org.spartan.utils.Wrapper;
 

@@ -7,8 +7,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
-import static org.spartan.utils.Utils.removePrefix;
-import static org.spartan.utils.Utils.removeSuffix;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -25,19 +23,9 @@ import org.spartan.refactoring.wring.Trimmer;
 public enum TESTUtils {
   ;
   static final String WHITES = "(?m)\\s+";
-  private static final String PRE_STATEMENT = //
-  "package p;public class SpongeBob {\n" + //
-      "public boolean squarePants(){\n" + //
-      "";
-  private static final String POST_STATEMENT = //
-  "" + //
-      "} // END OF METHO\n" + //
-      "} // END OF PACKAGE\n" + //
-      "";
-  private static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
-  private static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;
+
   public static void assertNoChange(final String input) {
-    assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
+    assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
   /**
    * A test to check that that the actual output is similar to the actual value.
@@ -79,12 +67,6 @@ public enum TESTUtils {
           ;
     return $;
   }
-  public static final String peelExpression(final String s) {
-    return removeSuffix(removePrefix(s, PRE_EXPRESSION), POST_EXPRESSION);
-  }
-  public static final String peelStatement(final String s) {
-    return removeSuffix(removePrefix(s, PRE_STATEMENT), POST_STATEMENT);
-  }
   public static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {
     try {
       s.createRewrite(u, null).rewriteAST($, null).apply($);
@@ -93,12 +75,6 @@ public enum TESTUtils {
       fail(e.getMessage());
     }
     return null;
-  }
-  public static final String wrapExpression(final String s) {
-    return PRE_EXPRESSION + s + POST_EXPRESSION;
-  }
-  public static final String wrapStatement(final String s) {
-    return PRE_STATEMENT + s + POST_STATEMENT;
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);

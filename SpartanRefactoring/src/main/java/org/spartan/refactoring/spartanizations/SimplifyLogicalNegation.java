@@ -1,7 +1,6 @@
 package org.spartan.refactoring.spartanizations;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asNot;

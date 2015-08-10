@@ -8,14 +8,16 @@ import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.Into.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.TESTUtils.peelExpression;
-import static org.spartan.refactoring.spartanizations.TESTUtils.wrapExpression;
+import static org.spartan.refactoring.spartanizations.Wrap.POST_EXPRESSION;
+import static org.spartan.refactoring.spartanizations.Wrap.PRE_EXPRESSION;
 import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.wring.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
+import static org.spartan.utils.Utils.removePrefix;
+import static org.spartan.utils.Utils.removeSuffix;
 
 import java.io.File;
 
@@ -29,6 +31,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.TESTUtils;
+import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
 
@@ -45,7 +48,7 @@ import org.spartan.refactoring.utils.Is;
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
   public static void assertNoChange(final String input) {
-    assertSimilar(input, peelExpression(apply(new Trimmer(), wrapExpression(input))));
+    assertSimilar(input, removeSuffix(removePrefix(apply(new Trimmer(), Wrap.Expression.on(input)), PRE_EXPRESSION), POST_EXPRESSION));
   }
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
@@ -61,12 +64,12 @@ public class TrimmerTest {
     return TESTUtils.rewrite(t, u, d).get();
   }
   static void assertSimplifiesTo(final String from, final String expected) {
-    final String wrap = wrapExpression(from);
-    assertEquals(from, peelExpression(wrap));
+    final String wrap = Wrap.Expression.on(from);
+    assertEquals(from, removeSuffix(removePrefix(wrap, PRE_EXPRESSION), POST_EXPRESSION));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
-    final String peeled = peelExpression(unpeeled);
+    final String peeled = removeSuffix(removePrefix(unpeeled, PRE_EXPRESSION), POST_EXPRESSION);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
@@ -231,7 +234,7 @@ public class TrimmerTest {
     assertSimplifiesTo("f(a,b,c,d,e) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d,e)");
   }
   @Test public void oneOpportunityExample() {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrapExpression(example));
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
     assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
@@ -257,7 +260,7 @@ public class TrimmerTest {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void testPeel() {
-    assertEquals(example, peelExpression(wrapExpression(example)));
+    assertEquals(example, removeSuffix(removePrefix(Wrap.Expression.on(example), PRE_EXPRESSION), POST_EXPRESSION));
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");

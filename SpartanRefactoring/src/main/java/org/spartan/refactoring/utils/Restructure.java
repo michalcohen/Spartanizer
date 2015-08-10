@@ -1,8 +1,7 @@
 package org.spartan.refactoring.utils;
-import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Extract.core;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.rebase;

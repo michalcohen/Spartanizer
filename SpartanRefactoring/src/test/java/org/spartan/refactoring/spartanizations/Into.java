@@ -24,17 +24,7 @@ import org.spartan.refactoring.utils.As;
 public enum Into {
   ;
   static final String WHITES = "(?m)\\s+";
-  private static final String PRE_STATEMENT = //
-  "package p;public class SpongeBob {\n" + //
-      "public boolean squarePants(){\n" + //
-      "";
-  private static final String POST_STATEMENT = //
-  "" + //
-      "} // END OF METHO\n" + //
-      "} // END OF PACKAGE\n" + //
-      "";
-  private static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
-  private static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;
+
   /**
    * Convert a given {@link String} into an {@link ConditionalExpression}, or
    * fail the current test, if such a conversion is not possible

@@ -2,10 +2,10 @@ package org.spartan.refactoring.utils;
 
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.rebase;
-import static org.spartan.refactoring.utils.Restructure.*;
 
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
