@@ -32,7 +32,7 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class PUSHDOWN_NOT {
+public class PushdowNotTest {
   /** The {@link Wring} under test */
   static final Wring WRING = Wrings.PUSHDOWN_NOT.inner;
   @Test public void notOfFalse() {
@@ -46,11 +46,11 @@ public class PUSHDOWN_NOT {
     assertThat(inner, is(notNullValue()));
     assertThat(inner.toString(), is("false"));
     assertThat(Is.booleanLiteral(inner), is(true));
-    assertThat(Wrings.perhapsNotOfLiteral(inner), is(notNullValue()));
-    assertThat(Wrings.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
-    assertThat(Wrings.perhapsNotOfLiteral(inner), is(notNullValue()));
-    assertThat(Wrings.pushdownNot(inner), is(notNullValue()));
-    assertThat(Wrings.pushdownNot(asNot(e)), is(notNullValue()));
+    assertThat(PushdowNot.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(PushdowNot.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
+    assertThat(PushdowNot.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(PushdowNot.pushdownNot(inner), is(notNullValue()));
+    assertThat(PushdowNot.pushdownNot(asNot(e)), is(notNullValue()));
     assertThat(WRING.replacement(e), is(notNullValue()));
   }
 
@@ -90,9 +90,9 @@ public class PUSHDOWN_NOT {
         Utils.asArray("double not deeply nested", "!(((!f())))", "f()"), //
         Utils.asArray("double not", "!!f()", "f()"), //
         Utils.asArray("double not nested", "!(!f())", "f()"), //
-        Utils.asArray("not of AND", "!(a && b && c)", "(!a || !b || !c)"), //
-        Utils.asArray("not of AND", "!(f() && f(5))", "(!f() || !f(5))"), //
-        Utils.asArray("not of AND nested", "!(f() && (f(5)))", "(!f() || !f(5))"), //
+        Utils.asArray("not of AND", "!(a && b && c)", "!a || !b || !c"), //
+        Utils.asArray("not of AND", "!(f() && f(5))", "!f() || !f(5)"), //
+        Utils.asArray("not of AND nested", "!(f() && (f(5)))", "!f() || !f(5)"), //
         Utils.asArray("not of EQ", "!(3 == 5)", "3 != 5"), //
         Utils.asArray("not of EQ nested", "!((((3 == 5))))", "3 != 5"), //
         Utils.asArray("not of false", "!false", "true"), //
@@ -101,9 +101,9 @@ public class PUSHDOWN_NOT {
         Utils.asArray("not of LE", "!(3 <= 5)", "3 > 5"), //
         Utils.asArray("not of LT", "!(3 < 5)", "3 >= 5"), //
         Utils.asArray("not of NE", "!(3 != 5)", "3 == 5"), //
-        Utils.asArray("not of OR 2", "!(f() || f(5))", "(!f() && !f(5))"), //
-        Utils.asArray("not of OR", "!(a || b || c)", "(!a && !b && !c)"), //
-        Utils.asArray("not of wrapped OR", "!((a) || b || c)", "(!a && !b && !c)"), //
+        Utils.asArray("not of OR 2", "!(f() || f(5))", "!f() && !f(5)"), //
+        Utils.asArray("not of OR", "!(a || b || c)", "!a && !b && !c"), //
+        Utils.asArray("not of wrapped OR", "!((a) || b || c)", "!a && !b && !c"), //
         Utils.asArray("not of true", "!true", "false"), //
         Utils.asArray("not of true", "!!true", "true"), //
         null);

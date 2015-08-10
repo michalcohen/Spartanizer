@@ -3,6 +3,10 @@ package org.spartan.refactoring.utils;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.rebase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
@@ -20,8 +24,11 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
   public static Pair pair(final Expression left, final Expression right) {
     return new Pair(left, right);
   }
-  public static Several operands(final Expression... operands) {
-    return new Several(operands);
+  public static Several operands(final Expression... es) {
+    return new Several(Arrays.asList(es));
+  }
+  public static Several operands(final List<Expression> es) {
+    return new Several(es);
   }
 
 
@@ -101,10 +108,21 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     }
   }
 
-  public static class Several {
-    private final Expression[] operands;
-    Several(final Expression... operands) {
-      this.operands = operands;
+  public static class Several extends Claimer {
+    private final List<Expression> operands;
+
+    public Several(final List<Expression> operands) {
+      super(operands.get(0));
+      this.operands = new ArrayList<>();
+      for (final Expression e: operands)
+        this.operands.add(claim(e));
+    }
+    public InfixExpression to(final InfixExpression.Operator o) {
+      assert operands.size() >= 2;
+      final InfixExpression $ = Subject.pair(operands.get(0), operands.get(1)).to(o);
+        for (int i = 2; i < operands.size(); ++i)
+          $.extendedOperands().add(operands.get(i));
+      return $;
     }
   }
 }

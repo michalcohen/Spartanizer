@@ -1,5 +1,6 @@
 package org.spartan.refactoring.utils;
 
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
@@ -66,5 +67,8 @@ import org.spartan.refactoring.utils.Subject.Pair;
   @Test public void postfixPeels() {
     assertThat(Subject.operand(e("((a))")).to(PostfixExpression.Operator.INCREMENT), iz("a++"));
     assertThat(Subject.operand(e("((a))")).to(PostfixExpression.Operator.DECREMENT), iz("a--"));
+  }
+  @Test public void operandsVanilla() {
+    assertThat(Subject.operands(e("((a))"),e("b"), e("c")).to(InfixExpression.Operator.PLUS), iz("a+b+c"));
   }
 }

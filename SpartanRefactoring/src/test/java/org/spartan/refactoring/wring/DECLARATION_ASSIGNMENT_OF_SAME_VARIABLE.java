@@ -1,5 +1,7 @@
 package org.spartan.refactoring.wring;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Collection;
 
 import org.junit.FixMethodOrder;
@@ -26,6 +28,7 @@ public class DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE {
   static final Wring WRING = Wrings.DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE.inner;
   @Test public void placeHolder() {
     // Place holder for future tests
+    assertNotNull(WRING);
   }
 
   @RunWith(Parameterized.class) //

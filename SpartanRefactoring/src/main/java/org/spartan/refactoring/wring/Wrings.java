@@ -27,9 +27,7 @@ import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
 import static org.spartan.refactoring.utils.Funcs.not;
-import static org.spartan.refactoring.utils.Funcs.parenthesize;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
-import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.refactoring.utils.Restructure.refitOperands;
@@ -51,7 +49,6 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Extract;
@@ -794,20 +791,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-7-17
    */
-  PUSHDOWN_NOT(new Wring.OfPrefixExpression() {
-    @Override public boolean scopeIncludes(final PrefixExpression e) {
-      return e != null && asNot(e) != null && hasOpportunity(asNot(e));
-    }
-    @Override public String toString() {
-      return "Pushdown not";
-    }
-    @Override boolean _eligible(@SuppressWarnings("unused") final PrefixExpression _) {
-      return true;
-    }
-    @Override Expression _replacement(final PrefixExpression e) {
-      return pushdownNot(asNot(e));
-    }
-  }),  //
+  PUSHDOWN_NOT(new PushdowNot()),  //
   //
   ;
   /**
@@ -974,41 +958,15 @@ public enum Wrings {
     for (final Expression e : from)
       to.add(not(e));
   }
-  static Expression comparison(final InfixExpression inner) {
-    return Subject.pair(getCoreLeft(inner), getCoreRight(inner)).to(ShortestBranchFirst.negate(inner.getOperator()));
-  }
-  static Expression deMorgan(final InfixExpression inner, final Expression left, final Expression right) {
-    return deMorgan1(inner, parenthesize(left), parenthesize(right));
-  }
-  static Expression deMorgan1(final InfixExpression inner, final Expression left, final Expression right) {
-    return parenthesize( //
-        addExtendedOperands(inner, //
-            Subject.pair(not(left), not(right)).to(conjugate(inner))));
-  }
-  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
-    final List<Expression> operands = All.operands(flatten(e));
-    removeAll(b, operands);
-    switch (operands.size()) {
-      case 0:
-        return e.getAST().newBooleanLiteral(b);
-      case 1:
-        return duplicate(operands.get(0));
-      default:
-        return refitOperands(e, operands);
-    }
-  }
+
+
   static boolean elseIsEmpty(final IfStatement s) {
     return Extract.statements(s.getElseStatement()).size() == 0;
   }
   static boolean existingEmptyElse(final IfStatement s) {
     return s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
   }
-  static Expression getCoreLeft(final InfixExpression e) {
-    return core(e.getLeftOperand());
-  }
-  static Expression getCoreRight(final InfixExpression e) {
-    return core(e.getRightOperand());
-  }
+
   static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
   }
@@ -1032,45 +990,12 @@ public enum Wrings {
     $.setInitializer(duplicate(e));
     return $;
   }
-  static Expression notOfLiteral(final BooleanLiteral l) {
-    final BooleanLiteral $ = duplicate(l);
-    $.setBooleanValue(!l.booleanValue());
-    return $;
-  }
 
-  static Expression perhapsComparison(final Expression inner) {
-    return perhapsComparison(asComparison(inner));
-  }
-  static Expression perhapsComparison(final InfixExpression inner) {
-    return inner == null ? null : comparison(inner);
-  }
-  static Expression perhapsDeMorgan(final Expression e) {
-    return perhapsDeMorgan(asAndOrOr(e));
-  }
-  static Expression perhapsDeMorgan(final InfixExpression e) {
-    return e == null ? null : deMorgan(e, getCoreLeft(e), getCoreRight(e));
-  }
-  static Expression perhapsDoubleNegation(final Expression inner) {
-    return perhapsDoubleNegation(asNot(inner));
-  }
-  static Expression perhapsDoubleNegation(final PrefixExpression inner) {
-    return inner == null ? null : inner.getOperand();
-  }
-  static Expression perhapsNotOfLiteral(final Expression inner) {
-    return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));
-  }
-  static Expression pushdownNot(final Expression inner) {
-    Expression $;
-    return ($ = perhapsNotOfLiteral(inner)) != null//
-        || ($ = perhapsDoubleNegation(inner)) != null//
-        || ($ = perhapsDeMorgan(inner)) != null//
-        || ($ = perhapsComparison(inner)) != null //
-        ? $ : null;
-  }
 
-  static Expression pushdownNot(final PrefixExpression e) {
-    return e == null ? null : pushdownNot(core(e.getOperand()));
-  }
+
+
+
+
   static ASTRewrite removeStatement(final ASTRewrite r, final Statement s) {
     final Block parent = asBlock(s.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -1165,6 +1090,18 @@ public enum Wrings {
         continue;
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
+    }
+  }
+  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
+    final List<Expression> operands = All.operands(flatten(e));
+    removeAll(b, operands);
+    switch (operands.size()) {
+      case 0:
+        return e.getAST().newBooleanLiteral(b);
+      case 1:
+        return duplicate(operands.get(0));
+      default:
+        return refitOperands(e, operands);
     }
   }
   public final Wring inner;
