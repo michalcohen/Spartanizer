@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 
@@ -31,7 +30,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     return new Several(es);
   }
 
-
   static class Claimer {
     protected final AST ast;
     public Claimer(final ASTNode n) {
@@ -39,14 +37,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     }
     Expression claim(final Expression e) {
       return rebase(duplicate(Extract.core(e)), ast);
-    }
-    private  ParenthesizedExpression parenthesize(final Expression e) {
-      final ParenthesizedExpression $ = ast.newParenthesizedExpression();
-      $.setExpression(duplicate(e));
-      return $;
-    }
-     Expression parenthesize(final Expression host, final Expression $) {
-      return !Precedence.known($) || Precedence.of(host) > Precedence.of($) || Precedence.of(host) == Precedence.of($) && !Is.nonAssociative(host) ? $ : parenthesize($);
     }
   }
 
@@ -59,13 +49,13 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     public Expression to(final PostfixExpression.Operator o) {
       final PostfixExpression $ = ast.newPostfixExpression();
       $.setOperator(o);
-      $.setOperand(parenthesize($, inner));
+      $.setOperand(Plant.zis(inner).into($));
       return $;
     }
     public PrefixExpression to(final PrefixExpression.Operator o) {
       final PrefixExpression $ = ast.newPrefixExpression();
       $.setOperator(o);
-      $.setOperand(parenthesize($, inner));
+      $.setOperand(Plant.zis(inner).into($));
       return $;
     }
   }
@@ -80,40 +70,39 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
     public Assignment to(final Assignment.Operator o) {
       final Assignment $ = ast.newAssignment();
       $.setOperator(o);
-      $.setLeftHandSide(parenthesize($, left));
-      $.setRightHandSide(parenthesize($, right));
+      $.setLeftHandSide(Plant.zis(left).into($));
+      $.setRightHandSide(Plant.zis(right).into($));
       return $;
     }
     public InfixExpression to(final InfixExpression.Operator o) {
       final InfixExpression $ = ast.newInfixExpression();
       $.setOperator(o);
-      $.setLeftOperand(parenthesize($, left));
-      $.setRightOperand(parenthesize($, right));
+      $.setLeftOperand(Plant.zis(left).into($));
+      $.setRightOperand(Plant.zis(right).into($));
       return $;
     }
     public ConditionalExpression toCondition(final Expression condition) {
       final ConditionalExpression $ = ast.newConditionalExpression();
-      $.setExpression(parenthesize($, claim(condition)));
-      $.setThenExpression(parenthesize($, left));
-      $.setElseExpression(parenthesize($, right));
+      $.setExpression(Plant.zis(claim(condition)).into($));
+      $.setThenExpression(Plant.zis(left).into($));
+      $.setElseExpression(Plant.zis(right).into($));
       return $;
     }
   }
 
   public static class Several extends Claimer {
     private final List<Expression> operands;
-
     public Several(final List<Expression> operands) {
       super(operands.get(0));
       this.operands = new ArrayList<>();
-      for (final Expression e: operands)
+      for (final Expression e : operands)
         this.operands.add(claim(e));
     }
     public InfixExpression to(final InfixExpression.Operator o) {
       assert operands.size() >= 2;
       final InfixExpression $ = Subject.pair(operands.get(0), operands.get(1)).to(o);
-        for (int i = 2; i < operands.size(); ++i)
-          $.extendedOperands().add(parenthesize($,operands.get(i)));
+      for (int i = 2; i < operands.size(); ++i)
+        $.extendedOperands().add(Plant.zis(operands.get(i)).into($));
       return $;
     }
   }

@@ -16,6 +16,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.7.0",
  org.junit
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
+ J2SE-1.5
 Bundle-ClassPath: .
-Export-Package: org.spartan.refactoring.builder
+Export-Package: org.spartan.refactoring.builder;
+  uses:="org.osgi.framework,
+   org.eclipse.ui,
+   org.eclipse.core.runtime,
+   org.eclipse.core.resources,
+   org.eclipse.ui.plugin"

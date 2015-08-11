@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 
 /**
@@ -23,7 +22,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
  */
 public enum Precedence {
   ;
-
   private final static int UNDEFINED = -1;
   private static final ChainStringToIntMap of = new ChainStringToIntMap()//
       .putOn(1, "[]", ".", "() invoke", "++ post", "-- post", "MethodInvocation", "PostfixExpression", "ArrayAccess", "FieldAccess", "QualifiedName") //
@@ -47,7 +45,30 @@ public enum Precedence {
           "<<=", ">>=", ">>>="// assignment, shift
   );
   /**
-   * determine whether the precedence of a given {@link Expression} can be determined.
+   * Compare precedence of two expressions.
+   *
+   * @param e1 JD
+   * @param e2 JD
+   * @return <code><b>true</b></code> <i>iff</i> the precedence of the first parameter
+   *         is equal to that of the second parameter.
+   */
+  public static boolean equal(final Expression e1, final Expression e2) {
+    return Precedence.of(e1) == Precedence.of(e2);
+  }
+  /**
+   * Compare precedence of two expressions.
+   *
+   * @param e1 JD
+   * @param e2 JD
+   * @return <code><b>true</b></code> <i>iff</i> the precedence of the first parameter
+   *         is strictly greater than that of the second parameter.
+   */
+  public static boolean greater(final Expression e1, final Expression e2) {
+    return !Precedence.known(e2) || Precedence.of(e1) > Precedence.of(e2);
+  }
+  /**
+   * determine whether the precedence of a given {@link Expression} can be
+   * determined.
    *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
@@ -63,9 +84,16 @@ public enum Precedence {
    * @param o JD
    * @return the precedence of the parameter
    */
-  public static int of(final Assignment.Operator o) {
+  private static int of(final Assignment.Operator o) {
     return of(o.toString());
   }
+  /**
+   * Determine the precedence of an arbitrary
+   * {@link ASTNode}
+   *
+   * @param o JD
+   * @return the precedence of the parameter
+   */
   public static int of(final ASTNode n) {
     return !org.spartan.refactoring.utils.Is.expression(n) ? UNDEFINED : Precedence.of(asExpression(n));
   }
@@ -95,24 +123,7 @@ public enum Precedence {
   public static int of(final InfixExpression.Operator o) {
     return of(o.toString());
   }
-  /**
-   * Determine the precedence of a given {@link org.eclipse.jdt.core.dom.PostfixExpression.Operator}
-   *
-   * @param o JD
-   * @return the precedence of the parameter
-   */
-  public static int of(final PostfixExpression.Operator o) {
-    return of(o.toString());
-  }
-  /**
-   * Determine the precedence of a given {@link org.eclipse.jdt.core.dom.PrefixExpression.Operator}
-   *
-   * @param o JD
-   * @return the precedence of the parameter
-   */
-  public static int of(final PrefixExpression.Operator o) {
-    return of(o.toString());
-  }
+
   /**
    * Determine the precedence of two expressions is the same.
    *
@@ -141,10 +152,10 @@ public enum Precedence {
   private static int of(final InfixExpression e) {
     return of(e.getOperator());
   }
-
   private static int of(final String key) {
     return !of.containsKey(key) ? UNDEFINED : of.get(key);
   }
+
   /**
    * *An empty <code><b>enum</b></code> for fluent programming. The name should
    * say it all: The name, followed by a dot, followed by a method name, should

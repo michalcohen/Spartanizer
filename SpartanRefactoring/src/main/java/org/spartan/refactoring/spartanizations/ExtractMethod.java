@@ -90,7 +90,4 @@ public class ExtractMethod extends Spartanization {
       }
     });
   }
-  static boolean invalid(final SimpleName sn) {
-    return false;
-  }
 }

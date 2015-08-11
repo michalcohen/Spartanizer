@@ -99,6 +99,14 @@ public enum Extract {
     });
     return $.get();
   }
+  /**
+   * Return the first {@link VariableDeclarationFragment} encountered in a visit
+   * of the tree rooted a the parameter.
+   *
+   * @param n JD
+   * @return the first such node encountered in a visit of the tree rooted a the
+   *         parameter, or <code><b>null</b></code>
+   */
   public static VariableDeclarationFragment firstVariableDeclarationFragment(final ASTNode n) {
     if (n == null)
       return null;
@@ -120,6 +128,13 @@ public enum Extract {
   public static MethodInvocation methodInvocation(final ASTNode n) {
     return asMethodInvocation(Extract.expressionStatement(n).getExpression());
   }
+  /**
+   * Find the {@link Assignment} that follows a given node.
+   *
+   * @param n JD
+   * @return the {@link Assignment} that follows the parameter, or
+   *         <code><b>null</b></code> if not such value exists.
+   */
   public static Assignment nextAssignment(final ASTNode n) {
     return Extract.assignment(nextStatement(n));
   }
