@@ -83,8 +83,8 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         }
         return makeIfStatement(t, r, negatedOp, elseStmnt, thenStmnt);
       }
-      private ParenthesizedExpression transpose(final ConditionalExpression n) {
-        return n == null ? null : makeParenthesizedConditionalExp(r, negate(t, r, n.getExpression()), n.getElseExpression(), n.getThenExpression());
+      private ConditionalExpression transpose(final ConditionalExpression n) {
+        return n == null ? null : Subject.pair(n.getElseExpression(), n.getThenExpression()).toCondition(negate(t, r, n.getExpression()));
       }
     });
   }

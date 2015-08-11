@@ -577,14 +577,13 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param r ASTRewrite for the given AST
    * @param cond the condition
    * @param thenExp the then statement to set in the conditional
    * @param elseExp the else statement to set in the conditional
    * @return a parenthesized conditional expression
    */
-  public static ParenthesizedExpression makeParenthesizedConditionalExp(final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
-    if (hasNull(r, cond, thenExp, elseExp))
+  public static ParenthesizedExpression makeParenthesizedConditionalExp(final Expression cond, final Expression thenExp, final Expression elseExp) {
+    if (hasNull(cond, thenExp, elseExp))
       return null;
     final ConditionalExpression $ = cond.getAST().newConditionalExpression();
     $.setExpression(frugalDuplicate(cond));
