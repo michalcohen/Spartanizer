@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.spartanizations.Into.c;

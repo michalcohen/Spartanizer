@@ -179,12 +179,12 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link InfixExpression}
    *
-   * @param e JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
-  public static InfixExpression asInfixExpression(final Expression e) {
-    return !(e instanceof InfixExpression) ? null : (InfixExpression) e;
+  public static InfixExpression asInfixExpression(final ASTNode n) {
+    return !(n instanceof InfixExpression) ? null : (InfixExpression) n;
   }
   /**
    * Down-cast, if possible, to {@link MethodInvocation}

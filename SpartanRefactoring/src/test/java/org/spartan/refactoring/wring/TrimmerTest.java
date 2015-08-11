@@ -57,9 +57,6 @@ public class TrimmerTest {
   protected static int countOppportunities(final Spartanization s, final String input) {
     return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
   }
-  public void parenthesizeOfPushdownTernary() {
-    assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
-  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -83,20 +80,12 @@ public class TrimmerTest {
   static int countOppportunities(final Spartanization s, final File f) {
     return countOppportunities(s, As.string(f));
   }
-  @Test public void bugIntroducingMISSINGWordTry2() {
-    assertSimplifiesTo(
-  "!(intent.getBooleanExtra(EXTRA_FROM_SHORTCUT, false) && !K9.FOLDER_NONE.equals(mAccount.getAutoExpandFolderName()))",//
-  "!intent.getBooleanExtra(EXTRA_FROM_SHORTCUT,false)||K9.FOLDER_NONE.equals(mAccount.getAutoExpandFolderName())");
+  @Test public void actualExampleForSortAddition() {
+    assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
-  @Test public void bugIntroducingMISSINGWordTry3() {
-    assertSimplifiesTo(
-  "!(f.g(X, false) && !a.b.e(m.h()))",//
-  "!f.g(X,false)||a.b.e(m.h())");
-  }
-  @Test public void bugIntroducingMISSINGWordTry1() {
-    assertSimplifiesTo(
-        "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)",
-        "name.endsWith(testSuffix) && As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  @Test public void actualExampleForSortAdditionInContext() {
+    assertSimplifiesTo("2 + a < b", //
+        "a + 2 < b");
   }
   @Test public void bugIntroducingMISSINGWord1() {
     assertSimplifiesTo(//
@@ -106,15 +95,13 @@ public class TrimmerTest {
   @Test public void bugIntroducingMISSINGWord1a() {
     assertSimplifiesTo("-1 == As.g(f).h(c)", "As.g(f).h(c)==-1");
   }
-  @Test public void bugOfMissingTry() {
-    assertSimplifiesTo("!(A && B && C && true && D)", "!A||!B||!C||false||!D");
-  }
   @Test public void bugIntroducingMISSINGWord1b() {
     assertSimplifiesTo("b.f(a) && X ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)",
         "b.f(a)&&X?o(s,b,g(f)):b.f(\".in\")&&!y(d,b)?o(b.z(u,v),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWord1c() {
-    assertSimplifiesTo("Y ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)", //
+    assertSimplifiesTo(//
+        "Y ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)", //
         "Y?o(s,b,g(f)):b.f(\".in\")&&!y(d,b)?o(b.z(u,v),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWord1d() {
@@ -175,6 +162,22 @@ public class TrimmerTest {
   @Test public void bugIntroducingMISSINGWord3a() {
     assertSimplifiesTo("!name.endsWith(x) ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(3, 56), s, f)",
         "name.endsWith(x)&&!dotOutExists(d,name)?objects(name.replaceAll(3,56),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWordTry1() {
+    assertSimplifiesTo(
+        "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)",
+        "name.endsWith(testSuffix) && As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWordTry2() {
+    assertSimplifiesTo("!(intent.getBooleanExtra(EXTRA_FROM_SHORTCUT, false) && !K9.FOLDER_NONE.equals(mAccount.getAutoExpandFolderName()))", //
+        "!intent.getBooleanExtra(EXTRA_FROM_SHORTCUT,false)||K9.FOLDER_NONE.equals(mAccount.getAutoExpandFolderName())");
+  }
+  @Test public void bugIntroducingMISSINGWordTry3() {
+    assertSimplifiesTo("!(f.g(X, false) && !a.b.e(m.h()))", //
+        "!f.g(X,false)||a.b.e(m.h())");
+  }
+  @Test public void bugOfMissingTry() {
+    assertSimplifiesTo("!(A && B && C && true && D)", "!A||!B||!C||false||!D");
   }
   @Test public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
@@ -339,6 +342,9 @@ public class TrimmerTest {
   @Test public void oneOpportunityExample() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
     assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
+  }
+  public void parenthesizeOfPushdownTernary() {
+    assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");

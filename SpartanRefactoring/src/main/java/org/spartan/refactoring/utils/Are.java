@@ -25,7 +25,7 @@ public enum Are {
    */
   public static boolean notString(final List<Expression> es) {
     for (final Expression e : es)
-      if (!Is.notString(e))
+      if (!Is.notStringDown(e))
         return false;
     return true;
   }

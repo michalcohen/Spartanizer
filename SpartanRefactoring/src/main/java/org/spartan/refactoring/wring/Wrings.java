@@ -126,7 +126,11 @@ public enum Wrings {
       if (initializer == null)
         return null;
       final ReturnStatement s = Extract.nextReturn(f);
-      if (s == null || !same(f.getName(), Extract.expression(s)))
+      final Expression e = Extract.expression(s);
+      if (s == null || !same(f.getName(), e))
+        return null;
+      final Expression returnValue = Extract.expression(s);
+      if (e == null || !same(f.getName(), returnValue))
         return null;
       r.remove(Extract.statement(f), null);
       r.replace(s,Subject.operand(initializer).toReturn(),null);

@@ -70,7 +70,6 @@ public class DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE {
     private static String[][] cases = Utils.asArray(//
         new String[] { "Vanilla", "int a = 2; if (b) a =3;", "int a= b?3:2;" }, //
         null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -81,25 +80,25 @@ public class DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+    /**
+     * Instantiates the enclosing class ({@link Wringed})
+     */
+    public Wringed() {
+      super(WRING);
+    }
     @Test public void traceLegiblity() {
       final VariableDeclarationFragment f = asMe();
       final ASTRewrite r = ASTRewrite.create(f.getAST());
       final Expression initializer = f.getInitializer();
       assertNotNull(initializer);
       final IfStatement s = Extract.nextIfStatement(f);
-        assertNotNull(s);
-      assertThat (Extract.statements(s.getElseStatement()).size(),is( 0));
+      assertNotNull(s);
+      assertThat(Extract.statements(s.getElseStatement()).size(), is(0));
       final Assignment a = Extract.assignment(s.getThenStatement());
       assertNotNull(a);
-      assertTrue (Wrings.same(a.getLeftHandSide(),f.getName()));
-      r.replace(initializer,Subject.pair(a.getRightHandSide(),initializer).toCondition(s.getExpression()),null);
-      r.remove(s,null);
-    }
-    /**
-     * Instantiates the enclosing class ({@link Wringed})
-     */
-    public Wringed() {
-      super(WRING);
+      assertTrue(Wrings.same(a.getLeftHandSide(), f.getName()));
+      r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
+      r.remove(s, null);
     }
   }
 }

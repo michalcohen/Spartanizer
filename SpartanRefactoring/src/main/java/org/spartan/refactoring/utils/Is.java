@@ -1,5 +1,5 @@
 package org.spartan.refactoring.utils;
-
+import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_CREATION;
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
@@ -336,17 +336,43 @@ public enum Is {
    *         strings. concatenation.
    */
   public static boolean notString(final Expression e) {
+    return notStringSelf(e) || notStringUp(e) || notStringDown(asInfixExpression(e));
+  }
+  static boolean notStringSelf(final Expression e) {
     return intIsIn(e.getNodeType(), //
         NULL_LITERAL, // null + null is an error, not a string.
         CHARACTER_LITERAL, //
         NUMBER_LITERAL, //
         BOOLEAN_LITERAL, //
         PREFIX_EXPRESSION, //
-        INFIX_EXPRESSION, //
         ARRAY_CREATION, //
         INSTANCEOF_EXPRESSION//
     //
-    ) || notString(asInfixExpression(e));
+    );
+  }
+  public static boolean notStringDown(final Expression e) {
+    return notStringSelf(e) || notStringDown(asInfixExpression(e));
+  }
+  private static boolean notStringUp(final Expression e) {
+    for ( ASTNode context = e.getParent(); context != null; context = context.getParent())
+      switch (context.getNodeType()) {
+        case INFIX_EXPRESSION:
+          if (asInfixExpression(context).getOperator().equals(PLUS))
+            continue;
+          return true;
+        case ARRAY_ACCESS:
+        case PREFIX_EXPRESSION:
+        case POSTFIX_EXPRESSION:
+          return true;
+        case PARENTHESIZED_EXPRESSION:
+          continue;
+        default:
+          return false;
+      }
+   return false;
+  }
+   static boolean notStringDown(final InfixExpression e) {
+    return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
   }
   /**
    * @param e JD

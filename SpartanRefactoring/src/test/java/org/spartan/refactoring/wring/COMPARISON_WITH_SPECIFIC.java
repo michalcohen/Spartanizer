@@ -203,7 +203,6 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
         Utils.asArray("Crazy comparison", "null == this", "this == null"), //
         Utils.asArray("Crazy comparison", "null == 1", "1 == null"), //
         Utils.asArray("Negative number", "-1 == a", "a == -1"), //
-
         null);
     /**
      * Generate test cases for this parameterized class.

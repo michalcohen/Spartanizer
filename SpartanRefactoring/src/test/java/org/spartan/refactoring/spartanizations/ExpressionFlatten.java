@@ -4,9 +4,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.spartanizations.Into.e;
 import static org.spartan.refactoring.spartanizations.Into.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
@@ -70,6 +72,13 @@ public class ExpressionFlatten {
   @Test public void leftOperandIsNotString() {
     final InfixExpression e = i("1+2");
     assertTrue(Is.notString(e.getLeftOperand()));
+  }
+  @Test public void isNotStringInfixFalse() {
+    final InfixExpression e = i("1+f");
+    assertFalse(Is.notString(e));
+  }
+  @Test public void isNotStringInfixPlain() {
+    assertFalse(Is.notString(e("1+f")));
   }
   @Test public void leftOperandIsNumeric() {
     final InfixExpression e = i("1+2");
