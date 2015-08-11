@@ -105,13 +105,13 @@ public enum Wrings {
    * A {@link Wring} to convert
    *
    * <pre>
-   * int a; a = 3;
+   * int  a = 3; return a;
    * </pre>
    *
    * into
    *
    * <pre>
-   * int a = 3;
+   * return a;
    * </pre>
    *
    * @author Yossi Gil
@@ -1008,7 +1008,6 @@ public enum Wrings {
     final int i = siblings.indexOf(what);
     siblings.remove(i);
     siblings.remove(i);
-
     siblings.add(i, by );
     final Block $ =  parent.getAST().newBlock();
     duplicateInto(siblings, $.statements());
