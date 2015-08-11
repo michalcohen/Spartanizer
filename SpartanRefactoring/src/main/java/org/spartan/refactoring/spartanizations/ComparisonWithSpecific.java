@@ -44,7 +44,7 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
     });
   }
   static boolean applicable(final InfixExpression e) {
-    return Is.specific(e.getLeftOperand());
+    return Is.constant(e.getLeftOperand());
   }
   static boolean withinDomain(final InfixExpression e) {
     return e != null && Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
@@ -54,6 +54,6 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
   }
   private static boolean hasOneSpecificArgument(final InfixExpression e) {
     // One of the arguments must be specific, the other must not be.
-    return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
+    return Is.constant(e.getLeftOperand()) != Is.constant(e.getRightOperand());
   }
 }

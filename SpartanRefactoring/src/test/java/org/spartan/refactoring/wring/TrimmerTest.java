@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -56,6 +57,9 @@ public class TrimmerTest {
   protected static int countOppportunities(final Spartanization s, final String input) {
     return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
   }
+  public void parenthesizeOfPushdownTernary() {
+    assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
+  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -78,6 +82,86 @@ public class TrimmerTest {
   }
   static int countOppportunities(final Spartanization s, final File f) {
     return countOppportunities(s, As.string(f));
+  }
+  @Test public void bugIntroducingMISSINGWord() {
+    assertSimplifiesTo(
+        "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)",
+        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord1() {
+    assertSimplifiesTo(//
+        "b.f(a) && -1 == As.g(f).h(c) ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)",
+        "b.f(a) && As.g(f).h(c) == -1 ? o(s,b,g(f)) : b.f(\".in\") && !y(d,b)? o(b.z(u,v),s,f) : null");
+  }
+  @Test public void bugIntroducingMISSINGWord1a() {
+    assertSimplifiesTo("-1 == As.g(f).h(c)", "As.g(f).h(c)==-1");
+  }
+  @Test public void bugIntroducingMISSINGWord1b() {
+    assertSimplifiesTo("b.f(a) && X ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)",
+        "b.f(a)&&X?o(s,b,g(f)):b.f(\".in\")&&!y(d,b)?o(b.z(u,v),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord1c() {
+    assertSimplifiesTo("Y ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)", //
+        "Y?o(s,b,g(f)):b.f(\".in\")&&!y(d,b)?o(b.z(u,v),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord1d() {
+    assertSimplifiesTo("Y ? Z : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)", //
+        "Y?Z:b.f(\".in\")&&!y(d,b)?o(b.z(u,v),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord1e() {
+    assertSimplifiesTo("Y ? Z : R ? null : S ? null : T", "Y?Z:!R&&!S?T:null");
+  }
+  @Test public void bugIntroducingMISSINGWord2() {
+    assertSimplifiesTo(//
+        "name.endsWith(testSuffix) &&  As.stringBuilder(f).indexOf(testKeyword) == -1? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
+        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord2a() {
+    assertSimplifiesTo(//
+        "name.endsWith(testSuffix) &&  As.stringBuilder(f).indexOf(testKeyword) == -1? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
+        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord2b() {
+    assertSimplifiesTo( //
+        "name.endsWith(testSuffix) &&  T ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
+        "name.endsWith(testSuffix) && T ? objects(s,name,makeInFile(f)): name.endsWith(\".in\") && !dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord2c() {
+    assertSimplifiesTo( //
+        "X && T ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
+        "X && T ? objects(s,name,makeInFile(f)) : name.endsWith(\".in\") && !dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord2d() {
+    assertSimplifiesTo(//
+        "X && T ? E : Y ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
+        "X && T ? E : !Y && !dotOutExists(d,name) ? objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f) : null");
+  }
+  @Test public void bugIntroducingMISSINGWord2e() {
+    assertSimplifiesTo(//
+        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
+        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f) : null");
+  }
+  @Test public void bugIntroducingMISSINGWord2e1() {
+    assertSimplifiesTo(//
+        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(x, \"\"), s, f)", //
+        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(x,\"\"),s,f) : null");
+  }
+  @Test public void bugIntroducingMISSINGWord2e2() {
+    assertSimplifiesTo(//
+        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(g, \"\"), s, f)", //
+        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(g,\"\"),s,f) : null");
+  }
+  @Test public void bugIntroducingMISSINGWord2f() {
+    assertSimplifiesTo("X &&  T ? E : Y ? null : Z ? null : F", "X&&T?E:!Y&&!Z?F:null");
+  }
+  @Test public void bugIntroducingMISSINGWord3() {
+    assertSimplifiesTo(
+        "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(x) ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(3, 56), s, f)",
+        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(x)&&!dotOutExists(d,name)?objects(name.replaceAll(3,56),s,f):null");
+  }
+  @Test public void bugIntroducingMISSINGWord3a() {
+    assertSimplifiesTo("!name.endsWith(x) ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(3, 56), s, f)",
+        "name.endsWith(x)&&!dotOutExists(d,name)?objects(name.replaceAll(3,56),s,f):null");
   }
   @Test public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
@@ -160,8 +244,11 @@ public class TrimmerTest {
   @Test public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion != the * plain + kludge", "no*of*on*notion*nothion!=the*plain+kludge");
   }
+  @Test public void doNotIntroduceDoubleNegation() {
+    assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
+  }
   @Test public void isGreaterTrue() {
-    final InfixExpression e = i("f(a,b,c,d,e) & f(a,b,c)");
+    final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d,e)", e.getLeftOperand().toString());
     final Wring s = Wrings.find(e);
@@ -178,10 +265,10 @@ public class TrimmerTest {
     assertTrue(e.toString(), s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
-    assertEquals("f(a,b,c) & f(a,b,c,d,e)", replacement.toString());
+    assertEquals("f(a,b,c) * f(a,b,c,d,e)", replacement.toString());
   }
   @Test public void isGreaterTrueButAlmostNot() {
-    final InfixExpression e = i("f(a,b,c,d) ^ f(a,b,c)");
+    final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d)", e.getLeftOperand().toString());
     final Wring s = Wrings.find(e);
@@ -198,7 +285,7 @@ public class TrimmerTest {
     assertTrue(e.toString(), s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
-    assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
+    assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
   @Test public void longChainComparison() {
     assertNoChange("a == b == c == d");
@@ -226,6 +313,9 @@ public class TrimmerTest {
   }
   @Test public void noChange2() {
     assertNoChange("plain + kludge");
+  }
+  @Test public void notOfAnd() {
+    assertSimplifiesTo("!(A && B)", "!A || !B");
   }
   @Test public void oneMultiplication() {
     assertSimplifiesTo("f(a,b,c,d) * f(a,b,c)", "f(a,b,c) * f(a,b,c,d)");

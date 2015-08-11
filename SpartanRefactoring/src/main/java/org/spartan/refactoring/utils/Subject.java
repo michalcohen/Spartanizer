@@ -121,7 +121,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
       assert operands.size() >= 2;
       final InfixExpression $ = Subject.pair(operands.get(0), operands.get(1)).to(o);
         for (int i = 2; i < operands.size(); ++i)
-          $.extendedOperands().add(operands.get(i));
+          $.extendedOperands().add(parenthesize($,operands.get(i)));
       return $;
     }
   }

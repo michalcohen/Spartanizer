@@ -48,14 +48,14 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
     super(WRING);
   }
   @Test public void comparisonWithSpecific0Legibiliy1() {
-    assertTrue(Is.specific(i("this != a").getLeftOperand()));
+    assertTrue(Is.constant(i("this != a").getLeftOperand()));
     assertNotLegible("a != this");
   }
   @Test public void comparisonWithSpecific0Legibiliy1withinScope() {
     assertNotWithinScope("this != a");
   }
   @Test public void comparisonWithSpecific0Legibiliy2() {
-    assertTrue(Is.specific(i("this != a").getLeftOperand()));
+    assertTrue(Is.constant(i("this != a").getLeftOperand()));
     assertLegible("this != a");
   }
   @Test public void comparisonWithSpecific0z0() {
@@ -202,6 +202,8 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
         // Misc
         Utils.asArray("Crazy comparison", "null == this", "this == null"), //
         Utils.asArray("Crazy comparison", "null == 1", "1 == null"), //
+        Utils.asArray("Negative number", "-1 == a", "a == -1"), //
+
         null);
     /**
      * Generate test cases for this parameterized class.

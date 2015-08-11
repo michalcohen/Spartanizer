@@ -69,19 +69,19 @@ public class ComparisonWithSpecificTest {
     assertEquals(ASTNode.INFIX_EXPRESSION, i.getNodeType());
   }
   @Test public void callIsSpecific() {
-    Is.specific(e("2+2"));
+    Is.constant(e("2+2"));
   }
   @Test public void callIsSpecificFalse() {
-    assertFalse(Is.specific(e("2+2")));
+    assertFalse(Is.constant(e("2+2")));
   }
   @Test public void callIsSpecificTrue() {
-    assertTrue(Is.specific(e("this")));
+    assertTrue(Is.constant(e("this")));
   }
   @Test public void canMakeExpression() {
     e("2+2");
   }
   @Test public void cisSpecificFalse1() {
-    assertFalse(Is.specific(e("a")));
+    assertFalse(Is.constant(e("a")));
   }
   @Test public void getNodeType() {
     assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());

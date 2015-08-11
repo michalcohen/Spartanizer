@@ -63,6 +63,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.spartan.refactoring.wring.PushdownNot;
 import org.spartan.utils.Utils;
 
 /**
@@ -555,21 +556,6 @@ public enum Funcs {
     final Expression $ = e.getLeftOperand();
     return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
   }
-  /**
-   * Create a new {@link ConditionalExpression}
-   *
-   * @param e JD
-   * @param then JD
-   * @param elze JD
-   * @return a newly created, unparenthesized {@link ConditionalExpression} with
-   *         the specified arguments.
-   */
-  public static ConditionalExpression makeConditional(final ConditionalExpression e, final Expression then, final Expression elze) {
-    final ConditionalExpression $ = duplicate(e);
-    $.setThenExpression(duplicate(then));
-    $.setElseExpression(duplicate(elze));
-    return $;
-  }
   public static Statement makeExpressionStatement(final Expression e) {
     return e.getAST().newExpressionStatement(frugalDuplicate(e));
   }
@@ -689,13 +675,12 @@ public enum Funcs {
 
    /**
    * @param e JD
-   * @return the parameter, but logcially negated.
+   * @return the parameter, but logically negated.
    */
-  public static PrefixExpression not(final Expression e) {
-    final PrefixExpression $ = e.getAST().newPrefixExpression();
-    $.setOperator(NOT);
-    $.setOperand(parenthesize(e));
-    return $;
+  public static Expression not(final Expression e) {
+    final PrefixExpression $ = Subject.operand(e).to(NOT);
+    final Expression $$ = PushdownNot.simplifyNot($);
+    return $$ == null ? $ : $$;
   }
   /**
    * Parenthesize an {@link Expression}

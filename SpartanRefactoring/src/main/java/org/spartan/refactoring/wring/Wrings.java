@@ -30,7 +30,6 @@ import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.utils.Restructure.refitOperands;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -573,10 +572,10 @@ public enum Wrings {
     }
     private boolean hasOneSpecificArgument(final InfixExpression e) {
       // One of the arguments must be specific, the other must not be.
-      return Is.specific(e.getLeftOperand()) != Is.specific(e.getRightOperand());
+      return Is.constant(e.getLeftOperand()) != Is.constant(e.getRightOperand());
     }
     @Override boolean _eligible(final InfixExpression e) {
-      return Is.specific(e.getLeftOperand());
+      return Is.constant(e.getLeftOperand());
     }
     @Override Expression _replacement(final InfixExpression e) {
       return flip(e);
@@ -718,7 +717,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !Are.notString(operands) || !tryToSort(operands) ? null : refitOperands(e, operands);
+      return !Are.notString(operands) || !tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return e.getOperator() == PLUS;
@@ -749,7 +748,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !tryToSort(operands) ? null : refitOperands(e, operands);
+      return !tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), OR);
@@ -778,7 +777,7 @@ public enum Wrings {
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !tryToSort(operands) ? null : refitOperands(e, operands);
+      return !tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), TIMES);
@@ -791,7 +790,7 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-7-17
    */
-  PUSHDOWN_NOT(new PushdowNot()),  //
+  PUSHDOWN_NOT(new PushdownNot()),  //
   //
   ;
   /**
@@ -934,37 +933,20 @@ public enum Wrings {
     return $;
   }
 
-  private static InfixExpression makeWithOther(final Expression other) {
-    final InfixExpression $ = other.getAST().newInfixExpression();
-    $.setRightOperand(duplicate(other));
-    return $;
-  }
 
 
   private static Expression simplifyTernary(final Expression then, final Expression elze, final Expression main) {
     final boolean takeThen = !Is.booleanLiteral(then);
-    final InfixExpression $ = makeWithOther(takeThen ? then : elze);
+    final Expression other = takeThen ? then : elze;
     final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
-    $.setOperator(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
-    $.setLeftOperand(takeThen != literal ? main : not(main));
-    return $;
+    return Subject.pair(takeThen != literal ? main : not(main),other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
-  static InfixExpression addExtendedOperands(final InfixExpression from, final InfixExpression $) {
-    if (from.hasExtendedOperands())
-      addExtendedOperands(from.extendedOperands(), $.extendedOperands());
-    return $;
-  }
-  static void addExtendedOperands(final List<Expression> from, final List<Expression> to) {
-    for (final Expression e : from)
-      to.add(not(e));
-  }
-
 
   static boolean elseIsEmpty(final IfStatement s) {
     return Extract.statements(s.getElseStatement()).size() == 0;
   }
   static boolean existingEmptyElse(final IfStatement s) {
-    return s.getElseStatement() != null && Extract.statements(s.getElseStatement()).size() == 0;
+    return s.getElseStatement() != null && elseIsEmpty(s);
   }
 
   static boolean hasOpportunity(final Expression inner) {
@@ -1101,7 +1083,7 @@ public enum Wrings {
       case 1:
         return duplicate(operands.get(0));
       default:
-        return refitOperands(e, operands);
+        return Subject.operands(operands).to(e.getOperator());
     }
   }
   public final Wring inner;

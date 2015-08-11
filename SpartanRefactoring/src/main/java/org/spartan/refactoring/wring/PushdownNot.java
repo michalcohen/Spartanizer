@@ -22,7 +22,7 @@ import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
-public final class PushdowNot extends Wring.OfPrefixExpression {
+public final class PushdownNot extends Wring.OfPrefixExpression {
   static Expression notOfLiteral(final BooleanLiteral l) {
     final BooleanLiteral $ = duplicate(l);
     $.setBooleanValue(!l.booleanValue());
@@ -56,7 +56,7 @@ public final class PushdowNot extends Wring.OfPrefixExpression {
   static Expression perhapsNotOfLiteral(final Expression inner) {
     return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));
   }
-  static Expression pushdownNot(final Expression inner) {
+   static Expression pushdownNot(final Expression inner) {
     Expression $;
     return ($ = perhapsNotOfLiteral(inner)) != null//
         || ($ = perhapsDoubleNegation(inner)) != null//
@@ -86,6 +86,10 @@ public final class PushdowNot extends Wring.OfPrefixExpression {
     return true;
   }
   @Override Expression _replacement(final PrefixExpression e) {
+    return simplifyNot(e);
+  }
+  public static
+  Expression simplifyNot(final PrefixExpression e) {
     return pushdownNot(asNot(e));
   }
 }

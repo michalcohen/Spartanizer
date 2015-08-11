@@ -53,7 +53,7 @@ public class ExpressionFlatten {
   }
   @Test public void flattenOfDeepParenthesOtherOperatorsisIsCorrect() {
     final InfixExpression e = i("(((1+2)))+(((3 + (4*5))))");
-    assertThat(flatten(e).toString(), is("1 + 2 + 3+ (4 * 5)"));
+    assertThat(flatten(e).toString(), is("1 + 2 + 3+ 4 * 5"));
   }
   @Test public void flattenOfParenthesis() {
     final InfixExpression e = i("1+2+(3)");

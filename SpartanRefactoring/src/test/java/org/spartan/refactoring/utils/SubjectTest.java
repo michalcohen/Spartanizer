@@ -71,4 +71,16 @@ import org.spartan.refactoring.utils.Subject.Pair;
   @Test public void operandsVanilla() {
     assertThat(Subject.operands(e("((a))"),e("b"), e("c")).to(InfixExpression.Operator.PLUS), iz("a+b+c"));
   }
+  @Test public void operandsParenthesisLeft() {
+    assertThat(Subject.operands(e("((a+b))"),e("b"), e("c")).to(InfixExpression.Operator.TIMES), iz("(a+b)*b*c"));
+  }
+  @Test public void operandsParenthesisRight() {
+    assertThat(Subject.operands(e("((a))"),e("b+c"), e("c")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*c"));
+  }
+  @Test public void operandsParenthesisRest() {
+    assertThat(Subject.operands(e("((a))"),e("b+c"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*(c+d)"));
+  }
+  @Test public void operandsNoParenthesisRest() {
+    assertThat(Subject.operands(e("((a))"),e("b+c"), e("c+d")).to(InfixExpression.Operator.PLUS), iz("a+b+c+c+d"));
+  }
 }

@@ -67,7 +67,7 @@ public enum Restructure {
    * @return a duplicate of the argument, with the a flattened list of operands.
    */
   public static InfixExpression flatten(final InfixExpression $) {
-    return refitOperands(duplicate($), flattenInto($.getOperator(), All.operands($), new ArrayList<Expression>()));
+    return Subject.operands(flattenInto($.getOperator(), All.operands($), new ArrayList<Expression>())).to(duplicate($).getOperator());
   }
   private static List<Expression> flattenInto(final Operator o, final List<Expression> es, final List<Expression> $) {
     for (final Expression e : es)
@@ -80,28 +80,6 @@ public enum Restructure {
   }
   private static List<Expression> add(final Expression e, final List<Expression> $) {
     $.add(e);
-    return $;
-  }
-  /**
-   * Replace the list of arguments of a given @link {@link InfixExpression}
-   *
-   * @param e JD
-   * @param es JD
-   * @return a duplicate of the {@link InfixExpression} parameter, whose
-   *         operands are the {@link List} of {@link Expression} parameter.
-   */
-  public static InfixExpression refitOperands(final InfixExpression e, final List<Expression> es) {
-    assert es.size() >= 2;
-    final AST t = e.getAST();
-    final InfixExpression $ = t.newInfixExpression();
-    $.setOperator(e.getOperator());
-    $.setLeftOperand(rebase(es.get(0), t));
-    $.setRightOperand(rebase(es.get(1), t));
-    es.remove(0);
-    es.remove(0);
-    if (!es.isEmpty())
-      for (final Expression operand : es)
-        $.extendedOperands().add(rebase(operand, t));
     return $;
   }
   /**

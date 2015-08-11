@@ -46,11 +46,11 @@ public class PushdowNotTest {
     assertThat(inner, is(notNullValue()));
     assertThat(inner.toString(), is("false"));
     assertThat(Is.booleanLiteral(inner), is(true));
-    assertThat(PushdowNot.perhapsNotOfLiteral(inner), is(notNullValue()));
-    assertThat(PushdowNot.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
-    assertThat(PushdowNot.perhapsNotOfLiteral(inner), is(notNullValue()));
-    assertThat(PushdowNot.pushdownNot(inner), is(notNullValue()));
-    assertThat(PushdowNot.pushdownNot(asNot(e)), is(notNullValue()));
+    assertThat(PushdownNot.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(PushdownNot.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
+    assertThat(PushdownNot.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(PushdownNot.pushdownNot(inner), is(notNullValue()));
+    assertThat(PushdownNot.pushdownNot(asNot(e)), is(notNullValue()));
     assertThat(WRING.replacement(e), is(notNullValue()));
   }
 

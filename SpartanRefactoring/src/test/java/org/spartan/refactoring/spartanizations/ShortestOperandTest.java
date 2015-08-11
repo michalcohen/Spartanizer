@@ -62,10 +62,10 @@ public class ShortestOperandTest {
     assertEquals(ASTNode.INFIX_EXPRESSION, i("a == this").getNodeType());
   }
   @Test public void callIsSpecificTrue() {
-    assertTrue(Is.specific(e("this")));
+    assertTrue(Is.constant(e("this")));
   }
   @Test public void cisSpecificFalse1() {
-    assertFalse(Is.specific(e("a")));
+    assertFalse(Is.constant(e("a")));
   }
   @Test public void getNodeType() {
     assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());

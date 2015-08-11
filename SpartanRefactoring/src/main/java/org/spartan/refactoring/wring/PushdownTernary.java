@@ -5,11 +5,8 @@ import static org.eclipse.jdt.core.dom.ASTNode.FIELD_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.makeConditional;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
-import static org.spartan.refactoring.utils.Restructure.refitOperands;
 
 import java.util.List;
 
@@ -23,6 +20,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Precedence;
+import org.spartan.refactoring.utils.Subject;
 
 final class PushdownTernary extends Wring.OfConditionalExpression {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {
@@ -38,19 +36,12 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
   @SuppressWarnings("unchecked") private static <T extends Expression> T p(final ASTNode e, final T $) {
     return !Precedence.Is.legal(Precedence.of(e)) || Precedence.of(e) >= Precedence.of($) ? $ : (T) parenthesize($);
   }
-  private static Expression pushdown(final ConditionalExpression e, final Assignment e1, final Assignment e2) {
-    if (e1.getOperator() != e2.getOperator() || !Wrings.same(e1.getLeftHandSide(), e2.getLeftHandSide()))
-      return null;
-    final Assignment $ = duplicate(e1);
-    $.setRightHandSide(makeConditional(e, e1.getRightHandSide(), e2.getRightHandSide()));
-    return p(e.getParent(), $);
-  }
   private static Expression pushdown(final ConditionalExpression e, final FieldAccess e1, final FieldAccess e2) {
     if (!Wrings.same(e1.getName(), e2.getName()))
       return null;
     System.out.println("Field access" + e1 + e2);
     final FieldAccess $ = duplicate(e1);
-    $.setExpression(parenthesize(makeConditional(e, e1.getExpression(), e2.getExpression())));
+    $.setExpression(parenthesize(Subject.pair(e1.getExpression(), e2.getExpression()).toCondition(e.getExpression())));
     return $;
   }
   private static Expression pushdown(final ConditionalExpression e, final InfixExpression e1, final InfixExpression e2) {
@@ -66,8 +57,8 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     final InfixExpression $ = duplicate(e1);
     final List<Expression> operands = All.operands($);
     operands.remove(i);
-    operands.add(i, p($, makeConditional(e, es1.get(i), es2.get(i))));
-    return p(e, refitOperands($, operands));
+    operands.add(i, p($, Subject.pair(es1.get(i), es2.get(i)).toCondition(e.getExpression())));
+    return p(e, Subject.operands(operands).to($.getOperator()));
   }
   private static Expression pushdown(final ConditionalExpression e, final MethodInvocation e1, final MethodInvocation e2) {
     if (!Wrings.same(e1.getName(), e2.getName()) || !Wrings.same(e1.getExpression(), e2.getExpression()))
@@ -81,7 +72,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
       return null;
     final MethodInvocation $ = duplicate(e1);
     $.arguments().remove(i);
-    $.arguments().add(i, makeConditional(e, es1.get(i), es2.get(i)));
+    $.arguments().add(i, Subject.pair(es1.get(i), es2.get(i)).toCondition(e.getExpression()));
     return $;
   }
   private static Expression pushdown(final ConditionalExpression e, final ClassInstanceCreation e1, final ClassInstanceCreation e2) {
@@ -96,7 +87,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
       return null;
     final ClassInstanceCreation $ = duplicate(e1);
     $.arguments().remove(i);
-    $.arguments().add(i, makeConditional(e, es1.get(i), es2.get(i)));
+    $.arguments().add(i, Subject.pair(es1.get(i), es2.get(i)).toCondition(e.getExpression()));
     return $;
   }
   private Expression pushdown(final ConditionalExpression e) {
@@ -123,6 +114,13 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
       default:
         return null;
     }
+  }
+  Expression pushdown(final ConditionalExpression e, final Assignment a1, final Assignment a2) {
+    if (a1.getOperator() != a2.getOperator() || !Wrings.same(a1.getLeftHandSide(), a2.getLeftHandSide()))
+      return null;
+    final Assignment $ = duplicate(a1);
+    $.setRightHandSide(Subject.pair(a1.getRightHandSide(), a2.getRightHandSide()).toCondition(e.getExpression()));
+    return p(e.getParent(), $);
   }
   @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
     return true;

@@ -326,7 +326,7 @@ public enum Is {
     return nonAssociative(asInfixExpression(e));
   }
   public static boolean nonAssociative(final InfixExpression e) {
-    return e != null && in(e.getOperator(),MINUS, DIVIDE, REMAINDER);
+    return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);
   }
   /**
    * @param e JD
@@ -451,8 +451,18 @@ public enum Is {
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a "specific"
    */
-  public static boolean specific(final Expression e) {
-    return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION);
+  public static boolean constant(final Expression e) {
+    switch (e.getNodeType()) {
+      case CHARACTER_LITERAL:
+      case NUMBER_LITERAL:
+      case NULL_LITERAL:
+      case THIS_EXPRESSION:
+        return true;
+      case PREFIX_EXPRESSION:
+        return Is.constant(Extract.core(((PrefixExpression) e).getOperand()));
+      default:
+        return false;
+    }
   }
   /**
    * Determine whether a node is a {@link Block}
