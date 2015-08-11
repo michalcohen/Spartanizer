@@ -144,7 +144,7 @@ public enum ADDITION_SORTER {
       assertThat(operands.size(), greaterThanOrEqualTo(2));
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
-              "After: " + operands + "\n", //
+          "After: " + operands + "\n", //
           Wrings.tryToSort(operands, COMPARATOR), is(true));
     }
     @Test public void tryToSortTwice() {

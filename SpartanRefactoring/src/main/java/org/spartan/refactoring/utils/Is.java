@@ -304,7 +304,7 @@ public enum Is {
         NUMBER_LITERAL, //
         STRING_LITERAL, //
         BOOLEAN_LITERAL //
-    );
+        );
   }
   /**
    * @param r Return Statement node
@@ -347,8 +347,8 @@ public enum Is {
         PREFIX_EXPRESSION, //
         ARRAY_CREATION, //
         INSTANCEOF_EXPRESSION//
-    //
-    );
+        //
+        );
   }
   public static boolean notStringDown(final Expression e) {
     return notStringSelf(e) || notStringDown(asInfixExpression(e));
@@ -369,9 +369,9 @@ public enum Is {
         default:
           return false;
       }
-   return false;
+    return false;
   }
-   static boolean notStringDown(final InfixExpression e) {
+  static boolean notStringDown(final InfixExpression e) {
     return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
   }
   /**

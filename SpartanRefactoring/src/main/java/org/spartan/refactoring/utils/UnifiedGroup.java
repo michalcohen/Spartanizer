@@ -68,8 +68,8 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
      * Zero based
      */
     ZeroBased, /**
-                * one based
-                */
+     * one based
+     */
     OneBased
   }
   /**

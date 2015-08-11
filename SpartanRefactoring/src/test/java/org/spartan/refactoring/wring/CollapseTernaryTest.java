@@ -30,7 +30,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class CollapseTernaryTest {
   static final Wring WRING = Wrings.COLLAPSE_TERNARY.inner;
- @Test public void steps() {
+  @Test public void steps() {
     final ConditionalExpression e = c("a ? b ? x : z :z");
     assertNotNull(e);
     final ConditionalExpression then = asConditionalExpression(core(e.getThenExpression()));

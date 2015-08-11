@@ -78,7 +78,6 @@ public enum Spartanizations {
       }
     };
   }
-  private static String ignoreRuleStr = "false";
   private static final Map<String, Spartanization> all = new HashMap<>();
   private static void put(final Spartanization s) {
     all.put(s.toString(), s);

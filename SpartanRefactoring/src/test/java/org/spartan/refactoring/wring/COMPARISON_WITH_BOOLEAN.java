@@ -48,23 +48,23 @@ public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
   @RunWith(Parameterized.class) //
   public static class WringedInput extends AbstractWringTest.WringedExpression.Infix {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("", "a == b == c == true", "a == b == c"), //
-        Utils.asArray("", "a == true", "a"), //
-        Utils.asArray("", "a == false", "!a"), //
-        Utils.asArray("", "true == a", "a"), //
-        Utils.asArray("", "a != true", "!a"), //
-        Utils.asArray("", "a != false", "a"), //
-        Utils.asArray("", "false == a", "!a"), //
-        Utils.asArray("", "true != a", "!a"), //
-        Utils.asArray("", "false != a", "a"), //
-        Utils.asArray("", "false != false", "false"), //
-        Utils.asArray("", "false != true", "true"), //
-        Utils.asArray("", "false == false", "!false"), //
-        Utils.asArray("", "false == true", "!true"), //
-        Utils.asArray("", "false != false", "false"), //
-        Utils.asArray("", "true != true", "!true"), //
-        Utils.asArray("", "true != false", "!false"), //
-        Utils.asArray("", "true != true", "!true"), //
+        new String[] { "", "a == b == c == true", "a == b == c" }, //
+        new String[] { "", "a == true", "a" }, //
+        new String[] { "", "a == false", "!a" }, //
+        new String[] { "", "true == a", "a" }, //
+        new String[] { "", "a != true", "!a" }, //
+        new String[] { "", "a != false", "a" }, //
+        new String[] { "", "false == a", "!a" }, //
+        new String[] { "", "true != a", "!a" }, //
+        new String[] { "", "false != a", "a" }, //
+        new String[] { "", "false != false", "false" }, //
+        new String[] { "", "false != true", "true" }, //
+        new String[] { "", "false == false", "true" }, //
+        new String[] { "", "false == true", "false" }, //
+        new String[] { "", "false != false", "false" }, //
+        new String[] { "", "true != true", "false" }, //
+        new String[] { "", "true != false", "true" }, //
+        new String[] { "", "true != true", "false" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

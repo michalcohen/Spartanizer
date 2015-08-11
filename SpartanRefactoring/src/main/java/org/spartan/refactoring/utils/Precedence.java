@@ -42,7 +42,7 @@ public enum Precedence {
           "*=", "/=", "%=", // assignment, multiplicative
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
-  );
+          );
   /**
    * Compare precedence of two expressions.
    *

@@ -720,7 +720,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-    ) ? e : null;
+        ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)

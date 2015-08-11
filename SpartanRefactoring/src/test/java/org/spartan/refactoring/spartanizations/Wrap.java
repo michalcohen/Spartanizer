@@ -31,11 +31,11 @@ public enum Wrap {
     }
   };
   private static final String PRE_STATEMENT = //
-  "package p;public class SpongeBob {\n" + //
+      "package p;public class SpongeBob {\n" + //
       "public boolean squarePants(){\n" + //
       "";
   private static final String POST_STATEMENT = //
-  "" + //
+      "" + //
       "} // END OF METHO\n" + //
       "} // END OF PACKAGE\n" + //
       "";

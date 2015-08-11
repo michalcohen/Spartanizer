@@ -38,10 +38,10 @@ public enum TESTUtils {
   }
   /**
    * A test to check that the actual output is similar to the actual value.
-  *
-  * @param expected JD
-  * @param actual JD
-  */
+   *
+   * @param expected JD
+   * @param actual JD
+   */
   public static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
       assertEquals(compressSpaces(expected), compressSpaces(actual));
@@ -66,11 +66,11 @@ public enum TESTUtils {
         .replaceAll("\\s$", "") // Closing whites
         ;
     for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
-        "[\\^]" })
+    "[\\^]" })
       $ = $ //
-          .replaceAll(WHITES + operator, operator) // Preceding whites
-          .replaceAll(operator + WHITES, operator) // Trailing whites
-          ;
+      .replaceAll(WHITES + operator, operator) // Preceding whites
+      .replaceAll(operator + WHITES, operator) // Trailing whites
+      ;
     return $;
   }
   public static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {

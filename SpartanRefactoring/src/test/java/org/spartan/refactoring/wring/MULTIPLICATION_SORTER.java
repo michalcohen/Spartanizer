@@ -181,7 +181,7 @@ public class MULTIPLICATION_SORTER extends AbstractWringTest {
       final boolean tryToSort = Wrings.tryToSort(operands, COMPARATOR);
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
-              "After: " + operands + "\n", //
+          "After: " + operands + "\n", //
           tryToSort, is(true));
     }
     @Test public void tryToSortTwice() {

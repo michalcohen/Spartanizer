@@ -125,7 +125,7 @@ public abstract class Wring {
     return ($ = replacement(asInfixExpression(e))) != null //
         || ($ = replacement(asPrefixExpression(e))) != null //
         || ($ = replacement(asConditionalExpression(e))) != null //
-            ? $ : null;
+        ? $ : null;
   }
   abstract Statement replacement(final IfStatement e);
   abstract Expression replacement(final InfixExpression e);
@@ -242,9 +242,9 @@ public abstract class Wring {
   }
 
   static abstract class OfBlock extends Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final Block _) {
-       return true;
-     }
+    @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final Block _) {
+      return true;
+    }
     abstract Statement _replacement(final Block e);
     @Override final boolean eligible(final Block e) {
       assert scopeIncludes(e);
@@ -263,7 +263,7 @@ public abstract class Wring {
   }
 
   static abstract class OfConditionalExpression extends Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
+    @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
       return true;
     }
     abstract Expression _replacement(final ConditionalExpression e);
@@ -284,7 +284,7 @@ public abstract class Wring {
   }
 
   static abstract class OfIfStatement extends Wring.Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+    @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
     abstract Statement _replacement(final IfStatement s);
@@ -305,9 +305,9 @@ public abstract class Wring {
   }
 
   static abstract class OfIfStatementAndSubsequentStatement extends Wring.Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-       return true;
-     }
+    @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
+      return true;
+    }
     @Override final boolean eligible(final IfStatement s) {
       assert scopeIncludes(s);
       return _eligible(s);
@@ -325,7 +325,7 @@ public abstract class Wring {
   }
 
   static abstract class OfInfixExpression extends Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
+    @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
     }
     abstract Expression _replacement(final InfixExpression e);
@@ -364,7 +364,7 @@ public abstract class Wring {
   }
 
   abstract static class OfVariableDeclarationFragmentAndSurrounding extends Wring.Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
+    @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
       return true;
     }
     @Override final boolean eligible(final VariableDeclarationFragment f) {

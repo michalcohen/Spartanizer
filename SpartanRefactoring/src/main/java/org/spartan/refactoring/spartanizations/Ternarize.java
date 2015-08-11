@@ -59,7 +59,7 @@ public class Ternarize extends Spartanization {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final IfStatement i) {
         return // try many alternatives, but finally return true.
-        !inRange(m, i) // Stop here
+            !inRange(m, i) // Stop here
             || perhapsAssignIfAssign(t, r, i) //
             || perhapsIfReturn(t, r, i) //
             || perhapsIfSameExpStmntOrRet(t, r, i) //
@@ -234,13 +234,13 @@ public class Ternarize extends Spartanization {
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final TwoExpressions diffExps) {
     return diffExps != null ? isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze)
         : !Is.assignment(then) //
-            || !Is.assignment(elze) //
-            || compatible(Extract.assignment(then), Extract.assignment(elze));
+        || !Is.assignment(elze) //
+        || compatible(Extract.assignment(then), Extract.assignment(elze));
   }
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final Expression thenExp, final Expression elseExp) {
     return Is.assignment(then) && Is.assignment(elze)//
         ? compatible(Extract.assignment(then), Extract.assignment(elze)) //
-        : same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp));
+            : same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp));
   }
   private static List<ASTNode> prepareSubTree(final ASTNode n, final Expression e) {
     final List<ASTNode> $ = collectDescendants(n);
@@ -386,8 +386,8 @@ public class Ternarize extends Spartanization {
   }
   private static boolean tryHandleOnlyPrevAsgnExist(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Assignment prevAsgn,
       final VariableDeclarationFragment prevDecl) {
-        return isOnlyPrevAsgnPossible(i, then, prevAsgn) && (prevDecl == null ? handleNoPrevDecl(t, r, i, then, prevAsgn) : handlePrevDeclExist(t, r, i, then, prevAsgn, prevDecl));
-      }
+    return isOnlyPrevAsgnPossible(i, then, prevAsgn) && (prevDecl == null ? handleNoPrevDecl(t, r, i, then, prevAsgn) : handlePrevDeclExist(t, r, i, then, prevAsgn, prevDecl));
+  }
   private static boolean isOnlyPrevAsgnPossible(final IfStatement i, final Assignment then, final Assignment prevAsgn) {
     return prevAsgn != null //
         && !dependsOn(prevAsgn.getLeftHandSide(), i.getExpression()) //
@@ -482,11 +482,11 @@ public class Ternarize extends Spartanization {
     final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn != null ? prev2(ss, ifIdx) : prev(ifIdx, ss), then.getLeftHandSide());
     Range $;
     return //
-    //
-    ($ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl)) != null || //
+        //
+        ($ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl)) != null || //
         ($ = detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl)) != null || //
         ($ = detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl)) != null//
-            ? $ : null;
+        ? $ : null;
   }
   private static ASTNode prev2(final List<Statement> stmts, final int ifIdx) {
     return stmts.get(ifIdx < 2 ? 0 : ifIdx - 2);

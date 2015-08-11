@@ -67,7 +67,7 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
         || ($ = perhapsDoubleNegation(inner)) != null//
         || ($ = perhapsDeMorgan(inner)) != null//
         || ($ = perhapsComparison(inner)) != null //
-            ? $ : null;
+        ? $ : null;
   }
   static Expression comparison(final InfixExpression inner) {
     return Subject.pair(inner.getLeftOperand(), inner.getRightOperand()).to(negate(inner.getOperator()));

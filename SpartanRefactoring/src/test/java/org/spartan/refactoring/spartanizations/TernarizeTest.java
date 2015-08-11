@@ -55,9 +55,9 @@ public class TernarizeTest extends AbstractTestBase {
               "if (s.equals(xxx)) res+=6;      " + //
               "else res+=9;      " + //
               "return res;", //
-          "" + //
+              "" + //
               "int res = 0;\n" + //
-              "res += (s.equals(xxx) ? 6 : 9);"), //
+          "res += (s.equals(xxx) ? 6 : 9);"), //
       null);
   /**
    * Generate test cases for this parameterized class.

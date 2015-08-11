@@ -75,7 +75,7 @@ public class DECLARATION_RETURN_OF_SAME_VARIABLE {
                 + "   !messageFlagged ? mReadColorChip : mFlaggedReadColorChip: " //
                 + "    !messageFlagged ? mUnreadColorChip : mFlaggedUnreadColorChip; " //
                 + "   return $;", //
-            "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
+        "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -33,7 +33,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
           ($ = nodesCompare(e1, e2)) != 0 || //
           ($ = characterCompare(e1, e2)) != 0 || //
           ($ = alphabeticalCompare(e1, e2)) != 0 //
-              ? $ : 0;
+          ? $ : 0;
     }
   },
   /**
@@ -50,7 +50,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
           ($ = nodesCompare(e1, e2)) != 0 || //
           ($ = characterCompare(e1, e2)) != 0 || //
           ($ = alphabeticalCompare(e1, e2)) != 0 //
-              ? $ : 0;
+          ? $ : 0;
     }
   };
   static int literalCompare(final Expression e1, final Expression e2) {
@@ -85,9 +85,9 @@ public enum ExpressionComparator implements Comparator<Expression> {
   }
   static boolean isLonger(final Expression e1, final Expression e2) {
     return !hasNull(e1, e2) && (//
-    countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2) || //
+        countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2) || //
         countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
-    );
+        );
   }
   static final int TOKEN_THRESHOLD = 1;
   /**
