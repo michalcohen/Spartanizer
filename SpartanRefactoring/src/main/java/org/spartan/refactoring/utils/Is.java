@@ -322,8 +322,8 @@ public enum Is {
   public static boolean methodInvocation(final ASTNode n) {
     return is(n, METHOD_INVOCATION);
   }
-  public static boolean nonAssociative(final Expression e) {
-    return nonAssociative(asInfixExpression(e));
+  public static boolean nonAssociative(final ASTNode n) {
+    return nonAssociative(asInfixExpression(n));
   }
   public static boolean nonAssociative(final InfixExpression e) {
     return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);

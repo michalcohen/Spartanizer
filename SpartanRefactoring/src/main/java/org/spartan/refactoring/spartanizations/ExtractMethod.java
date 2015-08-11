@@ -43,7 +43,7 @@ public class ExtractMethod extends Spartanization {
   }
   final int MinimumGroupSizeForExtraction = 3;
   final int MaximunGroupRelativeToMethodSize = 3;
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, @SuppressWarnings("unused") final IMarker m) {
     cu.accept(new ASTVisitor() {
       @SuppressWarnings("boxing") @Override public boolean visit(final MethodDeclaration md) {
         final Block b = md.getBody();

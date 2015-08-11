@@ -10,9 +10,6 @@ import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.Into.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.leftMoveableToRight;
-import static org.spartan.refactoring.utils.Funcs.remake;
-import static org.spartan.refactoring.utils.Funcs.rightMoveableToLeft;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
@@ -20,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +25,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
@@ -220,22 +217,13 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
     public Wringed() {
       super(WRING);
     }
-    @Test public void checkFlippingProcess() {
-      final InfixExpression e = asInfixExpression();
-      final Operator flip = flip(e.getOperator());
-      assertNotNull(e.toString(), flip);
-      final Expression left = rightMoveableToLeft(flip, e);
-      assertNotNull(left);
-      final Expression right = leftMoveableToRight(flip, e);
-      assertNotNull(right);
-      assertNotNull(remake(e.getAST().newInfixExpression(), left, flip, right));
-    }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Test public void flipIsNotNull() {
-      assertNotNull(flip(asInfixExpression()));
+      final InfixExpression e = asInfixExpression();
+      assertNotNull(Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator())));
     }
     @Override @Test public void inputIsInfixExpression() {
       assertNotNull(asInfixExpression());

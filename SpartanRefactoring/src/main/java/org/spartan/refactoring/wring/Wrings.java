@@ -21,12 +21,10 @@ import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.last;
-import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
+import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.utils.Utils.in;
@@ -528,7 +526,8 @@ public enum Wrings {
       if (!compatible(then, elze))
         return null;
       final ConditionalExpression e = Subject.pair(then.getRightHandSide(), elze.getRightHandSide()).toCondition(i.getExpression());
-      return makeExpressionStatement(Subject.pair(then.getLeftHandSide(), e).to(then.getOperator()));
+      final Assignment a = Subject.pair(then.getLeftHandSide(), e).to(then.getOperator());
+      return Subject.operand(a).toStatement();
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
@@ -546,7 +545,7 @@ public enum Wrings {
       return in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     }
     private PrefixExpression negate(final ASTNode e) {
-      return makePrefixExpression(makeParenthesizedExpression((Expression) e), NOT);
+      return Subject.operand((Expression) e).to(NOT);
     }
     private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
       return literal.booleanValue() == (e.getOperator() == EQUALS);
@@ -588,7 +587,7 @@ public enum Wrings {
       return Is.constant(e.getLeftOperand());
     }
     @Override Expression _replacement(final InfixExpression e) {
-      return flip(e);
+      return Subject.pair(e.getRightOperand(),e.getLeftOperand()).to(flip(e.getOperator()));
     }
     boolean hasThisOrNull(final InfixExpression e) {
       return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
@@ -598,14 +597,12 @@ public enum Wrings {
     @Override public final String toString() {
       return " ELIMINATE_TERNARY (" + super.toString() + ")";
     }
-
     @Override Expression _replacement(final ConditionalExpression e) {
       return duplicate(e.getThenExpression());
     }
     @Override boolean scopeIncludes(final ConditionalExpression e) {
       return e != null && same(e.getThenExpression(), e.getElseExpression());
     }
-
   }),  //
   COLLAPSE_TERNARY(new CollapseTernary()), //
   /**
@@ -901,9 +898,9 @@ public enum Wrings {
         ? $ : null;
   }
   /**
-   * Find the first {@link Wring} appropriate for an {@link IfStatement}
+   * Find the first {@link Wring} appropriate for a {@link VariableDeclarationFragment}
    *
-   * @param b JD
+   * @param f JD
    * @return the first {@link Wring} for which the parameter is within scope, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found.
    */
@@ -1018,18 +1015,7 @@ public enum Wrings {
     r.replace(parent, $, null);
     return r;
   }
-  static boolean same(final ASTNode e1, final ASTNode e2){
-    return e1 == e2 || e1.getNodeType() == e2.getNodeType() && e1.toString().equals(e2.toString());
-  }
-  static <T extends ASTNode> boolean same(final List<T> ns1, final List<T> ns2){
-    if (ns1 == ns2) return true;
-    if (ns1.size()  != ns2.size())
-      return false;
-    for (int i = 0; i < ns1.size(); ++i )
-      if (!same(ns1.get(i), ns2.get(i)))
-        return false;
-    return true;
-  }
+
   /**
    * Consider an expression <code> a ? b : c </code>; in a sense it is the same
    * as <code> (a && b) || (!a && c) </code>

@@ -9,16 +9,12 @@ import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.Into.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.Wrap.POST_EXPRESSION;
-import static org.spartan.refactoring.spartanizations.Wrap.PRE_EXPRESSION;
 import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.wring.Wrings.COMPARISON_WITH_SPECIFIC;
 import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
-import static org.spartan.utils.Utils.removePrefix;
-import static org.spartan.utils.Utils.removeSuffix;
 
 import java.io.File;
 
@@ -49,7 +45,7 @@ import org.spartan.refactoring.utils.Is;
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
   public static void assertNoChange(final String input) {
-    assertSimilar(input, removeSuffix(removePrefix(apply(new Trimmer(), Wrap.Expression.on(input)), PRE_EXPRESSION), POST_EXPRESSION));
+    assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
@@ -66,11 +62,11 @@ public class TrimmerTest {
   }
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = Wrap.Expression.on(from);
-    assertEquals(from, removeSuffix(removePrefix(wrap, PRE_EXPRESSION), POST_EXPRESSION));
+    assertEquals(from, Wrap.Expression.off(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
-    final String peeled = removeSuffix(removePrefix(unpeeled, PRE_EXPRESSION), POST_EXPRESSION);
+    final String peeled = Wrap.Expression.off(unpeeled);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
@@ -369,7 +365,7 @@ public class TrimmerTest {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void testPeel() {
-    assertEquals(example, removeSuffix(removePrefix(Wrap.Expression.on(example), PRE_EXPRESSION), POST_EXPRESSION));
+    assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");

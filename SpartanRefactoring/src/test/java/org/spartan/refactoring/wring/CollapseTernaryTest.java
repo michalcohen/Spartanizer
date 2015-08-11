@@ -26,11 +26,11 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({ "javadoc", }) //
+@SuppressWarnings({ "javadoc","static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class CollapseTernaryTest {
   static final Wring WRING = Wrings.COLLAPSE_TERNARY.inner;
-  @Test public void steps() {
+ @Test public void steps() {
     final ConditionalExpression e = c("a ? b ? x : z :z");
     assertNotNull(e);
     final ConditionalExpression then = asConditionalExpression(core(e.getThenExpression()));

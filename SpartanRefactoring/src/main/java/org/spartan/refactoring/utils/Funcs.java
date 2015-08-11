@@ -331,32 +331,10 @@ public enum Funcs {
   @SuppressWarnings("unchecked") public static <N extends ASTNode> N duplicate(final N n) {
     return (N) copySubtree(n.getAST(), n);
   }
-  /**
-   * Make a duplicate of, suitable for tree rewrite, of the parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static Expression duplicateLeft(final InfixExpression e) {
-    return duplicate(e.getLeftOperand());
-  }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the right hand side of the
-   * parameter
-   *
-   * @param e JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
-  public static Expression duplicateRight(final InfixExpression e) {
-    return duplicate(e.getRightOperand());
-  }
+
+
   public static InfixExpression flip(final InfixExpression e) {
-    final Operator flip = flip(e.getOperator());
-    return remake(e.getAST().newInfixExpression(), rightMoveableToLeft(flip, e), flip, leftMoveableToRight(flip, e));
+    return Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator()));
   }
   /**
    * Makes an opposite operator from a given one, which keeps its logical
@@ -552,13 +530,6 @@ public enum Funcs {
   public static <T> T last(final List<T> ts) {
     return ts == null || ts.isEmpty() ? null : ts.get(ts.size() - 1);
   }
-  public static Expression leftMoveableToRight(final Operator o, final InfixExpression e) {
-    final Expression $ = e.getLeftOperand();
-    return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
-  }
-  public static Statement makeExpressionStatement(final Expression e) {
-    return e.getAST().newExpressionStatement(frugalDuplicate(e));
-  }
   /**
    * @param t the AST who is to own the new If Statement
    * @param r ASTRewrite for the given AST
@@ -577,21 +548,6 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param cond the condition
-   * @param thenExp the then statement to set in the conditional
-   * @param elseExp the else statement to set in the conditional
-   * @return a parenthesized conditional expression
-   */
-  public static ParenthesizedExpression makeParenthesizedConditionalExp(final Expression cond, final Expression thenExp, final Expression elseExp) {
-    if (hasNull(cond, thenExp, elseExp))
-      return null;
-    final ConditionalExpression $ = cond.getAST().newConditionalExpression();
-    $.setExpression(frugalDuplicate(cond));
-    $.setThenExpression(frugalDuplicate(thenExp));
-    $.setElseExpression(frugalDuplicate(elseExp));
-    return makeParenthesizedExpression($);
-  }
-  /**
    * @param e the expression to put in parenthesis
    * @return the given expression with parenthesis
    */
@@ -601,28 +557,13 @@ public enum Funcs {
     return $;
   }
   /**
-   * @param t the AST to own the newly created expression
-   * @param e the operand for the new prefix Expression
-   * @param o the operator for the new prefix Expression
-   * @return the new prefix expression or null if one of the given parameters
-   *         was null
-   */
-  public static PrefixExpression makePrefixExpression(final AST t, final Expression e, final PrefixExpression.Operator o) {
-    if (hasNull(t, e, o))
-      return null;
-    final PrefixExpression $ = t.newPrefixExpression();
-    $.setOperator(o);
-    $.setOperand(frugalDuplicate(e));
-    return $;
-  }
-  /**
    * @param e the operand for the new prefix Expression
    * @param o the operator for the new prefix Expression
    * @return the new prefix expression or null if one of the given parameters
    *         was null
    */
   public static PrefixExpression makePrefixExpression(final Expression e, final PrefixExpression.Operator o) {
-    return makePrefixExpression(e.getAST(), e, o);
+    return Subject.operand(e).to(o);
   }
 
   /**
@@ -630,9 +571,7 @@ public enum Funcs {
    * @return the new return statement
    */
   public static ThrowStatement makeThrowStatement(final Expression e) {
-    final ThrowStatement $ = e.getAST().newThrowStatement();
-    $.setExpression(frugalDuplicate(e));
-    return $;
+    return Subject.operand(e).toThrow();
   }
   /**
    * @param t the AST who is to own the new variable declaration fragment
@@ -661,8 +600,7 @@ public enum Funcs {
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
   }
-
-   /**
+  /**
    * @param e JD
    * @return the parameter, but logically negated.
    */
@@ -707,12 +645,6 @@ public enum Funcs {
   public static Expression rebase(final Expression e, final AST t) {
     return (Expression) copySubtree(t, e);
   }
-  public static InfixExpression remake(final InfixExpression $, final Expression left, final InfixExpression.Operator o, final Expression right) {
-    $.setLeftOperand(left);
-    $.setOperator(o);
-    $.setRightOperand(right);
-    return $;
-  }
   /**
    * Remove all occurrences of a boolean literal from a list of
    * {@link Expression}s
@@ -737,21 +669,8 @@ public enum Funcs {
   public static String removeWhites(final ASTNode n) {
     return Utils.removeWhites(n.toString());
   }
-  public static Expression rightMoveableToLeft(final Operator o, final InfixExpression e) {
-    final Expression $ = e.getRightOperand();
-    return !Precedence.same(o, $) || !Associativity.isLeftToRight(o) ? duplicate($) : parenthesize($);
-  }
-  /**
-   * Determine whether two nodes are the same, in the sense that their textual
-   * representations is identical.
-   *
-   * @param n1 JD
-   * @param n2 JD
-   * @return are the nodes equal string-wise
-   */
-  public static boolean same(final ASTNode n1, final ASTNode n2) {
-    return n1.toString().equals(n2.toString());
-  }
+
+
   /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
@@ -760,29 +679,38 @@ public enum Funcs {
    * @param n2 second list to compare
    * @return are the lists equal string-wise
    */
-  public static boolean same(final List<ASTNode> n1, final List<ASTNode> n2) {
-    return n1.toString().equals(n2.toString());
+  public static boolean same(final ASTNode n1, final ASTNode n2) {
+    return n1 == n2 || n1.getNodeType() == n2.getNodeType() && n1.toString().equals(n2.toString());
   }
   /**
-   * @param s JD
-   * @return 0 is s is null, 1 if s is a statement or the number of statement in
-   *         the block is the parameter is
+   * Determine whether two lists of nodes are the same, in the sense that their textual
+   * representations is identical.
+   *
+   * @param ns1 first list to compare
+   * @param ns2 second list to compare
+   * @return are the lists equal string-wise
    */
-  public static int statementsCount(final ASTNode s) {
-    return Extract.statements(s).size();
+  public static <T extends ASTNode> boolean same(final List<T> ns1, final List<T> ns2) {
+    if (ns1 == ns2)
+      return true;
+    if (ns1.size() != ns2.size())
+      return false;
+    for (int i = 0; i < ns1.size(); ++i)
+      if (!same(ns1.get(i), ns2.get(i)))
+        return false;
+    return true;
   }
   /**
    * the function receives a condition and the then boolean value and returns
    * the proper condition (its negation if thenValue is false)
-   *
-   * @param t the AST who is to own the new return statement
    * @param cond the condition to try to negate
    * @param thenValue the then value
+   *
    * @return the original condition if thenValue was true or its negation if it
    *         was false (or null if any of the given parameter were null)
    */
-  public static Expression tryToNegateCond(final AST t, final Expression cond, final boolean thenValue) {
-    return hasNull(t, cond) ? null : thenValue ? cond : makePrefixExpression(t, makeParenthesizedExpression(cond), PrefixExpression.Operator.NOT);
+  public static Expression tryToNegateCond(final Expression cond, final boolean thenValue) {
+    return cond == null ? null : thenValue ? cond : Subject.operand(cond).to(PrefixExpression.Operator.NOT);
   }
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
@@ -824,10 +752,7 @@ public enum Funcs {
     return $;
   }
 
-
-
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
   }
-
 }

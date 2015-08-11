@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
 /**
@@ -38,7 +39,7 @@ public final class ComparisonWithSpecific extends SpartanizationOfInfixExpressio
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
         if (inRange(m, e) && withinDomain(e) && applicable(e))
-          r.replace(e, flip(e), null);
+          r.replace(e, Subject.pair(e.getRightOperand(),e.getLeftOperand()).to(flip(e.getOperator())), null);
         return true;
       }
     });

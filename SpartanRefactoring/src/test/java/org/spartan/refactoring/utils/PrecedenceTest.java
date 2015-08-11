@@ -12,6 +12,7 @@ import static org.spartan.refactoring.spartanizations.Into.c;
 import static org.spartan.refactoring.spartanizations.Into.e;
 import static org.spartan.refactoring.spartanizations.Into.p;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.junit.Test;
 
@@ -134,5 +135,13 @@ public class PrecedenceTest {
   }
   @Test public void methodAccess() {
     assertThat(Precedence.of(e("t.f()")), is(1));
+  }
+  @Test public void preceenceOfNull() {
+    final ASTNode n = null;
+    assertThat(Precedence.of(n), is(Precedence.UNDEFINED));
+  }
+  @Test public void preceenceOfNulGreatherl() {
+    final ASTNode n = null;
+    assertThat(Precedence.greater(n, c("a?b:c")), is(true));
   }
 }

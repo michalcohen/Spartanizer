@@ -21,13 +21,9 @@ import static org.spartan.refactoring.spartanizations.Into.s;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.Wrap.POST_EXPRESSION;
-import static org.spartan.refactoring.spartanizations.Wrap.PRE_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.utils.Utils.removePrefix;
-import static org.spartan.utils.Utils.removeSuffix;
 
 import java.util.List;
 
@@ -55,8 +51,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Conditional;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Infix;
 import org.spartan.utils.Range;
 
 /**
@@ -170,7 +164,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final Document d = asDocument();
       wringer.createRewrite(asCompilationUnit(), null).rewriteAST(d, null).apply(d);
-      assertSimilar(compressSpaces(removeSuffix(removePrefix(d.get(), PRE_EXPRESSION), POST_EXPRESSION)), compressSpaces(input));
+      assertSimilar(compressSpaces(Wrap.Expression.off(d.get())), compressSpaces(input));
       final String s = input;
       assertSimilar(Wrap.Expression.on(s), d.get());
     }
@@ -476,8 +470,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       assertFalse(inner.noneligible(asExpression()));
     }
     @Test public void peelableOutput() {
-      final String s = expected;
-      assertEquals(expected, removeSuffix(removePrefix(Wrap.Expression.on(s), PRE_EXPRESSION), POST_EXPRESSION));
+      assertEquals(expected, Wrap.Expression.off(Wrap.Expression.on(expected)));
     }
     @Test public void scopeIncludes() {
       assertTrue(inner.scopeIncludes(asExpression()));
@@ -485,7 +478,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       final CompilationUnit u = asCompilationUnit();
       final Document actual = TESTUtils.rewrite(wringer, u, asDocument());
-      final String peeled = removeSuffix(removePrefix(actual.get(), PRE_EXPRESSION), POST_EXPRESSION);
+      final String peeled = Wrap.Expression.off(actual.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -514,7 +507,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       }
       if (actual == null)
         return;
-      final String peeled = removeSuffix(removePrefix(actual.get(), PRE_EXPRESSION), POST_EXPRESSION);
+      final String peeled = Wrap.Expression.off(actual.get());
       if (expected.equals(peeled))
         return;
       if (input.equals(peeled))
@@ -901,7 +894,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
       }
       @Test public void peelableOutput() {
         final String s = output;
-        assertEquals(output, removeSuffix(removePrefix(Wrap.Expression.on(s), PRE_EXPRESSION), POST_EXPRESSION));
+        assertEquals(output, Wrap.Expression.off(Wrap.Expression.on(s)));
       }
       @Test public void scopeIncludes() {
         assertFalse(inner.scopeIncludes(asExpression()));
@@ -910,7 +903,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         final CompilationUnit u = asCompilationUnit();
         final String s = input;
         final Document excpected = TESTUtils.rewrite(trimmer, u, new Document(Wrap.Expression.on(s)));
-        final String peeled = removeSuffix(removePrefix(excpected.get(), PRE_EXPRESSION), POST_EXPRESSION);
+        final String peeled = Wrap.Expression.off(excpected.get());
         if (output.equals(peeled))
           return;
         if (input.equals(peeled))

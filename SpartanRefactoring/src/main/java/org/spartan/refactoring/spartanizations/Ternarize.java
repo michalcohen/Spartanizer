@@ -9,12 +9,10 @@ import static org.spartan.refactoring.utils.Funcs.compatibleOps;
 import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.hasReturn;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
 import static org.spartan.refactoring.utils.Funcs.makeVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.next;
 import static org.spartan.refactoring.utils.Funcs.prev;
 import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Funcs.statementsCount;
 import static org.spartan.refactoring.utils.Funcs.tryToNegateCond;
 import static org.spartan.utils.Utils.hasNull;
 
@@ -97,13 +95,13 @@ public class Ternarize extends Spartanization {
     return isEmpty(i.getElseStatement());
   }
   private static boolean isEmpty(final Statement s) {
-    return statementsCount(s) == 0;
+    return Extract.statements(s).size() == 0;
   }
   private static boolean singletonThen(final IfStatement i) {
     return isSingleton(i.getThenStatement());
   }
-  private static boolean isSingleton(final Statement s) {
-    return statementsCount(s) == 1;
+  private static boolean isSingleton(final ASTNode then) {
+    return Extract.statements(then).size() == 1;
   }
   private static ReturnStatement nextStatement(final List<Statement> ns, final int n) {
     return n + 1 >= ns.size() ? null : asReturnStatement(ns.get(n + 1));
@@ -113,7 +111,7 @@ public class Ternarize extends Spartanization {
     return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(t, r, i, $.getExpression(), nextReturn.getExpression());
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
-    r.replace(i, Subject.operand(determineNewExp(t, r, i.getExpression(), thenExp, nextExp)).toReturn(), null);
+    r.replace(i, Subject.operand(determineNewExp( i.getExpression(), thenExp, nextExp)).toReturn(), null);
     r.remove(nextExp.getParent(), null);
     return true;
   }
@@ -256,7 +254,7 @@ public class Ternarize extends Spartanization {
     return Is.expressionStatement(n) || Is.retern(n);
   }
   private static boolean handleCaseDiffNodesAreBlocks(final Pair diffNodes) {
-    if (statementsCount(diffNodes.then) != 1 || statementsCount(diffNodes.elze) != 1)
+    if (!isSingleton(diffNodes.then) || !isSingleton(diffNodes.elze))
       return false;
     diffNodes.then = Extract.singleStatement(diffNodes.then);
     diffNodes.elze = Extract.singleStatement(diffNodes.elze);
@@ -294,7 +292,7 @@ public class Ternarize extends Spartanization {
     final Statement elze = singleElse(i);
     final Statement then = singleThen(i);
     final Pair diffNodes = isExpStmntOrRet(then) ? new Pair(then, elze) : findDiffNodes(then, elze);
-    final Expression newExp = determineNewExp(t, r, i.getExpression(), diff.then, diff.elze);
+    final Expression newExp = determineNewExp( i.getExpression(), diff.then, diff.elze);
     if (Is.assignment(diffNodes.then) && Is.assignment(diffNodes.elze)) {
       if (!compatible(Extract.assignment(diffNodes.then), Extract.assignment(diffNodes.elze)))
         return false;
@@ -322,9 +320,9 @@ public class Ternarize extends Spartanization {
     r.remove(i, null);
     return true;
   }
-  private static Expression determineNewExp(final AST t, final ASTRewrite r, final Expression cond, final Expression thenExp, final Expression elseExp) {
-    return !Is.booleanLiteral(thenExp) || !Is.booleanLiteral(elseExp) ? makeParenthesizedConditionalExp(cond, thenExp, elseExp)
-        : tryToNegateCond(t, cond, ((BooleanLiteral) thenExp).booleanValue());
+  private static Expression determineNewExp(final Expression cond, final Expression thenExp, final Expression elseExp) {
+    return !Is.booleanLiteral(thenExp) || !Is.booleanLiteral(elseExp) ? Subject.pair(thenExp,elseExp).toCondition(cond)
+        : tryToNegateCond(cond, ((BooleanLiteral) thenExp).booleanValue());
   }
   static boolean perhapsAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i) {
     return asBlock(i.getParent()) != null && treatAssignIfAssign(t, r, i, siblings(i));
@@ -351,7 +349,7 @@ public class Ternarize extends Spartanization {
       final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
     if (!isNoNextNoPrevAsgnPossible(i, then, prevAsgn, nextAsgn, prevDecl))
       return false;
-    r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), makeParenthesizedConditionalExp(i.getExpression(), then.getRightHandSide(), prevDecl.getInitializer())), null);
+    r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), Subject.pair(then.getRightHandSide(),prevDecl.getInitializer()).toCondition(i.getExpression())), null);
     r.remove(i, null);
     return true;
   }
@@ -403,7 +401,7 @@ public class Ternarize extends Spartanization {
         return handleNoPrevDecl(t, r, i, then, prevAsgn);
     } else {
       r.replace(prevDecl, makeVarDeclFrag(t, r, (SimpleName) prevAsgn.getLeftHandSide(),
-          makeParenthesizedConditionalExp(i.getExpression(), then.getRightHandSide(), prevAsgn.getRightHandSide())), null);
+          Subject.pair(then.getRightHandSide(),prevAsgn.getRightHandSide()).toCondition(i.getExpression())), null);
       r.remove(i, null);
       r.remove(prevAsgn.getParent(), null);
       return true;
@@ -447,7 +445,7 @@ public class Ternarize extends Spartanization {
   private static void rewriteAssignIfAssignToAssignTernary(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Expression otherAsgnExp) {
     final Expression thenSideExp = Is.plainAssignment(then) ? then.getRightHandSide()
         : Subject.pair(then.getRightHandSide(), otherAsgnExp).to(InfixExpression.Operator.PLUS);
-    final Expression newCond = makeParenthesizedConditionalExp(i.getExpression(), thenSideExp, otherAsgnExp);
+    final Expression newCond = Subject.pair(thenSideExp,otherAsgnExp).toCondition(i.getExpression());
     r.replace(i, t.newExpressionStatement(Subject.pair(then.getLeftHandSide(), newCond).to(then.getOperator())), null);
   }
   static Range detectIfReturn(final IfStatement i) {

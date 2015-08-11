@@ -37,7 +37,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", }) //
 public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
-  private static final Wring WRING = Wrings.COMPARISON_WITH_BOOLEAN.inner;
+  static final Wring WRING = Wrings.COMPARISON_WITH_BOOLEAN.inner;
   public COMPARISON_WITH_BOOLEAN() {
     super(WRING);
   }
@@ -50,21 +50,21 @@ public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("", "a == b == c == true", "a == b == c"), //
         Utils.asArray("", "a == true", "a"), //
-        Utils.asArray("", "a == false", "!(a)"), //
+        Utils.asArray("", "a == false", "!a"), //
         Utils.asArray("", "true == a", "a"), //
-        Utils.asArray("", "a != true", "!(a)"), //
+        Utils.asArray("", "a != true", "!a"), //
         Utils.asArray("", "a != false", "a"), //
-        Utils.asArray("", "false == a", "!(a)"), //
-        Utils.asArray("", "true != a", "!(a)"), //
+        Utils.asArray("", "false == a", "!a"), //
+        Utils.asArray("", "true != a", "!a"), //
         Utils.asArray("", "false != a", "a"), //
         Utils.asArray("", "false != false", "false"), //
         Utils.asArray("", "false != true", "true"), //
-        Utils.asArray("", "false == false", "!(false)"), //
-        Utils.asArray("", "false == true", "!(true)"), //
+        Utils.asArray("", "false == false", "!false"), //
+        Utils.asArray("", "false == true", "!true"), //
         Utils.asArray("", "false != false", "false"), //
-        Utils.asArray("", "true != true", "!(true)"), //
-        Utils.asArray("", "true != false", "!(false)"), //
-        Utils.asArray("", "true != true", "!(true)"), //
+        Utils.asArray("", "true != true", "!true"), //
+        Utils.asArray("", "true != false", "!false"), //
+        Utils.asArray("", "true != true", "!true"), //
         null);
     /**
      * Generate test cases for this parameterized class.

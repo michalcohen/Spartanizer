@@ -6,10 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.spartanizations.Wrap.POST_EXPRESSION;
-import static org.spartan.refactoring.spartanizations.Wrap.PRE_EXPRESSION;
-import static org.spartan.utils.Utils.removePrefix;
-import static org.spartan.utils.Utils.removeSuffix;
 
 import java.util.Collection;
 
@@ -76,10 +72,7 @@ public class TernarizeTest extends AbstractTestBase {
   /** Where the expected output can be found? */
   @Parameter(2) public String output;
   @Test public void peelableOutput() {
-    final String s = output;
-    assertEquals(output, removeSuffix(removePrefix(Wrap.Expression.on(s), PRE_EXPRESSION), POST_EXPRESSION));
-    final String s1 = output;
-    assertEquals(output, Wrap.Statement.off(Wrap.Statement.on(s1)));
+    assertEquals(output, Wrap.Statement.off(Wrap.Statement.on(output)));
   }
   @Test public void rewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String s = input;

@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.Collection;
 
@@ -100,7 +101,7 @@ public class DECLARATION_RETURN_OF_SAME_VARIABLE {
       assertNotNull(Extract.nextStatement(f));
       final ReturnStatement s = Extract.nextReturn(f);
       assertNotNull(s);
-      assertTrue(Wrings.same(f.getName(), Extract.expression(s)));
+      assertTrue(same(f.getName(), Extract.expression(s)));
       r.remove(Extract.statement(f), null);
       r.replace(s, Subject.operand(initializer).toReturn(), null);
     }

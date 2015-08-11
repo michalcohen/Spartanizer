@@ -6,6 +6,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.Plant;
 import org.spartan.refactoring.utils.Precedence;
 import org.spartan.refactoring.utils.Subject;
 
@@ -26,7 +28,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {
     int $ = -1;
     for (int i = 0; i < es1.size(); i++)
-      if (!Wrings.same(es1.get(i), es2.get(i)))
+      if (!same(es1.get(i), es2.get(i)))
         if ($ < 0)
           $ = i;
         else
@@ -37,7 +39,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return !Precedence.Is.legal(Precedence.of(e)) || Precedence.of(e) >= Precedence.of($) ? $ : (T) parenthesize($);
   }
   private static Expression pushdown(final ConditionalExpression e, final FieldAccess e1, final FieldAccess e2) {
-    if (!Wrings.same(e1.getName(), e2.getName()))
+    if (!same(e1.getName(), e2.getName()))
       return null;
     System.out.println("Field access" + e1 + e2);
     final FieldAccess $ = duplicate(e1);
@@ -61,7 +63,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return p(e, Subject.operands(operands).to($.getOperator()));
   }
   private static Expression pushdown(final ConditionalExpression e, final MethodInvocation e1, final MethodInvocation e2) {
-    if (!Wrings.same(e1.getName(), e2.getName()) || !Wrings.same(e1.getExpression(), e2.getExpression()))
+    if (!same(e1.getName(), e2.getName()) || !same(e1.getExpression(), e2.getExpression()))
       return null;
     final List<Expression> es1 = e1.arguments();
     final List<Expression> es2 = e2.arguments();
@@ -76,7 +78,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
     return $;
   }
   private static Expression pushdown(final ConditionalExpression e, final ClassInstanceCreation e1, final ClassInstanceCreation e2) {
-    if (!Wrings.same(e1.getType(), e2.getType()) || !Wrings.same(e1.getExpression(), e2.getExpression()))
+    if (!same(e1.getType(), e2.getType()) || !same(e1.getExpression(), e2.getExpression()))
       return null;
     final List<Expression> es1 = e1.arguments();
     final List<Expression> es2 = e2.arguments();
@@ -95,7 +97,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
       return null;
     final Expression then = core(e.getThenExpression());
     final Expression elze = core(e.getElseExpression());
-    return Wrings.same(then, elze) ? null : pushdown(e, then, elze);
+    return same(then, elze) ? null : pushdown(e, then, elze);
   }
   private Expression pushdown(final ConditionalExpression e, final Expression e1, final Expression e2) {
     if (e1.getNodeType() != e2.getNodeType())
@@ -115,12 +117,12 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
         return null;
     }
   }
-  Expression pushdown(final ConditionalExpression e, final Assignment a1, final Assignment a2) {
-    if (a1.getOperator() != a2.getOperator() || !Wrings.same(a1.getLeftHandSide(), a2.getLeftHandSide()))
+  static Expression pushdown(final ConditionalExpression e, final Assignment a1, final Assignment a2) {
+    if (a1.getOperator() != a2.getOperator() || !same(a1.getLeftHandSide(), a2.getLeftHandSide()))
       return null;
-    final Assignment $ = duplicate(a1);
-    $.setRightHandSide(Subject.pair(a1.getRightHandSide(), a2.getRightHandSide()).toCondition(e.getExpression()));
-    return p(e.getParent(), $);
+    final ConditionalExpression c = Subject.pair(a1.getRightHandSide(), a2.getRightHandSide()).toCondition(e.getExpression());
+    final Assignment a = Subject.pair(a1.getLeftHandSide(), c).to(a1.getOperator());
+    return Plant.zis(a).into(e.getParent());
   }
   @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
     return true;

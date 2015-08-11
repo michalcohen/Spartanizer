@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.Collection;
 
@@ -31,7 +32,7 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({ "javadoc" }) //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE {
@@ -96,7 +97,7 @@ public class DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE {
       assertThat(Extract.statements(s.getElseStatement()).size(), is(0));
       final Assignment a = Extract.assignment(s.getThenStatement());
       assertNotNull(a);
-      assertTrue(Wrings.same(a.getLeftHandSide(), f.getName()));
+      assertTrue(same(a.getLeftHandSide(), f.getName()));
       r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
       r.remove(s, null);
     }

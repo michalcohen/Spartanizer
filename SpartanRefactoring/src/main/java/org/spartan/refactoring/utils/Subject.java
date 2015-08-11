@@ -16,6 +16,8 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.ThrowStatement;
 
 @SuppressWarnings("javadoc") public class Subject {
   public static Operand operand(final Expression inner) {
@@ -66,6 +68,14 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
      */
     public ReturnStatement toReturn() {
       final ReturnStatement $ = ast.newReturnStatement();
+      $.setExpression(inner);
+      return $;
+    }
+    public Statement toStatement() {
+      return ast.newExpressionStatement(inner);
+    }
+    public ThrowStatement toThrow() {
+      final ThrowStatement $ = ast.newThrowStatement();
       $.setExpression(inner);
       return $;
     }

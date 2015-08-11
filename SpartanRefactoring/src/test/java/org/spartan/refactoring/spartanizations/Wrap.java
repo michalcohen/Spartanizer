@@ -12,26 +12,24 @@ import static org.spartan.utils.Utils.removeSuffix;
  * @since 2015-07-16
  */
 public enum Wrap {
+  /** Algorithm for wrapping/unwrapping an expression */
   Expression {
-  @Override public String on(final String s) {
-    return PRE_EXPRESSION +s + POST_EXPRESSION;
-  }
-  @Override public String off(final String s) {
-    return removeSuffix(removePrefix(s, PRE_EXPRESSION), POST_EXPRESSION);
-  }
-},
+    @Override public String on(final String s) {
+      return PRE_EXPRESSION + s + POST_EXPRESSION;
+    }
+    @Override public String off(final String s) {
+      return removeSuffix(removePrefix(s, PRE_EXPRESSION), POST_EXPRESSION);
+    }
+  },
+  /** Algorithm for wrapping/unwrapping a statement */
   Statement {
     @Override public String on(final String s) {
       return PRE_STATEMENT + s + POST_STATEMENT;
     }
-
     @Override public String off(final String s) {
       return removeSuffix(removePrefix(s, PRE_STATEMENT), POST_STATEMENT);
     }
-  }
-  ;
-
-  static final String WHITES = "(?m)\\s+";
+  };
   private static final String PRE_STATEMENT = //
   "package p;public class SpongeBob {\n" + //
       "public boolean squarePants(){\n" + //
@@ -41,8 +39,16 @@ public enum Wrap {
       "} // END OF METHO\n" + //
       "} // END OF PACKAGE\n" + //
       "";
-  public static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
-  public static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;
+  private static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
+  private static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;
+  /** Place a wrap around a phrase
+   * @param s some program phrase
+   * @return the wrapped phrase
+   */
   public abstract String on(final String s);
-   public abstract String off(final String s);
+  /** Remove a wrap from around a phrase
+   * @param s a wrapped program phrase
+   * @return the unwrapped phrase
+   */
+  public abstract String off(final String s);
 }

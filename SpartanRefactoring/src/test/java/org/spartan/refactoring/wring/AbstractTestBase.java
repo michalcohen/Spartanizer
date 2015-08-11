@@ -32,8 +32,6 @@ public abstract class AbstractTestBase {
     assertNotNull(input);
   }
   @Test public void peelableinput() {
-    final String s = input;
-    final String s1 = input;
-    assertEquals(input, Wrap.Statement.off(Wrap.Statement.on(s1)));
+    assertEquals(input, Wrap.Statement.off(Wrap.Statement.on(input)));
   }
 }

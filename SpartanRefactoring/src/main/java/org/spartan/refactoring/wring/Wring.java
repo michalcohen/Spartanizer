@@ -263,7 +263,7 @@ public abstract class Wring {
   }
 
   static abstract class OfConditionalExpression extends Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(final ConditionalExpression _) {
+     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
       return true;
     }
     abstract Expression _replacement(final ConditionalExpression e);
@@ -305,7 +305,7 @@ public abstract class Wring {
   }
 
   static abstract class OfIfStatementAndSubsequentStatement extends Wring.Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(final IfStatement s) {
+     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
        return true;
      }
     @Override final boolean eligible(final IfStatement s) {
@@ -325,7 +325,7 @@ public abstract class Wring {
   }
 
   static abstract class OfInfixExpression extends Defaults {
-     @SuppressWarnings("static-method") boolean _eligible(final InfixExpression _) {
+     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
     }
     abstract Expression _replacement(final InfixExpression e);

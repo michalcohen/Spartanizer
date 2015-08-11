@@ -1,8 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
-
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -17,6 +14,7 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
 /**
@@ -45,7 +43,7 @@ public class ComparisonWithBoolean extends Spartanization {
           literal = (BooleanLiteral) n.getLeftOperand();
         }
         r.replace(n, literal.booleanValue() && n.getOperator() == Operator.EQUALS || !literal.booleanValue() && n.getOperator() == Operator.NOT_EQUALS ? nonliteral
-            : makePrefixExpression(makeParenthesizedExpression((Expression) nonliteral), PrefixExpression.Operator.NOT), null);
+            : Subject.operand((Expression) nonliteral).to(PrefixExpression.Operator.NOT), null);
         return true;
       }
     });

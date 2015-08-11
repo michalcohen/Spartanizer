@@ -215,6 +215,16 @@ public enum Extract {
     return asReturnStatement(Extract.singleStatement(n));
   }
   /**
+   * Extract the single {@link ReturnStatement} embedded in a node.
+   *
+   * @param n JD
+   * @return the single {@link IfStatement} embedded in the parameter, and
+   *         return it; <code><b>null</b></code> if not such statements exists.
+   */
+  public static IfStatement ifStatement(final ASTNode n) {
+    return asIfStatement(Extract.singleStatement(n));
+  }
+  /**
    * @param n JD
    * @return if b is a block with just 1 statement it returns that statement, if
    *         b is statement it returns b and if b is null it returns a null

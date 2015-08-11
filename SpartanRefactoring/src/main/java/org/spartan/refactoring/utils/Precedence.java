@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
  */
 public enum Precedence {
   ;
-  private final static int UNDEFINED = -1;
+  final static int UNDEFINED = -1;
   private static final ChainStringToIntMap of = new ChainStringToIntMap()//
       .putOn(1, "[]", ".", "() invoke", "++ post", "-- post", "MethodInvocation", "PostfixExpression", "ArrayAccess", "FieldAccess", "QualifiedName") //
       .putOn(2, "++ pre", "-- pre", "+ unary", "- unary", "!", "~", "PrefixExpression") //
@@ -46,13 +46,13 @@ public enum Precedence {
   /**
    * Compare precedence of two expressions.
    *
-   * @param e1 JD
+   * @param host JD
    * @param e2 JD
    * @return <code><b>true</b></code> <i>iff</i> the precedence of the first parameter
    *         is equal to that of the second parameter.
    */
-  public static boolean equal(final Expression e1, final Expression e2) {
-    return Precedence.of(e1) == Precedence.of(e2);
+  public static boolean equal(final ASTNode host, final ASTNode e2) {
+    return Precedence.of(host) == Precedence.of(e2);
   }
   /**
    * Compare precedence of two expressions.
@@ -62,19 +62,19 @@ public enum Precedence {
    * @return <code><b>true</b></code> <i>iff</i> the precedence of the first parameter
    *         is strictly greater than that of the second parameter.
    */
-  public static boolean greater(final Expression e1, final Expression e2) {
-    return !Precedence.known(e2) || Precedence.of(e1) > Precedence.of(e2);
+  public static boolean greater(final ASTNode e1, final ASTNode e2) {
+    return !Precedence.known(e1) || !Precedence.known(e2) || Precedence.of(e1) > Precedence.of(e2);
   }
   /**
    * determine whether the precedence of a given {@link Expression} can be
    * determined.
    *
-   * @param e JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter a legal
    *         precedence of Java.
    */
-  public static boolean known(final Expression e) {
-    return Is.legal(Precedence.of(e));
+  public static boolean known(final ASTNode n) {
+    return Is.legal(Precedence.of(n));
   }
   /**
    * Determine the precedence of an

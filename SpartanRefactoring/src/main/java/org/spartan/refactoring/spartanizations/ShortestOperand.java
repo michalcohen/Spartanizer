@@ -3,10 +3,7 @@ package org.spartan.refactoring.spartanizations;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.duplicateLeft;
-import static org.spartan.refactoring.utils.Funcs.duplicateRight;
 import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.remake;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.removeDuplicates;
@@ -25,6 +22,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
 /**
@@ -122,17 +120,17 @@ public class ShortestOperand extends Spartanization {
    * @param e The node.
    * @return Number of abstract syntax tree nodes under the parameter.
    */
-  public InfixExpression transpose(final AST t, final InfixExpression e) {
+  public static InfixExpression transpose(final AST t, final InfixExpression e) {
     if (eligible(e))
       flip(e);
     final InfixExpression $ = duplicate(e);
     sortInfix($, t);
     return $;
   }
-  boolean eligible(final InfixExpression e) {
+  static boolean eligible(final InfixExpression e) {
     return Is.flipable(e.getOperator()) && longerFirst(e) && !inInfixExceptions(e);
   }
-  void transposeOperands(final InfixExpression ie, final AST t) {
+  static void transposeOperands(final InfixExpression ie, final AST t) {
     final Expression l = ie.getLeftOperand();
     // sortInfix($);
     if (Is.infix(l))
@@ -264,7 +262,7 @@ public class ShortestOperand extends Spartanization {
     eo.remove(0);
     // (Left = a) (Right = b) | c, d, e, f
     if (longerFirst(e) && !inInfixExceptions(e)) {
-      remake(e, duplicateLeft(e), flip(o), duplicateRight(e));
+      Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(flip(o));
       $ = true;
     }
     return $;

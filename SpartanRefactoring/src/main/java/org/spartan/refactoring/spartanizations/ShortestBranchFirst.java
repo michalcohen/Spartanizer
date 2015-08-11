@@ -2,14 +2,12 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.utils.Funcs.makeIfStatement;
 import static org.spartan.refactoring.utils.Funcs.not;
-import static org.spartan.refactoring.utils.Funcs.statementsCount;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -57,7 +55,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
           return null;
         final Statement elseStmnt = s.getElseStatement();
         final Statement thenStmnt = s.getThenStatement();
-        if (statementsCount(elseStmnt) == 1 && ASTNode.IF_STATEMENT == Extract.singleStatement(elseStmnt).getNodeType()) {
+        if ( Extract.ifStatement(elseStmnt) != null) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
           return makeIfStatement(t, r, negatedOp, newElseBlock, thenStmnt);
