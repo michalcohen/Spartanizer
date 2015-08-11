@@ -31,13 +31,13 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({ "javadoc", "static-method" }) //
+@SuppressWarnings({ "javadoc" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE {
   static final Wring WRING = Wrings.DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE.inner;
   @Test public void placeHolder() {
-    // Place holder for future tests
+    assertNotNull(WRING);
   }
 
   @RunWith(Parameterized.class) //

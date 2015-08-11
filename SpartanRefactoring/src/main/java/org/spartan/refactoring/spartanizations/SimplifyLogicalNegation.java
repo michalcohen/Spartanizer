@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.wring.PushdownNot;
 import org.spartan.utils.Range;
 
 /**
@@ -85,11 +86,12 @@ public class SimplifyLogicalNegation extends Spartanization {
         return inner != null && comparison(e, inner);
       }
       boolean comparison(final Expression e, final InfixExpression inner) {
-        return replace(e, cloneInfixChangingOperator(inner, ShortestBranchFirst.negate(inner.getOperator())));
+        return replace(e, cloneInfixChangingOperator(inner, PushdownNot.negate(inner.getOperator())));
       }
       InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
         return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
       }
+
       private PrefixExpression not(final Expression e) {
         final PrefixExpression $ = t.newPrefixExpression();
         $.setOperator(NOT);

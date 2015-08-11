@@ -5,7 +5,6 @@ import static org.spartan.refactoring.spartanizations.Into.c;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.Collection;
 

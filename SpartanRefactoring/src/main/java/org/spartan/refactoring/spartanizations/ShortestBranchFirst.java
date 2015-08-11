@@ -1,25 +1,11 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.makeIfStatement;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
-import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
-import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.statementsCount;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
@@ -30,14 +16,9 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.ParenthesizedExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
@@ -65,17 +46,17 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
       @Override public boolean visit(final ConditionalExpression n) {
         if (!inRange(m, n) || !longerFirst(n))
           return true;
-        final ParenthesizedExpression newCondExp = transpose(n);
+        final ConditionalExpression newCondExp = transpose(n);
         if (newCondExp != null)
           r.replace(n, newCondExp, null);
         return true;
       }
-      private IfStatement transpose(final IfStatement n) {
-        final Expression negatedOp = negate(t, r, n.getExpression());
+      private IfStatement transpose(final IfStatement s) {
+        final Expression negatedOp = not(s.getExpression());
         if (negatedOp == null)
           return null;
-        final Statement elseStmnt = n.getElseStatement();
-        final Statement thenStmnt = n.getThenStatement();
+        final Statement elseStmnt = s.getElseStatement();
+        final Statement thenStmnt = s.getThenStatement();
         if (statementsCount(elseStmnt) == 1 && ASTNode.IF_STATEMENT == Extract.singleStatement(elseStmnt).getNodeType()) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
@@ -83,49 +64,12 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         }
         return makeIfStatement(t, r, negatedOp, elseStmnt, thenStmnt);
       }
-      private ConditionalExpression transpose(final ConditionalExpression n) {
-        return n == null ? null : Subject.pair(n.getElseExpression(), n.getThenExpression()).toCondition(negate(t, r, n.getExpression()));
+      private ConditionalExpression transpose(final ConditionalExpression e) {
+        return e == null ? null : Subject.pair(e.getElseExpression(), e.getThenExpression()).toCondition(not(e.getExpression()));
       }
     });
   }
-  /**
-   * @return a prefix expression that is the negation of the provided
-   *         expression.
-   */
-  static Expression negate(final AST t, final ASTRewrite r, final Expression e) {
-    return e instanceof InfixExpression ? tryNegateComparison(t, r, (InfixExpression) e) //
-        : e instanceof PrefixExpression ? tryNegatePrefix(r, asPrefixExpression(e)) //
-            : makePrefixExpression(t, makeParenthesizedExpression(e), NOT);
-  }
-  private static Expression tryNegateComparison(final AST t, final ASTRewrite r, final InfixExpression e) {
-    final Operator op = negate(e.getOperator());
-    return op == null ? null
-        : !Is.deMorgan(op) ? Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(op)
-            : Subject.pair(negateExp(t, r, e.getLeftOperand()), negateExp(t, r, e.getRightOperand())).to(op);
-  }
-  private static Expression negateExp(final AST t, final ASTRewrite r, final Expression e) {
-    return Is.infix(e) ? makePrefixExpression(t, makeParenthesizedExpression(e), NOT)
-        : !Is.prefix(e) || !asPrefixExpression(e).getOperator().equals(NOT) ? makePrefixExpression(t, e, NOT) : (Expression) r.createCopyTarget(asPrefixExpression(e).getOperand());
-  }
-  public static Operator negate(final Operator o) {
-    return !negate.containsKey(o) ? null : negate.get(o);
-  }
-  private static Map<Operator, Operator> makeNegation() {
-    final Map<Operator, Operator> $ = new HashMap<>();
-    $.put(EQUALS, NOT_EQUALS);
-    $.put(NOT_EQUALS, EQUALS);
-    $.put(LESS_EQUALS, GREATER);
-    $.put(GREATER, LESS_EQUALS);
-    $.put(LESS, GREATER_EQUALS);
-    $.put(GREATER_EQUALS, LESS);
-    $.put(CONDITIONAL_AND, CONDITIONAL_OR);
-    $.put(CONDITIONAL_OR, CONDITIONAL_AND);
-    return $;
-  }
-  private static Map<Operator, Operator> negate = makeNegation();
-  private static Expression tryNegatePrefix(final ASTRewrite r, final PrefixExpression exp) {
-    return !exp.getOperator().equals(NOT) ? null : (Expression) r.createCopyTarget(exp.getOperand());
-  }
+
   private static final int threshold = 1;
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {

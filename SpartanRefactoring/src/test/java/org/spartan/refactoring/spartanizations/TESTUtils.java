@@ -28,7 +28,7 @@ public enum TESTUtils {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
   /**
-   * A test to check that that the actual output is similar to the actual value.
+   * A test to check that the actual output is similar to the actual value.
    *
    * @param expected JD
    * @param actual JD
@@ -36,6 +36,12 @@ public enum TESTUtils {
   public static void assertSimilar(final String expected, final Document actual) {
     assertSimilar(expected, actual.get());
   }
+  /**
+   * A test to check that the actual output is similar to the actual value.
+  *
+  * @param expected JD
+  * @param actual JD
+  */
   public static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
       assertEquals(compressSpaces(expected), compressSpaces(actual));
