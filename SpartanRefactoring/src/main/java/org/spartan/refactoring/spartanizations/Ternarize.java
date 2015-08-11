@@ -470,7 +470,7 @@ public class Ternarize extends Spartanization {
         : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
   }
   static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-    return hasNull(singleThen(i), singleElse(i), asBlock(i.getParent())) ? null : !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
+    return !hasNull(singleThen(i), singleElse(i), asBlock(i.getParent())) && isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? new Range(i) : null;
   }
   static Range detectAssignIfAssign(final IfStatement i) {
     return detectAssignIfAssign(asBlock(i.getParent()), i);
@@ -506,16 +506,12 @@ public class Ternarize extends Spartanization {
   private static Range detecOnlyPrevAsgnExist(final IfStatement i, final Assignment then, final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
     if (prevAsgn == null || dependsOn(prevAsgn.getLeftHandSide(), i.getExpression()) || !compatible(prevAsgn, then))
       return null;
-    if (prevDecl != null && prevDecl.getInitializer() == null)
-      return dependsOn(prevDecl.getName(), prevAsgn.getRightHandSide()) ? null : new Range(prevDecl, i);
-    return new Range(prevAsgn, i);
+    return prevDecl == null || prevDecl.getInitializer() != null ? new Range(prevAsgn, i)
+        : dependsOn(prevDecl.getName(), prevAsgn.getRightHandSide()) ? null : new Range(prevDecl, i);
   }
   private static Range detecPrevAndNextAsgnExist(final Assignment then, final Assignment prevAsgn, final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
-    if (hasNull(prevAsgn, nextAsgn) || !compatible(nextAsgn, prevAsgn, then))
-      return null;
-    if (prevDecl != null)
-      return dependsOn(prevDecl.getName(), nextAsgn.getRightHandSide()) ? null : new Range(prevDecl, nextAsgn);
-    return new Range(prevAsgn, nextAsgn);
+    return hasNull(prevAsgn, nextAsgn) || !compatible(nextAsgn, prevAsgn, then) ? null
+        : prevDecl == null ? new Range(prevAsgn, nextAsgn) : dependsOn(prevDecl.getName(), nextAsgn.getRightHandSide()) ? null : new Range(prevDecl, nextAsgn);
   }
   private static boolean dependsOn(final Expression expToCheck, final Expression... possiblyDependentExps) {
     for (final Expression pde : possiblyDependentExps)

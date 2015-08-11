@@ -91,17 +91,13 @@ public enum Wrings {
     if (initializer == null)
       return null;
     final IfStatement s = Extract.nextIfStatement(f);
-    if (s == null)
-      return null;
-    if (!elseIsEmpty(s))
+    if (s == null || !elseIsEmpty(s))
       return null;
     final Assignment a = Extract.assignment(s.getThenStatement());
-    if (a == null)
+    if (a == null || !same(a.getLeftHandSide(), f.getName()))
       return null;
-    if (!same(a.getLeftHandSide(),f.getName()))
-      return null;
-    r.replace(initializer,Subject.pair(a.getRightHandSide(),initializer).toCondition(s.getExpression()),null);
-    r.remove(s,null);
+    r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
+    r.remove(s, null);
     return r;
   }
   @Override boolean scopeIncludes(final VariableDeclarationFragment f) {
@@ -313,8 +309,8 @@ public enum Wrings {
       final Statement then = s1.getThenStatement();
       final List<Statement> ss1 = Extract.statements(then);
       final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
-      return !same(ss1, ss2) ? null
-          : !Is.sequencer(last(ss1)) ? null : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
+      return (!same(ss1, ss2) || !Is.sequencer(last(ss1)) ? null
+          : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR))));
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;

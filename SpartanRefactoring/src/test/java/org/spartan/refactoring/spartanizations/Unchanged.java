@@ -39,8 +39,8 @@ public class Unchanged {
         return new File(d, name.replaceAll("\\.in$", ".out")).exists();
       }
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
-        return name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f))
-            : !name.endsWith(".in") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll("\\.in$", ""), s, f);
+        return name.endsWith(testSuffix) && As.stringBuilder(f).indexOf(testKeyword) == -1 ? objects(s, name, makeInFile(f))
+            : name.endsWith(".in") && !dotOutExists(d, name) ? objects(name.replaceAll("\\.in$", ""), s, f) : null;
       }
     }.go();
   }

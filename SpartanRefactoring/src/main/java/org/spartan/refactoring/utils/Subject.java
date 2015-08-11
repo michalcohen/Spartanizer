@@ -46,15 +46,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
       return $;
     }
      Expression parenthesize(final Expression host, final Expression $) {
-      if (!Precedence.known($))
-        return $;
-      if (Precedence.of(host) > Precedence.of($))
-        return $;
-      if (Precedence.of(host) < Precedence.of($))
-        return parenthesize($);
-      if (Is.nonAssociative(host))
-        return parenthesize($);
-      return $;
+      return !Precedence.known($) || Precedence.of(host) > Precedence.of($) || Precedence.of(host) == Precedence.of($) && !Is.nonAssociative(host) ? $ : parenthesize($);
     }
   }
 
