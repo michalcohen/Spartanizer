@@ -624,17 +624,7 @@ public enum Funcs {
   public static PrefixExpression makePrefixExpression(final Expression e, final PrefixExpression.Operator o) {
     return makePrefixExpression(e.getAST(), e, o);
   }
-  /**
-   * Create a new {@link ReturnStatement} with a specific expression to return
-   *
-   * @param e what to return
-   * @return the new return statement
-   */
-  public static ReturnStatement makeReturnStatement(final Expression e) {
-    final ReturnStatement $ = e.getAST().newReturnStatement();
-    $.setExpression(frugalDuplicate(e));
-    return $;
-  }
+
   /**
    * @param e the expression to return in the return statement
    * @return the new return statement

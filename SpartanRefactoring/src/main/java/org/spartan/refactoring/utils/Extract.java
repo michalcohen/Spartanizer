@@ -150,14 +150,14 @@ public enum Extract {
   }
   /**
    * Extract the {@link ReturnStatement} that immediately follows a given
-   * statement
+   * node
    *
-   * @param s JD
+   * @param n JD
    * @return the {@link ReturnStatement} that immediately follows the parameter,
    *         or <code><b>null</b></code>, if no such statement exists.
    */
-  public static ReturnStatement nextReturn(final Statement s) {
-    return asReturnStatement(nextStatement(s));
+  public static ReturnStatement nextReturn(final ASTNode n) {
+    return asReturnStatement(nextStatement(n));
   }
   /**
    * Extract the {@link Statement} that immediately follows a given node.

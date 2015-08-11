@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 
 @SuppressWarnings("javadoc") public class Subject {
   public static Operand operand(final Expression inner) {
@@ -56,6 +57,16 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
       final PrefixExpression $ = ast.newPrefixExpression();
       $.setOperator(o);
       $.setOperand(Plant.zis(inner).into($));
+      return $;
+    }
+    /**
+     * Create a new {@link ReturnStatement} with which returns our operand
+     *
+     * @return the new return statement
+     */
+    public ReturnStatement toReturn() {
+      final ReturnStatement $ = ast.newReturnStatement();
+      $.setExpression(inner);
       return $;
     }
   }

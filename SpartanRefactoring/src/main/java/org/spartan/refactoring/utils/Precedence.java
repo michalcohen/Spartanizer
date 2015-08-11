@@ -91,7 +91,7 @@ public enum Precedence {
    * Determine the precedence of an arbitrary
    * {@link ASTNode}
    *
-   * @param o JD
+   * @param n JD
    * @return the precedence of the parameter
    */
   public static int of(final ASTNode n) {

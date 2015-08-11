@@ -10,7 +10,6 @@ import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.hasReturn;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedConditionalExp;
-import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.makeVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.next;
 import static org.spartan.refactoring.utils.Funcs.prev;
@@ -114,7 +113,7 @@ public class Ternarize extends Spartanization {
     return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(t, r, i, $.getExpression(), nextReturn.getExpression());
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
-    r.replace(i, makeReturnStatement(determineNewExp(t, r, i.getExpression(), thenExp, nextExp)), null);
+    r.replace(i, Subject.operand(determineNewExp(t, r, i.getExpression(), thenExp, nextExp)).toReturn(), null);
     r.remove(nextExp.getParent(), null);
     return true;
   }

@@ -24,7 +24,6 @@ import static org.spartan.refactoring.utils.Funcs.last;
 import static org.spartan.refactoring.utils.Funcs.makeExpressionStatement;
 import static org.spartan.refactoring.utils.Funcs.makeParenthesizedExpression;
 import static org.spartan.refactoring.utils.Funcs.makePrefixExpression;
-import static org.spartan.refactoring.utils.Funcs.makeReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
@@ -83,9 +82,7 @@ public enum Wrings {
   @Override public final String toString() {
     return "DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE(" + super.toString() + ")";
   }
-  @Override boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
-    return true;
-  }
+
   @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
     final Expression initializer = f.getInitializer();
     if (initializer == null)
@@ -120,13 +117,46 @@ public enum Wrings {
    * @author Yossi Gil
    * @since 2015-08-07
    */
+  DECLARATION_RETURN_OF_SAME_VARIABLE(new Wring.OfVariableDeclarationFragmentAndSurrounding(){
+    @Override public final String toString() {
+      return "DECLARATION_RETURN_OF_SAME_VARIABLE(" + super.toString() + ")";
+    }
+    @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
+      final Expression initializer = f.getInitializer();
+      if (initializer == null)
+        return null;
+      final ReturnStatement s = Extract.nextReturn(f);
+      if (s == null || !same(f.getName(), Extract.expression(s)))
+        return null;
+      r.remove(Extract.statement(f), null);
+      r.replace(s,Subject.operand(initializer).toReturn(),null);
+      return r;
+    }
+    @Override boolean scopeIncludes(final VariableDeclarationFragment f) {
+      return fillReplacement(f, ASTRewrite.create(f.getAST())) != null;
+    }
+    }), //
+  /**
+   * A {@link Wring} to convert
+   *
+   * <pre>
+   * int a; a = 3;
+   * </pre>
+   *
+   * into
+   *
+   * <pre>
+   * int a = 3;
+   * </pre>
+   *
+   * @author Yossi Gil
+   * @since 2015-08-07
+   */
   DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE(new Wring.OfVariableDeclarationFragmentAndSurrounding(){
     @Override public final String toString() {
       return "DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE(" + super.toString() + ")";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
-      return true;
-    }
+
     @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
       if (f.getInitializer() != null)
         return null;
@@ -170,9 +200,7 @@ public enum Wrings {
       return true;
     }
 
-    @Override boolean _eligible(@SuppressWarnings("unused") final Block _) {
-      return true;
-    }
+
     @Override Statement _replacement(final Block b) {
       if (b == null || identical(Extract.statements(b), b.statements()))
         return null;
@@ -214,9 +242,7 @@ public enum Wrings {
     @Override public final String toString() {
       return "IFX_THROW_A_ELSE_THROW_B (" + super.toString() + ")";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
+
     @Override Statement _replacement(final IfStatement i) {
       final Expression condition = i.getExpression();
       final Expression then = Extract.throwExpression(i.getThenStatement());
@@ -251,14 +277,12 @@ public enum Wrings {
     @Override public final String toString() {
       return "IFX_RETURN_A_ELSE_RETURN_B (" + super.toString() + ")";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
+
     @Override Statement _replacement(final IfStatement i) {
       final Expression condition = i.getExpression();
       final Expression then = Extract.returnExpression(i.getThenStatement());
       final Expression elze = Extract.returnExpression(i.getElseStatement());
-      return then == null || elze == null ? null : makeReturnStatement(Subject.pair(then, elze).toCondition(condition));
+      return then == null || elze == null ? null : Subject.operand(Subject.pair(then, elze).toCondition(condition)).toReturn();
     }
     @Override boolean scopeIncludes(final IfStatement e) {
       final IfStatement i = asIfStatement(e);
@@ -297,9 +321,6 @@ public enum Wrings {
       return $;
     }
 
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
     @Override ASTRewrite fillReplacement(final IfStatement s1, final ASTRewrite r) {
       if (s1 == null || !elseIsEmpty(s1))
         return null;
@@ -309,8 +330,8 @@ public enum Wrings {
       final Statement then = s1.getThenStatement();
       final List<Statement> ss1 = Extract.statements(then);
       final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
-      return (!same(ss1, ss2) || !Is.sequencer(last(ss1)) ? null
-          : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR))));
+      return !same(ss1, ss2) || !Is.sequencer(last(ss1)) ? null
+          : replaceTwoStatements(r, s1, makeIfWithoutElse(reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;
@@ -349,13 +370,11 @@ public enum Wrings {
     @Override public final String toString() {
       return "IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN(" + super.toString() + ")";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
+
     @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
       final ReturnStatement then = Extract.returnStatement(s.getThenStatement());
       final ReturnStatement elze = Extract.nextReturn(s);
-      return replaceTwoStatements(r, s, makeReturnStatement(Subject.pair(Extract.expression(then), Extract.expression(elze)).toCondition(s.getExpression())));
+      return replaceTwoStatements(r, s, Subject.operand(Subject.pair(Extract.expression(then), Extract.expression(elze)).toCondition(s.getExpression())).toReturn());
     }
 
     @Override boolean scopeIncludes(final IfStatement s) {
@@ -389,9 +408,7 @@ public enum Wrings {
     @Override public final String toString() {
       return "IFX_SOMETHING_EXISTING_EMPTY_ELSE  (" + super.toString() + ")";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
+
     @Override Statement _replacement(final IfStatement s) {
       final IfStatement $ = duplicate(s);
       $.setElseStatement(null);
@@ -443,9 +460,7 @@ public enum Wrings {
           duplicateInto(by2, to);
         }
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
+
     @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
       if (s.getElseStatement() == null || !Is.sequencer(last(Extract.statements(s.getThenStatement()))))
         return r;
@@ -498,9 +513,7 @@ public enum Wrings {
     @Override public final String toString() {
       return " IFX_ASSIGNX_ELSE_ASSIGNY (" + super.toString() + ")";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
-      return true;
-    }
+
     @Override Statement _replacement(final IfStatement s) {
       asBlock(s);
       final IfStatement i = asIfStatement(s);
@@ -534,10 +547,7 @@ public enum Wrings {
     private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
       return literal.booleanValue() == (e.getOperator() == EQUALS);
     }
-    @Override boolean _eligible(final InfixExpression e) {
-      assert scopeIncludes(e);
-      return true;
-    }
+
     @Override Expression _replacement(final InfixExpression e) {
       Expression nonliteral;
       BooleanLiteral literal;
@@ -584,9 +594,7 @@ public enum Wrings {
     @Override public final String toString() {
       return " ELIMINATE_TERNARY (" + super.toString() + ")";
     }
-    @Override boolean _eligible(final ConditionalExpression e) {
-      return true;
-    }
+
     @Override Expression _replacement(final ConditionalExpression e) {
       return duplicate(e.getThenExpression());
     }
@@ -638,9 +646,7 @@ public enum Wrings {
     @Override public String toString() {
       return "TERNARY_BOOLEAN_LITERAL";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
-      return true;
-    }
+
     @Override Expression _replacement(final ConditionalExpression e) {
       return simplifyTernary(e);
     }
@@ -659,9 +665,7 @@ public enum Wrings {
     @Override public String toString() {
       return "TERNARY_BOOLEAN_LITERAL";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
-      return true;
-    }
+
     @Override Expression _replacement(final InfixExpression e) {
       return eliminateLiteral(e, true);
     }
@@ -680,9 +684,7 @@ public enum Wrings {
     @Override public String toString() {
       return "|| true";
     }
-    @Override boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
-      return true;
-    }
+
     @Override Expression _replacement(final InfixExpression e) {
       return eliminateLiteral(e, false);
     }
