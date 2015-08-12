@@ -185,23 +185,26 @@ public class TrimmerTest {
     assertSimplifiesTo("a == true", "a");
   }
   @Test public void compareWithBoolean01() {
-    assertSimplifiesTo("a == false", "!(a)");
+    assertSimplifiesTo("a == false", "!a");
   }
   @Test public void compareWithBoolean10() {
     assertSimplifiesTo("true == a", "a");
   }
   //
   @Test public void compareWithBoolean100() {
-    assertSimplifiesTo("a != true", "!(a)");
+    assertSimplifiesTo("a != true", "!a");
+  }
+  @Test public void compareWithBoolean100a() {
+    assertSimplifiesTo("(((a))) != true", "!a");
   }
   @Test public void compareWithBoolean101() {
     assertSimplifiesTo("a != false", "a");
   }
   @Test public void compareWithBoolean11() {
-    assertSimplifiesTo("false == a", "!(a)");
+    assertSimplifiesTo("false == a", "!a");
   }
   @Test public void compareWithBoolean110() {
-    assertSimplifiesTo("true != a", "!(a)");
+    assertSimplifiesTo("true != a", "!a");
   }
   @Test public void compareWithBoolean111() {
     assertSimplifiesTo("false != a", "a");
@@ -213,22 +216,22 @@ public class TrimmerTest {
     assertSimplifiesTo("false != true", "true");
   }
   @Test public void compareWithBoolean4() {
-    assertSimplifiesTo("false == false", "!(false)");
+    assertSimplifiesTo("false == false", "true");
   }
   @Test public void compareWithBoolean5() {
-    assertSimplifiesTo("false == true", "!(true)");
+    assertSimplifiesTo("false == true", "false");
   }
   @Test public void compareWithBoolean6() {
     assertSimplifiesTo("false != false", "false");
   }
   @Test public void compareWithBoolean7() {
-    assertSimplifiesTo("true != true", "!(true)");
+    assertSimplifiesTo("true != true", "false");
   }
   @Test public void compareWithBoolean8() {
-    assertSimplifiesTo("true != false", "!(false)");
+    assertSimplifiesTo("true != false", "true");
   }
   @Test public void compareWithBoolean9() {
-    assertSimplifiesTo("true != true", "!(true)");
+    assertSimplifiesTo("true != true", "false");
   }
   @Test public void comparisonWithSpecific0() {
     assertSimplifiesTo("this != a", "a != this");
