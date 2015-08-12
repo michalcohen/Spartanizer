@@ -429,31 +429,31 @@ public class TrimmerTest {
     assertNoChange("a?b:c");
   }
   @Test public void pushdownTernaryFX() {
-    assertNoChange("a ? false : c");
+    assertSimplifiesTo("a ? false : c","!a && c");
   }
   @Test public void pushdownTernaryTX() {
-    assertNoChange("a ? true : c");
+    assertSimplifiesTo("a ? true : c",, "a || c");
   }
   @Test public void pushdownTernaryXF() {
-    assertNoChange("a ? b : false");
+    assertSimplifiesTo("a ? b : false","a && b");
   }
   @Test public void pushdownTernaryXT() {
-    assertNoChange("a ? b : true");
+    assertSimplifiesTo("a ? b : true","!a || b");
   }
   @Test public void pushdownTernaryParFX() {
     assertNoChange("a ?( false):true");
   }
   @Test public void pushdownTernaryParTX() {
-    assertNoChange("a ? (((true ))): c");
+    assertSimplifiesTo("a ? (((true ))): c");
   }
   @Test public void pushdownTernaryParXF() {
-    assertNoChange("a ? b : (false)");
+    assertSimplifiesTo("a ? b : (false)");
   }
   @Test public void pushdownTernaryParXT() {
-    assertNoChange("a ? b : ((true))");
+    assertSimplifiesTo("a ? b : ((true))","");
   }
   @Test public void pushdownTernaryActualExample2() {
-    assertNoChange("!inRange(m, e) ? true : inner.go(r, e)");
+    assertSimplifiesTo("!inRange(m, e) ? true : inner.go(r, e)");
   }
   @Test public void pushdownTernaryMethodInvocationFirst() {
     assertNoChange("a?b():c");
@@ -468,7 +468,7 @@ public class TrimmerTest {
     assertNoChange("a ? y.f(b) :y.f(b)");
   }
   @Test public void pushdownTernaryIdenticalFunctionCall() {
-    assertNoChange("a ? f(b) :f(b)");
+    assertSimplifiesTo("a ? f(b) :f(b)");
   }
   @Test public void pushdownTernaryIdenticalAssignment() {
     assertNoChange("a ? (b=c) :(b=c)");
@@ -477,7 +477,7 @@ public class TrimmerTest {
     assertNoChange("a ? b++ :b++");
   }
   @Test public void pushdownTernaryIdenticalAddition() {
-    assertNoChange("a ? b+d :b+ d");
+    assertSimplifiesTo("a ? b+d :b+ d");
   }
   @Test public void pushdownTernaryFunctionCall() {
     assertNoChange("a ? f(b,c) : f(c)");
@@ -720,43 +720,43 @@ public class TrimmerTest {
     assertNoChange("(a && (b && false)) && (c && (d && (e && (false && false))))");
   }
   @Test public void orFalseTrueAndTrueA() {
-    assertNoChange("true && true");
+    assertSimplifiesTo("true && true");
   }
   @Test public void orFalseANDOf3WithTrueA() {
-    assertNoChange("a && b && true");
+    assertSimplifiesTo("a && b && true", "a && b");
   }
   @Test public void orFalseANDOf4WithTrueA() {
-    assertNoChange("a && b && c && true");
+    assertSimplifiesTo("a && b && c && true","");
   }
   @Test public void orFalseANDOf5WithTrueA() {
-    assertNoChange("true && a && b && c && d");
+    assertSimplifiesTo("true && a && b && c && d","");
   }
   @Test public void orFalseANDOf6WithTrueA() {
     assertNoChange("a && b && c && true && d && e");
   }
   @Test public void orFalseANDOf7WithTrueWithParenthesis() {
-    assertNoChange("true && (a && b) && (c && (d && (e && true)))");
+    assertSimplifiesTo("true && (a && b) && (c && (d && (e && true)))","");
   }
   @Test public void orFalseANDOf7WithMultipleTrueValue() {
-    assertNoChange("(a && (b && true)) && (c && (d && (e && (true && true))))");
+    assertSimplifiesTo("(a && (b && true)) && (c && (d && (e && (true && true))))","");
   }
   @Test public void orFalseANDOf3WithTrue() {
-    assertNoChange("true && x && true && a && b");
+    assertSimplifiesTo("true && x && true && a && b", "x && a && b","");
   }
   @Test public void orFalseANDOf4WithTrue() {
-    assertNoChange("x && true && a && b && c");
+    assertSimplifiesTo("x && true && a && b && c","x && a && b && c","");
   }
   @Test public void orFalseANDOf5WithTrue() {
-    assertNoChange("x && a && b && c && true && true && true && d");
+    assertSimplifiesTo("x && a && b && c && true && true && true && d","");
   }
   @Test public void orFalseANDOf6WithTrue() {
-    assertNoChange("x && a && true && b && c && d && e");
+    assertSimplifiesTo("x && a && true && b && c && d && e","");
   }
   @Test public void orFalseANDOf6WithTrueWithParenthesis() {
-    assertNoChange("x && (true && (a && b && true)) && (c && (d && e))");
+    assertSimplifiesTo("x && (true && (a && b && true)) && (c && (d && e))","");
   }
   @Test public void orFalseANDWithTrue() {
-    assertNoChange("true && b && a");
+    assertSimplifiesTo("true && b && a","");
   }
 
   @Test public void orFalseFalseOrFalse() {
