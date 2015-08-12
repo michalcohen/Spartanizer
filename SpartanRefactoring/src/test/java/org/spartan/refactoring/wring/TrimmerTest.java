@@ -636,5 +636,172 @@ public class TrimmerTest {
   @Test public void pushdownNotNotOfTrue2() {
     assertSimplifiesTo("!!true", "true");
   }
+  @Test public void orFalseProductIsNotANDDivOR() {
+    assertNoChange("2*a");
+  }
+  @Test public void orFalseANDWithoutBoolean() {
+    assertNoChange("b && a");
+  }
+  @Test public void orFalseORWithoutBoolean() {
+    assertNoChange("b || a");
+  }
+  @Test public void orFalseOROf3WithoutBooleanA() {
+    assertNoChange("x || a || b");
+  }
+  @Test public void orFalseOROf4WithoutBooleanA() {
+    assertNoChange("x || a || b || c");
+  }
+  @Test public void orFalseOROf5WithoutBooleanA() {
+    assertNoChange("x || a || b || c || d");
+  }
+  @Test public void orFalseOROf6WithoutBooleanA() {
+    assertNoChange("x || a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithoutBooleanWithParenthesisA() {
+    assertNoChange("x || (a || b) || (c || (d || e))");
+  }
+  @Test public void orFalseANDOf3WithoutBooleanA() {
+    assertNoChange("x && a && b");
+  }
+  @Test public void orFalseANDOf4WithoutBooleanA() {
+    assertNoChange("x && a && b && c");
+  }
+  @Test public void orFalseANDOf5WithoutBooleanA() {
+    assertNoChange("x && a && b && c && d");
+  }
+  @Test public void orFalseANDOf6WithoutBooleanA() {
+    assertNoChange("x && a && b && c && d && e");
+  }
+  @Test public void orFalseANDOf6WithoutBooleanWithParenthesis() {
+    assertNoChange("(x && (a && b)) && (c && (d && e))");
+  }
+  @Test public void orFalseANDWithFalse() {
+    assertNoChange("b && a");
+  }
+  @Test public void orFalseORFalseWithSomething() {
+    assertNoChange("true || a");
+  }
+  @Test public void orFalseORSomethingWithTrue() {
+    assertNoChange("a || true");
+  }
+  @Test public void orFalseOROf3WithoutBoolean() {
+    assertNoChange("a || b");
+  }
+  @Test public void orFalseOROf4WithoutBoolean() {
+    assertNoChange("a || b || c");
+  }
+  @Test public void orFalseOROf5WithoutBoolean() {
+    assertNoChange("a || b || c || d");
+  }
+  @Test public void orFalseOROf6WithoutBoolean() {
+    assertNoChange("a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithoutBooleanWithParenthesis() {
+    assertNoChange("(a || b) || (c || (d || e))");
+  }
+  @Test public void orFalseANDOf3WithoutBoolean() {
+    assertNoChange("a && b && false");
+  }
+  @Test public void orFalseANDOf4WithoutBoolean() {
+    assertNoChange("a && b && c && false");
+  }
+  @Test public void orFalseANDOf5WithoutBoolean() {
+    assertNoChange("false && a && b && c && d");
+  }
+  @Test public void orFalseANDOf6WithoutBoolean() {
+    assertNoChange("a && b && c && false && d && e");
+  }
+  @Test public void orFalseANDOf7WithoutBooleanWithParenthesis() {
+    assertNoChange("(a && b) && (c && (d && (e && false)))");
+  }
+  @Test public void orFalseANDOf7WithoutBooleanAndMultipleFalseValue() {
+    assertNoChange("(a && (b && false)) && (c && (d && (e && (false && false))))");
+  }
+  @Test public void orFalseTrueAndTrueA() {
+    assertNoChange("true && true");
+  }
+  @Test public void orFalseANDOf3WithTrueA() {
+    assertNoChange("a && b && true");
+  }
+  @Test public void orFalseANDOf4WithTrueA() {
+    assertNoChange("a && b && c && true");
+  }
+  @Test public void orFalseANDOf5WithTrueA() {
+    assertNoChange("true && a && b && c && d");
+  }
+  @Test public void orFalseANDOf6WithTrueA() {
+    assertNoChange("a && b && c && true && d && e");
+  }
+  @Test public void orFalseANDOf7WithTrueWithParenthesis() {
+    assertNoChange("true && (a && b) && (c && (d && (e && true)))");
+  }
+  @Test public void orFalseANDOf7WithMultipleTrueValue() {
+    assertNoChange("(a && (b && true)) && (c && (d && (e && (true && true))))");
+  }
+  @Test public void orFalseANDOf3WithTrue() {
+    assertNoChange("true && x && true && a && b");
+  }
+  @Test public void orFalseANDOf4WithTrue() {
+    assertNoChange("x && true && a && b && c");
+  }
+  @Test public void orFalseANDOf5WithTrue() {
+    assertNoChange("x && a && b && c && true && true && true && d");
+  }
+  @Test public void orFalseANDOf6WithTrue() {
+    assertNoChange("x && a && true && b && c && d && e");
+  }
+  @Test public void orFalseANDOf6WithTrueWithParenthesis() {
+    assertNoChange("x && (true && (a && b && true)) && (c && (d && e))");
+  }
+  @Test public void orFalseANDWithTrue() {
+    assertNoChange("true && b && a");
+  }
+
+  @Test public void orFalseFalseOrFalse() {
+    assertSimplifiesTo("false ||false", "false");
+  }
+  @Test public void orFalse3ORTRUE() {
+    assertSimplifiesTo("false || false || false", "false");
+  }
+  @Test public void orFalse4ORTRUE() {
+    assertSimplifiesTo("false || false || false || false", "false");
+  }
+  @Test public void orFalseOROf3WithFalse() {
+    assertSimplifiesTo("x || false || b", "x || b");
+  }
+  @Test public void orFalseOROf4WithFalse() {
+    assertSimplifiesTo("x || a || b || c || false", "x || a || b || c");
+  }
+  @Test public void orFalseOROf5WithFalse() {
+    assertSimplifiesTo("x || a || false || c || d", "x || a || c || d");
+  }
+  @Test public void orFalseOROf6WithFalse() {
+    assertSimplifiesTo("false || x || a || b || c || d || e", "x || a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithFalseWithParenthesis() {
+    assertSimplifiesTo("x || (a || (false) || b) || (c || (d || e))", "x || a || b || c || d || e");
+  }
+  @Test public void orFalseORFalseWithSomethingB() {
+    assertSimplifiesTo("false || a || false", "a");
+  }
+  @Test public void orFalseORSomethingWithFalse() {
+    assertSimplifiesTo("false || a || false", "a");
+  }
+  @Test public void orFalseOROf3WithFalseB() {
+    assertSimplifiesTo("false || a || b || false", "a || b");
+  }
+  @Test public void orFalseOROf4WithFalseB() {
+    assertSimplifiesTo("a || b || false || c", "a || b || c");
+  }
+  @Test public void orFalseOROf5WithFalseB() {
+    assertSimplifiesTo("a || b || c || d || false", "a || b || c || d");
+  }
+  @Test public void orFalseOROf6WithTwoFalse() {
+    assertSimplifiesTo("a || false || b || false || c || d || e", "a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithFalseWithParenthesisB() {
+    assertSimplifiesTo("(a || b) || false || (c || false || (d || e || false))", "a || b || c || d || e");
+  }
+
 
 }
