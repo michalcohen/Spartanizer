@@ -411,13 +411,15 @@ public class TrimmerTest {
     assertSimplifiesTo("{i++;{{;;return b; }}j++;}", " i++;return b;j++;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
   }
   @Test public void simplifyBlockExpressionVsExpression() {
-    assertNoChange(" 6 - 7 < 2 + 1   ");  // Note that we also need to generalize NoChange to work with other Wrings\Wrap types
+    assertSimplifiesTo(" 6 - 7 < a * 3","6 - 7 < 3 * a");
+
+    // Note that we also need to generalize NoChange to work with other Wrings\Wrap types
   }
   @Test public void simplifyBlockLiteralVsLiteral() {
     assertNoChange("if (a) return b; else c;");
   }
   @Test public void pushdownTernaryExpressionVsExpression() {
-    assertNoChange(" 6 - 7 < 2 + 1   ");
+    assertSimplifiesTo(" 6 - 7 < 2 + 1   ","6 -7 < 1 + 2");
   }
   @Test public void pushdownTernaryLiteralVsLiteral() {
     assertNoChange("1 < 102333");
@@ -432,7 +434,7 @@ public class TrimmerTest {
     assertSimplifiesTo("a ? false : c","!a && c");
   }
   @Test public void pushdownTernaryTX() {
-    assertSimplifiesTo("a ? true : c",, "a || c");
+    assertSimplifiesTo("a ? true : c", "a || c");
   }
   @Test public void pushdownTernaryXF() {
     assertSimplifiesTo("a ? b : false","a && b");
@@ -441,19 +443,19 @@ public class TrimmerTest {
     assertSimplifiesTo("a ? b : true","!a || b");
   }
   @Test public void pushdownTernaryParFX() {
-    assertNoChange("a ?( false):true");
+    assertSimplifiesTo("a ?( false):true","!a && true");
   }
   @Test public void pushdownTernaryParTX() {
-    assertSimplifiesTo("a ? (((true ))): c");
+    assertSimplifiesTo("a ? (((true ))): c","a || c");
   }
   @Test public void pushdownTernaryParXF() {
-    assertSimplifiesTo("a ? b : (false)");
+    assertSimplifiesTo("a ? b : (false)","a && b");
   }
   @Test public void pushdownTernaryParXT() {
-    assertSimplifiesTo("a ? b : ((true))","");
+    assertSimplifiesTo("a ? b : ((true))","!a || b");
   }
   @Test public void pushdownTernaryActualExample2() {
-    assertSimplifiesTo("!inRange(m, e) ? true : inner.go(r, e)");
+    assertSimplifiesTo("!inRange(m, e) ? true : inner.go(r, e)","!inRange(m, e) || inner.go(r, e)");
   }
   @Test public void pushdownTernaryMethodInvocationFirst() {
     assertNoChange("a?b():c");
@@ -465,19 +467,19 @@ public class TrimmerTest {
     assertNoChange("a?x.f(x):x.d(x)");
   }
   @Test public void pushdownTernaryIdenticalMethodCall() {
-    assertNoChange("a ? y.f(b) :y.f(b)");
+    assertSimplifiesTo("a ? y.f(b) :y.f(b)","y.f(b)");
   }
   @Test public void pushdownTernaryIdenticalFunctionCall() {
-    assertSimplifiesTo("a ? f(b) :f(b)");
+    assertSimplifiesTo("a ? f(b) :f(b)","f(b)");
   }
   @Test public void pushdownTernaryIdenticalAssignment() {
-    assertNoChange("a ? (b=c) :(b=c)");
+    assertSimplifiesTo("a ? (b=c) :(b=c)","b = c");
   }
   @Test public void pushdownTernaryIdenticalIncrement() {
-    assertNoChange("a ? b++ :b++");
+    assertSimplifiesTo("a ? b++ :b++","b++");
   }
   @Test public void pushdownTernaryIdenticalAddition() {
-    assertSimplifiesTo("a ? b+d :b+ d");
+    assertSimplifiesTo("a ? b+d :b+ d","b+d");
   }
   @Test public void pushdownTernaryFunctionCall() {
     assertNoChange("a ? f(b,c) : f(c)");
@@ -720,43 +722,43 @@ public class TrimmerTest {
     assertNoChange("(a && (b && false)) && (c && (d && (e && (false && false))))");
   }
   @Test public void orFalseTrueAndTrueA() {
-    assertSimplifiesTo("true && true");
+    assertSimplifiesTo("true && true","true");
   }
   @Test public void orFalseANDOf3WithTrueA() {
     assertSimplifiesTo("a && b && true", "a && b");
   }
   @Test public void orFalseANDOf4WithTrueA() {
-    assertSimplifiesTo("a && b && c && true","");
+    assertSimplifiesTo("a && b && c && true","a && b && c");
   }
   @Test public void orFalseANDOf5WithTrueA() {
-    assertSimplifiesTo("true && a && b && c && d","");
+    assertSimplifiesTo("true && a && b && c && d","a && b && c && d");
   }
   @Test public void orFalseANDOf6WithTrueA() {
-    assertNoChange("a && b && c && true && d && e");
+    assertSimplifiesTo("a && b && c && true && d && e","a && b && c && d && e");
   }
   @Test public void orFalseANDOf7WithTrueWithParenthesis() {
-    assertSimplifiesTo("true && (a && b) && (c && (d && (e && true)))","");
+    assertSimplifiesTo("true && (a && b) && (c && (d && (e && true)))","a &&b &&c &&d &&e ");
   }
   @Test public void orFalseANDOf7WithMultipleTrueValue() {
-    assertSimplifiesTo("(a && (b && true)) && (c && (d && (e && (true && true))))","");
+    assertSimplifiesTo("(a && (b && true)) && (c && (d && (e && (true && true))))","a &&b &&c &&d &&e ");
   }
   @Test public void orFalseANDOf3WithTrue() {
-    assertSimplifiesTo("true && x && true && a && b", "x && a && b","");
+    assertSimplifiesTo("true && x && true && a && b", "x && a && b");
   }
   @Test public void orFalseANDOf4WithTrue() {
-    assertSimplifiesTo("x && true && a && b && c","x && a && b && c","");
+    assertSimplifiesTo("x && true && a && b && c","x && a && b && c");
   }
   @Test public void orFalseANDOf5WithTrue() {
-    assertSimplifiesTo("x && a && b && c && true && true && true && d","");
+    assertSimplifiesTo("x && a && b && c && true && true && true && d","x && a && b && c && d");
   }
   @Test public void orFalseANDOf6WithTrue() {
-    assertSimplifiesTo("x && a && true && b && c && d && e","");
+    assertSimplifiesTo("x && a && true && b && c && d && e","x && a && b && c && d && e");
   }
   @Test public void orFalseANDOf6WithTrueWithParenthesis() {
-    assertSimplifiesTo("x && (true && (a && b && true)) && (c && (d && e))","");
+    assertSimplifiesTo("x && (true && (a && b && true)) && (c && (d && e))","x && a && b && c && d && e");
   }
   @Test public void orFalseANDWithTrue() {
-    assertSimplifiesTo("true && b && a","");
+    assertSimplifiesTo("true && b && a","b && a");
   }
 
   @Test public void orFalseFalseOrFalse() {
