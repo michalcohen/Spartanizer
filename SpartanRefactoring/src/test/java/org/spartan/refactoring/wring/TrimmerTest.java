@@ -362,7 +362,7 @@ public class TrimmerTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
     assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
   }
-  public void parenthesizeOfPushdownTernary() {
+  public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
@@ -414,145 +414,227 @@ public class TrimmerTest {
   @Test public void simplifyBlockLiteralVsLiteral() {
     assertNoChange("if (a) return b; else c;");
   }
-  @Test public void PushdownTernaryExpressionVsExpression() {
+  @Test public void pushdownTernaryExpressionVsExpression() {
     assertNoChange(" 6 - 7 < 2 + 1   ");
   }
-  @Test public void PushdownTernaryLiteralVsLiteral() {
+  @Test public void pushdownTernaryLiteralVsLiteral() {
     assertNoChange("1 < 102333");
   }
-  @Test public void PushdownTernaryActualExample() {
+  @Test public void pushdownTernaryActualExample() {
     assertNoChange("next < values().length");
   }
-  @Test public void PushdownTernaryNoBoolean() {
+  @Test public void pushdownTernaryNoBoolean() {
     assertNoChange("a?b:c");
   }
-  @Test public void PushdownTernaryFX() {
+  @Test public void pushdownTernaryFX() {
     assertNoChange("a ? false : c");
   }
-  @Test public void PushdownTernaryTX() {
+  @Test public void pushdownTernaryTX() {
     assertNoChange("a ? true : c");
   }
-  @Test public void PushdownTernaryXF() {
+  @Test public void pushdownTernaryXF() {
     assertNoChange("a ? b : false");
   }
-  @Test public void PushdownTernaryXT() {
+  @Test public void pushdownTernaryXT() {
     assertNoChange("a ? b : true");
   }
-  @Test public void PushdownTernaryParFX() {
+  @Test public void pushdownTernaryParFX() {
     assertNoChange("a ?( false):true");
   }
-  @Test public void PushdownTernaryParTX() {
+  @Test public void pushdownTernaryParTX() {
     assertNoChange("a ? (((true ))): c");
   }
-  @Test public void PushdownTernaryParXF() {
+  @Test public void pushdownTernaryParXF() {
     assertNoChange("a ? b : (false)");
   }
-  @Test public void PushdownTernaryParXT() {
+  @Test public void pushdownTernaryParXT() {
     assertNoChange("a ? b : ((true))");
   }
-  @Test public void PushdownTernaryActualExample2() {
+  @Test public void pushdownTernaryActualExample2() {
     assertNoChange("!inRange(m, e) ? true : inner.go(r, e)");
   }
-  @Test public void PushdownTernaryMethodInvocationFirst() {
+  @Test public void pushdownTernaryMethodInvocationFirst() {
     assertNoChange("a?b():c");
   }
-  @Test public void PushdownTernaryNotSameFunctionInvocation() {
+  @Test public void pushdownTernaryNotSameFunctionInvocation() {
     assertNoChange("a?b(x):d(x)");
   }
-  @Test public void PushdownTernaryNotSameFunctionInvocation2() {
+  @Test public void pushdownTernaryNotSameFunctionInvocation2() {
     assertNoChange("a?x.f(x):x.d(x)");
   }
-  @Test public void PushdownTernaryIdenticalMethodCall() {
+  @Test public void pushdownTernaryIdenticalMethodCall() {
     assertNoChange("a ? y.f(b) :y.f(b)");
   }
-  @Test public void PushdownTernaryIdenticalFunctionCall() {
+  @Test public void pushdownTernaryIdenticalFunctionCall() {
     assertNoChange("a ? f(b) :f(b)");
   }
-  @Test public void PushdownTernaryIdenticalAssignment() {
+  @Test public void pushdownTernaryIdenticalAssignment() {
     assertNoChange("a ? (b=c) :(b=c)");
   }
-  @Test public void PushdownTernaryIdenticalIncrement() {
+  @Test public void pushdownTernaryIdenticalIncrement() {
     assertNoChange("a ? b++ :b++");
   }
-  @Test public void PushdownTernaryIdenticalAddition() {
+  @Test public void pushdownTernaryIdenticalAddition() {
     assertNoChange("a ? b+d :b+ d");
   }
-  @Test public void PushdownTernaryFunctionCall() {
+  @Test public void pushdownTernaryFunctionCall() {
     assertNoChange("a ? f(b,c) : f(c)");
   }
-  @Test public void PushdownTernaryAMethodCall() {
+  @Test public void pushdownTernaryAMethodCall() {
     assertNoChange("a ? y.f(c,b) :y.f(c)");
   }
-  @Test public void PushdownTernaryAMethodCallDistinctReceiver() {
+  @Test public void pushdownTernaryAMethodCallDistinctReceiver() {
     assertNoChange("a ? x.f(c) : y.f(d)");
   }
-  @Test public void PushdownTernaryNotOnMINUS() {
+  @Test public void pushdownTernaryNotOnMINUS() {
     assertNoChange("a ? -c :-d");
   }
-  @Test public void PushdownTernaryNotOnNOT() {
+  @Test public void pushdownTernaryNotOnNOT() {
     assertNoChange("a ? !c :!d");
   }
-  @Test public void PushdownTernaryNotOnMINUSMINUS1() {
+  @Test public void pushdownTernaryNotOnMINUSMINUS1() {
     assertNoChange("a ? --c :--d");
   }
-  @Test public void PushdownTernaryNotOnMINUSMINUS2() {
+  @Test public void pushdownTernaryNotOnMINUSMINUS2() {
     assertNoChange("a ? c-- :d--");
   }
-  @Test public void PushdownTernaryNotOnPLUSPLUS() {
+  @Test public void pushdownTernaryNotOnPLUSPLUS() {
     assertNoChange("a ? x++ :y++");
   }
-  @Test public void PushdownTernaryNotOnPLUS() {
+  @Test public void pushdownTernaryNotOnPLUS() {
     assertNoChange("a ? +x : +y");
   }
-  @Test public void PushdownTernaryIntoConstructorNotSameArity() {
+  @Test public void pushdownTernaryIntoConstructorNotSameArity() {
     assertNoChange("a ? new S(a,new Integer(4),b) : new S(new Ineger(3))");
   }
-  @Test public void PushdownTernaryFieldRefernece() {
+  @Test public void pushdownTernaryFieldRefernece() {
     assertNoChange("externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action");
   }
-  @Test public void PushdownTernaryAlmostIdenticalFunctionCall() {
-    assertNoChange("a ? f(b) :f(c)");
+  @Test public void pushdownTernaryAlmostIdenticalFunctionCall() {
+    assertSimplifiesTo("a ? f(b) :f(c)", "f(a ? b : c)");
   }
-  @Test public void PushdownTernaryAlmostIdenticalMethodCall() {
-    assertNoChange("a ? y.f(b) :y.f(c)");
+  @Test public void pushdownTernaryAlmostIdenticalMethodCall() {
+    assertSimplifiesTo("a ? y.f(b) :y.f(c)", "y.f(a ? b : c)");
   }
-  @Test public void PushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall1Div2() {
-    assertNoChange("a ? f(b,x) :f(c,x)");
+  @Test public void pushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall1Div2() {
+    assertSimplifiesTo("a ? f(b,x) :f(c,x)", "f(a ? b : c,x)");
   }
-  @Test public void PushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall2Div2() {
-    assertNoChange("a ? f(x,b) :f(x,c)");
+  @Test public void pushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall2Div2() {
+    assertSimplifiesTo("a ? f(x,b) :f(x,c)", "f(x,a ? b : c)");
   }
-  @Test public void PushdownTernaryAlmostIdenticalAssignment() {
-    assertNoChange("a ? (b=c) :(b=d)");
+  @Test public void pushdownTernaryAlmostIdenticalAssignment() {
+    assertSimplifiesTo("a ? (b=c) :(b=d)", "b = a ? c : d");
   }
-  @Test public void PushdownTernaryAlmostIdentical2Addition() {
-    assertNoChange("a ? b+d :b+ c");
+  @Test public void pushdownTernaryAlmostIdentical2Addition() {
+    assertSimplifiesTo("a ? b+d :b+ c", "b+(a ? d : c)");
   }
-  @Test public void PushdownTernaryAlmostIdentical3Addition() {
-    assertNoChange("a ? b+d +x:b+ c + x");
+  @Test public void pushdownTernaryAlmostIdentical3Addition() {
+    assertSimplifiesTo("a ? b+d +x:b+ c + x", "b+(a ? d : c) + x");
   }
-  @Test public void PushdownTernaryAlmostIdentical4AdditionLast() {
-    assertNoChange("a ? b+d+e+y:b+d+e+x");
+  @Test public void pushdownTernaryAlmostIdentical4AdditionLast() {
+    assertSimplifiesTo("a ? b+d+e+y:b+d+e+x", "b+d+e+(a ? y : x)");
   }
-  @Test public void PushdownTernaryAlmostIdentical4AdditionSecond() {
-    assertNoChange("a ? b+x+e+f:b+y+e+f");
+  @Test public void pushdownTernaryAlmostIdentical4AdditionSecond() {
+    assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
-  @Test public void PushdownTernaryDifferentTargetFieldRefernce() {
-    assertNoChange("a ? 1 + x.a : 1 + y.a");
+  @Test public void pushdownTernaryDifferentTargetFieldRefernce() {
+    assertSimplifiesTo("a ? 1 + x.a : 1 + y.a", "1+(a ? x.a : y.a)");
   }
-  @Test public void PushdownTernaryIntoConstructor1Div1Location() {
-    assertNoChange("a.equal(b) ? new S(new Integer(4)) : new S(new Ineger(3))");
+  @Test public void pushdownTernaryIntoConstructor1Div1Location() {
+    assertSimplifiesTo("a.equal(b) ? new S(new Integer(4)) : new S(new Ineger(3))", "new S(a.equal(b)? new Integer(4): new Ineger(3))");
   }
-  @Test public void PushdownTernaryIntoConstructor1Div3() {
-    assertNoChange("a.equal(b) ? new S(new Integer(4),a,b) : new S(new Ineger(3),a,b)");
+  @Test public void pushdownTernaryIntoConstructor1Div3() {
+    assertSimplifiesTo("a.equal(b) ? new S(new Integer(4),a,b) : new S(new Ineger(3),a,b)", "new S(a.equal(b)? new Integer(4): new Ineger(3), a, b)");
   }
-  @Test public void PushdownTernaryIntoConstructor2Div3() {
-    assertNoChange("a.equal(b) ? new S(a,new Integer(4),b) : new S(a, new Ineger(3), b)");
+  @Test public void pushdownTernaryIntoConstructor2Div3() {
+    assertSimplifiesTo("a.equal(b) ? new S(a,new Integer(4),b) : new S(a, new Ineger(3), b)", "new S(a,a.equal(b)? new Integer(4): new Ineger(3),b)");
   }
-  @Test public void PushdownTernaryIntoConstructor3Div3() {
-    assertNoChange("a.equal(b) ? new S(a,b,new Integer(4)) : new S(a,b,new Ineger(3))");
+  @Test public void pushdownTernaryIntoConstructor3Div3() {
+    assertSimplifiesTo("a.equal(b) ? new S(a,b,new Integer(4)) : new S(a,b,new Ineger(3))", "new S(a, b, a.equal(b)? new Integer(4): new Ineger(3))");
   }
-
-
+  @Test public void pushdownNotSummation() {
+    assertNoChange("a+b");
+  }
+  @Test public void pushdownNotMultiplication() {
+    assertNoChange("a*b");
+  }
+  @Test public void pushdownNotOR() {
+    assertNoChange("a||b");
+  }
+  @Test public void pushdownNotEND() {
+    assertNoChange("a&&b");
+  }
+  @Test public void pushdownNotSimpleNot() {
+    assertNoChange("!a");
+  }
+  @Test public void pushdownNotSimpleNotOfFunction() {
+    assertNoChange("!f(a)");
+  }
+  @Test public void pushdownNotActualExample() {
+    assertNoChange("!inRange(m, e)");
+  }
+  @Test public void pushdownNot2LevelNotOfFalse() {
+    assertSimplifiesTo("!!false", "false");
+  }
+  @Test public void pushdownNot2LevelNotOfTrue() {
+    assertSimplifiesTo("!!true", "true");
+  }
+  @Test public void pushdownNotDoubleNotDeeplyNested() {
+    assertSimplifiesTo("!(((!f())))", "f()");
+  }
+  @Test public void pushdownNotDoubleNot() {
+    assertSimplifiesTo("!!f()", "f()");
+  }
+  @Test public void pushdownNotDoubleNotNested() {
+    assertSimplifiesTo("!(!f())", "f()");
+  }
+  @Test public void pushdownNotNotOfAND() {
+    assertSimplifiesTo("!(a && b && c)", "!a || !b || !c");
+  }
+  @Test public void pushdownNotNotOfAND2() {
+    assertSimplifiesTo("!(f() && f(5))", "!f() || !f(5)");
+  }
+  @Test public void pushdownNotNotOfANDNested() {
+    assertSimplifiesTo("!(f() && (f(5)))", "!f() || !f(5)");
+  }
+  @Test public void pushdownNotNotOfEQ() {
+    assertSimplifiesTo("!(3 == 5)", "3 != 5");
+  }
+  @Test public void pushdownNotNotOfEQNested() {
+    assertSimplifiesTo("!((((3 == 5))))", "3 != 5");
+  }
+  @Test public void pushdownNotNotOfFalse() {
+    assertSimplifiesTo("!false", "true");
+  }
+  @Test public void pushdownNotNotOfGE() {
+    assertSimplifiesTo("!(3 >= 5)", "3 < 5");
+  }
+  @Test public void pushdownNotNotOfGT() {
+    assertSimplifiesTo("!(3 > 5)", "3 <= 5");
+  }
+  @Test public void pushdownNotNotOfLE() {
+    assertSimplifiesTo("!(3 <= 5)", "3 > 5");
+  }
+  @Test public void pushdownNotNotOfLT() {
+    assertSimplifiesTo("!(3 < 5)", "3 >= 5");
+  }
+  @Test public void pushdownNotNotOfNE() {
+    assertSimplifiesTo("!(3 != 5)", "3 == 5");
+  }
+  @Test public void pushdownNotNotOfOR2() {
+    assertSimplifiesTo("!(f() || f(5))", "!f() && !f(5)");
+  }
+  @Test public void pushdownNotNotOfOR() {
+    assertSimplifiesTo("!(a || b || c)", "!a && !b && !c");
+  }
+  @Test public void pushdownNotNotOfWrappedOR() {
+    assertSimplifiesTo("!((a) || b || c)", "!a && !b && !c");
+  }
+  @Test public void pushdownNotNotOfTrue() {
+    assertSimplifiesTo("!true", "false");
+  }
+  @Test public void pushdownNotNotOfTrue2() {
+    assertSimplifiesTo("!!true", "true");
+  }
 
 }
