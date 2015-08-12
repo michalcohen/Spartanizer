@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -79,6 +80,11 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       $.setExpression(inner);
       return $;
     }
+    public ParenthesizedExpression parenthesis() {
+      final ParenthesizedExpression $ = ast.newParenthesizedExpression();
+      $.setExpression(inner);
+      return $;
+    }
   }
 
   public static class Pair extends Claimer {
@@ -87,6 +93,9 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       super(left);
       this.left = claim(left);
       this.right = claim(right);
+    }
+    public Statement toStatement(final Assignment.Operator o) {
+      return Subject.operand(to(o)).toStatement();
     }
     public Assignment to(final Assignment.Operator o) {
       final Assignment $ = ast.newAssignment();

@@ -21,6 +21,7 @@ import org.spartan.utils.Range;
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  */
+@Deprecated
 public class ComparisonWithBoolean extends Spartanization {
   /** Instantiates this class */
   public ComparisonWithBoolean() {

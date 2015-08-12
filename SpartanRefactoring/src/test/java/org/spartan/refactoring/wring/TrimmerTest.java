@@ -213,7 +213,6 @@ public class TrimmerTest {
   @Test public void compareWithBoolean10() {
     assertSimplifiesTo("true == a", "a");
   }
-  //
   @Test public void compareWithBoolean100() {
     assertSimplifiesTo("a != true", "!a");
   }

@@ -50,6 +50,18 @@ public enum Extract {
     return e == null ? null : asAssignment(e.getExpression());
   }
   /**
+   * Find the "core" of a given {@link Expression}, by peeling of any
+   * parenthesis that may wrap it.
+   *
+   * @param $ JD
+   * @return the parameter itself, if not parenthesized, or the result of
+   *         applying this function (@link {@link #getClass()}) to whatever is
+   *         wrapped in these parenthesis.
+   */
+  public static Expression core(final Expression $) {
+    return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : core(((ParenthesizedExpression) $).getExpression());
+  }
+  /**
    * @param node a node to extract an expression from
    * @return null if the statement is not an expression or return statement or
    *         the expression if they are
@@ -121,6 +133,16 @@ public enum Extract {
     return $.get();
   }
   /**
+   * Extract the single {@link ReturnStatement} embedded in a node.
+   *
+   * @param n JD
+   * @return the single {@link IfStatement} embedded in the parameter, and
+   *         return it; <code><b>null</b></code> if not such statements exists.
+   */
+  public static IfStatement ifStatement(final ASTNode n) {
+    return asIfStatement(Extract.singleStatement(n));
+  }
+  /**
    * @param n JD
    * @return the method invocation if it exists or null if it doesn't or if the
    *         block contains more than one statement
@@ -170,19 +192,6 @@ public enum Extract {
     return nextStatement(Extract.statement(n));
   }
   /**
-   * Extract the {@link Statement} that contains a given node.
-   *
-   * @param n JD
-   * @return the inner most {@link Statement} in which the parameter is nested,
-   *         or <code><b>null</b></code>, if no such statement exists.
-   */
-  public static Statement statement(final ASTNode n) {
-    for (ASTNode $ = n; $ != null; $ = $.getParent())
-      if (Is.statement($))
-        return asStatement($);
-    return null;
-  }
-  /**
    * Extract the {@link Statement} that immediately follows a given statement
    *
    * @param s JD
@@ -214,15 +223,8 @@ public enum Extract {
   public static ReturnStatement returnStatement(final ASTNode n) {
     return asReturnStatement(Extract.singleStatement(n));
   }
-  /**
-   * Extract the single {@link ReturnStatement} embedded in a node.
-   *
-   * @param n JD
-   * @return the single {@link IfStatement} embedded in the parameter, and
-   *         return it; <code><b>null</b></code> if not such statements exists.
-   */
-  public static IfStatement ifStatement(final ASTNode n) {
-    return asIfStatement(Extract.singleStatement(n));
+  public static Statement singleElse(final IfStatement i) {
+    return Extract.singleStatement(i.getElseStatement());
   }
   /**
    * @param n JD
@@ -232,6 +234,22 @@ public enum Extract {
   public static Statement singleStatement(final ASTNode n) {
     final List<Statement> $ = Extract.statements(n);
     return $.size() != 1 ? null : (Statement) $.get(0);
+  }
+  public static Statement singleThen(final IfStatement i) {
+    return Extract.singleStatement(i.getThenStatement());
+  }
+  /**
+   * Extract the {@link Statement} that contains a given node.
+   *
+   * @param n JD
+   * @return the inner most {@link Statement} in which the parameter is nested,
+   *         or <code><b>null</b></code>, if no such statement exists.
+   */
+  public static Statement statement(final ASTNode n) {
+    for (ASTNode $ = n; $ != null; $ = $.getParent())
+      if (Is.statement($))
+        return asStatement($);
+    return null;
   }
   /**
    * Extract the list of non-empty statements embedded in node (nesting within
@@ -285,17 +303,5 @@ public enum Extract {
         $.add(s);
         return $;
     }
-  }
-  /**
-   * Find the "core" of a given {@link Expression}, by peeling of any
-   * parenthesis that may wrap it.
-   *
-   * @param $ JD
-   * @return the parameter itself, if not parenthesized, or the result of
-   *         applying this function (@link {@link #getClass()}) to whatever is
-   *         wrapped in these parenthesis.
-   */
-  public static Expression core(final Expression $) {
-    return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : core(((ParenthesizedExpression) $).getExpression());
   }
 }

@@ -88,6 +88,8 @@ public enum Wrings {
       if (s == null || !elseIsEmpty(s))
         return null;
       final Assignment a = Extract.assignment(s.getThenStatement());
+      // TODO: FIXME  there are many kinds of assignments.
+      // TODO: FIXME: If the the variable is used in the expression, then we have a problem.
       if (a == null || !same(a.getLeftHandSide(), f.getName()))
         return null;
       r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
@@ -525,8 +527,7 @@ public enum Wrings {
       if (!compatible(then, elze))
         return null;
       final ConditionalExpression e = Subject.pair(then.getRightHandSide(), elze.getRightHandSide()).toCondition(i.getExpression());
-      final Assignment a = Subject.pair(then.getLeftHandSide(), e).to(then.getOperator());
-      return Subject.operand(a).toStatement();
+      return Subject.pair(then.getLeftHandSide(), e).toStatement(then.getOperator());
     }
     @Override boolean scopeIncludes(final IfStatement s) {
       return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));

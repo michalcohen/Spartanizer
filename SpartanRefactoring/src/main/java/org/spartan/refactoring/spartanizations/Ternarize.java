@@ -49,6 +49,7 @@ import org.spartan.utils.Range;
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
  * @since 2013/01/01
  */
+@Deprecated
 public class Ternarize extends Spartanization {
   /** Instantiates this class */
   public Ternarize() {
@@ -108,9 +109,9 @@ public class Ternarize extends Spartanization {
   }
   private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final ReturnStatement nextReturn) {
     final ReturnStatement $ = asReturnStatement(i.getThenStatement());
-    return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(t, r, i, $.getExpression(), nextReturn.getExpression());
+    return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(r, i, $.getExpression(), nextReturn.getExpression());
   }
-  private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
+  private static boolean rewriteIfToRetStmnt(final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
     r.replace(i, Subject.operand(determineNewExp( i.getExpression(), thenExp, nextExp)).toReturn(), null);
     r.remove(nextExp.getParent(), null);
     return true;
@@ -157,16 +158,11 @@ public class Ternarize extends Spartanization {
     }
   }
   static boolean perhapsIfSameExpStmntOrRet(final AST t, final ASTRewrite r, final IfStatement i) {
-    final Statement then = singleThen(i);
-    final Statement elze = singleElse(i);
+    final Statement then = Extract.singleThen(i);
+    final Statement elze = Extract.singleElse(i);
     return !hasNull(asBlock(i.getParent()), then, elze) && treatIfSameExpStmntOrRet(t, r, i, then, elze);
   }
-  private static Statement singleElse(final IfStatement i) {
-    return Extract.singleStatement(i.getElseStatement());
-  }
-  private static Statement singleThen(final IfStatement i) {
-    return Extract.singleStatement(i.getThenStatement());
-  }
+
   private static boolean treatIfSameExpStmntOrRet(final AST t, final ASTRewrite r, final IfStatement ifStmt, final Statement thenStmnt, final Statement elseStmnt) {
     final List<Pair> diffList = differences(thenStmnt, elseStmnt);
     if (!isDiffListValid(diffList))
@@ -289,8 +285,8 @@ public class Ternarize extends Spartanization {
     return $;
   }
   private static boolean substitute(final AST t, final ASTRewrite r, final IfStatement i, final TwoExpressions diff, final Statement possiblePrevDecl) {
-    final Statement elze = singleElse(i);
-    final Statement then = singleThen(i);
+    final Statement elze = Extract.singleElse(i);
+    final Statement then = Extract.singleThen(i);
     final Pair diffNodes = isExpStmntOrRet(then) ? new Pair(then, elze) : findDiffNodes(then, elze);
     final Expression newExp = determineNewExp( i.getExpression(), diff.then, diff.elze);
     if (Is.assignment(diffNodes.then) && Is.assignment(diffNodes.elze)) {
@@ -464,7 +460,7 @@ public class Ternarize extends Spartanization {
         : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
   }
   static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-    return !hasNull(singleThen(i), singleElse(i), asBlock(i.getParent())) && isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? new Range(i) : null;
+    return !hasNull(Extract.singleThen(i), Extract.singleElse(i), asBlock(i.getParent())) && isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? new Range(i) : null;
   }
   static Range detectAssignIfAssign(final IfStatement i) {
     return detectAssignIfAssign(asBlock(i.getParent()), i);
