@@ -22,6 +22,8 @@ import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.THROW_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_DECLARATION;
+import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
@@ -124,6 +126,15 @@ public enum Is {
    */
   public static boolean booleanLiteral(final ASTNode n) {
     return is(n, BOOLEAN_LITERAL);
+  }
+  /**
+   * Determine whether a node is a simple name
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a simple name
+   */
+  public static boolean simpleName(final ASTNode n) {
+    return is(n, SIMPLE_NAME);
   }
   /**
    * @param e JD
@@ -321,6 +332,9 @@ public enum Is {
    */
   public static boolean methodInvocation(final ASTNode n) {
     return is(n, METHOD_INVOCATION);
+  }
+  public static boolean methodDeclaration(final ASTNode n) {
+    return is(n, METHOD_DECLARATION);
   }
   public static boolean nonAssociative(final ASTNode n) {
     return nonAssociative(asInfixExpression(n));
