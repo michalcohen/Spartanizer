@@ -21,7 +21,7 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015-07-04
  */
-public final class ComparisonWithSpecific extends SpartanizationOfInfixExpression {
+@Deprecated public final class ComparisonWithSpecific extends SpartanizationOfInfixExpression {
   /** Instantiates this class */
   public ComparisonWithSpecific() {
     super("Specific comparison", "Specific values: 'null', 'this' and numerical literals should appear last in comparisons");

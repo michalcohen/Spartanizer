@@ -547,24 +547,7 @@ public enum Funcs {
     $.setElseStatement(elze.getParent() == null ? elze : (Statement) r.createCopyTarget(elze));
     return $;
   }
-  /**
-   * @param e the expression to put in parenthesis
-   * @return the given expression with parenthesis
-   */
-  public static ParenthesizedExpression makeParenthesizedExpression(final Expression e) {
-    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(frugalDuplicate(e));
-    return $;
-  }
-  /**
-   * @param e the operand for the new prefix Expression
-   * @param o the operator for the new prefix Expression
-   * @return the new prefix expression or null if one of the given parameters
-   *         was null
-   */
-  public static PrefixExpression makePrefixExpression(final Expression e, final PrefixExpression.Operator o) {
-    return Subject.operand(e).to(o);
-  }
+
 
   /**
    * @param e the expression to return in the return statement
@@ -729,7 +712,7 @@ public enum Funcs {
     return null;
   }
   private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
-    return ep == null ? null : getCompilationUnit((IResource)ep.getEditorInput().getAdapter(IResource.class));
+    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
   }
   private static ICompilationUnit getCompilationUnit(final IResource r) {
     return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);

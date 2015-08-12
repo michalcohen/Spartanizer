@@ -1,4 +1,5 @@
 package org.spartan.refactoring.spartanizations;
+
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
@@ -30,7 +31,7 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2014/06/15
  */
-public class SimplifyLogicalNegation extends Spartanization {
+@Deprecated public class SimplifyLogicalNegation extends Spartanization {
   /** Instantiates this class */
   public SimplifyLogicalNegation() {
     super("Simplify logical negation", "Simplify logical negation");
@@ -91,7 +92,6 @@ public class SimplifyLogicalNegation extends Spartanization {
       InfixExpression cloneInfixChangingOperator(final InfixExpression e, final Operator o) {
         return e == null ? null : makeInfixExpression(getCoreLeft(e), o, getCoreRight(e));
       }
-
       private PrefixExpression not(final Expression e) {
         final PrefixExpression $ = t.newPrefixExpression();
         $.setOperator(NOT);

@@ -27,24 +27,16 @@ import org.spartan.utils.Range;
  * @since 2013/07/01
  */
 public class Builder extends IncrementalProjectBuilder {
-  /**
-   * Long prefix to be used in front of all suggestions
-   */
+  /** Long prefix to be used in front of all suggestions */
   public static final String SPARTANIZATION_LONG_PREFIX = "Spartanization suggestion: ";
-  /**
-   * Short prefix to be used in front of all suggestions
-   */
+  /** Short prefix to be used in front of all suggestions */
   public static final String SPARTANIZATION_SHORT_PREFIX = "Spartanize: ";
-  /**
-   * Empty prefix for brevity
-   */
+  /** Empty prefix for brevity */
   public static final String EMPTY_PREFIX = "";
   private static String prefix() {
     return SPARTANIZATION_SHORT_PREFIX;
   }
-  /**
-   * the ID under which this builder is registered
-   */
+  /** the ID under which this builder is registered */
   public static final String BUILDER_ID = "org.spartan.refactoring.builder.Builder";
   private static final String MARKER_TYPE = "org.spartan.refactoring.spartanizationSuggestion";
   /**
@@ -61,15 +53,15 @@ public class Builder extends IncrementalProjectBuilder {
     return null;
   }
   private void build(final int kind) throws CoreException {
-    if (kind == FULL_BUILD)
+    if (kind == FULL_BUILD) {
       fullBuild();
-    else {
-      final IResourceDelta d = getDelta(getProject());
-      if (d == null)
-        fullBuild();
-      else
-        incrementalBuild(d);
+      return;
     }
+    final IResourceDelta d = getDelta(getProject());
+    if (d == null)
+      fullBuild();
+    else
+      incrementalBuild(d);
   }
   protected void fullBuild() {
     try {

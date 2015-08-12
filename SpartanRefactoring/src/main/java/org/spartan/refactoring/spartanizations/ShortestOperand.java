@@ -32,7 +32,7 @@ import org.spartan.utils.Range;
  *         24.05.2014)
  * @since 2014/05/24
  */
-public class ShortestOperand extends Spartanization {
+@Deprecated public class ShortestOperand extends Spartanization {
   // Option flags
   /**
    * Enumeration for null and boolean swap
