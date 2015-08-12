@@ -393,415 +393,417 @@ public class TrimmerTest {
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
   }
-  @Test public void simplifyBlockEmpty() {
-    assertSimplifiesTo("{;;}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
-  }
-  @Test public void simplifyBlockComplexEmpty() {
-    assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
-  }
-  @Test public void simplifyBlockDeeplyNestedReturn() {
-    assertSimplifiesTo(" {{{;return c;};;};}", " return c;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
-  }
-  @Test public void simplifyBlockComplexSingleton() {
-    assertSimplifiesTo("{;{{;;return b; }}}", " return b;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
-  }
-  @Test public void simplifyBlockThreeStatements() {
-    assertSimplifiesTo("{i++;{{;;return b; }}j++;}", " i++;return b;j++;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
-  }
-  @Test public void simplifyBlockExpressionVsExpression() {
-    assertNoChange(" 6 - 7 < 2 + 1   ");  // Note that we also need to generalize NoChange to work with other Wrings\Wrap types
-  }
-  @Test public void simplifyBlockLiteralVsLiteral() {
-    assertNoChange("if (a) return b; else c;");
-  }
-  @Test public void pushdownTernaryExpressionVsExpression() {
-    assertNoChange(" 6 - 7 < 2 + 1   ");
-  }
-  @Test public void pushdownTernaryLiteralVsLiteral() {
-    assertNoChange("1 < 102333");
-  }
-  @Test public void pushdownTernaryActualExample() {
-    assertNoChange("next < values().length");
-  }
-  @Test public void pushdownTernaryNoBoolean() {
-    assertNoChange("a?b:c");
-  }
-  @Test public void pushdownTernaryFX() {
-    assertNoChange("a ? false : c");
-  }
-  @Test public void pushdownTernaryTX() {
-    assertNoChange("a ? true : c");
-  }
-  @Test public void pushdownTernaryXF() {
-    assertNoChange("a ? b : false");
-  }
-  @Test public void pushdownTernaryXT() {
-    assertNoChange("a ? b : true");
-  }
-  @Test public void pushdownTernaryParFX() {
-    assertNoChange("a ?( false):true");
-  }
-  @Test public void pushdownTernaryParTX() {
-    assertNoChange("a ? (((true ))): c");
-  }
-  @Test public void pushdownTernaryParXF() {
-    assertNoChange("a ? b : (false)");
-  }
-  @Test public void pushdownTernaryParXT() {
-    assertNoChange("a ? b : ((true))");
-  }
-  @Test public void pushdownTernaryActualExample2() {
-    assertNoChange("!inRange(m, e) ? true : inner.go(r, e)");
-  }
-  @Test public void pushdownTernaryMethodInvocationFirst() {
-    assertNoChange("a?b():c");
-  }
-  @Test public void pushdownTernaryNotSameFunctionInvocation() {
-    assertNoChange("a?b(x):d(x)");
-  }
-  @Test public void pushdownTernaryNotSameFunctionInvocation2() {
-    assertNoChange("a?x.f(x):x.d(x)");
-  }
-  @Test public void pushdownTernaryIdenticalMethodCall() {
-    assertNoChange("a ? y.f(b) :y.f(b)");
-  }
-  @Test public void pushdownTernaryIdenticalFunctionCall() {
-    assertNoChange("a ? f(b) :f(b)");
-  }
-  @Test public void pushdownTernaryIdenticalAssignment() {
-    assertNoChange("a ? (b=c) :(b=c)");
-  }
-  @Test public void pushdownTernaryIdenticalIncrement() {
-    assertNoChange("a ? b++ :b++");
-  }
-  @Test public void pushdownTernaryIdenticalAddition() {
-    assertNoChange("a ? b+d :b+ d");
-  }
-  @Test public void pushdownTernaryFunctionCall() {
-    assertNoChange("a ? f(b,c) : f(c)");
-  }
-  @Test public void pushdownTernaryAMethodCall() {
-    assertNoChange("a ? y.f(c,b) :y.f(c)");
-  }
-  @Test public void pushdownTernaryAMethodCallDistinctReceiver() {
-    assertNoChange("a ? x.f(c) : y.f(d)");
-  }
-  @Test public void pushdownTernaryNotOnMINUS() {
-    assertNoChange("a ? -c :-d");
-  }
-  @Test public void pushdownTernaryNotOnNOT() {
-    assertNoChange("a ? !c :!d");
-  }
-  @Test public void pushdownTernaryNotOnMINUSMINUS1() {
-    assertNoChange("a ? --c :--d");
-  }
-  @Test public void pushdownTernaryNotOnMINUSMINUS2() {
-    assertNoChange("a ? c-- :d--");
-  }
-  @Test public void pushdownTernaryNotOnPLUSPLUS() {
-    assertNoChange("a ? x++ :y++");
-  }
-  @Test public void pushdownTernaryNotOnPLUS() {
-    assertNoChange("a ? +x : +y");
-  }
-  @Test public void pushdownTernaryIntoConstructorNotSameArity() {
-    assertNoChange("a ? new S(a,new Integer(4),b) : new S(new Ineger(3))");
-  }
-  @Test public void pushdownTernaryFieldRefernece() {
-    assertNoChange("externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action");
-  }
-  @Test public void pushdownTernaryAlmostIdenticalFunctionCall() {
-    assertSimplifiesTo("a ? f(b) :f(c)", "f(a ? b : c)");
-  }
-  @Test public void pushdownTernaryAlmostIdenticalMethodCall() {
-    assertSimplifiesTo("a ? y.f(b) :y.f(c)", "y.f(a ? b : c)");
-  }
-  @Test public void pushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall1Div2() {
-    assertSimplifiesTo("a ? f(b,x) :f(c,x)", "f(a ? b : c,x)");
-  }
-  @Test public void pushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall2Div2() {
-    assertSimplifiesTo("a ? f(x,b) :f(x,c)", "f(x,a ? b : c)");
-  }
-  @Test public void pushdownTernaryAlmostIdenticalAssignment() {
-    assertSimplifiesTo("a ? (b=c) :(b=d)", "b = a ? c : d");
-  }
-  @Test public void pushdownTernaryAlmostIdentical2Addition() {
-    assertSimplifiesTo("a ? b+d :b+ c", "b+(a ? d : c)");
-  }
-  @Test public void pushdownTernaryAlmostIdentical3Addition() {
-    assertSimplifiesTo("a ? b+d +x:b+ c + x", "b+(a ? d : c) + x");
-  }
-  @Test public void pushdownTernaryAlmostIdentical4AdditionLast() {
-    assertSimplifiesTo("a ? b+d+e+y:b+d+e+x", "b+d+e+(a ? y : x)");
-  }
-  @Test public void pushdownTernaryAlmostIdentical4AdditionSecond() {
-    assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
-  }
-  @Test public void pushdownTernaryDifferentTargetFieldRefernce() {
-    assertSimplifiesTo("a ? 1 + x.a : 1 + y.a", "1+(a ? x.a : y.a)");
-  }
-  @Test public void pushdownTernaryIntoConstructor1Div1Location() {
-    assertSimplifiesTo("a.equal(b) ? new S(new Integer(4)) : new S(new Ineger(3))", "new S(a.equal(b)? new Integer(4): new Ineger(3))");
-  }
-  @Test public void pushdownTernaryIntoConstructor1Div3() {
-    assertSimplifiesTo("a.equal(b) ? new S(new Integer(4),a,b) : new S(new Ineger(3),a,b)", "new S(a.equal(b)? new Integer(4): new Ineger(3), a, b)");
-  }
-  @Test public void pushdownTernaryIntoConstructor2Div3() {
-    assertSimplifiesTo("a.equal(b) ? new S(a,new Integer(4),b) : new S(a, new Ineger(3), b)", "new S(a,a.equal(b)? new Integer(4): new Ineger(3),b)");
-  }
-  @Test public void pushdownTernaryIntoConstructor3Div3() {
-    assertSimplifiesTo("a.equal(b) ? new S(a,b,new Integer(4)) : new S(a,b,new Ineger(3))", "new S(a, b, a.equal(b)? new Integer(4): new Ineger(3))");
-  }
-  @Test public void pushdownNotSummation() {
-    assertNoChange("a+b");
-  }
-  @Test public void pushdownNotMultiplication() {
-    assertNoChange("a*b");
-  }
-  @Test public void pushdownNotOR() {
-    assertNoChange("a||b");
-  }
-  @Test public void pushdownNotEND() {
-    assertNoChange("a&&b");
-  }
-  @Test public void pushdownNotSimpleNot() {
-    assertNoChange("!a");
-  }
-  @Test public void pushdownNotSimpleNotOfFunction() {
-    assertNoChange("!f(a)");
-  }
-  @Test public void pushdownNotActualExample() {
-    assertNoChange("!inRange(m, e)");
-  }
-  @Test public void pushdownNot2LevelNotOfFalse() {
-    assertSimplifiesTo("!!false", "false");
-  }
-  @Test public void pushdownNot2LevelNotOfTrue() {
-    assertSimplifiesTo("!!true", "true");
-  }
-  @Test public void pushdownNotDoubleNotDeeplyNested() {
-    assertSimplifiesTo("!(((!f())))", "f()");
-  }
-  @Test public void pushdownNotDoubleNot() {
-    assertSimplifiesTo("!!f()", "f()");
-  }
-  @Test public void pushdownNotDoubleNotNested() {
-    assertSimplifiesTo("!(!f())", "f()");
-  }
-  @Test public void pushdownNotNotOfAND() {
-    assertSimplifiesTo("!(a && b && c)", "!a || !b || !c");
-  }
-  @Test public void pushdownNotNotOfAND2() {
-    assertSimplifiesTo("!(f() && f(5))", "!f() || !f(5)");
-  }
-  @Test public void pushdownNotNotOfANDNested() {
-    assertSimplifiesTo("!(f() && (f(5)))", "!f() || !f(5)");
-  }
-  @Test public void pushdownNotNotOfEQ() {
-    assertSimplifiesTo("!(3 == 5)", "3 != 5");
-  }
-  @Test public void pushdownNotNotOfEQNested() {
-    assertSimplifiesTo("!((((3 == 5))))", "3 != 5");
-  }
-  @Test public void pushdownNotNotOfFalse() {
-    assertSimplifiesTo("!false", "true");
-  }
-  @Test public void pushdownNotNotOfGE() {
-    assertSimplifiesTo("!(3 >= 5)", "3 < 5");
-  }
-  @Test public void pushdownNotNotOfGT() {
-    assertSimplifiesTo("!(3 > 5)", "3 <= 5");
-  }
-  @Test public void pushdownNotNotOfLE() {
-    assertSimplifiesTo("!(3 <= 5)", "3 > 5");
-  }
-  @Test public void pushdownNotNotOfLT() {
-    assertSimplifiesTo("!(3 < 5)", "3 >= 5");
-  }
-  @Test public void pushdownNotNotOfNE() {
-    assertSimplifiesTo("!(3 != 5)", "3 == 5");
-  }
-  @Test public void pushdownNotNotOfOR2() {
-    assertSimplifiesTo("!(f() || f(5))", "!f() && !f(5)");
-  }
-  @Test public void pushdownNotNotOfOR() {
-    assertSimplifiesTo("!(a || b || c)", "!a && !b && !c");
-  }
-  @Test public void pushdownNotNotOfWrappedOR() {
-    assertSimplifiesTo("!((a) || b || c)", "!a && !b && !c");
-  }
-  @Test public void pushdownNotNotOfTrue() {
-    assertSimplifiesTo("!true", "false");
-  }
-  @Test public void pushdownNotNotOfTrue2() {
-    assertSimplifiesTo("!!true", "true");
-  }
-  @Test public void orFalseProductIsNotANDDivOR() {
-    assertNoChange("2*a");
-  }
-  @Test public void orFalseANDWithoutBoolean() {
-    assertNoChange("b && a");
-  }
-  @Test public void orFalseORWithoutBoolean() {
-    assertNoChange("b || a");
-  }
-  @Test public void orFalseOROf3WithoutBooleanA() {
-    assertNoChange("x || a || b");
-  }
-  @Test public void orFalseOROf4WithoutBooleanA() {
-    assertNoChange("x || a || b || c");
-  }
-  @Test public void orFalseOROf5WithoutBooleanA() {
-    assertNoChange("x || a || b || c || d");
-  }
-  @Test public void orFalseOROf6WithoutBooleanA() {
-    assertNoChange("x || a || b || c || d || e");
-  }
-  @Test public void orFalseOROf6WithoutBooleanWithParenthesisA() {
-    assertNoChange("x || (a || b) || (c || (d || e))");
-  }
-  @Test public void orFalseANDOf3WithoutBooleanA() {
-    assertNoChange("x && a && b");
-  }
-  @Test public void orFalseANDOf4WithoutBooleanA() {
-    assertNoChange("x && a && b && c");
-  }
-  @Test public void orFalseANDOf5WithoutBooleanA() {
-    assertNoChange("x && a && b && c && d");
-  }
-  @Test public void orFalseANDOf6WithoutBooleanA() {
-    assertNoChange("x && a && b && c && d && e");
-  }
-  @Test public void orFalseANDOf6WithoutBooleanWithParenthesis() {
-    assertNoChange("(x && (a && b)) && (c && (d && e))");
-  }
-  @Test public void orFalseANDWithFalse() {
-    assertNoChange("b && a");
-  }
-  @Test public void orFalseORFalseWithSomething() {
-    assertNoChange("true || a");
-  }
-  @Test public void orFalseORSomethingWithTrue() {
-    assertNoChange("a || true");
-  }
-  @Test public void orFalseOROf3WithoutBoolean() {
-    assertNoChange("a || b");
-  }
-  @Test public void orFalseOROf4WithoutBoolean() {
-    assertNoChange("a || b || c");
-  }
-  @Test public void orFalseOROf5WithoutBoolean() {
-    assertNoChange("a || b || c || d");
-  }
-  @Test public void orFalseOROf6WithoutBoolean() {
-    assertNoChange("a || b || c || d || e");
-  }
-  @Test public void orFalseOROf6WithoutBooleanWithParenthesis() {
-    assertNoChange("(a || b) || (c || (d || e))");
-  }
-  @Test public void orFalseANDOf3WithoutBoolean() {
-    assertNoChange("a && b && false");
-  }
-  @Test public void orFalseANDOf4WithoutBoolean() {
-    assertNoChange("a && b && c && false");
-  }
-  @Test public void orFalseANDOf5WithoutBoolean() {
-    assertNoChange("false && a && b && c && d");
-  }
-  @Test public void orFalseANDOf6WithoutBoolean() {
-    assertNoChange("a && b && c && false && d && e");
-  }
-  @Test public void orFalseANDOf7WithoutBooleanWithParenthesis() {
-    assertNoChange("(a && b) && (c && (d && (e && false)))");
-  }
-  @Test public void orFalseANDOf7WithoutBooleanAndMultipleFalseValue() {
-    assertNoChange("(a && (b && false)) && (c && (d && (e && (false && false))))");
-  }
-  @Test public void orFalseTrueAndTrueA() {
-    assertNoChange("true && true");
-  }
-  @Test public void orFalseANDOf3WithTrueA() {
-    assertNoChange("a && b && true");
-  }
-  @Test public void orFalseANDOf4WithTrueA() {
-    assertNoChange("a && b && c && true");
-  }
-  @Test public void orFalseANDOf5WithTrueA() {
-    assertNoChange("true && a && b && c && d");
-  }
-  @Test public void orFalseANDOf6WithTrueA() {
-    assertNoChange("a && b && c && true && d && e");
-  }
-  @Test public void orFalseANDOf7WithTrueWithParenthesis() {
-    assertNoChange("true && (a && b) && (c && (d && (e && true)))");
-  }
-  @Test public void orFalseANDOf7WithMultipleTrueValue() {
-    assertNoChange("(a && (b && true)) && (c && (d && (e && (true && true))))");
-  }
-  @Test public void orFalseANDOf3WithTrue() {
-    assertNoChange("true && x && true && a && b");
-  }
-  @Test public void orFalseANDOf4WithTrue() {
-    assertNoChange("x && true && a && b && c");
-  }
-  @Test public void orFalseANDOf5WithTrue() {
-    assertNoChange("x && a && b && c && true && true && true && d");
-  }
-  @Test public void orFalseANDOf6WithTrue() {
-    assertNoChange("x && a && true && b && c && d && e");
-  }
-  @Test public void orFalseANDOf6WithTrueWithParenthesis() {
-    assertNoChange("x && (true && (a && b && true)) && (c && (d && e))");
-  }
-  @Test public void orFalseANDWithTrue() {
-    assertNoChange("true && b && a");
-  }
 
-  @Test public void orFalseFalseOrFalse() {
-    assertSimplifiesTo("false ||false", "false");
+  @Test public void ComparisonWithBoolean1() {
+    assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ", "  String res = s;   if (s.equals(\"yada\"))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ");
   }
-  @Test public void orFalse3ORTRUE() {
-    assertSimplifiesTo("false || false || false", "false");
+  @Test public void ComparisonWithBoolean2() {
+    assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==false)    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ", "  String res = s;   if (!(s.equals(\"yada\")))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ");
   }
-  @Test public void orFalse4ORTRUE() {
-    assertSimplifiesTo("false || false || false || false", "false");
+  @Test public void ComparisonWithBoolean3() {
+    assertSimplifiesTo("  String res = s;   if (false==s.equals(\"yada\"))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ", "  String res = s;   if (!(s.equals(\"yada\")))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ");
   }
-  @Test public void orFalseOROf3WithFalse() {
-    assertSimplifiesTo("x || false || b", "x || b");
+  @Test public void ComparisonWithSpecific1() {
+    assertSimplifiesTo("  if (null == a)     return; ", "  if (a == null)     return; ");
   }
-  @Test public void orFalseOROf4WithFalse() {
-    assertSimplifiesTo("x || a || b || c || false", "x || a || b || c");
+  @Test public void ComparisonWithSpecific2() {
+    assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==0)    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ", "  String res = s;   if (!(s.equals(\"yada\")))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ");
   }
-  @Test public void orFalseOROf5WithFalse() {
-    assertSimplifiesTo("x || a || false || c || d", "x || a || c || d");
+  @Test public void ComparisonWithSpecific3() {
+    assertSimplifiesTo("  String res = s;   if (false==s.equals(\"yada\"))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ", "  String res = s;   if (!(s.equals(\"yada\")))    res = s + \" blah\";   System.out.println(res);      /*if (s.equals(\"yada\")==true)    res = s + \" blah\";    */       ");
   }
-  @Test public void orFalseOROf6WithFalse() {
-    assertSimplifiesTo("false || x || a || b || c || d || e", "x || a || b || c || d || e");
+  @Test public void ComparisonWithSpecific4() {
+    assertSimplifiesTo("  if (0 < a)     return; ", "  if (a > 0)     return; ");
   }
-  @Test public void orFalseOROf6WithFalseWithParenthesis() {
-    assertSimplifiesTo("x || (a || (false) || b) || (c || (d || e))", "x || a || b || c || d || e");
+  @Test public void ExtractMethodSplitDifferentStories() {
+    assertSimplifiesTo("", "");
   }
-  @Test public void orFalseORFalseWithSomethingB() {
-    assertSimplifiesTo("false || a || false", "a");
+  @Test public void ForwardDeclaration1() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = 6;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ", "  /*    * This is a comment    */      int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
   }
-  @Test public void orFalseORSomethingWithFalse() {
-    assertSimplifiesTo("false || a || false", "a");
+  @Test public void ForwardDeclaration2() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = 6, h = 7;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ", "  /*    * This is a comment    */      int h = 7;   int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
   }
-  @Test public void orFalseOROf3WithFalseB() {
-    assertSimplifiesTo("false || a || b || false", "a || b");
+  @Test public void ForwardDeclaration3() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   yada3(i);   yada3(i+m); ", "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   yada3(i);   yada3(i+m); ");
   }
-  @Test public void orFalseOROf4WithFalseB() {
-    assertSimplifiesTo("a || b || false || c", "a || b || c");
+  @Test public void ForwardDeclaration4() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ", "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ");
   }
-  @Test public void orFalseOROf5WithFalseB() {
-    assertSimplifiesTo("a || b || c || d || false", "a || b || c || d");
+  @Test public void ForwardDeclaration5() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ", "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int i = yada3(0);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
   }
-  @Test public void orFalseOROf6WithTwoFalse() {
-    assertSimplifiesTo("a || false || b || false || c || d || e", "a || b || c || d || e");
+  @Test public void ForwardDeclaration6() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = yada3(0);   int h = 8;   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ", "  /*    * This is a comment    */      int h = 8;   int i = yada3(0);   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
   }
-  @Test public void orFalseOROf6WithFalseWithParenthesisB() {
-    assertSimplifiesTo("(a || b) || false || (c || false || (d || e || false))", "a || b || c || d || e");
+  @Test public void ForwardDeclaration7() {
+    assertSimplifiesTo("   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ", "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
   }
-
-
+  @Test public void InlineSingleUse01() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ", "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (yada3(0))); ");
+  }
+  @Test public void InlineSingleUse02() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = 5,j=3;   int k = j+2;   int m = k + j -19 +i;   yada3(k); ", "  /*    * This is a comment    */      int j=3;   int k = j+2;   int m = k + j -19 +(5);   yada3(k); ");
+  }
+  @Test public void InlineSingleUse03() {
+    assertSimplifiesTo("  /*    * This is a comment    */      int i = 5;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ", "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (5)); ");
+  }
+  @Test public void InlineSingleUse04() {
+    assertSimplifiesTo("  int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ", "  final BlahClass b = new BlahClass((6));   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ");
+  }
+  @Test public void InlineSingleUse05() {
+    assertSimplifiesTo("  int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   yada3(y+x);   yada3(y*x); ", "  int x = 6;   int y = 2+(new BlahClass(x)).j;   yada3(y+x);   yada3(y*x); ");
+  }
+  @Test public void InlineSingleUse06() {
+    assertNoChange("    final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     for (final Integer pi : outdated)      coes.remove(pi);     System.out.println(coes.size()); ");
+  }@Test public void InlineSingleUse07() {
+    assertNoChange("    final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size()); ");
+  }@Test public void InlineSingleUse08() {
+    assertNoChange("    final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size());     System.out.println(outdated.size()); ");
+  }@Test public void InlineSingleUse09() {
+    assertNoChange("  final Application a = new DuplicateCurrent().new Application(&quot;{\nABRA\n{\nCADABRA\n{&quot;);   assertEquals(5, a.new Context().lineCount());   final PureIterable&lt;Mutant&gt; ms = a.generateMutants();   assertEquals(2, count(ms));   final PureIterator&lt;Mutant&gt; i = ms.iterator();   assertTrue(i.hasNext());   assertEquals(&quot;{\nABRA\nABRA\n{\nCADABRA\n{\n&quot;, i.next().text);   assertTrue(i.hasNext());   assertEquals(&quot;{\nABRA\n{\nCADABRA\nCADABRA\n{\n&quot;, i.next().text);   assertFalse(i.hasNext());  ");
+  }@Test public void InlineSingleUse10() {
+    assertNoChange("       final Application a = new Application(\"{\nABRA\n{\nCADABRA\n{\");        assertEquals(5, a.new Context().lineCount());        final PureIterable<Mutant> ms = a.mutantsGenerator();        assertEquals(2, count(ms));        final PureIterator<Mutant> i = ms.iterator();        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\nABRA\n{\nCADABRA\n{\n\", i.next().text);        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\n{\nCADABRA\nCADABRA\n{\n\", i.next().text);        assertFalse(i.hasNext());");
+  }@Test public void RenameReturnVariableToDollar01() {
+    assertSimplifiesTo("  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ", "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   System.out.println($.j);   return $; ");
+  }
+  @Test public void RenameReturnVariableToDollar02() {
+    assertSimplifiesTo("  int res = blah.length();   if (blah.contains(\"blah\"))    return res * 2;   if (res % 2 ==0)    return ++res;   if (blah.startsWith(\"y\")) {    return yada3(res);   int x = res + 6;   if (x>1)    return res + x;   res -= 1;   return res; ", "  int $ = blah.length();   if (blah.contains(\"blah\"))    return $ * 2;   if ($ % 2 ==0)    return ++$;   if (blah.startsWith(\"y\")) {    return yada3($);   int x = $ + 6;   if (x>1)    return $ + x;   $ -= 1;   return $; ");
+  }
+  @Test public void RenameReturnVariableToDollar03() {
+    assertSimplifiesTo("  public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(\"blah\"))    return res.j;   int x = blah.length()/2;   if (x==3)    return x;   x = yada3(res.j - x);   return x; ", "  public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(\"blah\"))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = yada3(res.j - $);   return $; ");
+  }
+  @Test public void RenameReturnVariableToDollar04() {
+    assertNoChange("  int res = 0;   String $ = blah + \" yada\";   yada3(res + $.length());   return res + $.length();");
+  }@Test public void RenameReturnVariableToDollar05() {
+    assertSimplifiesTo("   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println(res.j);   return res; ", "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass($.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println($.j);   return $; ");
+  }
+  @Test public void RenameReturnVariableToDollar06() {
+    assertSimplifiesTo("   j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass res = new BlahClass(r.j);     return res.j + 1;   System.out.println(res.j); ", "   j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass $ = new BlahClass(r.j);     return $.j + 1;   System.out.println(res.j); ");
+  }
+  @Test public void RenameReturnVariableToDollar07() {
+    assertSimplifiesTo("   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ", "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println($.j);   return $; ");
+  }
+  @Test public void RenameReturnVariableToDollar08() {
+    assertSimplifiesTo("  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return res; ", "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   if ($.j == 0)    return null;   System.out.println($.j);   return $; ");
+  }
+  @Test public void RenameReturnVariableToDollar09() {
+    assertNoChange("  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return null;");
+  }@Test public void RenameReturnVariableToDollar10() {
+    assertSimplifiesTo(" @Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ", " @Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization $ = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ");
+  }
+  @Test public void RenameReturnVariableToDollar11() {
+    assertNoChange("");
+  }@Test public void ShortestBranchFirst01() {
+    assertSimplifiesTo("  if (s.equals(\"blah\")) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (!(s.equals(\"blah\"))) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst02() {
+    assertSimplifiesTo("  if (!s.equals(\"blah\")) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.equals(\"blah\")) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst03() {
+    assertSimplifiesTo("  if (s.length()>6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.length() <= 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst04() {
+    assertSimplifiesTo("  if (s.length()>=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.length() < 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst05() {
+    assertSimplifiesTo("  if (s.length()<6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.length() >= 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst06() {
+    assertSimplifiesTo("  if (s.length()<=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.length() > 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst07() {
+    assertSimplifiesTo("  if (s.length()==6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.length() != 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst08() {
+    assertSimplifiesTo("  if (s.length()!=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ", "  if (s.length() == 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
+  }
+  @Test public void ShortestBranchFirst09() {
+    assertSimplifiesTo("  return s.equals(\"yada\") ? 9 * yada3(s.length()) : 6;  } ", "  return (!(s.equals(\"yada\")) ? 6 : 9 * yada3(s.length()));  } ");
+  }
+  @Test public void ShortestBranchFirst10() {
+    assertSimplifiesTo("", "");
+  }
+  @Test public void ShortestBranchFirst11() {
+    assertSimplifiesTo("  return b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b;  } ", "  return (!(b != null) || !(b.getNodeType() == ASTNode.BLOCK) ? b : getBlockSingleStmnt((Block) b));  } ");
+  }
+  @Test public void ShortestBranchFirst12() {
+    assertSimplifiesTo("  if (FF() && TT()){    foo1();    foo2();     shorterFoo(); ", "  if (!FF() || !TT()) {     shorterFoo();    foo1();    foo2(); ");
+  }
+  @Test public void ShortestBranchFirst13() {
+    assertNoChange("  int a=0;   if (a > 0)    return 6;   else {    int b=9;    b*=b;    return b;");
+  }@Test public void ShortestBranchFirst14() {
+    assertSimplifiesTo("  int a=0;   if (a > 0){    int b=9;    b*=b;    return 6;    a = 5;    return b; ", "  int a=0;   if (a <= 0){    a = 5;    return b;    int b=9;    b*=b;    return 6;");
+  }
+  @Test public void ShortestOperand01() {
+    assertSimplifiesTo("  return x + y > z;  } ", "  return z < x + y;  } ");
+  }
+  @Test public void ShortestOperand02() {
+    assertSimplifiesTo("  k = k + 4;   if (2 * 6 + 4 == k) return true; ", "  k = k + 4;   if (k == 2 * 6 + 4) return true; ");
+  }
+  @Test public void ShortestOperand03() {
+    assertSimplifiesTo("  k = k * 4;   if ( 1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9 > k + 4) return true; ", "  k = k * 4;   if ( k + 4 < 1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9) return true; ");
+  }
+  @Test public void ShortestOperand04() {
+    assertSimplifiesTo("  return (1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);  } ", "  return (3 > 1 + 2 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);  } ");
+  }
+  @Test public void ShortestOperand05() {
+    assertSimplifiesTo("  StringBuilder s = \"bob\";   return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\"; ", "  StringBuilder s = \"bob\";   return \"bob-ha-banai\" == s.append(\"-ha\").append(\"-ba\").toString(); ");
+  }
+  @Test public void ShortestOperand06() {
+    assertSimplifiesTo("  int a,b,c;   String t = \"eureka!\";   if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5; ", "  int a,b,c;   String t = \"eureka!\";   if (a < 2 * 3.1415 * 180 || \"1984\" == t.concat(\"<!>\") && 3 < t.length())    return c > 5; ");
+  }
+  @Test public void ShortestOperand07() {
+    assertSimplifiesTo("  int y,o,g,i,s;   return ( y + o + s > s + i |  g > 42); ", "  int y,o,g,i,s;   return ( g > 42 | y + o + s > s + i); ");
+  }
+  @Test public void ShortestOperand08() {
+    assertSimplifiesTo("  human father;   human mother;   int age;  public boolean squarePants() {   human bob;   if (bob.father.age > 42 && bob.mother.father.age > bob.age ) return true;  ", "  human father;   human mother;   int age;  public boolean squarePants() {   human bob;   if (bob.father.age ? 42 && bob.age < bob.mother.father.age ) return true;  ");
+  }
+  @Test public void ShortestOperand09() {
+    assertNoChange("  return 2 - 4 < 50 - 20 - 10 - 5;  } ");
+  }@Test public void ShortestOperand10() {
+    assertNoChange("  return b == true;  } ");
+  }@Test public void ShortestOperand11() {
+    assertNoChange(" int h,u,m,a,n;   return b == true && n + a > m - u || h > u; ");
+  }@Test public void ShortestOperand12() {
+    assertNoChange("  int k = 15;   return 7 < k; ");
+  }@Test public void ShortestOperand13() {
+    assertNoChange("  return (2 > 2 + a) == true;     } ");
+  }@Test public void ShortestOperand14() {
+    assertNoChange(" Integer t = new Integer(5);   return (t.toString() == null);    ");
+  }@Test public void ShortestOperand15() {
+    assertNoChange(" String t = \"Bob \" + \"Wants \" + \"To \" + \"Sleep \";   return (\"right now...\" + t);    ");
+  }@Test public void ShortestOperand16() {
+    assertNoChange("  String t = \"\";   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
+  }@Test public void ShortestOperand17() {
+    assertSimplifiesTo("  SomeClass a;   return a.getNum() ^ 5; ", "  SomeClass a;   return 5 ^ a.getNum();");
+  }
+  @Test public void ShortestOperand18() {
+    assertSimplifiesTo("  SomeClass a;   return k.get().parent() & a; ", "  SomeClass a;   return a & k.get().parent();");
+  }
+  @Test public void ShortestOperand19() {
+    assertNoChange("  SomeClass a;   return k.get().operand() ^ a.get(); ");
+  }@Test public void ShortestOperand20() {
+    assertNoChange("  SomeClass a;   String k = k.Concat(\"mmm...\") + a.get().sum().toString();   return k.get() ^ a.get(); ");
+  }@Test public void ShortestOperand21() {
+    assertSimplifiesTo("        return f(a, b, c, d, e) + 3333 + 222 + a + spongeBob + f(g, c, d) + f(a) + tt; ", "     return a+tt+222+3333+spongeBob+f(a,b,c,d,e)+f(g,c,d)+f(a); ");
+  }
+  @Test public void ShortestOperand22() {
+    assertNoChange("    return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f f(a,b) + f(a) + f();     } ");
+  }@Test public void ShortestOperand23() {
+    assertNoChange("    return f() + \".\";     }");
+  }@Test public void ShortestOperand24() {
+    assertSimplifiesTo("    return f(a,b,c,d) & 175 & 0;   } ", "    return 0 & 175 & f(a,b,c,d);   }");
+  }
+  @Test public void ShortestOperand25() {
+    assertSimplifiesTo("    return f(a,b,c,d) & bob & 0;   } ", "    return 0 & bob & f(a,b,c,d);   }");
+  }
+  @Test public void ShortestOperand26() {
+    assertSimplifiesTo("    return f(a,b,c,d) | f() | 0;     } ", "    return 0 | f(a,b,c,d) | f();     }");
+  }
+  @Test public void ShortestOperand27() {
+    assertNoChange("    return f(a,b,c,d) + f(a,b,c) + f();     } ");
+  }@Test public void ShortestOperand28() {
+    assertNoChange("    return f(a,b,c,d) * f(a,b,c) * f();     } ");
+  }@Test public void ShortestOperand29() {
+    assertSimplifiesTo("    return f(a,b,c,d) ^ f() ^ 0;     } ", "    return 0 ^ f(a,b,c,d) ^ f();     }");
+  }
+  @Test public void ShortestOperand30() {
+    assertNoChange("    return f(a,b,c,d) & f();     } ");
+  }@Test public void ShortestOperand31() {
+    assertNoChange("    return f(a,b,c,d) | \".\";     }");
+  }@Test public void ShortestOperand32() {
+    assertNoChange("    return f(a,b,c,d) && f();     }");
+  }@Test public void ShortestOperand33() {
+    assertNoChange("    return f(a,b,c,d) || f();     }");
+  }@Test public void ShortestOperand34() {
+    assertSimplifiesTo("    return f(a,b,c,d) + someVar;     } ", "    return someVar + f(a,b,c,d);    } ");
+  }
+  @Test public void ShortestOperand35() {
+    assertSimplifiesTo("    return f(a,b,c,d) * moshe;     } ", "    return moshe * f(a,b,c,d);     } ");
+  }
+  @Test public void ShortestOperand36() {
+    assertSimplifiesTo("    return f(a,b,c,d) ^ bob;     } ", "    return bob ^ f(a,b,c,d);     } ");
+  }
+  @Test public void ShortestOperand37() {
+    assertNoChange("");
+  }@Test public void ShortestOperandFarStringLiteral() {
+    assertNoChange("");
+  }@Test public void SimplifyLogicalNegationnotOfAnd() {
+    assertSimplifiesTo("   return !(f() && f(5));   } ", "   return (!f() || !f(5));   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfEquality() {
+    assertSimplifiesTo("  return !(3 == 5);  } ", "   return 3 != 5;   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfGreater() {
+    assertSimplifiesTo("  return !(3 > 5);  } ", "   return 3 <= 5;   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfGreaterEquals() {
+    assertSimplifiesTo("  return !(3 >= 5);  } ", "   return 3 < 5;   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfInequality() {
+    assertSimplifiesTo("  return !(3 != 5);  } ", "   return 3 == 5;   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfLess() {
+    assertSimplifiesTo("  return !(3 < 5);  } ", "   return 3 >= 5;   } ");
+  }
+  @Test public void SimplifyLogicalNegationnotOfLessEquals() {
+    assertSimplifiesTo("  return !(3 <= 5);  } ", "   return 3 > 5;   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfMultipleAnd() {
+    assertSimplifiesTo("   return !(a && b && c);   } ", "   return (!a || !b || !c);   } ");
+  }
+  @Test public void SimplifyLogicalNegationnotOfMultipleOr() {
+    assertSimplifiesTo("   return !(a || b || c);         ", "   return (!a && !b && !c);   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfNot() {
+    assertSimplifiesTo("   return !!f();   } ", "   return f();   }");
+  }
+  @Test public void SimplifyLogicalNegationnotOfOr() {
+    assertSimplifiesTo("   return !(f() || f(5));   } ", "   return (!f() && !f(5));   }");
+  }
+  @Test public void Ternarize01() {
+    assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   else    res = \"spam\";   System.out.println(res); ", "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : \"spam\");   System.out.println(res); ");
+  }
+  @Test public void Ternarize02() {
+    assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ", "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : s);   System.out.println(res); ");
+  }
+  @Test public void Ternarize03() {
+    assertSimplifiesTo("  if (s.equals(\"yada\"))    return 6;   return 9; ", "  return (s.equals(\"yada\") ? 6 : 9);  } ");
+  }
+  @Test public void Ternarize04() {
+    assertSimplifiesTo("  int res = 0;   if (s.equals(\"yada\"))    res += 6;   else    res += 9;      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ", "  int res = 0;   res += (s.equals(\"yada\") ? 6 : 9);      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ");
+  }
+  @Test public void Ternarize05() {
+    assertNoChange("  int res = 0;   if (s.equals(\"yada\"))    res += 6;   else    res -= 9;      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ");
+  }@Test public void Ternarize06() {
+    assertSimplifiesTo("  String res;   res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ", "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : s);   System.out.println(res); ");
+  }
+  @Test public void Ternarize07() {
+    assertNoChange("  String res;   res = s;   if (res.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ");
+  }@Test public void Ternarize08() {
+    assertSimplifiesTo("  int res = 0;   if (s.equals(\"yada\")) {    res += 6;   else {    res += 9;      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ", "  int res = 0;   res += (s.equals(\"yada\") ? 6 : 9);      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ");
+  }
+  @Test public void Ternarize09() {
+    assertSimplifiesTo("  if (s.equals(\"yada\")) {    return 6;   else {    return 9; ", "  return (s.equals(\"yada\") ? 6 : 9);  } ");
+  }
+  @Test public void Ternarize10() {
+    assertNoChange("  String res = s, foo = \"bar\";   if (res.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ");
+  }@Test public void Ternarize11() {
+    assertSimplifiesTo("  String res = s, foo = \"bar\";   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ", "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : s), foo = \"bar\";   System.out.println(res); ");
+  }
+  @Test public void Ternarize12() {
+    assertNoChange("  String res = s;   if (s.equals(\"yada\")==true)    res = res + \" blah\";   System.out.println(res); ");
+  }@Test public void Ternarize13() {
+    assertNoChange(" String res = mode, foo;  if (mode.equals(\"TEST-MODE\")==true)   foo = \"test-bob\"; ");
+  }@Test public void Ternarize14() {
+    assertNoChange("  String res = mode, foo = \"Not in test mode\";   if (res.equals(\"TEST-MODE\")==true){    foo = \"test-bob\";    int k = 2;    k = 8;   System.out.println(foo); ");
+  }@Test public void Ternarize15() {
+    assertSimplifiesTo("  String res = mode, foo = \"Not in test mode\"; int k;   k = 1984;   if (mode.equals(\"TEST-MODE\")==true)    foo = \"test-bob\";   foo = \"sponge-bob\"; ", "  String res = mode, foo = \"Not in test mode\"; int k;   k = 1984;   foo = \"sponge-bob\"; ");
+  }
+  @Test public void Ternarize16() {
+    assertNoChange(" String res = mode;  int num1, num2, num3;  if (mode.equals(\"TEST-MODE\"))   num2 = 2; ");
+  }@Test public void Ternarize17() {
+    assertSimplifiesTo("  return 6;  }  public int y(){   return 4;  public void yada(final String s) {      int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = r();        else          b = a;     else       if (b == 3)         b = y();       else         b = a; ", "  return 6;  }  public int y(){   return 4;  public void yada(final String s) {      int a, b;      a = 3;      b = 5;      if (b == 3)          b = (a == 4 ? r() : y());        else          b = a; ");
+  }
+  @Test public void Ternarize18() {
+    assertSimplifiesTo("  String res = s;   int a=0;   if (s.equals(\"yada\"))    System.out.println(\"hey\" + res);   else    System.out.println(\"ho\" + res + a); ", "  String res = s;   int a=0;   System.out.println((s.equals(\"yada\") ? \"hey\" + res : \"ho\" + res + a)); ");
+  }
+  @Test public void Ternarize19() {
+    assertSimplifiesTo("  if (s.equals(\"yada\"))    System.out.close();   else    System.out.close(); ", "  System.out.close();  } ");
+  }
+  @Test public void Ternarize20() {
+    assertSimplifiesTo("  return 0;  }  public int y(int b){   return 1;  public int yada(final String s) {   if (s.equals(\"yada\")){    return 2 + r(2);    return 3 + f(4); ", "  return 0;  }  public int y(int b){   return 1;  public int yada(final String s) {   return (s.equals(\"yada\") ? 2 + r(2) : 3 + f(4)); ");
+  }
+  @Test public void Ternarize21() {
+    assertNoChange("  if (s.equals(\"yada\")){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+  }@Test public void Ternarize22() {
+    assertNoChange("  int a=0;   if (s.equals(\"yada\")){    System.console();    a=3; ");
+  }@Test public void Ternarize23() {
+    assertSimplifiesTo("  return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   if (s.equals(\"yada\")){    a+=y(2)+10;    a+=r(3)-6; ", "  return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   a+=(s.equals(\"yada\") ? y(2)+10 : r(3)-6); ");
+  }
+  @Test public void Ternarize24() {
+    assertSimplifiesTo("  boolean c;   if (s.equals(\"yada\")){    c=false;    c=true; ", "  boolean c = !(s.equals(\"yada\"));  } ");
+  }
+  @Test public void Ternarize25() {
+    assertNoChange("  return 2;  }  public void yada(final String s) {   int a, b=0, c=0;   if (b==3){    a+=2+r();    c=6;   a+=6; ");
+  }@Test public void Ternarize26() {
+    assertNoChange("  int a=0;   if (s.equals(\"yada\")){    a+=2;   a-=2; ");
+  }@Test public void Ternarize27() {
+    assertSimplifiesTo("  int a=0;   int b=0;   a=5;   if (s.equals(\"yada\")){    a=4;   a=3; ", "  int a=0;   int b=0;   a=3; ");
+  }
+  @Test public void Ternarize28() {
+    assertSimplifiesTo("  int a=0;   a=5;   if (s.equals(\"yada\")){    a=4;   a=3; ", "  int a=3;  } ");
+  }
+  @Test public void Ternarize29() {
+    assertNoChange("  int a=0;   int b=0;   a=5;   if (a==3){    a=4; ");
+  }@Test public void Ternarize30() {
+    assertSimplifiesTo("  int a=0, b=0;   a=5;   if (b==3){    a=a+4; ", "  int a=0, b=0;   a = (b==3 ? a+4 : 5); ");
+  }
+  @Test public void Ternarize31() {
+    assertSimplifiesTo("  int a=0;   a=5;   if (a==3){    a=a+4;   a=7; ", "  int a=7;  } ");
+  }
+  @Test public void Ternarize32() {
+    assertSimplifiesTo("  int a=0, b=0;   if (b==3){    a=4; ", "  int a = (b==3 ? 4 : 0), b=0;  } ");
+  }
+  @Test public void Ternarize33() {
+    assertNoChange("  int a, b=0;   if (b==3){    a=4; ");
+  }@Test public void Ternarize34() {
+    assertSimplifiesTo("  int b=0;   if (b==3){    return true;   return false; ", "  int b=0;   return b==3; ");
+  }
+  @Test public void Ternarize35() {
+    assertNoChange("  int a, b=0, c=0;   a=4;   if (c==3){    b=2; ");
+  }@Test public void Ternarize36() {
+    assertNoChange("  int a, b=0, c=0;   a=4;   if (c==3){    b=2;   a=6; ");
+  }@Test public void Ternarize37() {
+    assertSimplifiesTo("  return 2;  }  public void yada(final String s) {   int a, b=0, c=0;   if (b==3){    a+=2+r()+c;   a+=6; ", "  return 2;  }  public void yada(final String s) {   int a, b=0, c=0;   a += (b==3 ? 2+r()+c + 6 : 6); ");
+  }
+  @Test public void Ternarize38() {
+    assertNoChange("  return 2;  }  public void yada(final String s) {   int a, b=0;   if (b==3){    a+=2+r();   a-=6; ");
+  }@Test public void Ternarize39() {
+    assertSimplifiesTo("     int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else          b = a;     else       if (b == 3)         b = 2;       else         b = a*a; ", "     int a, b;      a = 3;      b = 5;      if (b == 3)          b = 2;        else          b = (a == 4 ? a : a*a); ");
+  }
+  @Test public void Ternarize40() {
+    assertSimplifiesTo("  int a, b, c;   a = 3;   b = 5;   if (a == 4)     while (b == 3)     c = a;   else    while (b == 3)     c = a*a; ", "  int a, b, c;   a = 3;   b = 5;   while (b == 3)    c = (a == 4 ? a : a*a); ");
+  }
+  @Test public void Ternarize41() {
+    assertNoChange("  int a, b, c, d;   a = 3;   b = 5;   d = 7;   if (a == 4)     while (b == 3)     c = a;   else    while (d == 3)     c = a*a; ");
+  }@Test public void Ternarize42() {
+    assertNoChange("  int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else{          b = a;          b=3;     else       if (b == 3)         b = 2;       else{         b = a*a;         b=3; ");
+  }@Test public void Ternarize43() {
+    assertSimplifiesTo("  if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     b=5;   else    if (b==3){     return 2;     b=4; ", "  if (b==3){    return (mode.equals(\"TEST-MODE\")==true ? 3 : 2);    b=(mode.equals(\"TEST-MODE\")==true ? 5 : 4); ");
+  }
+  @Test public void Ternarize44() {
+    assertSimplifiesTo("  if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     return 7; ", "  if (b==3){    return (mode.equals(\"TEST-MODE\")==true ? 3 : 2);    return 7; ");
+  }
+  @Test public void Ternarize45() {
+    assertNoChange("  if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
+  }@Test public void Ternarize46() {
+    assertNoChange("  int a , b=0;   if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     a+=7;   else    if (b==3){     return 2;     a=7; ");
+  }@Test public void Ternarize47() {
+    assertSimplifiesTo("  int size = 0, a;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     a+=7;   else    for (int i=0; i < size; i++){     a+=8; ", "  int size = 0, a;   for (int i=0; i < size; i++){    a+=(mode.equals(\"TEST-MODE\")==true ? 7 : 8); ");
+  }
+  @Test public void Ternarize48() {
+    assertNoChange("  int size = 0, a, b;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
+  }@Test public void Ternarize49() {
+    assertNoChange("  int size = 0;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.append('f'); ");
+  }@Test public void Ternarize50() {
+    assertSimplifiesTo("  int size = 0;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.println(\"Ho\"); ", "  int size = 0;   for (int i=0; i < size; i++){    System.out.println((mode.equals(\"TEST-MODE\")==true ? \"Hey\" : \"Ho\")); ");
+  }
+  @Test public void Ternarize51() {
+    assertSimplifiesTo("  int a=0,b = 0,d = 0,e = 0,c;   if (a < b) {    c = d;     c = e; ", "  int a=0,b = 0,d = 0,e = 0,c = (a < b ? d : e);  } ");
+  }
+  @Test public void Ternarize52() {
+    assertSimplifiesTo("  int a=0,b = 0,c,d = 0,e = 0;   if (a < b) {    c = d;     c = e; ", "  int a=0,b = 0,c,d = 0,e = 0;   c = (a < b ? d : e); ");
+  }
+  @Test public void Ternarize53() {
+    assertNoChange("  int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;");
+  }@Test public void Ternarize54() {
+    assertSimplifiesTo("", "");
+  }
+  @Test public void Ternarize55() {
+    assertNoChange("");
+  }@Test public void Ternarize56() {
+    assertNoChange("     if (target == 0) {        progressBarCurrent.setString(\"0/0\");        progressBarCurrent.setValue(0);        progressBarCurrent.setString(current + \"/\" + target);        progressBarCurrent.setValue(current * 100 / target);");
+  }
 }
