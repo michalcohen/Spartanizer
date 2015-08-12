@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.Into.i;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
@@ -31,7 +32,7 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
-
+import org.spartan.refactoring.wring.AsRefactoring;
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
  * our naming convention: a) test methods do not use the redundant "test"
@@ -60,6 +61,13 @@ public class TrimmerTest {
     assertNotNull(d);
     return TESTUtils.rewrite(t, u, d).get();
   }
+  static String apply(final Wring w, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(new AsRefactoring(w, "Tested Refactoring", ""), u, d).get();
+  }
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = Wrap.Expression.on(from);
     assertEquals(from, Wrap.Expression.off(wrap));
@@ -67,6 +75,21 @@ public class TrimmerTest {
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
     final String peeled = Wrap.Expression.off(unpeeled);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
+  }
+  static void assertSimplifiesTo(final String from, final String expected, final Wring wring, final Wrap wrapper) {
+
+    final String wrap = wrapper.on(from);
+    assertEquals(from, wrapper.off(wrap));
+
+    final String unpeeled = apply(wring, wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    final String peeled = wrapper.off(unpeeled);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
@@ -342,7 +365,7 @@ public class TrimmerTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
     assertEquals(u.toString(), 1, countOpportunities(new Trimmer(), u));
   }
-  public void parenthesizeOfPushdownTernary() {
+  public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
@@ -373,4 +396,415 @@ public class TrimmerTest {
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
   }
+  @Test public void simplifyBlockEmpty() {
+    assertSimplifiesTo("{;;}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockComplexEmpty() {
+    assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockDeeplyNestedReturn() {
+    assertSimplifiesTo(" {{{;return c;};;};}", " return c;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockComplexSingleton() {
+    assertSimplifiesTo("{;{{;;return b; }}}", " return b;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockThreeStatements() {
+    assertSimplifiesTo("{i++;{{;;return b; }}j++;}", " i++;return b;j++;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockExpressionVsExpression() {
+    assertNoChange(" 6 - 7 < 2 + 1   ");  // Note that we also need to generalize NoChange to work with other Wrings\Wrap types
+  }
+  @Test public void simplifyBlockLiteralVsLiteral() {
+    assertNoChange("if (a) return b; else c;");
+  }
+  @Test public void pushdownTernaryExpressionVsExpression() {
+    assertNoChange(" 6 - 7 < 2 + 1   ");
+  }
+  @Test public void pushdownTernaryLiteralVsLiteral() {
+    assertNoChange("1 < 102333");
+  }
+  @Test public void pushdownTernaryActualExample() {
+    assertNoChange("next < values().length");
+  }
+  @Test public void pushdownTernaryNoBoolean() {
+    assertNoChange("a?b:c");
+  }
+  @Test public void pushdownTernaryFX() {
+    assertNoChange("a ? false : c");
+  }
+  @Test public void pushdownTernaryTX() {
+    assertNoChange("a ? true : c");
+  }
+  @Test public void pushdownTernaryXF() {
+    assertNoChange("a ? b : false");
+  }
+  @Test public void pushdownTernaryXT() {
+    assertNoChange("a ? b : true");
+  }
+  @Test public void pushdownTernaryParFX() {
+    assertNoChange("a ?( false):true");
+  }
+  @Test public void pushdownTernaryParTX() {
+    assertNoChange("a ? (((true ))): c");
+  }
+  @Test public void pushdownTernaryParXF() {
+    assertNoChange("a ? b : (false)");
+  }
+  @Test public void pushdownTernaryParXT() {
+    assertNoChange("a ? b : ((true))");
+  }
+  @Test public void pushdownTernaryActualExample2() {
+    assertNoChange("!inRange(m, e) ? true : inner.go(r, e)");
+  }
+  @Test public void pushdownTernaryMethodInvocationFirst() {
+    assertNoChange("a?b():c");
+  }
+  @Test public void pushdownTernaryNotSameFunctionInvocation() {
+    assertNoChange("a?b(x):d(x)");
+  }
+  @Test public void pushdownTernaryNotSameFunctionInvocation2() {
+    assertNoChange("a?x.f(x):x.d(x)");
+  }
+  @Test public void pushdownTernaryIdenticalMethodCall() {
+    assertNoChange("a ? y.f(b) :y.f(b)");
+  }
+  @Test public void pushdownTernaryIdenticalFunctionCall() {
+    assertNoChange("a ? f(b) :f(b)");
+  }
+  @Test public void pushdownTernaryIdenticalAssignment() {
+    assertNoChange("a ? (b=c) :(b=c)");
+  }
+  @Test public void pushdownTernaryIdenticalIncrement() {
+    assertNoChange("a ? b++ :b++");
+  }
+  @Test public void pushdownTernaryIdenticalAddition() {
+    assertNoChange("a ? b+d :b+ d");
+  }
+  @Test public void pushdownTernaryFunctionCall() {
+    assertNoChange("a ? f(b,c) : f(c)");
+  }
+  @Test public void pushdownTernaryAMethodCall() {
+    assertNoChange("a ? y.f(c,b) :y.f(c)");
+  }
+  @Test public void pushdownTernaryAMethodCallDistinctReceiver() {
+    assertNoChange("a ? x.f(c) : y.f(d)");
+  }
+  @Test public void pushdownTernaryNotOnMINUS() {
+    assertNoChange("a ? -c :-d");
+  }
+  @Test public void pushdownTernaryNotOnNOT() {
+    assertNoChange("a ? !c :!d");
+  }
+  @Test public void pushdownTernaryNotOnMINUSMINUS1() {
+    assertNoChange("a ? --c :--d");
+  }
+  @Test public void pushdownTernaryNotOnMINUSMINUS2() {
+    assertNoChange("a ? c-- :d--");
+  }
+  @Test public void pushdownTernaryNotOnPLUSPLUS() {
+    assertNoChange("a ? x++ :y++");
+  }
+  @Test public void pushdownTernaryNotOnPLUS() {
+    assertNoChange("a ? +x : +y");
+  }
+  @Test public void pushdownTernaryIntoConstructorNotSameArity() {
+    assertNoChange("a ? new S(a,new Integer(4),b) : new S(new Ineger(3))");
+  }
+  @Test public void pushdownTernaryFieldRefernece() {
+    assertNoChange("externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action");
+  }
+  @Test public void pushdownTernaryAlmostIdenticalFunctionCall() {
+    assertSimplifiesTo("a ? f(b) :f(c)", "f(a ? b : c)");
+  }
+  @Test public void pushdownTernaryAlmostIdenticalMethodCall() {
+    assertSimplifiesTo("a ? y.f(b) :y.f(c)", "y.f(a ? b : c)");
+  }
+  @Test public void pushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall1Div2() {
+    assertSimplifiesTo("a ? f(b,x) :f(c,x)", "f(a ? b : c,x)");
+  }
+  @Test public void pushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall2Div2() {
+    assertSimplifiesTo("a ? f(x,b) :f(x,c)", "f(x,a ? b : c)");
+  }
+  @Test public void pushdownTernaryAlmostIdenticalAssignment() {
+    assertSimplifiesTo("a ? (b=c) :(b=d)", "b = a ? c : d");
+  }
+  @Test public void pushdownTernaryAlmostIdentical2Addition() {
+    assertSimplifiesTo("a ? b+d :b+ c", "b+(a ? d : c)");
+  }
+  @Test public void pushdownTernaryAlmostIdentical3Addition() {
+    assertSimplifiesTo("a ? b+d +x:b+ c + x", "b+(a ? d : c) + x");
+  }
+  @Test public void pushdownTernaryAlmostIdentical4AdditionLast() {
+    assertSimplifiesTo("a ? b+d+e+y:b+d+e+x", "b+d+e+(a ? y : x)");
+  }
+  @Test public void pushdownTernaryAlmostIdentical4AdditionSecond() {
+    assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
+  }
+  @Test public void pushdownTernaryDifferentTargetFieldRefernce() {
+    assertSimplifiesTo("a ? 1 + x.a : 1 + y.a", "1+(a ? x.a : y.a)");
+  }
+  @Test public void pushdownTernaryIntoConstructor1Div1Location() {
+    assertSimplifiesTo("a.equal(b) ? new S(new Integer(4)) : new S(new Ineger(3))", "new S(a.equal(b)? new Integer(4): new Ineger(3))");
+  }
+  @Test public void pushdownTernaryIntoConstructor1Div3() {
+    assertSimplifiesTo("a.equal(b) ? new S(new Integer(4),a,b) : new S(new Ineger(3),a,b)", "new S(a.equal(b)? new Integer(4): new Ineger(3), a, b)");
+  }
+  @Test public void pushdownTernaryIntoConstructor2Div3() {
+    assertSimplifiesTo("a.equal(b) ? new S(a,new Integer(4),b) : new S(a, new Ineger(3), b)", "new S(a,a.equal(b)? new Integer(4): new Ineger(3),b)");
+  }
+  @Test public void pushdownTernaryIntoConstructor3Div3() {
+    assertSimplifiesTo("a.equal(b) ? new S(a,b,new Integer(4)) : new S(a,b,new Ineger(3))", "new S(a, b, a.equal(b)? new Integer(4): new Ineger(3))");
+  }
+  @Test public void pushdownNotSummation() {
+    assertNoChange("a+b");
+  }
+  @Test public void pushdownNotMultiplication() {
+    assertNoChange("a*b");
+  }
+  @Test public void pushdownNotOR() {
+    assertNoChange("a||b");
+  }
+  @Test public void pushdownNotEND() {
+    assertNoChange("a&&b");
+  }
+  @Test public void pushdownNotSimpleNot() {
+    assertNoChange("!a");
+  }
+  @Test public void pushdownNotSimpleNotOfFunction() {
+    assertNoChange("!f(a)");
+  }
+  @Test public void pushdownNotActualExample() {
+    assertNoChange("!inRange(m, e)");
+  }
+  @Test public void pushdownNot2LevelNotOfFalse() {
+    assertSimplifiesTo("!!false", "false");
+  }
+  @Test public void pushdownNot2LevelNotOfTrue() {
+    assertSimplifiesTo("!!true", "true");
+  }
+  @Test public void pushdownNotDoubleNotDeeplyNested() {
+    assertSimplifiesTo("!(((!f())))", "f()");
+  }
+  @Test public void pushdownNotDoubleNot() {
+    assertSimplifiesTo("!!f()", "f()");
+  }
+  @Test public void pushdownNotDoubleNotNested() {
+    assertSimplifiesTo("!(!f())", "f()");
+  }
+  @Test public void pushdownNotNotOfAND() {
+    assertSimplifiesTo("!(a && b && c)", "!a || !b || !c");
+  }
+  @Test public void pushdownNotNotOfAND2() {
+    assertSimplifiesTo("!(f() && f(5))", "!f() || !f(5)");
+  }
+  @Test public void pushdownNotNotOfANDNested() {
+    assertSimplifiesTo("!(f() && (f(5)))", "!f() || !f(5)");
+  }
+  @Test public void pushdownNotNotOfEQ() {
+    assertSimplifiesTo("!(3 == 5)", "3 != 5");
+  }
+  @Test public void pushdownNotNotOfEQNested() {
+    assertSimplifiesTo("!((((3 == 5))))", "3 != 5");
+  }
+  @Test public void pushdownNotNotOfFalse() {
+    assertSimplifiesTo("!false", "true");
+  }
+  @Test public void pushdownNotNotOfGE() {
+    assertSimplifiesTo("!(3 >= 5)", "3 < 5");
+  }
+  @Test public void pushdownNotNotOfGT() {
+    assertSimplifiesTo("!(3 > 5)", "3 <= 5");
+  }
+  @Test public void pushdownNotNotOfLE() {
+    assertSimplifiesTo("!(3 <= 5)", "3 > 5");
+  }
+  @Test public void pushdownNotNotOfLT() {
+    assertSimplifiesTo("!(3 < 5)", "3 >= 5");
+  }
+  @Test public void pushdownNotNotOfNE() {
+    assertSimplifiesTo("!(3 != 5)", "3 == 5");
+  }
+  @Test public void pushdownNotNotOfOR2() {
+    assertSimplifiesTo("!(f() || f(5))", "!f() && !f(5)");
+  }
+  @Test public void pushdownNotNotOfOR() {
+    assertSimplifiesTo("!(a || b || c)", "!a && !b && !c");
+  }
+  @Test public void pushdownNotNotOfWrappedOR() {
+    assertSimplifiesTo("!((a) || b || c)", "!a && !b && !c");
+  }
+  @Test public void pushdownNotNotOfTrue() {
+    assertSimplifiesTo("!true", "false");
+  }
+  @Test public void pushdownNotNotOfTrue2() {
+    assertSimplifiesTo("!!true", "true");
+  }
+  @Test public void orFalseProductIsNotANDDivOR() {
+    assertNoChange("2*a");
+  }
+  @Test public void orFalseANDWithoutBoolean() {
+    assertNoChange("b && a");
+  }
+  @Test public void orFalseORWithoutBoolean() {
+    assertNoChange("b || a");
+  }
+  @Test public void orFalseOROf3WithoutBooleanA() {
+    assertNoChange("x || a || b");
+  }
+  @Test public void orFalseOROf4WithoutBooleanA() {
+    assertNoChange("x || a || b || c");
+  }
+  @Test public void orFalseOROf5WithoutBooleanA() {
+    assertNoChange("x || a || b || c || d");
+  }
+  @Test public void orFalseOROf6WithoutBooleanA() {
+    assertNoChange("x || a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithoutBooleanWithParenthesisA() {
+    assertNoChange("x || (a || b) || (c || (d || e))");
+  }
+  @Test public void orFalseANDOf3WithoutBooleanA() {
+    assertNoChange("x && a && b");
+  }
+  @Test public void orFalseANDOf4WithoutBooleanA() {
+    assertNoChange("x && a && b && c");
+  }
+  @Test public void orFalseANDOf5WithoutBooleanA() {
+    assertNoChange("x && a && b && c && d");
+  }
+  @Test public void orFalseANDOf6WithoutBooleanA() {
+    assertNoChange("x && a && b && c && d && e");
+  }
+  @Test public void orFalseANDOf6WithoutBooleanWithParenthesis() {
+    assertNoChange("(x && (a && b)) && (c && (d && e))");
+  }
+  @Test public void orFalseANDWithFalse() {
+    assertNoChange("b && a");
+  }
+  @Test public void orFalseORFalseWithSomething() {
+    assertNoChange("true || a");
+  }
+  @Test public void orFalseORSomethingWithTrue() {
+    assertNoChange("a || true");
+  }
+  @Test public void orFalseOROf3WithoutBoolean() {
+    assertNoChange("a || b");
+  }
+  @Test public void orFalseOROf4WithoutBoolean() {
+    assertNoChange("a || b || c");
+  }
+  @Test public void orFalseOROf5WithoutBoolean() {
+    assertNoChange("a || b || c || d");
+  }
+  @Test public void orFalseOROf6WithoutBoolean() {
+    assertNoChange("a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithoutBooleanWithParenthesis() {
+    assertNoChange("(a || b) || (c || (d || e))");
+  }
+  @Test public void orFalseANDOf3WithoutBoolean() {
+    assertNoChange("a && b && false");
+  }
+  @Test public void orFalseANDOf4WithoutBoolean() {
+    assertNoChange("a && b && c && false");
+  }
+  @Test public void orFalseANDOf5WithoutBoolean() {
+    assertNoChange("false && a && b && c && d");
+  }
+  @Test public void orFalseANDOf6WithoutBoolean() {
+    assertNoChange("a && b && c && false && d && e");
+  }
+  @Test public void orFalseANDOf7WithoutBooleanWithParenthesis() {
+    assertNoChange("(a && b) && (c && (d && (e && false)))");
+  }
+  @Test public void orFalseANDOf7WithoutBooleanAndMultipleFalseValue() {
+    assertNoChange("(a && (b && false)) && (c && (d && (e && (false && false))))");
+  }
+  @Test public void orFalseTrueAndTrueA() {
+    assertNoChange("true && true");
+  }
+  @Test public void orFalseANDOf3WithTrueA() {
+    assertNoChange("a && b && true");
+  }
+  @Test public void orFalseANDOf4WithTrueA() {
+    assertNoChange("a && b && c && true");
+  }
+  @Test public void orFalseANDOf5WithTrueA() {
+    assertNoChange("true && a && b && c && d");
+  }
+  @Test public void orFalseANDOf6WithTrueA() {
+    assertNoChange("a && b && c && true && d && e");
+  }
+  @Test public void orFalseANDOf7WithTrueWithParenthesis() {
+    assertNoChange("true && (a && b) && (c && (d && (e && true)))");
+  }
+  @Test public void orFalseANDOf7WithMultipleTrueValue() {
+    assertNoChange("(a && (b && true)) && (c && (d && (e && (true && true))))");
+  }
+  @Test public void orFalseANDOf3WithTrue() {
+    assertNoChange("true && x && true && a && b");
+  }
+  @Test public void orFalseANDOf4WithTrue() {
+    assertNoChange("x && true && a && b && c");
+  }
+  @Test public void orFalseANDOf5WithTrue() {
+    assertNoChange("x && a && b && c && true && true && true && d");
+  }
+  @Test public void orFalseANDOf6WithTrue() {
+    assertNoChange("x && a && true && b && c && d && e");
+  }
+  @Test public void orFalseANDOf6WithTrueWithParenthesis() {
+    assertNoChange("x && (true && (a && b && true)) && (c && (d && e))");
+  }
+  @Test public void orFalseANDWithTrue() {
+    assertNoChange("true && b && a");
+  }
+
+  @Test public void orFalseFalseOrFalse() {
+    assertSimplifiesTo("false ||false", "false");
+  }
+  @Test public void orFalse3ORTRUE() {
+    assertSimplifiesTo("false || false || false", "false");
+  }
+  @Test public void orFalse4ORTRUE() {
+    assertSimplifiesTo("false || false || false || false", "false");
+  }
+  @Test public void orFalseOROf3WithFalse() {
+    assertSimplifiesTo("x || false || b", "x || b");
+  }
+  @Test public void orFalseOROf4WithFalse() {
+    assertSimplifiesTo("x || a || b || c || false", "x || a || b || c");
+  }
+  @Test public void orFalseOROf5WithFalse() {
+    assertSimplifiesTo("x || a || false || c || d", "x || a || c || d");
+  }
+  @Test public void orFalseOROf6WithFalse() {
+    assertSimplifiesTo("false || x || a || b || c || d || e", "x || a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithFalseWithParenthesis() {
+    assertSimplifiesTo("x || (a || (false) || b) || (c || (d || e))", "x || a || b || c || d || e");
+  }
+  @Test public void orFalseORFalseWithSomethingB() {
+    assertSimplifiesTo("false || a || false", "a");
+  }
+  @Test public void orFalseORSomethingWithFalse() {
+    assertSimplifiesTo("false || a || false", "a");
+  }
+  @Test public void orFalseOROf3WithFalseB() {
+    assertSimplifiesTo("false || a || b || false", "a || b");
+  }
+  @Test public void orFalseOROf4WithFalseB() {
+    assertSimplifiesTo("a || b || false || c", "a || b || c");
+  }
+  @Test public void orFalseOROf5WithFalseB() {
+    assertSimplifiesTo("a || b || c || d || false", "a || b || c || d");
+  }
+  @Test public void orFalseOROf6WithTwoFalse() {
+    assertSimplifiesTo("a || false || b || false || c || d || e", "a || b || c || d || e");
+  }
+  @Test public void orFalseOROf6WithFalseWithParenthesisB() {
+    assertSimplifiesTo("(a || b) || false || (c || false || (d || e || false))", "a || b || c || d || e");
+  }
+
+
 }
