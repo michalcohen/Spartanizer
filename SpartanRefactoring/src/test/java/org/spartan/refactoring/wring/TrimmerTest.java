@@ -414,4 +414,145 @@ public class TrimmerTest {
   @Test public void simplifyBlockLiteralVsLiteral() {
     assertNoChange("if (a) return b; else c;");
   }
+  @Test public void PushdownTernaryExpressionVsExpression() {
+    assertNoChange(" 6 - 7 < 2 + 1   ");
+  }
+  @Test public void PushdownTernaryLiteralVsLiteral() {
+    assertNoChange("1 < 102333");
+  }
+  @Test public void PushdownTernaryActualExample() {
+    assertNoChange("next < values().length");
+  }
+  @Test public void PushdownTernaryNoBoolean() {
+    assertNoChange("a?b:c");
+  }
+  @Test public void PushdownTernaryFX() {
+    assertNoChange("a ? false : c");
+  }
+  @Test public void PushdownTernaryTX() {
+    assertNoChange("a ? true : c");
+  }
+  @Test public void PushdownTernaryXF() {
+    assertNoChange("a ? b : false");
+  }
+  @Test public void PushdownTernaryXT() {
+    assertNoChange("a ? b : true");
+  }
+  @Test public void PushdownTernaryParFX() {
+    assertNoChange("a ?( false):true");
+  }
+  @Test public void PushdownTernaryParTX() {
+    assertNoChange("a ? (((true ))): c");
+  }
+  @Test public void PushdownTernaryParXF() {
+    assertNoChange("a ? b : (false)");
+  }
+  @Test public void PushdownTernaryParXT() {
+    assertNoChange("a ? b : ((true))");
+  }
+  @Test public void PushdownTernaryActualExample2() {
+    assertNoChange("!inRange(m, e) ? true : inner.go(r, e)");
+  }
+  @Test public void PushdownTernaryMethodInvocationFirst() {
+    assertNoChange("a?b():c");
+  }
+  @Test public void PushdownTernaryNotSameFunctionInvocation() {
+    assertNoChange("a?b(x):d(x)");
+  }
+  @Test public void PushdownTernaryNotSameFunctionInvocation2() {
+    assertNoChange("a?x.f(x):x.d(x)");
+  }
+  @Test public void PushdownTernaryIdenticalMethodCall() {
+    assertNoChange("a ? y.f(b) :y.f(b)");
+  }
+  @Test public void PushdownTernaryIdenticalFunctionCall() {
+    assertNoChange("a ? f(b) :f(b)");
+  }
+  @Test public void PushdownTernaryIdenticalAssignment() {
+    assertNoChange("a ? (b=c) :(b=c)");
+  }
+  @Test public void PushdownTernaryIdenticalIncrement() {
+    assertNoChange("a ? b++ :b++");
+  }
+  @Test public void PushdownTernaryIdenticalAddition() {
+    assertNoChange("a ? b+d :b+ d");
+  }
+  @Test public void PushdownTernaryFunctionCall() {
+    assertNoChange("a ? f(b,c) : f(c)");
+  }
+  @Test public void PushdownTernaryAMethodCall() {
+    assertNoChange("a ? y.f(c,b) :y.f(c)");
+  }
+  @Test public void PushdownTernaryAMethodCallDistinctReceiver() {
+    assertNoChange("a ? x.f(c) : y.f(d)");
+  }
+  @Test public void PushdownTernaryNotOnMINUS() {
+    assertNoChange("a ? -c :-d");
+  }
+  @Test public void PushdownTernaryNotOnNOT() {
+    assertNoChange("a ? !c :!d");
+  }
+  @Test public void PushdownTernaryNotOnMINUSMINUS1() {
+    assertNoChange("a ? --c :--d");
+  }
+  @Test public void PushdownTernaryNotOnMINUSMINUS2() {
+    assertNoChange("a ? c-- :d--");
+  }
+  @Test public void PushdownTernaryNotOnPLUSPLUS() {
+    assertNoChange("a ? x++ :y++");
+  }
+  @Test public void PushdownTernaryNotOnPLUS() {
+    assertNoChange("a ? +x : +y");
+  }
+  @Test public void PushdownTernaryIntoConstructorNotSameArity() {
+    assertNoChange("a ? new S(a,new Integer(4),b) : new S(new Ineger(3))");
+  }
+  @Test public void PushdownTernaryFieldRefernece() {
+    assertNoChange("externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action");
+  }
+  @Test public void PushdownTernaryAlmostIdenticalFunctionCall() {
+    assertNoChange("a ? f(b) :f(c)");
+  }
+  @Test public void PushdownTernaryAlmostIdenticalMethodCall() {
+    assertNoChange("a ? y.f(b) :y.f(c)");
+  }
+  @Test public void PushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall1Div2() {
+    assertNoChange("a ? f(b,x) :f(c,x)");
+  }
+  @Test public void PushdownTernaryAlmostIdenticalTwoArgumentsFunctionCall2Div2() {
+    assertNoChange("a ? f(x,b) :f(x,c)");
+  }
+  @Test public void PushdownTernaryAlmostIdenticalAssignment() {
+    assertNoChange("a ? (b=c) :(b=d)");
+  }
+  @Test public void PushdownTernaryAlmostIdentical2Addition() {
+    assertNoChange("a ? b+d :b+ c");
+  }
+  @Test public void PushdownTernaryAlmostIdentical3Addition() {
+    assertNoChange("a ? b+d +x:b+ c + x");
+  }
+  @Test public void PushdownTernaryAlmostIdentical4AdditionLast() {
+    assertNoChange("a ? b+d+e+y:b+d+e+x");
+  }
+  @Test public void PushdownTernaryAlmostIdentical4AdditionSecond() {
+    assertNoChange("a ? b+x+e+f:b+y+e+f");
+  }
+  @Test public void PushdownTernaryDifferentTargetFieldRefernce() {
+    assertNoChange("a ? 1 + x.a : 1 + y.a");
+  }
+  @Test public void PushdownTernaryIntoConstructor1Div1Location() {
+    assertNoChange("a.equal(b) ? new S(new Integer(4)) : new S(new Ineger(3))");
+  }
+  @Test public void PushdownTernaryIntoConstructor1Div3() {
+    assertNoChange("a.equal(b) ? new S(new Integer(4),a,b) : new S(new Ineger(3),a,b)");
+  }
+  @Test public void PushdownTernaryIntoConstructor2Div3() {
+    assertNoChange("a.equal(b) ? new S(a,new Integer(4),b) : new S(a, new Ineger(3), b)");
+  }
+  @Test public void PushdownTernaryIntoConstructor3Div3() {
+    assertNoChange("a.equal(b) ? new S(a,b,new Integer(4)) : new S(a,b,new Ineger(3))");
+  }
+
+
+
 }
