@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
-
+import static org.spartan.refactoring.utils.Funcs.same;
 /**
  * @author Ofir Elmakias <code><Elmakias [at] outlook.com></code> (original)
  * @since 2015/08/12
@@ -40,33 +40,37 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
 
       @Override public boolean visit(final ReturnStatement rs) {
 
-        final Expression n = rs.getExpression();
-        if (Is.simpleName(n)){
-          System.out.print(n);//
-          final Expression returnVar = n;
-          if (returnVar == null || !inRange(m, returnVar))
-            return true;
+        final Expression n = rs.getExpression(); // e.g. rs = "return s;" => n = "s"
+        if (!Is.simpleName(n)) return true;
 
-          ASTNode md = n;
-          while (!Is.methodDeclaration(md))
-            md = md.getParent();
-          declaredInMethod = false;
-          md.accept(new ASTVisitor() {
-            @Override public boolean visit(final VariableDeclarationFragment v) {
-              if (v.getName().toString().equals(n.toString())) declaredInMethod = true;
-              return true;
-            }
-          });
-          if (!declaredInMethod) return true;
-          md.accept(new ASTVisitor() {
-            @Override public boolean visit(final SimpleName sn) {
-              if (sn.toString().equals(n.toString())) r.replace(sn, t.newSimpleName("$"), null);
-              return true;
-            }
-          });
-        }
+        if (n == null || !inRange(m, n))
+          return true;
+
+        ASTNode md = n;
+        while (!Is.methodDeclaration(md))
+          md = md.getParent();
+        if (!declaredHere(n, md)) return true;
+
+        md.accept(new ASTVisitor() {  // Replace all occurrences to $
+          @Override public boolean visit(final SimpleName sn) {
+            if (same(sn,t.newSimpleName("$"))) return true;
+            if (same(sn,n)) r.replace(sn, t.newSimpleName("$"), null);
+            return true;
+          }
+        });
 
         return true;
+      }
+
+      private boolean declaredHere(final Expression n, final ASTNode md) {
+        declaredInMethod = false;
+        md.accept(new ASTVisitor() {
+          @Override public boolean visit(final VariableDeclarationFragment v) {
+            if (v.getName().toString().equals(n.toString())) declaredInMethod = true;
+            return true;
+          }
+        });
+        return declaredInMethod;
       }
     });
   }
