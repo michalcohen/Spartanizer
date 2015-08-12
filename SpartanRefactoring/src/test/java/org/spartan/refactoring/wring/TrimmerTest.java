@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.refactoring.spartanizations.Into.i;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
@@ -31,7 +32,7 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Is;
-
+import org.spartan.refactoring.wring.AsRefactoring;
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
  * our naming convention: a) test methods do not use the redundant "test"
@@ -60,6 +61,13 @@ public class TrimmerTest {
     assertNotNull(d);
     return TESTUtils.rewrite(t, u, d).get();
   }
+  static String apply(final Wring w, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(new AsRefactoring(w, "Tested Refactoring", ""), u, d).get();
+  }
   static void assertSimplifiesTo(final String from, final String expected) {
     final String wrap = Wrap.Expression.on(from);
     assertEquals(from, Wrap.Expression.off(wrap));
@@ -67,6 +75,21 @@ public class TrimmerTest {
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
     final String peeled = Wrap.Expression.off(unpeeled);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
+  }
+  static void assertSimplifiesTo(final String from, final String expected, final Wring wring, final Wrap wrapper) {
+
+    final String wrap = wrapper.on(from);
+    assertEquals(from, wrapper.off(wrap));
+
+    final String unpeeled = apply(wring, wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    final String peeled = wrapper.off(unpeeled);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
@@ -369,5 +392,26 @@ public class TrimmerTest {
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
+  }
+  @Test public void simplifyBlockEmpty() {
+    assertSimplifiesTo("{;;}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockComplexEmpty() {
+    assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockDeeplyNestedReturn() {
+    assertSimplifiesTo(" {{{;return c;};;};}", " return c;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockComplexSingleton() {
+    assertSimplifiesTo("{;{{;;return b; }}}", " return b;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockThreeStatements() {
+    assertSimplifiesTo("{i++;{{;;return b; }}j++;}", " i++;return b;j++;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockExpressionVsExpression() {
+    assertNoChange(" 6 - 7 < 2 + 1   ");  // Note that we also need to generalize NoChange to work with other Wrings\Wrap types
+  }
+  @Test public void simplifyBlockLiteralVsLiteral() {
+    assertNoChange("if (a) return b; else c;");
   }
 }
