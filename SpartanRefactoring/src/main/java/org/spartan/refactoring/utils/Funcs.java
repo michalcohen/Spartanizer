@@ -548,19 +548,7 @@ public enum Funcs {
     final Expression $$ = PushdownNot.simplifyNot($);
     return $$ == null ? $ : $$;
   }
-  /**
-   * Parenthesize an {@link Expression}
-   *
-   * @param e JD
-   * @return a duplicate of parameter, wrapped in parenthesis
-   */
-  public static Expression parenthesize(final Expression e) {
-    if (Is.simple(e))
-      return duplicate(e);
-    final ParenthesizedExpression $ = e.getAST().newParenthesizedExpression();
-    $.setExpression(duplicate(core(e)));
-    return $;
-  }
+
   /**
    * Retrieve previous item in a list
    *
