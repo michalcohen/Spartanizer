@@ -76,9 +76,6 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(core(e.getOperand()));
   }
-  static Expression getCoreLeft(final InfixExpression e) {
-    return core(e.getLeftOperand());
-  }
   /**
    * @param o JD
    * @return the operator that produces the logical negation of the parameter
