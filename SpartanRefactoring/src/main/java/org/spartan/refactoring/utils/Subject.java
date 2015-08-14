@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
@@ -20,12 +21,10 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 
+// TODO: document this class
 @SuppressWarnings("javadoc") public class Subject {
   public static Operand operand(final Expression inner) {
     return new Operand(inner);
-  }
-  public static Pair pair(final Expression left, final Expression right) {
-    return new Pair(left, right);
   }
   public static Several operands(final Expression... es) {
     return new Several(Arrays.asList(es));
@@ -33,15 +32,11 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
   public static Several operands(final List<Expression> es) {
     return new Several(es);
   }
-
-  static class Claimer {
-    protected final AST ast;
-    public Claimer(final ASTNode n) {
-      ast = n.getAST();
-    }
-    Expression claim(final Expression e) {
-      return rebase(duplicate(Extract.core(e)), ast);
-    }
+  public static Pair pair(final Expression left, final Expression right) {
+    return new Pair(left, right);
+  }
+  public static StatementPair pair(final Statement s1, final Statement s2) {
+    return new StatementPair(s1, s2);
   }
 
   public static class Operand extends Claimer {
@@ -49,6 +44,11 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     Operand(final Expression inner) {
       super(inner);
       this.inner = claim(inner);
+    }
+    public ParenthesizedExpression parenthesis() {
+      final ParenthesizedExpression $ = ast.newParenthesizedExpression();
+      $.setExpression(inner);
+      return $;
     }
     public Expression to(final PostfixExpression.Operator o) {
       final PostfixExpression $ = ast.newPostfixExpression();
@@ -80,11 +80,6 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       $.setExpression(inner);
       return $;
     }
-    public ParenthesizedExpression parenthesis() {
-      final ParenthesizedExpression $ = ast.newParenthesizedExpression();
-      $.setExpression(inner);
-      return $;
-    }
   }
 
   public static class Pair extends Claimer {
@@ -93,9 +88,6 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       super(left);
       this.left = claim(left);
       this.right = claim(right);
-    }
-    public Statement toStatement(final Assignment.Operator o) {
-      return Subject.operand(to(o)).toStatement();
     }
     public Assignment to(final Assignment.Operator o) {
       final Assignment $ = ast.newAssignment();
@@ -118,6 +110,9 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       $.setElseExpression(Plant.zis(right).into($));
       return $;
     }
+    public Statement toStatement(final Assignment.Operator o) {
+      return Subject.operand(to(o)).toStatement();
+    }
   }
 
   public static class Several extends Claimer {
@@ -134,6 +129,33 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       for (int i = 2; i < operands.size(); ++i)
         $.extendedOperands().add(Plant.zis(operands.get(i)).into($));
       return $;
+    }
+  }
+
+  public static class StatementPair extends Claimer {
+    private final Statement elze;
+    private final Statement then;
+    StatementPair(final Statement then, final Statement elze) {
+      super(then);
+      this.then = then;
+      this.elze = elze;
+    }
+    public IfStatement toIf(final Expression condition) {
+      final IfStatement $ = ast.newIfStatement();
+      $.setExpression(condition);
+      $.setThenStatement(then);
+      $.setElseStatement(elze);
+      return $;
+    }
+  }
+
+  public static class Claimer {
+    protected final AST ast;
+    public Claimer(final ASTNode n) {
+      ast = n.getAST();
+    }
+    Expression claim(final Expression e) {
+      return rebase(duplicate(Extract.core(e)), ast);
     }
   }
 }

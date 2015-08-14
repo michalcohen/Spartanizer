@@ -1,5 +1,4 @@
 package org.spartan.refactoring.utils;
-
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
@@ -12,7 +11,6 @@ import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
-import static org.eclipse.jdt.core.dom.ASTNode.STRING_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
@@ -26,6 +24,7 @@ import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.inRange;
+import static org.spartan.utils.Utils.last;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -331,8 +330,6 @@ public enum Funcs {
   @SuppressWarnings("unchecked") public static <N extends ASTNode> N duplicate(final N n) {
     return (N) copySubtree(n.getAST(), n);
   }
-
-
   public static InfixExpression flip(final InfixExpression e) {
     return Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator()));
   }
@@ -498,22 +495,7 @@ public enum Funcs {
   public static boolean isOpAssign(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
-  /**
-   * Determined if a node is a return statement
-   *
-   * @param n node to check
-   * @return true if the given node is a return statement or false otherwise
-   */
-  public static boolean isReturn(final ASTNode n) {
-    return is(n, RETURN_STATEMENT);
-  }
-  /**
-   * @param n node to check
-   * @return true if the given node is a string literal or false otherwise
-   */
-  public static boolean isStringLiteral(final ASTNode n) {
-    return n != null && n.getNodeType() == STRING_LITERAL;
-  }
+
   /**
    * @param n node to check
    * @return true if the given node is a variable declaration statement or false
@@ -522,32 +504,6 @@ public enum Funcs {
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
-  /**
-   * @param ts a list
-   * @return the last item in a list or <code><b>null</b></code> if the
-   *         parameter is <code><b>null</b></code> or empty
-   */
-  public static <T> T last(final List<T> ts) {
-    return ts == null || ts.isEmpty() ? null : ts.get(ts.size() - 1);
-  }
-  /**
-   * @param t the AST who is to own the new If Statement
-   * @param r ASTRewrite for the given AST
-   * @param condition the condition
-   * @param then the then statement to set in the If Statement
-   * @param elze the else statement to set in the If Statement
-   * @return a new if Statement
-   */
-  public static IfStatement makeIfStatement(final AST t, final ASTRewrite r, final Expression condition, final Statement then, final Statement elze) {
-    if (hasNull(t, r, condition, then, elze))
-      return null;
-    final IfStatement $ = t.newIfStatement();
-    $.setExpression(frugalDuplicate(condition));
-    $.setThenStatement(then.getParent() == null ? then : (Statement) r.createCopyTarget(then));
-    $.setElseStatement(elze.getParent() == null ? elze : (Statement) r.createCopyTarget(elze));
-    return $;
-  }
-
 
   /**
    * @param e the expression to return in the return statement
@@ -585,7 +541,7 @@ public enum Funcs {
   }
   /**
    * @param e JD
-   * @return the parameter, but logically negated.
+   * @return the parameter, but logically negated and simplified
    */
   public static Expression not(final Expression e) {
     final PrefixExpression $ = Subject.operand(e).to(NOT);
@@ -652,8 +608,6 @@ public enum Funcs {
   public static String removeWhites(final ASTNode n) {
     return Utils.removeWhites(n.toString());
   }
-
-
   /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
@@ -666,8 +620,8 @@ public enum Funcs {
     return n1 == n2 || n1.getNodeType() == n2.getNodeType() && n1.toString().equals(n2.toString());
   }
   /**
-   * Determine whether two lists of nodes are the same, in the sense that their textual
-   * representations is identical.
+   * Determine whether two lists of nodes are the same, in the sense that their
+   * textual representations is identical.
    *
    * @param ns1 first list to compare
    * @param ns2 second list to compare
@@ -683,18 +637,7 @@ public enum Funcs {
         return false;
     return true;
   }
-  /**
-   * the function receives a condition and the then boolean value and returns
-   * the proper condition (its negation if thenValue is false)
-   * @param cond the condition to try to negate
-   * @param thenValue the then value
-   *
-   * @return the original condition if thenValue was true or its negation if it
-   *         was false (or null if any of the given parameter were null)
-   */
-  public static Expression tryToNegateCond(final Expression cond, final boolean thenValue) {
-    return cond == null ? null : thenValue ? cond : Subject.operand(cond).to(PrefixExpression.Operator.NOT);
-  }
+
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
@@ -703,7 +646,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-        ) ? e : null;
+    ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)
@@ -734,7 +677,6 @@ public enum Funcs {
     $.put(LESS_EQUALS, GREATER_EQUALS);
     return $;
   }
-
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
   }

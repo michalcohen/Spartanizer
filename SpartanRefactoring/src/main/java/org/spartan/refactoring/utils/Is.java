@@ -56,6 +56,7 @@ import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -132,6 +133,18 @@ public enum Is {
    */
   public static boolean comparison(final InfixExpression e) {
     return in(e.getOperator(), EQUALS, GREATER, GREATER_EQUALS, LESS, LESS_EQUALS, NOT_EQUALS);
+  }
+  // TODO: document this.
+  public static boolean empty(final Statement s) {
+    return Extract.statements(s).size() == 0;
+  }
+  // TODO: document this.
+  public static boolean singletonStatement(final ASTNode s) {
+    return Extract.statements(s).size() == 1;
+  }
+  // TODO: document this.
+  public static boolean singletonThen(final IfStatement i) {
+    return Is.singletonStatement(i.getThenStatement());
   }
   /**
    * @param es JD

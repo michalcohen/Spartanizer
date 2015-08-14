@@ -1,5 +1,4 @@
 package org.spartan.refactoring.utils;
-
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
@@ -11,6 +10,7 @@ import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
+import static org.spartan.utils.Utils.last;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -303,5 +303,8 @@ public enum Extract {
         $.add(s);
         return $;
     }
+  }
+  public static ASTNode lastStatement(final Statement s) {
+    return last(statements(s));
   }
 }
