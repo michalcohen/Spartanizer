@@ -246,9 +246,9 @@ public abstract class Wring {
       return true;
     }
     abstract Statement _replacement(final Block e);
-    @Override final boolean eligible(final Block e) {
-      assert scopeIncludes(e);
-      return _eligible(e);
+    @Override final boolean eligible(final Block b) {
+      assert scopeIncludes(b);
+      return _eligible(b);
     }
     @Override final boolean go(final ASTRewrite r, final Block b) {
       if (eligible(b))

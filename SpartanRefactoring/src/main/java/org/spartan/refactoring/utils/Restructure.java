@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.dom.Statement;
 public enum Restructure {
   ;
   /**
-   * Duplicate all a {@link Statement} in a given list into another list.
+   * Duplicate all {@link Statement} object found in a given list into another list.
    *
    * @param from JD
    * @param into JD

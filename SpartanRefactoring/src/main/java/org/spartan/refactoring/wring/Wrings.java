@@ -19,7 +19,6 @@ import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.flip;
-import static org.spartan.refactoring.utils.Funcs.last;
 import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
@@ -27,6 +26,7 @@ import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.utils.Utils.in;
+import static org.spartan.utils.Utils.last;
 
 import java.util.List;
 
@@ -202,14 +202,14 @@ public enum Wrings {
           return false;
       return true;
     }
-
-
     @Override Statement _replacement(final Block b) {
-      if (b == null || identical(Extract.statements(b), b.statements()))
+      System.out.println("Given is "+b);
+      final List<Statement> ss = Extract.statements(b);
+      if (b == null || identical(ss, b.statements()))
         return null;
       if (!Is.statement(b.getParent()))
         return reorganizeStatement(b);
-      switch (Extract.statements(b).size()) {
+      switch (ss.size()) {
         case 0:
           return b.getAST().newEmptyStatement();
         case 1:
@@ -219,7 +219,7 @@ public enum Wrings {
       }
     }
     @Override boolean scopeIncludes(final Block b) {
-      return !identical(Extract.statements(b), b.statements());
+      return _replacement(b) != null;
     }
   }), //
   /**
@@ -465,7 +465,7 @@ public enum Wrings {
     }
 
     @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
-      if (s.getElseStatement() == null || !Is.sequencer(last(Extract.statements(s.getThenStatement()))))
+      if (s.getElseStatement() == null || !Is.sequencer(Extract.lastStatement(s.getThenStatement())))
         return r;
       final IfStatement newlyCreatedIf = duplicate(s);
       newlyCreatedIf.setElseStatement(null);
@@ -490,7 +490,7 @@ public enum Wrings {
       return new Range(e);
     }
     @Override boolean scopeIncludes(final IfStatement s) {
-      return s.getElseStatement() != null && Is.sequencer(last(Extract.statements(s.getThenStatement())));
+      return s.getElseStatement() != null && Is.sequencer(Extract.lastStatement(s.getThenStatement()));
     }
   }), //
   /**
@@ -910,8 +910,7 @@ public enum Wrings {
         return w.inner;
     return null;
   }
-  public
-  static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
+  public static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
     for (int i = 0, size = es.size(); i < size; i++)
@@ -939,13 +938,25 @@ public enum Wrings {
     return Subject.pair(takeThen != literal ? main : not(main),other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
 
+  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
+    final List<Expression> operands = All.operands(flatten(e));
+    removeAll(b, operands);
+    switch (operands.size()) {
+      case 0:
+        return e.getAST().newBooleanLiteral(b);
+      case 1:
+        return duplicate(operands.get(0));
+      default:
+        return Subject.operands(operands).to(e.getOperator());
+    }
+  }
   static boolean elseIsEmpty(final IfStatement s) {
     return Extract.statements(s.getElseStatement()).size() == 0;
   }
+
   static boolean existingEmptyElse(final IfStatement s) {
     return s.getElseStatement() != null && elseIsEmpty(s);
   }
-
   static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
   }
@@ -964,17 +975,12 @@ public enum Wrings {
   static boolean isTernaryOfBooleanLitreral(final Expression e) {
     return isTernaryOfBooleanLitreral(asConditionalExpression(core(e)));
   }
+
   static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
     final VariableDeclarationFragment $ = duplicate(f);
     $.setInitializer(duplicate(e));
     return $;
   }
-
-
-
-
-
-
   static ASTRewrite removeStatement(final ASTRewrite r, final Statement s) {
     final Block parent = asBlock(s.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -1001,6 +1007,7 @@ public enum Wrings {
     duplicateInto(ss,$.statements());
     return $;
   }
+
   static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by) {
     final Block parent = asBlock(what.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -1013,7 +1020,6 @@ public enum Wrings {
     r.replace(parent, $, null);
     return r;
   }
-
   /**
    * Consider an expression <code> a ? b : c </code>; in a sense it is the same
    * as <code> (a && b) || (!a && c) </code>
@@ -1057,18 +1063,6 @@ public enum Wrings {
         continue;
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
-    }
-  }
-  static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
-    final List<Expression> operands = All.operands(flatten(e));
-    removeAll(b, operands);
-    switch (operands.size()) {
-      case 0:
-        return e.getAST().newBooleanLiteral(b);
-      case 1:
-        return duplicate(operands.get(0));
-      default:
-        return Subject.operands(operands).to(e.getOperator());
     }
   }
   public final Wring inner;

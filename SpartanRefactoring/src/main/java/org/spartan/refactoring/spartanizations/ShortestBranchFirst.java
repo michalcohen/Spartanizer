@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.makeIfStatement;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 
@@ -58,9 +57,9 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
         if ( Extract.ifStatement(elseStmnt) != null) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
-          return makeIfStatement(t, r, negatedOp, newElseBlock, thenStmnt);
+          return Subject.pair(newElseBlock, thenStmnt).toIf(negatedOp);
         }
-        return makeIfStatement(t, r, negatedOp, elseStmnt, thenStmnt);
+        return Subject.pair(elseStmnt, thenStmnt).toIf(negatedOp);
       }
       private ConditionalExpression transpose(final ConditionalExpression e) {
         return e == null ? null : Subject.pair(e.getElseExpression(), e.getThenExpression()).toCondition(not(e.getExpression()));
