@@ -203,7 +203,6 @@ public enum Wrings {
       return true;
     }
     @Override Statement _replacement(final Block b) {
-      System.out.println("Given is "+b);
       final List<Statement> ss = Extract.statements(b);
       if (b == null || identical(ss, b.statements()))
         return null;
