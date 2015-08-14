@@ -531,11 +531,11 @@ public enum Wrings {
       return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
     }
   }), //
-  TERNARYT_SHOREST_FIRST(new Wring.OfConditionalExpression() {
+  TERNARY_SHOREST_FIRST(new Wring.OfConditionalExpression() {
     @Override Expression _replacement(final ConditionalExpression e) {
       final Expression elze = Extract.core(e.getElseExpression());
       final Expression then = Extract.core(e.getThenExpression());
-      return longer(then,elze) ? Subject.pair(elze,then).to(not(e.getExpression)) : null;
+      return longer(then,elze) ? Subject.pair(elze,then).toCondition(not(e.getExpression())) : null;
     }
     private boolean longer(final Expression e1, final Expression e2) {
       return false;
