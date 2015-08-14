@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
@@ -99,9 +100,6 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
       return GREATER_EQUALS;
     return null;
   }
-  static Expression getCoreRight(final InfixExpression e) {
-    return core(e.getRightOperand());
-  }
   @Override public boolean scopeIncludes(final PrefixExpression e) {
     return e != null && asNot(e) != null && Wrings.hasOpportunity(asNot(e));
   }
@@ -115,6 +113,6 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
     return simplifyNot(e);
   }
   public static Expression simplifyNot(final PrefixExpression e) {
-    return pushdownNot(asNot(e));
+    return pushdownNot(asNot(Extract.core(e)));
   }
 }
