@@ -116,7 +116,7 @@ public class Ternarize extends Spartanization {
     final ReturnStatement then = asReturnStatement(thenStmt);
     final ReturnStatement elze = asReturnStatement(elseStmt);
     return (then == null || elze != null || Is.conditional(then.getExpression())) && (then != null || elze == null || Is.conditional(elze.getExpression())) ? null
-        : new Range(thenStmt == null ? elseStmt.getParent() : thenStmt.getParent(), nextRet);
+        : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
   }
 
   private static Expression determineNewExp(final Expression cond, final Expression thenExp, final Expression elseExp) {
@@ -128,9 +128,7 @@ public class Ternarize extends Spartanization {
     return hasNull(thenNode, elseNode) ? null : findDiffList(collectDescendants(thenNode), collectDescendants(elseNode));
   }
   private static TwoExpressions findDiffExps(final Pair diffNodes) {
-    Pair $ = findDiffNodes(diffNodes.then, diffNodes.elze);
-    if (Is.expressionStatement(diffNodes.then))
-      $ = findDiffNodes($.then, $.elze);
+    Pair $ = Is.expressionStatement(diffNodes.then) ? findDiffNodes($.then, $.elze) : findDiffNodes(diffNodes.then, diffNodes.elze);
     return $ == null ? null : new TwoExpressions((Expression) $.then, (Expression) $.elze);
   }
 

@@ -42,11 +42,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   MULTIPLICATION {
     @Override public int compare(final Expression e1, final Expression e2) {
       int $;
-      return ($ = literalCompare(e2, e1)) != 0 || //
-          ($ = nodesCompare(e1, e2)) != 0 || //
-          ($ = characterCompare(e1, e2)) != 0 || //
-          ($ = alphabeticalCompare(e1, e2)) != 0 //
-          ? $ : 0;
+      return ($ = literalCompare(e2, e1)) == 0 && ($ = nodesCompare(e1, e2)) == 0 && ($ = characterCompare(e1, e2)) == 0 && ($ = alphabeticalCompare(e1, e2)) == 0 ? 0 : $;
     }
   };
   static int literalCompare(final Expression e1, final Expression e2) {
