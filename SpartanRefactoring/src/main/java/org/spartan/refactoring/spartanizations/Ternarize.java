@@ -97,7 +97,7 @@ public class Ternarize extends Spartanization {
     final int ifIdx = ss.indexOf(i);
     final Assignment nextAsgn = Extract.assignment(next(ifIdx, ss));
     final Assignment prevAsgn = Extract.assignment(prev(ifIdx, ss));
-    final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn != null ? prev2(ss, ifIdx) : prev(ifIdx, ss), then.getLeftHandSide());
+    final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn == null ? prev(ifIdx, ss) : prev2(ss, ifIdx), then.getLeftHandSide());
     Range $;
     return //
         //
