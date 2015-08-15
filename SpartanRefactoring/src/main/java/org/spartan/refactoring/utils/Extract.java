@@ -319,4 +319,8 @@ public enum Extract {
   public static ASTNode lastStatement(final Statement s) {
     return last(statements(s));
   }
+
+  public static int count(final Statement s) {
+    return statements(s).size();
+  }
 }

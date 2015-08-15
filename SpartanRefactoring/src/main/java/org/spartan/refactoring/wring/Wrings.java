@@ -791,26 +791,34 @@ public enum Wrings {
       final Expression condition = $.getExpression();
       if (length(not(condition)) + length(then) < length(condition) + length(elze))
         return null;
-            return $;
+      return $;
     }
-    int length(final Expression e) {
-      return e.toString().length();
-    }
+
   }), //
   /**
    * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code>
    * into <code> a ? c(d,e) : f(g,h) </code>
    *
    * @author Yossi Gil
-   * @since 2015-08-14
+   * @since 2015-08-15
    */
   IF_SHORTEST_FIRST(new Wring.OfIfStatement() {
     @Override Statement _replacement(final IfStatement s) {
-      final List<Statement> then = Extract.statements(s.getElseStatement());
-      final List<Statement> elze =  Extract.statements(s.getThenStatement());
-      return then.toString().length() < elze.toString().length() ? null : null;
+      final Expression
+ = not(s.getExpression());
+      final Statement then = s.getThenStatement();
+      final Statement elze = s.getElseStatement();
+      final int n1 = Extract.statements(then).size();
+      final int n2 = Extract.statements(elze).size();
+      if (n1 < n2)
+        return null;
+      final Statement $ = Subject.pair(elze,then).toIf(negatedCondition);
+      if (n1 > n2)
+        return $;
+      if (length(not(negatedCondition)) + length(then) < length(negatedCondition) + length(elze))
+        return null;
+      return $;
     }
-
   }), //
   ;
   /**
@@ -1083,6 +1091,9 @@ public enum Wrings {
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
+  }
+  static  int length(final ASTNode e) {
+    return e.toString().length();
   }
   public final Wring inner;
   Wrings(final Wring inner) {

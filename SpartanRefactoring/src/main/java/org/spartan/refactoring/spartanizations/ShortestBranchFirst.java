@@ -54,7 +54,7 @@ public class ShortestBranchFirst extends SpartanizationOfInfixExpression {
           return null;
         final Statement elseStmnt = s.getElseStatement();
         final Statement thenStmnt = s.getThenStatement();
-        if ( Extract.ifStatement(elseStmnt) != null) {
+        if (Extract.ifStatement(elseStmnt) != null) {
           final Block newElseBlock = t.newBlock();
           newElseBlock.statements().add(r.createCopyTarget(elseStmnt));
           return Subject.pair(newElseBlock, thenStmnt).toIf(negatedOp);
