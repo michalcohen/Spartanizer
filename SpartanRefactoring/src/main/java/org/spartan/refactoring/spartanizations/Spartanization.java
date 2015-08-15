@@ -233,10 +233,10 @@ public abstract class Spartanization extends Refactoring {
     textChange.setTextType("java");
     textChange.setEdit(createRewrite(new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), m).rewriteAST());
     if (textChange.getEdit().getLength() != 0)
-      if (!preview)
-        textChange.perform(pm);
-      else
+      if (preview)
         changes.add(textChange);
+      else
+        textChange.perform(pm);
     pm.done();
   }
   /**
