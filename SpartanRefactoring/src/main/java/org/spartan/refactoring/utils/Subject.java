@@ -142,7 +142,7 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     }
     public IfStatement toIf(final Expression condition) {
       final IfStatement $ = ast.newIfStatement();
-      $.setExpression(condition);
+      $.setExpression(claim(condition));
       $.setThenStatement(then);
       $.setElseStatement(elze);
       return $;
