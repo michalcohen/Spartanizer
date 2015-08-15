@@ -41,18 +41,6 @@ import org.spartan.utils.Wrapper;
  */
 public enum Extract {
   ;
-  public static int size(final ASTNode n) {
-    class Integer {
-      int inner = 0;
-    }
-    final Integer $ = new Integer();
-    n.accept(new ASTVisitor() {
-      @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-        $.inner++;
-      }
-    });
-    return $.inner;
-  }
   /**
    * @param n a statement or block to extract the assignment from
    * @return null if the block contains more than one statement or if the
@@ -73,6 +61,17 @@ public enum Extract {
    */
   public static Expression core(final Expression $) {
     return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : core(((ParenthesizedExpression) $).getExpression());
+  }
+  public static Statement core(final Statement s) {
+    final List<Statement> ss = Extract.statements(s);
+    switch (ss.size()) {
+      case 0:
+        return null;
+      case 1:
+        return ss.get(0);
+      default:
+        return s;
+    }
   }
   /**
    * @param node a node to extract an expression from
@@ -154,6 +153,9 @@ public enum Extract {
    */
   public static IfStatement ifStatement(final ASTNode n) {
     return asIfStatement(Extract.singleStatement(n));
+  }
+  public static ASTNode lastStatement(final Statement s) {
+    return last(statements(s));
   }
   /**
    * @param n JD
@@ -250,6 +252,18 @@ public enum Extract {
   public static Statement singleThen(final IfStatement i) {
     return Extract.singleStatement(i.getThenStatement());
   }
+  public static int size(final ASTNode n) {
+    class Integer {
+      int inner = 0;
+    }
+    final Integer $ = new Integer();
+    n.accept(new ASTVisitor() {
+      @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
+        $.inner++;
+      }
+    });
+    return $.inner;
+  }
   /**
    * Extract the {@link Statement} that contains a given node.
    *
@@ -316,8 +330,4 @@ public enum Extract {
         return $;
     }
   }
-  public static ASTNode lastStatement(final Statement s) {
-    return last(statements(s));
-  }
-
 }

@@ -158,7 +158,7 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       return rebase(duplicate(Extract.core(e)), ast);
     }
     Statement claim(final Statement s) {
-      return rebase(duplicate(s), ast);
+      return rebase(duplicate(Extract.core(s)), ast);
     }
   }
 }

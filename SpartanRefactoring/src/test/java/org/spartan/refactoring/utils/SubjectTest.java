@@ -5,12 +5,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.refactoring.spartanizations.Into.e;
+import static org.spartan.refactoring.spartanizations.Into.*;
 
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Subject.Pair;
 
@@ -82,5 +83,10 @@ import org.spartan.refactoring.utils.Subject.Pair;
   }
   @Test public void operandsNoParenthesisRest() {
     assertThat(Subject.operands(e("((a))"),e("b+c"), e("c+d")).to(InfixExpression.Operator.PLUS), iz("a+b+c+c+d"));
+  }
+  @Test public void makeIfStatement() {
+    final Statement s = s("s();");
+    assertThat(s, iz("{s();}"));
+    assertThat(Subject.pair(s,s("f();")).toIf(e("a")), iz("if(a)s(); else f();"));
   }
 }
