@@ -23,9 +23,8 @@ final class CollapseTernary extends Wring.OfConditionalExpression {
     final Expression elze = core(e.getElseExpression());
     final Expression thenThen = core(then.getThenExpression());
     final Expression thenElse = core(then.getElseExpression());
-    if (same(thenElse, elze))
-      return Subject.pair(thenThen, elze).toCondition(Subject.pair(e.getExpression(), then.getExpression()).to(CONDITIONAL_AND));
-    return !same(thenThen, elze) ? null : Subject.pair(thenElse, elze).toCondition(Subject.pair(e.getExpression(), not(then.getExpression())).to(CONDITIONAL_AND));
+    return same(thenElse, elze) ? Subject.pair(thenThen, elze).toCondition(Subject.pair(e.getExpression(), then.getExpression()).to(CONDITIONAL_AND))
+        : !same(thenThen, elze) ? null : Subject.pair(thenElse, elze).toCondition(Subject.pair(e.getExpression(), not(then.getExpression())).to(CONDITIONAL_AND));
   }
   private static Expression collapseOnElse(final ConditionalExpression e) {
     final ConditionalExpression elze = asConditionalExpression(core(e.getElseExpression()));

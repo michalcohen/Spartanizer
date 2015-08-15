@@ -38,17 +38,15 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final ReturnStatement rs) {
-        final Expression n = rs.getExpression(); // e.g. rs = "return s;" => n =
-        if (!Is.simpleName(n))
-          return true;
-        if (n == null || !inRange(m, n))
+        final Expression n = rs.getExpression();
+        if (!Is.simpleName(n) || n == null || !inRange(m, n))
           return true;
         ASTNode md = n;
         while (!Is.methodDeclaration(md))
           md = md.getParent();
         if (!declaredHere(n, md))
           return true;
-        md.accept(new ASTVisitor() { // Replace all occurrences to $
+        md.accept(new ASTVisitor() {
           @Override public boolean visit(final SimpleName sn) {
             if (same(sn, t.newSimpleName("$")))
               return true;
