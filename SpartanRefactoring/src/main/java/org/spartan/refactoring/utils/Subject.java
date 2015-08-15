@@ -137,8 +137,8 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     private final Statement then;
     StatementPair(final Statement then, final Statement elze) {
       super(then);
-      this.then = then;
-      this.elze = elze;
+      this.then = claim(then);
+      this.elze = claim(elze);
     }
     public IfStatement toIf(final Expression condition) {
       final IfStatement $ = ast.newIfStatement();
@@ -156,6 +156,9 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     }
     Expression claim(final Expression e) {
       return rebase(duplicate(Extract.core(e)), ast);
+    }
+    Statement claim(final Statement s) {
+      return rebase(duplicate(s), ast);
     }
   }
 }

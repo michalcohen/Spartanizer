@@ -569,8 +569,8 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
-  public static Expression rebase(final Expression e, final AST t) {
-    return (Expression) copySubtree(t, e);
+  @SuppressWarnings("unchecked") public static <N extends ASTNode>  N rebase(final N n, final AST t) {
+    return (N) copySubtree(t, n);
   }
   /**
    * Remove all occurrences of a boolean literal from a list of

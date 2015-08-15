@@ -320,7 +320,4 @@ public enum Extract {
     return last(statements(s));
   }
 
-  public static int count(final Statement s) {
-    return statements(s).size();
-  }
 }

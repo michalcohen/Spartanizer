@@ -31,7 +31,7 @@ public enum IF_SHORTEST_BRANCH_FIRSt {
         Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
-
+        Utils.asArray("No else", "if (a) {;{{;;return b; }}}"), //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -807,6 +807,8 @@ public enum Wrings {
       final Expression notConditional = not(s.getExpression());
       final Statement then = s.getThenStatement();
       final Statement elze = s.getElseStatement();
+      if (elze == null)
+        return null;
       final int n1 = Extract.statements(then).size();
       final int n2 = Extract.statements(elze).size();
       if (n1 < n2)
