@@ -544,8 +544,7 @@ public enum Wrings {
         literal = asBooleanLiteral(e.getRightOperand());
         nonliteral = duplicate(e.getLeftOperand());
       }
-      final Expression e1 = nonliteral;
-      return nonNegating(e, literal) ? nonliteral : not(e1);
+      return !nonNegating(e, literal) ? not(nonliteral) : nonliteral;
     }
   }), //
   /**
@@ -783,16 +782,14 @@ public enum Wrings {
    */
   TERNARY_SHORTEST_FIRST(new Wring.OfConditionalExpression() {
     @Override ConditionalExpression _replacement(final ConditionalExpression e) {
-      final ConditionalExpression  $ =  Subject.pair(e.getElseExpression(),e.getThenExpression()).toCondition(not(e.getExpression()));
-      final Expression then =  $.getElseExpression(); // Original then, before swap, but cleaned
-      final Expression elze =  $.getThenExpression(); // Original then, before swap, but cleaned
-      if (!Is.conditional(then) && Is.conditional(elze)) // do not swap if we have the comb structure.
+      final ConditionalExpression $ = Subject.pair(e.getElseExpression(), e.getThenExpression()).toCondition(not(e.getExpression()));
+      final Expression then = $.getElseExpression();
+      final Expression elze = $.getThenExpression();
+      if (!Is.conditional(then) && Is.conditional(elze))
         return null;
-      if (Is.conditional(then) && !Is.conditional(elze)) // do swap if we have the comb structure.
+      if (Is.conditional(then) && !Is.conditional(elze))
         return $;
-      if ($.toString().length() < e.toString().length())
-        return $;
-      return elze.toString().length() < then.toString().length() ? $ : null;
+      return $.toString().length() < e.toString().length() ? $ : elze.toString().length() < then.toString().length() ? $ : null;
     }
   }), //
   /**
