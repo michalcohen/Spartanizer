@@ -788,8 +788,8 @@ public enum Wrings {
         return null;
       if (Is.conditional(then) && !Is.conditional(elze))
         return $;
-      final Expression condition = $.getExpression();
-      return length(not(condition)) + length(then) >= length(condition) + length(elze) ? $ : null;
+      final Expression condition = not($.getExpression());
+      return length(not(condition),elze) < length(condition, then) ? $ : null;
     }
   }), //
   /**
@@ -813,6 +813,7 @@ public enum Wrings {
      final Statement $ = Subject.pair(elze,then).toIf(notConditional);
       if (n1 > n2)
         return $;
+      assert n1 == n2;
       return length(not(notConditional), then) < length(notConditional,elze) ? null : $;
     }
   }), //
