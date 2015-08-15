@@ -927,50 +927,50 @@ public class TrimmerTest {
   @Test public void shorterChainParenthesisComparisonLast() {
     assertNoChange("b == a * b * c * d * e * f * g * h == a");
   }
-  @Test public void shortestIfBranchFist01() {
+  @Test public void shortestIfBranchFirst01() {
     assertConvertsTo(
         "if (s.equals(0xDEAD)) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;  return res;   else {    return 8; }",
         "if (!(s.equals(0xDEAD))) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
   }
-  @Test public void shortestIfBranchFist02() {
+  @Test public void shortestIfBranchFirst02() {
     assertConvertsTo(
         "  if (!s.equals(0xDEAD)) { int res=0; for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.equals(0xDEAD)) { return 8; int res=0; for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;");
   }
-  @Test public void shortestIfBranchFist03() {
+  @Test public void shortestIfBranchFirst03() {
     assertConvertsTo(
         "  if (s.length()>6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() <= 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void shortestIfBranchFist04() {
+  @Test public void shortestIfBranchFirst04() {
     assertConvertsTo(
         "  if (s.length()>=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() < 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void shortestIfBranchFist05() {
+  @Test public void shortestIfBranchFirst05() {
     assertConvertsTo(
         "  if (s.length()<6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() >= 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void shortestIfBranchFist06() {
+  @Test public void shortestIfBranchFirst06() {
     assertConvertsTo(
         "  if (s.length()<=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() > 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void shortestIfBranchFist07() {
+  @Test public void shortestIfBranchFirst07() {
     assertConvertsTo(
         "  if (s.length()==6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() != 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void shortestIfBranchFist08() {
+  @Test public void shortestIfBranchFirst08() {
     assertConvertsTo(
         "  if (s.length()!=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() == 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void shortestIfBranchFist09() {
+  @Test public void shortestIfBranchFirst09() {
     assertSimplifiesTo("s.equals(\"yada\") ? 9 * yada3(s.length()) : 6;  } ","  (!(s.equals(\"yada\")) ? 6 : 9 * yada3(s.length())) ");
   }
-  @Test public void shortestIfBranchFist10() {
+  @Test public void shortestIfBranchFirst10() {
     assertSimplifiesTo(
         "      for (final String s : contents.split(\"\\n\"))\n" + "        if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {\n" + //
             "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
@@ -987,18 +987,18 @@ public class TrimmerTest {
                 "        }\n" + //
         "      return asString($);");
   }
-  @Test public void shortestIfBranchFist11() {
+  @Test public void shortestIfBranchFirst11() {
     assertConvertsTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
         "   (!(b != null) || !(b.getNodeType() == ASTNode.BLOCK) ? b : getBlockSingleStmnt((Block) b)) ");
   }
-  @Test public void shortestIfBranchFist12() {
+  @Test public void shortestIfBranchFirst12() {
     assertSimplifiesTo("if (FF() && TT()){    foo1();    foo2();     shorterFoo(); ", //
         "  if (!FF() || !TT()) {     shorterFoo();    foo1();    foo2(); ");
   }
-  @Test public void shortestIfBranchFist13() {
+  @Test public void shortestIfBranchFirst13() {
     assertNoChange("int a=0;   if (a > 0)    return 6;   else {    int b=9;    b*=b;    return b;");
   }
-  @Test public void shortestIfBranchFist14() {
+  @Test public void shortestIfBranchFirst14() {
     assertSimplifiesTo("int a=0;   if (a > 0){    int b=9;    b*=b;    return 6;    a = 5;    return b; ",
         "  int a=0;   if (a <= 0){    a = 5;    return b;    int b=9;    b*=b;    return 6;");
   }
