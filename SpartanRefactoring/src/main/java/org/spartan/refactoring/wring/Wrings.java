@@ -812,7 +812,7 @@ public enum Wrings {
       final int n2 = Extract.statements(elze).size();
       if (n1 < n2)
         return null;
-      final Statement $ = Subject.pair(elze,then).toIf(notConditional);
+     final Statement $ = Subject.pair(elze,then).toIf(notConditional);
       if (n1 > n2)
         return $;
       if (length(not(notConditional)) + length(then) < length(notConditional) + length(elze))

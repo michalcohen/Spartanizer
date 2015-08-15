@@ -32,6 +32,9 @@ public enum IF_SHORTEST_BRANCH_FIRSt {
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         Utils.asArray("No else", "if (a) {;{{;;return b; }}}"), //
+        new String[] { "Two statemens are greater than one", //
+            "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
+            }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -53,10 +56,11 @@ public enum IF_SHORTEST_BRANCH_FIRSt {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
-        // Literal
-        Utils.asArray("Simple if throw", "if (a) throw b; else throw c;", "throw a ? b : c;"), //
-        Utils.asArray("Simply nested if throw", "{if (a)  throw b; else throw c;}", "if(a)throw b;else throw c;"), //
-        Utils.asArray("Nested if throw", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}", "throw a ? b : c;"), //
+        Utils.asArray("Vanilla", "if (a) a(x,y,z,w); else b();", "if (!a) b(); else a(x,y,z,w);"), //
+        new String[] { "Two statemens are greater than one", //
+            "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
+            "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} ", //
+            }, //
         null);
     /**
      * Generate test cases for this parameterized class.
