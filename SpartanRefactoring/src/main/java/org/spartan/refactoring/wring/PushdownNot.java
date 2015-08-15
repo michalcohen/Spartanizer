@@ -81,19 +81,10 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
    * @return the operator that produces the logical negation of the parameter
    */
   public static Operator negate(final Operator o) {
-    if (o == null)
-      return null;
-    if (o.equals(EQUALS))
-      return NOT_EQUALS;
-    if (o.equals(NOT_EQUALS))
-      return EQUALS;
-    if (o.equals(LESS_EQUALS))
-      return GREATER;
-    if (o.equals(GREATER))
-      return LESS_EQUALS;
-    if (o.equals(GREATER_EQUALS))
-      return LESS;
-    return o.equals(LESS) ? GREATER_EQUALS : null;
+    return o == null ? null
+        : o.equals(EQUALS) ? NOT_EQUALS
+            : o.equals(NOT_EQUALS) ? EQUALS
+                : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER) ? LESS_EQUALS : o.equals(GREATER_EQUALS) ? LESS : !o.equals(LESS) ? null : GREATER_EQUALS;
   }
   @Override public boolean scopeIncludes(final PrefixExpression e) {
     return e != null && asNot(e) != null && Wrings.hasOpportunity(asNot(e));

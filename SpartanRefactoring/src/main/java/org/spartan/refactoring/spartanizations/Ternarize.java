@@ -116,7 +116,7 @@ public class Ternarize extends Spartanization {
     final ReturnStatement then = asReturnStatement(thenStmt);
     final ReturnStatement elze = asReturnStatement(elseStmt);
     return (then == null || elze != null || Is.conditional(then.getExpression())) && (then != null || elze == null || Is.conditional(elze.getExpression())) ? null
-        : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
+        : new Range(thenStmt == null ? elseStmt.getParent() : thenStmt.getParent(), nextRet);
   }
 
   private static Expression determineNewExp(final Expression cond, final Expression thenExp, final Expression elseExp) {
