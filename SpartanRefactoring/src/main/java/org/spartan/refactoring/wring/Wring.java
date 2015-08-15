@@ -125,7 +125,7 @@ public abstract class Wring {
     return ($ = replacement(asInfixExpression(e))) != null //
         || ($ = replacement(asPrefixExpression(e))) != null //
         || ($ = replacement(asConditionalExpression(e))) != null //
-        ? $ : null;
+            ? $ : null;
   }
   abstract Statement replacement(final IfStatement e);
   abstract Expression replacement(final InfixExpression e);
@@ -259,7 +259,9 @@ public abstract class Wring {
       assert eligible(b);
       return _replacement(b);
     }
-    @Override abstract boolean scopeIncludes(final Block b);
+    @Override boolean scopeIncludes(final Block b) {
+      return _replacement(b) != null;
+    }
   }
 
   static abstract class OfConditionalExpression extends Defaults {
@@ -280,7 +282,9 @@ public abstract class Wring {
       assert eligible(e);
       return _replacement(e);
     }
-    @Override abstract boolean scopeIncludes(final ConditionalExpression e);
+    @Override boolean scopeIncludes(final ConditionalExpression e) {
+      return _replacement(e) != null;
+    }
   }
 
   static abstract class OfIfStatement extends Wring.Defaults {
@@ -301,7 +305,9 @@ public abstract class Wring {
       assert eligible(e);
       return _replacement(e);
     }
-    @Override abstract boolean scopeIncludes(final IfStatement i);
+    @Override boolean scopeIncludes(final IfStatement i) {
+      return _replacement(i) != null;
+    }
   }
 
   static abstract class OfIfStatementAndSubsequentStatement extends Wring.Defaults {
@@ -321,7 +327,9 @@ public abstract class Wring {
     @Override Range range(final ASTNode e) {
       return new Range(e).merge(new Range(Extract.nextStatement(asStatement(e))));
     }
-    @Override abstract boolean scopeIncludes(final IfStatement s);
+    @Override boolean scopeIncludes(final IfStatement s) {
+      return fillReplacement(s, ASTRewrite.create(s.getAST())) != null;
+    }
   }
 
   static abstract class OfInfixExpression extends Defaults {
@@ -371,6 +379,9 @@ public abstract class Wring {
       assert scopeIncludes(f);
       return _eligible(f);
     }
+    @Override boolean scopeIncludes(final VariableDeclarationFragment f) {
+      return fillReplacement(f, ASTRewrite.create(f.getAST())) != null;
+    }
     abstract ASTRewrite fillReplacement(VariableDeclarationFragment s, ASTRewrite r);
     @Override final boolean go(final ASTRewrite r, final VariableDeclarationFragment f) {
       if (eligible(f))
@@ -380,6 +391,5 @@ public abstract class Wring {
     @Override Range range(final ASTNode n) {
       return new Range(n).merge(new Range(Extract.nextStatement(n)));
     }
-    @Override abstract boolean scopeIncludes(final VariableDeclarationFragment s);
   }
 }
