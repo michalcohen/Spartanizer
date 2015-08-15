@@ -134,43 +134,43 @@ public class TrimmerTest {
   }
   @Test public void bugIntroducingMISSINGWord2() {
     assertSimplifiesTo(//
-        "name.endsWith(testSuffix) &&  As.stringBuilder(f).indexOf(testKeyword) == -1? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
-        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+        "name.endsWith(testSuffix) &&  As.stringBuilder(f).indexOf(testKeyword) == -1? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)", //
+        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",Z2),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWord2a() {
     assertSimplifiesTo(//
-        "name.endsWith(testSuffix) &&  As.stringBuilder(f).indexOf(testKeyword) == -1? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
-        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+        "name.endsWith(testSuffix) &&  As.stringBuilder(f).indexOf(testKeyword) == -1? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)", //
+        "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",Z2),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWord2b() {
     assertSimplifiesTo( //
-        "name.endsWith(testSuffix) &&  T ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
-        "name.endsWith(testSuffix) && T ? objects(s,name,makeInFile(f)): name.endsWith(\".in\") && !dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+        "name.endsWith(testSuffix) &&  T ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)", //
+        "name.endsWith(testSuffix) && T ? objects(s,name,makeInFile(f)): name.endsWith(\".in\") && !dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",Z2),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWord2c() {
     assertSimplifiesTo( //
-        "X && T ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
-        "X && T ? objects(s,name,makeInFile(f)) : name.endsWith(\".in\") && !dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+        "X && T ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)", //
+        "X && T ? objects(s,name,makeInFile(f)) : name.endsWith(\".in\") && !dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",Z2),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWord2d() {
     assertSimplifiesTo(//
-        "X && T ? E : Y ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
-        "X && T ? E : !Y && !dotOutExists(d,name) ? objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f) : null");
+        "X && T ? E : Y ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)", //
+        "X && T ? E : !Y && !dotOutExists(d,name) ? objects(name.replaceAll(\"\\\\.in$\",Z2),s,f) : null");
   }
   @Test public void bugIntroducingMISSINGWord2e() {
     assertSimplifiesTo(//
-        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)", //
-        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f) : null");
+        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)", //
+        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(\"\\\\.in$\",Z2),s,f) : null");
   }
   @Test public void bugIntroducingMISSINGWord2e1() {
     assertSimplifiesTo(//
-        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(x, \"\"), s, f)", //
-        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(x,\"\"),s,f) : null");
+        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(x, Z2), s, f)", //
+        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(x,Z2),s,f) : null");
   }
   @Test public void bugIntroducingMISSINGWord2e2() {
     assertSimplifiesTo(//
-        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(g, \"\"), s, f)", //
-        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(g,\"\"),s,f) : null");
+        "X &&  T ? E : Y ? null : Z ? null : objects(name.replaceAll(g, Z2), s, f)", //
+        "X &&  T ? E : !Y && !Z ? objects(name.replaceAll(g,Z2),s,f) : null");
   }
   @Test public void bugIntroducingMISSINGWord2f() {
     assertSimplifiesTo("X &&  T ? E : Y ? null : Z ? null : F", "X&&T?E:!Y&&!Z?F:null");
@@ -186,8 +186,8 @@ public class TrimmerTest {
   }
   @Test public void bugIntroducingMISSINGWordTry1() {
     assertSimplifiesTo(
-        "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", \"\"), s, f)",
-        "name.endsWith(testSuffix) && As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",\"\"),s,f):null");
+        "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(\".in\") ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(\"\\\\.in$\", Z2), s, f)",
+        "name.endsWith(testSuffix) && As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(\".in\")&&!dotOutExists(d,name)?objects(name.replaceAll(\"\\\\.in$\",Z2),s,f):null");
   }
   @Test public void bugIntroducingMISSINGWordTry2() {
     assertSimplifiesTo("!(intent.getBooleanExtra(EXTRA_FROM_SHORTCUT, false) && !K9.FOLDER_NONE.equals(mAccount.getAutoExpandFolderName()))", //
@@ -209,13 +209,13 @@ public class TrimmerTest {
   /* End of the already good tests */
   /* Begin of converted test files */
   @Test public void comaprisonWithBoolean1() {
-    assertSimplifiesTo("s.equals(\"yada\")==true", "s.equals(\"yada\")");
+    assertSimplifiesTo("s.equals(532)==true", "s.equals(532)");
   }
   @Test public void comaprisonWithBoolean2() {
-    assertSimplifiesTo("s.equals(\"yada\")==false ", "!s.equals(\"yada\")");
+    assertSimplifiesTo("s.equals(532)==false ", "!s.equals(532)");
   }
   @Test public void comaprisonWithBoolean3() {
-    assertSimplifiesTo("(false==s.equals(\"yada\"))", "(!s.equals(\"yada\"))");
+    assertSimplifiesTo("(false==s.equals(532))", "(!s.equals(532))");
   }
   @Test public void comaprisonWithSpecific0() {
     assertSimplifiesTo("this != a", "a != this");
@@ -241,10 +241,10 @@ public class TrimmerTest {
     assertSimplifiesTo("null <= a", "a >= null");
   }
   @Test public void comaprisonWithSpecific2a() {
-    assertSimplifiesTo("s.equals(\"yada\")==false", "!s.equals(\"yada\")");
+    assertSimplifiesTo("s.equals(532)==false", "!s.equals(532)");
   }
   @Test public void comaprisonWithSpecific3() {
-    assertSimplifiesTo("(this==s.equals(\"yada\"))", "(s.equals(\"yada\")==this)");
+    assertSimplifiesTo("(this==s.equals(532))", "(s.equals(532)==this)");
   }
   @Test public void comaprisonWithSpecific4() {
     assertSimplifiesTo("(0 < a)", "(a>0)");
@@ -929,7 +929,7 @@ public class TrimmerTest {
   }
   @Test public void shortestIfBranchFirst01() {
     assertConvertsTo(
-        "if (s.equals(0xDEAD)) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;  return res;   else {    return 8; }",
+        "if (s.equals(0xDEAD)) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;  return res;   else {    return 8; }",
         "if (!(s.equals(0xDEAD))) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
   }
   @Test public void shortestIfBranchFirst02() {
@@ -968,7 +968,7 @@ public class TrimmerTest {
         "  if (s.length() == 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
   @Test public void shortestIfBranchFirst09() {
-    assertSimplifiesTo("s.equals(\"yada\") ? 9 * yada3(s.length()) : 6;  } ","  (!(s.equals(\"yada\")) ? 6 : 9 * yada3(s.length())) ");
+    assertSimplifiesTo("s.equals(532) ? 9 * yada3(s.length()) : 6;  } ","  (!(s.equals(532)) ? 6 : 9 * yada3(s.length())) ");
   }
   @Test public void shortestIfBranchFirst10() {
     assertSimplifiesTo(
@@ -1055,7 +1055,7 @@ public class TrimmerTest {
     assertNoChange("String t = \"Bob \" + \"Wants \" + \"To \" + \"Sleep \";   return (\"right now...\" + t);    ");
   }
   @Test public void shortestOperand16() {
-    assertNoChange("String t = \"\";   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
+    assertNoChange("String t = Z2;   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
   }
   @Test public void shortestOperand17() {
     assertSimplifiesTo("SomeClass a;   return a.getNum() ^ 5; "," SomeClass a;   return 5 ^ a.getNum();");
@@ -1190,63 +1190,63 @@ public class TrimmerTest {
     assertSimplifiesTo("!((a || b == c) && (d || !(!!c)))", "!a && b != c || !d && c");
   }
   @Test public void ternarize01() {
-    assertConvertsTo("String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   else    res = \"spam\";   System.out.println(res); ",
-        "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : \"spam\");   System.out.println(res); ");
+    assertConvertsTo("String res = s;   if (s.equals(532)==true)    res = s + 0xABBA;   else    res = \"spam\";   System.out.println(res); ",
+        "  String res = (s.equals(532)==true ? s + 0xABBA : \"spam\");   System.out.println(res); ");
   }
   @Test public void ternarize02() {
-    assertConvertsTo("String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ",
-        "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : s);   System.out.println(res); ");
+    assertConvertsTo("String res = s;   if (s.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ",
+        "  String res = (s.equals(532)==true ? s + 0xABBA : s);   System.out.println(res); ");
   }
   @Test public void ternarize03() {
-    assertConvertsTo("if (s.equals(\"yada\"))    return 6;   return 9; "," return (s.equals(\"yada\") ? 6 : 9);  } ");
+    assertConvertsTo("if (s.equals(532))    return 6;   return 9; "," return (s.equals(532) ? 6 : 9);  } ");
   }
   @Test public void ternarize04() {
     assertConvertsTo(
-        "  int res = 0;   if (s.equals(\"yada\"))    res += 6;   else    res += 9;      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ",
-        "  int res = 0;   res += (s.equals(\"yada\") ? 6 : 9);      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ");
+        "  int res = 0;   if (s.equals(532))    res += 6;   else    res += 9;      /*   if (s.equals(532))    res += 6;   else    res += 9;    */   return res; ",
+        "  int res = 0;   res += (s.equals(532) ? 6 : 9);      /*   if (s.equals(532))    res += 6;   else    res += 9;    */   return res; ");
   }
   @Test public void ternarize05() {
     assertNoChange(
-        "  int res = 0;   if (s.equals(\"yada\"))    res += 6;   else    res -= 9;      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ");
+        "  int res = 0;   if (s.equals(532))    res += 6;   else    res -= 9;      /*   if (s.equals(532))    res += 6;   else    res += 9;    */   return res; ");
   }
   @Test public void ternarize06() {
-    assertConvertsTo("String res;   res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ",
-        "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : s);   System.out.println(res); ");
+    assertConvertsTo("String res;   res = s;   if (s.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ",
+        "  String res = (s.equals(532)==true ? s + 0xABBA : s);   System.out.println(res); ");
   }
   @Test public void ternarize07() {
-    assertNoChange("String res;   res = s;   if (res.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ");
+    assertNoChange("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ");
   }
   @Test public void ternarize08() {
     assertConvertsTo(
-        "  int res = 0;   if (s.equals(\"yada\")) {    res += 6;   else {    res += 9;      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ",
-        "  int res = 0;   res += (s.equals(\"yada\") ? 6 : 9);      /*   if (s.equals(\"yada\"))    res += 6;   else    res += 9;    */   return res; ");
+        "  int res = 0;   if (s.equals(532)) {    res += 6;   else {    res += 9;      /*   if (s.equals(532))    res += 6;   else    res += 9;    */   return res; ",
+        "  int res = 0;   res += (s.equals(532) ? 6 : 9);      /*   if (s.equals(532))    res += 6;   else    res += 9;    */   return res; ");
   }
   @Test public void ternarize09() {
-    assertConvertsTo("if (s.equals(\"yada\")) {    return 6;   else {    return 9; "," return (s.equals(\"yada\") ? 6 : 9);  } ");
+    assertConvertsTo("if (s.equals(532)) {    return 6;   else {    return 9; "," return (s.equals(532) ? 6 : 9);  } ");
   }
   @Test public void ternarize10() {
-    assertNoChange("String res = s, foo = \"bar\";   if (res.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ");
+    assertNoChange("String res = s, foo = \"bar\";   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ");
   }
   @Test public void ternarize11() {
-    assertConvertsTo("String res = s, foo = \"bar\";   if (s.equals(\"yada\")==true)    res = s + \" blah\";   System.out.println(res); ",
-        "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : s), foo = \"bar\";   System.out.println(res); ");
+    assertConvertsTo("String res = s, foo = \"bar\";   if (s.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ",
+        "  String res = (s.equals(532)==true ? s + 0xABBA : s), foo = \"bar\";   System.out.println(res); ");
   }
   @Test public void ternarize12() {
-    assertNoChange("String res = s;   if (s.equals(\"yada\")==true)    res = res + \" blah\";   System.out.println(res); ");
+    assertNoChange("String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ");
   }
   @Test public void ternarize13() {
-    assertNoChange("String res = mode, foo;  if (mode.equals(\"TEST-MODE\")==true)   foo = \"test-bob\"; ");
+    assertNoChange("String res = mode, foo;  if (mode.equals(f())==true)   foo = \"test-bob\"; ");
   }
   @Test public void ternarize14() {
     assertNoChange(
-        "String res = mode, foo = \"Not in test mode\";   if (res.equals(\"TEST-MODE\")==true){    foo = \"test-bob\";    int k = 2;    k = 8;   System.out.println(foo); ");
+        "String res = mode, foo = \"Not in test mode\";   if (res.equals(f())==true){    foo = \"test-bob\";    int k = 2;    k = 8;   System.out.println(foo); ");
   }
   @Test public void ternarize15() {
-    assertConvertsTo("  String res = mode, foo = \"Not in test mode\"; int k;   k = 1984;   if (mode.equals(\"TEST-MODE\")==true)    foo = \"test-bob\";   foo = \"sponge-bob\"; ",
+    assertConvertsTo("  String res = mode, foo = \"Not in test mode\"; int k;   k = 1984;   if (mode.equals(f())==true)    foo = \"test-bob\";   foo = \"sponge-bob\"; ",
         "  String res = mode, foo = \"Not in test mode\"; int k;   k = 1984;   foo = \"sponge-bob\"; ");
   }
   @Test public void ternarize16() {
-    assertNoChange("String res = mode;  int num1, num2, num3;  if (mode.equals(\"TEST-MODE\"))   num2 = 2; ");
+    assertNoChange("String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
   }
   @Test public void ternarize17() {
     assertConvertsTo(
@@ -1255,46 +1255,49 @@ public class TrimmerTest {
   }
   @Test public void ternarize18() {
     assertConvertsTo(//
-        "String res = s;   int a=0;   if (s.equals(\"yada\"))    System.out.println(\"hey\" + res);   else    System.out.println(\"ho\" + res + a); ",
-        "  String res = s;   int a=0;   System.out.println((s.equals(\"yada\") ? \"hey\" + res : \"ho\" + res + a)); ");
+        "String res = s;   int a=0;   if (s.equals(532))    System.out.println(\"hey\" + res);   else    System.out.println(\"ho\" + res + a); ",
+        "  String res = s;   int a=0;   System.out.println((s.equals(532) ? \"hey\" + res : \"ho\" + res + a)); ");
   }
   @Test public void ternarize19() {
-    assertSimplifiesTo("if (s.equals(\"yada\"))    System.out.close();   else    System.out.close(); "," System.out.close();  } ");
+    assertSimplifiesTo("if (s.equals(532))    System.out.close();   else    System.out.close(); "," System.out.close();  } ");
   }
   @Test public void ternarize20() {
-    assertConvertsTo("return 0;  }  public int y(int b){   return 1;  public int yada(final String s) {   if (s.equals(\"yada\")){    return 2 + r(2);    return 3 + f(4); ",
-        "  return 0;  }  public int y(int b){   return 1;  public int yada(final String s) {   return (s.equals(\"yada\") ? 2 + r(2) : 3 + f(4)); ");
+    assertConvertsTo("return 0;  }  public int y(int b){   return 1;  public int yada(final String s) {   if (s.equals(532)){    return 2 + r(2);    return 3 + f(4); ",
+        "  return 0;  }  public int y(int b){   return 1;  public int yada(final String s) {   return (s.equals(532) ? 2 + r(2) : 3 + f(4)); ");
   }
   @Test public void ternarize21() {
-    assertNoChange("if (s.equals(\"yada\")){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+    assertNoChange("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
   }
   @Test public void ternarize22() {
-    assertNoChange("int a=0;   if (s.equals(\"yada\")){    System.console();    a=3; ");
+    assertNoChange("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
   }
   @Test public void ternarize23() {
-    assertSimplifiesTo("return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   if (s.equals(\"yada\")){    a+=y(2)+10;    a+=r(3)-6; ",
-        "  return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   a+=(s.equals(\"yada\") ? y(2)+10 : r(3)-6); ");
+    assertSimplifiesTo("return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   if (s.equals(532)){    a+=y(2)+10;    a+=r(3)-6; ",
+        "  return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   a+=(s.equals(532) ? y(2)+10 : r(3)-6); ");
   }
   @Test public void ternarize24() {
-    assertConvertsTo("boolean c;   if (s.equals(\"yada\")){    c=false;    c=true; "," boolean c = !(s.equals(\"yada\"));  } ");
+    assertConvertsTo("boolean c;   if (s.equals(532)){    c=false;    c=true; "," boolean c = !(s.equals(532));  } ");
   }
   @Test public void ternarize25() {
     assertNoChange("return 2;  }  public void yada(final String s) {   int a, b=0, c=0;   if (b==3){    a+=2+r();    c=6;   a+=6; ");
   }
   @Test public void ternarize26() {
-    assertNoChange("int a=0;   if (s.equals(\"yada\")){    a+=2;   a-=2; ");
+    assertNoChange("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ");
   }
   @Test public void ternarize27() {
-    assertConvertsTo("int a=0;   int b=0;   a=5;   if (s.equals(\"yada\")){    a=4;   a=3; "," int a=0;   int b=0;   a=3; ");
+    assertConvertsTo("if (s.equals(532)){    a=4;   a=3; "," int a=0;   int b=0;   a=3; ");
   }
   @Test public void ternarize28() {
-    assertConvertsTo("int a=0;   a=5;   if (s.equals(\"yada\")){    a=4;   a=3; "," int a=3;  } ");
+    assertConvertsTo("int a=0;   a=5;   if (s.equals(532)){    a=4;   a=3; "," int a=3;  } ");
   }
   @Test public void ternarize29() {
-    assertNoChange("int a=0;   int b=0;   a=5;   if (a==3){    a=4; ");
+    assertNoChange("int a=0;   int b=0;   a=5;   if (a==3){    a=4; }");
   }
   @Test public void ternarize30() {
-    assertConvertsTo("int a=0, b=0;   a=5;   if (b==3){    a=a+4; "," int a=0, b=0;   a = (b==3 ? a+4 : 5); ");
+    assertConvertsTo("int a=0, b=0;   a=5;   if (b==3){    a=a+4; }"," int a=0, b=0;   a = (b==3 ? a+4 : 5); ");
+  }
+  @Test public void ternarize30a() {
+    assertConvertsTo("if (b==3){ a=a+4; }"," int a=0, b=0;  a = (b==3 ? a+4 : 5); ");
   }
   @Test public void ternarize31() {
     assertConvertsTo("int a=0;   a=5;   if (a==3){    a=a+4;   a=7; "," int a=7;  } ");
@@ -1339,37 +1342,37 @@ public class TrimmerTest {
         "  int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else{          b = a;          b=3;     else       if (b == 3)         b = 2;       else{         b = a*a;         b=3; ");
   }
   @Test public void ternarize43() {
-    assertSimplifiesTo("if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     b=5;   else    if (b==3){     return 2;     b=4; ",
-        "  if (b==3){    return (mode.equals(\"TEST-MODE\")==true ? 3 : 2);    b=(mode.equals(\"TEST-MODE\")==true ? 5 : 4); ");
+    assertSimplifiesTo("if (mode.equals(f())==true)    if (b==3){     return 3;     b=5;   else    if (b==3){     return 2;     b=4; ",
+        "  if (b==3){    return (mode.equals(f())==true ? 3 : 2);    b=(mode.equals(f())==true ? 5 : 4); ");
   }
   @Test public void ternarize44() {
     assertConvertsTo(//
-        "if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     return 7; ",
-        "if (b==3){    return (mode.equals(\"TEST-MODE\")==true ? 3 : 2);    return 7; ");
+        "if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     return 7; ",
+        "if (b==3){    return (mode.equals(f())==true ? 3 : 2);    return 7; ");
   }
   @Test public void ternarize45() {
-    assertNoChange("if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
+    assertNoChange("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize46() {
-    assertNoChange("int a , b=0;   if (mode.equals(\"TEST-MODE\")==true)    if (b==3){     return 3;     a+=7;   else    if (b==3){     return 2;     a=7; ");
+    assertNoChange("int a , b=0;   if (mode.equals(f())==true)    if (b==3){     return 3;     a+=7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize47() {
     assertConvertsTo(//
-        "int size = 0, a;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     a+=7;   else    for (int i=0; i < size; i++){     a+=8; ",
-        "int size = 0, a;   for (int i=0; i < size; i++){    a+=(mode.equals(\"TEST-MODE\")==true ? 7 : 8); ");
+        "int size = 0, a;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;   else    for (int i=0; i < size; i++){     a+=8; ",
+        "int size = 0, a;   for (int i=0; i < size; i++){    a+=(mode.equals(f())==true ? 7 : 8); ");
   }
   @Test public void ternarize48() {
     assertNoChange(
-        "  int size = 0, a, b;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
+        "  int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
   }
   @Test public void ternarize49() {
     assertNoChange(
-        "  int size = 0;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.append('f'); ");
+        "  int size = 0;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.append('f'); ");
   }
   @Test public void ternarize50() {
     assertConvertsTo(
-        "  int size = 0;   if (mode.equals(\"TEST-MODE\")==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.println(\"Ho\"); ",
-        "  int size = 0;   for (int i=0; i < size; i++){    System.out.println((mode.equals(\"TEST-MODE\")==true ? \"Hey\" : \"Ho\")); ");
+        "  int size = 0;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.println(\"Ho\"); ",
+        "  int size = 0;   for (int i=0; i < size; i++){    System.out.println((mode.equals(f())==true ? \"Hey\" : \"Ho\")); ");
   }
   @Test public void ternarize51() {
     assertConvertsTo("int a=0,b = 0,d = 0,e = 0,c;   if (a < b) {    c = d;     c = e; "," int a=0,b = 0,d = 0,e = 0,c = (a < b ? d : e);  } ");
@@ -1383,12 +1386,13 @@ public class TrimmerTest {
   @Test public void ternarize54() {
     assertConvertsTo(//
         "if (s == null)\n" + ///
-        "  return \"\";\n" + //
+        "  return Z2;\n" + //
         "if (!s.contains(delimiter()))\n" + //
-        "  return s;\n" + "        return s.replaceAll(delimiter(), \"\\\\\" + delimiter());", //
+        "  return s;\n" +//
+        "return s.replaceAll(delimiter(), ABC + delimiter());", //
         "if (s == null)\n" + //
-          "  return \"\";\n" + //
-        "return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), \"\\\\\" + delimiter()));"//
+          "  return Z2;\n" + //
+        "return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
         );
   }
   @Test public void ternarize55() {
@@ -1396,7 +1400,7 @@ public class TrimmerTest {
         "if (key.equals(markColumn))\n" + //
         "  to.put(key, a.toString());\n" + //
         "else\n" + //
-        "   to.put(key, missing(key, a) ? \"\" : get(key, a));"//
+        "   to.put(key, missing(key, a) ? Z2 : get(key, a));"//
         );
   }
   @Test public void ternarize56() {
