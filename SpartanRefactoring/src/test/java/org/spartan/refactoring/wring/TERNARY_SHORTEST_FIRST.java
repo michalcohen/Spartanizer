@@ -32,7 +32,7 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({ "javadoc", "static-method"}) //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class TERNARY_SHORTEST_FIRST {
   static final Wring WRING = Wrings.TERNARY_SHORTEST_FIRST.inner;
@@ -55,10 +55,22 @@ public class TERNARY_SHORTEST_FIRST {
     assertThat($.toString().length(), greaterThan(0));
     assertThat($, iz("f(o) ? x.f(a).to(e.g()) : null"));
   }
+  @Test public void cyclicBug() {
+    final ConditionalExpression e = Into.c("length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $");
+    assertThat(e, notNullValue());
+    final Expression elze = Extract.core(e.getElseExpression());
+    final Expression then = Extract.core(e.getThenExpression());
+    final Expression $ = Subject.pair(elze, then).toCondition(not(e.getExpression()));
+    assertFalse(then.toString(), Is.conditional(then));
+    assertFalse(elze.toString(), Is.conditional(elze));
+    assertThat($.toString().length(), greaterThan(0));
+    assertThat($, iz("length(not(notConditional)) + length(then) >= length(notConditional) + length(elze) ? $ : null"));
+  }
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
     static String[][] cases = Utils.asArray(//
+        new String[] { "Strange cyclic buc", "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null", }, //
         new String[] { "Actual simplified 3", "!f(o) ? null : x.f(a).to(e.g())" }, //
         new String[] { "Actual simplified 2", "!f(o) ? null : Subject.operands(operands).to(e.getOperator())" }, //
         new String[] { "Actual simplified 1", "!f(operands) ? null : Subject.operands(operands).to(e.getOperator())" }, //
@@ -112,6 +124,10 @@ public class TERNARY_SHORTEST_FIRST {
   public static class Wringed extends AbstractWringTest.WringedExpression.Conditional {
     private static String[][] cases = Utils.asArray(//
         new String[] { "Vanilla", "a?f(a,b,c):f(b)", "!a?f(b):f(a,b,c)" }, //
+        new String[] { "Bug of being cyclice", //
+            "length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $", //
+            "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null",//
+    }, //
         null);
     /**
      * Generate test cases for this parameterized class.

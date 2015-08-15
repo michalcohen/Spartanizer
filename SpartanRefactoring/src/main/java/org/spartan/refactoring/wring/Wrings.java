@@ -813,7 +813,7 @@ public enum Wrings {
      final Statement $ = Subject.pair(elze,then).toIf(notConditional);
       if (n1 > n2)
         return $;
-      return length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $;
+      return length(not(notConditional), then) < length(notConditional,elze) ? null : $;
     }
   }), //
   ;
@@ -998,9 +998,11 @@ public enum Wrings {
   static boolean isTernaryOfBooleanLitreral(final Expression e) {
     return isTernaryOfBooleanLitreral(asConditionalExpression(core(e)));
   }
-
-  static  int length(final ASTNode e) {
-    return e.toString().length();
+  static  int length(final ASTNode... ns) {
+    int $ = 0 ;
+    for (final ASTNode n: ns)
+      $+= n.toString().length();
+    return $;
   }
   static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
     final VariableDeclarationFragment $ = duplicate(f);
