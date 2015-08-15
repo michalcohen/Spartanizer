@@ -233,7 +233,7 @@ public class TrimmerTest {
   @Test public void comaprisonWithSpecific1() {
     assertSimplifiesTo("null != a", "a != null");
   }
-  @Test public void comaprisonWithSpecific1() {
+  @Test public void comaprisonWithSpecificInParenthesis() {
     assertSimplifiesTo("(null==a)", "(a==null)");
   }
   @Test public void comaprisonWithSpecific2() {
@@ -1187,9 +1187,6 @@ public class TrimmerTest {
   @Test public void simplifyLogicalNegationONested() {
     assertSimplifiesTo("!((a || b == c) && (d || !(!!c)))", "!a && b != c || !d && c");
   }
-  @Test public void strangeShortestFirstConditioanl() {
-    assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");
-  }
   @Test public void ternarize01() {
     assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   else    res = \"spam\";   System.out.println(res); ",
         "  String res = (s.equals(\"yada\")==true ? s + \" blah\" : \"spam\");   System.out.println(res); ");
@@ -1394,5 +1391,8 @@ public class TrimmerTest {
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
+  }
+  @Test public void vanillaShortestFirstConditionalNoChange() {
+    assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");
   }
 }
