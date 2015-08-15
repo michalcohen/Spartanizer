@@ -810,6 +810,25 @@ public enum Wrings {
       return _replacement(e) != null;
     }
   }), //
+  /**
+   * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code>
+   * into <code> a ? c(d,e) : f(g,h) </code>
+
+   *
+   * @author Yossi Gil
+   * @since 2015-08-14
+   */
+  IF_SHORTEST_FIRST(new Wring.OfIfStatement() {
+    @Override Statement _replacement(final IfStatement s) {
+      final List<Statement> then = Extract.statements(s.getElseStatement());
+      final List<Statement> elze =  Extract.statements(s.getThenStatement());
+
+      return then.toString().length() < elze.toString().length() ? null : null;
+    }
+    @Override boolean scopeIncludes(final IfStatement i) {
+      return _replacement(i) != null;
+    }
+  }), //
 
   ;
   /**

@@ -69,24 +69,11 @@ public class TrimmerTest {
     assertNotNull(d);
     return TESTUtils.rewrite(new AsRefactoring(w, "Tested Refactoring", ""), u, d).get();
   }
-  static void assertSimplifiesTo(final String from, final String expected) {
-    assertWrappedTranslation(from, expected, Wrap.Expression);
-  }
   static void assertConvertsTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Statement);
   }
-  static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
-    final String wrap = w.on(from);
-    assertEquals(from, w.off(wrap));
-    final String unpeeled = apply(new Trimmer(), wrap);
-    if (wrap.equals(unpeeled))
-      fail("Nothing done on " + from);
-    final String peeled = w.off(unpeeled);
-    if (peeled.equals(from))
-      assertNotEquals("No similification of " + from, from, peeled);
-    if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
-    assertSimilar(expected, peeled);
+  static void assertSimplifiesTo(final String from, final String expected) {
+    assertWrappedTranslation(from, expected, Wrap.Expression);
   }
   static void assertSimplifiesTo(final String from, final String expected, final Wring wring, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
@@ -95,6 +82,19 @@ public class TrimmerTest {
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
     final String peeled = wrapper.off(unpeeled);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
+  }
+  static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
+    final String wrap = w.on(from);
+    assertEquals(from, w.off(wrap));
+    final String unpeeled = apply(new Trimmer(), wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    final String peeled = w.off(unpeeled);
     if (peeled.equals(from))
       assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
@@ -924,50 +924,50 @@ public class TrimmerTest {
   @Test public void shorterChainParenthesisComparisonLast() {
     assertNoChange("b == a * b * c * d * e * f * g * h == a");
   }
-  @Test public void ShortestBranchFirst01() {
+  @Test public void shortestBranchFirst01() {
     assertConvertsTo(
         "  if (s.equals(\"blah\")) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (!(s.equals(\"blah\"))) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst02() {
+  @Test public void shortestBranchFirst02() {
     assertConvertsTo(
         "  if (!s.equals(\"blah\")) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.equals(\"blah\")) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst03() {
+  @Test public void shortestBranchFirst03() {
     assertConvertsTo(
         "  if (s.length()>6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() <= 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst04() {
+  @Test public void shortestBranchFirst04() {
     assertConvertsTo(
         "  if (s.length()>=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() < 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst05() {
+  @Test public void shortestBranchFirst05() {
     assertConvertsTo(
         "  if (s.length()<6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() >= 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst06() {
+  @Test public void shortestBranchFirst06() {
     assertConvertsTo(
         "  if (s.length()<=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() > 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst07() {
+  @Test public void shortestBranchFirst07() {
     assertConvertsTo(
         "  if (s.length()==6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() != 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst08() {
+  @Test public void shortestBranchFirst08() {
     assertConvertsTo(
         "  if (s.length()!=6) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
         "  if (s.length() == 6) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res; ");
   }
-  @Test public void ShortestBranchFirst09() {
+  @Test public void shortestBranchFirst09() {
     assertSimplifiesTo("   s.equals(\"yada\") ? 9 * yada3(s.length()) : 6;  } ", "   (!(s.equals(\"yada\")) ? 6 : 9 * yada3(s.length())) ");
   }
-  @Test public void ShortestBranchFirst10() {
+  @Test public void shortestBranchFirst10() {
     assertSimplifiesTo(
         "      for (final String s : contents.split(\"\\n\"))\n" + "        if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {\n" + //
             "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
@@ -984,141 +984,141 @@ public class TrimmerTest {
             "        }\n" + //
             "      return asString($);");
   }
-  @Test public void ShortestBranchFirst11() {
+  @Test public void shortestBranchFirst11() {
     assertConvertsTo("   b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
         "   (!(b != null) || !(b.getNodeType() == ASTNode.BLOCK) ? b : getBlockSingleStmnt((Block) b)) ");
   }
-  @Test public void ShortestBranchFirst12() {
+  @Test public void shortestBranchFirst12() {
     assertSimplifiesTo("  if (FF() && TT()){    foo1();    foo2();     shorterFoo(); ", //
         "  if (!FF() || !TT()) {     shorterFoo();    foo1();    foo2(); ");
   }
-  @Test public void ShortestBranchFirst13() {
+  @Test public void shortestBranchFirst13() {
     assertNoChange("  int a=0;   if (a > 0)    return 6;   else {    int b=9;    b*=b;    return b;");
   }
-  @Test public void ShortestBranchFirst14() {
+  @Test public void shortestBranchFirst14() {
     assertSimplifiesTo("  int a=0;   if (a > 0){    int b=9;    b*=b;    return 6;    a = 5;    return b; ",
         "  int a=0;   if (a <= 0){    a = 5;    return b;    int b=9;    b*=b;    return 6;");
   }
-  @Test public void ShortestOperand01() {
+  @Test public void shortestOperand01() {
     assertSimplifiesTo(" x + y > z; ", "  return z < x + y");
   }
-  @Test public void ShortestOperand02() {
+  @Test public void shortestOperand02() {
     assertSimplifiesTo("  k = k + 4;   if (2 * 6 + 4 == k) return true; ", "  k = k + 4;   if (k == 2 * 6 + 4) return true; ");
   }
-  @Test public void ShortestOperand03() {
+  @Test public void shortestOperand03() {
     assertSimplifiesTo(//
         "  k = k * 4;   if ( 1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9 > k + 4) return true; ", //
         "  k = k * 4;   if ( k + 4 < 1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9) return true; ");
   }
-  @Test public void ShortestOperand04() {
+  @Test public void shortestOperand04() {
     assertSimplifiesTo("  return (1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);  } ", "  return (3 > 1 + 2 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);  } ");
   }
-  @Test public void ShortestOperand05() {
+  @Test public void shortestOperand05() {
     assertSimplifiesTo(//
         "  StringBuilder s = \"bob\";   return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\"; ",
         "  StringBuilder s = \"bob\";   return \"bob-ha-banai\" == s.append(\"-ha\").append(\"-ba\").toString(); ");
   }
-  @Test public void ShortestOperand06() {
+  @Test public void shortestOperand06() {
     assertSimplifiesTo("  int a,b,c;   String t = \"eureka!\";   if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5; ",
         "  int a,b,c;   String t = \"eureka!\";   if (a < 2 * 3.1415 * 180 || \"1984\" == t.concat(\"<!>\") && 3 < t.length())    return c > 5; ");
   }
-  @Test public void ShortestOperand07() {
+  @Test public void shortestOperand07() {
     assertSimplifiesTo("  int y,o,g,i,s;   return ( y + o + s > s + i |  g > 42); ", "  int y,o,g,i,s;   return ( g > 42 | y + o + s > s + i); ");
   }
-  @Test public void ShortestOperand08() {
+  @Test public void shortestOperand08() {
     assertSimplifiesTo(
         "  human father;   human mother;   int age;  public boolean squarePants() {   human bob;   if (bob.father.age > 42 && bob.mother.father.age > bob.age ) return true;  ",
         "  human father;   human mother;   int age;  public boolean squarePants() {   human bob;   if (bob.father.age ? 42 && bob.age < bob.mother.father.age ) return true;  ");
   }
-  @Test public void ShortestOperand09() {
+  @Test public void shortestOperand09() {
     assertNoChange("  return 2 - 4 < 50 - 20 - 10 - 5;  } ");
   }
-  @Test public void ShortestOperand10() {
+  @Test public void shortestOperand10() {
     assertNoChange("  return b == true;  } ");
   }
-  @Test public void ShortestOperand11() {
+  @Test public void shortestOperand11() {
     assertNoChange(" int h,u,m,a,n;   return b == true && n + a > m - u || h > u; ");
   }
-  @Test public void ShortestOperand12() {
+  @Test public void shortestOperand12() {
     assertNoChange("  int k = 15;   return 7 < k; ");
   }
-  @Test public void ShortestOperand13() {
+  @Test public void shortestOperand13() {
     assertNoChange("  return (2 > 2 + a) == true;     } ");
   }
-  @Test public void ShortestOperand14() {
+  @Test public void shortestOperand14() {
     assertNoChange(" Integer t = new Integer(5);   return (t.toString() == null);    ");
   }
-  @Test public void ShortestOperand15() {
+  @Test public void shortestOperand15() {
     assertNoChange(" String t = \"Bob \" + \"Wants \" + \"To \" + \"Sleep \";   return (\"right now...\" + t);    ");
   }
-  @Test public void ShortestOperand16() {
+  @Test public void shortestOperand16() {
     assertNoChange("  String t = \"\";   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
   }
-  @Test public void ShortestOperand17() {
+  @Test public void shortestOperand17() {
     assertSimplifiesTo("  SomeClass a;   return a.getNum() ^ 5; ", "  SomeClass a;   return 5 ^ a.getNum();");
   }
-  @Test public void ShortestOperand18() {
+  @Test public void shortestOperand18() {
     assertSimplifiesTo("  SomeClass a;   return k.get().parent() & a; ", "  SomeClass a;   return a & k.get().parent();");
   }
-  @Test public void ShortestOperand19() {
+  @Test public void shortestOperand19() {
     assertNoChange("  SomeClass a;   return k.get().operand() ^ a.get(); ");
   }
-  @Test public void ShortestOperand20() {
+  @Test public void shortestOperand20() {
     assertNoChange("  SomeClass a;   String k = k.Concat(\"mmm...\") + a.get().sum().toString();   return k.get() ^ a.get(); ");
   }
-  @Test public void ShortestOperand21() {
+  @Test public void shortestOperand21() {
     assertSimplifiesTo("        return f(a, b, c, d, e) + 3333 + 222 + a + spongeBob + f(g, c, d) + f(a) + tt; ",
         "     return a+tt+222+3333+spongeBob+f(a,b,c,d,e)+f(g,c,d)+f(a); ");
   }
-  @Test public void ShortestOperand22() {
+  @Test public void shortestOperand22() {
     assertNoChange("    return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f f(a,b) + f(a) + f();     } ");
   }
-  @Test public void ShortestOperand23() {
+  @Test public void shortestOperand23() {
     assertNoChange("    return f() + \".\";     }");
   }
-  @Test public void ShortestOperand24() {
+  @Test public void shortestOperand24() {
     assertSimplifiesTo("    return f(a,b,c,d) & 175 & 0;   } ", "    return 0 & 175 & f(a,b,c,d);   }");
   }
-  @Test public void ShortestOperand25() {
+  @Test public void shortestOperand25() {
     assertSimplifiesTo("    return f(a,b,c,d) & bob & 0;   } ", "    return 0 & bob & f(a,b,c,d);   }");
   }
-  @Test public void ShortestOperand26() {
+  @Test public void shortestOperand26() {
     assertSimplifiesTo("    return f(a,b,c,d) | f() | 0;     } ", "    return 0 | f(a,b,c,d) | f();     }");
   }
-  @Test public void ShortestOperand27() {
+  @Test public void shortestOperand27() {
     assertNoChange("    return f(a,b,c,d) + f(a,b,c) + f();     } ");
   }
-  @Test public void ShortestOperand28() {
+  @Test public void shortestOperand28() {
     assertNoChange("    return f(a,b,c,d) * f(a,b,c) * f();     } ");
   }
-  @Test public void ShortestOperand29() {
+  @Test public void shortestOperand29() {
     assertSimplifiesTo("    return f(a,b,c,d) ^ f() ^ 0;     } ", "    return 0 ^ f(a,b,c,d) ^ f();     }");
   }
-  @Test public void ShortestOperand30() {
+  @Test public void shortestOperand30() {
     assertNoChange("    return f(a,b,c,d) & f();     } ");
   }
-  @Test public void ShortestOperand31() {
+  @Test public void shortestOperand31() {
     assertNoChange("    return f(a,b,c,d) | \".\";     }");
   }
-  @Test public void ShortestOperand32() {
+  @Test public void shortestOperand32() {
     assertNoChange("    return f(a,b,c,d) && f();     }");
   }
-  @Test public void ShortestOperand33() {
+  @Test public void shortestOperand33() {
     assertNoChange("    return f(a,b,c,d) || f();     }");
   }
-  @Test public void ShortestOperand34() {
+  @Test public void shortestOperand34() {
     assertSimplifiesTo("    return f(a,b,c,d) + someVar;     } ", "    return someVar + f(a,b,c,d);    } ");
   }
-  @Test public void ShortestOperand35() {
+  @Test public void shortestOperand35() {
     assertSimplifiesTo("    return f(a,b,c,d) * moshe;     } ", "    return moshe * f(a,b,c,d);     } ");
   }
-  @Test public void ShortestOperand36() {
+  @Test public void shortestOperand36() {
     assertSimplifiesTo("f(a,b,c,d) ^ bob", "bob ^ f(a,b,c,d)");
   }
-  @Test public void ShortestOperand37() {
+  @Test public void shortestOperand37() {
     assertNoChange("");
   }
-  @Test public void ShortestOperandFarStringLiteral() {
+  @Test public void shortestOperandFarStringLiteral() {
     assertNoChange("");
   }
   @Test public void simplifiesTo() {
@@ -1186,6 +1186,9 @@ public class TrimmerTest {
   }
   @Test public void simplifyLogicalNegationONested() {
     assertSimplifiesTo("!((a || b == c) && (d || !(!!c)))", "!a && b != c || !d && c");
+  }
+  @Test public void strangeShortestFirstConditioanl() {
+    assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");
   }
   @Test public void Ternarize01() {
     assertSimplifiesTo("  String res = s;   if (s.equals(\"yada\")==true)    res = s + \" blah\";   else    res = \"spam\";   System.out.println(res); ",
