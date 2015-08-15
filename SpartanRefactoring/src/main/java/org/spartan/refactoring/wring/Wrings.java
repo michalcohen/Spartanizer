@@ -950,16 +950,12 @@ public enum Wrings {
       }
     return $;
   }
-
-
-
   private static Expression simplifyTernary(final Expression then, final Expression elze, final Expression main) {
     final boolean takeThen = !Is.booleanLiteral(then);
     final Expression other = takeThen ? then : elze;
     final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
     return Subject.pair(takeThen != literal ? main : not(main),other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
-
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = All.operands(flatten(e));
     removeAll(b, operands);
