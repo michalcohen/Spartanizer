@@ -775,7 +775,6 @@ public enum Wrings {
   /**
    * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code>
    * into <code> a ? c(d,e) : f(g,h) </code>
-
    *
    * @author Yossi Gil
    * @since 2015-08-14
@@ -789,7 +788,13 @@ public enum Wrings {
         return null;
       if (Is.conditional(then) && !Is.conditional(elze))
         return $;
-      return $.toString().length() < e.toString().length() ? $ : elze.toString().length() < then.toString().length() ? $ : null;
+      final Expression condition = $.getExpression();
+      if (length(not(condition)) + length(then) < length(condition) + length(elze))
+        return $;
+            return null;
+    }
+    int length(final Expression e) {
+      return e.toString().length();
     }
   }), //
   /**

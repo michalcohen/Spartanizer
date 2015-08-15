@@ -218,7 +218,7 @@ public abstract class AbstractWringTest extends AbstractTestBase {
         assertThat(inner.scopeIncludes(asBlock(asMe())), is(false));
       }
       @Test public void scopeDoesNotIncludeAsExpression() {
-        assertThat(inner.scopeIncludes(asExpression()), is(false));
+        assertThat(asExpression().toString(), inner.scopeIncludes(asExpression()), is(false));
       }
       @Test public void scopeDoesNotIncludeAsIfStatement() {
         assertThat(inner.scopeIncludes(asIfStatement(asMe())), is(false));

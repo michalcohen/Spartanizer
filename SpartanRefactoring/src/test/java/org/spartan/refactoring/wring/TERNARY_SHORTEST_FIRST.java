@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.hamcrest.OrderingComparison.*;
@@ -20,31 +21,48 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mockito.internal.matchers.GreaterThan;
 import org.spartan.refactoring.spartanizations.Into;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
+
 /**
  * Unit tests for {@link Wrings#ADDITION_SORTER}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({ "javadoc", }) //
+@SuppressWarnings({ "javadoc", "static-method"}) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class TERNARY_SHORTEST_FIRST {
   static final Wring WRING = Wrings.TERNARY_SHORTEST_FIRST.inner;
-  @Test public void trace() {
+  @Test public void trace1() {
     final ConditionalExpression e = Into.c("a?f(b,c,d):a");
-    assertThat(e,notNullValue());
+    assertThat(e, notNullValue());
     final Expression elze = Extract.core(e.getElseExpression());
     final Expression then = Extract.core(e.getThenExpression());
-    final Expression  $ =  Subject.pair(elze,then).toCondition(not(e.getExpression()));
+    final Expression $ = Subject.pair(elze, then).toCondition(not(e.getExpression()));
     assertThat($, iz("!a?a:f(b,c,d)"));
+  }
+  @Test public void trace2() {
+    final ConditionalExpression e = Into.c("!f(o) ? null : x.f(a).to(e.g())");
+    assertThat(e, notNullValue());
+    final Expression elze = Extract.core(e.getElseExpression());
+    final Expression then = Extract.core(e.getThenExpression());
+    final Expression $ = Subject.pair(elze, then).toCondition(not(e.getExpression()));
+    assertFalse(then.toString(), Is.conditional(then));
+    assertFalse(elze.toString(), Is.conditional(elze));
+    assertThat($.toString().length(), greaterThan(0));
+    assertThat($, iz("f(o) ? x.f(a).to(e.g()) : null"));
   }
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
     static String[][] cases = Utils.asArray(//
+        new String[] { "Actual simplified 3", "!f(o) ? null : x.f(a).to(e.g())" }, //
+        new String[] { "Actual simplified 2", "!f(o) ? null : Subject.operands(operands).to(e.getOperator())" }, //
+        new String[] { "Actual simplified 1", "!f(operands) ? null : Subject.operands(operands).to(e.getOperator())" }, //
+        new String[] { "Actual", "!tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator())" }, //
         Utils.asArray("No boolean", "a?b:c"), //
         Utils.asArray("F X", "a ? false : c"), //
         Utils.asArray("T X", "a ? true : c"), //
