@@ -789,9 +789,7 @@ public enum Wrings {
       if (Is.conditional(then) && !Is.conditional(elze))
         return $;
       final Expression condition = $.getExpression();
-      if (length(not(condition)) + length(then) < length(condition) + length(elze))
-        return null;
-            return $;
+      return length(not(condition)) + length(then) >= length(condition) + length(elze) ? $ : null;
     }
     int length(final Expression e) {
       return e.toString().length();
