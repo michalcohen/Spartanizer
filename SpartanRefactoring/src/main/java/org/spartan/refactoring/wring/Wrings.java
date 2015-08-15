@@ -793,7 +793,6 @@ public enum Wrings {
         return null;
       return $;
     }
-
   }), //
   /**
    * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code>
@@ -1004,6 +1003,9 @@ public enum Wrings {
     return isTernaryOfBooleanLitreral(asConditionalExpression(core(e)));
   }
 
+  static  int length(final ASTNode e) {
+    return e.toString().length();
+  }
   static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
     final VariableDeclarationFragment $ = duplicate(f);
     $.setInitializer(duplicate(e));
@@ -1029,13 +1031,13 @@ public enum Wrings {
         return reorganizeStatement(s);
     }
   }
+
   static Block reorganizeStatement(final Statement s) {
     final List<Statement> ss = Extract.statements(s);
     final Block $ = s.getAST().newBlock();
     duplicateInto(ss,$.statements());
     return $;
   }
-
   static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by) {
     final Block parent = asBlock(what.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -1092,9 +1094,6 @@ public enum Wrings {
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
-  }
-  static  int length(final ASTNode e) {
-    return e.toString().length();
   }
   public final Wring inner;
   Wrings(final Wring inner) {

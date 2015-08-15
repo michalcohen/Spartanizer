@@ -29,11 +29,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   ADDITION {
     @Override public int compare(final Expression e1, final Expression e2) {
       int $;
-      return ($ = literalCompare(e1, e2)) != 0 || //
-          ($ = nodesCompare(e1, e2)) != 0 || //
-          ($ = characterCompare(e1, e2)) != 0 || //
-          ($ = alphabeticalCompare(e1, e2)) != 0 //
-          ? $ : 0;
+      return ($ = literalCompare(e1, e2)) != 0 || ($ = nodesCompare(e1, e2)) != 0 || ($ = characterCompare(e1, e2)) != 0 || ($ = alphabeticalCompare(e1, e2)) != 0 ? $ : 0;
     }
   },
   /**

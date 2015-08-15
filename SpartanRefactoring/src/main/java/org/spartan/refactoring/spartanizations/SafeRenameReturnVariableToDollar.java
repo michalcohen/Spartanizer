@@ -24,6 +24,7 @@ import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
 import static org.spartan.refactoring.utils.Funcs.same;
+
 /**
  * @author Ofir Elmakias <code><Elmakias [at] outlook.com></code> (original)
  * @since 2015/08/12
@@ -35,38 +36,35 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
   }
   static boolean declaredInMethod = false;
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
-
     cu.accept(new ASTVisitor() {
-
       @Override public boolean visit(final ReturnStatement rs) {
-
-        final Expression n = rs.getExpression(); // e.g. rs = "return s;" => n = "s"
-        if (!Is.simpleName(n)) return true;
-
+        final Expression n = rs.getExpression(); // e.g. rs = "return s;" => n =
+        if (!Is.simpleName(n))
+          return true;
         if (n == null || !inRange(m, n))
           return true;
-
         ASTNode md = n;
         while (!Is.methodDeclaration(md))
           md = md.getParent();
-        if (!declaredHere(n, md)) return true;
-
-        md.accept(new ASTVisitor() {  // Replace all occurrences to $
+        if (!declaredHere(n, md))
+          return true;
+        md.accept(new ASTVisitor() { // Replace all occurrences to $
           @Override public boolean visit(final SimpleName sn) {
-            if (same(sn,t.newSimpleName("$"))) return true;
-            if (same(sn,n)) r.replace(sn, t.newSimpleName("$"), null);
+            if (same(sn, t.newSimpleName("$")))
+              return true;
+            if (same(sn, n))
+              r.replace(sn, t.newSimpleName("$"), null);
             return true;
           }
         });
-
         return true;
       }
-
       private boolean declaredHere(final Expression n, final ASTNode md) {
         declaredInMethod = false;
         md.accept(new ASTVisitor() {
           @Override public boolean visit(final VariableDeclarationFragment v) {
-            if (v.getName().toString().equals(n.toString())) declaredInMethod = true;
+            if (v.getName().toString().equals(n.toString()))
+              declaredInMethod = true;
             return true;
           }
         });

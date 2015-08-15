@@ -443,7 +443,7 @@ public class Ternarize extends Spartanization {
     return Extract.statements(i.getParent()) == null ? null : detectIfReturn(i, Extract.statements(i.getParent()));
   }
   static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-    return !hasNull(Extract.singleThen(i), Extract.singleElse(i), asBlock(i.getParent())) && isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? new Range(i) : null;
+    return hasNull(Extract.singleThen(i), Extract.singleElse(i), asBlock(i.getParent())) || !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null : new Range(i);
   }
   static boolean perhapsAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i) {
     return asBlock(i.getParent()) != null && treatAssignIfAssign(t, r, i, siblings(i));
