@@ -792,7 +792,7 @@ public enum Wrings {
         return $;
       if ($.toString().length() < e.toString().length())
         return $;
-      return then.toString().length() < elze.toString().length() ? $ : null;
+      return elze.toString().length() < then.toString().length() ? $ : null;
     }
   }), //
   /**
