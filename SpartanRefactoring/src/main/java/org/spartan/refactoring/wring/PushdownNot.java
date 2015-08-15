@@ -93,9 +93,7 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
       return LESS_EQUALS;
     if (o.equals(GREATER_EQUALS))
       return LESS;
-    if (o.equals(LESS))
-      return GREATER_EQUALS;
-    return null;
+    return o.equals(LESS) ? GREATER_EQUALS : null;
   }
   @Override public boolean scopeIncludes(final PrefixExpression e) {
     return e != null && asNot(e) != null && Wrings.hasOpportunity(asNot(e));
