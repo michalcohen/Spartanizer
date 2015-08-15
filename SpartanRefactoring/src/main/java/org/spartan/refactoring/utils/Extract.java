@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
@@ -40,6 +41,18 @@ import org.spartan.utils.Wrapper;
  */
 public enum Extract {
   ;
+  public static int size(final ASTNode n) {
+    class Integer {
+      int inner = 0;
+    }
+    final Integer $ = new Integer();
+    n.accept(new ASTVisitor() {
+      @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
+        $.inner++;
+      }
+    });
+    return $.inner;
+  }
   /**
    * @param n a statement or block to extract the assignment from
    * @return null if the block contains more than one statement or if the
@@ -171,8 +184,7 @@ public enum Extract {
     return asIfStatement(nextStatement(n));
   }
   /**
-   * Extract the {@link ReturnStatement} that immediately follows a given
-   * node
+   * Extract the {@link ReturnStatement} that immediately follows a given node
    *
    * @param n JD
    * @return the {@link ReturnStatement} that immediately follows the parameter,

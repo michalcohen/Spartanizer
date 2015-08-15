@@ -530,19 +530,6 @@ public enum Wrings {
       return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
     }
   }), //
-  TERNARY_SHOREST_FIRST(new Wring.OfConditionalExpression() {
-    @Override Expression _replacement(final ConditionalExpression e) {
-      final Expression elze = Extract.core(e.getElseExpression());
-      final Expression then = Extract.core(e.getThenExpression());
-      return longer(then,elze) ? Subject.pair(elze,then).toCondition(not(e.getExpression())) : null;
-    }
-    private boolean longer(final Expression e1, final Expression e2) {
-      return false;
-    }
-    @Override boolean scopeIncludes(final ConditionalExpression e) {
-      return _replacement(e) != null;
-    }
-  }), //
   /**
    * A {@link Wring} that eliminates redundant comparison with the two boolean
    * literals: <code><b>true</b></code> and <code><b>false</b></code>.
@@ -798,7 +785,32 @@ public enum Wrings {
    * @since 2015-7-17
    */
   PUSHDOWN_NOT(new PushdownNot()),  //
-  //
+  /**
+   * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code>
+   * into <code> a ? c(d,e) : f(g,h) </code>
+
+   *
+   * @author Yossi Gil
+   * @since 2015-08-14
+   */
+  TERNARY_SHORTEST_FIRST(new Wring.OfConditionalExpression() {
+    @Override ConditionalExpression _replacement(final ConditionalExpression e) {
+      final ConditionalExpression  $ =  Subject.pair(e.getElseExpression(),e.getThenExpression()).toCondition(not(e.getExpression()));
+      final Expression then =  $.getElseExpression(); // Original then, before swap, but cleaned
+      final Expression elze =  $.getThenExpression(); // Original then, before swap, but cleaned
+      if (!Is.conditional(then) && Is.conditional(elze)) // do not swap if we have the comb structure.
+        return null;
+      if (Is.conditional(then) && !Is.conditional(elze)) // do swap if we have the comb structure.
+        return $;
+      if ($.toString().length() < e.toString().length())
+        return $;
+      return then.toString().length() < elze.toString().length() ? $ : null;
+    }
+    @Override boolean scopeIncludes(final ConditionalExpression e) {
+      return _replacement(e) != null;
+    }
+  }), //
+
   ;
   /**
    * Find the first {@link Wring} appropriate for an {@link IfStatement}
