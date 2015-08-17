@@ -815,7 +815,13 @@ public enum Wrings {
       if (n1 > n2)
         return $;
       assert n1 == n2;
-      return length(not(notConditional), then) >= length(notConditional, elze) ? $ : null;
+      final int l1 = length(not(notConditional), then);
+      final int l2 = length(notConditional, elze);
+      if (l1 < l2)
+        return null;
+      if (l1 > l2)
+        return $;
+      return null;
     }
   }), //
   ;

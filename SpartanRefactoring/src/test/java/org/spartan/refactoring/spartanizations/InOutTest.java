@@ -67,7 +67,7 @@ public class InOutTest {
   @Parameter(1) public String name;
   /** Where the input text can be found */
   @Parameter(2) public File input;
-  /** Where the expected output can be found? */
+  /** Where the expected output can be found */
   @Parameter(3) public File output;
   /**
    * Runs a parameterized test case, based on the instance variables of this

@@ -927,10 +927,15 @@ public class TrimmerTest {
   @Test public void shorterChainParenthesisComparisonLast() {
     assertNoChange("b == a * b * c * d * e * f * g * h == a");
   }
+  @Test public void shortestIfBranchFirst00() {
+    assertConvertsTo(
+        "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;",
+        "if (!(s.equals(0xDEAD))) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
+  }
   @Test public void shortestIfBranchFirst01() {
     assertConvertsTo(
-        "if (s.equals(0xDEAD)) {    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;  return res;   else {    return 8; }",
-        "if (!(s.equals(0xDEAD))) {    return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
+        "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;  return res;   else {    return 8; }",
+        "if (!(s.equals(0xDEAD))) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
   }
   @Test public void shortestIfBranchFirst02() {
     assertConvertsTo(

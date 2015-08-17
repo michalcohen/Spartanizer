@@ -38,17 +38,6 @@ import org.spartan.utils.Utils;
 public class TernarizeTest extends AbstractTestBase {
   final static Spartanization inner = new Ternarize();
   static String[][] cases = Utils.asArray(//
-      // Utils.asArray(
-      // " String res = s;\n" + //
-      // "xif (s.equals(\"yada\")==true)\n" + //
-      // " res = s + \" blah\";\n" + //
-      // "else\n" + //
-      // "res = \"spam\";" + //
-      // "",
-      // "" + //
-      // "String res = (s.equals(\"yada\")==true ? s + \" blah\" : \"spam\");\n"
-      // + //
-      // "System.out.println(res);"), //
       Utils.asArray("04.test",
           "" + //
               "int res=0;      " + //
