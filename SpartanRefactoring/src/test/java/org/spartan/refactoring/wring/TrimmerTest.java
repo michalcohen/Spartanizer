@@ -347,25 +347,21 @@ public class TrimmerTest {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   yada3(i);   yada3(i+m); ",
         "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   yada3(i);   yada3(i+m); ");
   }
-  @Ignore
-  @Test public void forwardDeclaration4() {
+  @Ignore @Test public void forwardDeclaration4() {
     assertSimplifiesTo(
         "  /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ",
         "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ");
   }
-  @Ignore
-  @Test public void forwardDeclaration5() {
+  @Ignore @Test public void forwardDeclaration5() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ",
         "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int i = yada3(0);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
   }
-  @Ignore
-  @Test public void forwardDeclaration6() {
+  @Ignore @Test public void forwardDeclaration6() {
     assertSimplifiesTo(
         "  /*    * This is a comment    */      int i = yada3(0);   int h = 8;   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ",
         "  /*    * This is a comment    */      int h = 8;   int i = yada3(0);   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
   }
-  @Ignore
-  @Test public void forwardDeclaration7() {
+  @Ignore @Test public void forwardDeclaration7() {
     assertSimplifiesTo(
         "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
         "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
@@ -879,54 +875,54 @@ public class TrimmerTest {
   @Test public void pushdownTernaryXT() {
     assertSimplifiesTo("a ? b : true", "!a || b");
   }
-  @Test public void reanmeReturnVariableToDollar01() {
+  @Ignore @Test public void reanmeReturnVariableToDollar01() {
     assertSimplifiesTo(
         "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ",
         "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   System.out.println($.j);   return $; ");
   }
-  @Test public void reanmeReturnVariableToDollar02() {
+  @Ignore @Test public void reanmeReturnVariableToDollar02() {
     assertSimplifiesTo(
         "  int res = blah.length();   if (blah.contains(0xDEAD))    return res * 2;   if (res % 2 ==0)    return ++res;   if (blah.startsWith(\"y\")) {    return yada3(res);   int x = res + 6;   if (x>1)    return res + x;   res -= 1;   return res; ",
         "  int $ = blah.length();   if (blah.contains(0xDEAD))    return $ * 2;   if ($ % 2 ==0)    return ++$;   if (blah.startsWith(\"y\")) {    return yada3($);   int x = $ + 6;   if (x>1)    return $ + x;   $ -= 1;   return $; ");
   }
-  @Test public void reanmeReturnVariableToDollar03() {
+  @Ignore @Test public void reanmeReturnVariableToDollar03() {
     assertSimplifiesTo(
         "  public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int x = blah.length()/2;   if (x==3)    return x;   x = yada3(res.j - x);   return x; ",
         "  public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = yada3(res.j - $);   return $; ");
   }
-  @Test public void reanmeReturnVariableToDollar04() {
+  @Ignore @Test public void reanmeReturnVariableToDollar04() {
     assertNoChange("int res = 0;   String $ = blah + \" yada\";   yada3(res + $.length());   return res + $.length();");
   }
-  @Test public void reanmeReturnVariableToDollar05() {
+  @Ignore @Test public void reanmeReturnVariableToDollar05() {
     assertSimplifiesTo(
         "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println(res.j);   return res; ",
         "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass($.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println($.j);   return $; ");
   }
-  @Test public void reanmeReturnVariableToDollar06() {
+  @Ignore @Test public void reanmeReturnVariableToDollar06() {
     assertSimplifiesTo(
         "   j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass res = new BlahClass(r.j);     return res.j + 1;   System.out.println(res.j); ",
         "   j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass $ = new BlahClass(r.j);     return $.j + 1;   System.out.println(res.j); ");
   }
-  @Test public void reanmeReturnVariableToDollar07() {
+  @Ignore @Test public void reanmeReturnVariableToDollar07() {
     assertSimplifiesTo(
         "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
         "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println($.j);   return $; ");
   }
-  @Test public void reanmeReturnVariableToDollar08() {
+  @Ignore @Test public void reanmeReturnVariableToDollar08() {
     assertSimplifiesTo(
         "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return res; ",
         "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   if ($.j == 0)    return null;   System.out.println($.j);   return $; ");
   }
-  @Test public void reanmeReturnVariableToDollar09() {
+  @Ignore @Test public void reanmeReturnVariableToDollar09() {
     assertNoChange(
         "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return null;");
   }
-  @Test public void reanmeReturnVariableToDollar10() {
+  @Ignore @Test public void reanmeReturnVariableToDollar10() {
     assertSimplifiesTo(
         " @Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ",
         " @Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization $ = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ");
   }
-  @Test public void reanmeReturnVariableToDollar11() {
+  @Ignore @Test public void reanmeReturnVariableToDollar11() {
     assertNoChange("");
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
@@ -1437,7 +1433,7 @@ public class TrimmerTest {
   }
   @Test public void twoOpportunityExample() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
-    assertThat(countOpportunities(new Trimmer(), u),is(2));
+    assertThat(countOpportunities(new Trimmer(), u), is(2));
   }
   @Test public void vanillaShortestFirstConditionalNoChange() {
     assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");
