@@ -694,7 +694,7 @@ public enum Wrings {
       return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
     }
     @Override boolean _eligible(final InfixExpression e) {
-      return Are.notString(All.operands(flatten(e))) && tryToSort(e);
+      return Is.notString(e) && tryToSort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));

@@ -94,6 +94,7 @@ public enum ADDITION_SORTER {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
+        Utils.asArray("Examine extrenal environment", "2 + a < b", "a + 2 < b"), //
         Utils.asArray("Add 1 to 2*3", "1+2*3", "2*3+1"), //
         Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
         Utils.asArray("Add '\\0' to a*.b", "'\0'+a*b", "a*b+'\0'"), //
@@ -144,7 +145,7 @@ public enum ADDITION_SORTER {
       assertThat(operands.size(), greaterThanOrEqualTo(2));
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
-          "After: " + operands + "\n", //
+              "After: " + operands + "\n", //
           Wrings.tryToSort(operands, COMPARATOR), is(true));
     }
     @Test public void tryToSortTwice() {

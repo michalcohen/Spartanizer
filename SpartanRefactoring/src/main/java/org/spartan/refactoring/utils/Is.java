@@ -401,16 +401,8 @@ public enum Is {
   static boolean notStringDown(final InfixExpression e) {
     return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
   }
-  /**
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
-   *         whose type is provably not of type {@link String}, in the sense
-   *         used in applying the <code>+</code> operator to concatenate
-   *         strings. concatenation.
-   */
-  public static boolean notString(final InfixExpression e) {
-    return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
-  }
+
+
   /**
    * Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
