@@ -955,6 +955,7 @@ public class TrimmerTest {
         "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;",
         "if (!s.equals(0xDEAD)) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
   }
+
   @Test public void shortestIfBranchFirst01() {
     assertConvertsTo(
         "" //
@@ -1305,6 +1306,16 @@ public class TrimmerTest {
   }
   @Test public void ternarize22() {
     assertNoChange("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
+  }
+  @Test public void ternarize22test() {
+    assertConvertsTo(
+"    int a=0;\n" + //
+"    if (s.equals(\"yada\")){\n" + //
+"      System.console();\n" + //
+"    } else {\n" + //
+"      a=3;\n" + //
+"    }\n" + //
+"","int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void ternarize23() {
     assertSimplifiesTo("return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   if (s.equals(532)){    a+=y(2)+10;    a+=r(3)-6; ",

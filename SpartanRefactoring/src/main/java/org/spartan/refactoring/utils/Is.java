@@ -475,20 +475,20 @@ public enum Is {
     return in(e.getClass(), //
         BooleanLiteral.class, //
         CharacterLiteral.class, //
+        ClassInstanceCreation.class, //
+        FieldAccess.class, //
+        MethodInvocation.class, //
+        Name.class, //
         NullLiteral.class, //
         NumberLiteral.class, //
-        StringLiteral.class, //
-        TypeLiteral.class, //
-        Name.class, //
+        ParenthesizedExpression.class, //
         QualifiedName.class, //
         SimpleName.class, //
-        ParenthesizedExpression.class, //
-        SuperMethodInvocation.class, //
-        MethodInvocation.class, //
-        ClassInstanceCreation.class, //
+        StringLiteral.class, //
         SuperFieldAccess.class, //
-        FieldAccess.class, //
+        SuperMethodInvocation.class, //
         ThisExpression.class, //
+        TypeLiteral.class, //
         null);
   }
   /**
@@ -577,13 +577,13 @@ public enum Is {
   }
   static boolean notStringSelf(final Expression e) {
     return intIsIn(e.getNodeType(), //
-        NULL_LITERAL, // null + null is an error, not a string.
-        CHARACTER_LITERAL, //
-        NUMBER_LITERAL, //
-        BOOLEAN_LITERAL, //
-        PREFIX_EXPRESSION, //
         ARRAY_CREATION, //
-        INSTANCEOF_EXPRESSION//
+        BOOLEAN_LITERAL, //
+        CHARACTER_LITERAL, //
+        INSTANCEOF_EXPRESSION,//
+        NULL_LITERAL, // null + null is an error, not a string.
+        NUMBER_LITERAL, //
+        PREFIX_EXPRESSION //
     //
     );
   }
