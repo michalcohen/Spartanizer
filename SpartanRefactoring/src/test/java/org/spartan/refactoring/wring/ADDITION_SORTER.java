@@ -122,9 +122,6 @@ public enum ADDITION_SORTER {
     public Wringed() {
       super(WRING);
     }
-    @Test public void allNotStringArgument() {
-      assertTrue(Are.notString(All.operands(asInfixExpression())));
-    }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
