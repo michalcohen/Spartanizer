@@ -115,10 +115,10 @@ public class ForwardDeclaration extends Spartanization {
       }
     };
   }
-  static int findFirstUse(final Block b, final SimpleName name) {
-    final ASTNode declarationStmt = name.getParent().getParent();
-    for (int $ = 1 + b.statements().indexOf(declarationStmt); $ < b.statements().size(); ++$)
-      if (Occurrences.BOTH_LEXICAL.of(name).in((ASTNode) b.statements().get($)).size() > 0)
+  static int findFirstUse(final Block b, final SimpleName n) {
+    final ASTNode whereDeclared = n.getParent().getParent();
+    for (int $ = 1 + b.statements().indexOf(whereDeclared); $ < b.statements().size(); ++$)
+      if (Occurrences.BOTH_LEXICAL.of(n).in((ASTNode) b.statements().get($)).size() > 0)
         return $; // first use!
     return -1; // that means unused
   }

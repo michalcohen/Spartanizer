@@ -129,6 +129,11 @@ public enum Occurrences {
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode n);
+
+    public List<VariableDeclarationFragment> in(final Expression[] es) {
+      // TODO Auto-generated method stub
+      return null;
+    }
   }
   /**
    * Lists the required occurrences

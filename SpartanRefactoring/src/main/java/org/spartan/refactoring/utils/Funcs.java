@@ -102,6 +102,16 @@ public enum Funcs {
     return $.getNodeType() != BLOCK ? null : (Block) $;
   }
   /**
+   * Convert, is possible, an {@link ASTNode} to a {@link Block}
+   *
+   * @param $ JD
+   * @return the argument, but down-casted to a {@link Block}, or
+   *         <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static SimpleName asSimpleName(final ASTNode $) {
+    return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName)$;
+  }
+  /**
    * Down-cast, if possible, to {@link BooleanLiteral}
    *
    * @param e JD
