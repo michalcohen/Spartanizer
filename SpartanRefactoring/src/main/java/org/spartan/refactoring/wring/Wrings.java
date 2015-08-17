@@ -652,8 +652,10 @@ public enum Wrings {
       return eliminateLiteral(e, true);
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return Is.conditionalAnd(e) && Have.trueLiteral(All.operands(flatten(e)));
+      return Is.conditionalAnd(e) && Have.trueLiteral(allOperands(e));
     }
+
+
   }), //
   /**
    * A {@link Wring} that eliminate Boolean literals, when possible present on
@@ -671,7 +673,7 @@ public enum Wrings {
       return eliminateLiteral(e, false);
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
-      return Is.conditionalOr(e) && Have.falseLiteral(All.operands(flatten(e)));
+      return Is.conditionalOr(e) && Have.falseLiteral(allOperands(e));
     }
   }), //
   /**
@@ -687,7 +689,7 @@ public enum Wrings {
       return "Addition sorter";
     }
     private boolean sort(final InfixExpression e) {
-      return sort(All.operands(flatten(e)));
+      return sort(allOperands(e));
     }
     private boolean sort(final List<Expression> es) {
       return Wrings.sort(es, ExpressionComparator.ADDITION);
@@ -696,7 +698,7 @@ public enum Wrings {
       return Is.notString(e) && sort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = allOperands(e);
       final boolean notString = Is.notString(e);
       final boolean canSort = sort(operands);
       return !notString || !canSort ? null : Subject.operands(operands).to(e.getOperator());
@@ -720,7 +722,7 @@ public enum Wrings {
       return "pseudo addition sorter";
     }
     private boolean sort(final InfixExpression e) {
-      return sort(All.operands(flatten(e)));
+      return sort(allOperands(e));
     }
     private boolean sort(final List<Expression> es) {
       return Wrings.sort(es, ExpressionComparator.ADDITION);
@@ -729,7 +731,7 @@ public enum Wrings {
       return sort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = allOperands(e);
       return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
@@ -749,7 +751,7 @@ public enum Wrings {
       return "Multiplication sorter";
     }
     private boolean sort(final InfixExpression e) {
-      return sort(All.operands(flatten(e)));
+      return sort(allOperands(e));
     }
     private boolean sort(final List<Expression> es) {
       return Wrings.sort(es, ExpressionComparator.MULTIPLICATION);
@@ -758,7 +760,7 @@ public enum Wrings {
       return sort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = allOperands(e);
       return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
@@ -966,7 +968,7 @@ public enum Wrings {
     return Subject.pair(takeThen != literal ? main : not(main),other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
-    final List<Expression> operands = All.operands(flatten(e));
+    final List<Expression> operands = allOperands(e);
     removeAll(b, operands);
     switch (operands.size()) {
       case 0:
@@ -1096,6 +1098,9 @@ public enum Wrings {
       es.remove(i);
       es.add(i, simplifyTernary(asConditionalExpression(e)));
     }
+  }
+  public static List<Expression> allOperands(final InfixExpression e) {
+    return All.operands(flatten(e));
   }
   public final Wring inner;
   Wrings(final Wring inner) {

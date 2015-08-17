@@ -74,7 +74,7 @@ public class Unchanged {
    * instance, and check that no opportunities are found.
    */
   @Test public void checkNoOpportunities() {
-    assertNotNull("Cannot instantiate Spartanization object", spartanization);
+    assertNotNull("Cannot instantiate spartanization object", spartanization);
     final ASTNode n = As.COMPILIATION_UNIT.ast(input);
     assertNotNull(n);
     assertThat(n, is(instanceOf(CompilationUnit.class)));

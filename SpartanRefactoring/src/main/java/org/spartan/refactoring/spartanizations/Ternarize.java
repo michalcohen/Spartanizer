@@ -57,8 +57,8 @@ import org.spartan.utils.Range;
   private static boolean areExpsValid(final Pair diffNodes, final TwoExpressions diffExps) {
     return diffExps != null && !Is.conditional(diffExps.then, diffExps.elze) && !containIncOrDecExp(diffExps.then, diffExps.elze) && isExpOnlyDiff(diffNodes, diffExps);
   }
-  private static boolean canReplacePrevDecl(final Statement possiblePrevDecl, final ExpressionStatement thenExpStmt, final ExpressionStatement elseExpStmt) {
-    final List<VariableDeclarationFragment> frags = !Is.isVarDeclStmt(possiblePrevDecl) ? null : ((VariableDeclarationStatement) possiblePrevDecl).fragments();
+  private static boolean canReplacePrevDecl(final Statement s, final ExpressionStatement thenExpStmt, final ExpressionStatement elseExpStmt) {
+    final List<VariableDeclarationFragment> frags = !Is.variableDeclarationStatement(s) ? null : ((VariableDeclarationStatement) s).fragments();
     final Assignment then = Extract.assignment(thenExpStmt);
     final Assignment elze = Extract.assignment(elseExpStmt);
     return !hasNull(then, elze, frags) && Is.plainAssignment(then) && compatibleOps(then.getOperator(), elze.getOperator()) && possibleToReplace(then, frags)
@@ -69,21 +69,18 @@ import org.spartan.utils.Range;
         && canReplacePrevDecl(possiblePrevDecl, (ExpressionStatement) diffNodes.then, (ExpressionStatement) diffNodes.elze);
   }
   private static Range detecOnlyNextAsgnExist(final IfStatement i, final Assignment then, final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
-    final Expression[] es = { nextAsgn.getRightHandSide() };
     return nextAsgn == null || !compatible(nextAsgn, then) ? null
-        : new Range(prevDecl == null || !Occurrences.BOTH_SEMANTIC.of(prevDecl.getName()).in(es).isEmpty() ? i : prevDecl, nextAsgn);
+        : new Range(prevDecl == null || !Occurrences.BOTH_SEMANTIC.of(prevDecl).in(new Expression[] { nextAsgn.getRightHandSide() }).isEmpty() ? i : prevDecl, nextAsgn);
   }
-  private static Range detecOnlyPrevAsgnExist(final IfStatement i, final Assignment then, final Assignment prevAsgn, final VariableDeclarationFragment prevDecl) {
+  private static Range detecOnlyPrevAsgnExist(final IfStatement i, final Assignment then, final Assignment a, final VariableDeclarationFragment p) {
     final Expression[] es = { i.getExpression() };
-    final Expression[] es1 = { prevAsgn.getRightHandSide() };
-    return prevAsgn == null || !Occurrences.BOTH_SEMANTIC.of(asSimpleName(prevAsgn.getLeftHandSide())).in(es).isEmpty() || !compatible(prevAsgn, then) ? null
-        : prevDecl == null || prevDecl.getInitializer() != null ? new Range(prevAsgn, i)
-            : !Occurrences.BOTH_SEMANTIC.of(prevDecl.getName()).in(es1).isEmpty() ? null : new Range(prevDecl, i);
+    return a == null || !Occurrences.BOTH_SEMANTIC.of(asSimpleName(a.getLeftHandSide())).in(es).isEmpty() || !compatible(a, then) ? null
+        : p == null || p.getInitializer() != null ? new Range(a, i)
+            : !Occurrences.BOTH_SEMANTIC.of(p).in(new Expression[] { a.getRightHandSide() }).isEmpty() ? null : new Range(p, i);
   }
   private static Range detecPrevAndNextAsgnExist(final Assignment then, final Assignment prevAsgn, final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
-    final Expression[] es = { nextAsgn.getRightHandSide() };
     return hasNull(prevAsgn, nextAsgn) || !compatible(nextAsgn, prevAsgn, then) ? null
-        : prevDecl == null ? new Range(prevAsgn, nextAsgn) : !Occurrences.BOTH_SEMANTIC.of(prevDecl.getName()).in(es).isEmpty() ? null : new Range(prevDecl, nextAsgn);
+        : prevDecl == null ? new Range(prevAsgn, nextAsgn) : Occurrences.BOTH_SEMANTIC.of(prevDecl).existIn(new Expression[] { nextAsgn.getRightHandSide() }) ? null : new Range(prevDecl, nextAsgn);
   }
   private static Range detectAssignIfAssign(final Block parent, final IfStatement i) {
     return parent == null ? null : detectAssignIfAssign(i, siblings(i));
@@ -194,7 +191,7 @@ import org.spartan.utils.Range;
   private static boolean handlePrevDeclExist(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Assignment prevAsgn,
       final VariableDeclarationFragment prevDecl) {
     final Expression[] es = { then.getRightHandSide(), prevAsgn.getRightHandSide() };
-    if (!Occurrences.BOTH_SEMANTIC.of(prevDecl.getName()).in(es).isEmpty() || !Is.plainAssignment(then)) {
+    if (Occurrences.BOTH_SEMANTIC.of(prevDecl).existIn(es) || !Is.plainAssignment(then)) {
       if (prevDecl.getInitializer() != null)
         return handleNoPrevDecl(t, r, i, then, prevAsgn);
     } else {
@@ -262,7 +259,7 @@ import org.spartan.utils.Range;
         && prevDecl.getInitializer() != null //
         && i.getElseStatement() == null //
         && !Is.conditional(prevDecl.getInitializer()) //
-        && Occurrences.BOTH_SEMANTIC.of(prevDecl.getName()).in(es).isEmpty()
+        && Occurrences.BOTH_SEMANTIC.of(prevDecl).in(es).isEmpty()
         ;
   }
   private static boolean isOnlyNextAsgnPossible(final Assignment then, final Assignment nextAsgn) {
@@ -270,9 +267,8 @@ import org.spartan.utils.Range;
         && !same(then.getRightHandSide(), nextAsgn.getRightHandSide()) && !same(nextAsgn.getRightHandSide(), then.getRightHandSide());
   }
   private static boolean isOnlyPrevAsgnPossible(final IfStatement i, final Assignment then, final Assignment prevAsgn) {
-    final Expression[] es = { i.getExpression() };
     return prevAsgn != null //
-        && Occurrences.BOTH_SEMANTIC.of(asSimpleName(prevAsgn.getLeftHandSide())).in(es).isEmpty()
+        && Occurrences.BOTH_SEMANTIC.of(asSimpleName(prevAsgn.getLeftHandSide())).in( i.getExpression()).isEmpty()
         && !Is.conditional(prevAsgn.getRightHandSide(), then.getRightHandSide()) //
         && !Is.assignment(prevAsgn.getRightHandSide()) && compatible(prevAsgn, then) && !same(prevAsgn.getRightHandSide(), then.getRightHandSide());
   }
@@ -334,15 +330,15 @@ import org.spartan.utils.Range;
     r.replace(diff.then, newExp, null);
     return true;
   }
-  private static boolean treatAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> stmts) {
+  private static boolean treatAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> ss) {
     detectAssignIfAssign(i);
-    final int where = stmts.indexOf(i);
+    final int where = ss.indexOf(i);
     final Assignment then = Extract.assignment(i.getThenStatement());
     if (then == null || i.getElseStatement() != null || where < 1)
       return false;
-    final Assignment prevAsgn = Extract.assignment(stmts.get(where - 1));
-    final Assignment nextAsgn = where + 1 >= stmts.size() ? null : Extract.assignment(stmts.get(1 + where));
-    final VariableDeclarationFragment prevDecl = findPrevDecl(stmts, where, then, prevAsgn, nextAsgn);
+    final Assignment prevAsgn = Extract.assignment(ss.get(where - 1));
+    final Assignment nextAsgn = where + 1 >= ss.size() ? null : Extract.assignment(ss.get(1 + where));
+    final VariableDeclarationFragment prevDecl = findPrevDecl(ss, where, then, prevAsgn, nextAsgn);
     return tryHandleNextAndPrevAsgnExist(r, i, then, prevAsgn, nextAsgn, prevDecl) //
         || tryHandleOnlyPrevAsgnExist(t, r, i, then, prevAsgn, prevDecl) //
         || tryHandleOnlyNextAsgnExist(t, r, i, then, nextAsgn, prevDecl) //
@@ -404,7 +400,7 @@ import org.spartan.utils.Range;
       r.remove(i, null);
     else {
       final Expression[] es = { nextAsgn.getRightHandSide() };
-      if (prevDecl == null || !Is.plainAssignment(then) || !Occurrences.BOTH_SEMANTIC.of(prevDecl.getName()).in(es).isEmpty())
+      if (prevDecl == null || !Is.plainAssignment(then) || !Occurrences.BOTH_SEMANTIC.of(prevDecl).in(es).isEmpty())
         return handleNoPrevDecl(t, r, i, then, nextAsgn);
       r.replace(prevDecl, makeVarDeclFrag(t, r, (SimpleName) nextAsgn.getLeftHandSide(), nextAsgn.getRightHandSide()), null);
       r.remove(i, null);
