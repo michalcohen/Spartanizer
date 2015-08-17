@@ -68,7 +68,7 @@ public class ELIMINATE_TERNARY {
     private static String[][] cases = Utils.asArray(//
         new String[] { "identical method call", "a ? y.f(b) :y.f(b)", "y.f(b)" }, //
         new String[] { "identical function call", "a ? f(b) :f(b)", "f(b)" }, //
-        new String[] { "identical assignment", "a ? (b=c) :(b=c)", "(b = c)" }, //
+        new String[] { "identical assignment", "a ? (b=c) :(b=c)", "b = c" }, //
         new String[] { "identical increment", "a ? b++ :b++", "b++" }, //
         new String[] { "identical addition", "a ? b+d :b+ d", "b+d" }, //
         null);

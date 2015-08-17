@@ -91,7 +91,7 @@ public class ForwardDeclaration extends Spartanization {
     if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
       final VariableDeclarationStatement nextNVDS = (VariableDeclarationStatement) nextN;
       for (final VariableDeclarationFragment f : (List<VariableDeclarationFragment>) nextNVDS.fragments())
-        if (1 + nextDeclaredIdx == findFirstUse(block, f.getName()) && nextDeclaredIdx == beginingOfDeclarationsIdx)
+        if (nextDeclaredIdx + 1 == findFirstUse(block, f.getName()) && nextDeclaredIdx == beginingOfDeclarationsIdx)
           return true;
     }
     return false;

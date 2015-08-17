@@ -802,7 +802,6 @@ public enum Wrings {
    */
   IF_SHORTEST_FIRST(new Wring.OfIfStatement() {
     @Override Statement _replacement(final IfStatement s) {
-
       final Statement then = s.getThenStatement();
       final Statement elze = s.getElseStatement();
       if (elze == null)
@@ -812,17 +811,13 @@ public enum Wrings {
       if (n1 < n2)
         return null;
       final Expression notConditional = not(s.getExpression());
-      final Statement $ = Subject.pair(elze,then).toIf(notConditional);
+      final Statement $ = Subject.pair(elze, then).toIf(notConditional);
       if (n1 > n2)
         return $;
       assert n1 == n2;
       final int l1 = length(not(notConditional), then);
       final int l2 = length(notConditional, elze);
-      if (l1 < l2)
-        return null;
-      if (l1 > l2)
-        return $;
-      return null;
+      return l1 > l2 ? $ : null;
     }
   }), //
   ;

@@ -100,8 +100,8 @@ public enum Occurrences {
    */
   public Of of(final Expression e) {
     return new Of() {
-      @Override public List<Expression> in(final ASTNode n) {
-        return collect(e, n);
+      @Override public List<Expression> in(final ASTNode... ns) {
+        return collect(e, ns);
       }
     };
   }
@@ -128,24 +128,20 @@ public enum Occurrences {
      * @param n a location in which the search is to be carried out
      * @return a list of occurrences of the captured value in the parameter.
      */
-    public abstract List<Expression> in(ASTNode n);
-
-    public List<VariableDeclarationFragment> in(final Expression[] es) {
-      // TODO Auto-generated method stub
-      return null;
-    }
+    public abstract List<Expression> in(ASTNode... ns);
   }
   /**
    * Lists the required occurrences
    *
    * @param what the expression to search for
-   * @param where the n in which to counted
+   * @param ns the n in which to counted
    * @return the list of uses
    */
-  final List<Expression> collect(final Expression what, final ASTNode where) {
+  final List<Expression> collect(final Expression what, final ASTNode... ns) {
     final List<Expression> $ = new ArrayList<>();
-    for (final ASTVisitor v : collectors($, what))
-      where.accept(v);
+    for (final ASTNode n : ns)
+      for (final ASTVisitor v : collectors($, what))
+        n.accept(v);
     Collections.sort($, new Comparator<Expression>() {
       @Override public int compare(final Expression e1, final Expression e2) {
         return e1.getStartPosition() - e2.getStartPosition();

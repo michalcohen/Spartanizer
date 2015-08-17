@@ -127,12 +127,12 @@ public abstract class Spartanization extends Refactoring {
     return !isSelected(n.getStartPosition());
   }
   private boolean isSelected(final int offset) {
-    return isTextSelected() && offset >= selection.getOffset() && offset < selection.getOffset() + selection.getLength();
+    return isTextSelected() && offset >= selection.getOffset() && offset < selection.getLength() + selection.getOffset();
   }
   protected static boolean isNodeOutsideMarker(final ASTNode n, final IMarker m) {
     try {
       return n.getStartPosition() < ((Integer) m.getAttribute(IMarker.CHAR_START)).intValue()
-          || n.getStartPosition() + n.getLength() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
+          || n.getLength() + n.getStartPosition() > ((Integer) m.getAttribute(IMarker.CHAR_END)).intValue();
     } catch (final CoreException e) {
       return true;
     }
