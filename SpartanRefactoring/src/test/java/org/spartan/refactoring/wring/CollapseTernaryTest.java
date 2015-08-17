@@ -2,10 +2,10 @@ package org.spartan.refactoring.wring;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.Into.c;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Into.c;
 
 import java.util.Collection;
 
@@ -26,7 +26,7 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({ "javadoc","static-method" }) //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class CollapseTernaryTest {
   static final Wring WRING = Wrings.COLLAPSE_TERNARY.inner;

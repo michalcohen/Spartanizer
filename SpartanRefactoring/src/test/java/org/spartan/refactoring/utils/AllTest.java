@@ -1,10 +1,11 @@
 package org.spartan.refactoring.utils;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.Into.i;
+import static org.spartan.refactoring.utils.Into.i;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

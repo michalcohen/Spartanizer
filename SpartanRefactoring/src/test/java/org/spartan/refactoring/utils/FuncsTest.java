@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
@@ -12,8 +13,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.Into.e;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.wring.ExpressionComparator.countNonWhites;
 
 import org.eclipse.jdt.core.dom.InfixExpression;

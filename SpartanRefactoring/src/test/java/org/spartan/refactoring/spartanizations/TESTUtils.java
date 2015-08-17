@@ -23,7 +23,6 @@ import org.spartan.refactoring.wring.Trimmer;
 public enum TESTUtils {
   ;
   static final String WHITES = "(?m)\\s+";
-
   public static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }

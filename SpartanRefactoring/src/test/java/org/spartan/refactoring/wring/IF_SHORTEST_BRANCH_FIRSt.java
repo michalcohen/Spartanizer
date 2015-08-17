@@ -1,7 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.not;
-
 import java.util.Collection;
 
 import org.junit.FixMethodOrder;
@@ -36,7 +34,7 @@ public enum IF_SHORTEST_BRANCH_FIRSt {
         Utils.asArray("No else", "if (a) {;{{;;return b; }}}"), //
         new String[] { "Two statemens are greater than one", //
             "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
-            }, //
+        }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -62,8 +60,7 @@ public enum IF_SHORTEST_BRANCH_FIRSt {
         new String[] { "Two statemens are greater than one", //
             "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
             "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} ", //
-            }, //
-
+        }, //
         null);
     /**
      * Generate test cases for this parameterized class.

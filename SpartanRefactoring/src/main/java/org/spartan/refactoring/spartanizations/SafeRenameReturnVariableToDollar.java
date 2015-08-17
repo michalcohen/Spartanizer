@@ -1,6 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.refactoring.utils.Funcs.getContainerByNodeType;
+import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +24,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
-import static org.spartan.refactoring.utils.Funcs.same;
 
 /**
  * @author Ofir Elmakias <code><Elmakias [at] outlook.com></code> (original)

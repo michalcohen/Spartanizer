@@ -2,10 +2,10 @@ package org.spartan.refactoring.wring;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.hamcrest.OrderingComparison.greaterThan;
 import static org.spartan.refactoring.utils.Funcs.not;
 
 import java.util.Collection;
@@ -18,9 +18,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.internal.matchers.GreaterThan;
-import org.spartan.refactoring.spartanizations.Into;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Into;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
@@ -127,7 +126,7 @@ public class TERNARY_SHORTEST_FIRST {
         new String[] { "Bug of being cyclice", //
             "length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $", //
             "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null",//
-    }, //
+        }, //
         null);
     /**
      * Generate test cases for this parameterized class.

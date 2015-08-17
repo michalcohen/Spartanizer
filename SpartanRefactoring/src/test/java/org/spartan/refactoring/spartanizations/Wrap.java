@@ -41,12 +41,16 @@ public enum Wrap {
       "";
   private static final String PRE_EXPRESSION = PRE_STATEMENT + "   return ";
   private static final String POST_EXPRESSION = ";\n" + POST_STATEMENT;
-  /** Place a wrap around a phrase
+  /**
+   * Place a wrap around a phrase
+   *
    * @param s some program phrase
    * @return the wrapped phrase
    */
   public abstract String on(final String s);
-  /** Remove a wrap from around a phrase
+  /**
+   * Remove a wrap from around a phrase
+   *
    * @param s a wrapped program phrase
    * @return the unwrapped phrase
    */

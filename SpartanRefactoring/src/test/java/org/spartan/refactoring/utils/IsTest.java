@@ -1,7 +1,8 @@
 package org.spartan.refactoring.utils;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.spartan.refactoring.spartanizations.Into.e;
+import static org.spartan.refactoring.utils.Into.e;
 
 import org.junit.Test;
 

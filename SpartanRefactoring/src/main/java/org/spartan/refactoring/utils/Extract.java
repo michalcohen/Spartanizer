@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -119,6 +120,23 @@ public enum Extract {
         if ($.get() == null)
           $.set(i);
         return false;
+      }
+    });
+    return $.get();
+  }
+  public static InfixExpression firstPlus(final ASTNode n) {
+    if (n == null)
+      return null;
+    final Wrapper<InfixExpression> $ = new Wrapper<>();
+    n.accept(new ASTVisitor() {
+      @Override public boolean visit(final InfixExpression e) {
+       if ($.get() != null)
+         return false;
+        if (e.getOperator() == InfixExpression.Operator.PLUS) {
+          $.set(e);
+          return false;
+        }
+        return true;
       }
     });
     return $.get();

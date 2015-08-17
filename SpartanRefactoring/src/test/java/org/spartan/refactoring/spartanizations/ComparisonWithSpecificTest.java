@@ -10,13 +10,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.applicable;
 import static org.spartan.refactoring.spartanizations.ComparisonWithSpecific.withinDomain;
-import static org.spartan.refactoring.spartanizations.Into.e;
-import static org.spartan.refactoring.spartanizations.Into.i;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNotEvenSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertOneOpportunity;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
+import static org.spartan.refactoring.utils.Into.e;
+import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 import static org.spartan.utils.Utils.hasNull;
 

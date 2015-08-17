@@ -1,11 +1,11 @@
 package org.spartan.refactoring.utils;
 
-
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.refactoring.spartanizations.Into.*;
+import static org.spartan.refactoring.utils.Into.e;
+import static org.spartan.refactoring.utils.Into.s;
 
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -34,7 +34,7 @@ import org.spartan.refactoring.utils.Subject.Pair;
   @Test public void assignment() {
     assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator.ASSIGN), iz("a=b"));
     assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator.PLUS_ASSIGN), iz("a+=b"));
-    assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator. RIGHT_SHIFT_UNSIGNED_ASSIGN), iz("a>>>=b"));
+    assertThat(Subject.pair(e("a"), e("b")).to(Assignment.Operator.RIGHT_SHIFT_UNSIGNED_ASSIGN), iz("a>>>=b"));
   }
   @Test public void substractionsDoesntAssociate() {
     assertThat(Subject.pair(e("a-B"), e("c-d")).to(InfixExpression.Operator.MINUS), iz("(a - B) - (c - d)"));
@@ -70,23 +70,23 @@ import org.spartan.refactoring.utils.Subject.Pair;
     assertThat(Subject.operand(e("((a))")).to(PostfixExpression.Operator.DECREMENT), iz("a--"));
   }
   @Test public void operandsVanilla() {
-    assertThat(Subject.operands(e("((a))"),e("b"), e("c")).to(InfixExpression.Operator.PLUS), iz("a+b+c"));
+    assertThat(Subject.operands(e("((a))"), e("b"), e("c")).to(InfixExpression.Operator.PLUS), iz("a+b+c"));
   }
   @Test public void operandsParenthesisLeft() {
-    assertThat(Subject.operands(e("((a+b))"),e("b"), e("c")).to(InfixExpression.Operator.TIMES), iz("(a+b)*b*c"));
+    assertThat(Subject.operands(e("((a+b))"), e("b"), e("c")).to(InfixExpression.Operator.TIMES), iz("(a+b)*b*c"));
   }
   @Test public void operandsParenthesisRight() {
-    assertThat(Subject.operands(e("((a))"),e("b+c"), e("c")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*c"));
+    assertThat(Subject.operands(e("((a))"), e("b+c"), e("c")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*c"));
   }
   @Test public void operandsParenthesisRest() {
-    assertThat(Subject.operands(e("((a))"),e("b+c"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*(c+d)"));
+    assertThat(Subject.operands(e("((a))"), e("b+c"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*(c+d)"));
   }
   @Test public void operandsNoParenthesisRest() {
-    assertThat(Subject.operands(e("((a))"),e("b+c"), e("c+d")).to(InfixExpression.Operator.PLUS), iz("a+b+c+c+d"));
+    assertThat(Subject.operands(e("((a))"), e("b+c"), e("c+d")).to(InfixExpression.Operator.PLUS), iz("a+b+c+c+d"));
   }
   @Test public void makeIfStatement() {
     final Statement s = s("s();");
     assertThat(s, iz("{s();}"));
-    assertThat(Subject.pair(s,s("f();")).toIf(e("a")), iz("if(a)s(); else f();"));
+    assertThat(Subject.pair(s, s("f();")).toIf(e("a")), iz("if(a)s(); else f();"));
   }
 }

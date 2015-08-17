@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.utils;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
-import org.spartan.refactoring.utils.As;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -24,7 +23,6 @@ import org.spartan.refactoring.utils.As;
 public enum Into {
   ;
   static final String WHITES = "(?m)\\s+";
-
   /**
    * Convert a given {@link String} into an {@link ConditionalExpression}, or
    * fail the current test, if such a conversion is not possible
@@ -109,5 +107,4 @@ public enum Into {
   public static Assignment a(final String expression) {
     return (Assignment) e(expression);
   }
-
 }

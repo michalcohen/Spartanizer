@@ -93,19 +93,16 @@ public abstract class FileTestUtils {
       $.delete($.indexOf(testKeyword), $.length());
     return $;
   }
-
   private static Spartanization error(final String message, final Class<?> c, final Throwable e) {
     System.err.println(message + " '" + c.getCanonicalName() + "' " + e.getMessage());
     return null;
   }
-
   /**
    * Makes an Input file out of a Test file
    */
   protected static File makeInFile(final File f) {
     return createTempFile(deleteTestKeyword(As.stringBuilder(f)), TestDirection.In, f);
   }
-
   /**
    * Makes an Output file out of a Test file
    */
@@ -115,7 +112,6 @@ public abstract class FileTestUtils {
       $.delete(0, $.indexOf(testKeyword) + testKeyword.length() + ($.indexOf("\r\n") > 0 ? 2 : 1));
     return createTempFile($, TestDirection.Out, f);
   }
-
   /**
    * Creates a temporary file - including lazy deletion.
    */
@@ -133,6 +129,7 @@ public abstract class FileTestUtils {
     assertNotNull($);
     return (Spartanization) $;
   }
+
   /**
    ** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
@@ -156,6 +153,7 @@ public abstract class FileTestUtils {
     }
     abstract Object[] makeCase(File d);
   }
+
   /**
    ** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
@@ -182,6 +180,7 @@ public abstract class FileTestUtils {
     }
     abstract Object[] makeCase(final Spartanization s, final File d, final File f, final String name);
   }
+
   /**
    * java.lang.AssertionError:
    * org.spartan.refacoring.spartanizations.ExtractMethod: class not found.
@@ -272,6 +271,7 @@ public abstract class FileTestUtils {
      */
     public abstract void go(List<Object[]> $, final File f);
   }
+
   /* Auxiliary function for test suite inherited classes */
   enum TestDirection {
     In, Out
