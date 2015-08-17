@@ -8,6 +8,7 @@ import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.utils.Into.e;
 
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.Test;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class PlantTest {
@@ -25,5 +26,12 @@ import org.junit.Test;
     assertThat(plus.toString(), Is.notString(plus), is(true));
     assertThat(e.toString(), Is.notString(plus), is(true));
   }
+  @Test public void piantIntoLess() {
+    final Expression e1 = Into.e("a + 2");
+    final Expression e2 = Into.e("b");
+    final Expression e = Subject.pair(e1, e2).to(InfixExpression.Operator.LESS);
+    assertThat(e, iz("a+2<b"));
+  }
+
 
 }

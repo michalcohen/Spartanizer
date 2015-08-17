@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Plant;
 import org.spartan.utils.Range;
 
 /**

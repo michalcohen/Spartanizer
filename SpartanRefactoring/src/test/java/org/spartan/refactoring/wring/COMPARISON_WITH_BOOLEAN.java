@@ -99,10 +99,10 @@ public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
     @Override @Test public void inputIsInfixExpression() {
       assertNotNull(asInfixExpression());
     }
-    @Test public void tryToSortTwice() {
+    @Test public void sortTwice() {
       final List<Expression> operands = All.operands(flatten(asInfixExpression()));
-      Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
+      Wrings.sort(operands, ExpressionComparator.ADDITION);
+      assertFalse(Wrings.sort(operands, ExpressionComparator.ADDITION));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));

@@ -119,15 +119,15 @@ public class MULTIPLICATION_SORTER extends AbstractWringTest {
       final InfixExpression e = asInfixExpression();
       assertTrue(e.getOperator() == Operator.TIMES);
     }
-    @Test public void tryToSort() {
+    @Test public void sort() {
       final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.tryToSort(All.operands(flatten(e)), COMPARATOR));
+      assertFalse(Wrings.sort(All.operands(flatten(e)), COMPARATOR));
     }
-    @Test public void tryToSortTwice() {
+    @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
-      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
-      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
+      assertFalse(Wrings.sort(operands, COMPARATOR));
+      assertFalse(Wrings.sort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
@@ -175,20 +175,20 @@ public class MULTIPLICATION_SORTER extends AbstractWringTest {
       final InfixExpression e = asInfixExpression();
       assertTrue(e.getOperator() == Operator.TIMES);
     }
-    @Test public void tryToSort() {
+    @Test public void sort() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
-      final boolean tryToSort = Wrings.tryToSort(operands, COMPARATOR);
+      final boolean sort = Wrings.sort(operands, COMPARATOR);
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
           "After: " + operands + "\n", //
-          tryToSort, is(true));
+          sort, is(true));
     }
-    @Test public void tryToSortTwice() {
+    @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
-      assertTrue(Wrings.tryToSort(operands, COMPARATOR));
-      assertFalse(Wrings.tryToSort(operands, COMPARATOR));
+      assertTrue(Wrings.sort(operands, COMPARATOR));
+      assertFalse(Wrings.sort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();

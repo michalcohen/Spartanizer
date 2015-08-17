@@ -68,7 +68,7 @@ public class RefitTest {
     assertThat(operands.size(), is(2));
     assertThat(operands.get(0).toString(), is("1"));
     assertThat(operands.get(1).toString(), is("2 * 3"));
-    assertTrue(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
+    assertTrue(Wrings.sort(operands, ExpressionComparator.ADDITION));
     assertThat(operands.get(0).toString(), is("2 * 3"));
     assertThat(operands.get(1).toString(), is("1"));
     final InfixExpression refit = Subject.operands(operands).to(e.getOperator());

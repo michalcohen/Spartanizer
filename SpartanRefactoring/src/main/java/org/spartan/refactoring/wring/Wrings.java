@@ -687,18 +687,20 @@ public enum Wrings {
     @Override public String toString() {
       return "Addition sorter";
     }
-    private boolean tryToSort(final InfixExpression e) {
-      return tryToSort(All.operands(flatten(e)));
+    private boolean sort(final InfixExpression e) {
+      return sort(All.operands(flatten(e)));
     }
-    private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
+    private boolean sort(final List<Expression> es) {
+      return Wrings.sort(es, ExpressionComparator.ADDITION);
     }
     @Override boolean _eligible(final InfixExpression e) {
-      return Is.notString(e) && tryToSort(e);
+      return Is.notString(e) && sort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !Are.notString(operands) || !tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator());
+      final boolean notString = Is.notString(e);
+      final boolean canSort = sort(operands);
+      return !notString || !canSort ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return e.getOperator() == PLUS;
@@ -718,18 +720,18 @@ public enum Wrings {
     @Override public String toString() {
       return "pseudo addition sorter";
     }
-    private boolean tryToSort(final InfixExpression e) {
-      return tryToSort(All.operands(flatten(e)));
+    private boolean sort(final InfixExpression e) {
+      return sort(All.operands(flatten(e)));
     }
-    private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, ExpressionComparator.ADDITION);
+    private boolean sort(final List<Expression> es) {
+      return Wrings.sort(es, ExpressionComparator.ADDITION);
     }
     @Override boolean _eligible(final InfixExpression e) {
-      return tryToSort(e);
+      return sort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator());
+      return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), OR);
@@ -747,18 +749,18 @@ public enum Wrings {
     @Override public String toString() {
       return "Multiplication sorter";
     }
-    private boolean tryToSort(final InfixExpression e) {
-      return tryToSort(All.operands(flatten(e)));
+    private boolean sort(final InfixExpression e) {
+      return sort(All.operands(flatten(e)));
     }
-    private boolean tryToSort(final List<Expression> es) {
-      return Wrings.tryToSort(es, ExpressionComparator.MULTIPLICATION);
+    private boolean sort(final List<Expression> es) {
+      return Wrings.sort(es, ExpressionComparator.MULTIPLICATION);
     }
     @Override boolean _eligible(final InfixExpression e) {
-      return tryToSort(e);
+      return sort(e);
     }
     @Override Expression _replacement(final InfixExpression e) {
       final List<Expression> operands = All.operands(flatten(e));
-      return !tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator());
+      return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
     @Override boolean scopeIncludes(final InfixExpression e) {
       return in(e.getOperator(), TIMES);
@@ -945,7 +947,7 @@ public enum Wrings {
         return w.inner;
     return null;
   }
-  public static boolean tryToSort(final List<Expression> es, final java.util.Comparator<Expression> c) {
+  public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
     for (int i = 0, size = es.size(); i < size; i++)

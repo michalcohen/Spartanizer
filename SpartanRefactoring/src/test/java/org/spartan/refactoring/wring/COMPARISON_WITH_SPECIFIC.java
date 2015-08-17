@@ -228,16 +228,16 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
     @Override @Test public void inputIsInfixExpression() {
       assertNotNull(asInfixExpression());
     }
-    @Test public void tryToSortTwiceADDITION() {
+    @Test public void sortTwiceADDITION() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = All.operands(flatten(e));
-      Wrings.tryToSort(operands, ExpressionComparator.ADDITION);
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.ADDITION));
+      Wrings.sort(operands, ExpressionComparator.ADDITION);
+      assertFalse(Wrings.sort(operands, ExpressionComparator.ADDITION));
     }
-    @Test public void tryToSortTwiceMULTIPLICATION() {
+    @Test public void sortTwiceMULTIPLICATION() {
       final List<Expression> operands = All.operands(flatten(asInfixExpression()));
-      Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION);
-      assertFalse(Wrings.tryToSort(operands, ExpressionComparator.MULTIPLICATION));
+      Wrings.sort(operands, ExpressionComparator.MULTIPLICATION);
+      assertFalse(Wrings.sort(operands, ExpressionComparator.MULTIPLICATION));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
