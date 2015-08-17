@@ -45,10 +45,10 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.All;
-import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Plant;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 
@@ -155,7 +155,6 @@ public enum Wrings {
     @Override public final String toString() {
       return "DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE(" + super.toString() + ")";
     }
-
     @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
       if (f.getInitializer() != null)
         return null;
@@ -581,7 +580,7 @@ public enum Wrings {
       return " ELIMINATE_TERNARY (" + super.toString() + ")";
     }
     @Override Expression _replacement(final ConditionalExpression e) {
-      return duplicate(e.getThenExpression());
+      return Plant.zis(Extract.core(e.getThenExpression())).into(e.getParent());
     }
     @Override boolean scopeIncludes(final ConditionalExpression e) {
       return e != null && same(e.getThenExpression(), e.getElseExpression());

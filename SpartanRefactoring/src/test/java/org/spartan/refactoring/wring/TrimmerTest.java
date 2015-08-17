@@ -788,8 +788,14 @@ public class TrimmerTest {
   @Test public void pushdownTernaryIdenticalAddition() {
     assertSimplifiesTo("a ? b+d :b+ d", "b+d");
   }
+  @Test public void pushdownTernaryIdenticalAdditionWtihParenthesis() {
+    assertSimplifiesTo("a ? (b+d) :(b+ d)", "b+d");
+  }
   @Test public void pushdownTernaryIdenticalAssignment() {
     assertSimplifiesTo("a ? (b=c) :(b=c)", "b = c");
+  }
+  @Test public void pushdownTernaryIdenticalAssignmentVariant() {
+    assertSimplifiesTo("a ? (b=c) :(b=d)", "b=a?c:d");
   }
   @Test public void pushdownTernaryIdenticalFunctionCall() {
     assertSimplifiesTo("a ? f(b) :f(b)", "f(b)");
@@ -947,12 +953,23 @@ public class TrimmerTest {
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
         "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;",
-        "if (!(s.equals(0xDEAD))) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
+        "if (!s.equals(0xDEAD)) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
   }
   @Test public void shortestIfBranchFirst01() {
     assertConvertsTo(
-        "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;  return res;   else {    return 8; }",
-        "if (!(s.equals(0xDEAD))) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
+        "" //
+            + "if (s.equals(0xDEAD))   {\n" //
+            + "  int res=0; "//
+            + "  for (int i=0; i<s.length(); ++i)     " //
+            + "  if (s.charAt(i)=='a')      " //
+            + "    res += 2;    "//
+            + "} " //
+            + "else " //
+            + " if (s.charAt(i)=='d') " //
+            + "   res -= 1;  " //
+            + "return res;  " //
+            ,
+        "if (!s.equals(0xDEAD))) { return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
   }
   @Test public void shortestIfBranchFirst02() {
     assertConvertsTo(
@@ -1025,10 +1042,10 @@ public class TrimmerTest {
         "  int a=0;   if (a <= 0){    a = 5;    return b;    int b=9;    b*=b;    return 6;");
   }
   @Test public void shortestOperand01() {
-    assertSimplifiesTo("x + y > z; ", "  z < x + y");
+    assertSimplifiesTo("x + y > z", "  z < x + y");
   }
   @Test public void shortestOperand02() {
-    assertSimplifiesTo("k = k + 4;   if (2 * 6 + 4 == k) return true; ", " k = k + 4;   if (k == 2 * 6 + 4) return true; ");
+    assertConvertsTo("k = k + 4;   if (2 * 6 + 4 == k) return true; ", " k = k + 4;   if (k == 2 * 6 + 4) return true; ");
   }
   @Test public void shortestOperand03() {
     assertSimplifiesTo(//
