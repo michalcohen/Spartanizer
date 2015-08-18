@@ -39,7 +39,6 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
-import org.spartan.refactoring.utils.Occurrences.Of;
 
 /**
  * A utility class for finding occurrences of an {@link Expression} in an

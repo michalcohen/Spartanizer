@@ -251,7 +251,6 @@ import org.spartan.utils.Range;
   }
   private static boolean isNoNextNoPrevAsgnPossible(final IfStatement i, final Assignment then, final Assignment prevAsgn, final Assignment nextAsgn,
       final VariableDeclarationFragment prevDecl) {
-    final Expression[] es = { i.getExpression(), then.getRightHandSide() };
     return prevAsgn == null //
         && nextAsgn == null //
         && !Is.conditional(then.getRightHandSide()) //
@@ -259,7 +258,7 @@ import org.spartan.utils.Range;
         && prevDecl.getInitializer() != null //
         && i.getElseStatement() == null //
         && !Is.conditional(prevDecl.getInitializer()) //
-        && Occurrences.BOTH_SEMANTIC.of(prevDecl).in(es).isEmpty()
+        && Occurrences.BOTH_SEMANTIC.of(prevDecl).in(i.getExpression(), then.getRightHandSide()).isEmpty()
         ;
   }
   private static boolean isOnlyNextAsgnPossible(final Assignment then, final Assignment nextAsgn) {
@@ -270,7 +269,9 @@ import org.spartan.utils.Range;
     return prevAsgn != null //
         && Occurrences.BOTH_SEMANTIC.of(asSimpleName(prevAsgn.getLeftHandSide())).in( i.getExpression()).isEmpty()
         && !Is.conditional(prevAsgn.getRightHandSide(), then.getRightHandSide()) //
-        && !Is.assignment(prevAsgn.getRightHandSide()) && compatible(prevAsgn, then) && !same(prevAsgn.getRightHandSide(), then.getRightHandSide());
+        && !Is.assignment(prevAsgn.getRightHandSide()) //
+        && compatible(prevAsgn, then) //
+        && !same(prevAsgn.getRightHandSide(), then.getRightHandSide());
   }
   private static ReturnStatement nextStatement(final List<Statement> ns, final int n) {
     return n + 1 >= ns.size() ? null : asReturnStatement(ns.get(n + 1));
