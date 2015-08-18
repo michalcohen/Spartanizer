@@ -68,27 +68,12 @@ public class ComparisonWithSpecificTest {
     final InfixExpression i = i("a == this");
     assertEquals(ASTNode.INFIX_EXPRESSION, i.getNodeType());
   }
-  @Test public void callIsSpecific() {
-    Is.constant(e("2+2"));
-  }
-  @Test public void callIsSpecificFalse() {
-    assertFalse(Is.constant(e("2+2")));
-  }
-  @Test public void callIsSpecificTrue() {
-    assertTrue(Is.constant(e("this")));
-  }
-  @Test public void canMakeExpression() {
-    e("2+2");
-  }
-  @Test public void cisSpecificFalse1() {
-    assertFalse(Is.constant(e("a")));
-  }
+
+
   @Test public void getNodeType() {
     assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
   }
-  @Test public void isOneOf() {
-    assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
-  }
+
   @Test public void noOpportunity0() {
     assertNoOpportunity(new ShortestOperand(), P0);
   }
@@ -188,25 +173,7 @@ public class ComparisonWithSpecificTest {
     final int countOpportunities = findOpportunities.size();
     assertEquals(u.toString(), 1, countOpportunities);
   }
-  @Test public void t3() {
-    assertFalse(ShortestOperand.outOfScope(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
-  }
-  @Test public void t4() {
-    assertFalse(ShortestOperand.outOfScope(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
-  }
-  @Test public void t5() {
-    assertFalse(ShortestOperand.outOfScope(i(" 6 - 7 < 2 + 1")));
-  }
-  @Test public void t8() {
-    final InfixExpression e = i("1 + 2  + 3 < 3 ");
-    assertTrue(ShortestOperand.outOfScope(e));
-  }
-  @Test public void t9() {
-    final InfixExpression e = i("1 + 2  + 3 < 3 -4");
-    assertNotNull(e);
-    assertFalse(hasNull(e.getLeftOperand(), e.getRightOperand()));
-    assertFalse(ComparisonWithSpecific.withinDomain(e));
-  }
+
   @Test public void withinDomainFalse0() {
     assertFalse(withinDomain(i("13455643294 < 22")));
   }

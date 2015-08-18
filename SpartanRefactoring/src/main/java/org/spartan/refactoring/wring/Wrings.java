@@ -527,7 +527,7 @@ public enum Wrings {
    */
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
-      return in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
+      return !e.hasExtendedOperands()&& in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     }
     private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
       return literal.booleanValue() == (e.getOperator() == EQUALS);
@@ -556,7 +556,7 @@ public enum Wrings {
    */
   COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
     @Override public boolean scopeIncludes(final InfixExpression e) {
-      return Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+      return  !e.hasExtendedOperands()&& Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
     @Override public final String toString() {
       return "COMPARISON_WITH_SPECIFIC (" + super.toString() + ")";
@@ -575,6 +575,34 @@ public enum Wrings {
       return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
     }
   }), //
+  /**
+   * A {@link Wring} that reorder comparisons so that the specific value is
+   * placed on the right. Specific value means a literal, or any of the two
+   * keywords <code><b>this</b></code> or <code><b>null</b></code>.
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   */
+  COMPARISON_SORTER(new Wring.OfInfixExpression() {
+    @Override public boolean scopeIncludes(final InfixExpression e) {
+      return !e.hasExtendedOperands() && Is.comparison(e) && ExpressionComparator.PRUDENT.compare(e.getLeftOperand(), e.getRightOperand()) > 0;
+    }
+    @Override public final String toString() {
+      return "COMPARISON_SORTER (" + super.toString() + ")";
+    }
+    @Override boolean _eligible(final InfixExpression e) {
+      return true;
+    }
+    @Override Expression _replacement(final InfixExpression e) {
+      return Subject.pair(e.getRightOperand(),e.getLeftOperand()).to(flip(e.getOperator()));
+    }
+  }), //
+  /**
+   * A {@link Wring} to eliminate a ternary in which both branches are identical
+   *
+   * @author Yossi Gil
+   * @since 2015-07-17
+   */
   ELIMINATE_TERNARY(new Wring.OfConditionalExpression() {
     @Override public final String toString() {
       return " ELIMINATE_TERNARY (" + super.toString() + ")";

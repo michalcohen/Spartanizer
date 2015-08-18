@@ -1,4 +1,4 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
 
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.wring.ExpressionComparator;
 
 /**
  * Test class for {@link ExpressionComparator}
@@ -21,6 +20,16 @@ import org.spartan.refactoring.wring.ExpressionComparator;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class ExpressionComparatorTest {
+  @Test public void alphabeticalCompare() {
+    final Expression e1 = e("1+2");
+    final Expression e2 = e("6+7");
+    assertThat(ExpressionComparator.alphabeticalCompare(e1, e2), lessThan(0));
+  }
+  @Test public void characterCompare() {
+    final Expression e1 = e("1+2");
+    final Expression e2 = e("6+7");
+    assertThat(ExpressionComparator.characterCompare(e1, e2), is(0));
+  }
   @Test public void literalAndProductAddition() {
     final Expression e1 = e("1");
     final Expression e2 = e("2*3");
@@ -31,6 +40,11 @@ public class ExpressionComparatorTest {
     final Expression e2 = e("2*3");
     assertThat(ExpressionComparator.MULTIPLICATION.compare(e1, e2), lessThan(0));
   }
+  @Test public void literalCompare() {
+    final Expression e1 = e("1+2");
+    final Expression e2 = e("6+7");
+    assertThat(ExpressionComparator.literalCompare(e1, e2), is(0));
+  }
   @Test public void longLiteralShortLiteralAddition() {
     final Expression e1 = e("1");
     final Expression e2 = e("12");
@@ -40,6 +54,16 @@ public class ExpressionComparatorTest {
     final Expression e1 = e("1");
     final Expression e2 = e("12");
     assertThat(ExpressionComparator.MULTIPLICATION.compare(e1, e2), lessThan(0));
+  }
+  @Test public void nodesCompare() {
+    final Expression e1 = e("1+2");
+    final Expression e2 = e("6+7");
+    assertThat(ExpressionComparator.nodesCompare(e1, e2), is(0));
+  }
+  @Test public void twoExpression() {
+    final Expression e1 = e("1+2");
+    final Expression e2 = e("6+7");
+    assertThat(ExpressionComparator.ADDITION.compare(e1, e2), lessThan(0));
   }
   @Test public void twoFunctionAddition() {
     assertThat(ExpressionComparator.ADDITION.compare(e("f(a,b,c)"), e("f(a,b,c)")), is(0));

@@ -74,7 +74,7 @@ public class InOutTest {
    * instance
    */
   @Test public void go() {
-    assertNotNull("Cannot instantiate Spartanization object", spartanization);
+    assertNotNull("Cannot instantiate spartanization object", spartanization);
     go(spartanization, input, output);
   }
 }

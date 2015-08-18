@@ -29,6 +29,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.spartanizations.ComparisonWithSpecific;
+import org.spartan.refactoring.spartanizations.ShortestOperand;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
@@ -952,24 +954,32 @@ public class TrimmerTest {
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
         "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;",
-        "if (!s.equals(0xDEAD)) {   return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
+        "if(!s.equals(0xDEAD))if(s.charAt(i)=='d')res-=1;else{int res=0;for(int i=0;i<s.length();++i)if(s.charAt(i)=='a')res+=2;}");
   }
-
   @Test public void shortestIfBranchFirst01() {
-    assertConvertsTo(
-        "" //
-            + "if (s.equals(0xDEAD))   {\n" //
-            + "  int res=0; "//
-            + "  for (int i=0; i<s.length(); ++i)     " //
-            + "  if (s.charAt(i)=='a')      " //
-            + "    res += 2;    "//
-            + "} " //
-            + "else " //
-            + " if (s.charAt(i)=='d') " //
-            + "   res -= 1;  " //
-            + "return res;  " //
-            ,
-        "if (!s.equals(0xDEAD))) { return 8;    int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d') res -= 1;");
+    assertConvertsTo("" //
+        + "if (s.equals(0xDEAD))   {\n" //
+        + "  int res=0; "//
+        + "  for (int i=0; i<s.length(); ++i)     " //
+        + "  if (s.charAt(i)=='a')      " //
+        + "    res += 2;    "//
+        + "} " //
+        + "else " //
+        + " if (s.charAt(i)=='d') " //
+        + "   res -= 1;  " //
+        + "return res;  " //
+        ,
+        ""//
+            + "if (!s.equals(0xDEAD))" //
+            + " if(s.charAt(i)=='d')" //
+            + " res-=1;" //
+            + "else {"//
+            + " int res=0;" //
+            + "  for(int i=0;i<s.length();++i)" //
+            + "   if(s.charAt(i)=='a')"//
+            + "     res+=2;" //
+            + "}"//
+            + "return res;");
   }
   @Test public void shortestIfBranchFirst02() {
     assertConvertsTo(
@@ -1042,7 +1052,7 @@ public class TrimmerTest {
         "  int a=0;   if (a <= 0){    a = 5;    return b;    int b=9;    b*=b;    return 6;");
   }
   @Test public void shortestOperand01() {
-    assertSimplifiesTo("x + y > z", "  z < x + y");
+    assertSimplifiesTo("x + y > z", "z < x + y");
   }
   @Test public void shortestOperand02() {
     assertConvertsTo("k = k + 4;   if (2 * 6 + 4 == k) return true; ", " k = k + 4;   if (k == 2 * 6 + 4) return true; ");
@@ -1228,6 +1238,24 @@ public class TrimmerTest {
   @Test public void simplifyLogicalNegationONested() {
     assertSimplifiesTo("!((a || b == c) && (d || !(!!c)))", "!a && b != c || !d && c");
   }
+  @Test public void sortAddition1() {
+    assertSimplifiesTo("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1", "1+2 <3&4+7>1+2||6-7<1+2");
+  }
+  @Test public void sortAddition2() {
+    assertNoChange(" 6 - 7 < 1 + 2");
+  }
+  @Test public void sortAddition3() {
+    assertSimplifiesTo("1+a", "a+1");
+  }
+  @Test public void sortConstantMultiplication() {
+    assertSimplifiesTo("a*2", "2*a");
+  }
+  @Test public void sortAddition4() {
+    assertSimplifiesTo("a + 11 + 2 < 3 & 7 + 4 > 2 + 1", "a + 2 + 11 < 3 & 4+7  >1+2");
+  }
+  @Test public void sortAddition5() {
+    assertSimplifiesTo("1 + 2  + 3 + a < 3 -4", "a + 1 + 2 + 3 < 3-4");
+  }
   @Test public void ternarize01() {
     assertConvertsTo("String res = s;   if (s.equals(532)==true)    res = s + 0xABBA;   else    res = \"spam\";   System.out.println(res); ",
         "  String res = (s.equals(532)==true ? s + 0xABBA : \"spam\");   System.out.println(res); ");
@@ -1307,14 +1335,13 @@ public class TrimmerTest {
     assertNoChange("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
   }
   @Test public void ternarize22test() {
-    assertConvertsTo(
-"    int a=0;\n" + //
-"    if (s.equals(\"yada\")){\n" + //
-"      System.console();\n" + //
-"    } else {\n" + //
-"      a=3;\n" + //
-"    }\n" + //
-"","int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
+    assertConvertsTo("    int a=0;\n" + //
+        "    if (s.equals(\"yada\")){\n" + //
+        "      System.console();\n" + //
+        "    } else {\n" + //
+        "      a=3;\n" + //
+        "    }\n" + //
+        "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void ternarize23() {
     assertSimplifiesTo("return 0;  }  public int y(int b){   return 1;  public void yada(final String s) {   int a=0;   if (s.equals(532)){    a+=y(2)+10;    a+=r(3)-6; ",

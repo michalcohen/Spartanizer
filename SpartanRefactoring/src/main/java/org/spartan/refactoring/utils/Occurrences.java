@@ -53,7 +53,7 @@ public enum Occurrences {
    * counts semantic (multiple uses for loops) uses of an expression
    */
   USES_SEMANTIC {
-    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
+    @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(semanticalUsesCollector(into, e));
     }
   },
@@ -61,7 +61,7 @@ public enum Occurrences {
    * counts lexical (single use for loops) uses of an expression
    */
   USES_LEXICAL {
-    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
+    @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(lexicalUsesCollector(into, e));
     }
   },
@@ -69,7 +69,7 @@ public enum Occurrences {
    * counts assignments of an expression
    */
   ASSIGNMENTS {
-    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
+    @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(definitionsCollector(into, e));
     }
   },
@@ -78,7 +78,7 @@ public enum Occurrences {
    * expression
    */
   BOTH_SEMANTIC {
-    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
+    @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(semanticalUsesCollector(into, e), definitionsCollector(into, e));
     }
   },
@@ -87,7 +87,7 @@ public enum Occurrences {
    * expression
    */
   BOTH_LEXICAL {
-    @Override ASTVisitor[] collectors(final List<Expression> into, final Expression e) {
+    @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(lexicalUsesCollector(into, e), definitionsCollector(into, e));
     }
   };
@@ -293,7 +293,7 @@ public enum Occurrences {
   final List<Expression> collect(final Expression what, final ASTNode... ns) {
     final List<Expression> $ = new ArrayList<>();
     for (final ASTNode n : ns)
-      for (final ASTVisitor v : collectors($, what))
+      for (final ASTVisitor v : collectors(what, $))
         n.accept(v);
     Collections.sort($, new Comparator<Expression>() {
       @Override public int compare(final Expression e1, final Expression e2) {
@@ -302,7 +302,7 @@ public enum Occurrences {
     });
     return $;
   }
-  abstract ASTVisitor[] collectors(final List<Expression> into, final Expression e);
+  abstract ASTVisitor[] collectors(final Expression e, final List<Expression> into);
   /**
    * An auxiliary class which makes it possible to use an easy invocation
    * sequence for the various offerings of the containing class. This class

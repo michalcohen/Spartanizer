@@ -1,5 +1,9 @@
 package org.spartan.refactoring.utils;
 
+import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
+import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.refactoring.utils.Into.e;
@@ -29,6 +33,15 @@ public class IsTest {
   @Test public void booleanLiteralTrueOnTrue() {
     assertTrue(Is.booleanLiteral(e("true")));
   }
+  @Test public void callIsSpecificTrue() {
+    assertTrue(Is.constant(e("this")));
+  }
+  @Test public void canMakeExpression() {
+    e("2+2");
+  }
+  @Test public void isConstantFalse() {
+    assertFalse(Is.constant(e("a")));
+  }
   @Test public void nonnAssociative() {
     assertFalse(Is.nonAssociative(e("1")));
     assertFalse(Is.nonAssociative(e("-1")));
@@ -56,6 +69,9 @@ public class IsTest {
   }
   @Test public void sideEffectArray3() {
     assertFalse(Is.sideEffectFree(e("new int[] {12,13, i++}")));
+  }
+  @Test public void isOneOf() {
+    assertTrue(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION));
   }
   @Test public void sideEffectArray4() {
     assertFalse(Is.sideEffectFree(e("new int[f()]")));
