@@ -1,10 +1,17 @@
 package org.spartan.refactoring.wring;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.utils.Utils.removeDuplicates;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -16,7 +23,13 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.spartanizations.TESTUtils;
+import org.spartan.refactoring.utils.As;
 import org.spartan.utils.Range;
 
 /**
@@ -31,6 +44,30 @@ public class Trimmer extends Spartanization {
     r.pruneIncluders(rs);
     rs.add(r);
     return true;
+  }
+  public static String fixedPoint(final String from) {
+    final Document d = new Document(from);
+    for (;;) {
+      final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
+      final AST t = u.getAST();
+      final ASTRewrite r = ASTRewrite.create(t);
+      new Trimmer().fillRewrite(r, t, u, null);
+      try {
+        final TextEdit e = r.rewriteAST();
+        if (e.hasChildren())
+          break;
+        try {
+          e.apply(d);
+        } catch (MalformedTreeException | BadLocationException x) {
+          x.printStackTrace();
+          break;
+        }
+      } catch (JavaModelException | IllegalArgumentException x) {
+        x.printStackTrace();
+        break;
+      }
+    }
+    return d.get();
   }
   /**
    * Tries to union the given range with one of the elements inside the given

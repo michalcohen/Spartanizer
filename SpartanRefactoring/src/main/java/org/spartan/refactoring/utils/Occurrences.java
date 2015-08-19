@@ -49,25 +49,19 @@ import org.eclipse.jdt.core.dom.WhileStatement;
  * @since 2013/07/01
  */
 public enum Occurrences {
-  /**
-   * counts semantic (multiple uses for loops) uses of an expression
-   */
+  /** collects semantic (multiple uses for loops) uses of an expression */
   USES_SEMANTIC {
     @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(semanticalUsesCollector(into, e));
     }
   },
-  /**
-   * counts lexical (single use for loops) uses of an expression
-   */
+  /** collects lexical (single use for loops) uses of an expression */
   USES_LEXICAL {
     @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(lexicalUsesCollector(into, e));
     }
   },
-  /**
-   * counts assignments of an expression
-   */
+  /** collects assignments of an expression */
   ASSIGNMENTS {
     @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(definitionsCollector(into, e));

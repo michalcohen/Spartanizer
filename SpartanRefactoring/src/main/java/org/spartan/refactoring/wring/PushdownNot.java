@@ -53,25 +53,29 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
       operands.add(not(e));
     return Subject.operands(operands).to(conjugate(inner.getOperator()));
   }
-  static Expression perhapsDoubleNegation(final Expression inner) {
-    return perhapsDoubleNegation(asNot(inner));
+  static Expression perhapsDoubleNegation(final Expression e) {
+    return perhapsDoubleNegation(asNot(e));
   }
-  static Expression perhapsDoubleNegation(final PrefixExpression inner) {
-    return inner == null ? null : inner.getOperand();
+  static Expression perhapsDoubleNegation(final PrefixExpression e) {
+    return e == null ? null : tryToSimplify(core(e.getOperand()));
   }
-  static Expression perhapsNotOfLiteral(final Expression inner) {
-    return !Is.booleanLiteral(inner) ? null : notOfLiteral(asBooleanLiteral(inner));
+  private static Expression tryToSimplify(final Expression e) {
+    final Expression $ = pushdownNot(asNot(e));
+    return $ != null ? $ : e;
   }
-  static Expression pushdownNot(final Expression inner) {
+  static Expression perhapsNotOfLiteral(final Expression e) {
+    return !Is.booleanLiteral(e) ? null : notOfLiteral(asBooleanLiteral(e));
+  }
+  static Expression pushdownNot(final Expression e) {
     Expression $;
-    return ($ = perhapsNotOfLiteral(inner)) != null//
-        || ($ = perhapsDoubleNegation(inner)) != null//
-        || ($ = perhapsDeMorgan(inner)) != null//
-        || ($ = perhapsComparison(inner)) != null //
-        ? $ : null;
+    return ($ = perhapsNotOfLiteral(e)) != null//
+        || ($ = perhapsDoubleNegation(e)) != null//
+        || ($ = perhapsDeMorgan(e)) != null//
+        || ($ = perhapsComparison(e)) != null //
+            ? $ : null;
   }
-  static Expression comparison(final InfixExpression inner) {
-    return Subject.pair(inner.getLeftOperand(), inner.getRightOperand()).to(negate(inner.getOperator()));
+  static Expression comparison(final InfixExpression e) {
+    return Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(negate(e.getOperator()));
   }
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(core(e.getOperand()));

@@ -590,9 +590,6 @@ public enum Wrings {
     @Override public final String toString() {
       return "COMPARISON_SORTER (" + super.toString() + ")";
     }
-    @Override boolean _eligible(final InfixExpression e) {
-      return true;
-    }
     @Override Expression _replacement(final InfixExpression e) {
       return Subject.pair(e.getRightOperand(),e.getLeftOperand()).to(flip(e.getOperator()));
     }

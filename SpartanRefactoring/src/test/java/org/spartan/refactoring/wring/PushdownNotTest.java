@@ -33,7 +33,7 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class PushdowNotTest {
+public class PushdownNotTest {
   /** The {@link Wring} under test */
   static final Wring WRING = Wrings.PUSHDOWN_NOT.inner;
   @Test public void notOfFalse() {
@@ -107,6 +107,10 @@ public class PushdowNotTest {
         Utils.asArray("not of wrapped OR", "!((a) || b || c)", "!a && !b && !c"), //
         Utils.asArray("not of true", "!true", "false"), //
         Utils.asArray("not of true", "!!true", "true"), //
+        Utils.asArray("Mutliple not" ,"!(!d || !!!c)", "d && c"), //
+        Utils.asArray("Mutliple not parenthesis" ,"!(!(d) || !!!c)", "d && c"), //
+        Utils.asArray("Mutliple not parenthesis" ,"!(!(d) || ((!(!(!(((c))))))))", "d && c"), //
+        Utils.asArray("Nested not" ,"!(!(a || b))", "a||b"), //
         null);
     /**
      * Generate test cases for this parameterized class.

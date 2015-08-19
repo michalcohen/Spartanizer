@@ -46,6 +46,8 @@ public class DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE {
         Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
         Utils.asArray("Simple if return", "if (a) return b; else a();"), //
         Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"), //
+        Utils.asArray("Wrong assignnet", "int a = 0; if (x)  a+= 5"), //
+        Utils.asArray("Wrong assignnet", "int a = 0; if (a)  a= 5;"), //
         null);
     /**
      * Generate test cases for this parameterized class.
