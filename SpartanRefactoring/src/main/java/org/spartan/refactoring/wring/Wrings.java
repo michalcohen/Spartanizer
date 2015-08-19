@@ -234,7 +234,6 @@ public enum Wrings {
     @Override public final String toString() {
       return "IFX_THROW_A_ELSE_THROW_B (" + super.toString() + ")";
     }
-
     @Override Statement _replacement(final IfStatement i) {
       final Expression condition = i.getExpression();
       final Expression then = Extract.throwExpression(i.getThenStatement());
@@ -527,23 +526,24 @@ public enum Wrings {
    */
   COMPARISON_WITH_BOOLEAN(new Wring.OfInfixExpression() {
     @Override public final boolean scopeIncludes(final InfixExpression e) {
-      return !e.hasExtendedOperands()&& in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
+      return !e.hasExtendedOperands() && in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
     }
-    private boolean nonNegating(final InfixExpression e, final BooleanLiteral literal) {
-      return literal.booleanValue() == (e.getOperator() == EQUALS);
+    private boolean negating(final InfixExpression e, final BooleanLiteral literal) {
+      return literal.booleanValue() != (e.getOperator() == EQUALS);
     }
-
     @Override Expression _replacement(final InfixExpression e) {
       Expression nonliteral;
       BooleanLiteral literal;
       if (Is.booleanLiteral(e.getLeftOperand())) {
         literal = asBooleanLiteral(e.getLeftOperand());
-        nonliteral = duplicate(e.getRightOperand());
+        nonliteral = e.getRightOperand();
       } else {
         literal = asBooleanLiteral(e.getRightOperand());
-        nonliteral = duplicate(e.getLeftOperand());
+        nonliteral = e.getLeftOperand();
       }
-      return nonNegating(e, literal) ? nonliteral : not(nonliteral);
+      nonliteral = Extract.core(nonliteral);
+      final ASTNode parent = e.getParent();
+      return new Plant(!negating(e,literal) ? nonliteral : not(nonliteral)).into(parent);
     }
   }), //
   /**
@@ -605,7 +605,7 @@ public enum Wrings {
       return " ELIMINATE_TERNARY (" + super.toString() + ")";
     }
     @Override Expression _replacement(final ConditionalExpression e) {
-      return Plant.zis(Extract.core(e.getThenExpression())).into(e.getParent());
+      return new Plant(Extract.core(e.getThenExpression())).into(e.getParent());
     }
     @Override boolean scopeIncludes(final ConditionalExpression e) {
       return e != null && same(e.getThenExpression(), e.getElseExpression());

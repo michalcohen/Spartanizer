@@ -53,13 +53,13 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     public Expression to(final PostfixExpression.Operator o) {
       final PostfixExpression $ = ast.newPostfixExpression();
       $.setOperator(o);
-      $.setOperand(Plant.zis(inner).into($));
+      $.setOperand(new Plant(inner).into($));
       return $;
     }
     public PrefixExpression to(final PrefixExpression.Operator o) {
       final PrefixExpression $ = ast.newPrefixExpression();
       $.setOperator(o);
-      $.setOperand(Plant.zis(inner).into($));
+      $.setOperand(new Plant(inner).into($));
       return $;
     }
     /**
@@ -92,22 +92,22 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     public Assignment to(final Assignment.Operator o) {
       final Assignment $ = ast.newAssignment();
       $.setOperator(o);
-      $.setLeftHandSide(Plant.zis(left).into($));
-      $.setRightHandSide(Plant.zis(right).into($));
+      $.setLeftHandSide(new Plant(left).into($));
+      $.setRightHandSide(new Plant(right).into($));
       return $;
     }
     public InfixExpression to(final InfixExpression.Operator o) {
       final InfixExpression $ = ast.newInfixExpression();
       $.setOperator(o);
-      $.setLeftOperand(Plant.zis(left).into($));
-      $.setRightOperand(Plant.zis(right).into($));
+      $.setLeftOperand(new Plant(left).into($));
+      $.setRightOperand(new Plant(right).into($));
       return $;
     }
     public ConditionalExpression toCondition(final Expression condition) {
       final ConditionalExpression $ = ast.newConditionalExpression();
-      $.setExpression(Plant.zis(claim(condition)).into($));
-      $.setThenExpression(Plant.zis(left).into($));
-      $.setElseExpression(Plant.zis(right).into($));
+      $.setExpression(new Plant(claim(condition)).into($));
+      $.setThenExpression(new Plant(left).into($));
+      $.setElseExpression(new Plant(right).into($));
       return $;
     }
     public Statement toStatement(final Assignment.Operator o) {
@@ -127,7 +127,7 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       assert operands.size() >= 2;
       final InfixExpression $ = Subject.pair(operands.get(0), operands.get(1)).to(o);
       for (int i = 2; i < operands.size(); ++i)
-        $.extendedOperands().add(Plant.zis(operands.get(i)).into($));
+        $.extendedOperands().add(new Plant(operands.get(i)).into($));
       return $;
     }
   }

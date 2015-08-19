@@ -126,7 +126,7 @@ public class TERNARY_SHORTEST_FIRST {
         new String[] { "Bug of being cyclice", //
             "length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $", //
             "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null",//
-        }, //
+    }, //
         null);
     /**
      * Generate test cases for this parameterized class.

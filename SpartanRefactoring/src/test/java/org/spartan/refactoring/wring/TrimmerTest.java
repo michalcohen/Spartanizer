@@ -29,8 +29,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.spartanizations.ComparisonWithSpecific;
-import org.spartan.refactoring.spartanizations.ShortestOperand;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
@@ -51,6 +49,9 @@ public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
   public static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
+  }
+  public static void assertNoConversion(final String input) {
+    assertSimilar(input, Wrap.Statement.off(apply(new Trimmer(), Wrap.Statement.on(input))));
   }
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
@@ -205,8 +206,6 @@ public class TrimmerTest {
   @Test public void chainCOmparisonTrueLast() {
     assertSimplifiesTo("a == b == c == true", "a == b == c");
   }
-  /* End of the already good tests */
-  /* Begin of converted test files */
   @Test public void comaprisonWithBoolean1() {
     assertSimplifiesTo("s.equals(532)==true", "s.equals(532)");
   }
@@ -945,52 +944,61 @@ public class TrimmerTest {
             + "return res;");
   }
   @Test public void shortestOperand12() {
-    assertNoChange("int k = 15;   return 7 < k; ");
+    assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
   }
   @Test public void shortestOperand13() {
-    assertNoChange("return (2 > 2 + a) == true;     } ");
+    assertConvertsTo("return (2 > 2 + a) == true;", "return 2>a+2;");
+  }
+  @Test public void shortestOperand13a() {
+    assertSimplifiesTo(" (2 > 2 + a) == true", " 2>a+2 ");
+  }
+  @Test public void shortestOperand13b() {
+    assertSimplifiesTo(" (2) == true", " 2 ");
+  }
+  @Test public void shortestOperand13c() {
+    assertSimplifiesTo(" 2 == true", " 2 ");
   }
   @Test public void shortestOperand14() {
-    assertNoChange("Integer t = new Integer(5);   return (t.toString() == null);    ");
+    assertNoConversion("Integer t = new Integer(5);   return (t.toString() == null);    ");
   }
   @Test public void shortestOperand15() {
-    assertNoChange("String t = \"Bob \" + \"Wants \" + \"To \" + \"Sleep \";   return (\"right now...\" + t);    ");
+    assertNoConversion("String t = \"Bob \" + \"Wants \" + \"To \" + \"Sleep \";   return (\"right now...\" + t);    ");
   }
   @Test public void shortestOperand16() {
-    assertNoChange("String t = Z2;   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
+    assertNoConversion("String t = Z2;   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
   }
   @Test public void shortestOperand19() {
-    assertNoChange("SomeClass a;   return k.get().operand() ^ a.get(); ");
+    assertNoConversion("SomeClass a;   return k.get().operand() ^ a.get(); ");
   }
   @Test public void shortestOperand20() {
-    assertNoChange("SomeClass a;   String k = k.Concat(\"mmm...\") + a.get().sum().toString();   return k.get() ^ a.get(); ");
+    assertNoConversion("SomeClass a;   String k = k.Concat(\"mmm...\") + a.get().sum().toString();   return k.get() ^ a.get(); ");
   }
   @Test public void shortestOperand22() {
-    assertNoChange("return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f f(a,b) + f(a) + f();     } ");
+    assertNoConversion("return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f f(a,b) + f(a) + f();     } ");
   }
   @Test public void shortestOperand23() {
-    assertNoChange("return f() + \".\";     }");
+    assertNoConversion("return f() + \".\";     }");
   }
   @Test public void shortestOperand27() {
-    assertNoChange("return f(a,b,c,d) + f(a,b,c) + f();     } ");
+    assertNoConversion("return f(a,b,c,d) + f(a,b,c) + f();     } ");
   }
   @Test public void shortestOperand28() {
     assertNoChange("return f(a,b,c,d) * f(a,b,c) * f();     } ");
   }
   @Test public void shortestOperand30() {
-    assertNoChange("return f(a,b,c,d) & f();     } ");
+    assertNoConversion("return f(a,b,c,d) & f();     } ");
   }
   @Test public void shortestOperand31() {
-    assertNoChange("return f(a,b,c,d) | \".\";     }");
+    assertNoConversion("return f(a,b,c,d) | \".\";     }");
   }
   @Test public void shortestOperand32() {
-    assertNoChange("return f(a,b,c,d) && f();     }");
+    assertNoConversion("return f(a,b,c,d) && f();     }");
   }
   @Test public void shortestOperand33() {
-    assertNoChange("return f(a,b,c,d) || f();     }");
+    assertNoConversion("return f(a,b,c,d) || f();     }");
   }
   @Test public void shortestOperand37() {
-    assertNoChange("");
+    assertNoChange("return sansJavaExtension(f) + n + \".\" + extension(f);");
   }
   @Test public void shortestOperandFarStringLiteral() {
     assertNoChange("");
@@ -1000,6 +1008,9 @@ public class TrimmerTest {
   }
   @Test public void simplifyBlockComplexEmpty() {
     assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+  }
+  @Test public void simplifyBlockComplexEmpty1() {
+    assertConvertsTo("{;;{;{{}}}{;}{};}", "");
   }
   @Test public void simplifyBlockComplexEmpty0() {
     assertSimplifiesTo("{}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
@@ -1083,31 +1094,37 @@ public class TrimmerTest {
     assertSimplifiesTo("a*2", "2*a");
   }
   @Test public void ternarize05() {
-    assertNoChange("  int res = 0;   if (s.equals(532))    res += 6;   else    res -= 9;      /*   if (s.equals(532))    res += 6;   else    res += 9;    */   return res; ");
+    assertNoConversion("  int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res -= 9;      "
+        + "/*   if (s.equals(532))    res += 6;   else    res += 9;    */   " + "return res; " + "");
+  }
+  @Test public void ternarize05a() {
+    assertConvertsTo("  int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ",
+        "int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
-    assertNoChange("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ");
+    assertConvertsTo("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ",//
+        "String res=s;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize10() {
-    assertNoChange("String res = s, foo = \"bar\";   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ");
+    assertNoConversion("String res = s, foo = \"bar\";   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ");
   }
   @Test public void ternarize12() {
-    assertNoChange("String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ");
+    assertNoConversion("String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ");
   }
   @Test public void ternarize13() {
-    assertNoChange("String res = mode, foo;  if (mode.equals(f())==true)   foo = \"test-bob\"; ");
+    assertNoConversion("String res = mode, foo;  if (mode.equals(f())==true)   foo = \"test-bob\"; ");
   }
   @Test public void ternarize14() {
-    assertNoChange("String res = mode, foo = \"Not in test mode\";   if (res.equals(f())==true){    foo = \"test-bob\";    int k = 2;    k = 8;   System.out.println(foo); ");
+    assertNoConversion("String res = mode, foo = \"Not in test mode\";   if (res.equals(f())==true){    foo = \"test-bob\";    int k = 2;    k = 8;   System.out.println(foo); ");
   }
   @Test public void ternarize16() {
-    assertNoChange("String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
+    assertNoConversion("String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
   }
   @Test public void ternarize21() {
-    assertNoChange("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+    assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
   }
   @Test public void ternarize22() {
-    assertNoChange("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
+    assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
   }
   @Test public void ternarize22test() {
     assertConvertsTo("    int a=0;\n" + //
@@ -1119,13 +1136,13 @@ public class TrimmerTest {
         "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void ternarize26() {
-    assertNoChange("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ");
+    assertNoConversion("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ");
   }
   @Test public void ternarize29() {
-    assertNoChange("int a=0;   int b=0;   a=5;   if (a==3){    a=4; }");
+    assertNoConversion("int a=0;   int b=0;   a=5;   if (a==3){    a=4; }");
   }
   @Test public void ternarize33() {
-    assertNoChange("int a, b=0;   if (b==3){    a=4; ");
+    assertNoConversion("int a, b=0;   if (b==3){    a=4; ");
   }
   @Test public void ternarize35() {
     assertNoChange("int a, b=0, c=0;   a=4;   if (c==3){    b=2; ");
@@ -1134,30 +1151,31 @@ public class TrimmerTest {
     assertNoChange("int a, b=0, c=0;   a=4;   if (c==3){    b=2;   a=6; ");
   }
   @Test public void ternarize41() {
-    assertNoChange("int a, b, c, d;   a = 3;   b = 5;   d = 7;   if (a == 4)     while (b == 3)     c = a;   else    while (d == 3)     c = a*a; ");
+    assertNoConversion("int a, b, c, d;   a = 3;   b = 5;   d = 7;   if (a == 4)     while (b == 3)     c = a;   else    while (d == 3)     c = a*a; ");
   }
   @Test public void ternarize42() {
-    assertNoChange(
+    assertNoConversion(
         "  int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else{          b = a;          b=3;     else       if (b == 3)         b = 2;       else{         b = a*a;         b=3; ");
   }
   @Test public void ternarize45() {
-    assertNoChange("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
+    assertNoConversion("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize46() {
-    assertNoChange("int a , b=0;   if (mode.equals(f())==true)    if (b==3){     return 3;     a+=7;   else    if (b==3){     return 2;     a=7; ");
+    assertNoConversion("int a , b=0;   if (mode.equals(f())==true)    if (b==3){     return 3;     a+=7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize48() {
-    assertNoChange("  int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
+    assertNoConversion(
+        "  int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
   }
   @Test public void ternarize49() {
-    assertNoChange(
+    assertNoConversion(
         "  int size = 0;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.append('f'); ");
   }
   @Test public void ternarize53() {
-    assertNoChange("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;");
+    assertNoConversion("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;");
   }
   @Test public void ternarize55() {
-    assertNoChange(//
+    assertNoConversion(//
         "if (key.equals(markColumn))\n" + //
             "  to.put(key, a.toString());\n" + //
             "else\n" + //
@@ -1165,10 +1183,9 @@ public class TrimmerTest {
     );
   }
   @Test public void ternarize56() {
-    assertNoChange(
+    assertNoConversion(
         "if (target == 0) { progressBarCurrent.setString(\"0/0\"); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target);        progressBarCurrent.setValue(current * 100 / target);");
   }
-  /* End of converted test files */
   @Test public void testPeel() {
     assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));
   }

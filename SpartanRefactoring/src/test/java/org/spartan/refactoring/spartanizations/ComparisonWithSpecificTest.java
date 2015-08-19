@@ -1,9 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -18,7 +14,6 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.rewrite;
 import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
-import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +29,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.utils.Range;
 
 /**
@@ -68,12 +62,9 @@ public class ComparisonWithSpecificTest {
     final InfixExpression i = i("a == this");
     assertEquals(ASTNode.INFIX_EXPRESSION, i.getNodeType());
   }
-
-
   @Test public void getNodeType() {
     assertEquals(ASTNode.THIS_EXPRESSION, e("this").getNodeType());
   }
-
   @Test public void noOpportunity0() {
     assertNoOpportunity(new ShortestOperand(), P0);
   }
@@ -173,7 +164,6 @@ public class ComparisonWithSpecificTest {
     final int countOpportunities = findOpportunities.size();
     assertEquals(u.toString(), 1, countOpportunities);
   }
-
   @Test public void withinDomainFalse0() {
     assertFalse(withinDomain(i("13455643294 < 22")));
   }

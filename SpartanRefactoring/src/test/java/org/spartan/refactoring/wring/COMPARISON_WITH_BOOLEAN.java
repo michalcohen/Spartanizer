@@ -2,11 +2,14 @@ package org.spartan.refactoring.wring;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.Collection;
@@ -25,6 +28,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.All;
 import org.spartan.utils.Utils;
 
@@ -35,14 +39,24 @@ import org.spartan.utils.Utils;
  * @since 2014-07-13
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "javadoc", }) //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
   static final Wring WRING = Wrings.COMPARISON_WITH_BOOLEAN.inner;
   public COMPARISON_WITH_BOOLEAN() {
     super(WRING);
   }
-  @Test public void comparisonWithSpecific0Legibiliy0() {
-    assertNotWithinScope("this != a");
+  @Test public void removeParenthesis() {
+    final String s = " (2) == true";
+    final String wrap = Wrap.Expression.on(s);
+    final String unpeeled = TrimmerTest.apply(new Trimmer(), wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + s);
+    final String peeled = Wrap.Expression.off(unpeeled);
+    if (peeled.equals(s))
+      assertNotEquals("No similification of " + s, s, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(s)))
+      assertNotEquals("Simpification of " + s + " is just reformatting", compressSpaces(peeled), compressSpaces(s));
+    assertSimilar(" 2 ", peeled);
   }
 
   @RunWith(Parameterized.class) //

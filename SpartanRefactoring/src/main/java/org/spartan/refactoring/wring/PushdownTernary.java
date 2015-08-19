@@ -97,7 +97,7 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
       return null;
     final ConditionalExpression c = Subject.pair(a1.getRightHandSide(), a2.getRightHandSide()).toCondition(e.getExpression());
     final Assignment a = Subject.pair(a1.getLeftHandSide(), c).to(a1.getOperator());
-    return Plant.zis(a).into(e.getParent());
+    return new Plant(a).into(e.getParent());
   }
   private Expression pushdown(final ConditionalExpression e) {
     if (e == null)

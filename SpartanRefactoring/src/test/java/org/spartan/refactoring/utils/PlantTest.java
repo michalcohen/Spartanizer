@@ -16,7 +16,7 @@ import org.junit.Test;
     final String s = "a?b:c";
     final Expression e = e(s);
     assertThat(e, notNullValue());
-    final Expression e1 = Plant.zis(e).into(null);
+    final Expression e1 = new Plant(e).into(null);
     assertThat(e1, notNullValue());
     assertThat(e1, iz(s));
   }
@@ -32,6 +32,4 @@ import org.junit.Test;
     final Expression e = Subject.pair(e1, e2).to(InfixExpression.Operator.LESS);
     assertThat(e, iz("a+2<b"));
   }
-
-
 }

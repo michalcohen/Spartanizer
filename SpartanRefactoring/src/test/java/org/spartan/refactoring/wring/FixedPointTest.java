@@ -114,14 +114,14 @@ public class FixedPointTest {
             "        } else\n" + //
             "          $.append(replaceClassName(s, className, newClassName) + \"\\n\");\n" + //
             "      return asString($);",
-            "      for (final String s : contents.split(\"\\n\"))\n" + //
-                "        if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n" + //
-                "          $.append(replaceClassName(s, className, newClassName) " + //
-                " \"\\n\");\n" + //
-                "        else {\n" + "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
-                "          foundPackage = true;\n" + //
-                "        }\n" + //
-        "      return asString($);");
+        "      for (final String s : contents.split(\"\\n\"))\n" + //
+            "        if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n" + //
+            "          $.append(replaceClassName(s, className, newClassName) " + //
+            " \"\\n\");\n" + //
+            "        else {\n" + "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
+            "          foundPackage = true;\n" + //
+            "        }\n" + //
+            "      return asString($);");
   }
   @Test public void shortestIfBranchFirst11() {
     assertConvertsTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
@@ -338,13 +338,13 @@ public class FixedPointTest {
   @Test public void ternarize54() {
     assertConvertsTo(//
         "if (s == null)\n" + ///
-        "  return Z2;\n" + //
-        "if (!s.contains(delimiter()))\n" + //
-        "  return s;\n" + //
-        "return s.replaceAll(delimiter(), ABC + delimiter());", //
+            "  return Z2;\n" + //
+            "if (!s.contains(delimiter()))\n" + //
+            "  return s;\n" + //
+            "return s.replaceAll(delimiter(), ABC + delimiter());", //
         "if (s == null)\n" + //
-        "  return Z2;\n" + //
-        "return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
-        );
+            "  return Z2;\n" + //
+            "return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
+    );
   }
 }

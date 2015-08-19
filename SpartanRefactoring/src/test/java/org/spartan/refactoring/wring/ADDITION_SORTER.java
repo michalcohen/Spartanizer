@@ -38,12 +38,11 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings({"javadoc", "static-method"}) //
+@SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class ADDITION_SORTER {
   static final Wring WRING = Wrings.ADDITION_SORTER.inner;
   static final ExpressionComparator COMPARATOR = ExpressionComparator.ADDITION;
-
   @Test public void subjectOperandsWithParenthesis() {
     final Expression e = Into.e("(2 + a) * b");
     assertTrue(Is.notString(e));
@@ -57,6 +56,7 @@ public class ADDITION_SORTER {
     final Expression replacement = inner.replacement(plus);
     assertThat(replacement, iz("a+2"));
   }
+
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//

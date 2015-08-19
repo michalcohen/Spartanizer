@@ -84,7 +84,7 @@ public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
                 "   return a;\n" + //
                 " }\n" + //
                 " g();\n" + //
-            ""),
+                ""),
         null, //
         Utils.asArray("Complex with many junk statements",
             "" + //
@@ -99,13 +99,13 @@ public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
                 "   }\n" + //
                 " }\n" + //
                 "",
-                "" + //
-                    " if (x) {\n" + //
-                    "   f();\n" + //
-                    "   return a;\n" + //
-                    " }\n" + //
-                    " g();\n" + //
-            ""),
+            "" + //
+                " if (x) {\n" + //
+                "   f();\n" + //
+                "   return a;\n" + //
+                " }\n" + //
+                " g();\n" + //
+                ""),
         null);
     /**
      * Generate test cases for this parameterized class.

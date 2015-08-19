@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -43,7 +44,6 @@ public class COMPARISON_SORTER extends AbstractWringTest {
     assertThat(WRING, notNullValue());
   }
 
-
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
@@ -69,8 +69,7 @@ public class COMPARISON_SORTER extends AbstractWringTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
-        new String[] {"Vanialla", "f(2) < a", "a > f(2)"},
-        null);
+        new String[] { "Vanialla", "f(2) < a", "a > f(2)" }, null);
     /**
      * Generate test cases for this parameterized class.
      *

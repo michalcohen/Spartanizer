@@ -101,83 +101,83 @@ public class IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = new String[][] { //
-      new String[] { "Vanilla {}", "if (a) return b; return a();", "return a ? b: a();" }, //
-      new String[] { "Vanilla ; ", "if (a) return b; return a(); b(); c();", "return a ? b: a(); b(); c();" }, //
-      new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}} return c;", "return a?b:c;" }, //
-      null, //
-      Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
-      null, //
-      Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"), //
-      Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
-          "" + //
-              " if (x) {\n" + //
-              "   f();\n" + //
-              "   return a;\n" + //
-              " }\n" + //
-              " g();\n" + //
-          ""),
-      null, //
-      Utils.asArray("Complex with many junk statements",
-          "" + //
-              " if (x) {\n" + //
-              "   ;\n" + //
-              "   f();\n" + //
-              "   return a;\n" + //
-              " } else {\n" + //
-              "   ;\n" + //
-              "   g();\n" + //
-              "   {\n" + //
-              "   }\n" + //
-              " }\n" + //
-              "",
-              "" + //
-                  " if (x) {\n" + //
-                  "   f();\n" + //
-                  "   return a;\n" + //
-                  " }\n" + //
-                  " g();\n" + //
-          ""), //
-      null };
-      /**
-       * Generate test cases for this parameterized class.
-       *
-       * @return a collection of cases, where each case is an array of three
-       *         objects, the test case name, the input, and the file.
-       */
-      @Parameters(name = DESCRIPTION) //
-      public static Collection<Object[]> cases() {
-        return collect(cases);
-      }
-      /**
-       * Instantiates the enclosing class ({@link Wringed})
-       */
-      public Wringed() {
-        super(WRING);
-      }
-      @Test public void asMeNotNull() {
-        assertNotNull(asMe());
-      }
-      @Test public void followedByReturn() {
-        assertThat(Extract.nextReturn(asMe()), notNullValue());
-      }
-      @Test public void isfStatementElseIsEmpty() {
-        final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
-        assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
-      }
-      @Test public void isIfStatement() {
-        assertThat(input, asMe(), notNullValue());
-      }
-      @Test public void myScopeIncludes() {
-        final IfStatement s = asMe();
-        assertThat(s, notNullValue());
-        assertThat(Extract.statements(s.getElseStatement()), notNullValue());
-        assertThat(Extract.statements(s.getElseStatement()).size(), is(0));
-      }
-      @Test public void noElse() {
-        assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
-      }
-      @Test public void thenIsSingleReturn() {
-        assertThat(Extract.returnStatement(asMe().getThenStatement()), notNullValue());
-      }
+        new String[] { "Vanilla {}", "if (a) return b; return a();", "return a ? b: a();" }, //
+        new String[] { "Vanilla ; ", "if (a) return b; return a(); b(); c();", "return a ? b: a(); b(); c();" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}} return c;", "return a?b:c;" }, //
+        null, //
+        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
+        null, //
+        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"), //
+        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
+            "" + //
+                " if (x) {\n" + //
+                "   f();\n" + //
+                "   return a;\n" + //
+                " }\n" + //
+                " g();\n" + //
+                ""),
+        null, //
+        Utils.asArray("Complex with many junk statements",
+            "" + //
+                " if (x) {\n" + //
+                "   ;\n" + //
+                "   f();\n" + //
+                "   return a;\n" + //
+                " } else {\n" + //
+                "   ;\n" + //
+                "   g();\n" + //
+                "   {\n" + //
+                "   }\n" + //
+                " }\n" + //
+                "",
+            "" + //
+                " if (x) {\n" + //
+                "   f();\n" + //
+                "   return a;\n" + //
+                " }\n" + //
+                " g();\n" + //
+                ""), //
+        null };
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION) //
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+    /**
+     * Instantiates the enclosing class ({@link Wringed})
+     */
+    public Wringed() {
+      super(WRING);
+    }
+    @Test public void asMeNotNull() {
+      assertNotNull(asMe());
+    }
+    @Test public void followedByReturn() {
+      assertThat(Extract.nextReturn(asMe()), notNullValue());
+    }
+    @Test public void isfStatementElseIsEmpty() {
+      final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
+      assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
+    }
+    @Test public void isIfStatement() {
+      assertThat(input, asMe(), notNullValue());
+    }
+    @Test public void myScopeIncludes() {
+      final IfStatement s = asMe();
+      assertThat(s, notNullValue());
+      assertThat(Extract.statements(s.getElseStatement()), notNullValue());
+      assertThat(Extract.statements(s.getElseStatement()).size(), is(0));
+    }
+    @Test public void noElse() {
+      assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
+    }
+    @Test public void thenIsSingleReturn() {
+      assertThat(Extract.returnStatement(asMe().getThenStatement()), notNullValue());
+    }
   }
 }
