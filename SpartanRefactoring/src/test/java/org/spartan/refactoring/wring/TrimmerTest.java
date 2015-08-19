@@ -1029,7 +1029,7 @@ public class TrimmerTest {
     assertSimplifiesTo("!((a || b == c) && (d || !(!!c)))", "!a && b != c || !d && c");
   }
   @Test public void simplifyLogicalNegationNested1() {
-    assertSimplifiesTo("!(d || !(!!c))", "(d||!c)");
+    assertSimplifiesTo("!(d || !(!!c))", "!d && c");
   }
   @Test public void simplifyLogicalNegationNested2() {
     assertSimplifiesTo("!(!d || !!!c)", "d && c");
