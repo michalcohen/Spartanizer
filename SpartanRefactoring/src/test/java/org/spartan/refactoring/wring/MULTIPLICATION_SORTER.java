@@ -45,6 +45,7 @@ import org.spartan.utils.Utils;
 public class MULTIPLICATION_SORTER extends AbstractWringTest {
   static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
+  public
   MULTIPLICATION_SORTER() {
     super(WRING);
   }

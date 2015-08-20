@@ -56,7 +56,6 @@ final class PushdownTernary extends Wring.OfConditionalExpression {
   private static Expression pushdown(final ConditionalExpression e, final FieldAccess e1, final FieldAccess e2) {
     if (!same(e1.getName(), e2.getName()))
       return null;
-    System.out.println("Field access" + e1 + e2);
     final FieldAccess $ = duplicate(e1);
     $.setExpression(parenthesize(Subject.pair(e1.getExpression(), e2.getExpression()).toCondition(e.getExpression())));
     return $;

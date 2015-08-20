@@ -71,7 +71,7 @@ public class TrimmerTest {
     assertNotNull(u);
     final Document d = new Document(from);
     assertNotNull(d);
-    return TESTUtils.rewrite(new AsRefactoring(w, "Tested Refactoring", ""), u, d).get();
+    return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring", ""), u, d).get();
   }
   static void assertConvertsTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Statement);

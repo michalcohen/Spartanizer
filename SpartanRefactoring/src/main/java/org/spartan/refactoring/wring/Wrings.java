@@ -79,7 +79,6 @@ public enum Wrings {
     @Override public final String toString() {
       return "DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE(" + super.toString() + ")";
     }
-
     @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
       final Expression initializer = f.getInitializer();
       if (initializer == null)
@@ -96,7 +95,6 @@ public enum Wrings {
       r.remove(s, null);
       return r;
     }
-
   }),
   /**
    * A {@link Wring} to convert
@@ -556,7 +554,7 @@ public enum Wrings {
    */
   COMPARISON_WITH_SPECIFIC(new Wring.OfInfixExpression() {
     @Override public boolean scopeIncludes(final InfixExpression e) {
-      return  !e.hasExtendedOperands()&& Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
+      return  e != null && !e.hasExtendedOperands()&& Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
     }
     @Override public final String toString() {
       return "COMPARISON_WITH_SPECIFIC (" + super.toString() + ")";

@@ -476,7 +476,7 @@ public enum Is {
         final ConditionalExpression ce = (ConditionalExpression) e;
         return sideEffectsFree(ce.getExpression(), ce.getThenExpression(), ce.getElseExpression());
       default:
-        System.err.println("Missing handeler for " + e.getClass().getSimpleName());
+        System.err.println("Missing handler for class: " + e.getClass().getSimpleName());
         return false;
     }
   }

@@ -29,7 +29,8 @@ public enum Wrap {
     @Override public String off(final String s) {
       return removeSuffix(removePrefix(s, PRE_STATEMENT), POST_STATEMENT);
     }
-  };
+  }, //
+  ;
   private static final String PRE_STATEMENT = //
   "package p;public class SpongeBob {\n" + //
       "public boolean squarePants(){\n" + //

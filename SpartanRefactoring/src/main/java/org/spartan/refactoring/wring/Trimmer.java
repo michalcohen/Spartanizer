@@ -1,11 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.utils.Utils.removeDuplicates;
 
 import java.util.List;
@@ -28,7 +22,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.utils.As;
 import org.spartan.utils.Range;
 

@@ -1,5 +1,5 @@
 package org.spartan.refactoring.wring;
-
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -15,6 +15,7 @@ import static org.spartan.refactoring.utils.Restructure.flatten;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.FixMethodOrder;
@@ -24,6 +25,8 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Funcs;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
@@ -43,17 +46,6 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
   /** Instantiates this class */
   public COMPARISON_WITH_SPECIFIC() {
     super(WRING);
-  }
-  @Test public void comparisonWithSpecific0Legibiliy1() {
-    assertTrue(Is.constant(i("this != a").getLeftOperand()));
-    assertNotLegible("a != this");
-  }
-  @Test public void comparisonWithSpecific0Legibiliy1withinScope() {
-    assertNotWithinScope("this != a");
-  }
-  @Test public void comparisonWithSpecific0Legibiliy2() {
-    assertTrue(Is.constant(i("this != a").getLeftOperand()));
-    assertLegible("this != a");
   }
   @Test public void comparisonWithSpecific0z0() {
     assertWithinScope("this != a");
@@ -80,6 +72,22 @@ public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
     assertNoChange("very(complicate,func,-ction,call) <= null");
     assertNoChange("very(complicate,func,-ction,call) >= this");
     assertNoChange("very(complicate,func,-ction,call) >= null");
+  }
+  @Test public void comparisonWithSpecificWithinScope() {
+    assertTrue(Is.constant(i("this != a").getLeftOperand()));
+    final ASTNode n = As.EXPRESSION.ast("a != this");
+    assertThat(n,notNullValue());
+    assertWithinScope(Funcs.asExpression(n));
+    correctScopeExpression(n);
+  }
+  @Test public void comparisonWithSpecificWithinScope1() {
+    final InfixExpression e = i("this != a");
+    assertTrue(Is.constant(e.getLeftOperand()));
+    assertTrue(inner.scopeIncludes(e));
+    assertLegible(e.toString());
+  }
+  @Test public void comparisonWithSpecificWithinScope2() {
+    assertWithinScope("this != a");
   }
 
   @RunWith(Parameterized.class) //

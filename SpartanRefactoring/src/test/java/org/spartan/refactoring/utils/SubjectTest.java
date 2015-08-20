@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
-import org.junit.Test;
 import org.spartan.refactoring.utils.Subject.Pair;
 import org.spartan.refactoring.wring.ExpressionComparator;
 import org.spartan.refactoring.wring.Wrings;

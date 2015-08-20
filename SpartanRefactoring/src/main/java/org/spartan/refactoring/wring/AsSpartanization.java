@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.utils.Range;
@@ -22,7 +23,7 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015/07/25
  */
-public class AsRefactoring extends Spartanization {
+public class AsSpartanization extends Spartanization {
   final Wring inner;
   /**
    * Instantiates this class
@@ -31,7 +32,7 @@ public class AsRefactoring extends Spartanization {
    * @param name The title of the refactoring
    * @param description One line description of the refactoring
    */
-  public AsRefactoring(final Wring inner, final String name, final String description) {
+  public AsSpartanization(final Wring inner, final String name, final String description) {
     super(name, description);
     this.inner = inner;
   }
@@ -67,6 +68,12 @@ public class AsRefactoring extends Spartanization {
         $.add(new Range(e));
         return true;
       }
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        if (!inner.scopeIncludes(f) || inner.noneligible(f))
+          return true;
+        $.add(new Range(f));
+        return true;
+      }
     };
   }
   @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit u, final IMarker m) {
@@ -85,6 +92,9 @@ public class AsRefactoring extends Spartanization {
       }
       @Override public boolean visit(final PrefixExpression e) {
         return !inRange(m, e) || inner.go(r, e);
+      }
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        return !inRange(m, f) || inner.go(r, f);
       }
     });
   }
