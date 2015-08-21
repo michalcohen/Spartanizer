@@ -27,6 +27,9 @@ import org.spartan.refactoring.utils.Subject;
  */
 public enum Wrings {
   ;
+  public static List<Expression> allOperands(final InfixExpression e) {
+    return All.operands(flatten(e));
+  }
   public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
@@ -63,24 +66,12 @@ public enum Wrings {
   static boolean existingEmptyElse(final IfStatement s) {
     return s.getElseStatement() != null && elseIsEmpty(s);
   }
-
   static int length(final ASTNode... ns) {
     int $ = 0;
     for (final ASTNode n : ns)
       $ += n.toString().length();
     return $;
   }
-
-  static ASTRewrite removeStatement(final ASTRewrite r, final Statement s) {
-    final Block parent = asBlock(s.getParent());
-    final List<Statement> siblings = Extract.statements(parent);
-    siblings.remove(siblings.indexOf(s));
-    final Block newParent$ = parent.getAST().newBlock();
-    duplicateInto(siblings, newParent$.statements());
-    r.replace(parent, newParent$, null);
-    return r;
-  }
-
   static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by) {
     final Block parent = asBlock(what.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -92,8 +83,5 @@ public enum Wrings {
     duplicateInto(siblings, $.statements());
     r.replace(parent, $, null);
     return r;
-  }
-  public static List<Expression> allOperands(final InfixExpression e) {
-    return All.operands(flatten(e));
   }
 }
