@@ -94,7 +94,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     assertNotNull($);
     return $;
   }
-  @SuppressWarnings("static-method") protected N asMe() {
+ protected  N asMe() {
     return null;
   }
   protected PrefixExpression asPrefixExpression() {

@@ -25,11 +25,9 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-17
  */
+
 public enum Wrings {
   ;
-  public static List<Expression> allOperands(final InfixExpression e) {
-    return All.operands(flatten(e));
-  }
   public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
@@ -49,7 +47,7 @@ public enum Wrings {
     return $;
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
-    final List<Expression> operands = allOperands(e);
+    final List<Expression> operands = Extract.operands(e);
     removeAll(b, operands);
     switch (operands.size()) {
       case 0:

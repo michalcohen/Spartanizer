@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.spartan.refactoring.utils.ExpressionComparator;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 /**
  * A {@link Wring} that sorts the arguments of an expression using the same
@@ -22,7 +23,7 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class InfixPseudoAdditionSort extends Wring.OfInfixExpression {
   private static boolean sort(final InfixExpression e) {
-    return sort(Wrings.allOperands(e));
+    return sort(Extract.operands(e));
   }
   private static boolean sort(final List<Expression> es) {
     return Wrings.sort(es, ExpressionComparator.ADDITION);
@@ -31,7 +32,7 @@ public final class InfixPseudoAdditionSort extends Wring.OfInfixExpression {
     return sort(e);
   }
   @Override Expression _replacement(final InfixExpression e) {
-    final List<Expression> operands = Wrings.allOperands(e);
+    final List<Expression> operands = Extract.operands(e);
     return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {

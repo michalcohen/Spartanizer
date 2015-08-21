@@ -471,7 +471,7 @@ public enum Is {
       case PARENTHESIZED_EXPRESSION:
         return sideEffectFree(((ParenthesizedExpression) e).getExpression());
       case INFIX_EXPRESSION:
-        return sideEffectsFree(Wrings.allOperands((InfixExpression) e));
+        return sideEffectsFree(Extract.operands((InfixExpression) e));
       case CONDITIONAL_EXPRESSION:
         final ConditionalExpression ce = (ConditionalExpression) e;
         return sideEffectsFree(ce.getExpression(), ce.getThenExpression(), ce.getElseExpression());

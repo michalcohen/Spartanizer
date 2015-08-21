@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.spartan.refactoring.utils.ExpressionComparator;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 /**
@@ -20,7 +21,7 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class InfixAdditionSort extends Wring.OfInfixExpression {
   private static boolean sort(final InfixExpression e) {
-    return sort(Wrings.allOperands(e));
+    return sort(Extract.operands(e));
   }
   private static boolean sort(final List<Expression> es) {
     return Wrings.sort(es, ExpressionComparator.ADDITION);
@@ -29,7 +30,7 @@ public final class InfixAdditionSort extends Wring.OfInfixExpression {
     return Is.notString(e) && sort(e);
   }
   @Override Expression _replacement(final InfixExpression e) {
-    final List<Expression> operands = Wrings.allOperands(e);
+    final List<Expression> operands = Extract.operands(e);
     final boolean notString = Is.notString(e);
     final boolean canSort = sort(operands);
     return !notString || !canSort ? null : Subject.operands(operands).to(e.getOperator());

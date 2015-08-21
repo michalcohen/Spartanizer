@@ -11,6 +11,7 @@ import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.utils.Utils.last;
 
 import java.util.ArrayList;
@@ -347,5 +348,8 @@ public enum Extract {
         $.add(s);
         return $;
     }
+  }
+  public static List<Expression> operands(final InfixExpression e) {
+    return All.operands(flatten(e));
   }
 }
