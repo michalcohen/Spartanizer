@@ -815,7 +815,7 @@ public enum Wrings {
       if (Is.conditional(then) && !Is.conditional(elze))
         return $;
       final Expression condition = not($.getExpression());
-      return length(not(condition),elze) < length(condition, then) ? $ : null;
+      return length(condition, then) > length(not(condition), elze) ? $ : null;
     }
   }), //
   /**
@@ -988,7 +988,7 @@ public enum Wrings {
     final boolean takeThen = !Is.booleanLiteral(then);
     final Expression other = takeThen ? then : elze;
     final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
-    return Subject.pair(takeThen != literal ? main : not(main),other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
+    return Subject.pair(literal != takeThen ? main : not(main),other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = allOperands(e);

@@ -226,7 +226,7 @@ public enum Occurrences {
         return !lexicalOnly && loopDepth > 0;
       }
       void collectExpression(final Expression e, final Expression candidate) {
-        if (candidate != null && candidate.getNodeType() == e.getNodeType() && candidate.subtreeMatch(matcher, e)) {
+        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e)) {
           into.add(candidate);
           if (repeated())
             into.add(candidate);
@@ -249,7 +249,7 @@ public enum Occurrences {
         return true;
       }
       void collectExpression(final Expression candidate) {
-        if (candidate != null && candidate.getNodeType() == e.getNodeType() && candidate.subtreeMatch(matcher, e))
+        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e))
           into.add(candidate);
       }
     };
