@@ -1,4 +1,4 @@
-package org.spartan.refactoring.wring;
+package org.spartan.refactoring.utils;
 
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
 import static org.spartan.utils.Utils.hasNull;
@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.spartan.refactoring.utils.Is;
 
 /**
  * Various methods for comparing
@@ -69,13 +68,13 @@ public enum ExpressionComparator implements Comparator<Expression> {
   static int argumentsCompare(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() - i2.arguments().size();
   }
-  static boolean moreArguments(final Expression e1, final Expression e2) {
+  public static boolean moreArguments(final Expression e1, final Expression e2) {
     return argumentsCompare(e1, e2) > 0;
   }
-  static int characterCompare(final Expression e1, final Expression e2) {
+  public static int characterCompare(final Expression e1, final Expression e2) {
     return countNonWhites(e1) - countNonWhites(e2);
   }
-  static int alphabeticalCompare(final Expression e1, final Expression e2) {
+  public static int alphabeticalCompare(final Expression e1, final Expression e2) {
     return removeWhites(e1).compareTo(removeWhites(e2));
   }
   static int round(final int $, final int threshold) {
@@ -84,7 +83,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   static int asBit(final boolean b) {
     return b ? 1 : 0;
   }
-  static boolean longerFirst(final InfixExpression e) {
+  public static boolean longerFirst(final InfixExpression e) {
     return isLonger(e.getLeftOperand(), e.getRightOperand());
   }
   static boolean isLonger(final Expression e1, final Expression e2) {
@@ -93,7 +92,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
         countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
         );
   }
-  static final int TOKEN_THRESHOLD = 1;
+  public static final int TOKEN_THRESHOLD = 1;
   /**
    * Counts the number of non-space characters in a tree rooted at a given node
    *

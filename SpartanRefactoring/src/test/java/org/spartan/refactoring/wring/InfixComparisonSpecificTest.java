@@ -26,6 +26,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Funcs;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
@@ -41,10 +42,10 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class COMPARISON_WITH_SPECIFIC extends AbstractWringTest {
-  static final Wring WRING = Wrings.COMPARISON_WITH_SPECIFIC.inner;
+public class InfixComparisonSpecificTest extends AbstractWringTest {
+  static final Wring WRING = new InfixComparisonSpecific();
   /** Instantiates this class */
-  public COMPARISON_WITH_SPECIFIC() {
+  public InfixComparisonSpecificTest() {
     super(WRING);
   }
   @Test public void comparisonWithSpecific0z0() {

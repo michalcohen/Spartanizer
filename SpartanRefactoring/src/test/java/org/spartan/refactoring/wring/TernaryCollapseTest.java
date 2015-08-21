@@ -28,8 +28,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class CollapseTernaryTest {
-  static final Wring WRING = Wrings.COLLAPSE_TERNARY.inner;
+public class TernaryCollapseTest {
+  static final Wring WRING = new TernaryCollapse();
   @Test public void steps() {
     final ConditionalExpression e = c("a ? b ? x : z :z");
     assertNotNull(e);

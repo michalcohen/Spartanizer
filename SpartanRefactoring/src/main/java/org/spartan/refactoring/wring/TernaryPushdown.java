@@ -24,7 +24,7 @@ import org.spartan.refactoring.utils.Plant;
 import org.spartan.refactoring.utils.Precedence;
 import org.spartan.refactoring.utils.Subject;
 
-final class PushdownTernary extends Wring.OfConditionalExpression {
+final class TernaryPushdown extends Wring.OfConditionalExpression {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {
     int $ = -1;
     for (int i = 0; i < es1.size(); i++)

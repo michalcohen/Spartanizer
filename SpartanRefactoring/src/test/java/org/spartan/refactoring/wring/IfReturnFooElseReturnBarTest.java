@@ -19,9 +19,9 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IFX_RETURN_A_ELSE_RETURN_B {
+public enum IfReturnFooElseReturnBarTest {
   ;
-  static final Wring WRING = Wrings.IFX_RETURN_A_ELSE_RETURN_B.inner;
+  static final Wring WRING = new IfReturnFooElseReturnBar();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {

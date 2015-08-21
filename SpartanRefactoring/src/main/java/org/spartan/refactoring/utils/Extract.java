@@ -130,8 +130,8 @@ public enum Extract {
     final Wrapper<InfixExpression> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
-       if ($.get() != null)
-         return false;
+        if ($.get() != null)
+          return false;
         if (e.getOperator() == InfixExpression.Operator.PLUS) {
           $.set(e);
           return false;

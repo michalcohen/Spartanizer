@@ -1,5 +1,7 @@
 package org.spartan.refactoring.wring;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -10,11 +12,9 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
+import static org.spartan.refactoring.utils.ExpressionComparator.TOKEN_THRESHOLD;
+import static org.spartan.refactoring.utils.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.utils.Into.i;
-import static org.spartan.refactoring.wring.ExpressionComparator.TOKEN_THRESHOLD;
-import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
-import static org.spartan.refactoring.wring.Wrings.COMPARISON_WITH_SPECIFIC;
-import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -33,6 +33,7 @@ import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -391,8 +392,8 @@ public class TrimmerTest {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d,e)", e.getLeftOperand().toString());
-    final Wring s = Wrings.find(e);
-    assertEquals(Wrings.MULTIPLICATION_SORTER.inner, s);
+    final Wring s = Toolbox.instance.find(e);
+    assertThat(s,instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
@@ -411,8 +412,8 @@ public class TrimmerTest {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d)", e.getLeftOperand().toString());
-    final Wring s = Wrings.find(e);
-    assertEquals(MULTIPLICATION_SORTER.inner, s);
+    final Wring s = Toolbox.instance.find(e);
+    assertThat(s,instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
@@ -902,7 +903,7 @@ public class TrimmerTest {
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
-    final Wring w = Wrings.find(e);
+    final Wring w = Toolbox.instance.find(e);
     assertNotNull(w);
     assertTrue(w.scopeIncludes(e));
     assertTrue(w.eligible(e));
@@ -911,7 +912,7 @@ public class TrimmerTest {
     assertEquals("a != null", replacement.toString());
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
-    assertEquals(COMPARISON_WITH_SPECIFIC.inner, Wrings.find(i("null != a")));
+    assertThat(Toolbox.instance.find(i("null != a")),instanceOf(InfixComparisonSpecific.class));
   }
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
@@ -932,16 +933,16 @@ public class TrimmerTest {
         + "return res;  " //
         ,
         ""//
-            + "if (!s.equals(0xDEAD))" //
-            + " if(s.charAt(i)=='d')" //
-            + " res-=1;" //
-            + "else {"//
-            + " int res=0;" //
-            + "  for(int i=0;i<s.length();++i)" //
-            + "   if(s.charAt(i)=='a')"//
-            + "     res+=2;" //
-            + "}"//
-            + "return res;");
+        + "if (!s.equals(0xDEAD))" //
+        + " if(s.charAt(i)=='d')" //
+        + " res-=1;" //
+        + "else {"//
+        + " int res=0;" //
+        + "  for(int i=0;i<s.length();++i)" //
+        + "   if(s.charAt(i)=='a')"//
+        + "     res+=2;" //
+        + "}"//
+        + "return res;");
   }
   @Test public void shortestOperand12() {
     assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
@@ -1007,23 +1008,23 @@ public class TrimmerTest {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void simplifyBlockComplexEmpty() {
-    assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+    assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", new BlockSimplify(), Wrap.Statement);
   }
   @Test public void simplifyBlockComplexEmpty1() {
     assertConvertsTo("{;;{;{{}}}{;}{};}", "");
   }
   @Test public void simplifyBlockComplexEmpty0() {
-    assertSimplifiesTo("{}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+    assertSimplifiesTo("{}", "", new BlockSimplify(), Wrap.Statement);
   }
   @Test public void simplifyBlockComplexSingleton() {
-    assertSimplifiesTo("{;{{;;return b; }}}", "return b;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+    assertSimplifiesTo("{;{{;;return b; }}}", "return b;", new BlockSimplify(), Wrap.Statement);
   }
   @Test public void simplifyBlockDeeplyNestedReturn() {
-    assertSimplifiesTo("{{{;return c;};;};}", "return c;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+    assertSimplifiesTo("{{{;return c;};;};}", "return c;", new BlockSimplify(), Wrap.Statement);
   }
   /* Begin of already good tests */
   @Test public void simplifyBlockEmpty() {
-    assertSimplifiesTo("{;;}", "", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+    assertSimplifiesTo("{;;}", "", new BlockSimplify(), Wrap.Statement);
   }
   @Test public void simplifyBlockExpressionVsExpression() {
     assertSimplifiesTo("6 - 7 < a * 3", "6 - 7 < 3 * a");
@@ -1034,7 +1035,7 @@ public class TrimmerTest {
     assertNoChange("if (a) return b; else c;");
   }
   @Test public void simplifyBlockThreeStatements() {
-    assertSimplifiesTo("{i++;{{;;return b; }}j++;}", "i++;return b;j++;", Wrings.SIMPLIFY_BLOCK.inner, Wrap.Statement);
+    assertSimplifiesTo("{i++;{{;;return b; }}j++;}", "i++;return b;j++;", new BlockSimplify(), Wrap.Statement);
   }
   @Test public void simplifyLogicalNegationNested() {
     assertSimplifiesTo("!((a || b == c) && (d || !(!!c)))", "!a && b != c || !d && c");
@@ -1177,10 +1178,10 @@ public class TrimmerTest {
   @Test public void ternarize55() {
     assertNoConversion(//
         "if (key.equals(markColumn))\n" + //
-            "  to.put(key, a.toString());\n" + //
-            "else\n" + //
-            "   to.put(key, missing(key, a) ? Z2 : get(key, a));"//
-    );
+        "  to.put(key, a.toString());\n" + //
+        "else\n" + //
+        "   to.put(key, missing(key, a) ? Z2 : get(key, a));"//
+        );
   }
   @Test public void ternarize56() {
     assertNoConversion(

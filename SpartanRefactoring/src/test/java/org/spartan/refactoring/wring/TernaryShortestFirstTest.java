@@ -33,8 +33,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class TERNARY_SHORTEST_FIRST {
-  static final Wring WRING = Wrings.TERNARY_SHORTEST_FIRST.inner;
+public class TernaryShortestFirstTest {
+  static final Wring<ConditionalExpression> WRING = new TernaryShortestFirst();
   @Test public void trace1() {
     final ConditionalExpression e = Into.c("a?f(b,c,d):a");
     assertThat(e, notNullValue());
@@ -126,7 +126,7 @@ public class TERNARY_SHORTEST_FIRST {
         new String[] { "Bug of being cyclice", //
             "length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $", //
             "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null",//
-    }, //
+        }, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -19,9 +19,9 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IFX_THROW_A_ELSE_THROW_B {
+public enum IfThrowFooElseThrowBarTest {
   ;
-  static final Wring WRING = Wrings.IFX_THROW_A_ELSE_THROW_B.inner;
+  static final Wring WRING = new IfThrowFooElseThrowBar();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {

@@ -24,8 +24,8 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
-public class DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE {
-  static final Wring WRING = Wrings.DECLARATION_ASSIGNMENT_OF_SAME_VARIABLE.inner;
+public class DeclarationAssignmentTest {
+  static final Wring<?> WRING =new DeclarationAssignment();
   @Test public void placeHolder() {
     // Place holder for future tests
     assertNotNull(WRING);

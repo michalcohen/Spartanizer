@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
@@ -70,26 +72,21 @@ public class DeclarationIfStatementWringed extends AbstractWringTest {
   @Parameter(2) public String expected;
   /** Instantiates the enclosing class ({@link Wringed}) */
   public DeclarationIfStatementWringed() {
-    super(DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE.WRING);
+    super(DeclarationIfAssginmentTest.WRING);
   }
   DeclarationIfStatementWringed(final Wring inner) {
     super(inner);
- }
+  }
   @Test public void correctSimplifier() {
-    assertThat(asMe().toString(), Wrings.find(asMe()), is(inner));
+    assertThat(asMe().toString(), Toolbox.instance.find(asMe()), instanceOf(inner.getClass()));
   }
   @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String s = input;
-    System.out.println("INPU");
     final Document d = new Document(Wrap.Statement.on(s));
-    System.out.println("d");
     final CompilationUnit u = asCompilationUnit();
-    System.out.println("u");
     final ASTRewrite r = new Trimmer().createRewrite(u, null);
-    System.out.println("r");
     final TextEdit e = r.rewriteAST(d, null);
     assertThat(e, notNullValue());
-    System.out.println("e" + e);
     assertThat(e.apply(d), is(notNullValue()));
   }
   @Test public void eligible() {
@@ -97,7 +94,7 @@ public class DeclarationIfStatementWringed extends AbstractWringTest {
     assertTrue(s.toString(), inner.eligible(s));
   }
   @Test public void findsSimplifier() {
-    assertNotNull(Wrings.find(asMe()));
+    assertNotNull(Toolbox.instance.find(asMe()));
   }
   @Test public void hasOpportunity() {
     assertTrue(inner.scopeIncludes(asMe()));
@@ -106,7 +103,7 @@ public class DeclarationIfStatementWringed extends AbstractWringTest {
     assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(1)));
   }
   @Test public void hasSimplifier() {
-    assertThat(asMe().toString(), Wrings.find(asMe()), is(notNullValue()));
+    assertThat(asMe().toString(), Toolbox.instance.find(asMe()), is(notNullValue()));
   }
   @Test public void noneligible() {
     assertFalse(inner.noneligible(asMe()));
@@ -140,10 +137,6 @@ public class DeclarationIfStatementWringed extends AbstractWringTest {
     assertSimilar(expected, peeled);
     assertSimilar(Wrap.Statement.on(expected), actual);
   }
-  @Test public void success() {
-    System.err.println("Begin test, input=" + input);
-    // Empty
-  }
   @Test public void traceLegiblity() {
     final VariableDeclarationFragment f = asMe();
     final ASTRewrite r = ASTRewrite.create(f.getAST());
@@ -157,10 +150,6 @@ public class DeclarationIfStatementWringed extends AbstractWringTest {
     assertTrue(same(a.getLeftHandSide(), f.getName()));
     r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
-  }
-  private  Document asDocument() {
-    final String s = input;
-    return new Document(Wrap.Statement.on(s));
   }
   @Override protected CompilationUnit asCompilationUnit() {
     final CompilationUnit $ = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Statement.on(input));

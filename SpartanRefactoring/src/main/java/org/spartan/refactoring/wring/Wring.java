@@ -26,55 +26,20 @@ import org.spartan.utils.Range;
  * A wring is so small that it is idempotent: Applying a wring to the output of
  * itself is the empty operation.
  *
+ * @param <N> JD
  * @author Yossi Gil
  * @since 2015-07-09
  */
-public abstract class Wring {
+public abstract class Wring<N extends ASTNode> {
   /**
    * Determine whether the parameter is "eligible" for application of this
    * instance. The parameter must be within the scope of the current instance.
    *
-   * @param b JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object.
    */
-  abstract boolean eligible(final Block b);
-  /**
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
-   *         the simplification offered by this object.
-   */
-  abstract boolean eligible(final ConditionalExpression e);
-  final boolean eligible(final Expression e) {
-    return eligible(asInfixExpression(e)) || eligible(asPrefixExpression(e)) || eligible(asConditionalExpression(e));
-  }
-  /**
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
-   *         the simplification offered by this object.
-   */
-  abstract boolean eligible(final IfStatement i);
-  /**
-   * Determines whether this {@link Wring} object is applicable to a given
-   * {@link PrefixExpression}, also said that it is within the "scope" of this .
-   * Note that a {@link Wring} is applicable in principle to an object, but that
-   * actual application will be vacuous.
-   *
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
-   *         the simplification offered by this object.
-   */
-  abstract boolean eligible(final InfixExpression e);
-  /**
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
-   *         the simplification offered by this object.
-   */
-  abstract boolean eligible(final PrefixExpression e);
-  abstract boolean eligible(VariableDeclarationFragment f);
-  abstract boolean go(ASTRewrite r, Block b);
-  abstract boolean go(ASTRewrite r, ConditionalExpression e);
-  abstract boolean go(ASTRewrite r, IfStatement e);
+  abstract boolean eligible(final N n);
   /**
    * Record a rewrite
    *
@@ -83,12 +48,7 @@ public abstract class Wring {
    * @return <code><b>true</b></code> <i>iff</i> there is room for further
    *         simplification of this expression.
    */
-  abstract boolean go(final ASTRewrite r, final InfixExpression e);
-  abstract boolean go(ASTRewrite r, PrefixExpression e);
-  abstract boolean go(ASTRewrite r, VariableDeclarationFragment f);
-  final boolean noneligible(final Block b) {
-    return !eligible(b);
-  }
+  abstract boolean go(ASTRewrite r, N n);
   /**
    * Determines whether this {@link Wring} object is not applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
@@ -100,14 +60,8 @@ public abstract class Wring {
    *         the simplification offered by this object.
    * @see #eligible(InfixExpression)
    */
-  final boolean noneligible(final Expression e) {
-    return !eligible(e);
-  }
-  final boolean noneligible(final IfStatement s) {
-    return !eligible(s);
-  }
-  final boolean noneligible(final VariableDeclarationFragment s) {
-    return !eligible(s);
+  final boolean noneligible(final N n) {
+    return !eligible(n);
   }
   /**
    * Determine the {@link Range} of characters managed by this instance.
@@ -115,8 +69,8 @@ public abstract class Wring {
    * @param e JD
    * @return
    */
-  @SuppressWarnings("static-method") Range range(final ASTNode e) {
-    return new Range(e);
+  @SuppressWarnings("static-method") Range range(final ASTNode n) {
+    return new Range(n);
   }
   abstract Statement replacement(final Block b);
   abstract Expression replacement(final ConditionalExpression e);
@@ -125,78 +79,29 @@ public abstract class Wring {
     return ($ = replacement(asInfixExpression(e))) != null //
         || ($ = replacement(asPrefixExpression(e))) != null //
         || ($ = replacement(asConditionalExpression(e))) != null //
-            ? $ : null;
+        ? $ : null;
   }
   abstract Statement replacement(final IfStatement e);
   abstract Expression replacement(final InfixExpression e);
   abstract Expression replacement(final PrefixExpression e);
   abstract Statement replacement(final VariableDeclarationFragment f);
-  abstract boolean scopeIncludes(Block b);
-  abstract boolean scopeIncludes(ConditionalExpression e);
   /**
    * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
    * be the case that a {@link Wring} is applicable in principle to an object,
    * but that actual application will be vacuous.
    *
-   * @param e JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */
-  final boolean scopeIncludes(final Expression e) {
-    return scopeIncludes(asInfixExpression(e)) || scopeIncludes(asPrefixExpression(e)) || scopeIncludes(asConditionalExpression(e));
-  }
-  abstract boolean scopeIncludes(final IfStatement i);
-  /**
-   * Determines whether this {@link Wring} object is applicable for a given
-   * {@link InfixExpression} is within the "scope" of this . Note that it could
-   * be the case that a {@link Wring} is applicable in principle to an object,
-   * but that actual application will be vacuous.
-   *
-   * @param e JD
-   * @return <code><b>true</b></code> <i>iff</i> the argument is within the
-   *         scope of this object
-   */
-  abstract boolean scopeIncludes(InfixExpression e);
-  abstract boolean scopeIncludes(PrefixExpression e);
-  abstract boolean scopeIncludes(VariableDeclarationFragment f);
+  abstract boolean scopeIncludes(N n);
 
-  @SuppressWarnings("unused") abstract static class Defaults extends Wring {
-    @Override boolean eligible(final Block b) {
+  @SuppressWarnings("unused") abstract static class Defaults<N extends ASTNode> extends Wring<N> {
+    @Override boolean eligible(final N n) {
       return false;
     }
-    @Override boolean eligible(final ConditionalExpression e) {
-      return false;
-    }
-    @Override boolean eligible(final IfStatement i) {
-      return false;
-    }
-    @Override boolean eligible(final InfixExpression e) {
-      return false;
-    }
-    @Override boolean eligible(final PrefixExpression e) {
-      return false;
-    }
-    @Override boolean eligible(final VariableDeclarationFragment f) {
-      return false;
-    }
-    @Override boolean go(final ASTRewrite r, final Block b) {
-      return false;
-    }
-    @Override boolean go(final ASTRewrite r, final ConditionalExpression e) {
-      return false;
-    }
-    @Override boolean go(final ASTRewrite r, final IfStatement e) {
-      return false;
-    }
-    @Override boolean go(final ASTRewrite r, final InfixExpression e) {
-      return false;
-    }
-    @Override boolean go(final ASTRewrite r, final PrefixExpression e) {
-      return false;
-    }
-    @Override boolean go(final ASTRewrite r, final VariableDeclarationFragment f) {
-      // TODO Auto-generated method stub
+    @Override boolean go(final ASTRewrite r, final N n) {
       return false;
     }
     @Override Statement replacement(final Block b) {
@@ -217,31 +122,16 @@ public abstract class Wring {
     @Override Statement replacement(final VariableDeclarationFragment f) {
       return null;
     }
-    @Override boolean scopeIncludes(final Block b) {
-      return false;
-    }
-    @Override boolean scopeIncludes(final ConditionalExpression e) {
-      return false;
-    }
-    @Override boolean scopeIncludes(final IfStatement i) {
-      return false;
-    }
-    @Override boolean scopeIncludes(final InfixExpression e) {
-      return false;
-    }
-    @Override boolean scopeIncludes(final PrefixExpression e) {
-      return false;
-    }
-    @Override boolean scopeIncludes(final VariableDeclarationFragment s) {
+    @Override boolean scopeIncludes(final N n) {
       return false;
     }
 
-    static final class Checker extends Defaults {
+    static final class Checker<N extends ASTNode> extends Defaults<N> {
       // Body of this class must be empty!
     }
   }
 
-  static abstract class OfBlock extends Defaults {
+  static abstract class OfBlock extends Defaults<Block> {
     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final Block _) {
       return true;
     }
@@ -264,7 +154,7 @@ public abstract class Wring {
     }
   }
 
-  static abstract class OfConditionalExpression extends Defaults {
+  static abstract class OfConditionalExpression extends Defaults<ConditionalExpression> {
     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
       return true;
     }
@@ -287,7 +177,7 @@ public abstract class Wring {
     }
   }
 
-  static abstract class OfIfStatement extends Wring.Defaults {
+  static abstract class OfIfStatement extends Defaults<IfStatement> {
     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
@@ -306,11 +196,11 @@ public abstract class Wring {
       return _replacement(e);
     }
     @Override boolean scopeIncludes(final IfStatement i) {
-      return _replacement(i) != null;
+      return i != null && _replacement(i) != null;
     }
   }
 
-  static abstract class OfIfStatementAndSubsequentStatement extends Wring.Defaults {
+  static abstract class OfIfStatementAndSubsequentStatement extends Wring.Defaults<IfStatement> {
     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final IfStatement _) {
       return true;
     }
@@ -332,7 +222,7 @@ public abstract class Wring {
     }
   }
 
-  static abstract class OfInfixExpression extends Defaults {
+  static abstract class OfInfixExpression extends Defaults<InfixExpression> {
     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final InfixExpression _) {
       return true;
     }
@@ -353,8 +243,7 @@ public abstract class Wring {
     @Override abstract boolean scopeIncludes(final InfixExpression e);
   }
 
-  static abstract class OfPrefixExpression extends Defaults {
-    abstract boolean _eligible(final PrefixExpression e);
+  static abstract class OfPrefixExpression extends Defaults<PrefixExpression> {
     abstract Expression _replacement(final PrefixExpression e);
     @Override final boolean eligible(final PrefixExpression e) {
       assert scopeIncludes(e);
@@ -369,9 +258,12 @@ public abstract class Wring {
       assert eligible(e);
       return _replacement(e);
     }
+    @SuppressWarnings("static-method") protected boolean _eligible(@SuppressWarnings("unused") final PrefixExpression _) {
+      return true;
+    }
   }
 
-  abstract static class OfVariableDeclarationFragmentAndSurrounding extends Wring.Defaults {
+  abstract static class OfVariableDeclarationFragmentAndSurrounding extends Wring.Defaults<VariableDeclarationFragment> {
     @SuppressWarnings("static-method") boolean _eligible(@SuppressWarnings("unused") final VariableDeclarationFragment _) {
       return true;
     }

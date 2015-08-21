@@ -25,7 +25,6 @@
             id="org.spartan.refactoring.builder.Builder">
       </builder>
    </extension>
-   
 <extension
     id="org.spartan.refactoring.spartanizationSuggestion"
     name="Spartanization Suggestion"

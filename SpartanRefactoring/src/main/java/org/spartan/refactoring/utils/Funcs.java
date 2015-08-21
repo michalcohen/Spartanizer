@@ -60,7 +60,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.spartan.refactoring.wring.PushdownNot;
+import org.spartan.refactoring.wring.PrefixNotPushdown;
 import org.spartan.utils.Utils;
 
 /**
@@ -553,7 +553,7 @@ public enum Funcs {
    */
   public static Expression not(final Expression e) {
     final PrefixExpression $ = Subject.operand(e).to(NOT);
-    final Expression $$ = PushdownNot.simplifyNot($);
+    final Expression $$ = PrefixNotPushdown.simplifyNot($);
     return $$ == null ? $ : $$;
   }
 
@@ -642,7 +642,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-    ) ? e : null;
+        ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)

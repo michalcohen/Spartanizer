@@ -30,6 +30,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.utils.Utils;
 
 /**
@@ -40,9 +41,9 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class COMPARISON_WITH_BOOLEAN extends AbstractWringTest {
-  static final Wring WRING = Wrings.COMPARISON_WITH_BOOLEAN.inner;
-  public COMPARISON_WITH_BOOLEAN() {
+public class InfixComparisonBooleanLiteralTest extends AbstractWringTest {
+  static final Wring<?> WRING = new InfixComparisonBooleanLiteral();
+  public InfixComparisonBooleanLiteralTest() {
     super(WRING);
   }
   @Test public void removeParenthesis() {

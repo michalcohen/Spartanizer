@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -18,8 +19,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class PushdownTernaryTest {
-  static final Wring WRING = Wrings.PUSHDOWN_TERNARY.inner;
+public class TernaryPushdownTest {
+  static final Wring<ConditionalExpression> WRING = new TernaryPushdown();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {

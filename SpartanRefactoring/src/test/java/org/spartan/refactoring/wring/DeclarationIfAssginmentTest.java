@@ -41,9 +41,9 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE extends AbstractWringTest {
-  static final Wring WRING = Wrings.DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE.inner;
-  public DECLARATION_IF_ASSIGNMENT_OF_SAME_VARIABLE() {
+public class DeclarationIfAssginmentTest extends AbstractWringTest {
+  static final Wring<?> WRING = new DeclarationIfAssginment();
+  public DeclarationIfAssginmentTest() {
     super(WRING);
   }
   @Test public void newlineBug() throws MalformedTreeException, BadLocationException {

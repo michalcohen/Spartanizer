@@ -19,9 +19,9 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum SIMPLIFY_BLOCK {
+public enum BlockSimplifyTest {
   ;
-  static final Wring WRING = Wrings.SIMPLIFY_BLOCK.inner;
+  static final Wring<?> WRING = new BlockSimplify();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {

@@ -1,7 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.utils.ExpressionComparator.countNodes;
 import static org.spartan.refactoring.utils.Funcs.not;
-import static org.spartan.refactoring.wring.ExpressionComparator.countNodes;
 
 import java.util.List;
 

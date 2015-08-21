@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,7 +12,6 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.wring.Wrings.MULTIPLICATION_SORTER;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +31,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
 import org.spartan.utils.Utils;
 
@@ -42,18 +43,18 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class MULTIPLICATION_SORTER extends AbstractWringTest {
-  static final Wring WRING = Wrings.MULTIPLICATION_SORTER.inner;
+public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpression> {
+  static final Wring<InfixExpression> WRING = new InfixMultiplicationSort();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
   public
-  MULTIPLICATION_SORTER() {
+  InfixMultiplicationSortTest() {
     super(WRING);
   }
   @Test public void chainComparison0() {
     final InfixExpression e = i("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
-    final Wring s = Wrings.find(e);
-    assertEquals(s, MULTIPLICATION_SORTER);
+    final Wring<InfixExpression> s = Toolbox.instance.find(e);
+    assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
@@ -65,10 +66,12 @@ public class MULTIPLICATION_SORTER extends AbstractWringTest {
     assertLegible("z * 2 * a * b * c * d * e * f * g * h");
   }
   @Test public void oneMultiplication0() {
-    final InfixExpression e = i("f(a,b,c,d) ^ f(a,b,c)");
+    final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
-    final Wring s = Wrings.find(e);
-    assertEquals(s, MULTIPLICATION_SORTER.inner);
+    assertThat(inner.scopeIncludes(e), is(true));
+    assertThat(inner.eligible(e), is(true));
+    final Wring<InfixExpression> s = Toolbox.instance.find(e);
+    assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
@@ -182,7 +185,7 @@ public class MULTIPLICATION_SORTER extends AbstractWringTest {
       final boolean sort = Wrings.sort(operands, COMPARATOR);
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
-              "After: " + operands + "\n", //
+          "After: " + operands + "\n", //
           sort, is(true));
     }
     @Test public void sortTwice() {

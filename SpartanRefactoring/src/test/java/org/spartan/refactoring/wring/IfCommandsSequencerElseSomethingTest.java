@@ -28,8 +28,8 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
-public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
-  static final Wring WRING = Wrings.IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING.inner;
+public class IfCommandsSequencerElseSomethingTest {
+  static final Wring<?> WRING = new IfCommandsSequencerElseSomething();
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) return a = b; else a = c;");
     assertNotNull(s);
@@ -84,7 +84,7 @@ public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
                 "   return a;\n" + //
                 " }\n" + //
                 " g();\n" + //
-                ""),
+            ""),
         null, //
         Utils.asArray("Complex with many junk statements",
             "" + //
@@ -99,13 +99,13 @@ public class IFX_COMMANDS_SEQUENCER_ELSE_SOMETHING {
                 "   }\n" + //
                 " }\n" + //
                 "",
-            "" + //
-                " if (x) {\n" + //
-                "   f();\n" + //
-                "   return a;\n" + //
-                " }\n" + //
-                " g();\n" + //
-                ""),
+                "" + //
+                    " if (x) {\n" + //
+                    "   f();\n" + //
+                    "   return a;\n" + //
+                    " }\n" + //
+                    " g();\n" + //
+            ""),
         null);
     /**
      * Generate test cases for this parameterized class.

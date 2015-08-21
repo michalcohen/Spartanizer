@@ -95,11 +95,11 @@ import org.spartan.utils.Range;
     final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn == null ? prev(ifIdx, ss) : prev2(ss, ifIdx), then.getLeftHandSide());
     Range $;
     return //
-    //
-    ($ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl)) != null || //
+        //
+        ($ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl)) != null || //
         ($ = detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl)) != null || //
         ($ = detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl)) != null//
-            ? $ : null;
+        ? $ : null;
   }
   private static Range detectIfReturn(final IfStatement s, final List<Statement> ss) {
     return Is.last(s, ss) ? null : detectIfReturn(s.getThenStatement(), s.getElseStatement(), ss, ss.indexOf(s));
@@ -231,13 +231,13 @@ import org.spartan.utils.Range;
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final Expression thenExp, final Expression elseExp) {
     return Is.assignment(then) && Is.assignment(elze)//
         ? compatible(Extract.assignment(then), Extract.assignment(elze)) //
-        : same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp));
+            : same(prepareSubTree(then, thenExp), prepareSubTree(elze, elseExp));
   }
   private static boolean isExpOnlyDiff(final ASTNode then, final ASTNode elze, final TwoExpressions diffExps) {
     return diffExps != null ? isExpOnlyDiff(then, elze, diffExps.then, diffExps.elze)
         : !Is.assignment(then) //
-            || !Is.assignment(elze) //
-            || compatible(Extract.assignment(then), Extract.assignment(elze));
+        || !Is.assignment(elze) //
+        || compatible(Extract.assignment(then), Extract.assignment(elze));
   }
   private static boolean isExpOnlyDiff(final Pair diffNodes, final TwoExpressions diffExps) {
     return !hasNull(diffNodes, diffNodes.then, diffNodes.elze) && isExpOnlyDiff(diffNodes.then, diffNodes.elze, diffExps);
@@ -472,7 +472,7 @@ import org.spartan.utils.Range;
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final IfStatement i) {
         return // try many alternatives, but finally return true.
-        !inRange(m, i) // Stop here
+            !inRange(m, i) // Stop here
             || perhapsAssignIfAssign(t, r, i) //
             || perhapsIfReturn(t, r, i) //
             || perhapsIfSameExpStmntOrRet(t, r, i) //

@@ -21,8 +21,9 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class ELIMINATE_TERNARY {
-  static final Wring WRING = Wrings.ELIMINATE_TERNARY.inner;
+public class TernaryEliminateTest
+{
+  static final Wring WRING = new TernaryEliminate();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {

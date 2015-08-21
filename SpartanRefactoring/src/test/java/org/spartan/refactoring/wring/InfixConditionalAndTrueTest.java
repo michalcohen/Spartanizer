@@ -28,9 +28,9 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum AND_TRUE {
+public enum InfixConditionalAndTrueTest {
   ;
-  static final Wring WRING = Wrings.AND_TRUE.inner;
+  static final Wring<InfixExpression> WRING = new InfixConditionalAndTrue();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {

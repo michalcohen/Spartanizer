@@ -28,8 +28,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class IFX_SOMETHING_EXISTING_EMPTY_ELSE {
-  static final Wring WRING = Wrings.IFX_SOMETHING_EXISTING_EMPTY_ELSE.inner;
+public class IfSomethingNoElseTest {
+  static final Wring<?> WRING =new IfSomethingNoElse();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {

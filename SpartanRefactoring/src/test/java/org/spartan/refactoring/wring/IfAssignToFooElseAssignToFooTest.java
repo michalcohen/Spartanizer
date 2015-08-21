@@ -33,8 +33,8 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
-public class IFX_ASSIGNX_ELSE_ASSIGNY {
-  static final Wring WRING = Wrings.IFX_ASSIGNX_ELSE_ASSIGNY.inner;
+public class IfAssignToFooElseAssignToFooTest {
+  static final Wring WRING = new IfAssignToFooElseAssignToFoo();
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) a = b; else a = c;");
     assertNotNull(s);

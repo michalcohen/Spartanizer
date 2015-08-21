@@ -32,8 +32,8 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
-public class DECLARATION_RETURN_OF_SAME_VARIABLE {
-  static final Wring WRING = Wrings.DECLARATION_RETURN_OF_SAME_VARIABLE.inner;
+public class DeclarationReturnTest {
+  static final Wring<?> WRING = new DeclarationReturn();
   @Test public void placeHolder() {
     assertNotNull(WRING);
   }
@@ -75,7 +75,7 @@ public class DECLARATION_RETURN_OF_SAME_VARIABLE {
                 + "   !messageFlagged ? mReadColorChip : mFlaggedReadColorChip: " //
                 + "    !messageFlagged ? mUnreadColorChip : mFlaggedUnreadColorChip; " //
                 + "   return $;", //
-            "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
+        "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
         null);
     /**
      * Generate test cases for this parameterized class.

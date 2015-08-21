@@ -24,12 +24,12 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
+import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Into;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
-import org.spartan.refactoring.wring.Wring.OfInfixExpression;
 import org.spartan.utils.Utils;
 
 /**
@@ -40,8 +40,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class ADDITION_SORTER {
-  static final Wring WRING = Wrings.ADDITION_SORTER.inner;
+public class InfixAdditionSortTest {
+  static final Wring<InfixExpression> WRING = new InfixAdditionSort();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.ADDITION;
   @Test public void subjectOperandsWithParenthesis() {
     final Expression e = Into.e("(2 + a) * b");
@@ -52,7 +52,7 @@ public class ADDITION_SORTER {
     assertThat(operands.size(), is(2));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
     assertThat(r, iz("2+a"));
-    final Wring.OfInfixExpression inner = (OfInfixExpression) Wrings.ADDITION_SORTER.inner;
+    final Wring.OfInfixExpression inner = new InfixAdditionSort();
     final Expression replacement = inner.replacement(plus);
     assertThat(replacement, iz("a+2"));
   }
@@ -161,7 +161,7 @@ public class ADDITION_SORTER {
       assertThat(operands.size(), greaterThanOrEqualTo(2));
       assertThat(//
           "Before: " + All.operands(flatten(e)) + "\n" + //
-              "After: " + operands + "\n", //
+          "After: " + operands + "\n", //
           Wrings.sort(operands, COMPARATOR), is(true));
     }
     @Test public void sortTwice() {

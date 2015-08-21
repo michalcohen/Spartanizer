@@ -1,4 +1,4 @@
-package org.spartan.refactoring.wring;
+package org.spartan.refactoring.utils;
 
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;

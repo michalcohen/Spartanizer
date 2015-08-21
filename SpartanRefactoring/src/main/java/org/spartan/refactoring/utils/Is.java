@@ -337,7 +337,7 @@ public enum Is {
         NUMBER_LITERAL, //
         STRING_LITERAL, //
         BOOLEAN_LITERAL //
-    );
+        );
   }
   /**
    * @param r Return Statement node
@@ -623,7 +623,7 @@ public enum Is {
         NULL_LITERAL, // null + null is an error, not a string.
         NUMBER_LITERAL, //
         PREFIX_EXPRESSION //
-    //
-    );
+        //
+        );
   }
 }

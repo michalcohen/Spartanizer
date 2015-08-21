@@ -29,7 +29,42 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
-public final class PushdownNot extends Wring.OfPrefixExpression {
+/**
+ * A {@link Wring} that pushes down "<code>!</code>", the negation operator as
+ * much as possible, using the de-Morgan and other simplification rules.
+ *
+ * @author Yossi Gil
+ * @since 2015-7-17
+ */
+public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
+  /**
+   * @param o JD
+   * @return the operator that produces the logical negation of the parameter
+   */
+  public static Operator negate(final Operator o) {
+    return o == null ? null
+        : o.equals(EQUALS) ? NOT_EQUALS
+            : o.equals(NOT_EQUALS) ? EQUALS
+                : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER) //
+                    ? LESS_EQUALS : o.equals(GREATER_EQUALS) ? LESS : //
+                      !o.equals(LESS) ? null : GREATER_EQUALS;
+  }
+  public static Expression simplifyNot(final PrefixExpression e) {
+    return pushdownNot(asNot(Extract.core(e)));
+  }
+  private static Expression tryToSimplify(final Expression e) {
+    final Expression $ = pushdownNot(asNot(e));
+    return $ != null ? $ : e;
+  }
+  static Expression applyDeMorgan(final InfixExpression inner) {
+    final List<Expression> operands = new ArrayList<>();
+    for (final Expression e : All.operands(flatten(inner)))
+      operands.add(not(e));
+    return Subject.operands(operands).to(conjugate(inner.getOperator()));
+  }
+  static Expression comparison(final InfixExpression e) {
+    return Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(negate(e.getOperator()));
+  }
   static Expression notOfLiteral(final BooleanLiteral l) {
     final BooleanLiteral $ = duplicate(l);
     $.setBooleanValue(!l.booleanValue());
@@ -47,21 +82,11 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
   static Expression perhapsDeMorgan(final InfixExpression e) {
     return e == null ? null : applyDeMorgan(e);
   }
-  static Expression applyDeMorgan(final InfixExpression inner) {
-    final List<Expression> operands = new ArrayList<>();
-    for (final Expression e : All.operands(flatten(inner)))
-      operands.add(not(e));
-    return Subject.operands(operands).to(conjugate(inner.getOperator()));
-  }
   static Expression perhapsDoubleNegation(final Expression e) {
     return perhapsDoubleNegation(asNot(e));
   }
   static Expression perhapsDoubleNegation(final PrefixExpression e) {
     return e == null ? null : tryToSimplify(core(e.getOperand()));
-  }
-  private static Expression tryToSimplify(final Expression e) {
-    final Expression $ = pushdownNot(asNot(e));
-    return $ != null ? $ : e;
   }
   static Expression perhapsNotOfLiteral(final Expression e) {
     return !Is.booleanLiteral(e) ? null : notOfLiteral(asBooleanLiteral(e));
@@ -72,37 +97,15 @@ public final class PushdownNot extends Wring.OfPrefixExpression {
         || ($ = perhapsDoubleNegation(e)) != null//
         || ($ = perhapsDeMorgan(e)) != null//
         || ($ = perhapsComparison(e)) != null //
-            ? $ : null;
-  }
-  static Expression comparison(final InfixExpression e) {
-    return Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(negate(e.getOperator()));
+        ? $ : null;
   }
   static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(core(e.getOperand()));
   }
-  /**
-   * @param o JD
-   * @return the operator that produces the logical negation of the parameter
-   */
-  public static Operator negate(final Operator o) {
-    return o == null ? null
-        : o.equals(EQUALS) ? NOT_EQUALS
-            : o.equals(NOT_EQUALS) ? EQUALS
-                : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER) ? LESS_EQUALS : o.equals(GREATER_EQUALS) ? LESS : !o.equals(LESS) ? null : GREATER_EQUALS;
-  }
   @Override public boolean scopeIncludes(final PrefixExpression e) {
     return e != null && asNot(e) != null && Wrings.hasOpportunity(asNot(e));
   }
-  @Override public String toString() {
-    return "Pushdown not";
-  }
-  @Override boolean _eligible(@SuppressWarnings("unused") final PrefixExpression _) {
-    return true;
-  }
   @Override Expression _replacement(final PrefixExpression e) {
     return simplifyNot(e);
-  }
-  public static Expression simplifyNot(final PrefixExpression e) {
-    return pushdownNot(asNot(Extract.core(e)));
   }
 }

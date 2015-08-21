@@ -33,9 +33,9 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class PushdownNotTest {
+public class PrefixNotPushdownTest {
   /** The {@link Wring} under test */
-  static final Wring WRING = Wrings.PUSHDOWN_NOT.inner;
+  static final Wring<PrefixExpression> WRING = new PrefixNotPushdown();
   @Test public void notOfFalse() {
     final PrefixExpression e = p("!false");
     assertThat(e, is(notNullValue()));
@@ -47,11 +47,11 @@ public class PushdownNotTest {
     assertThat(inner, is(notNullValue()));
     assertThat(inner.toString(), is("false"));
     assertThat(Is.booleanLiteral(inner), is(true));
-    assertThat(PushdownNot.perhapsNotOfLiteral(inner), is(notNullValue()));
-    assertThat(PushdownNot.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
-    assertThat(PushdownNot.perhapsNotOfLiteral(inner), is(notNullValue()));
-    assertThat(PushdownNot.pushdownNot(inner), is(notNullValue()));
-    assertThat(PushdownNot.pushdownNot(asNot(e)), is(notNullValue()));
+    assertThat(PrefixNotPushdown.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(PrefixNotPushdown.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
+    assertThat(PrefixNotPushdown.perhapsNotOfLiteral(inner), is(notNullValue()));
+    assertThat(PrefixNotPushdown.pushdownNot(inner), is(notNullValue()));
+    assertThat(PrefixNotPushdown.pushdownNot(asNot(e)), is(notNullValue()));
     assertThat(WRING.replacement(e), is(notNullValue()));
   }
 

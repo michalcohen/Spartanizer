@@ -22,6 +22,7 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
@@ -34,10 +35,10 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class COMPARISON_SORTER extends AbstractWringTest {
-  static final Wring WRING = Wrings.COMPARISON_SORTER.inner;
+public class InfixComparisonShortestFirstTest extends AbstractWringTest {
+  static final Wring WRING = new InfixComparisonShortestFirst();
   /** Instantiates this class */
-  public COMPARISON_SORTER() {
+  public InfixComparisonShortestFirstTest() {
     super(WRING);
   }
   @Test public void comparisonWithSpecific0Legibiliy1() {

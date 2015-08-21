@@ -143,8 +143,10 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     public IfStatement toIf(final Expression condition) {
       final IfStatement $ = ast.newIfStatement();
       $.setExpression(claim(condition));
-      $.setThenStatement(then);
-      $.setElseStatement(elze);
+      if (then != null)
+        $.setThenStatement(then);
+      if (elze != null)
+        $.setElseStatement(elze);
       return $;
     }
   }
@@ -158,7 +160,8 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       return rebase(duplicate(Extract.core(e)), ast);
     }
     Statement claim(final Statement s) {
-      return rebase(duplicate(Extract.core(s)), ast);
+      final Statement core = Extract.core(s);
+      return core == null ? null : rebase(duplicate(core), ast);
     }
   }
 }
