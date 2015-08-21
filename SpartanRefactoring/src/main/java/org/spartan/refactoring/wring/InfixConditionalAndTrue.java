@@ -1,0 +1,21 @@
+package org.spartan.refactoring.wring;
+
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.spartan.refactoring.utils.Have;
+import org.spartan.refactoring.utils.Is;
+/**
+ * A {@link Wring} that eliminate Boolean literals, when possible present on
+ * logical AND an logical OR.
+ *
+ * @author Yossi Gil
+ * @since 2015-07-20
+ */
+public final class InfixConditionalAndTrue extends Wring.OfInfixExpression {
+  @Override Expression _replacement(final InfixExpression e) {
+    return Wrings.eliminateLiteral(e, true);
+  }
+  @Override boolean scopeIncludes(final InfixExpression e) {
+    return Is.conditionalAnd(e) && Have.trueLiteral(Wrings.allOperands(e));
+  }
+}
