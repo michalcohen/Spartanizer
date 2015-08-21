@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.refactoring.utils.Subject;
 /**
  * A {@link Wring} to convert
@@ -26,7 +27,6 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-08-07
  */
 public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFragmentAndSurrounding {
-
   @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
     final Expression initializer = f.getInitializer();
     if (initializer == null)
@@ -35,9 +35,11 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
     if (s == null || !Wrings.elseIsEmpty(s))
       return null;
     final Assignment a = Extract.assignment(s.getThenStatement());
-    // TODO: FIXME  there are many kinds of assignments.
-    // TODO: FIXME: If the the variable is used in the expression, then we have a problem.
     if (a == null || !same(a.getLeftHandSide(), f.getName()))
+      return null;
+    if (a.getOperator() != Assignment.Operator.ASSIGN)
+      return null;
+    if (!Occurrences.BOTH_SEMANTIC.of(f).in(s).isEmpty())
       return null;
     r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);

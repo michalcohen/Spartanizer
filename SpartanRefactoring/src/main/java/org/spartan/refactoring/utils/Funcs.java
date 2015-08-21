@@ -528,7 +528,7 @@ public enum Funcs {
    * @return the new variable declaration fragment or null if one of the given
    *         parameters was null
    */
-  public static VariableDeclarationFragment makeVarDeclFrag(final AST t, final ASTRewrite r, final SimpleName varName, final Expression initalizer) {
+  public static VariableDeclarationFragment makeVariableDeclarationFragment(final AST t, final ASTRewrite r, final SimpleName varName, final Expression initalizer) {
     if (hasNull(t, r, varName, initalizer))
       return null;
     final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();

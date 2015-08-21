@@ -58,7 +58,7 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015-07-18
  */
-@SuppressWarnings({ "javadoc",   "unchecked" }) //
+@SuppressWarnings({ "javadoc", "unchecked" }) //
 public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
   protected final Wring<N> inner;
   public AbstractWringTest() {
@@ -94,7 +94,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     assertNotNull($);
     return $;
   }
-  @SuppressWarnings("static-method") protected ASTNode asMe() {
+  @SuppressWarnings("static-method") protected N asMe() {
     return null;
   }
   protected PrefixExpression asPrefixExpression() {
@@ -108,7 +108,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
   void assertNotLegible(final Block b) {
     assertThat(inner.eligible((N) b), is(false));
   }
- void assertNotLegible(final Expression e) {
+  void assertNotLegible(final Expression e) {
     assertThat(inner.eligible((N) e), is(false));
   }
   void assertNotLegible(final IfStatement b) {
@@ -226,15 +226,35 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       super(inner);
     }
 
-    public static class Exprezzion<N extends Expression> extends OutOfScope<N> {
+    public static class Declaration extends OutOfScope<VariableDeclarationFragment> {
+      public Declaration() {
+        this(null);
+      }
+      Declaration(final Wring<VariableDeclarationFragment> inner) {
+        super(inner);
+      }
+      @Override protected VariableDeclarationFragment asMe() {
+        return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
+      }
+      @Test public void asMeNotNull() {
+        if (inner != null)
+          assertThat(asMe(), notNullValue());
+      }
+      @Test public void scopeDoesNotInclude() {
+        if (inner != null)
+        assertThat(inner.scopeIncludes(asMe()), is(false));
+      }
+    }
+
+    public static class Exprezzion<E extends Expression> extends OutOfScope<E> {
       public Exprezzion() {
         this(null);
       }
-      Exprezzion(final Wring<N> inner) {
+      Exprezzion(final Wring<E> inner) {
         super(inner);
       }
-      @Override protected Expression asMe() {
-        final Expression $ = e(input);
+      @Override protected E asMe() {
+        final E $ = (E) e(input);
         assertNotNull($);
         return $;
       }
@@ -585,8 +605,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       final String s = input;
       return new Document(Wrap.Expression.on(s));
     }
-    @Override protected Expression asMe() {
-      final Expression $ = e(input);
+    @Override protected E asMe() {
+      final E $ = (E) e(input);
       assertNotNull($);
       return $;
     }
@@ -768,8 +788,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       final String s = input;
       return new Document(Wrap.Statement.on(s));
     }
-    @Override protected Statement asMe() {
-      final Statement $ = s(input);
+    @Override protected N asMe() {
+      final N $ = (N) s(input);
       assertNotNull($);
       return $;
     }

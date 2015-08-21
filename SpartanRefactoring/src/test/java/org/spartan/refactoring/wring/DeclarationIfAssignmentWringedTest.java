@@ -48,7 +48,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc" }) //
 @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class DeclarationIfAssignmentWringed extends AbstractWringTest<VariableDeclarationFragment> {
+public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<VariableDeclarationFragment> {
   /** Description of a test case for {@link Parameter} annotation */
   protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
   private static String[][] cases = Utils.asArray(//
@@ -70,10 +70,10 @@ public class DeclarationIfAssignmentWringed extends AbstractWringTest<VariableDe
   /** What should the output be */
   @Parameter(2) public String expected;
   /** Instantiates the enclosing class ({@link Wringed}) */
-  public DeclarationIfAssignmentWringed() {
+  public DeclarationIfAssignmentWringedTest() {
     super(DeclarationIfAssginmentTest.WRING);
   }
-  DeclarationIfAssignmentWringed(final Wring<VariableDeclarationFragment> inner) {
+  DeclarationIfAssignmentWringedTest(final Wring<VariableDeclarationFragment> inner) {
     super(inner);
   }
   @Test public void correctSimplifier() {

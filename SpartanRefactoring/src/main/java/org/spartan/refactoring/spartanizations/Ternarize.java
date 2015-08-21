@@ -10,7 +10,7 @@ import static org.spartan.refactoring.utils.Funcs.compatibleOps;
 import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.hasReturn;
-import static org.spartan.refactoring.utils.Funcs.makeVarDeclFrag;
+import static org.spartan.refactoring.utils.Funcs.makeVariableDeclarationFragment;
 import static org.spartan.refactoring.utils.Funcs.next;
 import static org.spartan.refactoring.utils.Funcs.prev;
 import static org.spartan.refactoring.utils.Funcs.same;
@@ -189,14 +189,14 @@ import org.spartan.utils.Range;
     return true;
   }
   private static boolean handlePrevDeclExist(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Assignment prevAsgn,
-      final VariableDeclarationFragment prevDecl) {
+      final VariableDeclarationFragment f) {
     final Expression[] es = { then.getRightHandSide(), prevAsgn.getRightHandSide() };
-    if (Occurrences.BOTH_SEMANTIC.of(prevDecl).existIn(es) || !Is.plainAssignment(then)) {
-      if (prevDecl.getInitializer() != null)
+    if (Occurrences.BOTH_SEMANTIC.of(f).existIn(es) || !Is.plainAssignment(then)) {
+      if (f.getInitializer() != null)
         return handleNoPrevDecl(t, r, i, then, prevAsgn);
     } else {
-      r.replace(prevDecl,
-          makeVarDeclFrag(t, r, (SimpleName) prevAsgn.getLeftHandSide(), Subject.pair(then.getRightHandSide(), prevAsgn.getRightHandSide()).toCondition(i.getExpression())), null);
+      r.replace(f,
+          makeVariableDeclarationFragment(t, r, (SimpleName) prevAsgn.getLeftHandSide(), Subject.pair(then.getRightHandSide(), prevAsgn.getRightHandSide()).toCondition(i.getExpression())), null);
       r.remove(i, null);
       r.remove(prevAsgn.getParent(), null);
       return true;
@@ -206,7 +206,7 @@ import org.spartan.utils.Range;
   private static boolean handleSubIfDiffAreAsgns(final AST t, final ASTRewrite r, final IfStatement i, final Statement possiblePrevDecl, final ASTNode thenNode,
       final Expression newExp) {
     final VariableDeclarationFragment prevDecl = getVarDeclFrag(possiblePrevDecl, Extract.assignment(thenNode).getLeftHandSide());
-    r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), newExp), null);
+    r.replace(prevDecl, makeVariableDeclarationFragment(t, r, prevDecl.getName(), newExp), null);
     r.remove(i, null);
     return true;
   }
@@ -389,7 +389,7 @@ import org.spartan.utils.Range;
       final Assignment nextAsgn, final VariableDeclarationFragment prevDecl) {
     if (!isNoNextNoPrevAsgnPossible(i, then, prevAsgn, nextAsgn, prevDecl))
       return false;
-    r.replace(prevDecl, makeVarDeclFrag(t, r, prevDecl.getName(), Subject.pair(then.getRightHandSide(), prevDecl.getInitializer()).toCondition(i.getExpression())), null);
+    r.replace(prevDecl, makeVariableDeclarationFragment(t, r, prevDecl.getName(), Subject.pair(then.getRightHandSide(), prevDecl.getInitializer()).toCondition(i.getExpression())), null);
     r.remove(i, null);
     return true;
   }
@@ -403,7 +403,7 @@ import org.spartan.utils.Range;
       final Expression[] es = { nextAsgn.getRightHandSide() };
       if (prevDecl == null || !Is.plainAssignment(then) || !Occurrences.BOTH_SEMANTIC.of(prevDecl).in(es).isEmpty())
         return handleNoPrevDecl(t, r, i, then, nextAsgn);
-      r.replace(prevDecl, makeVarDeclFrag(t, r, (SimpleName) nextAsgn.getLeftHandSide(), nextAsgn.getRightHandSide()), null);
+      r.replace(prevDecl, makeVariableDeclarationFragment(t, r, (SimpleName) nextAsgn.getLeftHandSide(), nextAsgn.getRightHandSide()), null);
       r.remove(i, null);
       r.remove(nextAsgn.getParent(), null);
     }
