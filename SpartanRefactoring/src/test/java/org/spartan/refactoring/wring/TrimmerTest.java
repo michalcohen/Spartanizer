@@ -20,6 +20,7 @@ import static org.spartan.utils.Utils.in;
 
 import java.io.File;
 
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -1008,7 +1009,11 @@ public class TrimmerTest {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void simplifyBlockComplexEmpty() {
-    assertSimplifiesTo("{;;{;{{}}}{;}{};}", "", new BlockSimplify(), Wrap.Statement);
+    final BlockSimplify wring = new BlockSimplify();
+    final String from = "{;;{;{{}}}{;}{};}";
+    assertThat(wring.scopeIncludes((Block)As.STATEMENTS.ast(from)), is(true));
+    assertThat(wring.eligible((Block)As.STATEMENTS.ast(from)), is(true));
+    assertSimplifiesTo(from, "", wring, Wrap.Statement);
   }
   @Test public void simplifyBlockComplexEmpty1() {
     assertConvertsTo("{;;{;{{}}}{;}{};}", "");
@@ -1107,7 +1112,10 @@ public class TrimmerTest {
         "String res=s;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize10() {
-    assertNoConversion("String res = s, foo = \"bar\";   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ");
+    assertNoConversion("String res = s, foo = bar;   "//
+        + "if (res.equals(532)==true)    "
+        + " res = s + 0xABBA;   "
+        + "System.out.println(res); ");
   }
   @Test public void ternarize12() {
     assertNoConversion("String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ");

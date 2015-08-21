@@ -1,9 +1,7 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -382,13 +380,13 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
      *
      * @param inner
      */
-    WringedBlock(final Wring inner) {
+    WringedBlock(final Wring<Block> inner) {
       super(inner);
     }
     @Test public void correctSimplifierAsBlock() {
       if (inner == null)
         return;
-      assertEquals(inner, Toolbox.instance.find(asBlock(asMe())));
+      assertThat(Toolbox.instance.find(asBlock(asMe())), instanceOf(inner.getClass()));
     }
     @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
       final String s = input;

@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.Block;
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -21,7 +22,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public enum BlockSimplifyTest {
   ;
-  static final Wring<?> WRING = new BlockSimplify();
+  static final Wring<Block> WRING = new BlockSimplify();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope {

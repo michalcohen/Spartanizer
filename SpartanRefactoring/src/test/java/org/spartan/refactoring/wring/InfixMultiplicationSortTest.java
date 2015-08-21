@@ -50,7 +50,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
   InfixMultiplicationSortTest() {
     super(WRING);
   }
-  @Test public void chainComparison0() {
+  @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
     assertEquals("c", e.getRightOperand().toString());
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
@@ -77,7 +77,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     assertTrue(s.eligible(e));
     final Expression replacement = s.replacement(e);
     assertNotNull(replacement);
-    assertEquals("f(a,b,c) ^ f(a,b,c,d)", replacement.toString());
+    assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
 
   @RunWith(Parameterized.class) //

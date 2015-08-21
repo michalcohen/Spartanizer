@@ -1,16 +1,11 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
 import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.refactoring.utils.Restructure.flatten;
@@ -19,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -29,7 +23,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
@@ -60,9 +53,6 @@ public enum Wrings {
    */
   //
   ;
-
-
-
   public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
@@ -80,12 +70,6 @@ public enum Wrings {
         $ = true;
       }
     return $;
-  }
-  private static Expression simplifyTernary(final Expression then, final Expression elze, final Expression main) {
-    final boolean takeThen = !Is.booleanLiteral(then);
-    final Expression other = takeThen ? then : elze;
-    final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
-    return Subject.pair(literal != takeThen ? main : not(main), other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = allOperands(e);
@@ -110,18 +94,6 @@ public enum Wrings {
   }
   static boolean hasOpportunity(final PrefixExpression e) {
     return e != null && hasOpportunity(core(e.getOperand()));
-  }
-  static boolean haveTernaryOfBooleanLitreral(final List<Expression> es) {
-    for (final Expression e : es)
-      if (isTernaryOfBooleanLitreral(e))
-        return true;
-    return false;
-  }
-  static boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
-    return e != null && Have.booleanLiteral(core(e.getThenExpression()), core(e.getElseExpression()));
-  }
-  static boolean isTernaryOfBooleanLitreral(final Expression e) {
-    return isTernaryOfBooleanLitreral(asConditionalExpression(core(e)));
   }
   static int length(final ASTNode... ns) {
     int $ = 0;
@@ -172,21 +144,6 @@ public enum Wrings {
     r.replace(parent, $, null);
     return r;
   }
-  /**
-   * Consider an expression <code> a ? b : c </code>; in a sense it is the same
-   * as <code> (a && b) || (!a && c) </code>
-   * <ol>
-   * <li>if b is false then: <code>
-   * (a && false) || (!a && c) == !a && c </code>
-   * <li>if b is true then:
-   * <code>(a && true) || (!a && c) == a || (!a && c) == a || c </code>
-   * <li>if c is false then: <code>(a && b) || (!a && false) == a && b </code>
-   * <li>if c is true then <code>(a && b) || (!a && true) == !a || b</code>
-   * </ol>
-   */
-  static Expression simplifyTernary(final ConditionalExpression e) {
-    return simplifyTernary(core(e.getThenExpression()), core(e.getElseExpression()), duplicate(e.getExpression()));
-  }
   /* <code> a ? b : c </code>
    *
    * is the same as
@@ -208,15 +165,6 @@ public enum Wrings {
    * if c is true than
    *
    * <code> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </code> */
-  static void simplifyTernary(final List<Expression> es) {
-    for (int i = 0; i < es.size(); ++i) {
-      final Expression e = es.get(i);
-      if (!isTernaryOfBooleanLitreral(e))
-        continue;
-      es.remove(i);
-      es.add(i, simplifyTernary(asConditionalExpression(e)));
-    }
-  }
   public static List<Expression> allOperands(final InfixExpression e) {
     return All.operands(flatten(e));
   }

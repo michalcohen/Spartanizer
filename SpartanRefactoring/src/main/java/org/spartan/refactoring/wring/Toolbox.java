@@ -57,14 +57,14 @@ public class Toolbox {
           new DeclarationReturn(), //
           null) //
       .add(IfStatement.class, //
+          new IfThrowFooElseThrowBar(), //
+          new IfReturnFooElseReturnBar(), //
           new IfReturnNoElseReturn(), //
           new IfSomethingNoElse(), //
-          new IfReturnFooElseReturnBar(), //
           new IfAssignToFooElseAssignToFoo(), //
           new IfCommandsSequencerElseSomething(), //
           new IfCommandsSequencerIfSameCommandsSequencer(), //
           new IfShortestFirst(), //
-          new IfThrowFooElseThrowBar(), //
           null)//
       .add(PrefixExpression.class, new PrefixNotPushdown()) //
       .add(ConditionalExpression.class, //

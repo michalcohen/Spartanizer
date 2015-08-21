@@ -13,6 +13,7 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -41,8 +42,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class DeclarationIfAssginmentTest extends AbstractWringTest {
-  static final Wring<?> WRING = new DeclarationIfAssginment();
+public class DeclarationIfAssginmentTest extends AbstractWringTest<VariableDeclarationFragment> {
+  static final Wring<VariableDeclarationFragment> WRING = new DeclarationIfAssginment();
   public DeclarationIfAssginmentTest() {
     super(WRING);
   }
