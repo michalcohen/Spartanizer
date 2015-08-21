@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,27 +26,15 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class DeclarationAssignmentTest {
-  static final Wring<?> WRING =new DeclarationAssignment();
+  static final Wring<VariableDeclarationFragment> WRING =new DeclarationAssignment();
   @Test public void placeHolder() {
     // Place holder for future tests
     assertNotNull(WRING);
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
-        Utils.asArray("Literal vs. Literal", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
-        Utils.asArray("Not same assignment", "if (a) a /= b; else a /= c;"), //
-        Utils.asArray("Another distinct assignment", "if (a) a /= b; else a %= c;"), //
-        Utils.asArray("Simple if assign", "if (a) a = b; else a = c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else a();"), //
-        Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"), //
         Utils.asArray("Wrong assignnet", "int a = 0; if (x)  a+= 5"), //
         Utils.asArray("Wrong assignnet", "int a = 0; if (a)  a= 5;"), //
         null);

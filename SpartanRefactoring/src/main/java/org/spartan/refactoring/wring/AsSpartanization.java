@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -24,7 +25,7 @@ import org.spartan.utils.Range;
  * @since 2015/07/25
  */
 public class AsSpartanization extends Spartanization {
-  final Wring inner;
+  final Wring<ASTNode> inner;
   /**
    * Instantiates this class
    *
@@ -32,7 +33,7 @@ public class AsSpartanization extends Spartanization {
    * @param name The title of the refactoring
    * @param description One line description of the refactoring
    */
-  public AsSpartanization(final Wring inner, final String name, final String description) {
+  public AsSpartanization(final Wring<ASTNode> inner, final String name, final String description) {
     super(name, description);
     this.inner = inner;
   }

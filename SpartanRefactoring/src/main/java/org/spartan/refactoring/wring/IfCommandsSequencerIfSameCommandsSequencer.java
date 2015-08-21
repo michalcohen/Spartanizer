@@ -52,6 +52,6 @@ public final class IfCommandsSequencerIfSameCommandsSequencer extends Wring.OfIf
     final List<Statement> ss1 = Extract.statements(then);
     final List<Statement> ss2 = Extract.statements(s2.getThenStatement());
     return !same(ss1, ss2) || !Is.sequencer(last(ss1)) ? null
-        : Wrings.replaceTwoStatements(r, s1, makeIfWithoutElse(Wrings.reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
+        : Wrings.replaceTwoStatements(r, s1, makeIfWithoutElse(BlockSimplify.reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
   }
 }

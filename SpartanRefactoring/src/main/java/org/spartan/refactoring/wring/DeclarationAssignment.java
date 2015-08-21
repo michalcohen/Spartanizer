@@ -1,16 +1,20 @@
 package org.spartan.refactoring.wring;
 
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.same;
 
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
+
 /**
  * A {@link Wring} to convert
  *
  * <pre>
- * int a; a = 3;
+ * int a;
+ * a = 3;
  * </pre>
  *
  * into
@@ -29,8 +33,13 @@ public final class DeclarationAssignment extends Wring.OfVariableDeclarationFrag
     final Assignment a = Extract.nextAssignment(f);
     if (a == null || !same(f.getName(), a.getLeftHandSide()))
       return null;
-    r.replace(f, Wrings.makeVariableDeclarationFragement(f, a.getRightHandSide()), null);
+    r.replace(f, makeVariableDeclarationFragement(f, a.getRightHandSide()), null);
     r.remove(Extract.statement(a), null);
     return r;
+  }
+  private static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
+    final VariableDeclarationFragment $ = duplicate(f);
+    $.setInitializer(duplicate(e));
+    return $;
   }
 }

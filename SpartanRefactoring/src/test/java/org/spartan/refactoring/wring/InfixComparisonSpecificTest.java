@@ -42,8 +42,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class InfixComparisonSpecificTest extends AbstractWringTest {
-  static final Wring WRING = new InfixComparisonSpecific();
+public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpression> {
+  static final Wring<InfixExpression> WRING = new InfixComparisonSpecific();
   /** Instantiates this class */
   public InfixComparisonSpecificTest() {
     super(WRING);
@@ -63,6 +63,48 @@ public class InfixComparisonSpecificTest extends AbstractWringTest {
     assertNoChange("a <= null");
     assertNoChange("a >= this");
     assertNoChange("a >= null");
+  }
+  @Test public void withinDomainFalse0() {
+    assertFalse(WRING.scopeIncludes(i("13455643294 < 22")));
+  }
+  @Test public void withinDomainFalse1() {
+    assertFalse(WRING.scopeIncludes(i("1 < 102333")));
+  }
+  @Test public void withinDomainFalse2() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void withinDomainFalse3() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void withinDomainFalse4() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void withinDomainFalse5() {
+    assertFalse(WRING.scopeIncludes(i("13455643294 < 22")));
+  }
+  @Test public void withinDomainFalse6() {
+    assertFalse(WRING.scopeIncludes(i("1 < 102333")));
+  }
+  @Test public void withinDomainFalse7() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void withinDomainFalse8() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void withinDomainFalse9() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void withinDomainTrue1() {
+    assertTrue(WRING.scopeIncludes(i("a == this")));
+  }
+  @Test public void withinDomainTrue2() {
+    assertTrue(WRING.scopeIncludes(i("this == null")));
+  }
+  @Test public void withinDomainTrue3() {
+    assertTrue(WRING.scopeIncludes(i("12 == this")));
+  }
+  @Test public void withinDomainTrue4() {
+    assertTrue(WRING.scopeIncludes(i("a == 11")));
   }
   @Test public void comparisonWithSpecificNoChangeWithLongEpxressions() {
     assertNoChange("very(complicate,func,-ction,call) != this");

@@ -13,7 +13,6 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -48,9 +47,9 @@ public class DeclarationIfAssginmentTest extends AbstractWringTest<VariableDecla
     super(WRING);
   }
   @Test public void newlineBug() throws MalformedTreeException, BadLocationException {
-    final String input = "int a = 2;\n if (b) a =3;";
+    final String from = "int a = 2;\n if (b) a =3;";
     final String expected = "int a = b ? 3 : 2;";
-    final Document d = new Document(Wrap.Statement.on(input));
+    final Document d = new Document(Wrap.Statement.on(from));
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
     final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(u);
     assertThat(f, notNullValue());
@@ -58,13 +57,14 @@ public class DeclarationIfAssginmentTest extends AbstractWringTest<VariableDecla
     final TextEdit e = r.rewriteAST(d, null);
     assertThat(e.getChildrenSize(), greaterThan(0));
     final UndoEdit b = e.apply(d);
+    assertThat(b, notNullValue());
     final String peeled = Wrap.Statement.off(d.get());
     if (expected.equals(peeled))
       return;
-    if (input.equals(peeled))
-      fail("Nothing done on " + input);
-    if (compressSpaces(peeled).equals(compressSpaces(input)))
-      assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
+    if (from.equals(peeled))
+      fail("Nothing done on " + from);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Wringing of " + from + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
     assertSimilar(Wrap.Statement.on(expected), d);
   }
@@ -72,25 +72,25 @@ public class DeclarationIfAssginmentTest extends AbstractWringTest<VariableDecla
     assertNotNull(WRING);
   }
   @Test public void vanilla() throws MalformedTreeException, IllegalArgumentException {
-    final String input = "int a = 2;\n if (b) a =3;";
+    final String from = "int a = 2;\n if (b) a =3;";
     final String expected = "int a = b ? 3 : 2;";
-    final Document d = new Document(Wrap.Statement.on(input));
+    final Document d = new Document(Wrap.Statement.on(from));
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
     final Document actual = TESTUtils.rewrite(new Trimmer(), u, d);
     final String peeled = Wrap.Statement.off(actual.get());
     if (expected.equals(peeled))
       return;
-    if (input.equals(peeled))
-      fail("Nothing done on " + input);
-    if (compressSpaces(peeled).equals(compressSpaces(input)))
-      assertNotEquals("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(input));
+    if (from.equals(peeled))
+      fail("Nothing done on " + from);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Wringing of " + from + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
     final String s1 = expected;
     assertSimilar(Wrap.Statement.on(s1), actual);
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"), //

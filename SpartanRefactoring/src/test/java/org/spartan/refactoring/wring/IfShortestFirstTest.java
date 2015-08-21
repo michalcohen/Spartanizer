@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -21,12 +22,11 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public enum IfShortestFirstTest {
   ;
-  static final Wring WRING = new IfShortestFirst();
+  static final Wring<IfStatement> WRING = new IfShortestFirst();
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
         Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
@@ -34,7 +34,7 @@ public enum IfShortestFirstTest {
         Utils.asArray("No else", "if (a) {;{{;;return b; }}}"), //
         new String[] { "Two statemens are greater than one", //
             "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
-        }, //
+    }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -60,7 +60,7 @@ public enum IfShortestFirstTest {
         new String[] { "Two statemens are greater than one", //
             "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
             "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} ", //
-        }, //
+    }, //
         null);
     /**
      * Generate test cases for this parameterized class.

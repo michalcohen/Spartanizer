@@ -4,11 +4,14 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,8 +38,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class InfixComparisonShortestFirstTest extends AbstractWringTest {
-  static final Wring WRING = new InfixComparisonShortestFirst();
+public class InfixComparisonShortestFirstTest extends AbstractWringTest<InfixExpression> {
+  static final Wring<InfixExpression> WRING = new InfixComparisonShortestFirst();
   /** Instantiates this class */
   public InfixComparisonShortestFirstTest() {
     super(WRING);
@@ -44,7 +47,72 @@ public class InfixComparisonShortestFirstTest extends AbstractWringTest {
   @Test public void comparisonWithSpecific0Legibiliy1() {
     assertThat(WRING, notNullValue());
   }
-
+  @Test public void t3() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void t4() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void t5() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1")));
+  }
+  @Test public void t6() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void t7() {
+    assertTrue(WRING.scopeIncludes(i("1 + 2  + s < 3 ")));
+  }
+  @Test public void t8() {
+    final InfixExpression e = i("1 + 2  + 3 < 3 ");
+    assertTrue(WRING.scopeIncludes(e));
+  }
+  @Test public void t9() {
+    final InfixExpression e = i("1 + 2  + 3 < 3 -4");
+    assertNotNull(e);
+    assertFalse(hasNull(e.getLeftOperand(), e.getRightOperand()));
+  }
+  @Test public void withinDomainFalse0() {
+    assertFalse(WRING.scopeIncludes(i("13455643294 < 22")));
+  }
+  @Test public void withinDomainFalse1() {
+    assertFalse(WRING.scopeIncludes(i("1 < 102333")));
+  }
+  @Test public void withinDomainFalse2() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void withinDomainFalse3() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void withinDomainFalse4() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void withinDomainFalse5() {
+    assertFalse(WRING.scopeIncludes(i("13455643294 < 22")));
+  }
+  @Test public void withinDomainFalse6() {
+    assertFalse(WRING.scopeIncludes(i("1 < 102333")));
+  }
+  @Test public void withinDomainFalse7() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void withinDomainFalse8() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void withinDomainFalse9() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void withinDomainTrue1() {
+    assertTrue(WRING.scopeIncludes(i("a == this")));
+  }
+  @Test public void withinDomainTrue2() {
+    assertTrue(WRING.scopeIncludes(i("this == null")));
+  }
+  @Test public void withinDomainTrue3() {
+    assertTrue(WRING.scopeIncludes(i("12 == this")));
+  }
+  @Test public void withinDomainTrue4() {
+    assertFalse(WRING.scopeIncludes(i("a == 11")));
+  }
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//

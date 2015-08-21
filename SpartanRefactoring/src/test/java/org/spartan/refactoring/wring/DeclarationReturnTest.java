@@ -33,15 +33,14 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class DeclarationReturnTest {
-  static final Wring<?> WRING = new DeclarationReturn();
+  static final Wring<VariableDeclarationFragment> WRING = new DeclarationReturn();
   @Test public void placeHolder() {
     assertNotNull(WRING);
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"), //
         new String[] { "Vanilla", "int a; a =3;", }, //
         new String[] { "Vanilla", "int a; if (x) b = 3; else ;", }, //

@@ -20,6 +20,7 @@ import static org.spartan.utils.Utils.in;
 
 import java.io.File;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -68,7 +69,7 @@ public class TrimmerTest {
     assertNotNull(d);
     return TESTUtils.rewrite(t, u, d).get();
   }
-  static String apply(final Wring w, final String from) {
+  static String apply(final Wring<ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
     final Document d = new Document(from);
@@ -81,10 +82,10 @@ public class TrimmerTest {
   static void assertSimplifiesTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Expression);
   }
-  static void assertSimplifiesTo(final String from, final String expected, final Wring wring, final Wrap wrapper) {
+  static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> wring, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
     assertEquals(from, wrapper.off(wrap));
-    final String unpeeled = apply(wring, wrap);
+    final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
     final String peeled = wrapper.off(unpeeled);
@@ -393,8 +394,8 @@ public class TrimmerTest {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d,e)", e.getLeftOperand().toString());
-    final Wring s = Toolbox.instance.find(e);
-    assertThat(s,instanceOf(InfixMultiplicationSort.class));
+    final Wring<InfixExpression> s = Toolbox.instance.find(e);
+    assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
@@ -413,8 +414,8 @@ public class TrimmerTest {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
     assertEquals("f(a,b,c)", e.getRightOperand().toString());
     assertEquals("f(a,b,c,d)", e.getLeftOperand().toString());
-    final Wring s = Toolbox.instance.find(e);
-    assertThat(s,instanceOf(InfixMultiplicationSort.class));
+    final Wring<InfixExpression> s = Toolbox.instance.find(e);
+    assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = e.getLeftOperand();
@@ -904,7 +905,7 @@ public class TrimmerTest {
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
-    final Wring w = Toolbox.instance.find(e);
+    final Wring<InfixExpression> w = Toolbox.instance.find(e);
     assertNotNull(w);
     assertTrue(w.scopeIncludes(e));
     assertTrue(w.eligible(e));
@@ -913,7 +914,7 @@ public class TrimmerTest {
     assertEquals("a != null", replacement.toString());
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
-    assertThat(Toolbox.instance.find(i("null != a")),instanceOf(InfixComparisonSpecific.class));
+    assertThat(Toolbox.instance.find(i("null != a")), instanceOf(InfixComparisonSpecific.class));
   }
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
@@ -934,16 +935,16 @@ public class TrimmerTest {
         + "return res;  " //
         ,
         ""//
-        + "if (!s.equals(0xDEAD))" //
-        + " if(s.charAt(i)=='d')" //
-        + " res-=1;" //
-        + "else {"//
-        + " int res=0;" //
-        + "  for(int i=0;i<s.length();++i)" //
-        + "   if(s.charAt(i)=='a')"//
-        + "     res+=2;" //
-        + "}"//
-        + "return res;");
+            + "if (!s.equals(0xDEAD))" //
+            + " if(s.charAt(i)=='d')" //
+            + " res-=1;" //
+            + "else {"//
+            + " int res=0;" //
+            + "  for(int i=0;i<s.length();++i)" //
+            + "   if(s.charAt(i)=='a')"//
+            + "     res+=2;" //
+            + "}"//
+            + "return res;");
   }
   @Test public void shortestOperand12() {
     assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
@@ -1011,8 +1012,8 @@ public class TrimmerTest {
   @Test public void simplifyBlockComplexEmpty() {
     final BlockSimplify wring = new BlockSimplify();
     final String from = "{;;{;{{}}}{;}{};}";
-    assertThat(wring.scopeIncludes((Block)As.STATEMENTS.ast(from)), is(true));
-    assertThat(wring.eligible((Block)As.STATEMENTS.ast(from)), is(true));
+    assertThat(wring.scopeIncludes((Block) As.STATEMENTS.ast(from)), is(true));
+    assertThat(wring.eligible((Block) As.STATEMENTS.ast(from)), is(true));
     assertSimplifiesTo(from, "", wring, Wrap.Statement);
   }
   @Test public void simplifyBlockComplexEmpty1() {
@@ -1108,14 +1109,12 @@ public class TrimmerTest {
         "int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
-    assertConvertsTo("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ",//
+    assertConvertsTo("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ", //
         "String res=s;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize10() {
     assertNoConversion("String res = s, foo = bar;   "//
-        + "if (res.equals(532)==true)    "
-        + " res = s + 0xABBA;   "
-        + "System.out.println(res); ");
+        + "if (res.equals(532)==true)    " + " res = s + 0xABBA;   " + "System.out.println(res); ");
   }
   @Test public void ternarize12() {
     assertNoConversion("String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ");
@@ -1186,14 +1185,14 @@ public class TrimmerTest {
   @Test public void ternarize55() {
     assertNoConversion(//
         "if (key.equals(markColumn))\n" + //
-        "  to.put(key, a.toString());\n" + //
-        "else\n" + //
-        "   to.put(key, missing(key, a) ? Z2 : get(key, a));"//
-        );
+            "  to.put(key, a.toString());\n" + //
+            "else\n" + //
+            "   to.put(key, missing(key, a) ? Z2 : get(key, a));"//
+    );
   }
   @Test public void ternarize56() {
     assertNoConversion(
-        "if (target == 0) { progressBarCurrent.setString(\"0/0\"); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target);        progressBarCurrent.setValue(current * 100 / target);");
+        "if (target == 0) { progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target);        progressBarCurrent.setValue(current * 100 / target);");
   }
   @Test public void testPeel() {
     assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));

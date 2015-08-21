@@ -4,9 +4,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.spartan.refactoring.spartanizations.ComparisonWithBoolean;
 import org.spartan.refactoring.spartanizations.RenameReturnVariableToDollar;
-import org.spartan.refactoring.spartanizations.ShortestBranchFirst;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Spartanizations;
 import org.spartan.refactoring.utils.All;
@@ -25,9 +23,7 @@ public class CleanupHandler extends BaseHandler {
     super(null);
   }
   private final Spartanization[] safeSpartanizations = { //
-      new ComparisonWithBoolean(), //
       new RenameReturnVariableToDollar(), //
-      new ShortestBranchFirst(), //
       new Trimmer(),
   };
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) {

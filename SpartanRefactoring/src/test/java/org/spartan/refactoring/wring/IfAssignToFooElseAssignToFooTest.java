@@ -34,7 +34,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @RunWith(BlockJUnit4ClassRunner.class) //
 public class IfAssignToFooElseAssignToFooTest {
-  static final Wring WRING = new IfAssignToFooElseAssignToFoo();
+  static final Wring<IfStatement> WRING = new IfAssignToFooElseAssignToFoo();
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) a = b; else a = c;");
     assertNotNull(s);
@@ -49,7 +49,7 @@ public class IfAssignToFooElseAssignToFooTest {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Literal vs. Literal", "if (a) return b; else c;"), //

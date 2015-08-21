@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
 
+import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,14 +24,11 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class TernaryEliminateTest
 {
-  static final Wring WRING = new TernaryEliminate();
+  static final Wring<ConditionalExpression> WRING = new TernaryEliminate();
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
-        Utils.asArray("Literal vs. Literal", "1 < 102333"), //
-        Utils.asArray("Actual example", "next < values().length"), //
         Utils.asArray("No boolean", "a?b:c"), //
         Utils.asArray("F X", "a ? false : c"), //
         Utils.asArray("T X", "a ? true : c"), //

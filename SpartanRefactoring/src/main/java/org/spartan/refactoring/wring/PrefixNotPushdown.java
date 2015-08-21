@@ -45,47 +45,49 @@ public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
     return o == null ? null
         : o.equals(EQUALS) ? NOT_EQUALS
             : o.equals(NOT_EQUALS) ? EQUALS
-                : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER) //
-                    ? LESS_EQUALS : o.equals(GREATER_EQUALS) ? LESS : //
-                      !o.equals(LESS) ? null : GREATER_EQUALS;
+                : o.equals(LESS_EQUALS) ? GREATER
+                    : o.equals(GREATER) ? LESS_EQUALS //
+                        : o.equals(GREATER_EQUALS) ? LESS //
+                            : !o.equals(LESS) ? null : GREATER_EQUALS;
   }
   public static Expression simplifyNot(final PrefixExpression e) {
     return pushdownNot(asNot(Extract.core(e)));
   }
-  private static Expression tryToSimplify(final Expression e) {
-    final Expression $ = pushdownNot(asNot(e));
-    return $ != null ? $ : e;
-  }
+  private
   static Expression applyDeMorgan(final InfixExpression inner) {
     final List<Expression> operands = new ArrayList<>();
     for (final Expression e : All.operands(flatten(inner)))
       operands.add(not(e));
     return Subject.operands(operands).to(conjugate(inner.getOperator()));
   }
+  private
   static Expression comparison(final InfixExpression e) {
     return Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(negate(e.getOperator()));
   }
-  static Expression notOfLiteral(final BooleanLiteral l) {
+  private static boolean hasOpportunity(final Expression inner) {
+    return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
+  }private static boolean hasOpportunity(final PrefixExpression e) {
+    return e != null && hasOpportunity(core(e.getOperand()));
+  }static Expression notOfLiteral(final BooleanLiteral l) {
     final BooleanLiteral $ = duplicate(l);
     $.setBooleanValue(!l.booleanValue());
     return $;
-  }
+  }private
   static Expression perhapsComparison(final Expression inner) {
     return perhapsComparison(asComparison(inner));
-  }
+  }private
   static Expression perhapsComparison(final InfixExpression inner) {
     return inner == null ? null : comparison(inner);
-  }
+  }private
   static Expression perhapsDeMorgan(final Expression e) {
     return perhapsDeMorgan(asAndOrOr(e));
-  }
-  static Expression perhapsDeMorgan(final InfixExpression e) {
+  }private static Expression perhapsDeMorgan(final InfixExpression e) {
     return e == null ? null : applyDeMorgan(e);
   }
-  static Expression perhapsDoubleNegation(final Expression e) {
+  private static Expression perhapsDoubleNegation(final Expression e) {
     return perhapsDoubleNegation(asNot(e));
   }
-  static Expression perhapsDoubleNegation(final PrefixExpression e) {
+  private static Expression perhapsDoubleNegation(final PrefixExpression e) {
     return e == null ? null : tryToSimplify(core(e.getOperand()));
   }
   static Expression perhapsNotOfLiteral(final Expression e) {
@@ -97,13 +99,17 @@ public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
         || ($ = perhapsDoubleNegation(e)) != null//
         || ($ = perhapsDeMorgan(e)) != null//
         || ($ = perhapsComparison(e)) != null //
-        ? $ : null;
+            ? $ : null;
   }
-  static Expression pushdownNot(final PrefixExpression e) {
+  private static Expression pushdownNot(final PrefixExpression e) {
     return e == null ? null : pushdownNot(core(e.getOperand()));
   }
+  private static Expression tryToSimplify(final Expression e) {
+    final Expression $ = pushdownNot(asNot(e));
+    return $ != null ? $ : e;
+  }
   @Override public boolean scopeIncludes(final PrefixExpression e) {
-    return e != null && asNot(e) != null && Wrings.hasOpportunity(asNot(e));
+    return e != null && asNot(e) != null && hasOpportunity(asNot(e));
   }
   @Override Expression _replacement(final PrefixExpression e) {
     return simplifyNot(e);

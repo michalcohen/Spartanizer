@@ -490,7 +490,7 @@ public enum Is {
     final ArrayInitializer i = a.getInitializer();
     return sideEffectsFree(a.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
   }
-  private static boolean sideEffectsFree(final List os) {
+  private static boolean sideEffectsFree(final List<?> os) {
     for (final Object o : os) {
       final Expression e = Funcs.asExpression((ASTNode) o);
       if (o == null || !sideEffectFree(e))

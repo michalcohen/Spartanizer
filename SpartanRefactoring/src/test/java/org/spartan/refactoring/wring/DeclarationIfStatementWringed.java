@@ -45,7 +45,7 @@ import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 import org.spartan.utils.Utils;
 
-@SuppressWarnings({ "javadoc", "static-method" }) //
+@SuppressWarnings({ "javadoc" }) //
 @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationIfStatementWringed extends AbstractWringTest<VariableDeclarationFragment> {

@@ -41,7 +41,6 @@ public class PrefixNotPushdownTest {
     assertThat(e, is(notNullValue()));
     assertThat(WRING.scopeIncludes(e), is(true));
     assertThat(WRING.eligible(e), is(true));
-    assertThat(Wrings.hasOpportunity(e), is(true));
     assertThat(asNot(e), is(notNullValue()));
     final Expression inner = core(e.getOperand());
     assertThat(inner, is(notNullValue()));
@@ -56,12 +55,8 @@ public class PrefixNotPushdownTest {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<PrefixExpression> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Summation", "a+b"), //
-        Utils.asArray("Multiplication", "a*b"), //
-        Utils.asArray("OR", "a||b"), //
-        Utils.asArray("END", "a&&b"), //
         Utils.asArray("Simple not", "!a"), //
         Utils.asArray("Simple not of function", "!f(a)"), //
         Utils.asArray("Actual example", "!inRange(m, e)"), //
@@ -84,7 +79,7 @@ public class PrefixNotPushdownTest {
 
   @RunWith(Parameterized.class) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-  public static class Wringed extends AbstractWringTest.WringedExpression {
+  public static class Wringed extends AbstractWringTest.WringedExpression<PrefixExpression> {
     private static String[][] cases = Utils.asArray(//
         Utils.asArray("2 level not of false", "!!false", "false"), //
         Utils.asArray("2 level not of true", "!!true", "true"), //

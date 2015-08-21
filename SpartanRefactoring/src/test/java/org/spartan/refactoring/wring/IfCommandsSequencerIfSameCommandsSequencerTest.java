@@ -55,10 +55,9 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
         new String[] { "Another distinct assignment", "if (a) a /= b; else a %= c;" }, //
-        new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
         new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
         new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
         new String[] { "Nested if return", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}" }, //

@@ -67,7 +67,7 @@ public class TernaryShortestFirstTest {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     static String[][] cases = Utils.asArray(//
         new String[] { "Strange cyclic buc", "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null", }, //
         new String[] { "Actual simplified 3", "!f(o) ? null : x.f(a).to(e.g())" }, //

@@ -30,7 +30,7 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public enum InfixConditionalOrFalseTest {
   ;
-  static final Wring WRING = new InfixConditionalOrFalse();
+  static final Wring<InfixExpression> WRING = new InfixConditionalOrFalse();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {

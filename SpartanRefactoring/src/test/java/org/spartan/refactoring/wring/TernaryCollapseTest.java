@@ -29,7 +29,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class TernaryCollapseTest {
-  static final Wring WRING = new TernaryCollapse();
+  static final Wring<ConditionalExpression> WRING = new TernaryCollapse();
   @Test public void steps() {
     final ConditionalExpression e = c("a ? b ? x : z :z");
     assertNotNull(e);
@@ -45,7 +45,7 @@ public class TernaryCollapseTest {
   }
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     static String[][] cases = Utils.asArray(//
         Utils.asArray("No boolean", "a?b:c"), //
         Utils.asArray("F X", "a ? false : c"), //

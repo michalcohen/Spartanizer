@@ -41,8 +41,8 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class InfixComparisonBooleanLiteralTest extends AbstractWringTest {
-  static final Wring<?> WRING = new InfixComparisonBooleanLiteral();
+public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixExpression> {
+  static final Wring<InfixExpression> WRING = new InfixComparisonBooleanLiteral();
   public InfixComparisonBooleanLiteralTest() {
     super(WRING);
   }

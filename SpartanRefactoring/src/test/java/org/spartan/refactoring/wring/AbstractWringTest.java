@@ -1,7 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -56,7 +58,7 @@ import org.spartan.utils.Range;
  * @author Yossi Gil
  * @since 2015-07-18
  */
-@SuppressWarnings({ "javadoc" }) //
+@SuppressWarnings({ "javadoc",   "unchecked" }) //
 public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
   protected final Wring<N> inner;
   public AbstractWringTest() {
@@ -106,7 +108,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
   void assertNotLegible(final Block b) {
     assertThat(inner.eligible((N) b), is(false));
   }
-  void assertNotLegible(final Expression e) {
+ void assertNotLegible(final Expression e) {
     assertThat(inner.eligible((N) e), is(false));
   }
   void assertNotLegible(final IfStatement b) {
@@ -137,7 +139,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
      *
      * @param inner JD
      */
-    Noneligible(final Wring inner) {
+    Noneligible(final Wring<N> inner) {
       super(inner);
     }
     @Override @Test public void correctSimplifier() {
@@ -174,8 +176,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       assertSimilar(Wrap.Expression.on(s), d.get());
     }
     @Override protected final Document asDocument() {
-      final String s = input;
-      return new Document(Wrap.Expression.on(s));
+      return new Document(Wrap.Expression.on(input));
     }
 
     public static class Infix extends Noneligible<InfixExpression> {
@@ -263,14 +264,14 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     public Wringed() {
       this(null);
     }
-    Wringed(final Wring inner) {
+    Wringed(final Wring<N> inner) {
       super(inner);
     }
     @Override protected Document asDocument() {
       return new Document(Wrap.Expression.on(input));
     }
 
-    public static class Conditional extends WringedExpression {
+    public static class Conditional extends WringedExpression<ConditionalExpression> {
       /** Default constructor to make Junit happy */
       public Conditional() {
         this(null);
@@ -280,7 +281,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
        *
        * @param w JD
        */
-      Conditional(final Wring w) {
+      Conditional(final Wring<ConditionalExpression> w) {
         super(w);
       }
       @Test public void inputIsConditionalExpression() {
@@ -302,7 +303,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
        *
        * @param inner
        */
-      IfStatementAndSurrounding(final Wring inner) {
+      IfStatementAndSurrounding(final Wring<IfStatement> inner) {
         super(inner);
       }
       @Override @Test public void hasReplacement() {
@@ -333,12 +334,12 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       }
     }
 
-    public static class Infix extends WringedExpression {
+    public static class Infix extends WringedExpression<InfixExpression> {
       public Infix() {
         this(null);
       }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-      Infix(final Wring w) {
+      Infix(final Wring<InfixExpression> w) {
         super(w);
       }
       @Test public void flattenIsIdempotentt() {
@@ -367,7 +368,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     }
   }
 
-  public static class WringedBlock extends WringedStatement {
+  public static class WringedBlock extends WringedStatement<Block> {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
     /** What should the output be */
@@ -463,7 +464,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
    * @author Yossi Gil
    * @since 2015-07-15
    */
-  public static class WringedExpression extends InScope {
+  public static class WringedExpression<E extends Expression> extends InScope<E> {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
     /** What should the output be */
@@ -474,7 +475,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     /**
      * Instantiates the enclosing class ( {@link WringedExpression})
      */
-    WringedExpression(final Wring inner) {
+    WringedExpression(final Wring<E> inner) {
       super(inner);
     }
     @Override @Test public void correctSimplifier() {
@@ -492,7 +493,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void eligible() {
       if (inner == null)
         return;
-      assertTrue(inner.eligible(asExpression()));
+      assertTrue(inner.eligible((E) asExpression()));
     }
     @Override @Test public void findsSimplifier() {
       if (inner == null)
@@ -502,7 +503,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void hasOpportunity() {
       if (inner == null)
         return;
-      assertTrue(inner.scopeIncludes(asExpression()));
+      assertTrue(inner.scopeIncludes((E) asExpression()));
       final CompilationUnit u = asCompilationUnit();
       assertThat(u.toString(), wringer.findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
     }
@@ -514,7 +515,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void noneligible() {
       if (inner == null)
         return;
-      assertFalse(inner.noneligible(asExpression()));
+      assertFalse(inner.noneligible((E) asExpression()));
     }
     @Test public void peelableOutput() {
       if (input == null)
@@ -524,7 +525,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void scopeIncludes() {
       if (inner == null)
         return;
-      assertTrue(inner.scopeIncludes(asExpression()));
+      assertTrue(inner.scopeIncludes((E) asExpression()));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       if (inner == null)
@@ -590,7 +591,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       return $;
     }
 
-    public static class Conditional extends WringedExpression {
+    public static class Conditional extends WringedExpression<ConditionalExpression> {
       public Conditional() {
         this(null);
       }
@@ -599,7 +600,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
        *
        * @param w JD
        */
-      Conditional(final Wring w) {
+      Conditional(final Wring<ConditionalExpression> w) {
         super(w);
       }
       @Test public void inputIsConditionalExpression() {
@@ -615,12 +616,12 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       }
     }
 
-    public static class Infix extends WringedExpression {
+    public static class Infix extends WringedExpression<InfixExpression> {
       public Infix() {
         this(null);
       }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-      Infix(final Wring w) {
+      Infix(final Wring<InfixExpression> w) {
         super(w);
       }
       @Test public void flattenIsIdempotentt() {
@@ -655,7 +656,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
      *
      * @param inner
      */
-    WringedIfStatement(final Wring inner) {
+    WringedIfStatement(final Wring<IfStatement> inner) {
       super(inner);
     }
     @Override @Test public void correctSimplifier() {
@@ -743,7 +744,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     public WringedStatement() {
       super(null);
     }
-    WringedStatement(final Wring inner) {
+    WringedStatement(final Wring<N> inner) {
       super(inner);
     }
     @Override @Test public void correctSimplifier() {
@@ -778,7 +779,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     public WringedVariableDeclarationFragmentAndSurrounding() {
       this(null);
     }
-    WringedVariableDeclarationFragmentAndSurrounding(final Wring inner) {
+    WringedVariableDeclarationFragmentAndSurrounding(final Wring<VariableDeclarationFragment> inner) {
       super(inner);
     }
     @Override @Test public void correctSimplifier() {
@@ -885,7 +886,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     public InScope() {
       this(null);
     }
-    InScope(final Wring inner) {
+    InScope(final Wring<N> inner) {
       super(inner);
     }
     @Test public void correctSimplifier() {
@@ -904,7 +905,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
      * @author Yossi Gil
      * @since 2015-07-15
      */
-    static abstract class WringedInput extends AbstractWringTest {
+    static abstract class WringedInput<N extends ASTNode> extends AbstractWringTest<N> {
       /** How should a test case like this be described? */
       protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
       static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
@@ -928,7 +929,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
        *
        * @param w JD
        */
-      WringedInput(final Wring w) {
+      WringedInput(final Wring<N> w) {
         super(w);
       }
       @Test public void correctSimplifier() {
@@ -942,7 +943,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         assertThat(r.rewriteAST(d, null).apply(d), is(notNullValue()));
       }
       @Test public void eligible() {
-        assertTrue(inner.eligible(asExpression()));
+        assertTrue(inner.eligible((N) asExpression()));
       }
       @Test public void findsSimplifier() {
         assertNotNull(Toolbox.instance.find(asExpression()));
@@ -951,19 +952,19 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         assertNotNull(inner.replacement(asExpression()));
       }
       @Test public void noneligible() {
-        assertFalse(inner.noneligible(asExpression()));
+        assertFalse(inner.noneligible((N) asExpression()));
       }
       @Test public void oneOpporunity() {
         final CompilationUnit u = asCompilationUnit();
         assertEquals(u.toString(), 1, trimmer.findOpportunities(u).size());
-        assertTrue(inner.scopeIncludes(asExpression()));
+        assertTrue(inner.scopeIncludes((N) asExpression()));
       }
       @Test public void peelableOutput() {
         final String s = output;
         assertEquals(output, Wrap.Expression.off(Wrap.Expression.on(s)));
       }
       @Test public void scopeIncludes() {
-        assertFalse(inner.scopeIncludes(asExpression()));
+        assertFalse(inner.scopeIncludes((N) asExpression()));
       }
       @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
         final CompilationUnit u = asCompilationUnit();

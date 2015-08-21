@@ -1,10 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
@@ -17,13 +13,10 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -33,25 +26,6 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-07-17
  */
 public enum Wrings {
-  /**
-   * <code>
-   * a ? b : c
-   * </code> is the same as <code>
-   * (a && b) || (!a && c)
-   * </code> if b is false than: <code>
-   * (a && false) || (!a && c) == (!a && c)
-   * </code> if b is true than: <code>
-   * (a && true) || (!a && c) == a || (!a && c) == a || c
-   * </code> if c is false than: <code>
-   * (a && b) || (!a && false) == (!a && c)
-   * </code> if c is true than <code>
-   * (a && b) || (!a && true) == (a && b) || (!a) == !a || b
-   * </code> keywords <code><b>this</b></code> or <code><b>null</b></code>.
-   *
-   * @author Yossi Gil
-   * @since 2015-07-20
-   */
-  //
   ;
   public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
@@ -89,23 +63,14 @@ public enum Wrings {
   static boolean existingEmptyElse(final IfStatement s) {
     return s.getElseStatement() != null && elseIsEmpty(s);
   }
-  static boolean hasOpportunity(final Expression inner) {
-    return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
-  }
-  static boolean hasOpportunity(final PrefixExpression e) {
-    return e != null && hasOpportunity(core(e.getOperand()));
-  }
+
   static int length(final ASTNode... ns) {
     int $ = 0;
     for (final ASTNode n : ns)
       $ += n.toString().length();
     return $;
   }
-  static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
-    final VariableDeclarationFragment $ = duplicate(f);
-    $.setInitializer(duplicate(e));
-    return $;
-  }
+
   static ASTRewrite removeStatement(final ASTRewrite r, final Statement s) {
     final Block parent = asBlock(s.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -115,23 +80,7 @@ public enum Wrings {
     r.replace(parent, newParent$, null);
     return r;
   }
-  static Statement reorganizeNestedStatement(final Statement s) {
-    final List<Statement> ss = Extract.statements(s);
-    switch (ss.size()) {
-      case 0:
-        return s.getAST().newEmptyStatement();
-      case 1:
-        return duplicate(ss.get(0));
-      default:
-        return reorganizeStatement(s);
-    }
-  }
-  static Block reorganizeStatement(final Statement s) {
-    final List<Statement> ss = Extract.statements(s);
-    final Block $ = s.getAST().newBlock();
-    duplicateInto(ss, $.statements());
-    return $;
-  }
+
   static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by) {
     final Block parent = asBlock(what.getParent());
     final List<Statement> siblings = Extract.statements(parent);
@@ -144,32 +93,7 @@ public enum Wrings {
     r.replace(parent, $, null);
     return r;
   }
-  /* <code> a ? b : c </code>
-   *
-   * is the same as
-   *
-   * <code> (a && b) || (!a && c) </code>
-   *
-   * if b is false than:
-   *
-   * <code> (a && false) || (!a && c) == (!a && c) </code>
-   *
-   * if b is true than:
-   *
-   * <code> (a && true) || (!a && c) == a || (!a && c) == a || c </code>
-   *
-   * if c is false than:
-   *
-   * <code> (a && b) || (!a && false) == (!a && c) </code>
-   *
-   * if c is true than
-   *
-   * <code> (a && b) || (!a && true) == (a && b) || (!a) == !a || b </code> */
   public static List<Expression> allOperands(final InfixExpression e) {
     return All.operands(flatten(e));
-  }
-  public final Wring inner;
-  Wrings(final Wring inner) {
-    this.inner = inner;
   }
 }

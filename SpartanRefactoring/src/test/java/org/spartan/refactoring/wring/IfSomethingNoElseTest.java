@@ -29,12 +29,11 @@ import org.spartan.utils.Utils;
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class IfSomethingNoElseTest {
-  static final Wring<?> WRING =new IfSomethingNoElse();
+  static final Wring<IfStatement> WRING =new IfSomethingNoElse();
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
         Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
         Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //

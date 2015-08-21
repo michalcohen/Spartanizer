@@ -94,23 +94,23 @@ public class Trimmer extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final ConditionalExpression e) {
-        final Wring w = Toolbox.instance.find(e);
+        final Wring<ConditionalExpression> w = Toolbox.instance.find(e);
         return w == null || w.noneligible(e) || overrideInto(w.range(e), $);
       }
       @Override public boolean visit(final VariableDeclarationFragment it) {
-        final Wring w = Toolbox.instance.find(it);
+        final Wring<VariableDeclarationFragment> w = Toolbox.instance.find(it);
         return w == null || w.noneligible(it) || overrideInto(w.range(it), $);
       }
       @Override public boolean visit(final IfStatement i) {
-        final Wring w = Toolbox.instance.find(i);
+        final Wring<IfStatement> w = Toolbox.instance.find(i);
         return w == null || w.noneligible(i) || overrideInto(w.range(i), $);
       }
       @Override public boolean visit(final Block b) {
-        final Wring w = Toolbox.instance.find(b);
+        final Wring<Block> w = Toolbox.instance.find(b);
         return w == null || w.noneligible(b) || overrideInto(w.range(b), $);
       }
       @Override public boolean visit(final InfixExpression e) {
-        final Wring w = Toolbox.instance.find(e);
+        final Wring<InfixExpression> w = Toolbox.instance.find(e);
         return w == null || w.noneligible(e) || overrideInto(w.range(e), $);
       }
       @Override public boolean visit(final PrefixExpression e) {
@@ -122,40 +122,28 @@ public class Trimmer extends Spartanization {
   @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final ConditionalExpression e) {
-        if (!inRange(m, e))
-          return true;
-        final Wring w = Toolbox.instance.find(e);
-        return w == null || w.go(r, e);
+        return go(e);
       }
-      @Override public boolean visit(final IfStatement i) {
-        if (!inRange(m, i))
+      private <N extends ASTNode> boolean go(final N n) {
+        if (!inRange(m, n))
           return true;
-        final Wring w = Toolbox.instance.find(i);
-        return w == null || w.go(r, i);
+        final Wring<N> w = Toolbox.instance.find(n);
+        return w == null || w.go(r, n);
+      }
+      @Override public boolean visit(final IfStatement s) {
+        return go(s);
       }
       @Override public boolean visit(final VariableDeclarationFragment f) {
-        if (!inRange(m, f))
-          return true;
-        final Wring w = Toolbox.instance.find(f);
-        return w == null || w.go(r, f);
+        return go(f);
       }
       @Override public boolean visit(final Block b) {
-        if (!inRange(m, b))
-          return true;
-        final Wring w = Toolbox.instance.find(b);
-        return w == null || w.go(r, b);
+        return go(b);
       }
       @Override public boolean visit(final InfixExpression e) {
-        if (!inRange(m, e))
-          return true;
-        final Wring w = Toolbox.instance.find(e);
-        return w == null || w.go(r, e);
+        return go(e);
       }
       @Override public boolean visit(final PrefixExpression e) {
-        if (!inRange(m, e))
-          return true;
-        final Wring w = Toolbox.instance.find(e);
-        return w == null || w.go(r, e);
+        return go(e);
       }
     });
   }

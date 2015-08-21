@@ -25,19 +25,9 @@ public enum BlockSimplifyTest {
   static final Wring<Block> WRING = new BlockSimplify();
 
   @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope {
+  public static class OutOfScope extends AbstractWringTest.OutOfScope<Block> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
-        Utils.asArray("Literal vs. Literal", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
-        Utils.asArray("Not same assignment", "if (a) a /= b; else a /= c;"), //
-        Utils.asArray("Another distinct assignment", "if (a) a /= b; else a %= c;"), //
-        Utils.asArray("Simple if assign", "if (a) a = b; else a = c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
         Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
         Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
         Utils.asArray("Simple block", "{a(); b(); c();}"), //
