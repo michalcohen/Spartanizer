@@ -1,15 +1,20 @@
 package org.spartan.refactoring.utils;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Into.e;
+import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.Assignment;
@@ -20,11 +25,9 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Subject.Pair;
-import org.spartan.refactoring.wring.ExpressionComparator;
 import org.spartan.refactoring.wring.Wrings;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class SubjectTest {
-  private static final InfixExpression pulus = null;
   @Test public void vanilla() {
     Subject.operand(e("a")).to(PrefixExpression.Operator.NOT);
   }
@@ -36,6 +39,46 @@ import org.spartan.refactoring.wring.Wrings;
   }
   @Test public void multiplicationOfAddition() {
     assertThat(Subject.pair(e("a+B"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("(a + B) * (c + d)"));
+  }
+  @Test public void subjectOperandsDoesNotIntroduceList() {
+    final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b")));
+    assertThat(operands.size(), is(2));
+    final InfixExpression e = i("1+2");
+    final InfixExpression refit = Subject.operands(operands).to(e.getOperator());
+    assertThat(refit.hasExtendedOperands(), is(false));
+    assertThat(refit.toString(), is("a + b"));
+  }
+  @Test public void subjectOperandsIsCorrect() {
+    final InfixExpression e = i("1+2+3");
+    final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b*c")));
+    assertThat(Subject.operands(operands).to(e.getOperator()).toString(), is("a + b + c"));
+  }
+  @Test public void subjectOperandsNotNull() {
+    final InfixExpression e = i("1+2+3");
+    final List<Expression> operands = All.operands(Funcs.duplicate(i("a+b+c")));
+    assertThat(Subject.operands(operands).to(e.getOperator()), notNullValue());
+  }
+  @Test public void refitPreservesOrder() {
+    final InfixExpression e = i("1 + 2 * 3");
+    final List<Expression> operands = new ArrayList<>();
+    operands.add(duplicate(e("3*4")));
+    operands.add(duplicate(e("5")));
+    final InfixExpression refit = Subject.operands(operands).to(e.getOperator());
+    assertThat(refit, is(not(e)));
+    assertThat(refit.toString(), is("3 * 4 + 5"));
+  }
+  @Test public void refitWithSort() {
+    final InfixExpression e = i("1 + 2 * 3");
+    final List<Expression> operands = All.operands(flatten(e));
+    assertThat(operands.size(), is(2));
+    assertThat(operands.get(0).toString(), is("1"));
+    assertThat(operands.get(1).toString(), is("2 * 3"));
+    assertTrue(Wrings.sort(operands, ExpressionComparator.ADDITION));
+    assertThat(operands.get(0).toString(), is("2 * 3"));
+    assertThat(operands.get(1).toString(), is("1"));
+    final InfixExpression refit = Subject.operands(operands).to(e.getOperator());
+    assertThat(refit, is(not(e)));
+    assertThat(refit.toString(), is("2 * 3 + 1"));
   }
   @Test public void subjectOperands() {
     final Expression e = Into.e("2 + a < b");
