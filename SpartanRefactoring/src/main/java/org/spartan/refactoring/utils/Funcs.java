@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
@@ -102,7 +103,7 @@ public enum Funcs {
    *         <code><b>null</b></code> if no such down-cast is possible..
    */
   public static SimpleName asSimpleName(final ASTNode $) {
-    return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName)$;
+    return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName) $;
   }
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}
@@ -351,22 +352,6 @@ public enum Funcs {
   }
 
   /**
-   * Get the containing node by type. Say we want to find the first block that
-   * wraps our node: getContainerByNodeType(node, BLOCK);
-   *
-   * @param n Node to find its container
-   * @param ASTNodeType The type of the containing node we want to find
-   * @return The containing node
-   */
-  public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
-    if (n != null)
-    for ( ASTNode $ = n.getParent(); $ != null && ASTNodeType != $.getNodeType(); $ = $.getParent())
-      if ($.getParent() == $.getRoot())
-        return $;
-    return null;
-  }
-
-  /**
    * @param n the node from which to extract the proper fragment
    * @param name the name by which to look for the fragment
    * @return the fragment if such with the given name exists or null otherwise
@@ -486,7 +471,6 @@ public enum Funcs {
   public static boolean isOpAssign(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
-
   /**
    * @param n node to check
    * @return true if the given node is a variable declaration statement or false
@@ -495,7 +479,6 @@ public enum Funcs {
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
-
   /**
    * @param e the expression to return in the return statement
    * @return the new return statement
@@ -539,7 +522,6 @@ public enum Funcs {
     final Expression $$ = PrefixNotPushdown.simplifyNot($);
     return $$ == null ? $ : $$;
   }
-
   /**
    * Retrieve previous item in a list
    *
@@ -560,7 +542,7 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
-  @SuppressWarnings("unchecked") public static <N extends ASTNode>  N rebase(final N n, final AST t) {
+  @SuppressWarnings("unchecked") public static <N extends ASTNode> N rebase(final N n, final AST t) {
     return (N) copySubtree(t, n);
   }
   /**
@@ -616,7 +598,6 @@ public enum Funcs {
         return false;
     return true;
   }
-
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
@@ -625,7 +606,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-        ) ? e : null;
+    ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression e : es)
@@ -633,7 +614,6 @@ public enum Funcs {
         return e;
     return null;
   }
-
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)
       if (same(name, o.getName()))

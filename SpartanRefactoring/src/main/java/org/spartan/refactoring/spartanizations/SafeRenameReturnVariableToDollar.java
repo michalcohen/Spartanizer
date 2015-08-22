@@ -1,6 +1,5 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.getContainerByNodeType;
 import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.utils.AncestorSearch;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.utils.Range;
@@ -167,7 +167,7 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment v = selectReturnVariable(n);
         if (v != null)
-          $.add(new Range(getContainerByNodeType(v, ASTNode.METHOD_DECLARATION)));
+          $.add(new Range(new AncestorSearch(ASTNode.METHOD_DECLARATION).of(v)));
         return true;
       }
     };
