@@ -332,7 +332,18 @@ public enum Funcs {
   @SuppressWarnings("unchecked") public static <N extends ASTNode> N duplicate(final N n) {
     return (N) copySubtree(n.getAST(), n);
   }
+  /**
+   * Swap the order of the left and right operands to an expression, changing
+   * the operator if necessary.
+   *
+   * @param e JD
+   * @return a newly created expression with its operands thus swapped.
+   * @throws IllegalArgumentException when the parameter has extra operands.
+   * @see InfixExpression#hasExtendedOperands
+   */
   public static InfixExpression flip(final InfixExpression e) {
+    if (e.hasExtendedOperands())
+      throw new IllegalArgumentException(e + ": flipping undefined for an expression with extra operands ");
     return Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator()));
   }
   /**
@@ -347,10 +358,9 @@ public enum Funcs {
   public static Operator flip(final Operator o) {
     return !conjugate.containsKey(o) ? o : conjugate.get(o);
   }
-  public static Expression frugalDuplicate(final Expression e) {
+  private static Expression frugalDuplicate(final Expression e) {
     return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
-
   /**
    * @param n the node from which to extract the proper fragment
    * @param name the name by which to look for the fragment
@@ -360,41 +370,6 @@ public enum Funcs {
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
     return hasNull(n, name) || n.getNodeType() != VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != SIMPLE_NAME ? null
         : getVarDeclFrag(((VariableDeclarationStatement) n).fragments(), (SimpleName) name);
-  }
-  /**
-   * @param b the block to check
-   * @return true if a return statement exists in the block or false otherwise
-   */
-  public static boolean hasReturn(final Block b) {
-    if (b == null)
-      return false;
-    for (final Object node : b.statements())
-      if (RETURN_STATEMENT == ((ASTNode) node).getNodeType())
-        return true;
-    return false;
-  }
-  /**
-   * Determine whether a given statement is return or has return in it.
-   *
-   * @param s the statement or block to check
-   * @return true iff s contains a return statement
-   */
-  public static boolean hasReturn(final Statement s) {
-    if (s == null)
-      return false;
-    switch (s.getNodeType()) {
-      case RETURN_STATEMENT:
-        return true;
-      case BLOCK: {
-        for (final Object node : ((Block) s).statements())
-          if (RETURN_STATEMENT == ((ASTNode) node).getNodeType())
-            return true;
-        break;
-      }
-      default:
-        break;
-    }
-    return false;
   }
   /**
    * Determine whether a node is a return statement
@@ -536,7 +511,7 @@ public enum Funcs {
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
-   * @param e JD
+   * @param n JD
    * @param t JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree

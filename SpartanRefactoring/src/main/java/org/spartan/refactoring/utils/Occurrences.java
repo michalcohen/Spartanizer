@@ -315,7 +315,7 @@ public enum Occurrences {
     /**
      * the method that will carry out the search
      *
-     * @param n a location in which the search is to be carried out
+     * @param ns where to search
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode... ns);

@@ -74,6 +74,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
@@ -234,7 +235,14 @@ public enum Is {
   public static boolean deMorgan(final Operator o) {
     return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
-  // TODO: document this.
+  /**
+   * Determine whether a statement is an {@link EmptyStatement} or has nothing
+   * but empty statements in it.
+   *
+   * @param s JD
+   * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
+   *         statements in the parameter
+   */
   public static boolean empty(final Statement s) {
     return Extract.statements(s).size() == 0;
   }
@@ -336,7 +344,7 @@ public enum Is {
         NUMBER_LITERAL, //
         STRING_LITERAL, //
         BOOLEAN_LITERAL //
-        );
+    );
   }
   /**
    * @param r Return Statement node
@@ -346,10 +354,19 @@ public enum Is {
   public static boolean literal(final ReturnStatement r) {
     return literal(r.getExpression());
   }
+  /**
+   * Determine whether a node is a {@link MethodDeclaration}
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a method
+   *         invocation.
+   */
   public static boolean methodDeclaration(final ASTNode n) {
     return is(n, METHOD_DECLARATION);
   }
   /**
+   * Determine whether a node is a {@link MethodInvocation}
+   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a method
    *         invocation.
@@ -357,10 +374,18 @@ public enum Is {
   public static boolean methodInvocation(final ASTNode n) {
     return is(n, METHOD_INVOCATION);
   }
+  /**
+   * Determine whether a node is an infix expression whose operator is
+   * non-associative.
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a node which
+   *         is an infix expression whose operator is
+   */
   public static boolean nonAssociative(final ASTNode n) {
     return nonAssociative(asInfixExpression(n));
   }
-  public static boolean nonAssociative(final InfixExpression e) {
+  private static boolean nonAssociative(final InfixExpression e) {
     return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);
   }
   /**
@@ -373,7 +398,7 @@ public enum Is {
   public static boolean notString(final Expression e) {
     return notStringSelf(e) || notStringUp(e) || notStringDown(asInfixExpression(e));
   }
-  public static boolean notStringDown(final Expression e) {
+  static boolean notStringDown(final Expression e) {
     return notStringSelf(e) || notStringDown(asInfixExpression(e));
   }
   /**
@@ -434,6 +459,14 @@ public enum Is {
   public static boolean sequencer(final ASTNode n) {
     return Is.oneOf(n, RETURN_STATEMENT, BREAK_STATEMENT, CONTINUE_STATEMENT, THROW_STATEMENT);
   }
+  /**
+   * Determine whether the evaluation of an expression is guaranteed to be free
+   * of any side effects.
+   *
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
+   *         whose computation is guaranteed to be free of any side effects.
+   */
   public static boolean sideEffectFree(final Expression e) {
     if (e == null)
       return true;
@@ -459,7 +492,7 @@ public enum Is {
         return sideEffectFreeArrayCreation((ArrayCreation) e);
       case ARRAY_ACCESS:
         final ArrayAccess x = (ArrayAccess) e;
-        return sideEffectsFree(x.getArray(),x.getIndex());
+        return sideEffectsFree(x.getArray(), x.getIndex());
       case CAST_EXPRESSION:
         final CastExpression c = (CastExpression) e;
         return sideEffectFree(c.getExpression());
@@ -538,20 +571,30 @@ public enum Is {
   public static boolean simpleName(final ASTNode n) {
     return is(n, SIMPLE_NAME);
   }
-  // TODO: document this.
-  public static boolean singletonStatement(final ASTNode s) {
-    return Extract.statements(s).size() == 1;
-  }
-  // TODO: document this.
-  public static boolean singletonThen(final IfStatement i) {
-    return Is.singletonStatement(i.getThenStatement());
-  }
   /**
-   * Determine whether a node is a {@link Block}
+   * Determine whether a node is a singleton statement, i.e., not a block.
    *
    * @param n JD
-   * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
-   *         statement
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a singleton
+   *         statement.
+   */
+  public static boolean singletonStatement(final ASTNode n) {
+    return Extract.statements(n).size() == 1;
+  }
+  /**
+   * Determine whether the "then" branch of an {@link Statement} is a single statement.
+   *
+   * @param s JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement
+   */
+  public static boolean singletonThen(final IfStatement s) {
+    return Is.singletonStatement(s.getThenStatement());
+  }
+  /**
+   * Determine whether a node is a {@link Statement}
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement
    */
   public static boolean statement(final ASTNode n) {
     return n instanceof Statement;
@@ -618,11 +661,11 @@ public enum Is {
         ARRAY_CREATION, //
         BOOLEAN_LITERAL, //
         CHARACTER_LITERAL, //
-        INSTANCEOF_EXPRESSION,//
+        INSTANCEOF_EXPRESSION, //
         NULL_LITERAL, // null + null is an error, not a string.
         NUMBER_LITERAL, //
         PREFIX_EXPRESSION //
-        //
-        );
+    //
+    );
   }
 }

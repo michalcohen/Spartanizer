@@ -41,9 +41,19 @@ public abstract class BaseHandler extends AbstractHandler {
     }
     return null;
   }
+  /**
+   * Retrieves the current {@link ICompilationUnit}
+   *
+   * @return the current {@link ICompilationUnit}
+   */
   public static ICompilationUnit getCompilationUnit() {
     return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
   }
+  /**
+   * Retrieves the current {@link IWorkbenchWindow}
+   *
+   * @return the current {@link IWorkbenchWindow}
+   */
   public static IWorkbenchWindow getCurrentWorkbenchWindow() {
     return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
   }
@@ -53,9 +63,14 @@ public abstract class BaseHandler extends AbstractHandler {
   private static ICompilationUnit getCompilationUnit(final IResource r) {
     return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
   }
-  private final Spartanization refactoring;
-  protected BaseHandler(final Spartanization refactoring) {
-    this.refactoring = refactoring;
+  private final Spartanization inner;
+  /**
+   * Instantiates this class
+   *
+   * @param inner JD
+   */
+  protected BaseHandler(final Spartanization inner) {
+    this.inner = inner;
   }
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     try {
@@ -81,9 +96,9 @@ public abstract class BaseHandler extends AbstractHandler {
     return new Wizard($);
   }
   protected final String getDialogTitle() {
-    return refactoring.getName();
+    return inner.getName();
   }
   protected Spartanization getRefactoring() {
-    return refactoring;
+    return inner;
   }
 }

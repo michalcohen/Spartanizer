@@ -4,7 +4,6 @@ import static org.spartan.refactoring.utils.Funcs.removeWhites;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Comparator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -40,7 +39,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   PRUDENT {
     @Override public int compare(final Expression e1, final Expression e2) {
       int $;
-      return ($ = literalCompare(e1, e2)) != 0 || ($ = nodesCompare(e1, e2)) != 0 || ($ = characterCompare(e1, e2)) != 0  ? $ : 0;
+      return ($ = literalCompare(e1, e2)) != 0 || ($ = nodesCompare(e1, e2)) != 0 || ($ = characterCompare(e1, e2)) != 0 ? $ : 0;
     }
   },
   /**
@@ -60,7 +59,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return asBit(Is.literal(e1)) - asBit(Is.literal(e2));
   }
   static int nodesCompare(final Expression e1, final Expression e2) {
-    return round(countNodes(e1) - countNodes(e2), TOKEN_THRESHOLD);
+    return round(nodesCount(e1) - nodesCount(e2), NODES_THRESHOLD);
   }
   static int argumentsCompare(final Expression e1, final Expression e2) {
     return !Is.methodInvocation(e1) || !Is.methodInvocation(e2) ? 0 : argumentsCompare((MethodInvocation) e1, (MethodInvocation) e2);
@@ -68,13 +67,40 @@ public enum ExpressionComparator implements Comparator<Expression> {
   static int argumentsCompare(final MethodInvocation i1, final MethodInvocation i2) {
     return i1.arguments().size() - i2.arguments().size();
   }
+  /**
+   * Compare method invocations by the number of arguments
+   *
+   * @param e1 JD
+   * @param e2 JD
+   * @return <code><b>true</b></code> <i>iff</i> the first argument is a method
+   *         invocation with more arguments that the second argument
+   */
   public static boolean moreArguments(final Expression e1, final Expression e2) {
     return argumentsCompare(e1, e2) > 0;
   }
-  public static int characterCompare(final Expression e1, final Expression e2) {
+  /**
+   * Compare expressions by their number of characters
+   *
+   * @param e1 JD
+   * @param e2 JD
+   * @return an integer which is either negative, zero, or positive, if the
+   *         number of characters in the first argument is less than, equal to,
+   *         or greater than the number of characters in the second argument.
+   */
+  static int characterCompare(final Expression e1, final Expression e2) {
     return countNonWhites(e1) - countNonWhites(e2);
   }
-  public static int alphabeticalCompare(final Expression e1, final Expression e2) {
+  /**
+   * Lexicographical comparison expressions by their number of characters
+   *
+   * @param e1 JD
+   * @param e2 JD
+   * @return an integer which is either negative, zero, or positive, if the
+   *         number of characters in the first argument occurs before, at the
+   *         same place, or after then the second argument in lexicographical
+   *         order.
+   */
+  static int alphabeticalCompare(final Expression e1, final Expression e2) {
     return removeWhites(e1).compareTo(removeWhites(e2));
   }
   static int round(final int $, final int threshold) {
@@ -83,16 +109,27 @@ public enum ExpressionComparator implements Comparator<Expression> {
   static int asBit(final boolean b) {
     return b ? 1 : 0;
   }
+  /**
+   * Compare the length of the left and right arguments of an infix expression
+   *
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> if the left operand of the
+   *         parameter is is longer than the second argument
+   */
   public static boolean longerFirst(final InfixExpression e) {
     return isLonger(e.getLeftOperand(), e.getRightOperand());
   }
-  static boolean isLonger(final Expression e1, final Expression e2) {
+  private static boolean isLonger(final Expression e1, final Expression e2) {
     return !hasNull(e1, e2) && (//
-        countNodes(e1) > TOKEN_THRESHOLD + countNodes(e2) || //
-        countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
-        );
+    nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2) || //
+        nodesCount(e1) >= nodesCount(e2) && moreArguments(e1, e2)//
+    );
   }
-  public static final int TOKEN_THRESHOLD = 1;
+  /**
+   * Threshold for comparing nodes; a difference in the number of nodes between
+   * two nodes is considered zero, if it is the less than this value,
+   */
+  public static final int NODES_THRESHOLD = 1;
   /**
    * Counts the number of non-space characters in a tree rooted at a given node
    *
@@ -108,17 +145,20 @@ public enum ExpressionComparator implements Comparator<Expression> {
    * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter.
    */
-  public static int countNodes(final ASTNode n) {
-    final AtomicInteger $ = new AtomicInteger(0);
+  public static int nodesCount(final ASTNode n) {
+    class Integer {
+      int inner = 0;
+    }
+    final Integer $ = new Integer();
     n.accept(new ASTVisitor() {
       /**
        * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
        * @param _ ignored
        */
       @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-        $.incrementAndGet();
+        $.inner++;
       }
     });
-    return $.get();
+    return $.inner;
   }
 }
