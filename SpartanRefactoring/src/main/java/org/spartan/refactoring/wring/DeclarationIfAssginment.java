@@ -39,7 +39,7 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
       return null;
     if (a.getOperator() != Assignment.Operator.ASSIGN)
       return null;
-    if (!Occurrences.BOTH_SEMANTIC.of(f).in(s).isEmpty())
+    if (!Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(),a.getRightHandSide()).isEmpty())
       return null;
     r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
