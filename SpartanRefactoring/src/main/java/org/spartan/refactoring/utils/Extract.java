@@ -12,6 +12,7 @@ import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
 import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.ExpressionComparator.*;
 import static org.spartan.utils.Utils.last;
 
 import java.util.ArrayList;
@@ -43,10 +44,15 @@ import org.spartan.utils.Wrapper;
  */
 public enum Extract {
   ;
+  /**
+   * Retrieve all operands, including parenthesized ones, under an expression
+   *
+   * @param e JD
+   * @return a {@link List} of all operands to the parameter
+   */
   public static List<Expression> allOperands(final InfixExpression e) {
     return Extract.operands(flatten(e));
   }
-
   /**
    * @param n a statement or block to extract the assignment from
    * @return null if the block contains more than one statement or if the
@@ -68,6 +74,18 @@ public enum Extract {
   public static Expression core(final Expression $) {
     return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : core(((ParenthesizedExpression) $).getExpression());
   }
+  /**
+   * Computes the "essence" of a statement, i.e., if a statement is essentially
+   * a single, non-empty, non-block statement, possibly wrapped in brackets,
+   * perhaps along with any number of empty statements, then its essence is this
+   * single non-empty statement.
+   *
+   * @param s JD
+   * @return the essence of the parameter, or <code><b>null</b></code>, if there
+   *         are no non-empty statements within the parameter. If, however there
+   *         are multiple non-empty statements inside the parameter then the
+   *         parameter itself is returned.
+   */
   public static Statement core(final Statement s) {
     final List<Statement> ss = Extract.statements(s);
     switch (ss.size()) {
@@ -129,6 +147,15 @@ public enum Extract {
     });
     return $.get();
   }
+  /**
+   * Find the first {@link InfixExpression} representing an addition, under a
+   * given node, as found in the usual visitation order.
+   *
+   * @param n JD
+   * @return the first {@link InfixExpression} representing an addition under
+   *         the parameter given node, or <code><b>null</b></code> if no such
+   *         value could be found.
+   */
   public static InfixExpression firstPlus(final ASTNode n) {
     if (n == null)
       return null;
@@ -171,12 +198,19 @@ public enum Extract {
    * Extract the single {@link ReturnStatement} embedded in a node.
    *
    * @param n JD
-   * @return the single {@link IfStatement} embedded in the parameter, and
-   *         return it; <code><b>null</b></code> if not such statements exists.
+   * @return the single {@link IfStatement} embedded in the parameter or
+   *         <code><b>null</b></code> if not such statements exists.
    */
   public static IfStatement ifStatement(final ASTNode n) {
     return asIfStatement(Extract.singleStatement(n));
   }
+  /**
+   * Find the last statement residing under a given {@link Statement}
+   *
+   * @param s JD
+   * @return the last statement residing under a given {@link Statement}, or
+   *         <code><b>null</b></code> if not such statements exists.
+   */
   public static ASTNode lastStatement(final Statement s) {
     return last(statements(s));
   }
@@ -241,6 +275,13 @@ public enum Extract {
     final Block b = asBlock(s.getParent());
     return b == null ? null : next(s, Extract.statements(b));
   }
+  /**
+   * Makes a list of all operands of an expression, comprising the left operand,
+   * the right operand, followed by extra operands when they exist.
+   *
+   * @param e JD
+   * @return a list of all operands of an expression
+   */
   public static List<Expression> operands(final InfixExpression e) {
     if (e == null)
       return null;
@@ -252,6 +293,8 @@ public enum Extract {
     return $;
   }
   /**
+   * Finds the expression returned by a return statement
+   *
    * @param n a node to extract an expression from
    * @return null if the statement is not an expression or return statement or
    *         the expression if they are
@@ -270,8 +313,17 @@ public enum Extract {
   public static ReturnStatement returnStatement(final ASTNode n) {
     return asReturnStatement(Extract.singleStatement(n));
   }
-  public static Statement singleElse(final IfStatement i) {
-    return Extract.singleStatement(i.getElseStatement());
+  /**
+   * Finds the single statement in the <code><b>else</b></code> branch of an
+   * {@link IfStatement}
+   *
+   * @param s JD
+   * @return the single statement in the <code><b>else</b></code> branch of the
+   *         parameter, or <code><b>null</b></code>, if no such statement
+   *         exists.
+   */
+  public static Statement singleElse(final IfStatement s) {
+    return Extract.singleStatement(s.getElseStatement());
   }
   /**
    * @param n JD
@@ -282,20 +334,17 @@ public enum Extract {
     final List<Statement> $ = Extract.statements(n);
     return $.size() != 1 ? null : (Statement) $.get(0);
   }
+  /**
+   * Finds the single statement in the "then" branch of an
+   * {@link IfStatement}
+   *
+   * @param s JD
+   * @return the single statement in the "then" branch of the
+   *         parameter, or <code><b>null</b></code>, if no such statement
+   *         exists.
+   */
   public static Statement singleThen(final IfStatement i) {
     return Extract.singleStatement(i.getThenStatement());
-  }
-  public static int size(final ASTNode n) {
-    class Integer {
-      int inner = 0;
-    }
-    final Integer $ = new Integer();
-    n.accept(new ASTVisitor() {
-      @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-        $.inner++;
-      }
-    });
-    return $.inner;
   }
   /**
    * Extract the {@link Statement} that contains a given node.

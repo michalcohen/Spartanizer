@@ -13,7 +13,7 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.utils.ExpressionComparator.NODES_THRESHOLD;
-import static org.spartan.refactoring.utils.ExpressionComparator.countNodes;
+import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
@@ -401,7 +401,7 @@ public class TrimmerTest {
     final Expression e1 = e.getLeftOperand();
     final Expression e2 = e.getRightOperand();
     assertFalse(hasNull(e1, e2));
-    final boolean tokenWiseGreater = countNodes(e1) > NODES_THRESHOLD + countNodes(e2);
+    final boolean tokenWiseGreater = nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2);
     assertTrue(tokenWiseGreater);
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
@@ -421,7 +421,7 @@ public class TrimmerTest {
     final Expression e1 = e.getLeftOperand();
     final Expression e2 = e.getRightOperand();
     assertFalse(hasNull(e1, e2));
-    final boolean tokenWiseGreater = countNodes(e1) > NODES_THRESHOLD + countNodes(e2);
+    final boolean tokenWiseGreater = nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2);
     assertFalse(tokenWiseGreater);
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));

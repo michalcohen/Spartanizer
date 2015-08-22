@@ -60,7 +60,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return asBit(Is.literal(e1)) - asBit(Is.literal(e2));
   }
   static int nodesCompare(final Expression e1, final Expression e2) {
-    return round(countNodes(e1) - countNodes(e2), NODES_THRESHOLD);
+    return round(nodesCount(e1) - nodesCount(e2), NODES_THRESHOLD);
   }
   static int argumentsCompare(final Expression e1, final Expression e2) {
     return !Is.methodInvocation(e1) || !Is.methodInvocation(e2) ? 0 : argumentsCompare((MethodInvocation) e1, (MethodInvocation) e2);
@@ -122,8 +122,8 @@ public enum ExpressionComparator implements Comparator<Expression> {
   }
   private static boolean isLonger(final Expression e1, final Expression e2) {
     return !hasNull(e1, e2) && (//
-    countNodes(e1) > NODES_THRESHOLD + countNodes(e2) || //
-        countNodes(e1) >= countNodes(e2) && moreArguments(e1, e2)//
+    nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2) || //
+        nodesCount(e1) >= nodesCount(e2) && moreArguments(e1, e2)//
     );
   }
   /**
@@ -146,17 +146,20 @@ public enum ExpressionComparator implements Comparator<Expression> {
    * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter.
    */
-  public static int countNodes(final ASTNode n) {
-    final AtomicInteger $ = new AtomicInteger(0);
+  public static int nodesCount(final ASTNode n) {
+    class Integer {
+      int inner = 0;
+    }
+    final Integer $ = new Integer();
     n.accept(new ASTVisitor() {
       /**
        * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
        * @param _ ignored
        */
       @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-        $.incrementAndGet();
+        $.inner++;
       }
     });
-    return $.get();
+    return $.inner;
   }
 }
