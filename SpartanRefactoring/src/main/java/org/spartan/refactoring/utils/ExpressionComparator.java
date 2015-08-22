@@ -4,7 +4,6 @@ import static org.spartan.refactoring.utils.Funcs.removeWhites;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Comparator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;

@@ -20,10 +20,11 @@ import org.spartan.refactoring.wring.Trimmer;
  * @author Yossi Gil
  * @since 2015-07-17
  */
+@SuppressWarnings("javadoc")
 public enum TESTUtils {
   ;
   static final String WHITES = "(?m)\\s+";
-  public static void assertNoChange(final String input) {
+ public static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
   /**

@@ -1,7 +1,5 @@
 package org.spartan.refactoring.utils;
 
-import org.spartan.refactoring.wring.Wrings;
-import static org.spartan.refactoring.wring.Wrings.*;
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_CREATION;
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
