@@ -23,8 +23,6 @@ public enum Spartanizations {
   // ForwardDeclaration(new ForwardDeclaration()), //
   // InlineSingleUse(new InlineSingleUse()), //
   // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  // ShortestBranchFirst(new ShortestBranchFirst()), //
-  // ShortestOperand(new ShortestOperand()), //
   ;
   // TODO break that simply returns
   // TODO Change Javadoc to one line /**... */ style when possible

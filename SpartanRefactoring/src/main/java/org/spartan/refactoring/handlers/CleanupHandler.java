@@ -51,10 +51,8 @@ public class CleanupHandler extends BaseHandler {
          }
       });
     } catch (final InvocationTargetException x) {
-      // TODO Auto-generated catch block
       x.printStackTrace();
     } catch (final InterruptedException x) {
-      // TODO Auto-generated catch block
       x.printStackTrace();
     }
 

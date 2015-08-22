@@ -33,7 +33,7 @@ public class ExtractMethod extends Spartanization {
   }
   CompilationUnit oldCu;
   @Override protected ASTVisitor collectOpportunities(final List<Range> opportunities) {
-    // No opportunities for now, if it's 2016 and not added yet, blame TODO Ofir
+    // TODO Ofir: No opportunities for now, if it's 2016 and not added yet, blame
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         opportunities.add(new Range(n));
@@ -60,12 +60,10 @@ public class ExtractMethod extends Spartanization {
         for (final LinkedList<Integer> group : ug)
           if (group.size() >= MinimumGroupSizeForExtraction && group.size() <= md.getBody().statements().size() - MaximunGroupRelativeToMethodSize)
             groups.add(0, group);
-        // Random method name for now - will
-        // be changed later on TODO Ofir
+        // TODO Ofir: random method name for now - will be changed later on
         for (final LinkedList<Integer> group : groups) {
           extract(cu.getPosition(group.getFirst(), 0), cu.getPosition(group.getLast() + 1, 0));
-          break; // Only the first group for now, TODO support multiple groups
-          // future
+          break; // TODO Ofir: support multiple groups future, Only the first group for now,
         }
         return true;
         // TODO Note: there is a known bug right now - that simple name also
