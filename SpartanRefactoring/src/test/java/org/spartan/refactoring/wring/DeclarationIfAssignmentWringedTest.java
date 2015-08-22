@@ -1,9 +1,9 @@
 package org.spartan.refactoring.wring;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -41,6 +41,7 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Range;
 import org.spartan.utils.Utils;
@@ -117,7 +118,27 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertNotNull(r);
   }
   @Test public void scopeIncludesAsMe() {
-    final boolean scopeIncludes = inner.scopeIncludes(asMe());
+    assertThat(asMe().toString(), inner.scopeIncludes(asMe()), is(true));
+  }
+  @Test public void scopeIncludesAsMeExpanded() {
+    final VariableDeclarationFragment f = asMe();
+    final Expression initializer = f.getInitializer();
+    assertNotNull(initializer);
+    final IfStatement s = Extract.nextIfStatement(f);
+    assertNotNull(s);
+    assertThat(Wrings.elseIsEmpty(s), is(true));
+    final Assignment a = Extract.assignment(s.getThenStatement());
+    assertNotNull(a);
+    final Expression leftHandSide = a.getLeftHandSide();
+    assertNotNull(leftHandSide);
+    assertTrue(same(leftHandSide, f.getName()));
+    assertThat(a.getOperator(), is(Assignment.Operator.ASSIGN));
+    final List<Expression> in = Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(),a.getRightHandSide());
+    final ASTRewrite r = ASTRewrite.create(f.getAST());
+    r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
+    r.remove(s, null);
+    final ASTRewrite fillReplacement = DeclarationIfAssginmentTest.WRING.fillReplacement(f, r);
+    final boolean scopeIncludes = fillReplacement != null;
     assertThat(asMe().toString(), scopeIncludes, is(true));
   }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {

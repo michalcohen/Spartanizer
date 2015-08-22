@@ -35,7 +35,7 @@ import org.spartan.refactoring.utils.Extract;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationIfAssginmentTest extends AbstractWringTest<VariableDeclarationFragment> {
-  static final Wring<VariableDeclarationFragment> WRING = new DeclarationIfAssginment();
+  static final DeclarationIfAssginment WRING = new DeclarationIfAssginment();
   public DeclarationIfAssginmentTest() {
     super(WRING);
   }
