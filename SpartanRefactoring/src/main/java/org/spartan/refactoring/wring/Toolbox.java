@@ -45,7 +45,7 @@ public class Toolbox {
           new InfixAdditionSort(), //
           new InfixComparisonBooleanLiteral(), //
           new InfixComparisonSpecific(), //
-          new InfixComparisonShortestFirst(), //
+     //     new InfixComparisonShortestFirst(), // Not good enough, produces silly transformations.
           new InfixConditionalAndTrue(), //
           new InfixConditionalOrFalse(), //
           new InfixMultiplicationSort(), //
