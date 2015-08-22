@@ -32,7 +32,6 @@ public enum Spartanizations {
   // TODO Clever chaining in 2 to 3 selected classes
   // TODO more clever forward/inline. do not propose if components of expression
   // are used in between
-  // TODO Add safe operations as source menu item for safe operations.
   // TODO Use one letter name for local variables and parameters
   private final Spartanization value;
   private Spartanizations(final Spartanization value) {
