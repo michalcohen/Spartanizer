@@ -1113,17 +1113,24 @@ public class TrimmerTest {
         "String res=s;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize10() {
-    assertNoConversion("String res = s, foo = bar;   "//
-        + "if (res.equals(532)==true)    " + " res = s + 0xABBA;   " + "System.out.println(res); ");
+    assertConvertsTo("String res = s, foo = bar;   "//
+        + "if (res.equals(532)==true)    " + //
+        " res = s + 0xABBA;   " //
+        + "System.out.println(res); ", "String res=s,foo=bar;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize12() {
-    assertNoConversion("String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ");
+    assertConvertsTo(//
+        "String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ", "String res=s;if(s.equals(532))res=res+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize13() {
-    assertNoConversion("String res = mode, foo;  if (mode.equals(f())==true)   foo = \"test-bob\"; ");
+    assertConvertsTo(//
+        "String res = mode, foo;  if (mode.equals(f())==true)   foo = M; ", //
+        "String res=mode,foo;if(mode.equals(f()))foo=M;");
   }
   @Test public void ternarize14() {
-    assertNoConversion("String res = mode, foo = \"Not in test mode\";   if (res.equals(f())==true){    foo = \"test-bob\";    int k = 2;    k = 8;   System.out.println(foo); ");
+    assertConvertsTo(//
+        "String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);", //
+        "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=2;k=8;System.out.println(foo);");
   }
   @Test public void ternarize16() {
     assertNoConversion("String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
@@ -1159,7 +1166,9 @@ public class TrimmerTest {
     assertNoChange("int a, b=0, c=0;   a=4;   if (c==3){    b=2;   a=6; ");
   }
   @Test public void ternarize41() {
-    assertNoConversion("int a, b, c, d;   a = 3;   b = 5;   d = 7;   if (a == 4)     while (b == 3)     c = a;   else    while (d == 3)     c = a*a; ");
+    assertConvertsTo(//
+        "int a,b,c,d;a = 3;b = 5; d = 7;if (a == 4)while (b == 3) c = a; else while (d == 3)c =a*a; ", //
+        "int a=3,b,c,d;b=5;d=7;if(a==4)while(b==3)c=a;else while(d==3)c=a*a;");
   }
   @Test public void ternarize42() {
     assertNoConversion(
@@ -1191,8 +1200,9 @@ public class TrimmerTest {
     );
   }
   @Test public void ternarize56() {
-    assertNoConversion(
-        "if (target == 0) { progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target);        progressBarCurrent.setValue(current * 100 / target);");
+    assertConvertsTo(
+        "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target); progressBarCurrent.setValue(current * 100 / target);", //
+        "if(target==0){progressBarCurrent.setString(X);progressBarCurrent.setValue(0);progressBarCurrent.setString(current+\"/\"+target);progressBarCurrent.setValue(100*current / target);");
   }
   @Test public void testPeel() {
     assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));
