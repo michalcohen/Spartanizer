@@ -53,7 +53,20 @@ public class InlineSingleUse extends Spartanization {
   }
   @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      // TOD: Something missing here?
+      @Override public boolean visit(final VariableDeclarationFragment n) {
+        if (!inRange(m, n) || !(n.getParent() instanceof VariableDeclarationStatement))
+          return true;
+        final SimpleName varName = n.getName();
+        final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
+        final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
+        if (1 == uses.size()
+            && (Is._final(parent) || 1 == numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()))) {
+          r.replace(uses.get(0), n.getInitializer(), null);
+          r.remove(1 != parent.fragments().size() ? n : parent, null);
+        }
+        return true;
+      }
+
     });
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
