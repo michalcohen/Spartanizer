@@ -79,7 +79,7 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
          new String[] {"Method call", "if (a) x.f(b); else x.f(c);", "x.f(a ? b: c);"}, //
          new String[] {"Distinct receiver", "if (a) y.f(b); else x.f(b);", "(a ?y :x).f(b);"}, //
          new String[] {"Distinct receiver no arguments", "if (a) y.f(); else x.f();", "(a ?y :x).f();"}, //
-         new String[] {"Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f();"}, //
+         new String[] {"Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f(a,b,c);"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
