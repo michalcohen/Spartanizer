@@ -159,10 +159,13 @@ public enum As {
   private As(final int kind) {
     this.kind = kind;
   }
+  /** Parses a given {@link Document}.
+   * @param d JD
+   * @return the {@link ASTNode} obtained by parsing
+   */
   public final ASTNode ast(final Document d) {
     return ast(d.get());
   }
-
   /**
    * File -> ASTNode converter
    *
