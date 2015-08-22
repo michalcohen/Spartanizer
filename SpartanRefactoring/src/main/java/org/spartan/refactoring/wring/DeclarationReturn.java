@@ -32,8 +32,10 @@ public final class DeclarationReturn extends Wring.OfVariableDeclarationFragment
     if (initializer == null)
       return null;
     final ReturnStatement s = Extract.nextReturn(f);
+    if (s == null)
+      return null;
     final Expression e = Extract.expression(s);
-    if (s == null || !same(f.getName(), e))
+    if (e == null || !same(f.getName(), e))
       return null;
     final Expression returnValue = Extract.expression(s);
     if (e == null || !same(f.getName(), returnValue))
