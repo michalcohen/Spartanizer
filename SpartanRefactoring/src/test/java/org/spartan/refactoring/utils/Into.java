@@ -37,18 +37,24 @@ public enum Into {
     assertThat(conditionalExpression, $, instanceOf(ConditionalExpression.class));
     return (ConditionalExpression) $;
   }
-  public static String compressSpaces(final String s) {
-    String $ = s//
+  /**
+   * Remove all non-essential spaces from a string that represents Java code.
+   *
+   * @param javaCode JD
+   * @return the parameter, with all redundant spaces removes from it
+   */
+  public static String compressSpaces(final String javaCode) {
+    String $ = javaCode//
         .replaceAll("(?m)\\s+", " ") // Squeeze whites
         .replaceAll("^\\s", "") // Opening whites
         .replaceAll("\\s$", "") // Closing whites
         ;
     for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
-    "[\\^]" })
+        "[\\^]" })
       $ = $ //
-      .replaceAll(WHITES + operator, operator) // Preceding whites
-      .replaceAll(operator + WHITES, operator) // Trailing whites
-      ;
+          .replaceAll(WHITES + operator, operator) // Preceding whites
+          .replaceAll(operator + WHITES, operator) // Trailing whites
+          ;
     return $;
   }
   /**

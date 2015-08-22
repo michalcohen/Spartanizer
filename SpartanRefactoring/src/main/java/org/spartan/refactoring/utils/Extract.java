@@ -12,7 +12,6 @@ import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
 import static org.spartan.refactoring.utils.Restructure.flatten;
-import static org.spartan.refactoring.utils.ExpressionComparator.*;
 import static org.spartan.utils.Utils.last;
 
 import java.util.ArrayList;
@@ -343,8 +342,8 @@ public enum Extract {
    *         parameter, or <code><b>null</b></code>, if no such statement
    *         exists.
    */
-  public static Statement singleThen(final IfStatement i) {
-    return Extract.singleStatement(i.getThenStatement());
+  public static Statement singleThen(final IfStatement s) {
+    return Extract.singleStatement(s.getThenStatement());
   }
   /**
    * Extract the {@link Statement} that contains a given node.

@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -80,4 +81,5 @@ public enum Wrings {
     r.replace(parent, $, null);
     return r;
   }
+
 }

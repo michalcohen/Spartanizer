@@ -9,7 +9,6 @@ import static org.spartan.refactoring.utils.Funcs.compatibleNames;
 import static org.spartan.refactoring.utils.Funcs.compatibleOps;
 import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
-import static org.spartan.refactoring.utils.Funcs.hasReturn;
 import static org.spartan.refactoring.utils.Funcs.makeVariableDeclarationFragment;
 import static org.spartan.refactoring.utils.Funcs.next;
 import static org.spartan.refactoring.utils.Funcs.prev;
@@ -346,7 +345,7 @@ import org.spartan.utils.Range;
         || tryHandleNoNextNoPrevAsgn(t, r, i, then, prevAsgn, nextAsgn, prevDecl);
   }
   private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> ss) {
-    if (!hasReturn(i.getThenStatement()))
+    if (!Is.retern(Extract.lastStatement(i.getThenStatement())))
       return false;
     final ReturnStatement nextRet = nextStatement(ss, ss.indexOf(i));
     return nextRet != null && Is.singletonThen(i) && noElse(i) && rewriteIfToRetStmnt(t, r, i, nextRet);
