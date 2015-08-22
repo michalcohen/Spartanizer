@@ -17,9 +17,13 @@ import org.eclipse.jface.text.Document;
  * @since 2015-07-16
  */
 public enum Make {
+  /** Strategy for conversion into a compilation unit */
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT), //
+  /** Strategy for conversion into an expression */
   EXPRESSION(ASTParser.K_EXPRESSION), //
+  /** Strategy for conversion into an sequence of statements */
   STATEMENTS(ASTParser.K_STATEMENTS), //
+  /** Strategy for conversion into a class body */
   CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS); //
   public static Make of(final As a) {
     switch (a) {
@@ -50,6 +54,12 @@ public enum Make {
     $.setSource(text);
     return $;
   }
+  /**
+   * Creates a parser for a given {@link Document}
+   *
+   * @param d JD
+   * @return the created parser
+   */
   public ASTParser parser(final Document d) {
     final ASTParser $ = parser();
     $.setSource(d.get().toCharArray());
@@ -66,9 +76,21 @@ public enum Make {
     $.setSource(u);
     return $;
   }
+  /**
+   * Creates a parser for a given {@link IFile}
+   *
+   * @param f JD
+   * @return the created parser
+   */
   public ASTParser parser(final IFile f) {
     return parser(JavaCore.createCompilationUnitFrom(f));
   }
+  /**
+   * Creates a parser for a given marked text.
+   *
+   * @param m JD
+   * @return the created parser
+   */
   public ASTParser parser(final IMarker m) {
     return parser(As.iCompilationUnit(m));
   }
