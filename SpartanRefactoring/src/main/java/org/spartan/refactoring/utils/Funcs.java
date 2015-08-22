@@ -511,7 +511,7 @@ public enum Funcs {
   /**
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
-   * @param e JD
+   * @param n JD
    * @param t JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree

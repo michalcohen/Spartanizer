@@ -584,7 +584,7 @@ public enum Is {
   /**
    * Determine whether the "then" branch of an {@link Statement} is a single statement.
    *
-   * @param n JD
+   * @param s JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement
    */
   public static boolean singletonThen(final IfStatement s) {
