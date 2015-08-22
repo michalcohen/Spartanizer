@@ -350,6 +350,21 @@ public class TrimmerTest {
         "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
         "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
   }
+  @Test public void ifFunctionCall() {
+    assertConvertsTo("if (x) f(a); else f(b);", " f(x ? a: b);");
+  }
+  @Test public void ifPlusPlusPost() {
+    assertNoConversion("if (x) a++; else b++;");
+  }
+  @Test public void ifPlusPlusPostExpression() {
+    assertNoChange("x? a++:b++");
+  }
+  @Test public void ifPlusPlusPre() {
+    assertNoConversion("if (x) ++a; else ++b;");
+  }
+  @Test public void ifPlusPlusPreExpression() {
+    assertNoChange("x? ++a:++b");
+  }
   @Ignore @Test public void inlineSingleUse01() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ",
         "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (yada3(0))); ");
@@ -622,8 +637,11 @@ public class TrimmerTest {
   @Test public void orFalseTrueAndTrueA() {
     assertSimplifiesTo("true && true", "true");
   }
-  public void parenthesizeOfpushdownTernary() {
+  @Test public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
+  }
+  @Test public void ternaryPushdownOfReciever() {
+    assertSimplifiesTo("a ? b.f():c.f()", "(a?b:c).f()");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -1016,11 +1034,11 @@ public class TrimmerTest {
     assertThat(wring.eligible((Block) As.STATEMENTS.ast(from)), is(true));
     assertSimplifiesTo(from, "", wring, Wrap.Statement);
   }
-  @Test public void simplifyBlockComplexEmpty1() {
-    assertConvertsTo("{;;{;{{}}}{;}{};}", "");
-  }
   @Test public void simplifyBlockComplexEmpty0() {
     assertSimplifiesTo("{}", "", new BlockSimplify(), Wrap.Statement);
+  }
+  @Test public void simplifyBlockComplexEmpty1() {
+    assertConvertsTo("{;;{;{{}}}{;}{};}", "");
   }
   @Test public void simplifyBlockComplexSingleton() {
     assertSimplifiesTo("{;{{;;return b; }}}", "return b;", new BlockSimplify(), Wrap.Statement);
@@ -1101,8 +1119,11 @@ public class TrimmerTest {
     assertSimplifiesTo("a*2", "2*a");
   }
   @Test public void ternarize05() {
-    assertNoConversion("  int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res -= 9;      "
-        + "/*   if (s.equals(532))    res += 6;   else    res += 9;    */   " + "return res; " + "");
+    assertConvertsTo("  int res = 0; " //
+        + "if (s.equals(532))    "//
+        + "res += 6;   " //
+        + "else    "//
+        + "res += 9;      ", "int res=0;res+=s.equals(532)?6:9;");
   }
   @Test public void ternarize05a() {
     assertConvertsTo("  int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ",
@@ -1137,6 +1158,13 @@ public class TrimmerTest {
   }
   @Test public void ternarize21() {
     assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+  }
+  @Test public void ternarize21a() {
+    assertNoConversion("    if (s.equals(\"yada\")){\n" + //
+        "      System.out.println(\"g\");\n" + //
+        "    } else {\n" + //
+        "      System.out.append(\"k\");\n" + //
+        "    }");
   }
   @Test public void ternarize22() {
     assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
@@ -1178,26 +1206,36 @@ public class TrimmerTest {
     assertNoConversion("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize46() {
-    assertNoConversion("int a , b=0;   if (mode.equals(f())==true)    if (b==3){     return 3;     a+=7;   else    if (b==3){     return 2;     a=7; ");
+    assertConvertsTo(
+        "    int a , b=0;\n" + "    if (mode.equals(NG)==true)\n" + "      if (b==3){\n" + "        return 3;\n" + "      } else {\n" + "        a+=7;\n" + "      }\n"
+            + "    else\n" + "      if (b==3){\n" + "        return 2;\n" + "      } else {\n" + "        a=7;\n" + "      }",
+        "int a,b=0;if(mode.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
   }
   @Test public void ternarize48() {
     assertNoConversion(
         "  int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
   }
   @Test public void ternarize49() {
-    assertNoConversion(
-        "  int size = 0;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     System.out.println(\"Hey\");   else    for (int i=0; i < size; i++){     System.out.append('f'); ");
+    assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+  }
+  @Test public void ternarize49a() {
+    assertConvertsTo(
+        "     int size = 0;\n" + "    if (mode.equals(153)==true)\n" + "      for (int i=0; i < size; i++){\n" + "        System.out.println(HH);\n" + "      }\n" + "    else\n"
+            + "      for (int i=0; i < size; i++){\n" + "        System.out.append('f');\n" + "      }",
+        "int size=0;"//
+            + "if(mode.equals(153))" + " for(int i=0;i<size;i++){" + "   System.out.println(HH);" + " } " + "else " + "   for(int i=0;i<size;i++){" + "     System.out.append('f');"
+            + "   }");
   }
   @Test public void ternarize53() {
     assertNoConversion("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;");
   }
   @Test public void ternarize55() {
-    assertNoConversion(//
+    assertConvertsTo(//
         "if (key.equals(markColumn))\n" + //
             "  to.put(key, a.toString());\n" + //
             "else\n" + //
-            "   to.put(key, missing(key, a) ? Z2 : get(key, a));"//
-    );
+            "   to.put(key, missing(key, a) ? Z2 : get(key, a));", //
+        "to.put(key,key.equals(markColumn)?a.toString():missing(key,a)?Z2:get(key,a));");
   }
   @Test public void ternarize56() {
     assertConvertsTo(

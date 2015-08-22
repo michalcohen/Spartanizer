@@ -24,27 +24,21 @@ import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
-/**
- * Unit tests for {@link Wrings#ADDITION_SORTER}.
- *
+/*
  * @author Yossi Gil
  * @since 2014-07-13
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class IfAssignToFooElseAssignToFooTest {
-  static final Wring<IfStatement> WRING = new IfAssignToFooElseAssignToFoo();
+public class IfExpressionStatementElseSimilarExpressionStatementTest {
+  static final IfExpressionStatementElseSimilarExpressionStatement WRING = new IfExpressionStatementElseSimilarExpressionStatement();
   @Test public void checkSteps() {
-    final Statement s = asSingle("if (a) a = b; else a = c;");
+    final Statement s = asSingle("if (a) f(b); else f(c);");
     assertNotNull(s);
     final IfStatement i = asIfStatement(s);
     assertNotNull(i);
-    final Assignment then = Extract.assignment(i.getThenStatement());
-    assertNotNull(i.getThenStatement().toString(), then);
-    final Assignment elze = Extract.assignment(i.getElseStatement());
-    assertNotNull(elze);
-    assertThat(compatible(then, elze), is(true));
-    assertThat(WRING.scopeIncludes(i), is(true));
+    final boolean scopeIncludes = WRING.scopeIncludes(i);
+    assertThat(scopeIncludes,is(true));
   }
 
   @RunWith(Parameterized.class) //
@@ -57,6 +51,9 @@ public class IfAssignToFooElseAssignToFooTest {
          new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
          new String[] {"Not same assignment", "if (a) a /= b; else a /= c;"}, //
          new String[] {"Another distinct assignment", "if (a) a /= b; else a %= c;"}, //
+         new String[] {"Simple if assign", "if (a) a = b; else a = c;", }, //
+         new String[] {"Simple if plus assign", "if (a) a += b; else a += c;",}, //
+         new String[] {"Simple if plus assign", "if (a) a *= b; else a *= c;",}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -78,9 +75,11 @@ public class IfAssignToFooElseAssignToFooTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
-         new String[] {"Simple if assign", "if (a) a = b; else a = c;", "a = a ? b : c;"}, //
-         new String[] {"Simple if plus assign", "if (a) a += b; else a += c;", "a += a ? b : c;"}, //
-         new String[] {"Simple if plus assign", "if (a) a *= b; else a *= c;", "a *= a ? b : c;"}, //
+         new String[] {"Vanilla", "if (a) f(b); else f(c);", "f(a ? b: c);"}, //
+         new String[] {"Method call", "if (a) x.f(b); else x.f(c);", "x.f(a ? b: c);"}, //
+         new String[] {"Distinct receiver", "if (a) y.f(b); else x.f(b);", "(a ?y :x).f(b);"}, //
+         new String[] {"Distinct receiver no arguments", "if (a) y.f(); else x.f();", "(a ?y :x).f();"}, //
+         new String[] {"Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f();"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.CLASS_INSTANCE_CREATION;
 import static org.eclipse.jdt.core.dom.ASTNode.FIELD_ACCESS;
@@ -77,10 +78,22 @@ final class TernaryPushdown extends Wring.OfConditionalExpression {
     return p(e, Subject.operands(operands).to($.getOperator()));
   }
   private static Expression pushdown(final ConditionalExpression e, final MethodInvocation e1, final MethodInvocation e2) {
-    if (!same(e1.getName(), e2.getName()) || !same(e1.getExpression(), e2.getExpression()))
+    if (!same(e1.getName(), e2.getName()))
       return null;
     final List<Expression> es1 = e1.arguments();
     final List<Expression> es2 = e2.arguments();
+    final Expression receiver1 = e1.getExpression();
+    final Expression receiver2 = e2.getExpression();
+    if (!same(receiver1, receiver2)) { // Try to push on receiver
+      if (receiver1 == null)
+        return null;
+      if (!same(es1, es2))
+        return null;
+      final ConditionalExpression c = Subject.pair(receiver1, receiver2).toCondition(e.getExpression());
+      final MethodInvocation $ = duplicate(e1);
+      $.setExpression(parenthesize(c));
+      return $;
+    }
     if (es1.size() != es2.size())
       return null;
     final int i = findSingleDifference(es1, es2);
@@ -98,14 +111,14 @@ final class TernaryPushdown extends Wring.OfConditionalExpression {
     final Assignment a = Subject.pair(a1.getLeftHandSide(), c).to(a1.getOperator());
     return new Plant(a).into(e.getParent());
   }
-  private Expression pushdown(final ConditionalExpression e) {
+  static Expression pushdown(final ConditionalExpression e) {
     if (e == null)
       return null;
     final Expression then = core(e.getThenExpression());
     final Expression elze = core(e.getElseExpression());
     return same(then, elze) ? null : pushdown(e, then, elze);
   }
-  private Expression pushdown(final ConditionalExpression e, final Expression e1, final Expression e2) {
+  private static Expression pushdown(final ConditionalExpression e, final Expression e1, final Expression e2) {
     if (e1.getNodeType() != e2.getNodeType())
       return null;
     switch (e1.getNodeType()) {

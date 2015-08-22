@@ -45,7 +45,6 @@ public class Toolbox {
           new InfixAdditionSort(), //
           new InfixComparisonBooleanLiteral(), //
           new InfixComparisonSpecific(), //
-     //     new InfixComparisonShortestFirst(), // Not good enough, produces silly transformations.
           new InfixConditionalAndTrue(), //
           new InfixConditionalOrFalse(), //
           new InfixMultiplicationSort(), //
@@ -62,6 +61,7 @@ public class Toolbox {
           new IfReturnNoElseReturn(), //
           new IfSomethingNoElse(), //
           new IfAssignToFooElseAssignToFoo(), //
+          new IfExpressionStatementElseSimilarExpressionStatement(), //
           new IfCommandsSequencerElseSomething(), //
           new IfCommandsSequencerIfSameCommandsSequencer(), //
           new IfShortestFirst(), //
