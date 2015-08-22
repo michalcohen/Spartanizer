@@ -30,10 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -57,9 +53,6 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.spartan.refactoring.wring.PrefixNotPushdown;
 import org.spartan.utils.Utils;
 
@@ -356,13 +349,7 @@ public enum Funcs {
   public static Expression frugalDuplicate(final Expression e) {
     return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
-  // TODO for Yossi review - not sure if funcs is the right place for
-  // getCompilationUnit(), getCurrentWorkbenchWindow() - because it serves both
-  // spartanization and command handlers but actually kind of part of the
-  // builder.
-  public static ICompilationUnit getCompilationUnit() {
-    return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
-  }
+
   /**
    * Get the containing node by type. Say we want to find the first block that
    * wraps our node: getContainerByNodeType(node, BLOCK);
@@ -372,17 +359,13 @@ public enum Funcs {
    * @return The containing node
    */
   public static ASTNode getContainerByNodeType(final ASTNode n, final int ASTNodeType) {
-    if (n == null)
-      return null;
-    ASTNode $ = n.getParent();
-    for (; $ != null && ASTNodeType != $.getNodeType(); $ = $.getParent())
+    if (n != null)
+    for ( ASTNode $ = n.getParent(); $ != null && ASTNodeType != $.getNodeType(); $ = $.getParent())
       if ($.getParent() == $.getRoot())
-        break;
-    return $;
+        return $;
+    return null;
   }
-  public static IWorkbenchWindow getCurrentWorkbenchWindow() {
-    return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-  }
+
   /**
    * @param n the node from which to extract the proper fragment
    * @param name the name by which to look for the fragment
@@ -650,12 +633,7 @@ public enum Funcs {
         return e;
     return null;
   }
-  private static ICompilationUnit getCompilationUnit(final IEditorPart ep) {
-    return ep == null ? null : getCompilationUnit(ep.getEditorInput().getAdapter(IResource.class));
-  }
-  private static ICompilationUnit getCompilationUnit(final IResource r) {
-    return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
-  }
+
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment o : frags)
       if (same(name, o.getName()))

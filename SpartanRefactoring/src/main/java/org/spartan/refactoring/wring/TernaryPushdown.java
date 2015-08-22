@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Plant;
 import org.spartan.refactoring.utils.Precedence;
 import org.spartan.refactoring.utils.Subject;
@@ -63,15 +63,15 @@ final class TernaryPushdown extends Wring.OfConditionalExpression {
   private static Expression pushdown(final ConditionalExpression e, final InfixExpression e1, final InfixExpression e2) {
     if (e1.getOperator() != e2.getOperator())
       return null;
-    final List<Expression> es1 = All.operands(e1);
-    final List<Expression> es2 = All.operands(e2);
+    final List<Expression> es1 = Extract.operands(e1);
+    final List<Expression> es2 = Extract.operands(e2);
     if (es1.size() != es2.size())
       return null;
     final int i = findSingleDifference(es1, es2);
     if (i < 0)
       return null;
     final InfixExpression $ = duplicate(e1);
-    final List<Expression> operands = All.operands($);
+    final List<Expression> operands = Extract.operands($);
     operands.remove(i);
     operands.add(i, p($, Subject.pair(es1.get(i), es2.get(i)).toCondition(e.getExpression())));
     return p(e, Subject.operands(operands).to($.getOperator()));

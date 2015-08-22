@@ -41,7 +41,7 @@ import org.spartan.refactoring.wring.Wrings;
     assertThat(Subject.pair(e("a+B"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("(a + B) * (c + d)"));
   }
   @Test public void subjectOperandsDoesNotIntroduceList() {
-    final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b")));
+    final List<Expression> operands = Extract.operands(Funcs.duplicate(i("a*b")));
     assertThat(operands.size(), is(2));
     final InfixExpression e = i("1+2");
     final InfixExpression refit = Subject.operands(operands).to(e.getOperator());
@@ -50,12 +50,12 @@ import org.spartan.refactoring.wring.Wrings;
   }
   @Test public void subjectOperandsIsCorrect() {
     final InfixExpression e = i("1+2+3");
-    final List<Expression> operands = All.operands(Funcs.duplicate(i("a*b*c")));
+    final List<Expression> operands = Extract.operands(Funcs.duplicate(i("a*b*c")));
     assertThat(Subject.operands(operands).to(e.getOperator()).toString(), is("a + b + c"));
   }
   @Test public void subjectOperandsNotNull() {
     final InfixExpression e = i("1+2+3");
-    final List<Expression> operands = All.operands(Funcs.duplicate(i("a+b+c")));
+    final List<Expression> operands = Extract.operands(Funcs.duplicate(i("a+b+c")));
     assertThat(Subject.operands(operands).to(e.getOperator()), notNullValue());
   }
   @Test public void refitPreservesOrder() {
@@ -69,7 +69,7 @@ import org.spartan.refactoring.wring.Wrings;
   }
   @Test public void refitWithSort() {
     final InfixExpression e = i("1 + 2 * 3");
-    final List<Expression> operands = All.operands(flatten(e));
+    final List<Expression> operands = Extract.operands(flatten(e));
     assertThat(operands.size(), is(2));
     assertThat(operands.get(0).toString(), is("1"));
     assertThat(operands.get(1).toString(), is("2 * 3"));
@@ -85,7 +85,7 @@ import org.spartan.refactoring.wring.Wrings;
     assertTrue(Is.notString(e));
     final InfixExpression plus = Extract.firstPlus(e);
     assertTrue(Is.notString(plus));
-    final List<Expression> operands = All.operands(flatten(plus));
+    final List<Expression> operands = Extract.operands(flatten(plus));
     assertThat(operands.size(), is(2));
     final boolean b = Wrings.sort(operands, ExpressionComparator.ADDITION);
     assertThat(b, is(true));
@@ -97,7 +97,7 @@ import org.spartan.refactoring.wring.Wrings;
     assertTrue(Is.notString(e));
     final InfixExpression plus = Extract.firstPlus(e);
     assertTrue(Is.notString(plus));
-    final List<Expression> operands = All.operands(flatten(plus));
+    final List<Expression> operands = Extract.operands(flatten(plus));
     assertThat(operands.size(), is(2));
     final boolean b = Wrings.sort(operands, ExpressionComparator.ADDITION);
     assertThat(b, is(true));

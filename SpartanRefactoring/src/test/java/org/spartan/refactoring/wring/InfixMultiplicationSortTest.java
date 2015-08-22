@@ -30,8 +30,8 @@ import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.ExpressionComparator;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
 import org.spartan.utils.Utils;
 
@@ -125,17 +125,17 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     }
     @Test public void sort() {
       final InfixExpression e = asInfixExpression();
-      assertFalse(Wrings.sort(All.operands(flatten(e)), COMPARATOR));
+      assertFalse(Wrings.sort(Extract.operands(flatten(e)), COMPARATOR));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = Extract.operands(flatten(e));
       assertFalse(Wrings.sort(operands, COMPARATOR));
       assertFalse(Wrings.sort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(e).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -181,22 +181,22 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     }
     @Test public void sort() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = Extract.operands(flatten(e));
       final boolean sort = Wrings.sort(operands, COMPARATOR);
       assertThat(//
-          "Before: " + All.operands(flatten(e)) + "\n" + //
+          "Before: " + Extract.operands(flatten(e)) + "\n" + //
           "After: " + operands + "\n", //
           sort, is(true));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = Extract.operands(flatten(e));
       assertTrue(Wrings.sort(operands, COMPARATOR));
       assertFalse(Wrings.sort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
       final InfixExpression e = asInfixExpression();
-      assertThat(All.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(e).size(), greaterThanOrEqualTo(2));
     }
   }
 }

@@ -24,8 +24,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.ExpressionComparator;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
@@ -168,17 +168,17 @@ public class InfixComparisonShortestFirstTest extends AbstractWringTest<InfixExp
     }
     @Test public void sortTwiceADDITION() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = Extract.operands(flatten(e));
       Wrings.sort(operands, ExpressionComparator.ADDITION);
       assertFalse(Wrings.sort(operands, ExpressionComparator.ADDITION));
     }
     @Test public void sortTwiceMULTIPLICATION() {
-      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
+      final List<Expression> operands = Extract.operands(flatten(asInfixExpression()));
       Wrings.sort(operands, ExpressionComparator.MULTIPLICATION);
       assertFalse(Wrings.sort(operands, ExpressionComparator.MULTIPLICATION));
     }
     @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

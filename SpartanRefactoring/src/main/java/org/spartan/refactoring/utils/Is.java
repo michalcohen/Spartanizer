@@ -92,7 +92,6 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.spartan.refactoring.wring.Wrings;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -471,7 +470,7 @@ public enum Is {
       case PARENTHESIZED_EXPRESSION:
         return sideEffectFree(((ParenthesizedExpression) e).getExpression());
       case INFIX_EXPRESSION:
-        return sideEffectsFree(Extract.operands((InfixExpression) e));
+        return sideEffectsFree(Extract.allOperands((InfixExpression) e));
       case CONDITIONAL_EXPRESSION:
         final ConditionalExpression ce = (ConditionalExpression) e;
         return sideEffectsFree(ce.getExpression(), ce.getThenExpression(), ce.getElseExpression());
@@ -612,7 +611,7 @@ public enum Is {
     return false;
   }
   static boolean notStringDown(final InfixExpression e) {
-    return e != null && (e.getOperator() != PLUS || Are.notString(All.operands(e)));
+    return e != null && (e.getOperator() != PLUS || Are.notString(Extract.allOperands(e)));
   }
   static boolean notStringSelf(final Expression e) {
     return intIsIn(e.getNodeType(), //

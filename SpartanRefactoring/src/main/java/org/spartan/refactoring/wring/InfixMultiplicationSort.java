@@ -22,7 +22,7 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class InfixMultiplicationSort extends Wring.OfInfixExpression {
   private static boolean sort(final InfixExpression e) {
-    return sort(Extract.operands(e));
+    return sort(Extract.allOperands(e));
   }
   private static boolean sort(final List<Expression> es) {
     return Wrings.sort(es, ExpressionComparator.MULTIPLICATION);
@@ -31,7 +31,7 @@ public final class InfixMultiplicationSort extends Wring.OfInfixExpression {
     return sort(e);
   }
   @Override Expression _replacement(final InfixExpression e) {
-    final List<Expression> operands = Extract.operands(e);
+    final List<Expression> operands = Extract.allOperands(e);
     return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {

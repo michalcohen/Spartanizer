@@ -18,6 +18,6 @@ public final class InfixConditionalOrFalse extends Wring.OfInfixExpression {
     return Wrings.eliminateLiteral(e, false);
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
-    return e != null && Is.conditionalOr(e) && Have.falseLiteral(Extract.operands(e));
+    return e != null && Is.conditionalOr(e) && Have.falseLiteral(Extract.allOperands(e));
   }
 }

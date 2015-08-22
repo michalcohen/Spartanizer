@@ -17,6 +17,6 @@ public final class InfixConditionalAndTrue extends Wring.OfInfixExpression {
     return Wrings.eliminateLiteral(e, true);
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
-    return Is.conditionalAnd(e) && Have.trueLiteral(Extract.operands(e));
+    return Is.conditionalAnd(e) && Have.trueLiteral(Extract.allOperands(e));
   }
 }

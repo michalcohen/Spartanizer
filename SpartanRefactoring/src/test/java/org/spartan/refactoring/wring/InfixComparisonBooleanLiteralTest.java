@@ -29,8 +29,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.ExpressionComparator;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.utils.Utils;
 
 /**
@@ -115,12 +115,12 @@ public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixEx
       assertNotNull(asInfixExpression());
     }
     @Test public void sortTwice() {
-      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
+      final List<Expression> operands = Extract.operands(flatten(asInfixExpression()));
       Wrings.sort(operands, ExpressionComparator.ADDITION);
       assertFalse(Wrings.sort(operands, ExpressionComparator.ADDITION));
     }
     @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

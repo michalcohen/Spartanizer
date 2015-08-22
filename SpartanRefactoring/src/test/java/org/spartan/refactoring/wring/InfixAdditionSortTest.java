@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Are;
 import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
@@ -48,7 +47,7 @@ public class InfixAdditionSortTest {
     assertTrue(Is.notString(e));
     final InfixExpression plus = Extract.firstPlus(e);
     assertTrue(Is.notString(plus));
-    final List<Expression> operands = All.operands(flatten(plus));
+    final List<Expression> operands = Extract.operands(flatten(plus));
     assertThat(operands.size(), is(2));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
     assertThat(r, iz("2+a"));
@@ -82,7 +81,7 @@ public class InfixAdditionSortTest {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      assertTrue(Are.notString(All.operands(asInfixExpression())));
+      assertTrue(Are.notString(Extract.operands(asInfixExpression())));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
@@ -95,15 +94,15 @@ public class InfixAdditionSortTest {
       assertTrue(asInfixExpression().getOperator() == Operator.PLUS);
     }
     @Test public void sort() {
-      assertFalse(Wrings.sort(All.operands(flatten(asInfixExpression())), COMPARATOR));
+      assertFalse(Wrings.sort(Extract.operands(flatten(asInfixExpression())), COMPARATOR));
     }
     @Test public void sortTwice() {
-      final List<Expression> operands = All.operands(flatten(asInfixExpression()));
+      final List<Expression> operands = Extract.operands(flatten(asInfixExpression()));
       assertFalse(Wrings.sort(operands, COMPARATOR));
       assertFalse(Wrings.sort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -139,7 +138,7 @@ public class InfixAdditionSortTest {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      assertTrue(Are.notString(All.operands(asInfixExpression())));
+      assertTrue(Are.notString(Extract.operands(asInfixExpression())));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
@@ -152,26 +151,26 @@ public class InfixAdditionSortTest {
       assertTrue(asInfixExpression().getOperator() == Operator.PLUS);
     }
     @Test public void notString() {
-      for (final Expression e : All.operands(flatten(asInfixExpression())))
+      for (final Expression e : Extract.operands(flatten(asInfixExpression())))
         assertThat(e.toString(), Is.notString(e), is(true));
     }
     @Test public void sort() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = Extract.operands(flatten(e));
       assertThat(operands.size(), greaterThanOrEqualTo(2));
       assertThat(//
-          "Before: " + All.operands(flatten(e)) + "\n" + //
+          "Before: " + Extract.operands(flatten(e)) + "\n" + //
           "After: " + operands + "\n", //
           Wrings.sort(operands, COMPARATOR), is(true));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
-      final List<Expression> operands = All.operands(flatten(e));
+      final List<Expression> operands = Extract.operands(flatten(e));
       assertTrue(e.toString(), Wrings.sort(operands, COMPARATOR));
       assertFalse(e.toString(), Wrings.sort(operands, COMPARATOR));
     }
     @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

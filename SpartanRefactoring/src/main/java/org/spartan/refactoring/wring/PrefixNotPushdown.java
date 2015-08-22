@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
@@ -56,7 +55,7 @@ public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
   private
   static Expression applyDeMorgan(final InfixExpression inner) {
     final List<Expression> operands = new ArrayList<>();
-    for (final Expression e : All.operands(flatten(inner)))
+    for (final Expression e : Extract.operands(flatten(inner)))
       operands.add(not(e));
     return Subject.operands(operands).to(conjugate(inner.getOperator()));
   }

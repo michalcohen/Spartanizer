@@ -1,13 +1,19 @@
 package org.spartan.refactoring.handlers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.spartan.refactoring.spartanizations.RenameReturnVariableToDollar;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Spartanizations;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.wring.Trimmer;
 
 /**
@@ -23,21 +29,35 @@ public class CleanupHandler extends BaseHandler {
     super(null);
   }
   private final Spartanization[] safeSpartanizations = { //
-      new RenameReturnVariableToDollar(), //
       new Trimmer(),
   };
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) {
-    for (final ICompilationUnit cu : All.compilationUnits())
-      for (final Spartanization s : safeSpartanizations)
-        execute(cu, s);
-    return null;
-  }
-  private static void execute(final ICompilationUnit cu, final Spartanization s) {
+    final IWorkbench wb = PlatformUI.getWorkbench();
+    final IProgressService ps = wb.getProgressService();
     try {
-      // TODO We might want a real ProgressMonitor for large projects
-      s.performRule(cu, new NullProgressMonitor());
-    } catch (final CoreException ex) {
-      ex.printStackTrace();
+      ps.busyCursorWhile(new IRunnableWithProgress() {
+         @Override public void run(final IProgressMonitor pm) {
+           final List<ICompilationUnit> compilationUnits = compilationUnits();
+           pm.beginTask("Sptarnizing", compilationUnits.size());
+          for (final ICompilationUnit cu : compilationUnits)
+             for (final Spartanization s : safeSpartanizations)
+              try {
+                // TODO We might want a real ProgressMonitor for large projects
+                s.performRule(cu, new NullProgressMonitor());
+              } catch (final CoreException x) {
+                x.printStackTrace();
+              }
+          pm.done();
+         }
+      });
+    } catch (final InvocationTargetException x) {
+      // TODO Auto-generated catch block
+      x.printStackTrace();
+    } catch (final InterruptedException x) {
+      // TODO Auto-generated catch block
+      x.printStackTrace();
     }
+
+    return null;
   }
 }

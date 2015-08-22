@@ -4,7 +4,6 @@ import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
-import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.utils.All;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
@@ -47,7 +45,7 @@ public enum Wrings {
     return $;
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
-    final List<Expression> operands = Extract.operands(e);
+    final List<Expression> operands = Extract.allOperands(e);
     removeAll(b, operands);
     switch (operands.size()) {
       case 0:

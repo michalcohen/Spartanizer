@@ -43,6 +43,10 @@ import org.spartan.utils.Wrapper;
  */
 public enum Extract {
   ;
+  public static List<Expression> allOperands(final InfixExpression e) {
+    return Extract.operands(flatten(e));
+  }
+
   /**
    * @param n a statement or block to extract the assignment from
    * @return null if the block contains more than one statement or if the
@@ -237,6 +241,16 @@ public enum Extract {
     final Block b = asBlock(s.getParent());
     return b == null ? null : next(s, Extract.statements(b));
   }
+  public static List<Expression> operands(final InfixExpression e) {
+    if (e == null)
+      return null;
+    final List<Expression> $ = new ArrayList<>();
+    $.add(e.getLeftOperand());
+    $.add(e.getRightOperand());
+    if (e.hasExtendedOperands())
+      $.addAll(e.extendedOperands());
+    return $;
+  }
   /**
    * @param n a node to extract an expression from
    * @return null if the statement is not an expression or return statement or
@@ -348,8 +362,5 @@ public enum Extract {
         $.add(s);
         return $;
     }
-  }
-  public static List<Expression> operands(final InfixExpression e) {
-    return All.operands(flatten(e));
   }
 }

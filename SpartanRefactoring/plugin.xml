@@ -136,10 +136,6 @@
             commandId="org.spartan.refactoring.commands.ConvertToTernary">
       </handler>
       <handler
-            class="org.spartan.refactoring.handlers.ShortestOperandHandler"
-            commandId="org.spartan.refactoring.commands.ShortestOperand">
-      </handler>
-      <handler
             class="org.spartan.refactoring.handlers.ExtractMethodHandler"
             commandId="org.spartan.refactoring.commands.ExtractMethod">
       </handler>
@@ -150,14 +146,6 @@
       <handler
             class="org.spartan.refactoring.handlers.InlineSingleUseHandler"
             commandId="org.spartan.refactoring.commands.InlineSingleUse">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.RedundantEqualityHandler"
-            commandId="org.spartan.refactoring.commands.RedundantEquality">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ShortestBranchFirstHandler"
-            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
       </handler>
       <handler
             class="org.spartan.refactoring.handlers.CleanupHandler"
@@ -179,16 +167,6 @@
                      style="push">
                </command>
                <command
-                     commandId="org.spartan.refactoring.commands.ConvertToTernary"
-                     id="org.spartan.menus.ConvertToTernaryCommand"
-                     style="push">
-               </command>
-               <command
-                     commandId="org.spartan.refactoring.commands.ShortestOperand"
-                     id="org.spartan.menus.ShortestOperandCommand"
-                     style="push">
-               </command>
-               <command
                      commandId="org.spartan.refactoring.commands.ExtractMethod"
                      id="org.spartan.menus.ExtractMethodCommand"
                      style="push">
@@ -201,16 +179,6 @@
                <command
                      commandId="org.spartan.refactoring.commands.InlineSingleUse"
                      id="org.spartan.menus.InlineSingleUseCommand"
-                     style="push">
-               </command>
-               <command
-                     commandId="org.spartan.refactoring.commands.RedundantEquality"
-                     id="org.spartan.menus.RedundantEqualityCommand"
-                     style="push">
-               </command>
-               <command
-                     commandId="org.spartan.refactoring.commands.ShortestBranchFirst"
-                     id="org.spartan.menus.ShortestBranchFirstCommand"
                      style="push">
                </command>
                <command

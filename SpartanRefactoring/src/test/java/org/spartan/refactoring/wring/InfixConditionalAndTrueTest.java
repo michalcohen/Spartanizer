@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.All;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.utils.Utils;
 
 /**
@@ -138,7 +138,7 @@ public enum InfixConditionalAndTrueTest {
       assertThat(asInfixExpression().getOperator(), is(CONDITIONAL_AND));
     }
     @Test public void twoOrMoreArguments() {
-      assertThat(All.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }
