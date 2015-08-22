@@ -34,10 +34,10 @@ public class IfSomethingNoElseTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Return only on one side", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
+         new String[] {"Return only on one side", "if (a) return b; else c;"}, //
+         new String[] {"Simple if return", "if (a) return b; else return c;"}, //
+         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
+         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

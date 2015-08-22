@@ -116,7 +116,7 @@ public class InfixComparisonShortestFirstTest extends AbstractWringTest<InfixExp
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Literal vs. Literal", "1 < 102333"), //
+         new String[] {"Literal vs. Literal", "1 < 102333"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -40,15 +40,15 @@ public class IfCommandsSequencerElseSomethingTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Literal vs. Literal", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
-        Utils.asArray("Not same assignment", "if (a) a /= b; else a /= c;"), //
-        Utils.asArray("Another distinct assignment", "if (a) a /= b; else a %= c;"), //
-        Utils.asArray("Simple if assign", "if (a) a = b; else a = c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;"), //
+         new String[] {"Literal vs. Literal", "if (a) return b; else c;"}, //
+         new String[] {"Simple if return", "if (a) return b; else return c;"}, //
+         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
+         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
+         new String[] {"Not same assignment", "if (a) a /= b; else a /= c;"}, //
+         new String[] {"Another distinct assignment", "if (a) a /= b; else a %= c;"}, //
+         new String[] {"Simple if assign", "if (a) a = b; else a = c;"}, //
+         new String[] {"Simple if plus assign", "if (a) a += b; else a += c;"}, //
+         new String[] {"Simple if plus assign", "if (a) a *= b; else a *= c;"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -70,22 +70,22 @@ public class IfCommandsSequencerElseSomethingTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("Simple if return", "if (a) return b; else a();", "if(a)return b;a();"), //
-        Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();", "if(a)return b;a(); f();"), //
+         new String[] {"Simple if return", "if (a) return b; else a();", "if(a)return b;a();"}, //
+         new String[] {"Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();", "if(a)return b;a(); f();"}, //
         null, //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
+         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"}, //
         null, //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"), //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
+         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"}, //
+         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
             "" + //
                 " if (x) {\n" + //
                 "   f();\n" + //
                 "   return a;\n" + //
                 " }\n" + //
                 " g();\n" + //
-            ""),
+            ""},//
         null, //
-        Utils.asArray("Complex with many junk statements",
+         new String[] {"Complex with many junk statements",
             "" + //
                 " if (x) {\n" + //
                 "   ;\n" + //
@@ -104,7 +104,7 @@ public class IfCommandsSequencerElseSomethingTest {
                     "   return a;\n" + //
                     " }\n" + //
                     " g();\n" + //
-            ""),
+            ""},//
         null);
     /**
      * Generate test cases for this parameterized class.

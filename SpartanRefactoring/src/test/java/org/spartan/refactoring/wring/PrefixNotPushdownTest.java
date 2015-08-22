@@ -57,9 +57,9 @@ public class PrefixNotPushdownTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<PrefixExpression> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Simple not", "!a"), //
-        Utils.asArray("Simple not of function", "!f(a)"), //
-        Utils.asArray("Actual example", "!inRange(m, e)"), //
+         new String[] {"Simple not", "!a"}, //
+         new String[] {"Simple not of function", "!f(a)"}, //
+         new String[] {"Actual example", "!inRange(m, e)"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -81,31 +81,31 @@ public class PrefixNotPushdownTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedExpression<PrefixExpression> {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("2 level not of false", "!!false", "false"), //
-        Utils.asArray("2 level not of true", "!!true", "true"), //
-        Utils.asArray("double not deeply nested", "!(((!f())))", "f()"), //
-        Utils.asArray("double not", "!!f()", "f()"), //
-        Utils.asArray("double not nested", "!(!f())", "f()"), //
-        Utils.asArray("not of AND", "!(a && b && c)", "!a || !b || !c"), //
-        Utils.asArray("not of AND", "!(f() && f(5))", "!f() || !f(5)"), //
-        Utils.asArray("not of AND nested", "!(f() && (f(5)))", "!f() || !f(5)"), //
-        Utils.asArray("not of EQ", "!(3 == 5)", "3 != 5"), //
-        Utils.asArray("not of EQ nested", "!((((3 == 5))))", "3 != 5"), //
-        Utils.asArray("not of false", "!false", "true"), //
-        Utils.asArray("not of GE", "!(3 >= 5)", "3 < 5"), //
-        Utils.asArray("not of GT", "!(3 > 5)", "3 <= 5"), //
-        Utils.asArray("not of LE", "!(3 <= 5)", "3 > 5"), //
-        Utils.asArray("not of LT", "!(3 < 5)", "3 >= 5"), //
-        Utils.asArray("not of NE", "!(3 != 5)", "3 == 5"), //
-        Utils.asArray("not of OR 2", "!(f() || f(5))", "!f() && !f(5)"), //
-        Utils.asArray("not of OR", "!(a || b || c)", "!a && !b && !c"), //
-        Utils.asArray("not of wrapped OR", "!((a) || b || c)", "!a && !b && !c"), //
-        Utils.asArray("not of true", "!true", "false"), //
-        Utils.asArray("not of true", "!!true", "true"), //
-        Utils.asArray("Mutliple not", "!(!d || !!!c)", "d && c"), //
-        Utils.asArray("Mutliple not parenthesis", "!(!(d) || !!!c)", "d && c"), //
-        Utils.asArray("Mutliple not parenthesis", "!(!(d) || ((!(!(!(((c))))))))", "d && c"), //
-        Utils.asArray("Nested not", "!(!(a || b))", "a||b"), //
+         new String[] {"2 level not of false", "!!false", "false"}, //
+         new String[] {"2 level not of true", "!!true", "true"}, //
+         new String[] {"double not deeply nested", "!(((!f())))", "f()"}, //
+         new String[] {"double not", "!!f()", "f()"}, //
+         new String[] {"double not nested", "!(!f())", "f()"}, //
+         new String[] {"not of AND", "!(a && b && c)", "!a || !b || !c"}, //
+         new String[] {"not of AND", "!(f() && f(5))", "!f() || !f(5)"}, //
+         new String[] {"not of AND nested", "!(f() && (f(5)))", "!f() || !f(5)"}, //
+         new String[] {"not of EQ", "!(3 == 5)", "3 != 5"}, //
+         new String[] {"not of EQ nested", "!((((3 == 5))))", "3 != 5"}, //
+         new String[] {"not of false", "!false", "true"}, //
+         new String[] {"not of GE", "!(3 >= 5)", "3 < 5"}, //
+         new String[] {"not of GT", "!(3 > 5)", "3 <= 5"}, //
+         new String[] {"not of LE", "!(3 <= 5)", "3 > 5"}, //
+         new String[] {"not of LT", "!(3 < 5)", "3 >= 5"}, //
+         new String[] {"not of NE", "!(3 != 5)", "3 == 5"}, //
+         new String[] {"not of OR 2", "!(f() || f(5))", "!f() && !f(5)"}, //
+         new String[] {"not of OR", "!(a || b || c)", "!a && !b && !c"}, //
+         new String[] {"not of wrapped OR", "!((a) || b || c)", "!a && !b && !c"}, //
+         new String[] {"not of true", "!true", "false"}, //
+         new String[] {"not of true", "!!true", "true"}, //
+         new String[] {"Mutliple not", "!(!d || !!!c)", "d && c"}, //
+         new String[] {"Mutliple not parenthesis", "!(!(d) || !!!c)", "d && c"}, //
+         new String[] {"Mutliple not parenthesis", "!(!(d) || ((!(!(!(((c))))))))", "d && c"}, //
+         new String[] {"Nested not", "!(!(a || b))", "a||b"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

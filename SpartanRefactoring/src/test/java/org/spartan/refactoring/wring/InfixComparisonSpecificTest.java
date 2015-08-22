@@ -137,35 +137,35 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("LT/literal", "a<2"), //
-        Utils.asArray("LE/literal", "a<=2"), //
-        Utils.asArray("GT/literal", "a>2"), //
-        Utils.asArray("GE/literal", "a>=2"), //
-        Utils.asArray("EQ/literal", "a==2"), //
-        Utils.asArray("NE/literal", "a!=2"), //
+         new String[] {"LT/literal", "a<2"}, //
+         new String[] {"LE/literal", "a<=2"}, //
+         new String[] {"GT/literal", "a>2"}, //
+         new String[] {"GE/literal", "a>=2"}, //
+         new String[] {"EQ/literal", "a==2"}, //
+         new String[] {"NE/literal", "a!=2"}, //
         // This
-        Utils.asArray("LT/this", "a<this"), //
-        Utils.asArray("LE/this", "a<=this"), //
-        Utils.asArray("GT/this", "a>this"), //
-        Utils.asArray("GE/this", "a>=this"), //
-        Utils.asArray("EQ/this", "a==this"), //
-        Utils.asArray("NE/this", "a!=this"), //
+         new String[] {"LT/this", "a<this"}, //
+         new String[] {"LE/this", "a<=this"}, //
+         new String[] {"GT/this", "a>this"}, //
+         new String[] {"GE/this", "a>=this"}, //
+         new String[] {"EQ/this", "a==this"}, //
+         new String[] {"NE/this", "a!=this"}, //
         // Null
-        Utils.asArray("LT/null", "a<null"), //
-        Utils.asArray("LE/null", "a<=null"), //
-        Utils.asArray("GT/null", "a>null"), //
-        Utils.asArray("GE/null", "a>=null"), //
-        Utils.asArray("EQ/null", "a==null"), //
-        Utils.asArray("NE/null", "a!=null"), //
+         new String[] {"LT/null", "a<null"}, //
+         new String[] {"LE/null", "a<=null"}, //
+         new String[] {"GT/null", "a>null"}, //
+         new String[] {"GE/null", "a>=null"}, //
+         new String[] {"EQ/null", "a==null"}, //
+         new String[] {"NE/null", "a!=null"}, //
         // Character literal
-        Utils.asArray("LT/character literal", "a<'a'"), //
-        Utils.asArray("LE/character literal", "a<='a'"), //
-        Utils.asArray("GT/character literal", "a>'a'"), //
-        Utils.asArray("GE/character literal", "a>='a'"), //
-        Utils.asArray("EQ/character literal", "a=='a'"), //
-        Utils.asArray("NE/character literal", "a!='a'"), //
+         new String[] {"LT/character literal", "a<'a'"}, //
+         new String[] {"LE/character literal", "a<='a'"}, //
+         new String[] {"GT/character literal", "a>'a'"}, //
+         new String[] {"GE/character literal", "a>='a'"}, //
+         new String[] {"EQ/character literal", "a=='a'"}, //
+         new String[] {"NE/character literal", "a!='a'"}, //
         // Misc
-        Utils.asArray("Correct order", "1 + 2 < 3 "), //
+         new String[] {"Correct order", "1 + 2 < 3 "}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -196,8 +196,8 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
-        Utils.asArray("Literal vs. Literal", "1 < 102333"), //
+         new String[] {"Expression vs. Expression", " 6 - 7 < 2 + 1   "}, //
+         new String[] {"Literal vs. Literal", "1 < 102333"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -220,37 +220,37 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("LT/literal", "2<a", "a>2"), //
-        Utils.asArray("LE/literal", "2<=a", "a>=2"), //
-        Utils.asArray("GT/literal", "2>a", "a<2"), //
-        Utils.asArray("GE/literal", "2>=a", "a<=2"), //
-        Utils.asArray("EQ/literal", "2==a", "a==2"), //
-        Utils.asArray("NE/literal", "2!=a", "a!=2"), //
+         new String[] {"LT/literal", "2<a", "a>2"}, //
+         new String[] {"LE/literal", "2<=a", "a>=2"}, //
+         new String[] {"GT/literal", "2>a", "a<2"}, //
+         new String[] {"GE/literal", "2>=a", "a<=2"}, //
+         new String[] {"EQ/literal", "2==a", "a==2"}, //
+         new String[] {"NE/literal", "2!=a", "a!=2"}, //
         // This
-        Utils.asArray("LT/this", "this<a", "a>this"), //
-        Utils.asArray("LE/this", "this<=a", "a>=this"), //
-        Utils.asArray("GT/this", "this>a", "a<this"), //
-        Utils.asArray("GE/this", "this>=a", "a<=this"), //
-        Utils.asArray("EQ/this", "this==a", "a==this"), //
-        Utils.asArray("NE/this", "this!=a", "a!=this"), //
+         new String[] {"LT/this", "this<a", "a>this"}, //
+         new String[] {"LE/this", "this<=a", "a>=this"}, //
+         new String[] {"GT/this", "this>a", "a<this"}, //
+         new String[] {"GE/this", "this>=a", "a<=this"}, //
+         new String[] {"EQ/this", "this==a", "a==this"}, //
+         new String[] {"NE/this", "this!=a", "a!=this"}, //
         // Null
-        Utils.asArray("LT/null", "null<a", "a>null"), //
-        Utils.asArray("LE/null", "null<=a", "a>=null"), //
-        Utils.asArray("GT/null", "null>a", "a<null"), //
-        Utils.asArray("GE/null", "null>=a", "a<=null"), //
-        Utils.asArray("EQ/null", "null==a", "a==null"), //
-        Utils.asArray("NE/null", "null!=a", "a!=null"), //
+         new String[] {"LT/null", "null<a", "a>null"}, //
+         new String[] {"LE/null", "null<=a", "a>=null"}, //
+         new String[] {"GT/null", "null>a", "a<null"}, //
+         new String[] {"GE/null", "null>=a", "a<=null"}, //
+         new String[] {"EQ/null", "null==a", "a==null"}, //
+         new String[] {"NE/null", "null!=a", "a!=null"}, //
         // Character literal
-        Utils.asArray("LT/character literal", "'b'<a", "a>'b'"), //
-        Utils.asArray("LE/character literal", "'b'<=a", "a>='b'"), //
-        Utils.asArray("GT/character literal", "'b'>a", "a<'b'"), //
-        Utils.asArray("GE/character literal", "'b'>=a", "a<='b'"), //
-        Utils.asArray("EQ/character literal", "'b'==a", "a=='b'"), //
-        Utils.asArray("NE/character literal", "'b'!=a", "a!='b'"), //
+         new String[] {"LT/character literal", "'b'<a", "a>'b'"}, //
+         new String[] {"LE/character literal", "'b'<=a", "a>='b'"}, //
+         new String[] {"GT/character literal", "'b'>a", "a<'b'"}, //
+         new String[] {"GE/character literal", "'b'>=a", "a<='b'"}, //
+         new String[] {"EQ/character literal", "'b'==a", "a=='b'"}, //
+         new String[] {"NE/character literal", "'b'!=a", "a!='b'"}, //
         // Misc
-        Utils.asArray("Crazy comparison", "null == this", "this == null"), //
-        Utils.asArray("Crazy comparison", "null == 1", "1 == null"), //
-        Utils.asArray("Negative number", "-1 == a", "a == -1"), //
+         new String[] {"Crazy comparison", "null == this", "this == null"}, //
+         new String[] {"Crazy comparison", "null == 1", "1 == null"}, //
+         new String[] {"Negative number", "-1 == a", "a == -1"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -83,10 +83,11 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
         new String[] { "Vanilla {}", "if (a) return b; return a();", }, //
         new String[] { "Vanilla ; ", "if (a) return b; return a(); b(); c();", }, //
         new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}} return c;", }, //
-        null, Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}"), //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}"), //
-        Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}"), //
-        Utils.asArray("Complex with many junk statements",
+        null, //
+         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}"}, //
+         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}"}, //
+         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}"}, //
+         new String[] {"Complex with many junk statements",
             "" + //
                 " if (x) {\n" + //
                 "   ;\n" + //
@@ -98,7 +99,7 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
                 "   {\n" + //
                 "   }\n" + //
                 " }\n" + //
-            ""), //
+            ""}, //
         null);
     /**
      * Generate test cases for this parameterized class.

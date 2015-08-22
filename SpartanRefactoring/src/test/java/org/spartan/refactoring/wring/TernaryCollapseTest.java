@@ -47,19 +47,19 @@ public class TernaryCollapseTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("No boolean", "a?b:c"), //
-        Utils.asArray("F X", "a ? false : c"), //
-        Utils.asArray("T X", "a ? true : c"), //
-        Utils.asArray("X F", "a ? b : false"), //
-        Utils.asArray("X T", "a ? b : true"), //
-        Utils.asArray("() F X", "a ?( false):true"), //
-        Utils.asArray("() T X", "a ? (((true ))): c"), //
-        Utils.asArray("() X F", "a ? b : (false)"), //
-        Utils.asArray("() X T", "a ? b : ((true))"), //
-        Utils.asArray("Actual example", "!inRange(m, e) ? true : inner.go(r, e)"), //
-        Utils.asArray("Method invocation first", "a?b():c"), //
-        Utils.asArray("Not same function invocation ", "a?b(x):d(x)"), //
-        Utils.asArray("Not same function invocation ", "a?x.f(x):x.d(x)"), //
+         new String[] {"No boolean", "a?b:c"}, //
+         new String[] {"F X", "a ? false : c"}, //
+         new String[] {"T X", "a ? true : c"}, //
+         new String[] {"X F", "a ? b : false"}, //
+         new String[] {"X T", "a ? b : true"}, //
+         new String[] {"() F X", "a ?( false):true"}, //
+         new String[] {"() T X", "a ? (((true ))): c"}, //
+         new String[] {"() X F", "a ? b : (false)"}, //
+         new String[] {"() X T", "a ? b : ((true))"}, //
+         new String[] {"Actual example", "!inRange(m, e) ? true : inner.go(r, e)"}, //
+         new String[] {"Method invocation first", "a?b():c"}, //
+         new String[] {"Not same function invocation ", "a?b(x):d(x)"}, //
+         new String[] {"Not same function invocation ", "a?x.f(x):x.d(x)"}, //
         new String[] { "identical method call", "a ? y.f(b) :y.f(b)" }, //
         new String[] { "identical function call", "a ? f(b) :f(b)" }, //
         new String[] { "identical assignment", "a ? (b=c) :(b=c)" }, //

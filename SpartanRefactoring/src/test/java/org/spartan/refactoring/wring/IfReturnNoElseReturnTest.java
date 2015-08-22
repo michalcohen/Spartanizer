@@ -78,7 +78,7 @@ public class IfReturnNoElseReturnTest {
         new String[] { "Vanilla if-then-else", "if (a) return b;" }, //
         new String[] { "Vanilla if-then-no-else", "if (a) return b;" }, //
         new String[] { "Simple if plus assign", "if (a) a *= b; else a *= c;" }, //
-        Utils.asArray("Simple if return empty else", "if (a) return b; else ;"), //
+         new String[] {"Simple if return empty else", "if (a) return b; else ;"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -104,19 +104,19 @@ public class IfReturnNoElseReturnTest {
       new String[] { "Vanilla ; ", "if (a) return b; return a(); b(); c();", "return a ? b: a(); b(); c();" }, //
       new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}} return c;", "return a?b:c;" }, //
       null, //
-      Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"), //
+       new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"}, //
       null, //
-      Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"), //
-      Utils.asArray("Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
+       new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"}, //
+       new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
           "" + //
               " if (x) {\n" + //
               "   f();\n" + //
               "   return a;\n" + //
               " }\n" + //
               " g();\n" + //
-          ""),
+          ""},
       null, //
-      Utils.asArray("Complex with many junk statements",
+       new String[] {"Complex with many junk statements",
           "" + //
               " if (x) {\n" + //
               "   ;\n" + //
@@ -135,7 +135,7 @@ public class IfReturnNoElseReturnTest {
                   "   return a;\n" + //
                   " }\n" + //
                   " g();\n" + //
-          ""), //
+          ""}, //
       null };
       /**
        * Generate test cases for this parameterized class.

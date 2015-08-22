@@ -27,10 +27,10 @@ public enum BlockSimplifyTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<Block> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
-        Utils.asArray("Simple block", "{a(); b(); c();}"), //
+         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
+         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
+         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
+         new String[] {"Simple block", "{a(); b(); c();}"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -53,12 +53,12 @@ public enum BlockSimplifyTest {
   public static class Wringed extends AbstractWringTest.WringedBlock {
     private static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("Empty", "{;;}", ""), //
-        Utils.asArray("Complex empty", "{;;{;{{}}}{;}{};}", ""), //
-        Utils.asArray("Deeply nested return", " {{{;return c;};;};}", " return c;"), //
-        Utils.asArray("Singleton", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"), //
-        Utils.asArray("Complex singleton", "{;{{;;return b; }}}", " return b;"), //
-        Utils.asArray("Three statements ", "{i++;{{;;return b; }}j++;}", " i++;return b;j++;"), //
+         new String[] {"Empty", "{;;}", ""}, //
+         new String[] {"Complex empty", "{;;{;{{}}}{;}{};}", ""}, //
+         new String[] {"Deeply nested return", " {{{;return c;};;};}", " return c;"}, //
+         new String[] {"Singleton", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"}, //
+         new String[] {"Complex singleton", "{;{{;;return b; }}}", " return b;"}, //
+         new String[] {"Three statements ", "{i++;{{;;return b; }}j++;}", " i++;return b;j++;"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

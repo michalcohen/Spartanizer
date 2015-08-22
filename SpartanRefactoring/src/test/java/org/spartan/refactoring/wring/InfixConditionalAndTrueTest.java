@@ -35,48 +35,48 @@ public enum InfixConditionalAndTrueTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("F || F", "false ||false"), //
-        Utils.asArray("3 OR TRUE", "true || true || true"), //
-        Utils.asArray("4 OR TRUE", "true || true || true || true"), //
-        Utils.asArray("OR of 3 with true", "x || true || b"), //
-        Utils.asArray("OR of 4 with true", "x || a || b || c || true"), //
-        Utils.asArray("OR of 5 with true", "x || a || true || c || d"), //
-        Utils.asArray("OR of 6 with true", "true || x || a || b || c || d || e"), //
-        Utils.asArray("OR of 6 with true with parenthesis", "x || (a || (true) || b) || (c || (d || e))"), //
-        Utils.asArray("OR true with something", "true || a || true"), //
-        Utils.asArray("OR something with true", "true || a || true"), //
-        Utils.asArray("OR of 3 with true", "true || a || b || true"), //
-        Utils.asArray("OR of 4 with true", "a || b || true || c"), //
-        Utils.asArray("OR of 5 with true", "a || b || c || d || true"), //
-        Utils.asArray("OR of 6 with two trues", "a || true || b || true || c || d || e"), //
-        Utils.asArray("OR of 6 with true with parenthesis", "(a || b) || true || (c || true || (d || e || true))"), //
-        Utils.asArray("Product is not AND/OR", "2*a"), //
-        Utils.asArray("AND without boolean", "b && a"), //
-        Utils.asArray("OR without boolean", "b || a"), //
-        Utils.asArray("OR of 3 without boolean", "x || a || b"), //
-        Utils.asArray("OR of 4 without boolean", "x || a || b || c"), //
-        Utils.asArray("OR of 5 without boolean", "x || a || b || c || d"), //
-        Utils.asArray("OR of 6 without boolean", "x || a || b || c || d || e"), //
-        Utils.asArray("OR of 6 without boolean with parenthesis", "x || (a || b) || (c || (d || e))"), //
-        Utils.asArray("AND of 3 without boolean", "x && a && b"), //
-        Utils.asArray("AND of 4 without boolean", "x && a && b && c"), //
-        Utils.asArray("AND of 5 without boolean", "x && a && b && c && d"), //
-        Utils.asArray("AND of 6 without boolean", "x && a && b && c && d && e"), //
-        Utils.asArray("AND of 6 without boolean with parenthesis", "(x && (a && b)) && (c && (d && e))"), //
-        Utils.asArray("AND with false", "b && a"), //
-        Utils.asArray("OR false with something", "false || a"), //
-        Utils.asArray("OR something with false", "a || false"), //
-        Utils.asArray("OR of 3 without boolean", "a || b"), //
-        Utils.asArray("OR of 4 without boolean", "a || b || c"), //
-        Utils.asArray("OR of 5 without boolean", "a || b || c || d"), //
-        Utils.asArray("OR of 6 without boolean", "a || b || c || d || e"), //
-        Utils.asArray("OR of 6 without boolean with parenthesis", "(a || b) || (c || (d || e))"), //
-        Utils.asArray("AND of 3 without boolean", "a && b && false"), //
-        Utils.asArray("AND of 4 without boolean", "a && b && c && false"), //
-        Utils.asArray("AND of 5 without boolean", "false && a && b && c && d"), //
-        Utils.asArray("AND of 6 without boolean", "a && b && c && false && d && e"), //
-        Utils.asArray("AND of 7 without boolean with parenthesis", "(a && b) && (c && (d && (e && false)))"), //
-        Utils.asArray("AND of 7 without boolean and multiple false value", "(a && (b && false)) && (c && (d && (e && (false && false))))"), //
+         new String[] {"F || F", "false ||false"}, //
+         new String[] {"3 OR TRUE", "true || true || true"}, //
+         new String[] {"4 OR TRUE", "true || true || true || true"}, //
+         new String[] {"OR of 3 with true", "x || true || b"}, //
+         new String[] {"OR of 4 with true", "x || a || b || c || true"}, //
+         new String[] {"OR of 5 with true", "x || a || true || c || d"}, //
+         new String[] {"OR of 6 with true", "true || x || a || b || c || d || e"}, //
+         new String[] {"OR of 6 with true with parenthesis", "x || (a || (true) || b) || (c || (d || e))"}, //
+         new String[] {"OR true with something", "true || a || true"}, //
+         new String[] {"OR something with true", "true || a || true"}, //
+         new String[] {"OR of 3 with true", "true || a || b || true"}, //
+         new String[] {"OR of 4 with true", "a || b || true || c"}, //
+         new String[] {"OR of 5 with true", "a || b || c || d || true"}, //
+         new String[] {"OR of 6 with two trues", "a || true || b || true || c || d || e"}, //
+         new String[] {"OR of 6 with true with parenthesis", "(a || b) || true || (c || true || (d || e || true))"}, //
+         new String[] {"Product is not AND/OR", "2*a"}, //
+         new String[] {"AND without boolean", "b && a"}, //
+         new String[] {"OR without boolean", "b || a"}, //
+         new String[] {"OR of 3 without boolean", "x || a || b"}, //
+         new String[] {"OR of 4 without boolean", "x || a || b || c"}, //
+         new String[] {"OR of 5 without boolean", "x || a || b || c || d"}, //
+         new String[] {"OR of 6 without boolean", "x || a || b || c || d || e"}, //
+         new String[] {"OR of 6 without boolean with parenthesis", "x || (a || b) || (c || (d || e))"}, //
+         new String[] {"AND of 3 without boolean", "x && a && b"}, //
+         new String[] {"AND of 4 without boolean", "x && a && b && c"}, //
+         new String[] {"AND of 5 without boolean", "x && a && b && c && d"}, //
+         new String[] {"AND of 6 without boolean", "x && a && b && c && d && e"}, //
+         new String[] {"AND of 6 without boolean with parenthesis", "(x && (a && b)) && (c && (d && e))"}, //
+         new String[] {"AND with false", "b && a"}, //
+         new String[] {"OR false with something", "false || a"}, //
+         new String[] {"OR something with false", "a || false"}, //
+         new String[] {"OR of 3 without boolean", "a || b"}, //
+         new String[] {"OR of 4 without boolean", "a || b || c"}, //
+         new String[] {"OR of 5 without boolean", "a || b || c || d"}, //
+         new String[] {"OR of 6 without boolean", "a || b || c || d || e"}, //
+         new String[] {"OR of 6 without boolean with parenthesis", "(a || b) || (c || (d || e))"}, //
+         new String[] {"AND of 3 without boolean", "a && b && false"}, //
+         new String[] {"AND of 4 without boolean", "a && b && c && false"}, //
+         new String[] {"AND of 5 without boolean", "false && a && b && c && d"}, //
+         new String[] {"AND of 6 without boolean", "a && b && c && false && d && e"}, //
+         new String[] {"AND of 7 without boolean with parenthesis", "(a && b) && (c && (d && (e && false)))"}, //
+         new String[] {"AND of 7 without boolean and multiple false value", "(a && (b && false)) && (c && (d && (e && (false && false))))"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -99,19 +99,19 @@ public enum InfixConditionalAndTrueTest {
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     static String[][] cases = Utils.asArray(//
         new String[] { "Many parenthesis", "a && (((true)))  && b", "a && b" }, //
-        Utils.asArray("true && true", "true && true", "true"), //
-        Utils.asArray("AND of 3 with true", "true && x && true && a && b", "x && a && b"), //
-        Utils.asArray("AND of 4 with true", "x && true && a && b && c", "x && a && b && c"), //
-        Utils.asArray("AND of 5 with true", "x && a && b && c && true && true && true && d", "x && a && b && c && d"), //
-        Utils.asArray("AND of 6 with true", "x && a && true && b && c && d && e", "x && a && b && c && d && e"), //
-        Utils.asArray("AND of 6 with true with parenthesis", "x && (true && (a && b && true)) && (c && (d && e))", "x && a && b && c && d && e"), //
-        Utils.asArray("AND with true", "true && b && a", "b && a"), //
-        Utils.asArray("AND of 3 with true", "a && b && true", "a && b"), //
-        Utils.asArray("AND of 4 with true", "a && b && c && true", "a && b && c"), //
-        Utils.asArray("AND of 5 with true", "true && a && b && c && d", "a && b && c && d"), //
-        Utils.asArray("AND of 6 with true", "a && b && c && true && d && e", "a && b && c && d && e"), //
-        Utils.asArray("AND of 7 with true with parenthesis", "true && (a && b) && (c && (d && (e && true)))", "a && b && c && d && e"), //
-        Utils.asArray("AND of 7 with multiple true value", "(a && (b && true)) && (c && (d && (e && (true && true))))", "a&&b&&c&&d&&e"), //
+         new String[] {"true && true", "true && true", "true"}, //
+         new String[] {"AND of 3 with true", "true && x && true && a && b", "x && a && b"}, //
+         new String[] {"AND of 4 with true", "x && true && a && b && c", "x && a && b && c"}, //
+         new String[] {"AND of 5 with true", "x && a && b && c && true && true && true && d", "x && a && b && c && d"}, //
+         new String[] {"AND of 6 with true", "x && a && true && b && c && d && e", "x && a && b && c && d && e"}, //
+         new String[] {"AND of 6 with true with parenthesis", "x && (true && (a && b && true)) && (c && (d && e))", "x && a && b && c && d && e"}, //
+         new String[] {"AND with true", "true && b && a", "b && a"}, //
+         new String[] {"AND of 3 with true", "a && b && true", "a && b"}, //
+         new String[] {"AND of 4 with true", "a && b && c && true", "a && b && c"}, //
+         new String[] {"AND of 5 with true", "true && a && b && c && d", "a && b && c && d"}, //
+         new String[] {"AND of 6 with true", "a && b && c && true && d && e", "a && b && c && d && e"}, //
+         new String[] {"AND of 7 with true with parenthesis", "true && (a && b) && (c && (d && (e && true)))", "a && b && c && d && e"}, //
+         new String[] {"AND of 7 with multiple true value", "(a && (b && true)) && (c && (d && (e && (true && true))))", "a&&b&&c&&d&&e"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

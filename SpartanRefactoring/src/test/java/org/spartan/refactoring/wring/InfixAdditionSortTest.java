@@ -59,12 +59,12 @@ public class InfixAdditionSortTest {
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Add 1", "2*a+1"), //
-        Utils.asArray("Add '1'", "2*a+'1'"), //
-        Utils.asArray("Add '\\0'", "3*a+'\\0'"), //
-        Utils.asArray("Plain addition", "5*a+b*c"), //
-        Utils.asArray("Plain addition plus constant", "5*a+b*c+12"), //
-        Utils.asArray("Literal addition", "2+3"), //
+         new String[] {"Add 1", "2*a+1"}, //
+         new String[] {"Add '1'", "2*a+'1'"}, //
+         new String[] {"Add '\\0'", "3*a+'\\0'"}, //
+         new String[] {"Plain addition", "5*a+b*c"}, //
+         new String[] {"Plain addition plus constant", "5*a+b*c+12"}, //
+         new String[] {"Literal addition", "2+3"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -110,16 +110,16 @@ public class InfixAdditionSortTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("Add 1 to 2*3", "1+2*3", "2*3+1"), //
-        Utils.asArray("Add '1' to a*b", "'1'+a*b", "a*b+'1'"), //
-        Utils.asArray("Add '\\0' to a*.b", "'\0'+a*b", "a*b+'\0'"), //
-        Utils.asArray("Sort from first to last", "1 + a*b + b*c", "a*b+b*c+1"), //
-        Utils.asArray("Sort from second to last", "a*b + 2 + b*c", "a*b+b*c+2"), //
-        Utils.asArray("All literals at the end", "1 + a*b + 2 + b*c + 3 + d*e + 4", "a*b + b*c  + d*e + 1 + 2 + 3+4"), //
-        Utils.asArray("Add 1", "1+a*b", "a*b+1"), //
-        Utils.asArray("Add 1", "1+c*d", "c*d+1"), //
-        Utils.asArray("Literals of distinct length", "123+12+1", "1+12+123"), //
-        Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)"), //
+         new String[] {"Add 1 to 2*3", "1+2*3", "2*3+1"}, //
+         new String[] {"Add '1' to a*b", "'1'+a*b", "a*b+'1'"}, //
+         new String[] {"Add '\\0' to a*.b", "'\0'+a*b", "a*b+'\0'"}, //
+         new String[] {"Sort from first to last", "1 + a*b + b*c", "a*b+b*c+1"}, //
+         new String[] {"Sort from second to last", "a*b + 2 + b*c", "a*b+b*c+2"}, //
+         new String[] {"All literals at the end", "1 + a*b + 2 + b*c + 3 + d*e + 4", "a*b + b*c  + d*e + 1 + 2 + 3+4"}, //
+         new String[] {"Add 1", "1+a*b", "a*b+1"}, //
+         new String[] {"Add 1", "1+c*d", "c*d+1"}, //
+         new String[] {"Literals of distinct length", "123+12+1", "1+12+123"}, //
+         new String[] {"Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

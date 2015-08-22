@@ -41,7 +41,7 @@ public class DeclarationReturnTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"), //
+         new String[] {"Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"}, //
         new String[] { "Vanilla", "int a; a =3;", }, //
         new String[] { "Vanilla", "int a; if (x) b = 3; else ;", }, //
         new String[] { "Vanilla", "int a = 2; if (b) a =3;", }, //

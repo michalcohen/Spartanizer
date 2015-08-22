@@ -35,8 +35,8 @@ public class DeclarationAssignmentTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Wrong assignnet", "int a = 0; if (x)  a+= 5"), //
-        Utils.asArray("Wrong assignnet", "int a = 0; if (a)  a= 5;"), //
+         new String[] {"Wrong assignnet", "int a = 0; if (x)  a+= 5"}, //
+         new String[] {"Wrong assignnet", "int a = 0; if (a)  a= 5;"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

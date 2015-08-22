@@ -83,10 +83,10 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Plain product of two, sorted", "2*a"), //
-        Utils.asArray("Plain product of two, no order", "a*b"), //
-        Utils.asArray("Plain product of three, sorted", "2*a*b"), //
-        Utils.asArray("Plain product of four, sorted", "2*a*b*c"), //
+         new String[] {"Plain product of two, sorted", "2*a"}, //
+         new String[] {"Plain product of two, no order", "a*b"}, //
+         new String[] {"Plain product of three, sorted", "2*a*b"}, //
+         new String[] {"Plain product of four, sorted", "2*a*b*c"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -143,13 +143,13 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
-        Utils.asArray("Constant first", "a*2", "2*a"), //
-        Utils.asArray("Constant first two arguments", "a*2*b", "2*a*b"), //
-        Utils.asArray("Function with fewer arguments first", "f(a,b,c)*f(a,b)*f(a)", "f(a)*f(a,b)*f(a,b,c)"), //
-        Utils.asArray("Literals of distinct length", "123*12*1", "1*12*123"), //
-        Utils.asArray("Sort expressions by size", "1*f(a,b,c,d) * 2*f(a,b) * 3*f()", "1*2*3*f()*f(a,b)*f(a,b,c,d)"), //
-        Utils.asArray("Long alphabetical sorting", "f(t)*g(h1,h2)*y*a*2*b*x", "2*a*b*x*y*f(t)*g(h1,h2)"), //
-        Utils.asArray("Plain alphabetical sorting", "f(y)*f(x)", "f(x)*f(y)"), //
+         new String[] {"Constant first", "a*2", "2*a"}, //
+         new String[] {"Constant first two arguments", "a*2*b", "2*a*b"}, //
+         new String[] {"Function with fewer arguments first", "f(a,b,c)*f(a,b)*f(a)", "f(a)*f(a,b)*f(a,b,c)"}, //
+         new String[] {"Literals of distinct length", "123*12*1", "1*12*123"}, //
+         new String[] {"Sort expressions by size", "1*f(a,b,c,d) * 2*f(a,b) * 3*f()", "1*2*3*f()*f(a,b)*f(a,b,c,d)"}, //
+         new String[] {"Long alphabetical sorting", "f(t)*g(h1,h2)*y*a*2*b*x", "2*a*b*x*y*f(t)*g(h1,h2)"}, //
+         new String[] {"Plain alphabetical sorting", "f(y)*f(x)", "f(x)*f(y)"}, //
         null);
     /**
      * Generate test cases for this parameterized class.

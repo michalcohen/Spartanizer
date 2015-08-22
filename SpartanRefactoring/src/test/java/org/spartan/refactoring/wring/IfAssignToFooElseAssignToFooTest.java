@@ -51,13 +51,13 @@ public class IfAssignToFooElseAssignToFooTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-        Utils.asArray("Expression vs. Expression", " 6 - 7 < 2 + 1   "), //
-        Utils.asArray("Literal vs. Literal", "if (a) return b; else c;"), //
-        Utils.asArray("Simple if return", "if (a) return b; else return c;"), //
-        Utils.asArray("Simply nested if return", "{if (a)  return b; else return c;}"), //
-        Utils.asArray("Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"), //
-        Utils.asArray("Not same assignment", "if (a) a /= b; else a /= c;"), //
-        Utils.asArray("Another distinct assignment", "if (a) a /= b; else a %= c;"), //
+         new String[] {"Expression vs. Expression", " 6 - 7 < 2 + 1   "}, //
+         new String[] {"Literal vs. Literal", "if (a) return b; else c;"}, //
+         new String[] {"Simple if return", "if (a) return b; else return c;"}, //
+         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
+         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
+         new String[] {"Not same assignment", "if (a) a /= b; else a /= c;"}, //
+         new String[] {"Another distinct assignment", "if (a) a /= b; else a %= c;"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -80,9 +80,9 @@ public class IfAssignToFooElseAssignToFooTest {
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
         // Literal
-        Utils.asArray("Simple if assign", "if (a) a = b; else a = c;", "a = a ? b : c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a += b; else a += c;", "a += a ? b : c;"), //
-        Utils.asArray("Simple if plus assign", "if (a) a *= b; else a *= c;", "a *= a ? b : c;"), //
+         new String[] {"Simple if assign", "if (a) a = b; else a = c;", "a = a ? b : c;"}, //
+         new String[] {"Simple if plus assign", "if (a) a += b; else a += c;", "a += a ? b : c;"}, //
+         new String[] {"Simple if plus assign", "if (a) a *= b; else a *= c;", "a *= a ? b : c;"}, //
         null);
     /**
      * Generate test cases for this parameterized class.
