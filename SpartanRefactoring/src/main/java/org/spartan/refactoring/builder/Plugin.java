@@ -36,6 +36,6 @@ public class Plugin extends AbstractUIPlugin {
    * @param t an error
    */
   public static void log(final Throwable t) {
-    getDefault().getLog().log(new Status(IStatus.ERROR, "il.ac.technion.cs.ssdl.spartan.refactoring", 0, t.getMessage(), t));
+    getDefault().getLog().log(new Status(IStatus.ERROR, "org.spartan.refactoring", 0, t.getMessage(), t));
   }
 }

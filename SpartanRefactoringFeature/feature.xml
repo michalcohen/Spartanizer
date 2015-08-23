@@ -4,7 +4,7 @@
       label="Spartanization Plugin"
       version="1.0.0.qualifier"
       provider-name="ssdl.cs.tachnion.ac.il"
-      plugin="il.ac.technion.cs.ssdl.spartan.refactoring">
+      plugin="org.spartan.refactoring">
 
    <description>
       A plugin which automatically finds Spartanization opportunities in Java code and offers to perform them.
@@ -32,7 +32,7 @@
    </requires>
 
    <plugin
-         id="il.ac.technion.cs.ssdl.spartan.refactoring"
+         id="org.spartan.refactoring"
          download-size="0"
          install-size="0"
          version="0.0.0"
