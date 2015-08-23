@@ -15,7 +15,9 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.utils.ExpressionComparator.countNonWhites;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.e;
+import static org.spartan.refactoring.utils.Into.i;
 
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -33,6 +35,10 @@ import org.junit.runners.MethodSorters;
 @SuppressWarnings({ "static-method", "javadoc" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class FuncsTest {
+  @Test public void chainComparison() {
+    final InfixExpression e = i("a == true == b == c");
+    assertEquals("c", right(e).toString());
+  }
   @Test public void asComparisonPrefixlExpression() {
     final PrefixExpression p = mock(PrefixExpression.class);
     doReturn(PrefixExpression.Operator.NOT).when(p).getOperator();

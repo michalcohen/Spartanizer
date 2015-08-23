@@ -62,6 +62,11 @@ public class TrimmerTest {
   public static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
+  @Test public void chainComparison() {
+    final InfixExpression e = i("a == true == b == c");
+    assertEquals("c", right(e).toString());
+    assertSimplifiesTo("a == true == b == c", "a == b == c");
+  }
   public static void assertNoConversion(final String input) {
     assertSimilar(input, Wrap.Statement.off(apply(new Trimmer(), Wrap.Statement.on(input))));
   }

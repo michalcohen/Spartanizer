@@ -56,18 +56,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
   @Test public void scopeIncludesTrue2() {
     assertTrue(WRING.scopeIncludes(i("a*2")));
   }
-  @Test public void chainComparison() {
-    final InfixExpression e = i("a == true == b == c");
-    assertEquals("c", right(e).toString());
-    final Wring<InfixExpression> s = Toolbox.instance.find(e);
-    assertThat(s, instanceOf(InfixMultiplicationSort.class));
-    assertNotNull(s);
-    assertTrue(s.scopeIncludes(e));
-    assertTrue(s.eligible(e));
-    final ASTNode replacement = s.replacement(e);
-    assertNotNull(replacement);
-    assertEquals("a == b == c", replacement);
-  }
+
   @Test public void legibleOnShorterChainParenthesisComparisonLast() {
     assertLegible("z * 2 * a * b * c * d * e * f * g * h");
   }
