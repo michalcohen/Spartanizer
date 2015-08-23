@@ -27,6 +27,8 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
@@ -125,6 +127,26 @@ public enum Extract {
    */
   public static ExpressionStatement expressionStatement(final ASTNode n) {
     return n == null ? null : asExpressionStatement(Extract.singleStatement(n));
+  }
+  /**
+   * Search for a {@link PrefixExpression} in the tree rooted at an {@link ASTNode}.
+   *
+   * @param n JD
+   * @return the first {@link PrefixExpression} found in an {@link ASTNode n}, or
+   *         <code><b>null</b> if there is no such statement.
+   */
+  public static PostfixExpression findFirstPostfix(final ASTNode n) {
+    if (n == null)
+      return null;
+    final Wrapper<PostfixExpression> $ = new Wrapper<>();
+    n.accept(new ASTVisitor() {
+      @Override public boolean visit(final PostfixExpression e) {
+        if ($.get() == null)
+          $.set(e);
+        return false;
+      }
+    });
+    return $.get();
   }
   /**
    * Search for an {@link IfStatement} in the tree rooted at an {@link ASTNode}.

@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
@@ -72,7 +73,7 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       $.setExpression(inner);
       return $;
     }
-    public Statement toStatement() {
+    public ExpressionStatement toStatement() {
       return ast.newExpressionStatement(inner);
     }
     public ThrowStatement toThrow() {

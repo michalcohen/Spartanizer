@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -43,7 +44,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpression> {
-  static final Wring<InfixExpression> WRING = new InfixComparisonSpecific();
+  static final InfixComparisonSpecific WRING = new InfixComparisonSpecific();
   /** Instantiates this class */
   public InfixComparisonSpecificTest() {
     super(WRING);
@@ -64,48 +65,6 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     assertNoChange("a >= this");
     assertNoChange("a >= null");
   }
-  @Test public void withinDomainFalse0() {
-    assertFalse(WRING.scopeIncludes(i("13455643294 < 22")));
-  }
-  @Test public void withinDomainFalse1() {
-    assertFalse(WRING.scopeIncludes(i("1 < 102333")));
-  }
-  @Test public void withinDomainFalse2() {
-    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
-  }
-  @Test public void withinDomainFalse3() {
-    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
-  }
-  @Test public void withinDomainFalse4() {
-    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
-  }
-  @Test public void withinDomainFalse5() {
-    assertFalse(WRING.scopeIncludes(i("13455643294 < 22")));
-  }
-  @Test public void withinDomainFalse6() {
-    assertFalse(WRING.scopeIncludes(i("1 < 102333")));
-  }
-  @Test public void withinDomainFalse7() {
-    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
-  }
-  @Test public void withinDomainFalse8() {
-    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
-  }
-  @Test public void withinDomainFalse9() {
-    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
-  }
-  @Test public void withinDomainTrue1() {
-    assertTrue(WRING.scopeIncludes(i("a == this")));
-  }
-  @Test public void withinDomainTrue2() {
-    assertTrue(WRING.scopeIncludes(i("this == null")));
-  }
-  @Test public void withinDomainTrue3() {
-    assertTrue(WRING.scopeIncludes(i("12 == this")));
-  }
-  @Test public void withinDomainTrue4() {
-    assertTrue(WRING.scopeIncludes(i("a == 11")));
-  }
   @Test public void comparisonWithSpecificNoChangeWithLongEpxressions() {
     assertNoChange("very(complicate,func,-ction,call) != this");
     assertNoChange("very(complicate,func,-ction,call) != null");
@@ -119,7 +78,7 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   @Test public void comparisonWithSpecificWithinScope() {
     assertTrue(Is.constant(i("this != a").getLeftOperand()));
     final ASTNode n = As.EXPRESSION.ast("a != this");
-    assertThat(n,notNullValue());
+    assertThat(n, notNullValue());
     assertWithinScope(Funcs.asExpression(n));
     correctScopeExpression(n);
   }
@@ -132,40 +91,90 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   @Test public void comparisonWithSpecificWithinScope2() {
     assertWithinScope("this != a");
   }
+  @Test public void scopeIncludesFalse1() {
+    assertFalse(WRING.scopeIncludes(i("13455643294 * 22")));
+  }
+  @Test public void scopeIncludesFalse1expanded() {
+    final InfixExpression e = i("13455643294 * 22");
+    assertTrue(!e.hasExtendedOperands());
+    assertFalse(Is.comparison(e));
+  }
+  @Test public void scopeIncludesFalse2() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void scopeIncludesFalse3() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void scopeIncludesFalse4() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void scopeIncludesFalse6() {
+    assertTrue(WRING.scopeIncludes(i("1 < 102333")));
+  }
+  @Test public void scopeIncludesFalse7() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")));
+  }
+  @Test public void scopeIncludesFalse8() {
+    assertFalse(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")));
+  }
+  @Test public void scopeIncludesFalse9() {
+    assertFalse(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")));
+  }
+  @Test public void scopeIncludesTrue1() {
+    assertTrue(WRING.scopeIncludes(i("a == this")));
+  }
+  @Test public void scopeIncludesTrue2() {
+    assertTrue(WRING.scopeIncludes(i("this == null")));
+  }
+  @Test public void scopeIncludesTrue3() {
+    assertTrue(WRING.scopeIncludes(i("12 == this")));
+  }
+  @Test public void scopeIncludesTrue4() {
+    assertTrue(WRING.scopeIncludes(i("a == 11")));
+  }
+  @Test public void scopeIncludesTrue5() {
+    assertTrue(WRING.scopeIncludes(i("13455643294 < 22")));
+  }
+  @Test public void scopeIncludesTrue7() {
+    assertTrue(WRING.scopeIncludes(i("1 < 102333")));
+  }
+  @Test public void scopeIncludesTrue8() {
+    assertTrue(WRING.scopeIncludes(i("13455643294 < 22")));
+  }
 
   @RunWith(Parameterized.class) //
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
     static String[][] cases = Utils.asArray(//
         // Literal
-         new String[] {"LT/literal", "a<2"}, //
-         new String[] {"LE/literal", "a<=2"}, //
-         new String[] {"GT/literal", "a>2"}, //
-         new String[] {"GE/literal", "a>=2"}, //
-         new String[] {"EQ/literal", "a==2"}, //
-         new String[] {"NE/literal", "a!=2"}, //
+        new String[] { "LT/literal", "a<2" }, //
+        new String[] { "LE/literal", "a<=2" }, //
+        new String[] { "GT/literal", "a>2" }, //
+        new String[] { "GE/literal", "a>=2" }, //
+        new String[] { "EQ/literal", "a==2" }, //
+        new String[] { "NE/literal", "a!=2" }, //
         // This
-         new String[] {"LT/this", "a<this"}, //
-         new String[] {"LE/this", "a<=this"}, //
-         new String[] {"GT/this", "a>this"}, //
-         new String[] {"GE/this", "a>=this"}, //
-         new String[] {"EQ/this", "a==this"}, //
-         new String[] {"NE/this", "a!=this"}, //
+        new String[] { "LT/this", "a<this" }, //
+        new String[] { "LE/this", "a<=this" }, //
+        new String[] { "GT/this", "a>this" }, //
+        new String[] { "GE/this", "a>=this" }, //
+        new String[] { "EQ/this", "a==this" }, //
+        new String[] { "NE/this", "a!=this" }, //
         // Null
-         new String[] {"LT/null", "a<null"}, //
-         new String[] {"LE/null", "a<=null"}, //
-         new String[] {"GT/null", "a>null"}, //
-         new String[] {"GE/null", "a>=null"}, //
-         new String[] {"EQ/null", "a==null"}, //
-         new String[] {"NE/null", "a!=null"}, //
+        new String[] { "LT/null", "a<null" }, //
+        new String[] { "LE/null", "a<=null" }, //
+        new String[] { "GT/null", "a>null" }, //
+        new String[] { "GE/null", "a>=null" }, //
+        new String[] { "EQ/null", "a==null" }, //
+        new String[] { "NE/null", "a!=null" }, //
         // Character literal
-         new String[] {"LT/character literal", "a<'a'"}, //
-         new String[] {"LE/character literal", "a<='a'"}, //
-         new String[] {"GT/character literal", "a>'a'"}, //
-         new String[] {"GE/character literal", "a>='a'"}, //
-         new String[] {"EQ/character literal", "a=='a'"}, //
-         new String[] {"NE/character literal", "a!='a'"}, //
+        new String[] { "LT/character literal", "a<'a'" }, //
+        new String[] { "LE/character literal", "a<='a'" }, //
+        new String[] { "GT/character literal", "a>'a'" }, //
+        new String[] { "GE/character literal", "a>='a'" }, //
+        new String[] { "EQ/character literal", "a=='a'" }, //
+        new String[] { "NE/character literal", "a!='a'" }, //
         // Misc
-         new String[] {"Correct order", "1 + 2 < 3 "}, //
+        new String[] { "Correct order", "1 + 2 < 3 " }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -196,8 +205,8 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Expression vs. Expression", " 6 - 7 < 2 + 1   "}, //
-         new String[] {"Literal vs. Literal", "1 < 102333"}, //
+        new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
+        new String[] { "Literal vs. Literal", "1 < 102333" }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -220,37 +229,37 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
     private static String[][] cases = Utils.asArray(//
         // Literal
-         new String[] {"LT/literal", "2<a", "a>2"}, //
-         new String[] {"LE/literal", "2<=a", "a>=2"}, //
-         new String[] {"GT/literal", "2>a", "a<2"}, //
-         new String[] {"GE/literal", "2>=a", "a<=2"}, //
-         new String[] {"EQ/literal", "2==a", "a==2"}, //
-         new String[] {"NE/literal", "2!=a", "a!=2"}, //
+        new String[] { "LT/literal", "2<a", "a>2" }, //
+        new String[] { "LE/literal", "2<=a", "a>=2" }, //
+        new String[] { "GT/literal", "2>a", "a<2" }, //
+        new String[] { "GE/literal", "2>=a", "a<=2" }, //
+        new String[] { "EQ/literal", "2==a", "a==2" }, //
+        new String[] { "NE/literal", "2!=a", "a!=2" }, //
         // This
-         new String[] {"LT/this", "this<a", "a>this"}, //
-         new String[] {"LE/this", "this<=a", "a>=this"}, //
-         new String[] {"GT/this", "this>a", "a<this"}, //
-         new String[] {"GE/this", "this>=a", "a<=this"}, //
-         new String[] {"EQ/this", "this==a", "a==this"}, //
-         new String[] {"NE/this", "this!=a", "a!=this"}, //
+        new String[] { "LT/this", "this<a", "a>this" }, //
+        new String[] { "LE/this", "this<=a", "a>=this" }, //
+        new String[] { "GT/this", "this>a", "a<this" }, //
+        new String[] { "GE/this", "this>=a", "a<=this" }, //
+        new String[] { "EQ/this", "this==a", "a==this" }, //
+        new String[] { "NE/this", "this!=a", "a!=this" }, //
         // Null
-         new String[] {"LT/null", "null<a", "a>null"}, //
-         new String[] {"LE/null", "null<=a", "a>=null"}, //
-         new String[] {"GT/null", "null>a", "a<null"}, //
-         new String[] {"GE/null", "null>=a", "a<=null"}, //
-         new String[] {"EQ/null", "null==a", "a==null"}, //
-         new String[] {"NE/null", "null!=a", "a!=null"}, //
+        new String[] { "LT/null", "null<a", "a>null" }, //
+        new String[] { "LE/null", "null<=a", "a>=null" }, //
+        new String[] { "GT/null", "null>a", "a<null" }, //
+        new String[] { "GE/null", "null>=a", "a<=null" }, //
+        new String[] { "EQ/null", "null==a", "a==null" }, //
+        new String[] { "NE/null", "null!=a", "a!=null" }, //
         // Character literal
-         new String[] {"LT/character literal", "'b'<a", "a>'b'"}, //
-         new String[] {"LE/character literal", "'b'<=a", "a>='b'"}, //
-         new String[] {"GT/character literal", "'b'>a", "a<'b'"}, //
-         new String[] {"GE/character literal", "'b'>=a", "a<='b'"}, //
-         new String[] {"EQ/character literal", "'b'==a", "a=='b'"}, //
-         new String[] {"NE/character literal", "'b'!=a", "a!='b'"}, //
+        new String[] { "LT/character literal", "'b'<a", "a>'b'" }, //
+        new String[] { "LE/character literal", "'b'<=a", "a>='b'" }, //
+        new String[] { "GT/character literal", "'b'>a", "a<'b'" }, //
+        new String[] { "GE/character literal", "'b'>=a", "a<='b'" }, //
+        new String[] { "EQ/character literal", "'b'==a", "a=='b'" }, //
+        new String[] { "NE/character literal", "'b'!=a", "a!='b'" }, //
         // Misc
-         new String[] {"Crazy comparison", "null == this", "this == null"}, //
-         new String[] {"Crazy comparison", "null == 1", "1 == null"}, //
-         new String[] {"Negative number", "-1 == a", "a == -1"}, //
+        new String[] { "Crazy comparison", "null == this", "this == null" }, //
+        new String[] { "Crazy comparison", "null == 1", "1 == null" }, //
+        new String[] { "Negative number", "-1 == a", "a == -1" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -16,6 +16,7 @@ import static org.spartan.refactoring.utils.Restructure.flatten;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -46,9 +47,14 @@ import org.spartan.utils.Utils;
 public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpression> {
   static final Wring<InfixExpression> WRING = new InfixMultiplicationSort();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
-  public
-  InfixMultiplicationSortTest() {
+  public InfixMultiplicationSortTest() {
     super(WRING);
+  }
+  @Test public void scopeIncludesTrue1() {
+    assertTrue(WRING.scopeIncludes(i("2*a")));
+  }
+  @Test public void scopeIncludesTrue2() {
+    assertTrue(WRING.scopeIncludes(i("a*2")));
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
@@ -58,7 +64,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("a == b == c", replacement);
   }
@@ -75,7 +81,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }

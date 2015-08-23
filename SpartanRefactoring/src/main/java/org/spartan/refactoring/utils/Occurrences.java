@@ -234,7 +234,6 @@ public enum Occurrences {
       }
     };
   }
-
   static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
     return new ASTVisitor() {
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
@@ -297,6 +296,7 @@ public enum Occurrences {
     return $;
   }
   abstract ASTVisitor[] collectors(final Expression e, final List<Expression> into);
+
   /**
    * An auxiliary class which makes it possible to use an easy invocation
    * sequence for the various offerings of the containing class. This class
@@ -319,7 +319,6 @@ public enum Occurrences {
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode... ns);
-
     public boolean existIn(final Expression[] es) {
       return !in(es).isEmpty();
     }

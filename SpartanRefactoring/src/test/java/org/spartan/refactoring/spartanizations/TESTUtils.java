@@ -5,13 +5,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.wring.Trimmer;
@@ -77,8 +78,12 @@ public enum TESTUtils {
     try {
       s.createRewrite(u, null).rewriteAST($, null).apply($);
       return $;
-    } catch (final Exception e) {
-      fail(e.getMessage());
+    } catch (final MalformedTreeException e) {
+      e.printStackTrace();
+    } catch (final IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (final BadLocationException e) {
+      e.printStackTrace();
     }
     return null;
   }

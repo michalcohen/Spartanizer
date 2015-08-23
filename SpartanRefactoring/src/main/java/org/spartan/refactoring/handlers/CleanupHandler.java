@@ -28,7 +28,7 @@ public class CleanupHandler extends BaseHandler {
   public CleanupHandler() {
     super(null);
   }
-  private final Spartanization[] safeSpartanizations = { //
+  final Spartanization[] safeSpartanizations = { //
       new Trimmer(),
   };
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) {
