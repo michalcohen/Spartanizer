@@ -34,6 +34,12 @@ import org.spartan.utils.Range;
  * @since 2015/07/10
  */
 public class Trimmer extends Spartanization {
+  /**
+   * Apply trimming repeatedly, until no more changes
+   *
+   * @param from what to process
+   * @return the trimmed text
+   */
   public static String fixedPoint(final String from) {
     final Document d = new Document(from);
     for (;;) {

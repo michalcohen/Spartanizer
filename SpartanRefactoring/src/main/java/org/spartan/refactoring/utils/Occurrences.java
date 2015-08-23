@@ -321,6 +321,10 @@ public enum Occurrences {
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode... ns);
+    /** Determine whether this instance occurs in a bunch of expressions
+     * @param es  JD
+     * @return <code><b>true</b></code> <i>iff</i> this instance occurs in the paraemter.
+     */
     public boolean existIn(final Expression[] es) {
       return !in(es).isEmpty();
     }

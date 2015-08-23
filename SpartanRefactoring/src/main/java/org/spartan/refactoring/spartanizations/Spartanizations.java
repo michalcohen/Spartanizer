@@ -90,10 +90,10 @@ public enum Spartanizations {
     final String[] str = PreferencesFile.parsePrefFile();
     final boolean useAll = str == null;
     final int i = 0;
-    for (final Spartanization rule : allAvailableSpartanizations())
+    for (final Spartanization s : allAvailableSpartanizations())
       // if (useAll || str != null && str.length >= i + offset && !ignored(str[i
       // + offset]))
-      put(rule);
+      put(s);
     // i++;
   }
   /**

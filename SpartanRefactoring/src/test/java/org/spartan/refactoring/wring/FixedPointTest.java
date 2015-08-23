@@ -48,7 +48,7 @@ public class FixedPointTest {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   @Test public void desiredSimplificationOfExample() {
-    assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion!=the*plain+kludge");
+    assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
   }
   @Test public void longChainComparison() {
     assertNoChange("a == b == c == d");
@@ -70,8 +70,33 @@ public class FixedPointTest {
   }
   @Test public void shortestIfBranchFirst02() {
     assertConvertsTo(
-        "  if (!s.equals(0xDEAD)) { int res=0; for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;    return res;   else {    return 8; ",
-        "  if (s.equals(0xDEAD)) { return 8; int res=0; for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;     else if (s.charAt(i)=='d')      res -= 1;");
+        "" //
+            + "if (!s.equals(0xDEAD)) { "//
+            + " int res=0; "//
+            + " for (int i=0; i<s.length(); ++i)     "//
+            + "   if (s.charAt(i)=='a')      "//
+            + "     res += 2;     "//
+            + "   else "//
+            + "     if (s.charAt(i)=='d')      "//
+            + "       res -= 1;    "//
+            + "  return res;   "//
+            + "} else {    "//
+            + " return 8; "//
+            + "}",
+        "" //
+            +
+           "    if (!s.equals(0xDEAD)) {\n" + //
+           "      int res = 0;\n" + //
+           "      for (int i = 0; i < s.length(); ++i)\n" + //
+           "        if (s.charAt(i) == 'a')\n" + //
+           "          res += 2;\n" + //
+           "        else if (s.charAt(i) == 'd')\n" + //
+           "          res -= 1;\n" + //
+           "      return res;\n" + //
+           "    }\n" + //
+           "    return 8;"//
+           );
+
   }
   @Test public void shortestIfBranchFirst03() {
     assertConvertsTo(
@@ -114,14 +139,14 @@ public class FixedPointTest {
             "        } else\n" + //
             "          $.append(replaceClassName(s, className, newClassName) + \"\\n\");\n" + //
             "      return asString($);",
-            "      for (final String s : contents.split(\"\\n\"))\n" + //
-                "        if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n" + //
-                "          $.append(replaceClassName(s, className, newClassName) " + //
-                " \"\\n\");\n" + //
-                "        else {\n" + "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
-                "          foundPackage = true;\n" + //
-                "        }\n" + //
-        "      return asString($);");
+        "      for (final String s : contents.split(\"\\n\"))\n" + //
+            "        if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n" + //
+            "          $.append(replaceClassName(s, className, newClassName) " + //
+            " \"\\n\");\n" + //
+            "        else {\n" + "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
+            "          foundPackage = true;\n" + //
+            "        }\n" + //
+            "      return asString($);");
   }
   @Test public void shortestIfBranchFirst11() {
     assertConvertsTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
@@ -338,13 +363,13 @@ public class FixedPointTest {
   @Test public void ternarize54() {
     assertConvertsTo(//
         "if (s == null)\n" + ///
-        "  return Z2;\n" + //
-        "if (!s.contains(delimiter()))\n" + //
-        "  return s;\n" + //
-        "return s.replaceAll(delimiter(), ABC + delimiter());", //
+            "  return Z2;\n" + //
+            "if (!s.contains(delimiter()))\n" + //
+            "  return s;\n" + //
+            "return s.replaceAll(delimiter(), ABC + delimiter());", //
         "if (s == null)\n" + //
-        "  return Z2;\n" + //
-        "return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
-        );
+            "  return Z2;\n" + //
+            "return  (!s.contains(delimiter()) ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
+    );
   }
 }

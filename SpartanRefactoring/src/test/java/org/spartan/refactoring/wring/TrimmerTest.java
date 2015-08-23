@@ -101,7 +101,7 @@ public class TrimmerTest {
     if (peeled.equals(from))
       assertNotEquals("No similification of "+ from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of "+ from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
+      assertNotEquals("Simpification of "+ from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
   static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
