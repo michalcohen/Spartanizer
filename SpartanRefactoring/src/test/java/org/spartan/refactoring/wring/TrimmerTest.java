@@ -331,9 +331,6 @@ public class TrimmerTest {
   @Test public void comparison06() {
     assertNoChange("1<102333");
   }
-  @Test public void comparison07() {
-    assertNoChange("1+2+s<3");
-  }
   @Test public void comparison08() {
     assertNoChange("a==this");
   }
@@ -1337,6 +1334,9 @@ public class TrimmerTest {
   @Test public void twoOpportunityExample() {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
     assertThat(countOpportunities(new Trimmer(), u), is(2));
+  }
+  @Test public void useOutcontextToManageStringAmbiguity() {
+    assertSimplifiesTo("1+2+s<3","s+1+2<3");
   }
   @Test public void vanillaShortestFirstConditionalNoChange() {
     assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");
