@@ -1,9 +1,10 @@
 package org.spartan.refactoring.wring;
-
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.utils.Utils.in;
 
 import org.eclipse.jdt.core.dom.ASTNode;

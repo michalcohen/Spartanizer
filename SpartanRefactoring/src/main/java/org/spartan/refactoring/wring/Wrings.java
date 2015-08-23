@@ -1,7 +1,7 @@
 package org.spartan.refactoring.wring;
-
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
@@ -57,10 +57,10 @@ public enum Wrings {
     }
   }
   static boolean elseIsEmpty(final IfStatement s) {
-    return Extract.statements(s.getElseStatement()).size() == 0;
+    return Extract.statements(elze(s)).size() == 0;
   }
   static boolean existingEmptyElse(final IfStatement s) {
-    return s.getElseStatement() != null && elseIsEmpty(s);
+    return elze(s) != null && elseIsEmpty(s);
   }
   static int length(final ASTNode... ns) {
     int $ = 0;

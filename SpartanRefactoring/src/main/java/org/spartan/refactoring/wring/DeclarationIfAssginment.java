@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
-
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
@@ -34,7 +34,7 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
     final IfStatement s = Extract.nextIfStatement(f);
     if (s == null || !Wrings.elseIsEmpty(s))
       return null;
-    final Assignment a = Extract.assignment(s.getThenStatement());
+    final Assignment a = Extract.assignment(then(s));
     if (a == null || !same(a.getLeftHandSide(), f.getName()))
       return null;
     if (a.getOperator() != Assignment.Operator.ASSIGN)

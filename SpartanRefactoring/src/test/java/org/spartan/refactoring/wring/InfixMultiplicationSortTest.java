@@ -1,5 +1,4 @@
 package org.spartan.refactoring.wring;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -10,6 +9,7 @@ import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
@@ -58,7 +58,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
-    assertEquals("c", e.getRightOperand().toString());
+    assertEquals("c", right(e).toString());
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
     assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
@@ -73,7 +73,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
   }
   @Test public void oneMultiplication0() {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
-    assertEquals("f(a,b,c)", e.getRightOperand().toString());
+    assertEquals("f(a,b,c)", right(e).toString());
     assertThat(inner.scopeIncludes(e), is(true));
     assertThat(inner.eligible(e), is(true));
     final Wring<InfixExpression> s = Toolbox.instance.find(e);

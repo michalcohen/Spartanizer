@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
-
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.wring.TernaryPushdown.pushdown;
 
 import org.eclipse.jdt.core.dom.Expression;
@@ -29,10 +30,10 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.OfIfStatement {
   @Override Statement _replacement(final IfStatement s) {
-    final Expression then = Extract.expression(Extract.expressionStatement(s.getThenStatement()));
+    final Expression then = Extract.expression(Extract.expressionStatement(then(s)));
     if (then == null)
       return null;
-    final Expression elze = Extract.expression(Extract.expressionStatement(s.getElseStatement()));
+    final Expression elze = Extract.expression(Extract.expressionStatement(elze(s)));
     if (elze == null)
       return null;
     final Expression e = pushdown(Subject.pair(then, elze).toCondition(s.getExpression()));

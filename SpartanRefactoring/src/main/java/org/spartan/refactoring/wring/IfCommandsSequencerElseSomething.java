@@ -1,7 +1,8 @@
 package org.spartan.refactoring.wring;
-
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
 import java.util.List;
@@ -55,11 +56,11 @@ public final class IfCommandsSequencerElseSomething extends Wring.OfIfStatementA
       }
   }
   @Override ASTRewrite fillReplacement(final IfStatement s, final ASTRewrite r) {
-    if (s.getElseStatement() == null || !Is.sequencer(Extract.lastStatement(s.getThenStatement())))
+    if (elze(s) == null || !Is.sequencer(Extract.lastStatement(then(s))))
       return r;
     final IfStatement newlyCreatedIf = duplicate(s);
     newlyCreatedIf.setElseStatement(null);
-    final List<Statement> remainder = Extract.statements(s.getElseStatement());
+    final List<Statement> remainder = Extract.statements(elze(s));
     if (remainder.size() == 0) {
       r.replace(s, newlyCreatedIf, null);
       return r;
@@ -80,6 +81,6 @@ public final class IfCommandsSequencerElseSomething extends Wring.OfIfStatementA
     return new Range(e);
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return s.getElseStatement() != null && Is.sequencer(Extract.lastStatement(s.getThenStatement()));
+    return elze(s) != null && Is.sequencer(Extract.lastStatement(then(s)));
   }
 }

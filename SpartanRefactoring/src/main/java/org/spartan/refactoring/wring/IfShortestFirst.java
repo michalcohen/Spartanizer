@@ -1,6 +1,7 @@
 package org.spartan.refactoring.wring;
-
+import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -17,8 +18,8 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfShortestFirst extends Wring.OfIfStatement {
   @Override Statement _replacement(final IfStatement s) {
-    final Statement then = s.getThenStatement();
-    final Statement elze = s.getElseStatement();
+    final Statement then = then(s);
+    final Statement elze = elze(s);
     if (elze == null)
       return null;
     final int n1 = Extract.statements(then).size();

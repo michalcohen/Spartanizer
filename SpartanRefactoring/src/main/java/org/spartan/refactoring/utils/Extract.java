@@ -1,5 +1,4 @@
 package org.spartan.refactoring.utils;
-
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
@@ -11,6 +10,10 @@ import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.asStatement;
 import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.utils.Utils.last;
 
@@ -307,8 +310,8 @@ public enum Extract {
     if (e == null)
       return null;
     final List<Expression> $ = new ArrayList<>();
-    $.add(e.getLeftOperand());
-    $.add(e.getRightOperand());
+    $.add(left(e));
+    $.add(right(e));
     if (e.hasExtendedOperands())
       $.addAll(e.extendedOperands());
     return $;
@@ -344,7 +347,7 @@ public enum Extract {
    *         exists.
    */
   public static Statement singleElse(final IfStatement s) {
-    return Extract.singleStatement(s.getElseStatement());
+    return Extract.singleStatement(elze(s));
   }
   /**
    * @param n JD
@@ -365,7 +368,7 @@ public enum Extract {
    *         exists.
    */
   public static Statement singleThen(final IfStatement s) {
-    return Extract.singleStatement(s.getThenStatement());
+    return Extract.singleStatement(then(s));
   }
   /**
    * Extract the {@link Statement} that contains a given node.

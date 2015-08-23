@@ -1,5 +1,4 @@
 package org.spartan.refactoring.utils;
-
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_CREATION;
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
@@ -50,6 +49,8 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.XOR;
 import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
 import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.utils.Utils.in;
 import static org.spartan.utils.Utils.intIsIn;
 
@@ -93,7 +94,6 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
@@ -449,7 +449,7 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a return
    *         statement.
    */
-  public static boolean retern(final ASTNode n) {
+  public static boolean return_(final ASTNode n) {
     return is(n, RETURN_STATEMENT);
   }
   /**
@@ -501,7 +501,7 @@ public enum Is {
         final CastExpression c = (CastExpression) e;
         return sideEffectFree(c.getExpression());
       case INSTANCEOF_EXPRESSION:
-        return sideEffectFree(((InstanceofExpression) e).getLeftOperand());
+        return sideEffectFree(left((InstanceofExpression) e));
       case PREFIX_EXPRESSION:
         return sideEffectFreePrefixExpression((PrefixExpression) e);
       case PARENTHESIZED_EXPRESSION:
@@ -571,7 +571,7 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement
    */
   public static boolean singletonThen(final IfStatement s) {
-    return Is.singletonStatement(s.getThenStatement());
+    return Is.singletonStatement(then(s));
   }
   /**
    * Determine whether a node is a {@link Statement}

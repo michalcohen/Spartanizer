@@ -34,7 +34,7 @@ public class Specificity implements Comparator<Expression> {
    * @return <code><b>true</b></code> <i>iff</i> the parameter has a defined
    *         level of specificity.
    */
-  public boolean defined(final Expression e) {
+  public static boolean defined(final Expression e) {
     return Level.defined(e);
   }
 

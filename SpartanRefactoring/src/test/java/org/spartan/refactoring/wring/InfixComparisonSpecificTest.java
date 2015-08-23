@@ -1,5 +1,4 @@
 package org.spartan.refactoring.wring;
-
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -10,6 +9,7 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertNoChange;
 import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
@@ -30,7 +30,6 @@ import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Funcs;
 import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
@@ -76,7 +75,7 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     assertNoChange("very(complicate,func,-ction,call) >= null");
   }
   @Test public void comparisonWithSpecificWithinScope() {
-    assertTrue(Is.constant(i("this != a").getLeftOperand()));
+    assertTrue(Is.constant(left(i("this != a"))));
     final ASTNode n = As.EXPRESSION.ast("a != this");
     assertThat(n, notNullValue());
     assertWithinScope(Funcs.asExpression(n));
@@ -84,7 +83,7 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   }
   @Test public void comparisonWithSpecificWithinScope1() {
     final InfixExpression e = i("this != a");
-    assertTrue(Is.constant(e.getLeftOperand()));
+    assertTrue(Is.constant(left(e)));
     assertTrue(inner.scopeIncludes(e));
     assertLegible(e.toString());
   }
@@ -282,8 +281,7 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Test public void flipIsNotNull() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator())));
+      assertNotNull(flip(asInfixExpression()));
     }
     @Override @Test public void inputIsInfixExpression() {
       assertNotNull(asInfixExpression());

@@ -1,5 +1,4 @@
 package org.spartan.refactoring.wring;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -15,7 +14,9 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
+import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import java.util.Collection;
 import java.util.List;
@@ -127,7 +128,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final IfStatement s = Extract.nextIfStatement(f);
     assertNotNull(s);
     assertThat(Wrings.elseIsEmpty(s), is(true));
-    final Assignment a = Extract.assignment(s.getThenStatement());
+    final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
     final Expression leftHandSide = a.getLeftHandSide();
     assertNotNull(leftHandSide);
@@ -164,8 +165,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertNotNull(f.toString(), initializer);
     final IfStatement s = Extract.nextIfStatement(f);
     assertNotNull(s);
-    assertThat(Extract.statements(s.getElseStatement()).size(), is(0));
-    final Assignment a = Extract.assignment(s.getThenStatement());
+    assertThat(Extract.statements(elze(s)).size(), is(0));
+    final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
     assertTrue(same(a.getLeftHandSide(), f.getName()));
     r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);

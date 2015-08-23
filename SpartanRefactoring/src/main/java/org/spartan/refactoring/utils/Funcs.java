@@ -43,6 +43,7 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PostfixExpression;
@@ -197,7 +198,6 @@ public enum Funcs {
   public static PostfixExpression asPostfixExpression(final ASTNode n) {
     return !(n instanceof PostfixExpression) ? null : (PostfixExpression) n;
   }
-
   /**
    * Down-cast, if possible, to {@link MethodInvocation}
    *
@@ -355,7 +355,52 @@ public enum Funcs {
   public static InfixExpression flip(final InfixExpression e) {
     if (e.hasExtendedOperands())
       throw new IllegalArgumentException(e + ": flipping undefined for an expression with extra operands ");
-    return Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator()));
+    return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
+  }
+  /**
+   * Syntactic sugar for {@link InfixExpression#getRightOperand()}
+   *
+   * @param e JD
+   * @return the right operand of the parameter
+   */
+  public static Expression right(final InfixExpression e) {
+    return e.getRightOperand();
+  }
+  /**
+   * Syntactic sugar for {@link InfixExpression#getLeftOperand()}
+   *
+   * @param e JD
+   * @return the left operand of the parameter
+   */
+  public static Expression left(final InfixExpression e) {
+    return e.getLeftOperand();
+  }
+  /**
+   * Syntactic sugar for {@link InstanceofExpression#getLeftOperand()}
+   *
+   * @param e JD
+   * @return the left operand of the parameter
+   */
+  public static Expression left(final InstanceofExpression e) {
+    return e.getLeftOperand();
+  }
+  /**
+   * Syntactic sugar for {@link IfStatement#getThenStatement}
+   *
+   * @param s JD
+   * @return the then statement of the parameter
+   */
+  public static Statement then(final IfStatement s) {
+    return s.getThenStatement();
+  }
+  /**
+   * Syntactic sugar for {@link IfStatement#getElseStatement}
+   *
+   * @param s JD
+   * @return the else statement of the parameter
+   */
+  public static Statement elze(final IfStatement s) {
+    return s.getElseStatement();
   }
   /**
    * Makes an opposite operator from a given one, which keeps its logical

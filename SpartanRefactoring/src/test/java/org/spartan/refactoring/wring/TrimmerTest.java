@@ -1,5 +1,4 @@
 package org.spartan.refactoring.wring;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -18,6 +17,8 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.utils.ExpressionComparator.NODES_THRESHOLD;
 import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;
 import static org.spartan.utils.Utils.hasNull;
@@ -232,10 +233,10 @@ public class TrimmerTest {
   @Test public void comaprisonWithSpecific0Legibiliy00() {
     final InfixExpression e = i("this != a");
     assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
-    assertFalse(Is.booleanLiteral(e.getRightOperand()));
-    assertFalse(Is.booleanLiteral(e.getLeftOperand()));
-    assertFalse(Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
-    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand())));
+    assertFalse(Is.booleanLiteral(right(e)));
+    assertFalse(Is.booleanLiteral(left(e)));
+    assertFalse(Is.booleanLiteral(right(e)) || Is.booleanLiteral(left(e)));
+    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS) && (Is.booleanLiteral(right(e)) || Is.booleanLiteral(left(e))));
   }
   @Test public void comaprisonWithSpecific1() {
     assertSimplifiesTo("null != a", "a != null");
@@ -454,14 +455,14 @@ public class TrimmerTest {
   }
   @Test public void isGreaterTrue() {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
-    assertEquals("f(a,b,c)", e.getRightOperand().toString());
-    assertEquals("f(a,b,c,d,e)", e.getLeftOperand().toString());
+    assertEquals("f(a,b,c)", right(e).toString());
+    assertEquals("f(a,b,c,d,e)", left(e).toString());
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
     assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
-    final Expression e1 = e.getLeftOperand();
-    final Expression e2 = e.getRightOperand();
+    final Expression e1 = left(e);
+    final Expression e2 = right(e);
     assertFalse(hasNull(e1, e2));
     final boolean tokenWiseGreater = nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2);
     assertTrue(tokenWiseGreater);
@@ -474,14 +475,14 @@ public class TrimmerTest {
   }
   @Test public void isGreaterTrueButAlmostNot() {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
-    assertEquals("f(a,b,c)", e.getRightOperand().toString());
-    assertEquals("f(a,b,c,d)", e.getLeftOperand().toString());
+    assertEquals("f(a,b,c)", right(e).toString());
+    assertEquals("f(a,b,c,d)", left(e).toString());
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
     assertThat(s, instanceOf(InfixMultiplicationSort.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
-    final Expression e1 = e.getLeftOperand();
-    final Expression e2 = e.getRightOperand();
+    final Expression e1 = left(e);
+    final Expression e2 = right(e);
     assertFalse(hasNull(e1, e2));
     final boolean tokenWiseGreater = nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2);
     assertFalse(tokenWiseGreater);

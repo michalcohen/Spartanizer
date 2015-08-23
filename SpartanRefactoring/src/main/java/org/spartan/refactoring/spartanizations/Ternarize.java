@@ -8,11 +8,13 @@ import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.utils.Funcs.compatibleNames;
 import static org.spartan.refactoring.utils.Funcs.compatibleOps;
 import static org.spartan.refactoring.utils.Funcs.containIncOrDecExp;
+import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.getVarDeclFrag;
 import static org.spartan.refactoring.utils.Funcs.makeVariableDeclarationFragment;
 import static org.spartan.refactoring.utils.Funcs.next;
 import static org.spartan.refactoring.utils.Funcs.prev;
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.ArrayList;
@@ -84,11 +86,11 @@ import org.spartan.utils.Range;
   private static Range detectAssignIfAssign(final Block parent, final IfStatement i) {
     return parent == null ? null : detectAssignIfAssign(i, siblings(i));
   }
-  private static Range detectAssignIfAssign(final IfStatement i, final List<Statement> ss) {
-    final Assignment then = Extract.assignment(i.getThenStatement());
-    if (then == null || i.getElseStatement() != null)
+  private static Range detectAssignIfAssign(final IfStatement s, final List<Statement> ss) {
+    final Assignment then = Extract.assignment(then(s));
+    if (then == null || elze(s) != null)
       return null;
-    final int ifIdx = ss.indexOf(i);
+    final int ifIdx = ss.indexOf(s);
     final Assignment nextAsgn = Extract.assignment(next(ifIdx, ss));
     final Assignment prevAsgn = Extract.assignment(prev(ifIdx, ss));
     final VariableDeclarationFragment prevDecl = getVarDeclFrag(prevAsgn == null ? prev(ifIdx, ss) : prev2(ss, ifIdx), then.getLeftHandSide());
@@ -96,12 +98,12 @@ import org.spartan.utils.Range;
     return //
         //
         ($ = detecPrevAndNextAsgnExist(then, prevAsgn, nextAsgn, prevDecl)) != null || //
-        ($ = detecOnlyPrevAsgnExist(i, then, prevAsgn, prevDecl)) != null || //
-        ($ = detecOnlyNextAsgnExist(i, then, nextAsgn, prevDecl)) != null//
+        ($ = detecOnlyPrevAsgnExist(s, then, prevAsgn, prevDecl)) != null || //
+        ($ = detecOnlyNextAsgnExist(s, then, nextAsgn, prevDecl)) != null//
         ? $ : null;
   }
   private static Range detectIfReturn(final IfStatement s, final List<Statement> ss) {
-    return Is.last(s, ss) ? null : detectIfReturn(s.getThenStatement(), s.getElseStatement(), ss, ss.indexOf(s));
+    return Is.last(s, ss) ? null : detectIfReturn(then(s), elze(s), ss, ss.indexOf(s));
   }
   private static Range detectIfReturn(final Statement thenStmt, final Statement elseStmt, final List<Statement> ss, final int ifIdx) {
     final ReturnStatement nextRet = asReturnStatement(ss.get(1 + ifIdx));
@@ -173,7 +175,7 @@ import org.spartan.utils.Range;
       return null;
     final TwoExpressions $ = findDiffExps(diffNodes);
     return Is.expressionStatement(diffNodes.then) ? $
-        : $ == null || !Is.retern(diffNodes.then) ? null : new TwoExpressions(Extract.expression(diffNodes.then), Extract.expression(diffNodes.elze));
+        : $ == null || !Is.return_(diffNodes.then) ? null : new TwoExpressions(Extract.expression(diffNodes.then), Extract.expression(diffNodes.elze));
   }
   private static boolean handleCaseDiffNodesAreBlocks(final Pair diffNodes) {
     if (!Is.singletonStatement(diffNodes.then) || !Is.singletonStatement(diffNodes.elze))
@@ -242,22 +244,22 @@ import org.spartan.utils.Range;
     return !hasNull(diffNodes, diffNodes.then, diffNodes.elze) && isExpOnlyDiff(diffNodes.then, diffNodes.elze, diffExps);
   }
   private static boolean isExpStmntOrRet(final ASTNode n) {
-    return Is.expressionStatement(n) || Is.retern(n);
+    return Is.expressionStatement(n) || Is.return_(n);
   }
   private static boolean isNextAndPrevAsgnPossible(final Assignment then, final Assignment prevAsgn, final Assignment nextAsgn) {
     return !hasNull(prevAsgn, nextAsgn) && compatible(nextAsgn, prevAsgn, then)
         && !Is.conditional(prevAsgn.getRightHandSide(), nextAsgn.getRightHandSide(), then.getRightHandSide());
   }
-  private static boolean isNoNextNoPrevAsgnPossible(final IfStatement i, final Assignment then, final Assignment prevAsgn, final Assignment nextAsgn,
+  private static boolean isNoNextNoPrevAsgnPossible(final IfStatement s, final Assignment then, final Assignment prevAsgn, final Assignment nextAsgn,
       final VariableDeclarationFragment prevDecl) {
     return prevAsgn == null //
         && nextAsgn == null //
         && !Is.conditional(then.getRightHandSide()) //
         && prevDecl != null //
         && prevDecl.getInitializer() != null //
-        && i.getElseStatement() == null //
+        && elze(s) == null //
         && !Is.conditional(prevDecl.getInitializer()) //
-        && Occurrences.BOTH_SEMANTIC.of(prevDecl).in(i.getExpression(), then.getRightHandSide()).isEmpty()
+        && Occurrences.BOTH_SEMANTIC.of(prevDecl).in(s.getExpression(), then.getRightHandSide()).isEmpty()
         ;
   }
   private static boolean isOnlyNextAsgnPossible(final Assignment then, final Assignment nextAsgn) {
@@ -303,9 +305,9 @@ import org.spartan.utils.Range;
     final Expression newCond = Subject.pair(thenSideExp, otherAsgnExp).toCondition(i.getExpression());
     r.replace(i, t.newExpressionStatement(Subject.pair(then.getLeftHandSide(), newCond).to(then.getOperator())), null);
   }
-  private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement i, final ReturnStatement nextReturn) {
-    final ReturnStatement $ = asReturnStatement(i.getThenStatement());
-    return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(r, i, $.getExpression(), nextReturn.getExpression());
+  private static boolean rewriteIfToRetStmnt(final AST t, final ASTRewrite r, final IfStatement s, final ReturnStatement nextReturn) {
+    final ReturnStatement $ = asReturnStatement(then(s));
+    return $ != null && !Is.conditional($.getExpression(), nextReturn.getExpression()) && rewriteIfToRetStmnt(r, s, $.getExpression(), nextReturn.getExpression());
   }
   private static boolean rewriteIfToRetStmnt(final ASTRewrite r, final IfStatement i, final Expression thenExp, final Expression nextExp) {
     r.replace(i, Subject.operand(determineNewExp(i.getExpression(), thenExp, nextExp)).toReturn(), null);
@@ -330,22 +332,22 @@ import org.spartan.utils.Range;
     r.replace(diff.then, newExp, null);
     return true;
   }
-  private static boolean treatAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> ss) {
-    detectAssignIfAssign(i);
-    final int where = ss.indexOf(i);
-    final Assignment then = Extract.assignment(i.getThenStatement());
-    if (then == null || i.getElseStatement() != null || where < 1)
+  private static boolean treatAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement s, final List<Statement> ss) {
+    detectAssignIfAssign(s);
+    final int where = ss.indexOf(s);
+    final Assignment then = Extract.assignment(then(s));
+    if (then == null || elze(s) != null || where < 1)
       return false;
     final Assignment prevAsgn = Extract.assignment(ss.get(where - 1));
     final Assignment nextAsgn = where + 1 >= ss.size() ? null : Extract.assignment(ss.get(1 + where));
     final VariableDeclarationFragment prevDecl = findPrevDecl(ss, where, then, prevAsgn, nextAsgn);
-    return tryHandleNextAndPrevAsgnExist(r, i, then, prevAsgn, nextAsgn, prevDecl) //
-        || tryHandleOnlyPrevAsgnExist(t, r, i, then, prevAsgn, prevDecl) //
-        || tryHandleOnlyNextAsgnExist(t, r, i, then, nextAsgn, prevDecl) //
-        || tryHandleNoNextNoPrevAsgn(t, r, i, then, prevAsgn, nextAsgn, prevDecl);
+    return tryHandleNextAndPrevAsgnExist(r, s, then, prevAsgn, nextAsgn, prevDecl) //
+        || tryHandleOnlyPrevAsgnExist(t, r, s, then, prevAsgn, prevDecl) //
+        || tryHandleOnlyNextAsgnExist(t, r, s, then, nextAsgn, prevDecl) //
+        || tryHandleNoNextNoPrevAsgn(t, r, s, then, prevAsgn, nextAsgn, prevDecl);
   }
   private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> ss) {
-    if (!Is.retern(Extract.lastStatement(i.getThenStatement())))
+    if (!Is.return_(Extract.lastStatement(i.getThenStatement())))
       return false;
     final ReturnStatement nextRet = nextStatement(ss, ss.indexOf(i));
     return nextRet != null && Is.singletonThen(i) && noElse(i) && rewriteIfToRetStmnt(t, r, i, nextRet);

@@ -1,6 +1,7 @@
 package org.spartan.refactoring.wring;
-
 import static org.spartan.refactoring.utils.Funcs.compatible;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
@@ -30,14 +31,14 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfAssignToFooElseAssignToFoo extends Wring.OfIfStatement {
   @Override Statement _replacement(final IfStatement s) {
-    final Assignment then = Extract.assignment(s.getThenStatement());
-    final Assignment elze = Extract.assignment(s.getElseStatement());
+    final Assignment then = Extract.assignment(then(s));
+    final Assignment elze = Extract.assignment(elze(s));
     if (!compatible(then, elze))
       return null;
     final ConditionalExpression e = Subject.pair(then.getRightHandSide(), elze.getRightHandSide()).toCondition(s.getExpression());
     return Subject.pair(then.getLeftHandSide(), e).toStatement(then.getOperator());
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return s != null && compatible(Extract.assignment(s.getThenStatement()), Extract.assignment(s.getElseStatement()));
+    return s != null && compatible(Extract.assignment(then(s)), Extract.assignment(elze(s)));
   }
 }

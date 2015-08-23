@@ -1,6 +1,7 @@
 package org.spartan.refactoring.utils;
-
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Comparator;
@@ -117,7 +118,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
    *         parameter is is longer than the second argument
    */
   public static boolean longerFirst(final InfixExpression e) {
-    return isLonger(e.getLeftOperand(), e.getRightOperand());
+    return isLonger(left(e), right(e));
   }
   private static boolean isLonger(final Expression e1, final Expression e2) {
     return !hasNull(e1, e2) && (//

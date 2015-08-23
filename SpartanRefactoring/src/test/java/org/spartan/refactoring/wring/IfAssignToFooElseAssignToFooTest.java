@@ -1,17 +1,17 @@
 package org.spartan.refactoring.wring;
-
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Funcs.compatible;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,16 +34,15 @@ import org.spartan.utils.Utils;
 public class IfAssignToFooElseAssignToFooTest {
   static final Wring<IfStatement> WRING = new IfAssignToFooElseAssignToFoo();
   @Test public void checkSteps() {
-    final Statement s = asSingle("if (a) a = b; else a = c;");
+    assertNotNull(asSingle("if (a) a = b; else a = c;"));
+    final IfStatement s = asIfStatement(asSingle("if (a) a = b; else a = c;"));
     assertNotNull(s);
-    final IfStatement i = asIfStatement(s);
-    assertNotNull(i);
-    final Assignment then = Extract.assignment(i.getThenStatement());
-    assertNotNull(i.getThenStatement().toString(), then);
-    final Assignment elze = Extract.assignment(i.getElseStatement());
+    final Assignment then = Extract.assignment(then(s));
+    assertNotNull(then(s).toString(), then);
+    final Assignment elze = Extract.assignment(elze(s));
     assertNotNull(elze);
     assertThat(compatible(then, elze), is(true));
-    assertThat(WRING.scopeIncludes(i), is(true));
+    assertThat(WRING.scopeIncludes(s), is(true));
   }
 
   @RunWith(Parameterized.class) //

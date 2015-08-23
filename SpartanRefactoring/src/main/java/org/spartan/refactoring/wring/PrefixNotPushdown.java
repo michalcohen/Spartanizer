@@ -12,7 +12,9 @@ import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.asComparison;
 import static org.spartan.refactoring.utils.Funcs.asNot;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
@@ -61,7 +63,7 @@ public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
   }
   private
   static Expression comparison(final InfixExpression e) {
-    return Subject.pair(e.getLeftOperand(), e.getRightOperand()).to(negate(e.getOperator()));
+    return Subject.pair(left(e), right(e)).to(negate(e.getOperator()));
   }
   private static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;

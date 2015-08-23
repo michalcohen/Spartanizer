@@ -1,7 +1,7 @@
 package org.spartan.refactoring.wring;
-
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -28,14 +28,13 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-07-29
  */
 public final class IfThrowFooElseThrowBar extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement i) {
-    final Expression condition = i.getExpression();
-    final Expression then = Extract.throwExpression(i.getThenStatement());
-    final Expression elze = Extract.throwExpression(i.getElseStatement());
+  @Override Statement _replacement(final IfStatement s) {
+    final Expression condition = s.getExpression();
+    final Expression then = Extract.throwExpression(then(s));
+    final Expression elze = Extract.throwExpression(elze(s));
     return then == null || elze == null ? null : makeThrowStatement(Subject.pair(then, elze).toCondition(condition));
   }
-  @Override boolean scopeIncludes(final IfStatement e) {
-    final IfStatement i = asIfStatement(e);
-    return i != null && Extract.throwExpression(i.getThenStatement()) != null && Extract.throwExpression(i.getElseStatement()) != null;
+  @Override boolean scopeIncludes(final IfStatement s) {
+    return s != null && Extract.throwExpression(then(s)) != null && Extract.throwExpression(elze(s)) != null;
   }
 }

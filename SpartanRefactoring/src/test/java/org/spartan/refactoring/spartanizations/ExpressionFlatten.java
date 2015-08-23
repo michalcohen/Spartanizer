@@ -1,5 +1,4 @@
 package org.spartan.refactoring.spartanizations;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -8,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Restructure.flatten;
@@ -41,9 +41,7 @@ public class ExpressionFlatten {
     assertThat($.toString(), is(e.toString()));
   }
   @Test public void flattenLeftArgument() {
-    final InfixExpression e = i("1+2");
-    final InfixExpression $ = flatten(e);
-    assertThat($.getLeftOperand().toString(), is("1"));
+    assertThat(left(flatten(i("1+2"))).toString(), is("1"));
   }
   @Test public void flattenOfDeepParenthesisIsCorrect() {
     final InfixExpression e = i("(((1+2)))+(((3 + (4+5))))");
@@ -71,7 +69,7 @@ public class ExpressionFlatten {
   }
   @Test public void leftOperandIsNotString() {
     final InfixExpression e = i("1+2");
-    assertTrue(Is.notString(e.getLeftOperand()));
+    assertTrue(Is.notString(left(e)));
   }
   @Test public void isNotStringInfixFalse() {
     final InfixExpression e = i("1+f");
@@ -82,18 +80,18 @@ public class ExpressionFlatten {
   }
   @Test public void leftOperandIsNumeric() {
     final InfixExpression e = i("1+2");
-    assertTrue(Is.numericLiteral(e.getLeftOperand()));
+    assertTrue(Is.numericLiteral(left(e)));
   }
   @Test public void leftOperandIsOne() {
     final InfixExpression e = i("1+2");
-    assertThat(e.getLeftOperand().toString(), is("1"));
+    assertThat(left(e).toString(), is("1"));
   }
   @Test public void leftOperandNotNull() {
     final InfixExpression e = i("1+2");
-    assertThat(e.getLeftOperand(), not(nullValue()));
+    assertThat(left(e), not(nullValue()));
   }
   @Test public void rightOperandNotNull() {
     final InfixExpression e = i("1+2");
-    assertThat(e.getLeftOperand(), not(nullValue()));
+    assertThat(left(e), not(nullValue()));
   }
 }

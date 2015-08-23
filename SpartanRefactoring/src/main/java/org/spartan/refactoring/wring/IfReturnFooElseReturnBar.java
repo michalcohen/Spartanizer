@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
-
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -27,14 +27,13 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-07-29
  */
 public final class IfReturnFooElseReturnBar extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement i) {
-    final Expression condition = i.getExpression();
-    final Expression then = Extract.returnExpression(i.getThenStatement());
-    final Expression elze = Extract.returnExpression(i.getElseStatement());
+  @Override Statement _replacement(final IfStatement s) {
+    final Expression condition = s.getExpression();
+    final Expression then = Extract.returnExpression(then(s));
+    final Expression elze = Extract.returnExpression(elze(s));
     return then == null || elze == null ? null : Subject.operand(Subject.pair(then, elze).toCondition(condition)).toReturn();
   }
-  @Override boolean scopeIncludes(final IfStatement e) {
-    final IfStatement i = asIfStatement(e);
-    return i != null && Extract.returnExpression(i.getThenStatement()) != null && Extract.returnExpression(i.getElseStatement()) != null;
+  @Override boolean scopeIncludes(final IfStatement s) {
+    return s != null && Extract.returnExpression(s.getThenStatement()) != null && Extract.returnExpression(s.getElseStatement()) != null;
   }
 }

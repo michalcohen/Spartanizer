@@ -1,5 +1,7 @@
 package org.spartan.refactoring.utils;
 
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.utils.Utils.asArray;
 
 import java.util.ArrayList;
@@ -152,13 +154,13 @@ public enum Occurrences {
       @Override public boolean visit(final IfStatement n) {
         return collect(n.getExpression());
       }
-      @Override public boolean visit(final InfixExpression n) {
-        collect(n.getRightOperand());
-        collect(n.getLeftOperand());
-        return collect(n.extendedOperands());
+      @Override public boolean visit(final InfixExpression e) {
+        collect(right(e));
+        collect(left(e));
+        return collect(e.extendedOperands());
       }
-      @Override public boolean visit(final InstanceofExpression n) {
-        return collect(n.getLeftOperand());
+      @Override public boolean visit(final InstanceofExpression e) {
+        return collect(left(e));
       }
       @Override public boolean visit(final MethodDeclaration n) {
         /* Now: this is a bit complicated. Java allows declaring methods in

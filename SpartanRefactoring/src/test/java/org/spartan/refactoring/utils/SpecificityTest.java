@@ -1,8 +1,9 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
-import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.OrderingComparison.greaterThan;
+import static org.spartan.hamcrest.OrderingComparison.lessThan;
 import static org.spartan.refactoring.utils.Into.e;
 
 import org.junit.FixMethodOrder;
@@ -77,7 +78,7 @@ public class SpecificityTest {
     assertThat(SPECIFICITY.compare(e("12"), e("true")), greaterThan(0));
   }
   @Test public void defined() {
-    assertThat(SPECIFICITY.defined(e("12")), is(true));
-    assertThat(SPECIFICITY.defined(e("a+b")), is(false));
+    assertThat(Specificity.defined(e("12")), is(true));
+    assertThat(Specificity.defined(e("a+b")), is(false));
   }
 }

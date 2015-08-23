@@ -1,12 +1,12 @@
 package org.spartan.refactoring.wring;
-
 import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Specificity;
-import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} that reorder comparisons so that the specific value is placed
@@ -22,10 +22,10 @@ public final class InfixComparisonSpecific extends Wring.OfInfixExpression {
   }
   private static final Specificity specifity = new Specificity();
   @Override public boolean scopeIncludes(final InfixExpression e) {
-    return !e.hasExtendedOperands() && Is.comparison(e) && (specifity.defined(left(e)) || specifity.defined(right(e)));
+    return !e.hasExtendedOperands() && Is.comparison(e) && (Specificity.defined(left(e)) || Specificity.defined(right(e)));
   }
 
   @Override Expression _replacement(final InfixExpression e) {
-    return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
+    return flip(e);
   }
 }

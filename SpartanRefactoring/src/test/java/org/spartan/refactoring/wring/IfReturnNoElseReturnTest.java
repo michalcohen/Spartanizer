@@ -1,10 +1,10 @@
 package org.spartan.refactoring.wring;
-
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.utils.Funcs.elze;
 
 import java.util.Collection;
 
@@ -169,8 +169,8 @@ public class IfReturnNoElseReturnTest {
       @Test public void myScopeIncludes() {
         final IfStatement s = asMe();
         assertThat(s, notNullValue());
-        assertThat(Extract.statements(s.getElseStatement()), notNullValue());
-        assertThat(Extract.statements(s.getElseStatement()).size(), is(0));
+        assertThat(Extract.statements(elze(s)), notNullValue());
+        assertThat(Extract.statements(elze(s)).size(), is(0));
       }
       @Test public void noElse() {
         assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
