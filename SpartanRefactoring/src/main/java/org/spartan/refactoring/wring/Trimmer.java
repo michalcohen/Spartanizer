@@ -43,7 +43,7 @@ public class Trimmer extends Spartanization {
       new Trimmer().fillRewrite(r, t, u, null);
       try {
         final TextEdit e = r.rewriteAST();
-        if (e.hasChildren())
+        if (!e.hasChildren())
           break;
         try {
           e.apply(d);
