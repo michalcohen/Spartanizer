@@ -385,9 +385,6 @@ public enum Is {
   public static boolean nonAssociative(final ASTNode n) {
     return nonAssociative(asInfixExpression(n));
   }
-  private static boolean nonAssociative(final InfixExpression e) {
-    return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);
-  }
   /**
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
@@ -398,8 +395,15 @@ public enum Is {
   public static boolean notString(final Expression e) {
     return notStringSelf(e) || notStringUp(e) || notStringDown(asInfixExpression(e));
   }
-  static boolean notStringDown(final Expression e) {
-    return notStringSelf(e) || notStringDown(asInfixExpression(e));
+  /**
+   * Determine whether a node is the <code><b>null</b></code> keyword
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i>is thee <code><b>null</b></code>
+   *         literal
+   */
+  public static boolean null_(final ASTNode n) {
+    return is(n, NULL_LITERAL);
   }
   /**
    * Determine whether a node is <code><b>this</b></code> or
@@ -512,28 +516,6 @@ public enum Is {
         return false;
     }
   }
-  private static boolean sideEffectsFree(final Expression... es) {
-    for (final Expression e : es)
-      if (!sideEffectFree(e))
-        return false;
-    return true;
-  }
-  static boolean sideEffectFreeArrayCreation(final ArrayCreation a) {
-    final ArrayInitializer i = a.getInitializer();
-    return sideEffectsFree(a.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
-  }
-  private static boolean sideEffectsFree(final List<?> os) {
-    for (final Object o : os) {
-      final Expression e = Funcs.asExpression((ASTNode) o);
-      if (o == null || !sideEffectFree(e))
-        return false;
-    }
-    return true;
-  }
-  static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
-    return in(e.getOperator(), PrefixExpression.Operator.PLUS, PrefixExpression.Operator.MINUS, PrefixExpression.Operator.COMPLEMENT, PrefixExpression.Operator.NOT)
-        && sideEffectFree(e.getOperand());
-  }
   /**
    * Determine whether an {@link Expression} is so basic that it never needs to
    * be placed in parenthesis.
@@ -582,7 +564,8 @@ public enum Is {
     return Extract.statements(n).size() == 1;
   }
   /**
-   * Determine whether the "then" branch of an {@link Statement} is a single statement.
+   * Determine whether the "then" branch of an {@link Statement} is a single
+   * statement.
    *
    * @param s JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement
@@ -606,6 +589,16 @@ public enum Is {
    */
   public static boolean stringLiteral(final ASTNode n) {
     return n != null && n.getNodeType() == STRING_LITERAL;
+  }
+  /**
+   * Determine whether a node is the <code><b>this</b></code> keyword
+   *
+   * @param n JD
+   * @return <code><b>true</b></code> <i>iff</i> is the <code><b>this</b></code>
+   *         keyword
+   */
+  public static boolean this_(final ASTNode n) {
+    return is(n, THIS_EXPRESSION);
   }
   /**
    * Determine whether a node is <code><b>this</b></code> or
@@ -635,6 +628,9 @@ public enum Is {
         return true;
     return false;
   }
+  private static boolean nonAssociative(final InfixExpression e) {
+    return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);
+  }
   private static boolean notStringUp(final Expression e) {
     for (ASTNode context = e.getParent(); context != null; context = context.getParent())
       switch (context.getNodeType()) {
@@ -653,6 +649,23 @@ public enum Is {
       }
     return false;
   }
+  private static boolean sideEffectsFree(final Expression... es) {
+    for (final Expression e : es)
+      if (!sideEffectFree(e))
+        return false;
+    return true;
+  }
+  private static boolean sideEffectsFree(final List<?> os) {
+    for (final Object o : os) {
+      final Expression e = Funcs.asExpression((ASTNode) o);
+      if (o == null || !sideEffectFree(e))
+        return false;
+    }
+    return true;
+  }
+  static boolean notStringDown(final Expression e) {
+    return notStringSelf(e) || notStringDown(asInfixExpression(e));
+  }
   static boolean notStringDown(final InfixExpression e) {
     return e != null && (e.getOperator() != PLUS || Are.notString(Extract.allOperands(e)));
   }
@@ -667,5 +680,13 @@ public enum Is {
         PREFIX_EXPRESSION //
     //
     );
+  }
+  static boolean sideEffectFreeArrayCreation(final ArrayCreation a) {
+    final ArrayInitializer i = a.getInitializer();
+    return sideEffectsFree(a.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
+  }
+  static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
+    return in(e.getOperator(), PrefixExpression.Operator.PLUS, PrefixExpression.Operator.MINUS, PrefixExpression.Operator.COMPLEMENT, PrefixExpression.Operator.NOT)
+        && sideEffectFree(e.getOperand());
   }
 }

@@ -15,7 +15,8 @@ import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
 
-@SuppressWarnings({ "static-method", "javadoc" }) public class ExtractTest {
+@SuppressWarnings({ "static-method", "javadoc" }) //
+public class ExtractTest {
   @Test public void core() {
     final Statement s = null;
     assertThat(Extract.core(s), nullValue());

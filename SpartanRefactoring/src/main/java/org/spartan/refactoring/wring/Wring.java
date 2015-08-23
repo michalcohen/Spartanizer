@@ -212,6 +212,12 @@ public abstract class Wring<N extends ASTNode> {
       return _replacement(e);
     }
     @Override abstract boolean scopeIncludes(final InfixExpression e);
+    protected static Expression right(final InfixExpression e) {
+      return e.getRightOperand();
+    }
+    protected static Expression left(final InfixExpression e) {
+      return e.getLeftOperand();
+    }
   }
 
   static abstract class OfPrefixExpression extends Defaults<PrefixExpression> {

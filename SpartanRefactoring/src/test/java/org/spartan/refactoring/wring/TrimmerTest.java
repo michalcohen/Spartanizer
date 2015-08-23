@@ -1120,8 +1120,6 @@ public class TrimmerTest {
   }
   @Test public void simplifyBlockExpressionVsExpression() {
     assertSimplifiesTo("6 - 7 < a * 3", "6 - 7 < 3 * a");
-    // Note that we also need to generalize NoChange to work with other
-    // Wrings\Wrap types
   }
   @Test public void simplifyBlockLiteralVsLiteral() {
     assertNoChange("if (a) return b; else c;");

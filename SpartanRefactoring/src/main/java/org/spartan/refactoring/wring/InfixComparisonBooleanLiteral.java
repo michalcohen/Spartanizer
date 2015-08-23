@@ -25,17 +25,17 @@ public final class InfixComparisonBooleanLiteral extends Wring.OfInfixExpression
     return literal.booleanValue() != (e.getOperator() == EQUALS);
   }
   @Override public final boolean scopeIncludes(final InfixExpression e) {
-    return !e.hasExtendedOperands() && in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(e.getRightOperand()) || Is.booleanLiteral(e.getLeftOperand()));
+    return !e.hasExtendedOperands() && in(e.getOperator(), EQUALS, NOT_EQUALS) && (Is.booleanLiteral(right(e)) || Is.booleanLiteral(left(e)));
   }
   @Override Expression _replacement(final InfixExpression e) {
     Expression nonliteral;
     BooleanLiteral literal;
-    if (Is.booleanLiteral(e.getLeftOperand())) {
-      literal = asBooleanLiteral(e.getLeftOperand());
-      nonliteral = e.getRightOperand();
+    if (Is.booleanLiteral(left(e))) {
+      literal = asBooleanLiteral(left(e));
+      nonliteral = right(e);
     } else {
-      literal = asBooleanLiteral(e.getRightOperand());
-      nonliteral = e.getLeftOperand();
+      literal = asBooleanLiteral(right(e));
+      nonliteral = left(e);
     }
     nonliteral = Extract.core(nonliteral);
     final ASTNode parent = e.getParent();

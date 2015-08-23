@@ -5,6 +5,7 @@ import static org.spartan.refactoring.utils.Funcs.flip;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Specificity;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -16,20 +17,15 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-07-17
  */
 public final class InfixComparisonSpecific extends Wring.OfInfixExpression {
-  @Override public boolean scopeIncludes(final InfixExpression e) {
-    return e != null && !e.hasExtendedOperands() && Is.comparison(e) && (hasThisOrNull(e) || hasOneSpecificArgument(e));
-  }
-  private static boolean hasOneSpecificArgument(final InfixExpression e) {
-    // One of the arguments must be specific, the other must not be.
-    return Is.constant(e.getLeftOperand()) != Is.constant(e.getRightOperand());
-  }
   @Override boolean _eligible(final InfixExpression e) {
-    return Is.constant(e.getLeftOperand());
+    return specifity.compare(left(e), right(e)) < 0;
   }
+  private static final Specificity specifity = new Specificity();
+  @Override public boolean scopeIncludes(final InfixExpression e) {
+    return !e.hasExtendedOperands() && Is.comparison(e) && (specifity.defined(left(e)) || specifity.defined(right(e)));
+  }
+
   @Override Expression _replacement(final InfixExpression e) {
-    return Subject.pair(e.getRightOperand(), e.getLeftOperand()).to(flip(e.getOperator()));
-  }
-  static boolean hasThisOrNull(final InfixExpression e) {
-    return Is.thisOrNull(e.getLeftOperand()) || Is.thisOrNull(e.getRightOperand());
+    return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
   }
 }

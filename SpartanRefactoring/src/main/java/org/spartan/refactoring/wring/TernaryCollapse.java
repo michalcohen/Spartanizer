@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
@@ -9,7 +10,15 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.spartan.refactoring.utils.Subject;
 
-final public class TernaryCollapse extends Wring.OfConditionalExpression {
+/**
+ * A {@link Wring} to convert ternary expressions which include a binary literal
+ * (<code><b>true</b></code> or <code><b>false</b></code>) into a simpler
+ * Boolean expression.
+ *
+ * @author Yossi Gil
+ * @since 2015-9-19
+ */
+public class TernaryCollapse extends Wring.OfConditionalExpression {
   private static Expression collapse(final ConditionalExpression e) {
     if (e == null)
       return null;

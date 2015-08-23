@@ -47,9 +47,14 @@ import org.spartan.utils.Utils;
 public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpression> {
   static final Wring<InfixExpression> WRING = new InfixMultiplicationSort();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
-  public
-  InfixMultiplicationSortTest() {
+  public InfixMultiplicationSortTest() {
     super(WRING);
+  }
+  @Test public void scopeIncludesTrue1() {
+    assertTrue(WRING.scopeIncludes(i("2*a")));
+  }
+  @Test public void scopeIncludesTrue2() {
+    assertTrue(WRING.scopeIncludes(i("a*2")));
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
