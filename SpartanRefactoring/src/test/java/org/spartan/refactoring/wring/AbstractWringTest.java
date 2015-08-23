@@ -530,7 +530,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void hasReplacement() {
       if (inner == null)
         return;
-      assertNotNull(inner.replacement(asExpression()));
+      assertNotNull(inner.replacement((E)asExpression()));
     }
     @Test public void noneligible() {
       if (inner == null)
@@ -969,7 +969,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         assertNotNull(Toolbox.instance.find(asExpression()));
       }
       @Test public void hasReplacement() {
-        assertNotNull(inner.replacement(asExpression()));
+        assertNotNull(inner.replacement((N)asExpression()));
       }
       @Test public void noneligible() {
         assertFalse(inner.noneligible((N) asExpression()));

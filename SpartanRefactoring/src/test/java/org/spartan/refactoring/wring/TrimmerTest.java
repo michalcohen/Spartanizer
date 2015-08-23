@@ -1,6 +1,8 @@
 package org.spartan.refactoring.wring;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,11 +12,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.utils.ExpressionComparator.NODES_THRESHOLD;
 import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
 import static org.spartan.refactoring.utils.Into.i;
+import static org.spartan.refactoring.utils.Into.s;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -26,6 +30,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.PostfixExpression;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jface.text.Document;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -36,6 +42,7 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.ExpressionComparator;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -354,7 +361,7 @@ public class TrimmerTest {
     assertConvertsTo("if (x) f(a); else f(b);", " f(x ? a: b);");
   }
   @Test public void ifPlusPlusPost() {
-    assertNoConversion("if (x) a++; else b++;");
+    assertConvertsTo("if (x) a++; else b++;","if(x)++a;else++b;");
   }
   @Test public void ifPlusPlusPostExpression() {
     assertNoChange("x? a++:b++");
@@ -421,7 +428,7 @@ public class TrimmerTest {
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d,e)", replacement.toString());
   }
@@ -441,7 +448,7 @@ public class TrimmerTest {
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
@@ -640,8 +647,29 @@ public class TrimmerTest {
   @Test public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
-  @Test public void ternaryPushdownOfReciever() {
-    assertSimplifiesTo("a ? b.f():c.f()", "(a?b:c).f()");
+  @Test public void prefixToPosfixIncreementSimple() {
+    assertSimplifiesTo("i++", "++i");
+  }
+  @Test public void prefixToPostfixIncreement() {
+    assertConvertsTo("for (int i = 0; i < 100; i++) i++;", "for(int i=0;i<100;++i)++i;");
+  }
+  @Test public void prefixToPostfixDecrement() {
+    final String from = "for (int i = 0; i < 100;  i--)  i--;";
+    final Statement s = s(from);
+    assertThat(s, iz("{" + from + "}"));
+    assertNotNull(s);
+    final PostfixExpression e = Extract.findFirstPostfix(s);
+    assertNotNull(e);
+    assertThat(e, iz("i--"));
+    final ASTNode parent = e.getParent();
+    assertThat(parent, notNullValue());
+    assertThat(parent, iz(from));
+    assertThat(parent, is(not(instanceOf(Expression.class))));
+    assertThat(new PostfixToPrefix().scopeIncludes(e), is(true));
+    assertThat(new PostfixToPrefix().eligible(e), is(true));
+    final Expression r = new PostfixToPrefix().replacement(e);
+    assertThat(r, iz("--i"));
+    assertConvertsTo(from, "for(int i=0;i<100;--i)--i;");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -927,7 +955,7 @@ public class TrimmerTest {
     assertNotNull(w);
     assertTrue(w.scopeIncludes(e));
     assertTrue(w.eligible(e));
-    final Expression replacement = w.replacement(e);
+    final ASTNode replacement = w.replacement(e);
     assertNotNull(replacement);
     assertEquals("a != null", replacement.toString());
   }
@@ -1220,14 +1248,24 @@ public class TrimmerTest {
   }
   @Test public void ternarize49a() {
     assertConvertsTo(
-        "     int size = 0;\n" + "    if (mode.equals(153)==true)\n" + "      for (int i=0; i < size; i++){\n" + "        System.out.println(HH);\n" + "      }\n" + "    else\n"
+        "     int size = 0;\n"//
+        + "    if (mode.equals(153)==true)\n"//
+        + "      for (int i=0; i < size; i++){\n"//
+        + "        System.out.println(HH);\n" + "      }\n"//
+        + "    else\n"//
             + "      for (int i=0; i < size; i++){\n" + "        System.out.append('f');\n" + "      }",
         "int size=0;"//
-            + "if(mode.equals(153))" + " for(int i=0;i<size;i++){" + "   System.out.println(HH);" + " } " + "else " + "   for(int i=0;i<size;i++){" + "     System.out.append('f');"
+            + "if(mode.equals(153))" + " for(int i=0;i<size;++i){" //
+            + "   System.out.println(HH);" + " } " //
+            + "else "//
+            + "   for(int i=0;i<size;++i){" //
+            + "     System.out.append('f');"
             + "   }");
   }
   @Test public void ternarize53() {
-    assertNoConversion("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;");
+    assertConvertsTo("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;",
+        "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;"//
+        );
   }
   @Test public void ternarize55() {
     assertConvertsTo(//
@@ -1241,6 +1279,9 @@ public class TrimmerTest {
     assertConvertsTo(
         "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target); progressBarCurrent.setValue(current * 100 / target);", //
         "if(target==0){progressBarCurrent.setString(X);progressBarCurrent.setValue(0);progressBarCurrent.setString(current+\"/\"+target);progressBarCurrent.setValue(100*current / target);");
+  }
+  @Test public void ternaryPushdownOfReciever() {
+    assertSimplifiesTo("a ? b.f():c.f()", "(a?b:c).f()");
   }
   @Test public void testPeel() {
     assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));

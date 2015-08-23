@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 
 import org.eclipse.jdt.core.dom.ASTNode;

@@ -1,16 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.wring.TernaryPushdown.pushdown;
 
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Statement;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;

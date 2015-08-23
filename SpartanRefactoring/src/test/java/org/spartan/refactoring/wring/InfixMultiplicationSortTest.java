@@ -16,6 +16,7 @@ import static org.spartan.refactoring.utils.Restructure.flatten;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -58,7 +59,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("a == b == c", replacement);
   }
@@ -75,7 +76,7 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
-    final Expression replacement = s.replacement(e);
+    final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }

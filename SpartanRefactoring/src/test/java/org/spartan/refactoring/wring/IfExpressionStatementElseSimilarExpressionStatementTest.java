@@ -5,21 +5,17 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-import static org.spartan.refactoring.utils.Funcs.compatible;
 
 import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;

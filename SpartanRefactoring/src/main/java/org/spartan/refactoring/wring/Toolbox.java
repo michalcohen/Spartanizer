@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -41,6 +42,7 @@ public class Toolbox {
   }
   public static final Toolbox instance = new Maker()//
       .add(Block.class, new BlockSimplify()) //
+      .add(PostfixExpression.class, new PostfixToPrefix()) //
       .add(InfixExpression.class, //
           new InfixAdditionSort(), //
           new InfixComparisonBooleanLiteral(), //

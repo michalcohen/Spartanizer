@@ -1,8 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
-import static org.spartan.refactoring.utils.Funcs.asInfixExpression;
-import static org.spartan.refactoring.utils.Funcs.asPrefixExpression;
 import static org.spartan.refactoring.utils.Funcs.asStatement;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -11,6 +8,7 @@ import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -72,19 +70,7 @@ public abstract class Wring<N extends ASTNode> {
   @SuppressWarnings("static-method") Range range(final ASTNode n) {
     return new Range(n);
   }
-  abstract Statement replacement(final Block b);
-  abstract Expression replacement(final ConditionalExpression e);
-  final Expression replacement(final Expression e) {
-    Expression $;
-    return ($ = replacement(asInfixExpression(e))) != null //
-        || ($ = replacement(asPrefixExpression(e))) != null //
-        || ($ = replacement(asConditionalExpression(e))) != null //
-        ? $ : null;
-  }
-  abstract Statement replacement(final IfStatement e);
-  abstract Expression replacement(final InfixExpression e);
-  abstract Expression replacement(final PrefixExpression e);
-  abstract Statement replacement(final VariableDeclarationFragment f);
+  abstract ASTNode replacement(final N n);
   /**
    * Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
@@ -104,22 +90,7 @@ public abstract class Wring<N extends ASTNode> {
     @Override boolean go(final ASTRewrite r, final N n) {
       return false;
     }
-    @Override Statement replacement(final Block b) {
-      return null;
-    }
-    @Override Expression replacement(final ConditionalExpression e) {
-      return null;
-    }
-    @Override Statement replacement(final IfStatement e) {
-      return null;
-    }
-    @Override Expression replacement(final InfixExpression e) {
-      return null;
-    }
-    @Override Expression replacement(final PrefixExpression e) {
-      return null;
-    }
-    @Override Statement replacement(final VariableDeclarationFragment f) {
+    @Override ASTNode replacement(final N n) {
       return null;
     }
     @Override boolean scopeIncludes(final N n) {
@@ -260,6 +231,24 @@ public abstract class Wring<N extends ASTNode> {
     }
     @SuppressWarnings("static-method") protected boolean _eligible(@SuppressWarnings("unused") final PrefixExpression _) {
       return true;
+    }
+  }
+
+  static abstract class OfPostfixExpression extends Defaults<PostfixExpression> {
+    abstract Expression _replacement(final PostfixExpression e);
+    @Override final boolean eligible(final PostfixExpression e) {
+      assert scopeIncludes(e);
+      return _eligible(e);
+    }
+    abstract boolean _eligible(final PostfixExpression e);
+    @Override final boolean go(final ASTRewrite r, final PostfixExpression e) {
+      if (eligible(e))
+        r.replace(e, replacement(e), null);
+      return true;
+    }
+    @Override final Expression replacement(final PostfixExpression e) {
+      assert eligible(e);
+      return _replacement(e);
     }
   }
 
