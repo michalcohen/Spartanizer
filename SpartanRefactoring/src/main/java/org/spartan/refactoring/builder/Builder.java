@@ -37,7 +37,7 @@ public class Builder extends IncrementalProjectBuilder {
     return SPARTANIZATION_SHORT_PREFIX;
   }
   /** the ID under which this builder is registered */
-  public static final String BUILDER_ID = "org.spartan.refactoring.builder.Builder";
+  public static final String BUILDER_ID = "org.spartan.refactoring.BuilderID";
   private static final String MARKER_TYPE = "org.spartan.refactoring.spartanizationSuggestion";
   /**
    * the key in the marker's properties map under which the type of the

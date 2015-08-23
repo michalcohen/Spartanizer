@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="org.spartan.refactoring.builder.Builder"
+         id="BuilderID"
          name="Spartanization Checker"
          point="org.eclipse.core.resources.builders">
       <builder
@@ -13,16 +13,17 @@
       </builder>
    </extension>
    <extension
-         id="org.spartan.refactoring.builder.Nature"
+         id="NatureID"
          name="Spartanization Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.spartan.refatoring.builder.Nature">
+         
+               class="org.spartan.refactoring.builder.Nature">
          </run>
       </runtime>
       <builder
-            id="org.spartan.refactoring.builder.Builder">
+            id="org.spartan.refactoring.BuilderID">
       </builder>
    </extension>
 <extension
@@ -45,19 +46,19 @@
    <extension
       point="org.eclipse.ui.editors.markerAnnotationSpecification">
    <specification
-         annotationType="org.spartan.spartanizationMarker"
-         colorPreferenceKey="org.spartan.spartanizationMarker.color"
+         annotationType="org.spartan.refactoring.spartanizationMarker"
+         colorPreferenceKey="org.spartan.refactoring.spartanizationMarker.color"
          colorPreferenceValue="0,0,180"
          contributesToHeader="false"
          includeOnPreferencePage="true"
          label="Spartanization Suggestion"
-         overviewRulerPreferenceKey="org.spartan.spartanizationMarker.overview"
+         overviewRulerPreferenceKey="org.spartan.refactoring.spartanizationMarker.overview"
          overviewRulerPreferenceValue="true"
          presentationLayer="0"
-         textPreferenceKey="org.spartan.spartanizationMarker.text"
+         textPreferenceKey="org.spartan.refactoring.spartanizationMarker.text"
          textPreferenceValue="true"
          textStylePreferenceValue="PROBLEM_UNDERLINE"
-         verticalRulerPreferenceKey="org.spartan.spartanizationMarker.ruler"
+         verticalRulerPreferenceKey="org.spartan.refactoring.spartanizationMarker.ruler"
          verticalRulerPreferenceValue="true">
    </specification>
 </extension>
@@ -136,6 +137,10 @@
             commandId="org.spartan.refactoring.commands.ConvertToTernary">
       </handler>
       <handler
+            class="org.spartan.refactoring.handlers.ShortestOperandHandler"
+            commandId="org.spartan.refactoring.commands.ShortestOperand">
+      </handler>
+      <handler
             class="org.spartan.refactoring.handlers.ExtractMethodHandler"
             commandId="org.spartan.refactoring.commands.ExtractMethod">
       </handler>
@@ -148,12 +153,78 @@
             commandId="org.spartan.refactoring.commands.InlineSingleUse">
       </handler>
       <handler
+            class="org.spartan.refactoring.handlers.RedundantEqualityHandler"
+            commandId="org.spartan.refactoring.commands.RedundantEquality">
+      </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.ShortestBranchFirstHandler"
+            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
+      </handler>
+      <handler
             class="org.spartan.refactoring.handlers.CleanupHandler"
             commandId="org.spartan.refactoring.commands.Cleanup">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="org.spartan.menus.spartanization"
+               label="Spartanization"
+               mnemonic="S">
+            <command
+                  commandId="org.spartan.commands.ToggleCommand"
+                  id="org.spartan.menus.toggleCommand"
+                  label="Disable Spartanization Suggestions"
+                  mnemonic="S">
+               <visibleWhen>
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.spartan.Nature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="org.spartan.commands.ToggleCommand"
+                  id="org.spartan.menus.toggleCommand"
+                  label="Enable Spartanization Suggestions"
+                  mnemonic="S">
+               <visibleWhen>
+                  <not>
+                     <iterate
+                           ifEmpty="true"
+                           operator="and">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="org.spartan.Nature">
+                           </test>
+                        </adapt>
+                     </iterate>
+                  </not>
+               </visibleWhen>
+            </command>
+            <visibleWhen>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?before=navigate">
          <menu
@@ -164,6 +235,16 @@
                <command
                      commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
                      id="org.spartan.menus.ChangeReturnToDollarCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ConvertToTernary"
+                     id="org.spartan.menus.ConvertToTernaryCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ShortestOperand"
+                     id="org.spartan.menus.ShortestOperandCommand"
                      style="push">
                </command>
                <command
@@ -179,6 +260,16 @@
                <command
                      commandId="org.spartan.refactoring.commands.InlineSingleUse"
                      id="org.spartan.menus.InlineSingleUseCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.RedundantEquality"
+                     id="org.spartan.menus.RedundantEqualityCommand"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ShortestBranchFirst"
+                     id="org.spartan.menus.ShortestBranchFirstCommand"
                      style="push">
                </command>
                <command
