@@ -34,6 +34,6 @@ public final class IfReturnFooElseReturnBar extends Wring.OfIfStatement {
     return then == null || elze == null ? null : Subject.operand(Subject.pair(then, elze).toCondition(condition)).toReturn();
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return s != null && Extract.returnExpression(s.getThenStatement()) != null && Extract.returnExpression(s.getElseStatement()) != null;
+    return s != null && Extract.returnExpression(then(s)) != null && Extract.returnExpression(elze(s)) != null;
   }
 }

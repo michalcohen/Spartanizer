@@ -277,8 +277,8 @@ import org.spartan.utils.Range;
   private static ReturnStatement nextStatement(final List<Statement> ns, final int n) {
     return n + 1 >= ns.size() ? null : asReturnStatement(ns.get(n + 1));
   }
-  private static boolean noElse(final IfStatement i) {
-    return Is.empty(i.getElseStatement());
+  private static boolean noElse(final IfStatement s) {
+    return Is.empty(elze(s));
   }
   private static boolean possibleToReplace(final Assignment a, final List<VariableDeclarationFragment> frags) {
     final int i = findIndexOfAsgn(a.getLeftHandSide(), frags);
@@ -346,11 +346,11 @@ import org.spartan.utils.Range;
         || tryHandleOnlyNextAsgnExist(t, r, s, then, nextAsgn, prevDecl) //
         || tryHandleNoNextNoPrevAsgn(t, r, s, then, prevAsgn, nextAsgn, prevDecl);
   }
-  private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement i, final List<Statement> ss) {
-    if (!Is.return_(Extract.lastStatement(i.getThenStatement())))
+  private static boolean treatIfReturn(final AST t, final ASTRewrite r, final IfStatement s, final List<Statement> ss) {
+    if (!Is.return_(Extract.lastStatement(then(s))))
       return false;
-    final ReturnStatement nextRet = nextStatement(ss, ss.indexOf(i));
-    return nextRet != null && Is.singletonThen(i) && noElse(i) && rewriteIfToRetStmnt(t, r, i, nextRet);
+    final ReturnStatement nextRet = nextStatement(ss, ss.indexOf(s));
+    return nextRet != null && Is.singletonThen(s) && noElse(s) && rewriteIfToRetStmnt(t, r, s, nextRet);
   }
   private static boolean treatIfSameExpStmntOrRet(final AST t, final ASTRewrite r, final IfStatement ifStmt, final Statement thenStmnt, final Statement elseStmnt) {
     final List<Pair> diffList = differences(thenStmnt, elseStmnt);
@@ -435,9 +435,9 @@ import org.spartan.utils.Range;
   static Range detectIfReturn(final IfStatement i) {
     return Extract.statements(i.getParent()) == null ? null : detectIfReturn(i, Extract.statements(i.getParent()));
   }
-  static Range detectIfSameExpStmntOrRet(final IfStatement i) {
-    return hasNull(Extract.singleThen(i), Extract.singleElse(i), asBlock(i.getParent())) || !isDiffListValid(differences(i.getThenStatement(), i.getElseStatement())) ? null
-        : new Range(i);
+  static Range detectIfSameExpStmntOrRet(final IfStatement s) {
+    return hasNull(Extract.singleThen(s), Extract.singleElse(s), asBlock(s.getParent())) || !isDiffListValid(differences(then(s), elze(s))) ? null
+        : new Range(s);
   }
   static boolean perhapsAssignIfAssign(final AST t, final ASTRewrite r, final IfStatement i) {
     return asBlock(i.getParent()) != null && treatAssignIfAssign(t, r, i, siblings(i));

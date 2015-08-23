@@ -84,8 +84,7 @@ public class IfSomethingNoElseTest {
       assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
     }
     @Test public void isfStatementElseNotNull() {
-      final IfStatement i = asMe();
-      assertNotNull(i.getElseStatement());
+      assertNotNull(elze(asMe()));
     }
     @Test public void isIfStatement() {
       assertNotNull(asMe());

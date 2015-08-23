@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.Collection;
 
@@ -158,8 +158,8 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
         assertThat(Extract.nextIfStatement(asMe()), notNullValue());
       }
       @Test public void isfStatementElseIsEmpty() {
-        final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
-        assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
+        final IfStatement s = Extract.firstIfStatement(As.STATEMENTS.ast(input));
+        assertThat(Extract.statements(elze(s)).size(), is(0));
       }
       @Test public void isIfStatement() {
         assertThat(input, asMe(), notNullValue());
@@ -171,7 +171,7 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
         assertThat(Extract.statements(elze(s)).size(), is(0));
       }
       @Test public void noElse() {
-        assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
+        assertThat(Extract.statements(elze(asMe())).size(), is(0));
       }
   }
 }

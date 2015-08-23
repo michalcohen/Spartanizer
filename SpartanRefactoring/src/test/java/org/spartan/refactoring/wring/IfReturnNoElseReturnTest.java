@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.utils.Funcs.elze;
-
+import static org.spartan.refactoring.utils.Funcs.*;
 import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -173,10 +173,10 @@ public class IfReturnNoElseReturnTest {
         assertThat(Extract.statements(elze(s)).size(), is(0));
       }
       @Test public void noElse() {
-        assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
+        assertThat(Extract.statements(elze(asMe())).size(), is(0));
       }
       @Test public void thenIsSingleReturn() {
-        assertThat(Extract.returnStatement(asMe().getThenStatement()), notNullValue());
+        assertThat(Extract.returnStatement(then(asMe())), notNullValue());
       }
   }
 }
