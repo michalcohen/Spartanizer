@@ -54,7 +54,7 @@ import org.spartan.refactoring.utils.Is;
  * @since 2014-07-10
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "static-method", "javadoc" }) //
+@SuppressWarnings({ "static-method", "javadoc"}) //
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
   public static void assertNoChange(final String input) {
@@ -94,12 +94,12 @@ public class TrimmerTest {
     assertEquals(from, wrapper.off(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
-      fail("Nothing done on " + from);
+      fail("Nothing done on "+ from);
     final String peeled = wrapper.off(unpeeled);
     if (peeled.equals(from))
-      assertNotEquals("No similification of " + from, from, peeled);
+      assertNotEquals("No similification of "+ from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+      assertNotEquals("Simpification of "+ from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
   static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
@@ -107,12 +107,12 @@ public class TrimmerTest {
     assertEquals(from, w.off(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
-      fail("Nothing done on " + from);
+      fail("Nothing done on "+ from);
     final String peeled = w.off(unpeeled);
     if (peeled.equals(from))
-      assertNotEquals("No similification of " + from, from, peeled);
+      assertNotEquals("No similification of "+ from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+      assertNotEquals("Simpification of "+ from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
   static int countOppportunities(final Spartanization s, final File f) {
@@ -311,6 +311,45 @@ public class TrimmerTest {
   @Test public void compareWithBoolean9() {
     assertSimplifiesTo("true != true", "false");
   }
+  @Test public void comparison01() {
+    assertNoChange("1+2+3<3");
+  }
+  @Test public void comparison02() {
+    assertNoChange("f(2)<a");
+  }
+  @Test public void comparison03() {
+    assertNoChange("this==null");
+  }
+  @Test public void comparison04() {
+    assertSimplifiesTo("6-7<2+1","6-7<1+2");
+  }
+  @Test public void comparison05() {
+    assertNoChange("a==11");
+  }
+  @Test public void comparison06() {
+    assertNoChange("1<102333");
+  }
+  @Test public void comparison07() {
+    assertNoChange("1+2+s<3");
+  }
+  @Test public void comparison08() {
+    assertNoChange("a==this");
+  }
+  @Test public void comparison09() {
+    assertSimplifiesTo("1+2<3&7+4>2+1","1+2<3&4+7>1+2");
+  }
+  @Test public void comparison10() {
+    assertNoChange("1+2+3<3-4");
+  }
+  @Test public void comparison11() {
+    assertSimplifiesTo("12==this","this==12");
+  }
+  @Test public void comparison12() {
+    assertSimplifiesTo("1+2<3&7+4>2+1||6-7<2+1","1+2<3&4+7>1+2||6-7<1+2");
+  }
+  @Test public void comparison13() {
+    assertNoChange("13455643294<22");
+  }
   @Test public void compreaeExpressionToExpression() {
     assertSimplifiesTo("6 - 7 < 2 + 1   ", "6 -7 < 1 + 2");
   }
@@ -328,40 +367,40 @@ public class TrimmerTest {
   }
   @Ignore @Test public void forwardDeclaration1() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 6;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ",
-        "  /*    * This is a comment    */      int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
+        " /*    * This is a comment    */      int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
   }
   @Ignore @Test public void forwardDeclaration2() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 6, h = 7;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ",
-        "  /*    * This is a comment    */      int h = 7;   int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
+        " /*    * This is a comment    */      int h = 7;   int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
   }
   @Ignore @Test public void forwardDeclaration3() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   yada3(i);   yada3(i+m); ",
-        "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   yada3(i);   yada3(i+m); ");
+        " /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   yada3(i);   yada3(i+m); ");
   }
   @Ignore @Test public void forwardDeclaration4() {
     assertSimplifiesTo(
-        "  /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ",
-        "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ");
+        " /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ",
+        " /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ");
   }
   @Ignore @Test public void forwardDeclaration5() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ",
-        "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int i = yada3(0);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
+        " /*    * This is a comment    */      int j = 3;   int k = j+2;   int i = yada3(0);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
   }
   @Ignore @Test public void forwardDeclaration6() {
     assertSimplifiesTo(
-        "  /*    * This is a comment    */      int i = yada3(0);   int h = 8;   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ",
-        "  /*    * This is a comment    */      int h = 8;   int i = yada3(0);   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
+        " /*    * This is a comment    */      int i = yada3(0);   int h = 8;   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ",
+        " /*    * This is a comment    */      int h = 8;   int i = yada3(0);   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
   }
   @Ignore @Test public void forwardDeclaration7() {
     assertSimplifiesTo(
-        "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
-        "   j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
+        "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
+        "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
   }
   @Test public void ifFunctionCall() {
-    assertConvertsTo("if (x) f(a); else f(b);", " f(x ? a: b);");
+    assertConvertsTo("if (x) f(a); else f(b);", "f(x ? a: b);");
   }
   @Test public void ifPlusPlusPost() {
-    assertConvertsTo("if (x) a++; else b++;","if(x)++a;else++b;");
+    assertConvertsTo("if (x) a++; else b++;", "if(x)++a;else++b;");
   }
   @Test public void ifPlusPlusPostExpression() {
     assertNoChange("x? a++:b++");
@@ -374,43 +413,43 @@ public class TrimmerTest {
   }
   @Ignore @Test public void inlineSingleUse01() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ",
-        "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (yada3(0))); ");
+        " /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (yada3(0))); ");
   }
   @Ignore @Test public void inlineSingleUse02() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 5,j=3;   int k = j+2;   int m = k + j -19 +i;   yada3(k); ",
-        "  /*    * This is a comment    */      int j=3;   int k = j+2;   int m = k + j -19 +(5);   yada3(k); ");
+        " /*    * This is a comment    */      int j=3;   int k = j+2;   int m = k + j -19 +(5);   yada3(k); ");
   }
   @Ignore @Test public void inlineSingleUse03() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 5;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ",
-        "  /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (5)); ");
+        " /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (5)); ");
   }
   @Ignore @Test public void inlineSingleUse04() {
     assertSimplifiesTo("int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ",
-        "  final BlahClass b = new BlahClass((6));   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ");
+        " final BlahClass b = new BlahClass((6));   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ");
   }
   @Ignore @Test public void inlineSingleUse05() {
     assertSimplifiesTo("int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   yada3(y+x);   yada3(y*x); ",
-        "  int x = 6;   int y = 2+(new BlahClass(x)).j;   yada3(y+x);   yada3(y*x); ");
+        " int x = 6;   int y = 2+(new BlahClass(x)).j;   yada3(y+x);   yada3(y*x); ");
   }
   @Ignore @Test public void inlineSingleUse06() {
     assertNoChange(
-        "    final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     for (final Integer pi : outdated)      coes.remove(pi);     System.out.println(coes.size()); ");
+        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     for (final Integer pi : outdated)      coes.remove(pi);     System.out.println(coes.size()); ");
   }
   @Test public void inlineSingleUse07() {
     assertNoChange(
-        "    final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size()); ");
+        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size()); ");
   }
   @Test public void inlineSingleUse08() {
     assertNoChange(
-        "    final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size());     System.out.println(outdated.size()); ");
+        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size());     System.out.println(outdated.size()); ");
   }
   @Test public void inlineSingleUse09() {
     assertNoChange(
-        "  final Application a = new DuplicateCurrent().new Application(&quot;{\nABRA\n{\nCADABRA\n{&quot;);   assertEquals(5, a.new Context().lineCount());   final PureIterable&lt;Mutant&gt; ms = a.generateMutants();   assertEquals(2, count(ms));   final PureIterator&lt;Mutant&gt; i = ms.iterator();   assertTrue(i.hasNext());   assertEquals(&quot;{\nABRA\nABRA\n{\nCADABRA\n{\n&quot;, i.next().text);   assertTrue(i.hasNext());   assertEquals(&quot;{\nABRA\n{\nCADABRA\nCADABRA\n{\n&quot;, i.next().text);   assertFalse(i.hasNext());  ");
+        " final Application a = new DuplicateCurrent().new Application(&quot;{\nABRA\n{\nCADABRA\n{&quot;);   assertEquals(5, a.new Context().lineCount());   final PureIterable&lt;Mutant&gt; ms = a.generateMutants();   assertEquals(2, count(ms));   final PureIterator&lt;Mutant&gt; i = ms.iterator();   assertTrue(i.hasNext());   assertEquals(&quot;{\nABRA\nABRA\n{\nCADABRA\n{\n&quot;, i.next().text);   assertTrue(i.hasNext());   assertEquals(&quot;{\nABRA\n{\nCADABRA\nCADABRA\n{\n&quot;, i.next().text);   assertFalse(i.hasNext());  ");
   }
   @Test public void inlineSingleUse10() {
     assertNoChange(
-        "       final Application a = new Application(\"{\nABRA\n{\nCADABRA\n{\");        assertEquals(5, a.new Context().lineCount());        final PureIterable<Mutant> ms = a.mutantsGenerator();        assertEquals(2, count(ms));        final PureIterator<Mutant> i = ms.iterator();        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\nABRA\n{\nCADABRA\n{\n\", i.next().text);        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\n{\nCADABRA\nCADABRA\n{\n\", i.next().text);        assertFalse(i.hasNext());");
+        "      final Application a = new Application(\"{\nABRA\n{\nCADABRA\n{\");        assertEquals(5, a.new Context().lineCount());        final PureIterable<Mutant> ms = a.mutantsGenerator();        assertEquals(2, count(ms));        final PureIterator<Mutant> i = ms.iterator();        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\nABRA\n{\nCADABRA\n{\n\", i.next().text);        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\n{\nCADABRA\nCADABRA\n{\n\", i.next().text);        assertFalse(i.hasNext());");
   }
   @Test public void isGreaterTrue() {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
@@ -650,13 +689,10 @@ public class TrimmerTest {
   @Test public void prefixToPosfixIncreementSimple() {
     assertSimplifiesTo("i++", "++i");
   }
-  @Test public void prefixToPostfixIncreement() {
-    assertConvertsTo("for (int i = 0; i < 100; i++) i++;", "for(int i=0;i<100;++i)++i;");
-  }
   @Test public void prefixToPostfixDecrement() {
     final String from = "for (int i = 0; i < 100;  i--)  i--;";
     final Statement s = s(from);
-    assertThat(s, iz("{" + from + "}"));
+    assertThat(s, iz("{"+ from + "}"));
     assertNotNull(s);
     final PostfixExpression e = Extract.findFirstPostfix(s);
     assertNotNull(e);
@@ -670,6 +706,9 @@ public class TrimmerTest {
     final Expression r = new PostfixToPrefix().replacement(e);
     assertThat(r, iz("--i"));
     assertConvertsTo(from, "for(int i=0;i<100;--i)--i;");
+  }
+  @Test public void prefixToPostfixIncreement() {
+    assertConvertsTo("for (int i = 0; i < 100; i++) i++;", "for(int i=0;i<100;++i)++i;");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -901,50 +940,50 @@ public class TrimmerTest {
   }
   @Ignore @Test public void reanmeReturnVariableToDollar01() {
     assertSimplifiesTo(
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ",
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   System.out.println($.j);   return $; ");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ",
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   System.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar02() {
     assertSimplifiesTo(
-        "  int res = blah.length();   if (blah.contains(0xDEAD))    return res * 2;   if (res % 2 ==0)    return ++res;   if (blah.startsWith(\"y\")) {    return yada3(res);   int x = res + 6;   if (x>1)    return res + x;   res -= 1;   return res; ",
-        "  int $ = blah.length();   if (blah.contains(0xDEAD))    return $ * 2;   if ($ % 2 ==0)    return ++$;   if (blah.startsWith(\"y\")) {    return yada3($);   int x = $ + 6;   if (x>1)    return $ + x;   $ -= 1;   return $; ");
+        " int res = blah.length();   if (blah.contains(0xDEAD))    return res * 2;   if (res % 2 ==0)    return ++res;   if (blah.startsWith(\"y\")) {    return yada3(res);   int x = res + 6;   if (x>1)    return res + x;   res -= 1;   return res; ",
+        " int $ = blah.length();   if (blah.contains(0xDEAD))    return $ * 2;   if ($ % 2 ==0)    return ++$;   if (blah.startsWith(\"y\")) {    return yada3($);   int x = $ + 6;   if (x>1)    return $ + x;   $ -= 1;   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar03() {
     assertSimplifiesTo(
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int x = blah.length()/2;   if (x==3)    return x;   x = yada3(res.j - x);   return x; ",
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = yada3(res.j - $);   return $; ");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int x = blah.length()/2;   if (x==3)    return x;   x = yada3(res.j - x);   return x; ",
+        " public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = yada3(res.j - $);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar04() {
-    assertNoChange("int res = 0;   String $ = blah + \" yada\";   yada3(res + $.length());   return res + $.length();");
+    assertNoChange("int res = 0;   String $ = blah + \"yada\";   yada3(res + $.length());   return res + $.length();");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar05() {
     assertSimplifiesTo(
-        "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println(res.j);   return res; ",
-        "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass($.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println($.j);   return $; ");
+        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println(res.j);   return res; ",
+        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass($.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar06() {
     assertSimplifiesTo(
-        "   j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass res = new BlahClass(r.j);     return res.j + 1;   System.out.println(res.j); ",
-        "   j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass $ = new BlahClass(r.j);     return $.j + 1;   System.out.println(res.j); ");
+        "  j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass res = new BlahClass(r.j);     return res.j + 1;   System.out.println(res.j); ",
+        "  j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass $ = new BlahClass(r.j);     return $.j + 1;   System.out.println(res.j); ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar07() {
     assertSimplifiesTo(
-        "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
-        "   j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println($.j);   return $; ");
+        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
+        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar08() {
     assertSimplifiesTo(
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return res; ",
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   if ($.j == 0)    return null;   System.out.println($.j);   return $; ");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return res; ",
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   if ($.j == 0)    return null;   System.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar09() {
     assertNoChange(
-        "  public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return null;");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return null;");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar10() {
     assertSimplifiesTo(
-        " @Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ",
-        " @Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization $ = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ");
+        "@Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization s = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ",
+        "@Override public IMarkerResolution[] getResolutions(final IMarker m) {   try {    final Spartanization $ = All.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY)); ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar11() {
     assertNoChange("");
@@ -968,27 +1007,27 @@ public class TrimmerTest {
         "if(!s.equals(0xDEAD))if(s.charAt(i)=='d')res-=1;else{int res=0;for(int i=0;i<s.length();++i)if(s.charAt(i)=='a')res+=2;}");
   }
   @Test public void shortestIfBranchFirst01() {
-    assertConvertsTo("" //
-        + "if (s.equals(0xDEAD))   {\n" //
-        + "  int res=0; "//
-        + "  for (int i=0; i<s.length(); ++i)     " //
-        + "  if (s.charAt(i)=='a')      " //
-        + "    res += 2;    "//
-        + "} " //
-        + "else " //
-        + " if (s.charAt(i)=='d') " //
-        + "   res -= 1;  " //
-        + "return res;  " //
+    assertConvertsTo(""//
+        + "if (s.equals(0xDEAD))   {\n"//
+        + " int res=0; "//
+        + " for (int i=0; i<s.length(); ++i)     "//
+        + " if (s.charAt(i)=='a')      "//
+        + "   res += 2;    "//
+        + "} "//
+        + "else "//
+        + "if (s.charAt(i)=='d') "//
+        + "  res -= 1;  "//
+        + "return res;  "//
         ,
         ""//
-            + "if (!s.equals(0xDEAD))" //
-            + " if(s.charAt(i)=='d')" //
-            + " res-=1;" //
+            + "if (!s.equals(0xDEAD))"//
+            + "if(s.charAt(i)=='d')"//
+            + "res-=1;"//
             + "else {"//
-            + " int res=0;" //
-            + "  for(int i=0;i<s.length();++i)" //
-            + "   if(s.charAt(i)=='a')"//
-            + "     res+=2;" //
+            + "int res=0;"//
+            + " for(int i=0;i<s.length();++i)"//
+            + "  if(s.charAt(i)=='a')"//
+            + "    res+=2;"//
             + "}"//
             + "return res;");
   }
@@ -999,22 +1038,22 @@ public class TrimmerTest {
     assertConvertsTo("return (2 > 2 + a) == true;", "return 2>a+2;");
   }
   @Test public void shortestOperand13a() {
-    assertSimplifiesTo(" (2 > 2 + a) == true", " 2>a+2 ");
+    assertSimplifiesTo("(2 > 2 + a) == true", "2>a+2 ");
   }
   @Test public void shortestOperand13b() {
-    assertSimplifiesTo(" (2) == true", " 2 ");
+    assertSimplifiesTo("(2) == true", "2 ");
   }
   @Test public void shortestOperand13c() {
-    assertSimplifiesTo(" 2 == true", " 2 ");
+    assertSimplifiesTo("2 == true", "2 ");
   }
   @Test public void shortestOperand14() {
     assertNoConversion("Integer t = new Integer(5);   return (t.toString() == null);    ");
   }
   @Test public void shortestOperand15() {
-    assertNoConversion("String t = \"Bob \" + \"Wants \" + \"To \" + \"Sleep \";   return (\"right now...\" + t);    ");
+    assertNoConversion("String t = Bob + Wants + To + \"Sleep \";   return (right_now + t);    ");
   }
   @Test public void shortestOperand16() {
-    assertNoConversion("String t = Z2;   t = t.concat(\"a\").concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
+    assertNoConversion("String t = Z2;   t = t.concat(A).concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
   }
   @Test public void shortestOperand19() {
     assertNoConversion("SomeClass a;   return k.get().operand() ^ a.get(); ");
@@ -1047,7 +1086,7 @@ public class TrimmerTest {
     assertNoConversion("return f(a,b,c,d) || f();     }");
   }
   @Test public void shortestOperand37() {
-    assertNoChange("return sansJavaExtension(f) + n + \".\" + extension(f);");
+    assertNoChange("return sansJavaExtension(f) + n + \".\"+ extension(f);");
   }
   @Test public void shortestOperandFarStringLiteral() {
     assertNoChange("");
@@ -1135,7 +1174,7 @@ public class TrimmerTest {
     assertSimplifiesTo("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1", "1+2 <3&4+7>1+2||6-7<1+2");
   }
   @Test public void sortAddition2() {
-    assertNoChange(" 6 - 7 < 1 + 2");
+    assertNoChange("6 - 7 < 1 + 2");
   }
   @Test public void sortAddition4() {
     assertSimplifiesTo("a + 11 + 2 < 3 & 7 + 4 > 2 + 1", "a + 2 + 11 < 3 & 4+7  >1+2");
@@ -1147,14 +1186,14 @@ public class TrimmerTest {
     assertSimplifiesTo("a*2", "2*a");
   }
   @Test public void ternarize05() {
-    assertConvertsTo("  int res = 0; " //
+    assertConvertsTo(" int res = 0; "//
         + "if (s.equals(532))    "//
-        + "res += 6;   " //
+        + "res += 6;   "//
         + "else    "//
         + "res += 9;      ", "int res=0;res+=s.equals(532)?6:9;");
   }
   @Test public void ternarize05a() {
-    assertConvertsTo("  int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ",
+    assertConvertsTo(" int res = 0; "+ "if (s.equals(532))    "+ "res += 6;   "+ "else    "+ "res += 9;      "+ "return res; ",
         "int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
@@ -1163,8 +1202,8 @@ public class TrimmerTest {
   }
   @Test public void ternarize10() {
     assertConvertsTo("String res = s, foo = bar;   "//
-        + "if (res.equals(532)==true)    " + //
-        " res = s + 0xABBA;   " //
+        + "if (res.equals(532)==true)    "+ //
+        "res = s + 0xABBA;   "//
         + "System.out.println(res); ", "String res=s,foo=bar;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize12() {
@@ -1188,22 +1227,22 @@ public class TrimmerTest {
     assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
   }
   @Test public void ternarize21a() {
-    assertNoConversion("    if (s.equals(\"yada\")){\n" + //
-        "      System.out.println(\"g\");\n" + //
-        "    } else {\n" + //
-        "      System.out.append(\"k\");\n" + //
-        "    }");
+    assertNoConversion("   if (s.equals(\"yada\")){\n"+ //
+        "     System.out.println(\"g\");\n"+ //
+        "   } else {\n"+ //
+        "     System.out.append(\"k\");\n"+ //
+        "   }");
   }
   @Test public void ternarize22() {
     assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
   }
   @Test public void ternarize22test() {
-    assertConvertsTo("    int a=0;\n" + //
-        "    if (s.equals(\"yada\")){\n" + //
-        "      System.console();\n" + //
-        "    } else {\n" + //
-        "      a=3;\n" + //
-        "    }\n" + //
+    assertConvertsTo("   int a=0;\n"+ //
+        "   if (s.equals(\"yada\")){\n"+ //
+        "     System.console();\n"+ //
+        "   } else {\n"+ //
+        "     a=3;\n"+ //
+        "   }\n"+ //
         "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void ternarize26() {
@@ -1228,56 +1267,62 @@ public class TrimmerTest {
   }
   @Test public void ternarize42() {
     assertNoConversion(
-        "  int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else{          b = a;          b=3;     else       if (b == 3)         b = 2;       else{         b = a*a;         b=3; ");
+        " int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else{          b = a;          b=3;     else       if (b == 3)         b = 2;       else{         b = a*a;         b=3; ");
   }
   @Test public void ternarize45() {
     assertNoConversion("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize46() {
     assertConvertsTo(
-        "    int a , b=0;\n" + "    if (mode.equals(NG)==true)\n" + "      if (b==3){\n" + "        return 3;\n" + "      } else {\n" + "        a+=7;\n" + "      }\n"
-            + "    else\n" + "      if (b==3){\n" + "        return 2;\n" + "      } else {\n" + "        a=7;\n" + "      }",
+        "   int a , b=0;\n"+ "   if (mode.equals(NG)==true)\n"+ "     if (b==3){\n"+ "       return 3;\n"+ "     } else {\n"+ "       a+=7;\n"+ "     }\n"
+            + "   else\n"+ "     if (b==3){\n"+ "       return 2;\n"+ "     } else {\n"+ "       a=7;\n"+ "     }",
         "int a,b=0;if(mode.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
   }
   @Test public void ternarize48() {
     assertNoConversion(
-        "  int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
+        " int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
   }
   @Test public void ternarize49() {
     assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
   }
   @Test public void ternarize49a() {
     assertConvertsTo(
-        "     int size = 0;\n"//
-        + "    if (mode.equals(153)==true)\n"//
-        + "      for (int i=0; i < size; i++){\n"//
-        + "        System.out.println(HH);\n" + "      }\n"//
-        + "    else\n"//
-            + "      for (int i=0; i < size; i++){\n" + "        System.out.append('f');\n" + "      }",
-        "int size=0;"//
-            + "if(mode.equals(153))" + " for(int i=0;i<size;++i){" //
-            + "   System.out.println(HH);" + " } " //
+        ""//
+            + "    int size = 0;\n"//
+            + "   if (mode.equals(153)==true)\n"//
+            + "     for (int i=0; i < size; i++){\n"//
+            + "       System.out.println(HH);\n"//
+            + "     }\n"//
+            + "   else\n"//
+            + "     for (int i=0; i < size; i++){\n"//
+            + "       System.out.append('f');\n"//
+            + "     }",
+        ""//
+            + "int size=0;"//
+            + "if(mode.equals(153))"//
+            + "for(int i=0;i<size;++i){"//
+            + "  System.out.println(HH);"//
+            + "} "//
             + "else "//
-            + "   for(int i=0;i<size;++i){" //
-            + "     System.out.append('f');"
-            + "   }");
+            + "  for(int i=0;i<size;++i){"//
+            + "    System.out.append('f');"+ "  }");
   }
   @Test public void ternarize53() {
     assertConvertsTo("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;",
         "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;"//
-        );
+    );
   }
   @Test public void ternarize55() {
     assertConvertsTo(//
-        "if (key.equals(markColumn))\n" + //
-            "  to.put(key, a.toString());\n" + //
-            "else\n" + //
-            "   to.put(key, missing(key, a) ? Z2 : get(key, a));", //
+        "if (key.equals(markColumn))\n"+ //
+            " to.put(key, a.toString());\n"+ //
+            "else\n"+ //
+            "  to.put(key, missing(key, a) ? Z2 : get(key, a));", //
         "to.put(key,key.equals(markColumn)?a.toString():missing(key,a)?Z2:get(key,a));");
   }
   @Test public void ternarize56() {
     assertConvertsTo(
-        "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\" + target); progressBarCurrent.setValue(current * 100 / target);", //
+        "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\"+ target); progressBarCurrent.setValue(current * 100 / target);", //
         "if(target==0){progressBarCurrent.setString(X);progressBarCurrent.setValue(0);progressBarCurrent.setString(current+\"/\"+target);progressBarCurrent.setValue(100*current / target);");
   }
   @Test public void ternaryPushdownOfReciever() {
