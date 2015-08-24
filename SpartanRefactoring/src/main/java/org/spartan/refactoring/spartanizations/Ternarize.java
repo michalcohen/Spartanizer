@@ -80,7 +80,7 @@ import org.spartan.utils.Range;
         : f == null || f.getInitializer() != null ? new Range(a, i)
             : !occurences(f).in(new Expression[] { a.getRightHandSide() }).isEmpty() ? null : new Range(f, i);
   }
-  static Of occurences(SimpleName n) {
+  static Of occurences(final SimpleName n) {
     return Occurrences.BOTH_SEMANTIC.of(n);
   }
   static Of occurences(final VariableDeclarationFragment f) {
@@ -171,7 +171,6 @@ import org.spartan.utils.Range;
       $ = getVarDeclFrag(ns.get(ifIdx - 2), then.getLeftHandSide());
     else if (next == null && ifIdx >= 1)
       $ = getVarDeclFrag(ns.get(ifIdx - 1), then.getLeftHandSide());
-    // TODO: I do not think that this conditional will ever be true
     else if (next != null && ifIdx >= 1 && compatibleNames(then.getLeftHandSide(), next.getLeftHandSide()))
       $ = getVarDeclFrag(ns.get(ifIdx - 1), next.getLeftHandSide());
     return $;

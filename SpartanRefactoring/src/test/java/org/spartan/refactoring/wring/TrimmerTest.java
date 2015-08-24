@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -56,7 +57,7 @@ import org.spartan.refactoring.utils.Is;
  * @since 2014-07-10
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "static-method", "javadoc"}) //
+@SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
   public static void assertNoChange(final String input) {
@@ -101,12 +102,12 @@ public class TrimmerTest {
     assertEquals(from, wrapper.off(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
-      fail("Nothing done on "+ from);
+      fail("Nothing done on " + from);
     final String peeled = wrapper.off(unpeeled);
     if (peeled.equals(from))
-      assertNotEquals("No similification of "+ from, from, peeled);
+      assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of "+ from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
   static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
@@ -114,16 +115,13 @@ public class TrimmerTest {
     assertEquals(from, w.off(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
     if (wrap.equals(unpeeled))
-      fail("Nothing done on "+ from);
+      fail("Nothing done on " + from);
     final String peeled = w.off(unpeeled);
     if (peeled.equals(from))
-      assertNotEquals("No similification of "+ from, from, peeled);
+      assertNotEquals("No similification of " + from, from, peeled);
     if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of "+ from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
+      assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
-  }
-  static int countOppportunities(final Spartanization s, final File f) {
-    return countOppportunities(s, As.string(f));
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -240,8 +238,7 @@ public class TrimmerTest {
     assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
     assertFalse(Is.booleanLiteral(right(e)));
     assertFalse(Is.booleanLiteral(left(e)));
-    assertFalse(Is.booleanLiteral(right(e)) || Is.booleanLiteral(left(e)));
-    assertFalse(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS) && (Is.booleanLiteral(right(e)) || Is.booleanLiteral(left(e))));
+    assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
   }
   @Test public void comaprisonWithSpecific1() {
     assertSimplifiesTo("null != a", "a != null");
@@ -328,7 +325,7 @@ public class TrimmerTest {
     assertNoChange("this==null");
   }
   @Test public void comparison04() {
-    assertSimplifiesTo("6-7<2+1","6-7<1+2");
+    assertSimplifiesTo("6-7<2+1", "6-7<1+2");
   }
   @Test public void comparison05() {
     assertNoChange("a==11");
@@ -340,16 +337,16 @@ public class TrimmerTest {
     assertNoChange("a==this");
   }
   @Test public void comparison09() {
-    assertSimplifiesTo("1+2<3&7+4>2+1","1+2<3&4+7>1+2");
+    assertSimplifiesTo("1+2<3&7+4>2+1", "1+2<3&4+7>1+2");
   }
   @Test public void comparison10() {
     assertNoChange("1+2+3<3-4");
   }
   @Test public void comparison11() {
-    assertSimplifiesTo("12==this","this==12");
+    assertSimplifiesTo("12==this", "this==12");
   }
   @Test public void comparison12() {
-    assertSimplifiesTo("1+2<3&7+4>2+1||6-7<2+1","1+2<3&4+7>1+2||6-7<1+2");
+    assertSimplifiesTo("1+2<3&7+4>2+1||6-7<2+1", "1+2<3&4+7>1+2||6-7<1+2");
   }
   @Test public void comparison13() {
     assertNoChange("13455643294<22");
@@ -696,7 +693,7 @@ public class TrimmerTest {
   @Test public void prefixToPostfixDecrement() {
     final String from = "for (int i = 0; i < 100;  i--)  i--;";
     final Statement s = s(from);
-    assertThat(s, iz("{"+ from + "}"));
+    assertThat(s, iz("{" + from + "}"));
     assertNotNull(s);
     final PostfixExpression e = Extract.findFirstPostfix(s);
     assertNotNull(e);
@@ -1195,7 +1192,7 @@ public class TrimmerTest {
         + "res += 9;      ", "int res=0;res+=s.equals(532)?6:9;");
   }
   @Test public void ternarize05a() {
-    assertConvertsTo(" int res = 0; "+ "if (s.equals(532))    "+ "res += 6;   "+ "else    "+ "res += 9;      "+ "return res; ",
+    assertConvertsTo(" int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ",
         "int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
@@ -1204,7 +1201,7 @@ public class TrimmerTest {
   }
   @Test public void ternarize10() {
     assertConvertsTo("String res = s, foo = bar;   "//
-        + "if (res.equals(532)==true)    "+ //
+        + "if (res.equals(532)==true)    " + //
         "res = s + 0xABBA;   "//
         + "System.out.println(res); ", "String res=s,foo=bar;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
@@ -1229,22 +1226,28 @@ public class TrimmerTest {
     assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
   }
   @Test public void ternarize21a() {
-    assertNoConversion("   if (s.equals(\"yada\")){\n"+ //
-        "     System.out.println(\"g\");\n"+ //
-        "   } else {\n"+ //
-        "     System.out.append(\"k\");\n"+ //
+    assertNoConversion("   if (s.equals(\"yada\")){\n" + //
+        "     System.out.println(\"g\");\n" + //
+        "   } else {\n" + //
+        "     System.out.append(\"k\");\n" + //
         "   }");
   }
   @Test public void ternarize22() {
     assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
   }
-  @Test public void ternarize22test() {
-    assertConvertsTo("   int a=0;\n"+ //
-        "   if (s.equals(\"yada\")){\n"+ //
-        "     System.console();\n"+ //
-        "   } else {\n"+ //
-        "     a=3;\n"+ //
-        "   }\n"+ //
+  @Test public void comparisonWithCharacterConstant() {
+    assertSimplifiesTo("'d' == s.charAt(i)", "s.charAt(i)=='d'");
+  }
+  @Test public void delcartionIfAssignmentNotPlain() {
+    assertNoConversion("int a=0;   if (y) a+=3; ");
+  }
+  @Test public void a() {
+    assertConvertsTo("   int a=0;\n" + //
+        "   if (s.equals(\"yada\")){\n" + //
+        "     System.console();\n" + //
+        "   } else {\n" + //
+        "     a=3;\n" + //
+        "   }\n" + //
         "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void ternarize26() {
@@ -1276,13 +1279,12 @@ public class TrimmerTest {
   }
   @Test public void ternarize46() {
     assertConvertsTo(
-        "   int a , b=0;\n"+ "   if (mode.equals(NG)==true)\n"+ "     if (b==3){\n"+ "       return 3;\n"+ "     } else {\n"+ "       a+=7;\n"+ "     }\n"
-            + "   else\n"+ "     if (b==3){\n"+ "       return 2;\n"+ "     } else {\n"+ "       a=7;\n"+ "     }",
+        "   int a , b=0;\n" + "   if (mode.equals(NG)==true)\n" + "     if (b==3){\n" + "       return 3;\n" + "     } else {\n" + "       a+=7;\n" + "     }\n" + "   else\n"
+            + "     if (b==3){\n" + "       return 2;\n" + "     } else {\n" + "       a=7;\n" + "     }",
         "int a,b=0;if(mode.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
   }
   @Test public void ternarize48() {
-    assertNoConversion(
-        " int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
+    assertNoConversion(" int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
   }
   @Test public void ternarize49() {
     assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
@@ -1307,7 +1309,7 @@ public class TrimmerTest {
             + "} "//
             + "else "//
             + "  for(int i=0;i<size;++i){"//
-            + "    System.out.append('f');"+ "  }");
+            + "    System.out.append('f');" + "  }");
   }
   @Test public void ternarize53() {
     assertConvertsTo("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;",
@@ -1316,9 +1318,9 @@ public class TrimmerTest {
   }
   @Test public void ternarize55() {
     assertConvertsTo(//
-        "if (key.equals(markColumn))\n"+ //
-            " to.put(key, a.toString());\n"+ //
-            "else\n"+ //
+        "if (key.equals(markColumn))\n" + //
+            " to.put(key, a.toString());\n" + //
+            "else\n" + //
             "  to.put(key, missing(key, a) ? Z2 : get(key, a));", //
         "to.put(key,key.equals(markColumn)?a.toString():missing(key,a)?Z2:get(key,a));");
   }
@@ -1341,7 +1343,7 @@ public class TrimmerTest {
     assertThat(countOpportunities(new Trimmer(), u), is(2));
   }
   @Test public void useOutcontextToManageStringAmbiguity() {
-    assertSimplifiesTo("1+2+s<3","s+1+2<3");
+    assertSimplifiesTo("1+2+s<3", "s+1+2<3");
   }
   @Test public void vanillaShortestFirstConditionalNoChange() {
     assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");

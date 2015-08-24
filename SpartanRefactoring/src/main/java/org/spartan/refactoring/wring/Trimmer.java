@@ -41,28 +41,27 @@ public class Trimmer extends Spartanization {
    * @return the trimmed text
    */
   public static String fixedPoint(final String from) {
-    final Document d = new Document(from);
+    final Document $ = new Document(from);
     for (;;) {
-      final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
+      final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast($);
       final AST t = u.getAST();
       final ASTRewrite r = ASTRewrite.create(t);
       new Trimmer().fillRewrite(r, t, u, null);
       try {
         final TextEdit e = r.rewriteAST();
-        if (!e.hasChildren())
-          break;
         try {
-          e.apply(d);
+          e.apply($);
         } catch (MalformedTreeException | BadLocationException x) {
           x.printStackTrace();
-          break;
         }
+        if (e.getLength() == 0)
+          break;
       } catch (JavaModelException | IllegalArgumentException x) {
         x.printStackTrace();
-        break;
       }
+
     }
-    return d.get();
+    return $.get();
   }
   /**
    * Tries to union the given range with one of the elements inside the given
