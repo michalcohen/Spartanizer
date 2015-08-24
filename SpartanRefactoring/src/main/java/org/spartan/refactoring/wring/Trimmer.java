@@ -1,11 +1,11 @@
 package org.spartan.refactoring.wring;
 
+import static org.junit.Assert.assertNotNull;
 import static org.spartan.utils.Utils.removeDuplicates;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -41,27 +41,21 @@ public class Trimmer extends Spartanization {
    * @return the trimmed text
    */
   public static String fixedPoint(final String from) {
+    final Trimmer trimmer = new Trimmer();
     final Document $ = new Document(from);
     for (;;) {
-      final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast($);
-      final AST t = u.getAST();
-      final ASTRewrite r = ASTRewrite.create(t);
-      new Trimmer().fillRewrite(r, t, u, null);
+      final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast($.get());
+      final ASTRewrite r = trimmer.createRewrite(u, null);
+      final TextEdit e = r.rewriteAST($, null);
+      assertNotNull($);
       try {
-        final TextEdit e = r.rewriteAST();
-        try {
-          e.apply($);
-        } catch (MalformedTreeException | BadLocationException x) {
-          x.printStackTrace();
-        }
-        if (e.getLength() == 0)
-          break;
-      } catch (JavaModelException | IllegalArgumentException x) {
+        e.apply($);
+      } catch (final MalformedTreeException | IllegalArgumentException | BadLocationException x) {
         x.printStackTrace();
       }
-
+      if (!e.hasChildren())
+        return $.get();
     }
-    return $.get();
   }
   /**
    * Tries to union the given range with one of the elements inside the given

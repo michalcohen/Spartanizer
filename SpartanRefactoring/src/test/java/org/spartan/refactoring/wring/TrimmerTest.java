@@ -57,43 +57,32 @@ import org.spartan.refactoring.utils.Is;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
-  public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
-  public static void assertNoChange(final String input) {
-    assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
-  }
-  public static void assertNoConversion(final String input) {
-    assertSimilar(input, Wrap.Statement.off(apply(new Trimmer(), Wrap.Statement.on(input))));
-  }
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
   }
-  protected static int countOppportunities(final Spartanization s, final String input) {
-    return s.findOpportunities((CompilationUnit) As.COMPILIATION_UNIT.ast(input)).size();
-  }
-  static String apply(final Trimmer t, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    return TESTUtils.rewrite(t, u, d).get();
-  }
-  static String apply(final Wring<ASTNode> w, final String from) {
+  private static String apply(final Wring<? extends ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
     final Document d = new Document(from);
     assertNotNull(d);
     return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring", ""), u, d).get();
   }
-  static void assertConvertsTo(final String from, final String expected) {
+  private static void assertConvertsTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Statement);
   }
-  static void assertSimplifiesTo(final String from, final String expected) {
+  private static void assertNoChange(final String input) {
+    assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
+  }
+  private static void assertNoConversion(final String input) {
+    assertSimilar(input, Wrap.Statement.off(apply(new Trimmer(), Wrap.Statement.on(input))));
+  }
+  private static void assertSimplifiesTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Expression);
   }
-  static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> wring, final Wrap wrapper) {
+  private static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> wring, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
     assertEquals(from, wrapper.off(wrap));
-    final String unpeeled = apply(new Trimmer(), wrap);
+    final String unpeeled = apply(wring, wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
     final String peeled = wrapper.off(unpeeled);
@@ -103,7 +92,7 @@ public class TrimmerTest {
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
+  private static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
     final String wrap = w.on(from);
     assertEquals(from, w.off(wrap));
     final String unpeeled = apply(new Trimmer(), wrap);
@@ -116,6 +105,13 @@ public class TrimmerTest {
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
+  static String apply(final Trimmer t, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(t, u, d).get();
+  }
   @Test public void a() {
     assertConvertsTo("   int a=0;\n" + //
         "   if (s.equals(\"yada\")){\n" + //
@@ -127,6 +123,28 @@ public class TrimmerTest {
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
+  }
+  @Test public void shortestOperand36() {
+    assertNoChange("f(a,b,c,d) ^ bob");
+  }
+  @Test public void actualExampleForSortAdditionInContext() {
+    final String from = "2 + a < b";
+    final String expected = "a + 2 < b";
+    final String from1 = from;
+    final String expected1 = expected;
+    final Wrap w = Wrap.Expression;
+    final String wrap = w.on(from1);
+    assertEquals(from1, w.off(wrap));
+    final Trimmer t = new Trimmer();
+    final String unpeeled = TrimmerTest.apply(t, wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from1);
+    final String peeled = w.off(unpeeled);
+    if (peeled.equals(from1))
+      assertNotEquals("No similification of " + from1, from1, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from1)))
+      assertNotEquals("Simpification of " + from1 + " is just reformatting", compressSpaces(peeled), compressSpaces(from1));
+    assertSimilar(expected1, peeled);
   }
   @Test public void bugIntroducingMISSINGWord1() {
     assertSimplifiesTo(//
@@ -370,6 +388,15 @@ public class TrimmerTest {
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
   }
+  @Test public void sequencerFirstInElse() {
+    assertConvertsTo(//
+        "    int res = 0;\n" + //
+            "    if (s.equals(532))\n" + //
+            "      res += 6;\n" + //
+            "    else {    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   \n" + "      return res;\n" + //
+            "    }",
+        "  int res = 0;res += (s.equals(532) ? 6 : 9);/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;");
+  }
   @Test public void emptyElse() {
     assertConvertsTo("if (x) b = 3; else ;", "if (x) b = 3;");
   }
@@ -504,6 +531,9 @@ public class TrimmerTest {
     final ASTNode replacement = s.replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
+  }
+  @Test public void linearTransformation() {
+    assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void literalVsLiteral() {
     assertNoChange("1 < 102333");
@@ -1048,6 +1078,11 @@ public class TrimmerTest {
   @Test public void shortestOperand02() {
     assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
   }
+  @Test public void shortestOperand05() {
+    assertNoConversion(//
+        "    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
+            "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";");
+  }
   @Test public void shortestOperand12() {
     assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
   }
@@ -1072,6 +1107,9 @@ public class TrimmerTest {
   @Test public void shortestOperand16() {
     assertNoConversion("String t = Z2;   t = t.concat(A).concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
   }
+  @Test public void shortestOperand17() {
+    assertSimplifiesTo("5 ^ a.getNum()", "a.getNum() ^ 5");
+  }
   @Test public void shortestOperand19() {
     assertNoConversion("SomeClass a;   return k.get().operand() ^ a.get(); ");
   }
@@ -1084,11 +1122,20 @@ public class TrimmerTest {
   @Test public void shortestOperand23() {
     assertNoConversion("return f() + \".\";     }");
   }
+  @Test public void shortestOperand24() {
+    assertNoChange("f(a,b,c,d) & 175 & 0");
+  }
+  @Test public void shortestOperand25() {
+    assertNoChange("f(a,b,c,d) & bob & 0 ");
+  }
   @Test public void shortestOperand27() {
     assertNoConversion("return f(a,b,c,d) + f(a,b,c) + f();     } ");
   }
   @Test public void shortestOperand28() {
     assertNoChange("return f(a,b,c,d) * f(a,b,c) * f();     } ");
+  }
+  @Test public void shortestOperand29() {
+    assertNoConversion("return f(a,b,c,d) ^ f() ^ 0; ");
   }
   @Test public void shortestOperand30() {
     assertNoConversion("return f(a,b,c,d) & f();     } ");
@@ -1102,14 +1149,14 @@ public class TrimmerTest {
   @Test public void shortestOperand33() {
     assertNoConversion("return f(a,b,c,d) || f();     }");
   }
+  @Test public void shortestOperand34() {
+    assertNoConversion("return f(a,b,c,d) + someVar; ");
+  }
   @Test public void shortestOperand37() {
     assertNoChange("return sansJavaExtension(f) + n + \".\"+ extension(f);");
   }
   @Test public void shortestOperandFarStringLiteral() {
     assertNoChange("");
-  }
-  @Test public void simplifiesTo() {
-    assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void simplifyBlockComplexEmpty() {
     final BlockSimplify wring = new BlockSimplify();
@@ -1215,6 +1262,10 @@ public class TrimmerTest {
     assertConvertsTo("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ", //
         "String res=s;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
   }
+  @Test public void ternarize09() {
+    assertConvertsTo("if (s.equals(532)) {    return 6;}else {    return 9;}", //
+        "return s.equals(532)?6:9; ");
+  }
   @Test public void ternarize10() {
     assertConvertsTo("String res = s, foo = bar;   "//
         + "if (res.equals(532)==true)    " + //
@@ -1312,6 +1363,9 @@ public class TrimmerTest {
             + "  for(int i=0;i<size;++i){"//
             + "    System.out.append('f');" + "  }");
   }
+  @Test public void ternarize52() {
+    assertNoConversion("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {    c = d;c = e;");
+  }
   @Test public void ternarize53() {
     assertConvertsTo("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;",
         "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;"//
@@ -1334,12 +1388,14 @@ public class TrimmerTest {
     assertSimplifiesTo("a ? b.f():c.f()", "(a?b:c).f()");
   }
   @Test public void testPeel() {
+    final String example = "on * notion * of * no * nothion != the * plain + kludge";
     assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));
   }
   @Test public void twoMultiplication1() {
     assertSimplifiesTo("f(a,b,c,d) * f()", "f() * f(a,b,c,d)");
   }
   @Test public void twoOpportunityExample() {
+    final String example = "on * notion * of * no * nothion != the * plain + kludge";
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
     assertThat(countOpportunities(new Trimmer(), u), is(2));
   }
