@@ -25,8 +25,6 @@ import static org.spartan.refactoring.utils.Into.s;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
-import java.io.File;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -62,11 +60,6 @@ public class TrimmerTest {
   public static final String example = "on * notion * of * no * nothion != the * plain + kludge";
   public static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
-  }
-  @Test public void chainComparison() {
-    final InfixExpression e = i("a == true == b == c");
-    assertEquals("c", right(e).toString());
-    assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   public static void assertNoConversion(final String input) {
     assertSimilar(input, Wrap.Statement.off(apply(new Trimmer(), Wrap.Statement.on(input))));
@@ -122,6 +115,15 @@ public class TrimmerTest {
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
+  }
+  @Test public void a() {
+    assertConvertsTo("   int a=0;\n" + //
+        "   if (s.equals(\"yada\")){\n" + //
+        "     System.console();\n" + //
+        "   } else {\n" + //
+        "     a=3;\n" + //
+        "   }\n" + //
+        "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -217,6 +219,11 @@ public class TrimmerTest {
   }
   @Test public void bugOfMissingTry() {
     assertSimplifiesTo("!(A && B && C && true && D)", "!A||!B||!C||false||!D");
+  }
+  @Test public void chainComparison() {
+    final InfixExpression e = i("a == true == b == c");
+    assertEquals("c", right(e).toString());
+    assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   @Test public void chainCOmparisonTrueLast() {
     assertSimplifiesTo("a == b == c == true", "a == b == c");
@@ -351,8 +358,14 @@ public class TrimmerTest {
   @Test public void comparison13() {
     assertNoChange("13455643294<22");
   }
+  @Test public void comparisonWithCharacterConstant() {
+    assertSimplifiesTo("'d' == s.charAt(i)", "s.charAt(i)=='d'");
+  }
   @Test public void compreaeExpressionToExpression() {
     assertSimplifiesTo("6 - 7 < 2 + 1   ", "6 -7 < 1 + 2");
+  }
+  @Test public void delcartionIfAssignmentNotPlain() {
+    assertNoConversion("int a=0;   if (y) a+=3; ");
   }
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
@@ -1032,6 +1045,9 @@ public class TrimmerTest {
             + "}"//
             + "return res;");
   }
+  @Test public void shortestOperand02() {
+    assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
+  }
   @Test public void shortestOperand12() {
     assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
   }
@@ -1234,21 +1250,6 @@ public class TrimmerTest {
   }
   @Test public void ternarize22() {
     assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
-  }
-  @Test public void comparisonWithCharacterConstant() {
-    assertSimplifiesTo("'d' == s.charAt(i)", "s.charAt(i)=='d'");
-  }
-  @Test public void delcartionIfAssignmentNotPlain() {
-    assertNoConversion("int a=0;   if (y) a+=3; ");
-  }
-  @Test public void a() {
-    assertConvertsTo("   int a=0;\n" + //
-        "   if (s.equals(\"yada\")){\n" + //
-        "     System.console();\n" + //
-        "   } else {\n" + //
-        "     a=3;\n" + //
-        "   }\n" + //
-        "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
   }
   @Test public void ternarize26() {
     assertNoConversion("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ");

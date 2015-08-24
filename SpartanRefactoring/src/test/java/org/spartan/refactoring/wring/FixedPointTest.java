@@ -135,92 +135,82 @@ public class FixedPointTest {
   @Test public void shortestIfBranchFirst03b() {
     assertConvertsTo(
         "    if (s.length() > 6) {\n" + //
-        "      int res = 0;\n" + //
-        "      for (int i = 0; i < s.length(); ++i)\n" + //
-        "        if ('a' == s.charAt(i))\n" + //
-        "          res += 2;\n" + //
-        "        else if ('d' == s.charAt(i))\n" + //
-        "          res -= 1;\n" + //
-        "      return res;\n" + //
-        "    }\n" +
-        "    return 8;", //
+            "      int res = 0;\n" + //
+            "      for (int i = 0; i < s.length(); ++i)\n" + //
+            "        if ('a' == s.charAt(i))\n" + //
+            "          res += 2;\n" + //
+            "        else if ('d' == s.charAt(i))\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "    }\n" + "    return 8;", //
         "  if (s.length() > 6) {\n" + //
-        "      int res = 0;\n" + //
-        "      for (int i = 0;i < s.length();++i)\n" + //
-        "  if (s.charAt(i) == 'a')\n" + //
-        "          res += 2;\n" + //
-        "        else if (s.charAt(i) == 'd')\n" + //
-        "          res -= 1;\n" + //
-        "      return res;\n" + //
-        "    }\n" + //
-        "    return 8;");
-
-
+            "      int res = 0;\n" + //
+            "      for (int i = 0;i < s.length();++i)\n" + //
+            "  if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "    }\n" + //
+            "    return 8;");
   }
   @Test public void shortestIfBranchFirst04() {
     assertConvertsTo(
-        "  if (s.length()>=6) {    int res=0;for (int i=0;i<s.length();i++)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;else {    return 8;",
-        "  if (s.length() < 6) {    return 8;int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;");
-  }
-  @Test public void shortestIfBranchFirst05() {
-    assertConvertsTo(
-        "  if (s.length()<6) {    int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;else {    return 8;",
-        "  if (s.length() >= 6) {    return 8;int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;");
-  }
-  @Test public void shortestIfBranchFirst06() {
-    assertConvertsTo(
-        "  if (s.length()<=6) {    int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;else {    return 8;",
-        "  if (s.length() > 6) {    return 8;int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;");
-  }
-  @Test public void shortestIfBranchFirst07() {
-    assertConvertsTo(
-        "  if (s.length()==6) {    int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;else {    return 8;",
-        "  if (s.length() != 6) {    return 8;int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;");
-  }
-  @Test public void shortestIfBranchFirst08() {
-    assertConvertsTo(
-        "  if (s.length()!=6) {    int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;else {    return 8;",
-        "  if (s.length() == 6) {    return 8;int res=0;for (int i=0;i<s.length();++i)  if (s.charAt(i)=='a')      res += 2;else if (s.charAt(i)=='d')      res -= 1;return res;");
+        "    String s;\n" + //
+            "    if (s.length() >= 6) {\n" + //
+            "      int res = 0;\n" + //
+            "      for (int i = 0; i < s.length(); i++)\n" + //
+            "        if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "    } else {\n" + //
+            "      return 8;\n" + //
+            "    }",
+        "     String s;\n" + //
+            "    if (s.length() >= 6) {\n" + //
+            "      int res = 0;\n" + //
+            "      for (int i = 0; i < s.length(); i++)\n" + //
+            "        if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "    }\n" + //
+            "    return 8;");
   }
   @Test public void shortestIfBranchFirst09() {
     assertSimplifiesTo("s.equals(532) ? 9 * yada3(s.length()) : 6 ", "!s.equals(532)?6:9*yada3(s.length())");
   }
   @Test public void shortestIfBranchFirst10() {
-    assertSimplifiesTo(
+    assertConvertsTo(
         "      for (final String s : contents.split(\"\\n\"))\n" + "  if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {\n" + //
             "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
             "          foundPackage = true;\n" + //
             "        } else\n" + //
             "          $.append(replaceClassName(s, className, newClassName) + \"\\n\");\n" + //
             "      return asString($);",
-        "      for (final String s : contents.split(\"\\n\"))\n" + //
-            "  if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n" + //
-            "          $.append(replaceClassName(s, className, newClassName) " + //
-            " \"\\n\");\n" + //
-            "        else {\n" + "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
-            "          foundPackage = true;\n" + //
-            "        }\n" + //
-            "      return asString($);");
+        "    for (final String s : contents.split(\"\\n\"))\n" + "      if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n"
+            + "        $.append(replaceClassName(s, className, newClassName) + \"\\n\");\n" + "      else {\n"
+            + "        $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + "        foundPackage = true;\n" + "      }\n" + "    return asString($);");
   }
   @Test public void shortestIfBranchFirst11() {
-    assertConvertsTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
+    assertSimplifiesTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
         "   (!(b != null) || !(b.getNodeType() == ASTNode.BLOCK) ? b : getBlockSingleStmnt((Block) b)) ");
   }
   @Test public void shortestIfBranchFirst12() {
-    assertSimplifiesTo("if (FF() && TT()){    foo1();foo2();shorterFoo();", //
+    assertConvertsTo("if (FF() && TT()){    foo1();foo2();shorterFoo();", //
         "  if (!FF() || !TT()) {     shorterFoo();foo1();foo2();");
   }
   @Test public void shortestIfBranchFirst13() {
-    assertNoChange("int a=0;if (a > 0)    return 6;else {    int b=9;b*=b;return b;");
+    assertConvertsTo("int a=0;if (a > 0)    return 6;else {    int b=9;b*=b;return b;", "");
   }
   @Test public void shortestIfBranchFirst14() {
-    assertSimplifiesTo("int a=0;if (a > 0){    int b=9;b*=b;return 6;a = 5;return b;", "  int a=0;if (a <= 0){    a = 5;return b;int b=9;b*=b;return 6;");
+    assertConvertsTo("int a=0;if (a > 0){    int b=9;b*=b;return 6;a = 5;return b;", "  int a=0;if (a <= 0){    a = 5;return b;int b=9;b*=b;return 6;");
   }
   @Test public void shortestOperand01() {
-    assertSimplifiesTo("x + y > z", "z < x + y");
-  }
-  @Test public void shortestOperand02() {
-    assertConvertsTo("k = k + 4;if (2 * 6 + 4 == k) return true;", " k = k + 4;if (k == 2 * 6 + 4) return true;");
+    assertNoChange("x + y > z");
   }
   @Test public void shortestOperand03() {
     assertConvertsTo(//
@@ -296,8 +286,7 @@ public class FixedPointTest {
   }
   @Test public void ternarize02() {
     assertConvertsTo(//
-        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);",
-        "String res = (s.equals(532)==true ? s + 0xABBA : s);System.out.println(res);");
+        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", "String res = s.equals(532)ge ? s + 0xABBA : s);System.out.println(res);");
   }
   @Test public void ternarize03() {
     assertConvertsTo(//
@@ -310,8 +299,7 @@ public class FixedPointTest {
   }
   @Test public void ternarize06() {
     assertConvertsTo(//
-        "String res;res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);",
-        "String res = (s.equals(532) ? s + 0xABBA : s);System.out.println(res);");
+        "String res;res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", "String res = (s.equals(532) ? s + 0xABBA : s);System.out.println(res);");
   }
   @Test public void ternarize08() {
     assertConvertsTo("  int res = 0;if (s.equals(532)) {    res += 6;else {    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;",
@@ -383,10 +371,10 @@ public class FixedPointTest {
   @Test public void ternarize38() {
     assertNoChange("int a, b=0;if (b==3){    a+=2+r();a-=6;");
   }
-  @Test public void ternarize39() {
+  @Test public void bug0() {
     assertConvertsTo(//
         "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3)          b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
-        "int a, b;a = 3;b = 5;if (b == 3)          b = 2;else          b = (a == 4 ? a : a*a);");
+        "int a=3,b;b=5;if(a==4)b=b==3?2:a;else b=b==3?2:a*a;");
   }
   @Test public void ternarize40() {
     assertConvertsTo(//
@@ -425,7 +413,7 @@ public class FixedPointTest {
             "return s.replaceAll(delimiter(), ABC + delimiter());", //
         "if (s == null)\n" + //
             "  return Z2;\n" + //
-            "return  !s.contains(delimiter() ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
+            "return  !s.contains(delimiter()) ? s : s.replaceAll(delimiter(), ABC + delimiter()));"//
     );
   }
 }
