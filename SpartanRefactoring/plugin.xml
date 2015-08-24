@@ -164,9 +164,27 @@
             class="org.spartan.refactoring.handlers.CleanupHandler"
             commandId="org.spartan.refactoring.commands.Cleanup">
       </handler>
+      <handler
+            class="org.spartan.refactoring.handlers.ApplySpartanizationHandler"
+            commandId="org.spartan.refactoring.commands.ApplySpartanization">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+         
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="groove.toolbars.sampleToolbar">
+            <command
+                  commandId="org.spartan.refactoring.commands.ApplySpartanization"
+                  icon="res/Spartan.gif"
+                  tooltip="Apply Spartanization to this file!"
+                  id="org.spartan.refactoring.commands.ApplySpartanization">
+            </command>
+         </toolbar>
+      </menuContribution>
+      
       <menuContribution
             allPopups="true"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
@@ -277,6 +295,11 @@
                      id="org.spartan.menus.CleanupCommand"
                      style="push">
                </command>
+               <command
+                     commandId="org.spartan.refactoring.commands.ApplySpartanization"
+                     id="org.spartan.menus.ApplySpartanizationCommand"
+                     style="push">
+               </command>
             </menu>
          </menu>
       </menuContribution>
@@ -321,7 +344,8 @@
             <command
                      commandId="org.spartan.refactoring.commands.Cleanup"
                      style="push">
-               </command>
+            </command>
+
             <visibleWhen>
                <and>
                   <with
