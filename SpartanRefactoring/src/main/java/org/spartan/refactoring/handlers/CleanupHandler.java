@@ -5,8 +5,11 @@ import static org.spartan.refactoring.handlers.ApplySpartanizationHandler.applyS
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import javax.swing.ProgressMonitor;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IWorkbench;
@@ -27,12 +30,12 @@ public class CleanupHandler extends BaseHandler {
     super(null);
   }
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) {
+    final List<ICompilationUnit> compilationUnits = compilationUnits();
     final IWorkbench wb = PlatformUI.getWorkbench();
     final IProgressService ps = wb.getProgressService();
     try {
       ps.busyCursorWhile(new IRunnableWithProgress() {
         @Override public void run(final IProgressMonitor pm) {
-          final List<ICompilationUnit> compilationUnits = compilationUnits();
           pm.beginTask("Spartanizing", compilationUnits.size());
           for (final ICompilationUnit cu : compilationUnits) {
             applySafeSpartanizationsTo(cu);
