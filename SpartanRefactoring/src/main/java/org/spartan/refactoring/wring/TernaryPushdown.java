@@ -6,7 +6,8 @@ import static org.eclipse.jdt.core.dom.ASTNode.FIELD_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 

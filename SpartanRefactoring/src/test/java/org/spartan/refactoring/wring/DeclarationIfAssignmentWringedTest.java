@@ -15,7 +15,9 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Funcs.then;
 
@@ -52,6 +54,7 @@ import org.spartan.utils.Utils;
 @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<VariableDeclarationFragment> {
+  final static DeclarationIfAssginment WRING = new DeclarationIfAssginment();
   /** Description of a test case for {@link Parameter} annotation */
   protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
   private static String[][] cases = Utils.asArray(//
@@ -79,7 +82,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Parameter(2) public String expected;
   /** Instantiates the enclosing class ({@link Wringed}) */
   public DeclarationIfAssignmentWringedTest() {
-    super(DeclarationIfAssginmentTest.WRING);
+    super(WRING);
   }
   DeclarationIfAssignmentWringedTest(final Wring<VariableDeclarationFragment> inner) {
     super(inner);
@@ -145,7 +148,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final ASTRewrite r = ASTRewrite.create(f.getAST());
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
-    final ASTRewrite fillReplacement = DeclarationIfAssginmentTest.WRING.fillReplacement(f, r);
+    final ASTRewrite fillReplacement = WRING.fillReplacement(f, r);
     final boolean scopeIncludes = fillReplacement != null;
     assertThat(asMe().toString(), scopeIncludes, is(true));
   }

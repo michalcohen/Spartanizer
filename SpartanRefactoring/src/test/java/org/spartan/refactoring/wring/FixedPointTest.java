@@ -61,9 +61,7 @@ public class FixedPointTest {
         "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
         "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
   }
-  @Test public void declarationIfUsesLaterVariable() {
-    assertConvertsTo("int a=0, b=0;if (b==3)   a=4;", " int a = (b==3 ? 4 : 0), b=0; ");
-  }
+
   @Test public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
