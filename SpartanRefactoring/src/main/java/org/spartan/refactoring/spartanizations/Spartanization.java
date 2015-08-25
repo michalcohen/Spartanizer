@@ -219,8 +219,10 @@ public abstract class Spartanization extends Refactoring {
   }
   /**
    * Performs the current Spartanization on the provided compilation unit
+   *
    * @param cu the compilation to Spartanize
-   * @param pm progress monitor for long operations (could be {@link NullProgressMonitor} for light operations)
+   * @param pm progress monitor for long operations (could be
+   *          {@link NullProgressMonitor} for light operations)
    * @throws CoreException exception from the <code>pm</code>
    */
   public void performRule(final ICompilationUnit cu, final IProgressMonitor pm) throws CoreException {
@@ -233,7 +235,7 @@ public abstract class Spartanization extends Refactoring {
       textChange.perform(pm);
     pm.done();
   }
-  //TODO: Do not add new public methods without JavaDoc!
+  // TODO: Do not add new public methods without JavaDoc!
   protected void scanCompilationUnitForMarkerFix(final IMarker m, final IProgressMonitor pm, final boolean preview) throws CoreException {
     pm.beginTask("Creating change(s) for a single compilation unit...", 2);
     final ICompilationUnit u = As.iCompilationUnit(m);
@@ -264,12 +266,10 @@ public abstract class Spartanization extends Refactoring {
         for (final IJavaElement e : r.getChildren())
           if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
             $.addAll(Arrays.asList(((IPackageFragment) e).getCompilationUnits()));
-
     pm.done();
-    for(final ICompilationUnit i : $)
-      for(final IPackageDeclaration d : i.getPackageDeclarations())
+    for (final ICompilationUnit i : $)
+      for (final IPackageDeclaration d : i.getPackageDeclarations())
         System.out.println(d.getElementName());
-
     return $;
   }
   /**
@@ -313,8 +313,10 @@ public abstract class Spartanization extends Refactoring {
     this.compilationUnit = compilationUnit;
   }
   /**
-   * @param m marker which represents the range to apply the Spartanization within
-   * @param n the node which needs to be within the range of <code><b>m</b></code>
+   * @param m marker which represents the range to apply the Spartanization
+   *          within
+   * @param n the node which needs to be within the range of
+   *          <code><b>m</b></code>
    * @return True if the node is within range
    */
   public final boolean inRange(final IMarker m, final ASTNode n) {
@@ -378,16 +380,25 @@ public abstract class Spartanization extends Refactoring {
       }
     };
   }
+  /**
+   * @return a quick fix for this instance
+   */
   public IMarkerResolution getFix() {
     return getFix(getName());
   }
+  /**
+   * @return a quick fix with a preview for this instance.
+   */
   public IMarkerResolution getFixWithPreview() {
     return getFixWithPreview(getName());
   }
-  /** Note! Heavy operation - use carefully.
-   * @return True if there are Spartanizations which can be performed on the compilation unit.
+  /**
+   * Note! Heavy operation - use carefully.
+   *
+   * @return True if there are Spartanizations which can be performed on the
+   *         compilation unit.
    */
-  public boolean haveSuggestions(){
+  public boolean haveSuggestions() {
     try {
       checkFinalConditions(new NullProgressMonitor());
     } catch (final OperationCanceledException e) {

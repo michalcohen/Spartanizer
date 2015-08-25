@@ -269,10 +269,21 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
   public static void assertThat(final String reason, final short s, final Matcher<? super Short> m) {
     assertThat(reason, Short.valueOf(s), m);
   }
-  public static void assertThat(final Object expected, final Wrapper<String> actual) {
-    assertThat(compressSpaces(expected+""), is(compressSpaces(actual.get())));
+  /**
+   * A variant of {@link org.hamcrest.MatcherAssert#assertThat(Object, Matcher)}
+   * which compares {link @String} representation of an object, with an expected
+   * such representation, while ignoring white space characters, unless these
+   * occur between identifiers.
+   *
+   * @param actual the actual object
+   * @param expected the expected textual representation of the first parameter
+   */
+  public static void assertThat(final Object actual, final Wrapper<String> expected) {
+    assertThat(compressSpaces(actual + ""), is(compressSpaces(expected.get())));
   }
-  /** Wraps the provided {@link String}
+  /**
+   * Wraps the provided {@link String}
+   *
    * @param s a {@link String} to wrap
    * @return a wrapped {@link String}
    */
@@ -286,11 +297,11 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
         .replaceAll("\\s$", "") // Closing whites
         ;
     for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
-    "[\\^]" })
+        "[\\^]" })
       $ = $ //
-      .replaceAll(WHITES + operator, operator) // Preceding whites
-      .replaceAll(operator + WHITES, operator) // Trailing whites
-      ;
+          .replaceAll(WHITES + operator, operator) // Preceding whites
+          .replaceAll(operator + WHITES, operator) // Trailing whites
+          ;
     return $;
   }
   static final String WHITES = "(?m)\\s+";

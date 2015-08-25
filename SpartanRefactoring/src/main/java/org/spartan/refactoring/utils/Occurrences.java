@@ -137,7 +137,6 @@ public enum Occurrences {
             into.add(candidate);
         }
       }
-
       @Override public void endVisit(@SuppressWarnings("unused") final DoStatement _) {
         --loopDepth;
       }
@@ -292,7 +291,7 @@ public enum Occurrences {
    * Creates a function object for searching for a given value.
    *
    * @param e what to search for
-   * @return a function object which can be used for searching for the parameter
+   * @return a function object to be used for searching for the parameter
    *         in a given location
    */
   public Of of(final Expression e) {
@@ -302,6 +301,14 @@ public enum Occurrences {
       }
     };
   }
+  /**
+   * Creates a function object for searching for a given {@link SimpleName}, as
+   * specified by the {@link VariableDeclarationFragment},
+   *
+   * @param f JD
+   * @return a function object to be used for searching for the
+   *         {@link SimpleName} embedded in the parameter.
+   */
   public Of of(final VariableDeclarationFragment f) {
     return of(f.getName());
   }

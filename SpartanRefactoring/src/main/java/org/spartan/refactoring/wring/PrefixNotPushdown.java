@@ -51,38 +51,46 @@ public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
                         : o.equals(GREATER_EQUALS) ? LESS //
                             : !o.equals(LESS) ? null : GREATER_EQUALS;
   }
+  /**
+   * A utility function, which tries to simplify a boolean expression, whose top
+   * most parameter is logical negation.
+   *
+   * @param e JD
+   * @return the simplified parameter
+   */
   public static Expression simplifyNot(final PrefixExpression e) {
     return pushdownNot(asNot(Extract.core(e)));
   }
-  private
-  static Expression applyDeMorgan(final InfixExpression inner) {
+  private static Expression applyDeMorgan(final InfixExpression inner) {
     final List<Expression> operands = new ArrayList<>();
     for (final Expression e : Extract.operands(flatten(inner)))
       operands.add(not(e));
     return Subject.operands(operands).to(conjugate(inner.getOperator()));
   }
-  private
-  static Expression comparison(final InfixExpression e) {
+  private static Expression comparison(final InfixExpression e) {
     return Subject.pair(left(e), right(e)).to(negate(e.getOperator()));
   }
   private static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;
-  }private static boolean hasOpportunity(final PrefixExpression e) {
+  }
+  private static boolean hasOpportunity(final PrefixExpression e) {
     return e != null && hasOpportunity(core(e.getOperand()));
-  }static Expression notOfLiteral(final BooleanLiteral l) {
+  }
+  static Expression notOfLiteral(final BooleanLiteral l) {
     final BooleanLiteral $ = duplicate(l);
     $.setBooleanValue(!l.booleanValue());
     return $;
-  }private
-  static Expression perhapsComparison(final Expression inner) {
+  }
+  private static Expression perhapsComparison(final Expression inner) {
     return perhapsComparison(asComparison(inner));
-  }private
-  static Expression perhapsComparison(final InfixExpression inner) {
+  }
+  private static Expression perhapsComparison(final InfixExpression inner) {
     return inner == null ? null : comparison(inner);
-  }private
-  static Expression perhapsDeMorgan(final Expression e) {
+  }
+  private static Expression perhapsDeMorgan(final Expression e) {
     return perhapsDeMorgan(asAndOrOr(e));
-  }private static Expression perhapsDeMorgan(final InfixExpression e) {
+  }
+  private static Expression perhapsDeMorgan(final InfixExpression e) {
     return e == null ? null : applyDeMorgan(e);
   }
   private static Expression perhapsDoubleNegation(final Expression e) {
