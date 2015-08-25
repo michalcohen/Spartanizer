@@ -20,6 +20,7 @@ public class ApplySpartanizationHandler extends BaseHandler {
   public ApplySpartanizationHandler() {
     super(null);
   }
+
   static final Spartanization[] safeSpartanizations = { //
       new Trimmer(),
   };
@@ -31,7 +32,8 @@ public class ApplySpartanizationHandler extends BaseHandler {
   static void applySafeSpartanizationsTo(final ICompilationUnit cu) {
     for (final Spartanization s : safeSpartanizations)
       try {
-        // TODO We might want a real ProgressMonitor for large projects - I think that since there is a progress monitor for the whole project we don't really need it for each file.
+        s.setCompilationUnit(cu);
+        //TODO We might want a real ProgressMonitor for large projects - I think that since there is a progress monitor for the whole project we don't really need it for each file.
         s.performRule(cu, new NullProgressMonitor());
       } catch (final CoreException x) {
         x.printStackTrace();
