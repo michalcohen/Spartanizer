@@ -341,7 +341,7 @@ public class FixedPointTest {
             "      System.out.println(\"ho\" + res + a);",
         "final String s;final String res=s;final int a=0;System.out.println(s.equals(res)?\"hey\"+res:\"ho\"+res+a);");
   }
-  @Test public void eliminateTernary() {
+  @Test public void duplicateIfBody() {
     assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
   }
   @Test public void ternarize23() {
@@ -354,7 +354,7 @@ public class FixedPointTest {
         "boolean c=!s.equals(532);");
   }
   @Test public void ternarize38() {
-    assertNoChange("int a, b=0;if (b==3){    a+=2+r();a-=6;");
+    assertNoChange("int a, b=0;if (b==3){    a+=2+r();a-=6;}");
   }
   @Test public void ternarize40() {
     assertConvertsTo(//

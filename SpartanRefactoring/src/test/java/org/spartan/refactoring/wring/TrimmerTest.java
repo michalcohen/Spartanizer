@@ -124,9 +124,10 @@ public class TrimmerTest {
   @Test public void  pushdownTernaryIntoPrintln() {
     assertConvertsTo(//
         "    if (s.equals(t))\n" +
-        "      System.out.println(\"hey\" + res);\n" +
+        "      System.out.println(Hey + res);\n" +
         "    else\n" +
-        "      System.out.println(\"ho\" + x + a);", "");
+        "      System.out.println(Ho + x + a);", //
+        "System.out.println(s.equals(t)?Hey+res:Ho+x+a);");
 }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -150,7 +151,7 @@ public class TrimmerTest {
       assertNotEquals("Simpification of " + from1 + " is just reformatting", compressSpaces(peeled), compressSpaces(from1));
     assertSimilar(expected1, peeled);
   }
-  @Test public void bug() {
+  @Test public void xorSortClassConstantsAtEnd() {
     assertNoChange("f(a,b,c,d) ^ BOB");
   }
   @Test public void bugIntroducingMISSINGWord1() {

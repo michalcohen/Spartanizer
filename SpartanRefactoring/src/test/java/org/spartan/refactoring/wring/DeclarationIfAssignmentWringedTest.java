@@ -59,10 +59,10 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
       new String[] { "Vanilla", "int a = 2; if (b) a =3;", "int a= b?3:2;" }, //
       new String[] { "Empty nested else", "int a=2; \n if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
       new String[] { "Ternarize 16", //
-          "int n1, n2 = 0, n3;" + //
+          "int n2 = 0, n3;" + //
           "  if (d)\n" + //
           "    n2 = 2;", //
-          "int n1, n2 = d ? 2: 0, n3"},
+          "int n2 = d ? 2 : 0, n3;"},
       null);
   /**
    * Generate test cases for this parameterized class.
