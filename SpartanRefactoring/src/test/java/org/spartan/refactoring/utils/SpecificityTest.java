@@ -17,6 +17,12 @@ public class SpecificityTest {
   @Test public void undefinedLevel() {
     assertThat(Specificity.Level.of(e("a+b")), is(Specificity.Level.values().length));
   }
+  @Test public void twoIdenticalClassConstants() {
+    assertThat(Specificity.Level.of(e("SPONGE")), is(Specificity.Level.of(e("SPONGE"))));
+  }
+  @Test public void twoDistinctClassConstants() {
+    assertThat(Specificity.Level.of(e("BOB")), is(Specificity.Level.of(e("SPONGE"))));
+  }
   @Test public void thisGreaterThanNull() {
     assertThat(SPECIFICITY.compare(e("this"), e("null")), greaterThan(0));
   }

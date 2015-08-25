@@ -56,8 +56,9 @@ public enum ExpressionComparator implements Comparator<Expression> {
       return ($ = literalCompare(e2, e1)) == 0 && ($ = nodesCompare(e1, e2)) == 0 && ($ = characterCompare(e1, e2)) == 0 && ($ = alphabeticalCompare(e1, e2)) == 0 ? 0 : $;
     }
   };
+  private static Specificity specificity = new Specificity();
   static int literalCompare(final Expression e1, final Expression e2) {
-    return asBit(Is.literal(e1)) - asBit(Is.literal(e2));
+    return -specificity.compare(e1,e2);
   }
   static int nodesCompare(final Expression e1, final Expression e2) {
     return round(nodesCount(e1) - nodesCount(e2), NODES_THRESHOLD);

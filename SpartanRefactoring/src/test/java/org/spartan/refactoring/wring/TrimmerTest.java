@@ -56,8 +56,12 @@ import org.spartan.refactoring.utils.Is;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
+  static String apply(final Trimmer t, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(t, u, d).get();
   }
   private static String apply(final Wring<? extends ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
@@ -104,12 +108,8 @@ public class TrimmerTest {
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  static String apply(final Trimmer t, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    return TESTUtils.rewrite(t, u, d).get();
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
   }
   @Test public void a() {
     assertConvertsTo("   int a=0;\n" + //
@@ -1255,10 +1255,30 @@ public class TrimmerTest {
   @Test public void simplifyLogicalNegationOfOr() {
     assertSimplifiesTo("!(f() || f(5))", "!f() && !f(5)");
   }
+  @Test public void sortAdditionClassConstantAndLiteral() {
+    assertSimplifiesTo(//
+        "1+A< 12", //
+        "A+1<12");
+  }
+  @Test public void sortAdditionVariableClassConstantAndLiteral() {
+    assertSimplifiesTo(//
+        "1+A+a< 12", //
+        "a+A+1<12");
+  }
+  @Test public void sortAdditionFunctionClassConstantAndLiteral() {
+    assertSimplifiesTo(//
+        "1+A+f()< 12", //
+        "f()+A+1<12");
+  }
   @Test public void sortAddition1() {
-    assertSimplifiesTo("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1", "1+2 <3&4+7>1+2||6-7<1+2");
+    assertSimplifiesTo(//
+        "1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9  + A> k + 4", //
+        "8*9+1+2-3-4+5 / 6-7+A>k+4");
   }
   @Test public void sortAddition2() {
+    assertSimplifiesTo("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1", "1+2 <3&4+7>1+2||6-7<1+2");
+  }
+  @Test public void sortAddition3() {
     assertNoChange("6 - 7 < 1 + 2");
   }
   @Test public void sortAddition4() {

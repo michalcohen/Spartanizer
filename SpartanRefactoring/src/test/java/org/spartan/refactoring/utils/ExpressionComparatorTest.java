@@ -35,6 +35,12 @@ public class ExpressionComparatorTest {
     final Expression e2 = e("2*3");
     assertThat(ExpressionComparator.ADDITION.compare(e1, e2), greaterThan(0));
   }
+  @Test public void literalAndClassConstant() {
+    assertThat(ExpressionComparator.ADDITION.compare(e("1"), e("BOB")), greaterThan(0));
+  }
+  @Test public void twoClassConstants() {
+    assertThat(ExpressionComparator.ADDITION.compare(e("SPONGE"), e("BOB")), greaterThan(0));
+  }
   @Test public void literalAndProductMULITIPLICATION() {
     final Expression e1 = e("1");
     final Expression e2 = e("2*3");

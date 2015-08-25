@@ -275,11 +275,7 @@ public class FixedPointTest {
   @Test public void shortestOperand35() {
     assertConvertsTo("return f(a,b,c,d) * moshe; ", "   return moshe * f(a,b,c,d);");
   }
-  @Test public void sortAddition() {
-    assertConvertsTo(//
-        "return 1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9 > k + 4);", //
-        "return 8*9+1+2-3-4+5 / 6-7>k+4;");
-  }
+
   @Test public void sortAddition5() {
     assertSimplifiesTo("1 + 2  + 3 + a < 3 -4", "a + 1 + 2 + 3 < 3-4");
   }
