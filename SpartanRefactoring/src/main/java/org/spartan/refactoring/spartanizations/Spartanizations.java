@@ -16,20 +16,20 @@ import org.spartan.refactoring.wring.Trimmer;
  *         30.05.2014) (v3)
  * @since 2013/07/01
  */
-@SuppressWarnings("javadoc") //
-public enum Spartanizations {
-  Trimmer(new Trimmer()), //
-  // ForwardDeclaration(new ForwardDeclaration()), //
-  // InlineSingleUse(new InlineSingleUse()), //
-  // RenameReturnVariableToDollar(new RenameReturnVariableToDollar()), //
-  ;
-  // TODO break that simply returns
-  // TODO Change Javadoc to one line /**... */ style when possible
-  // TODO Check for mentions of arguments in JavaDoc
-  // TODO Clever chaining in 2 to 3 selected classes
-  // TODO more clever forward/inline. do not propose if components of expression
-  // are used in between
-  // TODO Use one letter name for local variables and parameters
+public class Spartanizations {
+  private static Spartanization[] all = { new Trimmer(), //
+      new ForwardDeclaration(), //
+      new InlineSingleUse(), //
+      new RenameReturnVariableToDollar(), //
+  };
+  @SuppressWarnings("synthetic-access") //
+  private static final Map<String, Spartanization> map = new HashMap<String, Spartanization>() {
+    private static final long serialVersionUID = -8921699276699040030L;
+    {
+      for (final Spartanization s : all)
+        put(s.getClass().getSimpleName(), s);
+    }
+  };
   private final Spartanization value;
   private Spartanizations(final Spartanization value) {
     this.value = value;
@@ -46,11 +46,9 @@ public enum Spartanizations {
    */
   @SuppressWarnings("unchecked") //
   public static <T extends Spartanization> T findInstance(final Class<? extends T> c) {
-    for (final Spartanizations s : Spartanizations.values()) {
-      final Spartanization $ = s.value();
+    for (final Spartanization $ : all)
       if ($.getClass().equals(c))
         return (T) $;
-    }
     return null;
   }
   /**
@@ -58,14 +56,15 @@ public enum Spartanizations {
    */
   public static Iterable<Spartanization> allAvailableSpartanizations() {
     return new Iterable<Spartanization>() {
+      @SuppressWarnings("synthetic-access")//
       @Override public Iterator<Spartanization> iterator() {
         return new Iterator<Spartanization>() {
           int next = 0;
           @Override public boolean hasNext() {
-            return next < values().length;
+            return next < all.length;
           }
           @Override public Spartanization next() {
-            return values()[next++].value();
+            return all[next++];
           }
           @Override public final void remove() {
             throw new IllegalArgumentException();
@@ -74,19 +73,15 @@ public enum Spartanizations {
       }
     };
   }
-  private static final Map<String, Spartanization> all = new HashMap<>();
-  private static void put(final Spartanization s) {
-    all.put(s.toString(), s);
-  }
   /**
    * Resets the enumeration with the current values from the preferences file.
    * Letting the rules notification decisions be updated without restarting
    * eclipse.
    */
   public static void reset() {
-    all.clear();
-    for (final Spartanization s : allAvailableSpartanizations())
-      put(s);
+    map.clear();
+    for (final Spartanization s : all)
+      map.put(s.getClass().getSimpleName(), s);
   }
   /**
    * @param name the name of the spartanization
@@ -94,22 +89,22 @@ public enum Spartanizations {
    */
   public static Spartanization get(final String name) {
     assert name != null;
-    return all.get(name);
+    return map.get(name);
   }
   /**
    * @return all the registered spartanization refactoring objects
    */
   public static Iterable<Spartanization> all() {
-    return all.values();
+    return map.values();
   }
   /**
    * @return all the registered spartanization refactoring objects names
    */
   public static List<String> allRulesNames() {
     final List<String> $ = new ArrayList<>();
-    for (final Spartanization rule : allAvailableSpartanizations())
-      if (rule != null)
-        $.add(rule.getName());
+    for (final Spartanization s : allAvailableSpartanizations())
+      if (s != null)
+        $.add(s.getName());
     return $;
   }
 }
