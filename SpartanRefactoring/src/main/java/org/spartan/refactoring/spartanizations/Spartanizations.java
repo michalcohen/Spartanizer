@@ -1,10 +1,9 @@
 package org.spartan.refactoring.spartanizations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.spartan.refactoring.wring.Trimmer;
 
@@ -17,10 +16,11 @@ import org.spartan.refactoring.wring.Trimmer;
  * @since 2013/07/01
  */
 public class Spartanizations {
-  private static Spartanization[] all = { new Trimmer(), //
-      new ForwardDeclaration(), //
-      new InlineSingleUse(), //
-      new RenameReturnVariableToDollar(), //
+  private static Spartanization[] all = {//
+      new Trimmer(), //
+  //    new ForwardDeclaration(), //
+  //    new InlineSingleUse(), //
+  //    new RenameReturnVariableToDollar(), //
   };
   @SuppressWarnings("synthetic-access") //
   private static final Map<String, Spartanization> map = new HashMap<String, Spartanization>() {
@@ -100,11 +100,7 @@ public class Spartanizations {
   /**
    * @return all the registered spartanization refactoring objects names
    */
-  public static List<String> allRulesNames() {
-    final List<String> $ = new ArrayList<>();
-    for (final Spartanization s : allAvailableSpartanizations())
-      if (s != null)
-        $.add(s.getName());
-    return $;
+  public static Set<String> allRulesNames() {
+    return map.keySet();
   }
 }
