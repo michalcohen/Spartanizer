@@ -58,7 +58,7 @@ public class DeclarationIfAssginmentTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
     final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(u);
     assertThat(f, notNullValue());
-    assertThat(WRING.scopeIncludes(f), is(true));
+    assertThat(WRING.scopeIncludes(f), is(false));
   }
   @Test public void traceForbiddenSiblingsExpanded() {
     final String from = "int a = 2,b; if (a+b) a =3;";
