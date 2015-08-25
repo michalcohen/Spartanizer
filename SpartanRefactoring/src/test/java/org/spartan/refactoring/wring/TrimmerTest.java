@@ -514,7 +514,7 @@ public class TrimmerTest {
     final Expression e1 = left(e);
     final Expression e2 = right(e);
     assertFalse(hasNull(e1, e2));
-    final boolean tokenWiseGreater = nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2);
+    final boolean tokenWiseGreater = nodesCount(e1) > nodesCount(e2) + NODES_THRESHOLD;
     assertTrue(tokenWiseGreater);
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));

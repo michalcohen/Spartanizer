@@ -123,7 +123,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   }
   private static boolean isLonger(final Expression e1, final Expression e2) {
     return !hasNull(e1, e2) && (//
-    nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2) || //
+    nodesCount(e1) > nodesCount(e2) + NODES_THRESHOLD || //
         nodesCount(e1) >= nodesCount(e2) && moreArguments(e1, e2)//
     );
   }
