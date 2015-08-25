@@ -288,7 +288,7 @@ public enum Funcs {
     if (hasNull(base, as))
       return false;
     for (final Assignment a : as)
-      if (a == null || !compatibleOps(base.getOperator(), a.getOperator()) || !compatibleNames(base.getLeftHandSide(), a.getLeftHandSide()))
+      if (a == null || !compatibleOps(base.getOperator(), a.getOperator()) || !compatibleNames(left(base), left(a)))
         return false;
     return true;
   }
@@ -358,7 +358,7 @@ public enum Funcs {
     return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
   }
   /**
-   * Syntactic sugar for {@link InfixExpression#getRightOperand()}
+   * Shorthand for {@link InfixExpression#getRightOperand()}
    *
    * @param e JD
    * @return the right operand of the parameter
@@ -367,7 +367,7 @@ public enum Funcs {
     return e.getRightOperand();
   }
   /**
-   * Syntactic sugar for {@link InfixExpression#getLeftOperand()}
+   * Shorthand for {@link InfixExpression#getLeftOperand()}
    *
    * @param e JD
    * @return the left operand of the parameter
@@ -376,7 +376,25 @@ public enum Funcs {
     return e.getLeftOperand();
   }
   /**
-   * Syntactic sugar for {@link InstanceofExpression#getLeftOperand()}
+   * Shorthand for {@link Assignment#getLeftHandSide()}
+   *
+   * @param a JD
+   * @return the left operand of the parameter
+   */
+  public static Expression left(final Assignment a) {
+    return a.getLeftHandSide();
+  }
+  /**
+   * Shorthand for {@link Assignment#getRightHandSide()}
+   *
+   * @param a JD
+   * @return the left operand of the parameter
+   */
+  public static Expression right(final Assignment a) {
+    return a.getRightHandSide();
+  }
+  /**
+   * Shorthand for {@link InstanceofExpression#getLeftOperand()}
    *
    * @param e JD
    * @return the left operand of the parameter
@@ -385,7 +403,7 @@ public enum Funcs {
     return e.getLeftOperand();
   }
   /**
-   * Syntactic sugar for {@link IfStatement#getThenStatement}
+   * Shorthand for {@link IfStatement#getThenStatement}
    *
    * @param s JD
    * @return the then statement of the parameter
@@ -394,7 +412,7 @@ public enum Funcs {
     return s.getThenStatement();
   }
   /**
-   * Syntactic sugar for {@link IfStatement#getElseStatement}
+   * Shorthand for {@link IfStatement#getElseStatement}
    *
    * @param s JD
    * @return the else statement of the parameter

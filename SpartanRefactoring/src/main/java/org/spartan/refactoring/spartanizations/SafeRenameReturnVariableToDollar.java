@@ -159,7 +159,7 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
   private static int score(final VariableDeclarationFragment v, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final ReturnStatement r : rs)
-      $ += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r).size();
+      $ += Occurrences.BOTH_LEXICAL.of(v).in(r).size();
     return $;
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {

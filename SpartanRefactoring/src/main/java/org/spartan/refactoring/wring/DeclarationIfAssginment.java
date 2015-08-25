@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
-import static org.spartan.refactoring.utils.Funcs.same;
+
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.Assignment;
@@ -10,17 +11,20 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.refactoring.utils.Subject;
+
 /**
  * A {@link Wring} to convert
  *
  * <pre>
- * int a = 2; if (b) a = 3;
+ * int a = 2;
+ * if (b)
+ *   a = 3;
  * </pre>
  *
  * into
  *
  * <pre>
- * int a =  b ? 3: 2;
+ * int a = b ? 3 : 2;
  * </pre>
  *
  * @author Yossi Gil
@@ -35,14 +39,15 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
     if (s == null || !Wrings.elseIsEmpty(s))
       return null;
     final Assignment a = Extract.assignment(then(s));
-    if (a == null || !same(a.getLeftHandSide(), f.getName()))
+    if (a == null || !same(left(a), f.getName()))
       return null;
     if (a.getOperator() != Assignment.Operator.ASSIGN)
       return null;
-    if (!Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(),a.getRightHandSide()).isEmpty())
+    if (!Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(), right(a)).isEmpty())
       return null;
-    r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
+    r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
     return r;
   }
+
 }

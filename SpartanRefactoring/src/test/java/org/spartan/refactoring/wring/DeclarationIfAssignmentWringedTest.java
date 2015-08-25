@@ -15,7 +15,7 @@ import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Funcs.then;
 
@@ -136,14 +136,14 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertThat(Wrings.elseIsEmpty(s), is(true));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
-    final Expression leftHandSide = a.getLeftHandSide();
+    final Expression leftHandSide = left(a);
     assertNotNull(leftHandSide);
     assertTrue(same(leftHandSide, f.getName()));
     assertThat(a.getOperator(), is(Assignment.Operator.ASSIGN));
-    final List<Expression> in = Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(), a.getRightHandSide());
+    final List<Expression> in = Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(), right(a));
     assertThat(in, notNullValue());
     final ASTRewrite r = ASTRewrite.create(f.getAST());
-    r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
+    r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
     final ASTRewrite fillReplacement = DeclarationIfAssginmentTest.WRING.fillReplacement(f, r);
     final boolean scopeIncludes = fillReplacement != null;
@@ -175,8 +175,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertThat(Extract.statements(elze(s)).size(), is(0));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
-    assertTrue(same(a.getLeftHandSide(), f.getName()));
-    r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
+    assertTrue(same(left(a), f.getName()));
+    r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
   }
   @Override protected CompilationUnit asCompilationUnit() {

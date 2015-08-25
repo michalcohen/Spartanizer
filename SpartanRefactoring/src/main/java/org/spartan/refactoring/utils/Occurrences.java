@@ -118,11 +118,11 @@ public enum Occurrences {
       @Override public boolean visit(final ArrayInitializer n) {
         return collect(n.expressions());
       }
-      @Override public boolean visit(final Assignment n) {
-        return collect(n.getRightHandSide());
+      @Override public boolean visit(final Assignment a) {
+        return collect(right(a));
       }
-      @Override public boolean visit(final CastExpression n) {
-        return collect(n.getExpression());
+      @Override public boolean visit(final CastExpression e) {
+        return collect(e.getExpression());
       }
       @Override public boolean visit(final ClassInstanceCreation n) {
         collect(n.getExpression());
@@ -242,7 +242,7 @@ public enum Occurrences {
         return false;
       }
       @Override public boolean visit(final Assignment n) {
-        collectExpression(n.getLeftHandSide());
+        collectExpression(left(n));
         return true;
       }
       @Override public boolean visit(final VariableDeclarationFragment n) {
@@ -321,9 +321,12 @@ public enum Occurrences {
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode... ns);
-    /** Determine whether this instance occurs in a bunch of expressions
-     * @param es  JD
-     * @return <code><b>true</b></code> <i>iff</i> this instance occurs in the paraemter.
+    /**
+     * Determine whether this instance occurs in a bunch of expressions
+     *
+     * @param es JD
+     * @return <code><b>true</b></code> <i>iff</i> this instance occurs in the
+     *         paraemter.
      */
     public boolean existIn(final Expression[] es) {
       return !in(es).isEmpty();

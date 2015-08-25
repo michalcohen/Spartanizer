@@ -6,7 +6,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.FIELD_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Restructure.parenthesize;
 
@@ -105,11 +105,14 @@ final class TernaryPushdown extends Wring.OfConditionalExpression {
     return $;
   }
   static Expression pushdown(final ConditionalExpression e, final Assignment a1, final Assignment a2) {
-    if (a1.getOperator() != a2.getOperator() || !same(a1.getLeftHandSide(), a2.getLeftHandSide()))
+    if (a1.getOperator() != a2.getOperator() || !same(left(a1), left(a2)))
       return null;
-    final ConditionalExpression c = Subject.pair(a1.getRightHandSide(), a2.getRightHandSide()).toCondition(e.getExpression());
-    final Assignment a = Subject.pair(a1.getLeftHandSide(), c).to(a1.getOperator());
+    final ConditionalExpression c = Subject.pair(right(a1), right(a2)).toCondition(e.getExpression());
+    final Assignment a = Subject.pair(left(a1), c).to(a1.getOperator());
     return new Plant(a).into(e.getParent());
+  }
+  public static Expression right(final Assignment a1) {
+    return a1.getRightHandSide();
   }
   static Expression pushdown(final ConditionalExpression e) {
     if (e == null)

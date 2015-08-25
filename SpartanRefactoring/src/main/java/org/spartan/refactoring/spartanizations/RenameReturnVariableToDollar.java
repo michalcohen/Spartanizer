@@ -38,7 +38,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
         final VariableDeclarationFragment returnVar = selectReturnVariable(n);
         if (returnVar == null || !inRange(m, returnVar))
           return true;
-        for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar.getName()).in(n))
+        for (final Expression e : Occurrences.BOTH_LEXICAL.of(returnVar).in(n))
           r.replace(e, t.newSimpleName("$"), null);
         return true;
       }
@@ -133,7 +133,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
   private static int score(final VariableDeclarationFragment v, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final ReturnStatement r : rs)
-      $ += Occurrences.BOTH_LEXICAL.of(v.getName()).in(r).size();
+      $ += Occurrences.BOTH_LEXICAL.of(v).in(r).size();
     return $;
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {

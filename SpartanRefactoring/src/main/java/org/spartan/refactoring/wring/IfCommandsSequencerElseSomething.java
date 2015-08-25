@@ -1,8 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 

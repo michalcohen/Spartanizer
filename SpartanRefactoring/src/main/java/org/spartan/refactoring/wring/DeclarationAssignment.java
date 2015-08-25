@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Funcs.same;
 
 import org.eclipse.jdt.core.dom.Assignment;
@@ -31,9 +31,9 @@ public final class DeclarationAssignment extends Wring.OfVariableDeclarationFrag
     if (f.getInitializer() != null)
       return null;
     final Assignment a = Extract.nextAssignment(f);
-    if (a == null || !same(f.getName(), a.getLeftHandSide()))
+    if (a == null || !same(f.getName(), left(a)))
       return null;
-    r.replace(f, makeVariableDeclarationFragement(f, a.getRightHandSide()), null);
+    r.replace(f, makeVariableDeclarationFragement(f, right(a)), null);
     r.remove(Extract.statement(a), null);
     return r;
   }
