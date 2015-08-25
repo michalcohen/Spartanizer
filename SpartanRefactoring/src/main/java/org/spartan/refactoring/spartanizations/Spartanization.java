@@ -216,6 +216,7 @@ public abstract class Spartanization extends Refactoring {
       changes.add(textChange);
     m.done();
   }
+  //TODO: Do not add new public methods without JavaDoc!
   public void performRule(final ICompilationUnit cu, final IProgressMonitor pm) throws CoreException {
     pm.beginTask("Creating change for a single compilation unit...", 2);
     final TextFileChange textChange = new TextFileChange(cu.getElementName(), (IFile) cu.getResource());
@@ -226,6 +227,7 @@ public abstract class Spartanization extends Refactoring {
       textChange.perform(pm);
     pm.done();
   }
+  //TODO: Do not add new public methods without JavaDoc!
   protected void scanCompilationUnitForMarkerFix(final IMarker m, final IProgressMonitor pm, final boolean preview) throws CoreException {
     pm.beginTask("Creating change(s) for a single compilation unit...", 2);
     final ICompilationUnit u = As.iCompilationUnit(m);

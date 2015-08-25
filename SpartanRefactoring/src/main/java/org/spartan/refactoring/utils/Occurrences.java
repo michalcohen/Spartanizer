@@ -75,7 +75,7 @@ public enum Occurrences {
    */
   BOTH_SEMANTIC {
     @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
-      return asArray(semanticalUsesCollector(into, e), definitionsCollector(into, e));
+      return asArray(semanticalUsesCollector(into, e), lexicalUsesCollector(into, e), definitionsCollector(into, e));
     }
   },
   /**
@@ -304,7 +304,7 @@ public enum Occurrences {
    * sequence for the various offerings of the containing class. This class
    * should never be instantiated or inherited by clients.
    * <p>
-   * This class reifies the function object concept; an instance of it records
+   * This class realizes the function object concept; an instance of it records
    * the value we search for; it represents the function that, given a location
    * for the search, will carry out the search for the captured value in its
    * location parameter.
@@ -324,12 +324,12 @@ public enum Occurrences {
     /**
      * Determine whether this instance occurs in a bunch of expressions
      *
-     * @param es JD
+     * @param ns JD
      * @return <code><b>true</b></code> <i>iff</i> this instance occurs in the
-     *         paraemter.
+     *         Parameter.
      */
-    public boolean existIn(final Expression[] es) {
-      return !in(es).isEmpty();
+    public boolean existIn(final ASTNode... ns) {
+      return !in(ns).isEmpty();
     }
   }
 }

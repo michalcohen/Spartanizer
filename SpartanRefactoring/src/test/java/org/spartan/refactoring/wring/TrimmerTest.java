@@ -120,11 +120,6 @@ public class TrimmerTest {
         "   }\n" + //
         "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
-  @Test public void pushdownTernaryIntoPrintln() {
-    assertConvertsTo(//
-        "    if (s.equals(t))\n" + "      System.out.println(Hey + res);\n" + "    else\n" + "      System.out.println(Ho + x + a);", //
-        "System.out.println(s.equals(t)?Hey+res:Ho+x+a);");
-  }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
@@ -146,9 +141,6 @@ public class TrimmerTest {
     if (compressSpaces(peeled).equals(compressSpaces(from1)))
       assertNotEquals("Simpification of " + from1 + " is just reformatting", compressSpaces(peeled), compressSpaces(from1));
     assertSimilar(expected1, peeled);
-  }
-  @Test public void xorSortClassConstantsAtEnd() {
-    assertNoChange("f(a,b,c,d) ^ BOB");
   }
   @Test public void bugIntroducingMISSINGWord1() {
     assertSimplifiesTo(//
@@ -386,6 +378,24 @@ public class TrimmerTest {
   @Test public void compreaeExpressionToExpression() {
     assertSimplifiesTo("6 - 7 < 2 + 1   ", "6 -7 < 1 + 2");
   }
+  @Test public void declarationIfAssignment() {
+    assertConvertsTo( //
+        "" + //
+            "    final String y = empty;\n" + //
+            "    final String s = empty;\n" + //
+            "    String res = s;\n" + //
+            "    if (s.equals(y))\n" + //
+            "      res = s + blah;\n" + //
+            "    System.out.println(res);",
+        "" + //
+            "    final String y = empty;\n" + //
+            "    final String s = empty;\n" + //
+            "    String res = s.equals(y) ? s + blah :s;\n" + //
+            "    System.out.println(res);");
+  }
+  @Test public void declarationIfUsesLaterVariable() {
+    assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
+  }
   @Test public void delcartionIfAssignmentNotPlain() {
     assertNoConversion("int a=0;   if (y) a+=3; ");
   }
@@ -397,6 +407,12 @@ public class TrimmerTest {
   }
   @Test public void emptyElseBlock() {
     assertConvertsTo("if (x) b = 3; else { ;}", "if (x) b = 3;");
+  }
+  @Test public void emptyIsNotChangedExpression() {
+    assertNoConversion("");
+  }
+  @Test public void emptyIsNotChangedStatement() {
+    assertNoChange("");
   }
   @Ignore @Test public void extractMethodSplitDifferentStories() {
     assertSimplifiesTo("", "");
@@ -918,6 +934,11 @@ public class TrimmerTest {
     assertSimplifiesTo("a ? new S(a,new Integer(4),b) : new S(new Ineger(3))",
         "!a?new S(new Ineger(3)):new S(a,new Integer(4),b)                                                                                                                  ");
   }
+  @Test public void pushdownTernaryIntoPrintln() {
+    assertConvertsTo(//
+        "    if (s.equals(t))\n" + "      System.out.println(Hey + res);\n" + "    else\n" + "      System.out.println(Ho + x + a);", //
+        "System.out.println(s.equals(t)?Hey+res:Ho+x+a);");
+  }
   @Test public void pushdownTernaryLongFieldRefernece() {
     assertSimplifiesTo(//
         "externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action", //
@@ -1167,12 +1188,6 @@ public class TrimmerTest {
   @Test public void shortestOperand37() {
     assertNoChange("return sansJavaExtension(f) + n + \".\"+ extension(f);");
   }
-  @Test public void emptyIsNotChangedExpression() {
-    assertNoConversion("");
-  }
-  @Test public void emptyIsNotChangedStatement() {
-    assertNoChange("");
-  }
   @Test public void simplifyBlockComplexEmpty0() {
     assertConvertsTo("{}", "");
   }
@@ -1307,21 +1322,6 @@ public class TrimmerTest {
             "    n2 = 2;", //
         "int n1, n2 = d ? 2: 0, n3;");
   }
-  @Test public void declarationIfAssignment() {
-    assertConvertsTo( //
-        "" + //
-            "    final String y = empty;\n" + //
-            "    final String s = empty;\n" + //
-            "    String res = s;\n" + //
-            "    if (s.equals(y))\n" + //
-            "      res = s + blah;\n" + //
-            "    System.out.println(res);",
-        "" + //
-            "    final String y = empty;\n" + //
-            "    final String s = empty;\n" + //
-            "    String res = s.equals(y) ? s + blah :s;\n" + //
-            "    System.out.println(res);");
-  }
   @Test public void ternarize21() {
     assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
   }
@@ -1438,5 +1438,8 @@ public class TrimmerTest {
   }
   @Test public void vanillaShortestFirstConditionalNoChange() {
     assertNoChange("literal ? CONDITIONAL_OR : CONDITIONAL_AND");
+  }
+  @Test public void xorSortClassConstantsAtEnd() {
+    assertNoChange("f(a,b,c,d) ^ BOB");
   }
 }

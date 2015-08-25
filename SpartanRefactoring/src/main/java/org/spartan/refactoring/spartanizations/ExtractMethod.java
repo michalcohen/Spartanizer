@@ -33,7 +33,8 @@ public class ExtractMethod extends Spartanization {
   }
   CompilationUnit oldCu;
   @Override protected ASTVisitor collectOpportunities(final List<Range> opportunities) {
-    // TODO Ofir: No opportunities for now, if it's 2016 and not added yet, blame
+    // TODO Ofir: No opportunities for now, if it's 2016 and not added yet,
+    // blame
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         opportunities.add(new Range(n));
@@ -52,7 +53,7 @@ public class ExtractMethod extends Spartanization {
           @Override public boolean visit(final SimpleName sn) {
             // if (sn.isDeclaration()) return true; // could be added
             final int line = cu.getLineNumber(sn.getStartPosition());
-            ug.add(sn.toString(), line); // Add all simple names to the ug
+            ug.add(sn.toString(), line); // Add all simple names to the queue
             return true;
           }
         });
@@ -63,7 +64,8 @@ public class ExtractMethod extends Spartanization {
         // TODO Ofir: random method name for now - will be changed later on
         for (final LinkedList<Integer> group : groups) {
           extract(cu.getPosition(group.getFirst(), 0), cu.getPosition(group.getLast() + 1, 0));
-          break; // TODO Ofir: support multiple groups future, Only the first group for now,
+          break; // TODO Ofir: support multiple groups future, Only the first
+                 // group for now,
         }
         return true;
         // TODO Note: there is a known bug right now - that simple name also

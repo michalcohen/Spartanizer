@@ -1,6 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Funcs.same;
 
 import org.eclipse.jdt.core.dom.Assignment;

@@ -15,7 +15,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.spartan.refactoring.spartanizations.Spartanizations;
 
 /**
- * A handler for {@link Spartanizations} This handler executes all safe
+ * A handler for {@link Spartanizations}. This handler executes all safe
  * Spartanizations on all java files in the current project.
  *
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code>
