@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -27,7 +26,6 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@RunWith(BlockJUnit4ClassRunner.class) //
 public class IfCommandsSequencerElseSomethingTest {
   static final Wring<IfStatement> WRING = new IfCommandsSequencerElseSomething();
   @Test public void checkSteps() {
@@ -70,8 +68,9 @@ public class IfCommandsSequencerElseSomethingTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = Utils.asArray(//
-         new String[] {"Simple if return", "if (a) return b; else a();", "if(a)return b;a();"}, //
-         new String[] {"Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();", "if(a)return b;a(); f();"}, //
+         new String[] {"Vanilla: sequencer in then", "if (a) return b; else a();", "if(a)return b;a();"}, //
+         new String[] {"Vanilla: sequencer in else", "if (a) return b; else a();", "if(a)return b;a();"}, //
+         new String[] {"Plant two statements", "if (a) return b; else a(); f();", "if(a)return b;a(); f();"}, //
         null, //
          new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"}, //
         null, //

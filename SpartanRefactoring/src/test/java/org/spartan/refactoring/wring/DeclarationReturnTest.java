@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -31,7 +30,6 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@RunWith(BlockJUnit4ClassRunner.class) //
 public class DeclarationReturnTest {
   static final Wring<VariableDeclarationFragment> WRING = new DeclarationReturn();
   @Test public void placeHolder() {

@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -32,7 +31,6 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@RunWith(BlockJUnit4ClassRunner.class) //
 public class IfReturnNoElseReturnTest {
   static final Wring<IfStatement> WRING =new IfReturnNoElseReturn();
   @Test public void checkFirstIfStatement1() {
