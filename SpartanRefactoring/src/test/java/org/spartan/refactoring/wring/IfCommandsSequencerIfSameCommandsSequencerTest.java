@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.elze;
 
 import java.util.Collection;
 
