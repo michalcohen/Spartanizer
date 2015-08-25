@@ -2,7 +2,7 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension
-         id="BuilderID"
+         id="org.spartan.refactoring.BuilderID"
          name="Spartanization Checker"
          point="org.eclipse.core.resources.builders">
       <builder
@@ -13,12 +13,11 @@
       </builder>
    </extension>
    <extension
-         id="NatureID"
+         id="org.spartan.refactoring.NatureID"
          name="Spartanization Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-         
                class="org.spartan.refactoring.builder.Nature">
          </run>
       </runtime>
@@ -122,6 +121,11 @@
             id="org.spartan.refactoring.commands.Cleanup"
             name="- Auto project cleanup -">
       </command>
+      <command
+            categoryId="org.spartan.refactoring.category"
+            id="org.spartan.refactoring.commands.ApplySpartanization"
+            name="Apply Spartanizations automatically">
+      </command>
    </extension>
    <extension point="org.eclipse.ui.handlers">
       <handler
@@ -137,10 +141,6 @@
             commandId="org.spartan.refactoring.commands.ConvertToTernary">
       </handler>
       <handler
-            class="org.spartan.refactoring.handlers.ShortestOperandHandler"
-            commandId="org.spartan.refactoring.commands.ShortestOperand">
-      </handler>
-      <handler
             class="org.spartan.refactoring.handlers.ExtractMethodHandler"
             commandId="org.spartan.refactoring.commands.ExtractMethod">
       </handler>
@@ -151,14 +151,6 @@
       <handler
             class="org.spartan.refactoring.handlers.InlineSingleUseHandler"
             commandId="org.spartan.refactoring.commands.InlineSingleUse">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.RedundantEqualityHandler"
-            commandId="org.spartan.refactoring.commands.RedundantEquality">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ShortestBranchFirstHandler"
-            commandId="org.spartan.refactoring.commands.ShortestBranchFirst">
       </handler>
       <handler
             class="org.spartan.refactoring.handlers.CleanupHandler"
@@ -175,12 +167,12 @@
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
-               id="groove.toolbars.sampleToolbar">
+               id="org.spartan.refactoring.toolbars.spartanToolbar">
             <command
                   commandId="org.spartan.refactoring.commands.ApplySpartanization"
                   icon="res/Spartan.gif"
                   tooltip="Apply Spartanization to this file!"
-                  id="org.spartan.refactoring.commands.ApplySpartanization">
+                  id="org.spartan.refactoring.toolbars.ApplySpartanization">
             </command>
          </toolbar>
       </menuContribution>
@@ -297,7 +289,7 @@
                </command>
                <command
                      commandId="org.spartan.refactoring.commands.ApplySpartanization"
-                     id="org.spartan.menus.ApplySpartanizationCommand"
+                     id="org.spartan.refactoring.menus.ApplySpartanizationCommand"
                      style="push">
                </command>
             </menu>

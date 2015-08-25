@@ -216,6 +216,11 @@ public abstract class Spartanization extends Refactoring {
       changes.add(textChange);
     m.done();
   }
+  /** Perform the specific Spartanization rule on a given compilation unit
+   * @param cu The compilation unit which we will perform the rule on
+   * @param pm Progress monitor for long execution rules
+   * @throws CoreException  Could be thrown by the progress monitor
+   */
   public void performRule(final ICompilationUnit cu, final IProgressMonitor pm) throws CoreException {
     pm.beginTask("Creating change for a single compilation unit...", 2);
     final TextFileChange textChange = new TextFileChange(cu.getElementName(), (IFile) cu.getResource());
@@ -299,6 +304,11 @@ public abstract class Spartanization extends Refactoring {
   public void setCompilationUnit(final ICompilationUnit compilationUnit) {
     this.compilationUnit = compilationUnit;
   }
+  /**
+   * @param m Range as a marker
+   * @param n ASTNode
+   * @return true if the node is within the marker borders
+   */
   public final boolean inRange(final IMarker m, final ASTNode n) {
     return m != null ? !isNodeOutsideMarker(n, m) : !isTextSelected() || !isNodeOutsideSelection(n);
   }
