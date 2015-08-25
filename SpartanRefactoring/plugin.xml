@@ -83,11 +83,6 @@
       </command>
       <command
             categoryId="org.spartan.refactoring.category"
-            id="org.spartan.refactoring.commands.ConvertToTernary"
-            name="Convert conditional to ternary">
-      </command>
-      <command
-            categoryId="org.spartan.refactoring.category"
             id="org.spartan.refactoring.commands.ShortestOperand"
             name="Shortest operand first">
       </command>
@@ -135,10 +130,6 @@
       <handler
             class="org.spartan.refactoring.handlers.ChangeReturnToDollarHandler"
             commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
-      </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.TernarizeHandler"
-            commandId="org.spartan.refactoring.commands.ConvertToTernary">
       </handler>
       <handler
             class="org.spartan.refactoring.handlers.ExtractMethodHandler"
@@ -248,11 +239,6 @@
                      style="push">
                </command>
                <command
-                     commandId="org.spartan.refactoring.commands.ConvertToTernary"
-                     id="org.spartan.menus.ConvertToTernaryCommand"
-                     style="push">
-               </command>
-               <command
                      commandId="org.spartan.refactoring.commands.ShortestOperand"
                      id="org.spartan.menus.ShortestOperandCommand"
                      style="push">
@@ -303,10 +289,6 @@
                label="Spartanization">
             <command
                   commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.spartan.refactoring.commands.ConvertToTernary"
                   style="push">
             </command>
             <command

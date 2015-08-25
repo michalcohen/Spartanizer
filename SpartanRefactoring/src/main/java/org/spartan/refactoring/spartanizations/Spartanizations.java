@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.spartan.refactoring.preferences.PreferencesFile;
 import org.spartan.refactoring.wring.Trimmer;
 
 /**
@@ -86,16 +85,8 @@ public enum Spartanizations {
    */
   public static void reset() {
     all.clear();
-    final int offset = PreferencesFile.getSpartanTitle().length;
-    final String[] str = PreferencesFile.parsePrefFile();
-    final boolean useAll = str == null;
-    final int i = 0;
     for (final Spartanization s : allAvailableSpartanizations())
-      // TODO Ask Yossi if the ability to choose Spartanizations from the menu still necessary
-      // if (useAll || str != null && str.length >= i + offset && !ignored(str[i
-      // + offset]))
       put(s);
-    // i++;
   }
   /**
    * @param name the name of the spartanization
