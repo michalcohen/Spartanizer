@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -89,9 +90,54 @@ public enum Occurrences {
     }
   };
   static final ASTMatcher matcher = new ASTMatcher();
+  static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
+    return new ASTVisitor() {
+      void collectExpression(final Expression candidate) {
+        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e))
+          into.add(candidate);
+      }
+      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
+        return false;
+      }
+      @Override public boolean visit(final Assignment a) {
+        collectExpression(left(a));
+        return true;
+      }
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        collectExpression(f.getName());
+        return true;
+      }
+    };
+  }
+  static ASTVisitor lexicalUsesCollector(final List<Expression> into, final Expression what) {
+    return usesCollector(what, into, true);
+  }
+  static ASTVisitor semanticalUsesCollector(final List<Expression> into, final Expression what) {
+    return usesCollector(what, into, false);
+  }
   private static ASTVisitor usesCollector(final Expression what, final List<Expression> into, final boolean lexicalOnly) {
     return new ASTVisitor() {
       private int loopDepth = 0;
+      private boolean add(final Object o) {
+        return collect((Expression) o);
+      }
+      private boolean collect(final Expression e) {
+        collectExpression(what, e);
+        return true;
+      }
+      private boolean collect(@SuppressWarnings("rawtypes") final List os) {
+        for (final Object o : os)
+          add(o);
+        return true;
+      }
+      void collectExpression(final Expression e, final Expression candidate) {
+        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e)) {
+          into.add(candidate);
+          if (repeated())
+            into.add(candidate);
+        }
+      }
+
       @Override public void endVisit(@SuppressWarnings("unused") final DoStatement _) {
         --loopDepth;
       }
@@ -103,6 +149,19 @@ public enum Occurrences {
       }
       @Override public void endVisit(@SuppressWarnings("unused") final WhileStatement _) {
         --loopDepth;
+      }
+      private List<VariableDeclarationFragment> getFieldsOfClass(final ASTNode classNode) {
+        final List<VariableDeclarationFragment> $ = new ArrayList<>();
+        classNode.accept(new ASTVisitor() {
+          @Override public boolean visit(final FieldDeclaration n) {
+            $.addAll(n.fragments());
+            return false;
+          }
+        });
+        return $;
+      }
+      private boolean repeated() {
+        return !lexicalOnly && loopDepth > 0;
       }
       @Override public boolean visit(final AnonymousClassDeclaration n) {
         for (final VariableDeclarationFragment f : getFieldsOfClass(n))
@@ -203,81 +262,10 @@ public enum Occurrences {
         ++loopDepth;
         return collect(n.getExpression());
       }
-      private boolean add(final Object o) {
-        return collect((Expression) o);
-      }
-      private boolean collect(final Expression e) {
-        collectExpression(what, e);
-        return true;
-      }
-      private boolean collect(@SuppressWarnings("rawtypes") final List os) {
-        for (final Object o : os)
-          add(o);
-        return true;
-      }
-      private List<VariableDeclarationFragment> getFieldsOfClass(final ASTNode classNode) {
-        final List<VariableDeclarationFragment> $ = new ArrayList<>();
-        classNode.accept(new ASTVisitor() {
-          @Override public boolean visit(final FieldDeclaration n) {
-            $.addAll(n.fragments());
-            return false;
-          }
-        });
-        return $;
-      }
-      private boolean repeated() {
-        return !lexicalOnly && loopDepth > 0;
-      }
-      void collectExpression(final Expression e, final Expression candidate) {
-        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e)) {
-          into.add(candidate);
-          if (repeated())
-            into.add(candidate);
-        }
+      @Override public boolean visit(final SimpleName n) {
+        return collect(n);
       }
     };
-  }
-  static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
-    return new ASTVisitor() {
-      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
-        return false;
-      }
-      @Override public boolean visit(final Assignment a) {
-        collectExpression(left(a));
-        return true;
-      }
-      @Override public boolean visit(final VariableDeclarationFragment f) {
-        collectExpression(f.getName());
-        return true;
-      }
-      void collectExpression(final Expression candidate) {
-        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e))
-          into.add(candidate);
-      }
-    };
-  }
-  static ASTVisitor lexicalUsesCollector(final List<Expression> into, final Expression what) {
-    return usesCollector(what, into, true);
-  }
-  static ASTVisitor semanticalUsesCollector(final List<Expression> into, final Expression what) {
-    return usesCollector(what, into, false);
-  }
-  /**
-   * Creates a function object for searching for a given value.
-   *
-   * @param e what to search for
-   * @return a function object which can be used for searching for the parameter
-   *         in a given location
-   */
-  public Of of(final Expression e) {
-    return new Of() {
-      @Override public List<Expression> in(final ASTNode... ns) {
-        return collect(e, ns);
-      }
-    };
-  }
-  public Of of(final VariableDeclarationFragment f) {
-    return of(f.getName());
   }
   /**
    * Lists the required occurrences
@@ -300,6 +288,23 @@ public enum Occurrences {
     return $;
   }
   abstract ASTVisitor[] collectors(final Expression e, final List<Expression> into);
+  /**
+   * Creates a function object for searching for a given value.
+   *
+   * @param e what to search for
+   * @return a function object which can be used for searching for the parameter
+   *         in a given location
+   */
+  public Of of(final Expression e) {
+    return new Of() {
+      @Override public List<Expression> in(final ASTNode... ns) {
+        return collect(e, ns);
+      }
+    };
+  }
+  public Of of(final VariableDeclarationFragment f) {
+    return of(f.getName());
+  }
 
   /**
    * An auxiliary class which makes it possible to use an easy invocation
@@ -317,13 +322,6 @@ public enum Occurrences {
    */
   public static abstract class Of {
     /**
-     * the method that will carry out the search
-     *
-     * @param ns where to search
-     * @return a list of occurrences of the captured value in the parameter.
-     */
-    public abstract List<Expression> in(ASTNode... ns);
-    /**
      * Determine whether this instance occurs in a bunch of expressions
      *
      * @param ns JD
@@ -333,5 +331,12 @@ public enum Occurrences {
     public boolean existIn(final ASTNode... ns) {
       return !in(ns).isEmpty();
     }
+    /**
+     * the method that will carry out the search
+     *
+     * @param ns where to search
+     * @return a list of occurrences of the captured value in the parameter.
+     */
+    public abstract List<Expression> in(ASTNode... ns);
   }
 }

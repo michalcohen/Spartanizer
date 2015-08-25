@@ -1,6 +1,5 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Occurrences.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
@@ -52,6 +51,7 @@ public class OccurrencesTest {
     final List<Expression> into = new ArrayList<>();
     final ASTVisitor collector = Occurrences.lexicalUsesCollector(into, a);
     a.accept(collector);
+    assertThat(into.size(),is(1));
   }
   @Test public void occurencesAinE() {
     assertThat(Occurrences.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
