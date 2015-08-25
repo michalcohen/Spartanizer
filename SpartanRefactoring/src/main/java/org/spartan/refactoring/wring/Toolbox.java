@@ -103,11 +103,11 @@ public class Toolbox {
      */
     @SafeVarargs public final <N extends ASTNode> Maker add(final Class<N> c, final Wring<N>... ws) {
       final List<Wring<N>> l = get(c);
-      for (final Wring<N> w : ws)
-        if (w != null)
-          l.add(w);
-        else
+      for (final Wring<N> w : ws) {
+        if (w == null)
           break;
+        l.add(w);
+      }
       return this;
     }
     /**

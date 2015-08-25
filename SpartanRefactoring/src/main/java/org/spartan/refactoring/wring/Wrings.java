@@ -29,8 +29,8 @@ public enum Wrings {
   public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
-    for (int i = 0, size = es.size(); i < size; i++)
-      for (int j = 0; j < size - 1; j++) {
+    for (int i = 0, size = es.size(); i < size; ++i)
+      for (int j = 0; j < size - 1; ++j) {
         final Expression e0 = es.get(j);
         final Expression e1 = es.get(j + 1);
         if (c.compare(e0, e1) <= 0)

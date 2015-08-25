@@ -119,7 +119,7 @@ class UnionFind {
     sizeOf = new int[size];
     Arrays.fill(sizeOf, 1);
     parentOf = new int[size];
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; ++i)
       parentOf[i] = i;
   }
   public int union(final int n1, final int n2) {
@@ -162,7 +162,7 @@ class UnionFind {
       uf.union(first2, i);
     uf.union(first, first2);
     final ChainedHash<Integer, Integer> hm = new ChainedHash<>();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final int rootKey = uf.find(i);
       hm.chain(rootKey, i);
       System.out.print(uf.find(i));

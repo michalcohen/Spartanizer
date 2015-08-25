@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.spartan.utils.Utils;
 
 /**
  * A utility class for finding occurrences of an {@link Expression} in an
@@ -88,20 +89,20 @@ public enum Occurrences {
     }
   };
   static final ASTMatcher matcher = new ASTMatcher();
-  private static ASTVisitor usesCollector(final List<Expression> into, final Expression what, final boolean lexicalOnly) {
+  private static ASTVisitor usesCollector(final Expression what, final List<Expression> into, final boolean lexicalOnly) {
     return new ASTVisitor() {
       private int loopDepth = 0;
       @Override public void endVisit(@SuppressWarnings("unused") final DoStatement _) {
-        loopDepth--;
+        --loopDepth;
       }
       @Override public void endVisit(@SuppressWarnings("unused") final EnhancedForStatement _) {
-        loopDepth--;
+        --loopDepth;
       }
       @Override public void endVisit(@SuppressWarnings("unused") final ForStatement _) {
-        loopDepth--;
+        --loopDepth;
       }
       @Override public void endVisit(@SuppressWarnings("unused") final WhileStatement _) {
-        loopDepth--;
+        --loopDepth;
       }
       @Override public boolean visit(final AnonymousClassDeclaration n) {
         for (final VariableDeclarationFragment f : getFieldsOfClass(n))
@@ -137,18 +138,18 @@ public enum Occurrences {
         return collect(n.arguments());
       }
       @Override public boolean visit(final DoStatement n) {
-        loopDepth++;
+        ++loopDepth;
         return collect(n.getExpression());
       }
       @Override public boolean visit(final EnhancedForStatement n) {
-        loopDepth++;
+        ++loopDepth;
         return collect(n.getExpression());
       }
       @Override public boolean visit(final FieldAccess n) {
         return collect(n.getExpression());
       }
       @Override public boolean visit(final ForStatement n) {
-        loopDepth++;
+        ++loopDepth;
         return collect(n.getExpression());
       }
       @Override public boolean visit(final IfStatement n) {
@@ -199,7 +200,7 @@ public enum Occurrences {
         return collect(n.getInitializer());
       }
       @Override public boolean visit(final WhileStatement n) {
-        loopDepth++;
+        ++loopDepth;
         return collect(n.getExpression());
       }
       private boolean add(final Object o) {
@@ -241,12 +242,12 @@ public enum Occurrences {
       @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
         return false;
       }
-      @Override public boolean visit(final Assignment n) {
-        collectExpression(left(n));
+      @Override public boolean visit(final Assignment a) {
+        collectExpression(left(a));
         return true;
       }
-      @Override public boolean visit(final VariableDeclarationFragment n) {
-        collectExpression(n.getName());
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        collectExpression(f.getName());
         return true;
       }
       void collectExpression(final Expression candidate) {
@@ -256,10 +257,10 @@ public enum Occurrences {
     };
   }
   static ASTVisitor lexicalUsesCollector(final List<Expression> into, final Expression what) {
-    return usesCollector(into, what, true);
+    return usesCollector(what, into, true);
   }
   static ASTVisitor semanticalUsesCollector(final List<Expression> into, final Expression what) {
-    return usesCollector(into, what, false);
+    return usesCollector(what, into, false);
   }
   /**
    * Creates a function object for searching for a given value.
@@ -290,6 +291,7 @@ public enum Occurrences {
     for (final ASTNode n : ns)
       for (final ASTVisitor v : collectors(what, $))
         n.accept(v);
+    Utils.removeDuplicates($);
     Collections.sort($, new Comparator<Expression>() {
       @Override public int compare(final Expression e1, final Expression e2) {
         return e1.getStartPosition() - e2.getStartPosition();

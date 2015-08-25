@@ -61,7 +61,7 @@ public class DeclarationIfAssginmentTest {
     assertThat(WRING.scopeIncludes(f), is(true));
   }
   @Test public void traceForbiddenSiblingsExpanded() {
-    final String from = "int a = 2,b; if (b) a =3;";
+    final String from = "int a = 2,b; if (a+b) a =3;";
     final String wrap = Wrap.Statement.on(from);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
     final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(u);
@@ -71,7 +71,7 @@ public class DeclarationIfAssginmentTest {
     final IfStatement s = Extract.nextIfStatement(f);
     assertThat(s, is(Extract.firstIfStatement(u)));
     assertNotNull(s);
-    assertThat(s,iz("if (b) a=3;"));
+    assertThat(s,iz("if (a + b) a=3;"));
     assertTrue(Wrings.elseIsEmpty(s));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
@@ -81,14 +81,13 @@ public class DeclarationIfAssginmentTest {
     assertThat(x.size(), greaterThan(0));
     assertThat(x.size(), is(2));
     assertThat(x.get(0), is(f));
-
     final VariableDeclarationFragment b = x.get(1);
     assertThat(b.toString(), is("b"));
     final Of of = Occurrences.BOTH_SEMANTIC.of(b);
     assertNotNull(of);
     final Expression  e =  s.getExpression() ;
     assertNotNull(e);
-    assertThat(e, iz("b"));
+    assertThat(e, iz("a + b"));
     final List<Expression> in = of.in(e);
     assertThat(in.size(),is(1));
     assertThat(!in.isEmpty(), is(true));

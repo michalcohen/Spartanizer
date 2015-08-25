@@ -121,7 +121,7 @@ import org.spartan.utils.Range;
     final ReturnStatement then = asReturnStatement(thenStmt);
     final ReturnStatement elze = asReturnStatement(elseStmt);
     return (then == null || elze != null || Is.conditional(then.getExpression())) && (then != null || elze == null || Is.conditional(elze.getExpression())) ? null
-        : new Range(thenStmt != null ? thenStmt.getParent() : elseStmt.getParent(), nextRet);
+        : new Range((thenStmt != null ? thenStmt : elseStmt).getParent(), nextRet);
   }
   private static Expression determineNewExp(final Expression cond, final Expression thenExp, final Expression elseExp) {
     return !Is.booleanLiteral(thenExp) || !Is.booleanLiteral(elseExp) ? Subject.pair(thenExp, elseExp).toCondition(cond)
@@ -138,7 +138,7 @@ import org.spartan.utils.Range;
   }
   private static List<Pair> findDiffList(final List<ASTNode> thenList, final List<ASTNode> elseList) {
     final List<Pair> $ = new ArrayList<>();
-    for (int i = 0; i < thenList.size() && i < elseList.size(); i++) {
+    for (int i = 0; i < thenList.size() && i < elseList.size(); ++i) {
       final ASTNode then = thenList.get(i);
       final ASTNode elze = elseList.get(i);
       if (!same(then, elze)) {
@@ -153,7 +153,7 @@ import org.spartan.utils.Range;
     return hasNull(thenNode, elseNode) ? null : findFirstDifference(collectDescendants(thenNode), collectDescendants(elseNode));
   }
   private static Pair findFirstDifference(final List<ASTNode> thenList, final List<ASTNode> elseList) {
-    for (int i = 0; i < thenList.size() && i < elseList.size(); i++) {
+    for (int i = 0; i < thenList.size() && i < elseList.size(); ++i) {
       final ASTNode then = thenList.get(i);
       final ASTNode elze = elseList.get(i);
       if (!same(then, elze))
@@ -199,19 +199,15 @@ import org.spartan.utils.Range;
   }
   private static boolean handlePrevDeclExist(final AST t, final ASTRewrite r, final IfStatement i, final Assignment then, final Assignment prev,
       final VariableDeclarationFragment f) {
-    final Expression[] es = { right(then), right(prev) };
-    if (occurences(f).existIn(es) || !Is.plainAssignment(then)) {
-      if (f.getInitializer() != null)
-        return handleNoPrevDecl(t, r, i, then, prev);
-    } else {
-      r.replace(f, makeVariableDeclarationFragment(t, r, (SimpleName) left(prev),
-          Subject.pair(right(then), right(prev)).toCondition(i.getExpression())), null);
-      r.remove(i, null);
-      r.remove(prev.getParent(), null);
-      return true;
-    }
-    return false;
-  }
+        final Expression[] es = { right(then), right(prev) };
+        if (!occurences(f).existIn(es) && Is.plainAssignment(then)) {
+          r.replace(f, makeVariableDeclarationFragment(t, r, (SimpleName) left(prev), Subject.pair(right(then), right(prev)).toCondition(i.getExpression())), null);
+          r.remove(i, null);
+          r.remove(prev.getParent(), null);
+          return true;
+        }
+        return f.getInitializer() != null && handleNoPrevDecl(t, r, i, then, prev);
+      }
   private static boolean handleSubIfDiffAreAsgns(final AST t, final ASTRewrite r, final IfStatement i, final Statement possiblePrevDecl, final ASTNode thenNode,
       final Expression newExp) {
     final VariableDeclarationFragment prevDecl = getVarDeclFrag(possiblePrevDecl, left( Extract.assignment(thenNode)));
@@ -222,7 +218,7 @@ import org.spartan.utils.Range;
   private static boolean isDiffListValid(final List<Pair> diffList) {
     if (diffList == null)
       return false;
-    for (int i = 0; i < diffList.size(); i++) {
+    for (int i = 0; i < diffList.size(); ++i) {
       final Pair pair = diffList.get(i);
       if (!handleCaseDiffNodesAreBlocks(pair))
         return false;
@@ -366,7 +362,7 @@ import org.spartan.utils.Range;
     final int ifIdx = whichChildAreYou(ifStmt);
     final Statement possiblePrevDecl = Extract.statements(ifStmt.getParent()).get(ifIdx < 1 ? ifIdx : ifIdx - 1);
     boolean wasPrevDeclReplaced = false;
-    for (int i = 0; i < diffList.size(); i++) {
+    for (int i = 0; i < diffList.size(); ++i) {
       final TwoExpressions diffExps = findSingleDifference(diffList.get(i).then, diffList.get(i).elze);
       if (Is.conditional(diffExps.then, diffExps.elze))
         return false;

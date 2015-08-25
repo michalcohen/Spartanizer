@@ -165,7 +165,7 @@ public enum Is {
         case CONDITIONAL_EXPRESSION:
           return true;
         case PARENTHESIZED_EXPRESSION:
-          if (CONDITIONAL_EXPRESSION == ((ParenthesizedExpression) e).getExpression().getNodeType())
+          if (((ParenthesizedExpression) e).getExpression().getNodeType() == CONDITIONAL_EXPRESSION)
             return true;
       }
     }

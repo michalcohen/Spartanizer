@@ -60,7 +60,7 @@ public class CleanupHandler extends BaseHandler {
       haveSuggestions = false;
       for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations)
         if (s.haveSuggestions()) haveSuggestions = true;
-      loopCounter++;
+      ++loopCounter;
       if (loopCounter > MaxSpartanizationTries) throw new ExecutionException(null);
     }
     final ImageIcon i = new ImageIcon(this.getClass().getResource("/res/Spartan64.gif"));

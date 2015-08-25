@@ -25,9 +25,13 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-
 		<buildCommand>
 			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.spartan.refactoring.BuilderID</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -37,5 +41,6 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.spartan.refactoring.builder.Nature</nature>
+		<nature>org.spartan.refactoring.NatureID</nature>
 	</natures>
 </projectDescription>

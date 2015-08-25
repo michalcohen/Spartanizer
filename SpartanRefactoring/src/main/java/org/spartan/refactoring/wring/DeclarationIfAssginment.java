@@ -45,9 +45,7 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
     if (s == null || !Wrings.elseIsEmpty(s))
       return null;
     final Assignment a = Extract.assignment(then(s));
-    if (a == null || !same(left(a), f.getName()))
-      return null;
-    if (a.getOperator() != Assignment.Operator.ASSIGN)
+    if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN)
       return null;
     for (final VariableDeclarationFragment b : forbiddenSiblings(f))
       if (Occurrences.BOTH_SEMANTIC.of(b).existIn(s.getExpression(), right(a)))

@@ -76,7 +76,7 @@ public enum Extract {
    *         wrapped in these parenthesis.
    */
   public static Expression core(final Expression $) {
-    return $ == null || PARENTHESIZED_EXPRESSION != $.getNodeType() ? $ : core(((ParenthesizedExpression) $).getExpression());
+    return $ == null || $.getNodeType() != PARENTHESIZED_EXPRESSION ? $ : core(((ParenthesizedExpression) $).getExpression());
   }
   /**
    * Computes the "essence" of a statement, i.e., if a statement is essentially

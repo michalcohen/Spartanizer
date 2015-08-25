@@ -157,7 +157,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
        * @param _ ignored
        */
       @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
-        $.inner++;
+        ++$.inner;
       }
     });
     return $.inner;

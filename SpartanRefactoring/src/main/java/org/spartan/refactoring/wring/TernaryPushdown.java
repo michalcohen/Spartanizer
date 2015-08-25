@@ -29,12 +29,12 @@ import org.spartan.refactoring.utils.Subject;
 final class TernaryPushdown extends Wring.OfConditionalExpression {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {
     int $ = -1;
-    for (int i = 0; i < es1.size(); i++)
-      if (!same(es1.get(i), es2.get(i)))
-        if ($ < 0)
-          $ = i;
-        else
+    for (int i = 0; i < es1.size(); ++i)
+      if (!same(es1.get(i), es2.get(i))) {
+        if ($ >= 0)
           return -1;
+        $ = i;
+      }
     return $;
   }
   @SuppressWarnings("unchecked") private static <T extends Expression> T p(final ASTNode e, final T $) {
@@ -85,10 +85,8 @@ final class TernaryPushdown extends Wring.OfConditionalExpression {
     final List<Expression> es2 = e2.arguments();
     final Expression receiver1 = e1.getExpression();
     final Expression receiver2 = e2.getExpression();
-    if (!same(receiver1, receiver2)) { // Try to push on receiver
-      if (receiver1 == null)
-        return null;
-      if (!same(es1, es2))
+    if (!same(receiver1, receiver2)) {
+      if (receiver1 == null || !same(es1, es2))
         return null;
       final ConditionalExpression c = Subject.pair(receiver1, receiver2).toCondition(e.getExpression());
       final MethodInvocation $ = duplicate(e1);

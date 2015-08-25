@@ -37,9 +37,7 @@ public final class IfExpressionStatementElseSimilarExpressionStatement extends W
     if (elze == null)
       return null;
     final Expression e = pushdown(Subject.pair(then, elze).toCondition(s.getExpression()));
-    if (e == null)
-      return null;
-    return Subject.operand(e).toStatement();
+    return e == null ? null : Subject.operand(e).toStatement();
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return _replacement(s) != null;
