@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.OR;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -11,11 +11,12 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
+
 /**
  * A {@link Wring} that sorts the arguments of an expression using the same
  * sorting order as {@link Operator#PLUS} expression, except that we do not
- * worry about commutativity. Unlike {@link InfixAdditionSort}, we know that
- * the reordering is always possible.
+ * worry about commutativity. Unlike {@link InfixAdditionSort}, we know that the
+ * reordering is always possible.
  *
  * @see InfixAdditionSort
  * @author Yossi Gil
@@ -36,6 +37,6 @@ public final class InfixPseudoAdditionSort extends Wring.OfInfixExpression {
     return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
-    return in(e.getOperator(), OR);
+    return in(e.getOperator(), OR, XOR, AND);
   }
 }

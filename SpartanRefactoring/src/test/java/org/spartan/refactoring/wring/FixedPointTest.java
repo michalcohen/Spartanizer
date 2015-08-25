@@ -56,12 +56,12 @@ public class FixedPointTest {
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  @Test public void bug0() {
+  @Test public void multipleIfDeclarationAssignment() {
     assertConvertsTo(//
-        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3)          b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
-        "int a=3,b;b=5;if(a==4)b=b==3?2:a;else b=b==3?2:a*a;");
+        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
+        "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
   }
-  @Test public void bug1() {
+  @Test public void declarationIfUsesLaterVariable() {
     assertConvertsTo("int a=0, b=0;if (b==3)   a=4;", " int a = (b==3 ? 4 : 0), b=0; ");
   }
   @Test public void chainComparison() {
@@ -341,34 +341,26 @@ public class FixedPointTest {
             "      System.out.println(\"ho\" + res + a);",
         "final String s;final String res=s;final int a=0;System.out.println(s.equals(res)?\"hey\"+res:\"ho\"+res+a);");
   }
-  @Test public void bug() {
+  @Test public void eliminateTernary() {
     assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
   }
-
   @Test public void ternarize23() {
     assertConvertsTo(//
-        "int a=0;if (s.equals(532))   a+=y(2)+10;else a+=r(3)-6;",
-        "int a=0;a+=s.equals(532)?y(2)+10:r(3)-6;");
+        "int a=0;if (s.equals(532))   a+=y(2)+10;else a+=r(3)-6;", "int a=0;a+=s.equals(532)?y(2)+10:r(3)-6;");
   }
   @Test public void ternarize24() {
     assertConvertsTo(//
         "boolean c;if (s.equals(532))    c=false;else c=true;", //
         "boolean c=!s.equals(532);");
   }
-
-
-
-
-
   @Test public void ternarize38() {
     assertNoChange("int a, b=0;if (b==3){    a+=2+r();a-=6;");
   }
   @Test public void ternarize40() {
     assertConvertsTo(//
-        "int a, b, c;a = 3;b = 5;if (a == 4)     while (b == 3)     c = a;else    while (b == 3)     c = a*a;",//
+        "int a, b, c;a = 3;b = 5;if (a == 4)     while (b == 3)     c = a;else    while (b == 3)     c = a*a;", //
         "int a=3,b=5,c;if(a==4)while(b==3)c=a;else while(b==3)c=a*a;");
   }
-
   @Test public void ternarize54() {
     assertConvertsTo(//
         "if (s == null)\n" + ///

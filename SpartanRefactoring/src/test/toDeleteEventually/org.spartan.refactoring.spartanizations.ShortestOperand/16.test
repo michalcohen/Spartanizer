@@ -1,9 +1,0 @@
-package p;
-
-public class SpongeBob {
-	public String squarePants() {
-		String t = "";
-		t = t.concat("a").concat("b") + t.concat("c");
-		return (t + "...");   
-	}
-}

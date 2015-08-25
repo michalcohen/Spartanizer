@@ -114,18 +114,22 @@ public class TrimmerTest {
   }
   @Test public void a() {
     assertConvertsTo("   int a=0;\n" + //
-        "   if (s.equals(\"yada\")){\n" + //
+        "   if (s.equals(known)){\n" + //
         "     System.console();\n" + //
         "   } else {\n" + //
         "     a=3;\n" + //
         "   }\n" + //
-        "", "int a=0; if(!s.equals(\"yada\"))a=3;else System.console();");
+        "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
+  @Test public void  pushdownTernaryIntoPrintln() {
+    assertConvertsTo(//
+        "    if (s.equals(t))\n" +
+        "      System.out.println(\"hey\" + res);\n" +
+        "    else\n" +
+        "      System.out.println(\"ho\" + x + a);", "");
+}
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
-  }
-  @Test public void shortestOperand36() {
-    assertNoChange("f(a,b,c,d) ^ bob");
   }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
@@ -145,6 +149,9 @@ public class TrimmerTest {
     if (compressSpaces(peeled).equals(compressSpaces(from1)))
       assertNotEquals("Simpification of " + from1 + " is just reformatting", compressSpaces(peeled), compressSpaces(from1));
     assertSimilar(expected1, peeled);
+  }
+  @Test public void bug() {
+    assertNoChange("f(a,b,c,d) ^ BOB");
   }
   @Test public void bugIntroducingMISSINGWord1() {
     assertSimplifiesTo(//
@@ -387,15 +394,6 @@ public class TrimmerTest {
   }
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
-  }
-  @Test public void sequencerFirstInElse() {
-    assertConvertsTo(//
-        "    int res = 0;\n" + //
-            "    if (s.equals(532))\n" + //
-            "      res += 6;\n" + //
-            "    else {    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   \n" + "      return res;\n" + //
-            "    }",
-        "  int res = 0;res += (s.equals(532) ? 6 : 9);/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;");
   }
   @Test public void emptyElse() {
     assertConvertsTo("if (x) b = 3; else ;", "if (x) b = 3;");
@@ -998,7 +996,7 @@ public class TrimmerTest {
         " public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = yada3(res.j - $);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar04() {
-    assertNoChange("int res = 0;   String $ = blah + \"yada\";   yada3(res + $.length());   return res + $.length();");
+    assertNoChange("int res = 0;   String $ = blah + known;   yada3(res + $.length());   return res + $.length();");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar05() {
     assertSimplifiesTo(
@@ -1044,6 +1042,12 @@ public class TrimmerTest {
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
     assertThat(Toolbox.instance.find(i("null != a")), instanceOf(InfixComparisonSpecific.class));
+  }
+  @Test public void sequencerFirstInElse() {
+    assertConvertsTo(//
+        "if (a) {b++; c++; ++d;} else { f++; g++; return x;}",//
+        "if (!a) {f++; g++; return x;} b++; c++; ++d; " //
+        );
   }
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
@@ -1111,10 +1115,14 @@ public class TrimmerTest {
     assertSimplifiesTo("5 ^ a.getNum()", "a.getNum() ^ 5");
   }
   @Test public void shortestOperand19() {
-    assertNoConversion("SomeClass a;   return k.get().operand() ^ a.get(); ");
+    assertSimplifiesTo(//
+        "k.get().operand() ^ a.get()", //
+        "a.get() ^ k.get().operand()");
   }
   @Test public void shortestOperand20() {
-    assertNoConversion("SomeClass a;   String k = k.Concat(\"mmm...\") + a.get().sum().toString();   return k.get() ^ a.get(); ");
+    assertSimplifiesTo(//
+        "k.get() ^ a.get()", //
+        "a.get() ^ k.get()");
   }
   @Test public void shortestOperand22() {
     assertNoConversion("return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f f(a,b) + f(a) + f();     } ");
@@ -1123,10 +1131,12 @@ public class TrimmerTest {
     assertNoConversion("return f() + \".\";     }");
   }
   @Test public void shortestOperand24() {
-    assertNoChange("f(a,b,c,d) & 175 & 0");
+    assertSimplifiesTo("f(a,b,c,d) & 175 & 0", //
+        "f(a,b,c,d) & 0 & 175");
   }
   @Test public void shortestOperand25() {
-    assertNoChange("f(a,b,c,d) & bob & 0 ");
+    assertSimplifiesTo(//
+        "f(a,b,c,d) & bob & 0 ", "bob & f(a,b,c,d) & 0");
   }
   @Test public void shortestOperand27() {
     assertNoConversion("return f(a,b,c,d) + f(a,b,c) + f();     } ");
@@ -1135,10 +1145,15 @@ public class TrimmerTest {
     assertNoChange("return f(a,b,c,d) * f(a,b,c) * f();     } ");
   }
   @Test public void shortestOperand29() {
-    assertNoConversion("return f(a,b,c,d) ^ f() ^ 0; ");
+    assertSimplifiesTo( //
+        "f(a,b,c,d) ^ f() ^ 0", //
+        "f() ^ f(a,b,c,d) ^ 0");
   }
   @Test public void shortestOperand30() {
-    assertNoConversion("return f(a,b,c,d) & f();     } ");
+    assertSimplifiesTo(//
+        "f(a,b,c,d) & f()", //
+        "f() & f(a,b,c,d)" //
+    );
   }
   @Test public void shortestOperand31() {
     assertNoConversion("return f(a,b,c,d) | \".\";     }");
@@ -1239,7 +1254,9 @@ public class TrimmerTest {
     assertNoChange("6 - 7 < 1 + 2");
   }
   @Test public void sortAddition4() {
-    assertSimplifiesTo("a + 11 + 2 < 3 & 7 + 4 > 2 + 1", "a + 2 + 11 < 3 & 4+7  >1+2");
+    assertSimplifiesTo(//
+        "a + 11 + 2 < 3 & 7 + 4 > 2 + 1", //
+        "7 + 4 > 2 + 1 & a + 11 + 2 < 3");
   }
   @Test public void sortAdditionUncertain() {
     assertNoChange("1+a");
@@ -1287,17 +1304,41 @@ public class TrimmerTest {
         "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=2;k=8;System.out.println(foo);");
   }
   @Test public void ternarize16() {
-    assertNoConversion("String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
+    assertNoConversion(//
+        "String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
+  }
+  @Test public void ternarize16a() {
+    assertConvertsTo(
+        "int n1, n2 = 0, n3;\n" + //
+            "  if (d)\n" + //
+            "    n2 = 2;", //
+        "int n1, n2 = d ? 2: 0, n3;");
+  }
+  @Test public void declarationIfAssignment() {
+    assertConvertsTo( //
+        "" + //
+            "    final String y = empty;\n" + //
+            "    final String s = empty;\n" + //
+            "    String res = s;\n" + //
+            "    if (s.equals(y))\n" + //
+            "      res = s + blah;\n" + //
+            "    System.out.println(res);",
+        "" + //
+            "    final String y = empty;\n" + //
+            "    final String s = empty;\n" + //
+            "    String res = s.equals(y) ? s + blah :s;\n" + //
+            "    System.out.println(res);");
   }
   @Test public void ternarize21() {
-    assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+    assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
   }
   @Test public void ternarize21a() {
-    assertNoConversion("   if (s.equals(\"yada\")){\n" + //
-        "     System.out.println(\"g\");\n" + //
-        "   } else {\n" + //
-        "     System.out.append(\"k\");\n" + //
-        "   }");
+    assertNoConversion(//
+        "   if (s.equals(known)){\n" + //
+            "     System.out.println(gG);\n" + //
+            "   } else {\n" + //
+            "     System.out.append(kKz);\n" + //
+            "   }");
   }
   @Test public void ternarize22() {
     assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
@@ -1339,7 +1380,7 @@ public class TrimmerTest {
     assertNoConversion(" int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
   }
   @Test public void ternarize49() {
-    assertNoConversion("if (s.equals(532)){    System.out.println(\"g\");    System.out.append(\"k\"); ");
+    assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
   }
   @Test public void ternarize49a() {
     assertConvertsTo(
