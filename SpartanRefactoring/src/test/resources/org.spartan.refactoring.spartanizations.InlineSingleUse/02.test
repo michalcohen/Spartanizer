@@ -24,9 +24,7 @@ public class Blah {
 		/*
 		 * This is a comment
 		 */
-		
-		int j=3;
-		int k = j+2;
+		int k = 3+2;
 		int m = k + j -19 +(5);
 		yada3(k);
 	}

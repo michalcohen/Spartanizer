@@ -1,7 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -103,6 +104,7 @@ public enum TESTUtils {
   }
   static void assertOneOpportunity(final Spartanization s, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertEquals(u.toString(), 1, countOpportunities(s, u));
+    assertThat(u, notNullValue());
+    assertThat(countOpportunities(s, u), greaterThanOrEqualTo(1));
   }
 }
