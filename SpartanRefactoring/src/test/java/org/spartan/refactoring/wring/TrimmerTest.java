@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PostfixExpression;
@@ -121,14 +122,11 @@ public class TrimmerTest {
         "   }\n" + //
         "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
-  @Test public void  pushdownTernaryIntoPrintln() {
+  @Test public void pushdownTernaryIntoPrintln() {
     assertConvertsTo(//
-        "    if (s.equals(t))\n" +
-        "      System.out.println(Hey + res);\n" +
-        "    else\n" +
-        "      System.out.println(Ho + x + a);", //
+        "    if (s.equals(t))\n" + "      System.out.println(Hey + res);\n" + "    else\n" + "      System.out.println(Ho + x + a);", //
         "System.out.println(s.equals(t)?Hey+res:Ho+x+a);");
-}
+  }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
@@ -1046,9 +1044,9 @@ public class TrimmerTest {
   }
   @Test public void sequencerFirstInElse() {
     assertConvertsTo(//
-        "if (a) {b++; c++; ++d;} else { f++; g++; return x;}",//
+        "if (a) {b++; c++; ++d;} else { f++; g++; return x;}", //
         "if (!a) {f++; g++; return x;} b++; c++; ++d; " //
-        );
+    );
   }
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
@@ -1182,7 +1180,7 @@ public class TrimmerTest {
     assertSimplifiesTo(from, "", wring, Wrap.Statement);
   }
   @Test public void simplifyBlockComplexEmpty0() {
-    assertSimplifiesTo("{}", "", new BlockSimplify(), Wrap.Statement);
+    assertSimplifiesTo("{}", "");
   }
   @Test public void simplifyBlockComplexEmpty1() {
     assertConvertsTo("{;;{;{{}}}{;}{};}", "");

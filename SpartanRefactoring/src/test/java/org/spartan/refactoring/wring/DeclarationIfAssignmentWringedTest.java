@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -60,9 +61,9 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
       new String[] { "Empty nested else", "int a=2; \n if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
       new String[] { "Ternarize 16", //
           "int n2 = 0, n3;" + //
-          "  if (d)\n" + //
-          "    n2 = 2;", //
-          "int n2 = d ? 2 : 0, n3;"},
+              "  if (d)\n" + //
+              "    n2 = 2;", //
+          "int n2 = d ? 2 : 0, n3;" },
       null);
   /**
    * Generate test cases for this parameterized class.
@@ -139,8 +140,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertNotNull(leftHandSide);
     assertTrue(same(leftHandSide, f.getName()));
     assertThat(a.getOperator(), is(Assignment.Operator.ASSIGN));
-    final List<Expression> in = Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(),a.getRightHandSide());
-    assertThat(in,notNullValue());
+    final List<Expression> in = Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(), a.getRightHandSide());
+    assertThat(in, notNullValue());
     final ASTRewrite r = ASTRewrite.create(f.getAST());
     r.replace(initializer, Subject.pair(a.getRightHandSide(), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
