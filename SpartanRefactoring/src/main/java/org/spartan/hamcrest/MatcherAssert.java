@@ -272,6 +272,10 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
   public static void assertThat(final Object expected, final Wrapper<String> actual) {
     assertThat(compressSpaces(expected+""), is(compressSpaces(actual.get())));
   }
+  /** Wraps the provided {@link String}
+   * @param s a {@link String} to wrap
+   * @return a wrapped {@link String}
+   */
   public static final Wrapper<String> iz(final String s) {
     return new Wrapper<>(s);
   }

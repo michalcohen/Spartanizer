@@ -91,6 +91,7 @@ public enum Spartanizations {
     final boolean useAll = str == null;
     final int i = 0;
     for (final Spartanization s : allAvailableSpartanizations())
+      // TODO Ask Yossi if the ability to choose Spartanizations from the menu still necessary
       // if (useAll || str != null && str.length >= i + offset && !ignored(str[i
       // + offset]))
       put(s);

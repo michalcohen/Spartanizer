@@ -5,6 +5,7 @@ import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -26,7 +27,13 @@ import org.spartan.refactoring.utils.Subject;
 
 public enum Wrings {
   ;
-  public static boolean sort(final List<Expression> es, final java.util.Comparator<Expression> c) {
+  /**
+   * Sorts the {@link Expression} list
+   * @param es an {@link Expression} list to sort
+   * @param c a {@link Comparator} to use for the sorting
+   * @return True if the list was modified
+   */
+  public static boolean sort(final List<Expression> es, final Comparator<Expression> c) {
     boolean $ = false;
     // Bubble sort
     for (int i = 0, size = es.size(); i < size; ++i)
