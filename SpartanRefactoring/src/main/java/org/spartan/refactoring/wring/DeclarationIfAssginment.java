@@ -44,6 +44,7 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
     final IfStatement s = Extract.nextIfStatement(f);
     if (s == null || !Wrings.elseIsEmpty(s))
       return null;
+    s.setElseStatement(null);
     final Assignment a = Extract.assignment(then(s));
     if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN)
       return null;

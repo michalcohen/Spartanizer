@@ -59,10 +59,10 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
   private static String[][] cases = Utils.asArray(//
       new String[] { "Vanilla with newline", "int a = 2; \n if (b) a =3;", "int a= b?3:2;" }, //
-      new String[] { "Empty else", "int a=2; \n if (x) a = 3; else ;", " int a = x ? 3 : 2;" }, //
+      new String[] { "Empty else", "int a=2; if (x) a = 3; else ;", " int a = x ? 3 : 2;" }, //
       new String[] { "Vanilla", "int a = 2; if (b) a =3;", "int a= b?3:2;" }, //
-      new String[] { "Empty nested else", "int a=2; \n if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
-      new String[] { "Ternarize 16", //
+      new String[] { "Empty nested else", "int a=2; if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
+      new String[] { "Two fragments", //
           "int n2 = 0, n3;" + //
               "  if (d)\n" + //
               "    n2 = 2;", //
@@ -74,8 +74,10 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
    * @return a collection of cases, where each case is an array of three
    *         objects, the test case name, the input, and the file.
    */
+  // TODO: JUnit bug: gets confused when value contains new line characters:
   // @Parameters(name = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"") //
-  @Parameters public static Collection<Object[]> cases() {
+  @Parameters(name = "Test #{index}. ({0}) ") //
+  public static Collection<Object[]> cases() {
     return collect(cases);
   }
   /** What should the output be */
@@ -98,6 +100,14 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final TextEdit e = r.rewriteAST(d, null);
     assertThat(e, notNullValue());
     assertThat(e.apply(d), is(notNullValue()));
+  }
+  @Test public void checkIf() {
+    final IfStatement s = findIf();
+    assertThat(s, notNullValue());
+    assertThat(Wrings.elseIsEmpty(s),is(true));
+  }
+  private IfStatement findIf() {
+    return Extract.firstIfStatement(As.STATEMENTS.ast(input));
   }
   @Test public void eligible() {
     final VariableDeclarationFragment s = asMe();
