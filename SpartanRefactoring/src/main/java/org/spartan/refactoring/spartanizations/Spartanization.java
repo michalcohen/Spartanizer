@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
@@ -216,7 +217,12 @@ public abstract class Spartanization extends Refactoring {
       changes.add(textChange);
     m.done();
   }
-  //TODO: Do not add new public methods without JavaDoc!
+  /**
+   * Performs the current Spartanization on the provided compilation unit
+   * @param cu the compilation to Spartanize
+   * @param pm progress monitor for long operations (could be {@link NullProgressMonitor} for light operations)
+   * @throws CoreException exception from the <code>pm</code>
+   */
   public void performRule(final ICompilationUnit cu, final IProgressMonitor pm) throws CoreException {
     pm.beginTask("Creating change for a single compilation unit...", 2);
     final TextFileChange textChange = new TextFileChange(cu.getElementName(), (IFile) cu.getResource());
@@ -258,7 +264,12 @@ public abstract class Spartanization extends Refactoring {
         for (final IJavaElement e : r.getChildren())
           if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
             $.addAll(Arrays.asList(((IPackageFragment) e).getCompilationUnits()));
+
     pm.done();
+    for(final ICompilationUnit i : $)
+      for(final IPackageDeclaration d : i.getPackageDeclarations())
+        System.out.println(d.getElementName());
+
     return $;
   }
   /**
@@ -301,6 +312,11 @@ public abstract class Spartanization extends Refactoring {
   public void setCompilationUnit(final ICompilationUnit compilationUnit) {
     this.compilationUnit = compilationUnit;
   }
+  /**
+   * @param m marker which represents the range to apply the Spartanization within
+   * @param n the node which needs to be within the range of <code><b>m</b></code>
+   * @return True if the node is within range
+   */
   public final boolean inRange(final IMarker m, final ASTNode n) {
     return m != null ? !isNodeOutsideMarker(n, m) : !isTextSelected() || !isNodeOutsideSelection(n);
   }
