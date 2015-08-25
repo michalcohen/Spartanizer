@@ -366,4 +366,17 @@ public abstract class Spartanization extends Refactoring {
   public IMarkerResolution getFixWithPreview() {
     return getFixWithPreview(getName());
   }
+  /** Note! Heavy operation - use carefully.
+   * @return True if there are Spartanizations which can be performed on the compilation unit.
+   */
+  public boolean haveSuggestions(){
+    try {
+      checkFinalConditions(new NullProgressMonitor());
+    } catch (final OperationCanceledException e) {
+      e.printStackTrace();
+    } catch (final CoreException e) {
+      e.printStackTrace();
+    }
+    return changes.size() > 0;
+  }
 }
