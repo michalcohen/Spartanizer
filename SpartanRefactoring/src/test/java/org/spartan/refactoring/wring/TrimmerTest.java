@@ -1169,18 +1169,14 @@ public class TrimmerTest {
   @Test public void shortestOperand37() {
     assertNoChange("return sansJavaExtension(f) + n + \".\"+ extension(f);");
   }
-  @Test public void shortestOperandFarStringLiteral() {
+  @Test public void emptyIsNotChangedExpression() {
+    assertNoConversion("");
+  }
+  @Test public void emptyIsNotChangedStatement() {
     assertNoChange("");
   }
-  @Test public void simplifyBlockComplexEmpty() {
-    final BlockSimplify wring = new BlockSimplify();
-    final String from = "{;;{;{{}}}{;}{};}";
-    assertThat(wring.scopeIncludes((Block) As.STATEMENTS.ast(from)), is(true));
-    assertThat(wring.eligible((Block) As.STATEMENTS.ast(from)), is(true));
-    assertSimplifiesTo(from, "", wring, Wrap.Statement);
-  }
   @Test public void simplifyBlockComplexEmpty0() {
-    assertSimplifiesTo("{}", "");
+    assertConvertsTo("{}", "");
   }
   @Test public void simplifyBlockComplexEmpty1() {
     assertConvertsTo("{;;{;{{}}}{;}{};}", "");
