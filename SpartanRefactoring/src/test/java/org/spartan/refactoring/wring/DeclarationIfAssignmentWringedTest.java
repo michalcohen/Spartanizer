@@ -126,7 +126,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertThat(asMe().toString(), Toolbox.instance.find(asMe()), is(notNullValue()));
   }
   @Test public void noneligible() {
-    assertFalse(inner.noneligible(asMe()));
+    assertFalse(inner.nonEligible(asMe()));
   }
   @Test public void peelableOutput() {
     final String s = expected;

@@ -40,37 +40,37 @@ public class AsSpartanization extends Spartanization {
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final Block e) {
-        if (!inner.scopeIncludes(e) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final ConditionalExpression e) {
-        if (!inner.scopeIncludes(e) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final IfStatement e) {
-        if (!inner.scopeIncludes(e) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final InfixExpression e) {
-        if (!inner.scopeIncludes(e) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final PrefixExpression e) {
-        if (!inner.scopeIncludes(e) || inner.noneligible(e))
+        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
           return true;
         $.add(new Range(e));
         return true;
       }
       @Override public boolean visit(final VariableDeclarationFragment f) {
-        if (!inner.scopeIncludes(f) || inner.noneligible(f))
+        if (!inner.scopeIncludes(f) || inner.nonEligible(f))
           return true;
         $.add(new Range(f));
         return true;

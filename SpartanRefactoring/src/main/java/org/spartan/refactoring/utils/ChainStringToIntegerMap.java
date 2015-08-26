@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-class ChainStringToIntMap {
+class ChainStringToIntegerMap {
   public Map<String, Integer> inner = new HashMap<>();
   public boolean containsKey(final String key) {
     return inner.containsKey(key);
@@ -26,21 +26,21 @@ class ChainStringToIntMap {
   public Set<String> keySet() {
     return inner.keySet();
   }
-  public ChainStringToIntMap put(final String key, final int value) {
+  public ChainStringToIntegerMap put(final String key, final int value) {
     assert!inner.containsKey(key);
     inner.put(key, new Integer(value));
     return this;
   }
-  public ChainStringToIntMap putOn(final int value, final String... keys) {
+  public ChainStringToIntegerMap putOn(final int value, final String... keys) {
     for (final String key : keys)
       put(key, value);
     return this;
   }
-  public ChainStringToIntMap putAll(final Map<? extends String, ? extends Integer> m) {
+  public ChainStringToIntegerMap putAll(final Map<? extends String, ? extends Integer> m) {
     inner.putAll(m);
     return this;
   }
-  public ChainStringToIntMap remove(final String key) {
+  public ChainStringToIntegerMap remove(final String key) {
     inner.remove(key);
     return this;
   }

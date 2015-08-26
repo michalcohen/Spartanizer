@@ -160,7 +160,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void noneligible() {
       if (inner == null)
         return;
-      assertTrue(inner.noneligible((N) asExpression()));
+      assertTrue(inner.nonEligible((N) asExpression()));
     }
     @Test public void noOpporunity() {
       final CompilationUnit u = asCompilationUnit();
@@ -441,7 +441,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void noneligible() {
       if (inner == null)
         return;
-      assertFalse(inner.noneligible(asMe()));
+      assertFalse(inner.nonEligible(asMe()));
     }
     @Test public void peelableOutput() {
       if (inner == null)
@@ -535,7 +535,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void noneligible() {
       if (inner == null)
         return;
-      assertFalse(inner.noneligible((E) asExpression()));
+      assertFalse(inner.nonEligible((E) asExpression()));
     }
     @Test public void peelableOutput() {
       if (input == null)
@@ -723,7 +723,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void noneligible() {
       if (input == null)
         return;
-      assertFalse(inner.noneligible(asMe()));
+      assertFalse(inner.nonEligible(asMe()));
     }
     @Test public void peelableOutput() {
       if (input == null)
@@ -842,7 +842,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void noneligible() {
       if (inner == null)
         return;
-      assertFalse(inner.noneligible(asMe()));
+      assertFalse(inner.nonEligible(asMe()));
     }
     @Test public void peelableOutput() {
       if (expected == null)
@@ -972,7 +972,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         assertNotNull(inner.replacement((N) asExpression()));
       }
       @Test public void noneligible() {
-        assertFalse(inner.noneligible((N) asExpression()));
+        assertFalse(inner.nonEligible((N) asExpression()));
       }
       @Test public void oneOpporunity() {
         final CompilationUnit u = asCompilationUnit();

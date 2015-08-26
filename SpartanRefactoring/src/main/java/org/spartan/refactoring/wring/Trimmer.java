@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -93,6 +94,9 @@ public class Trimmer extends Spartanization {
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
+      @Override public boolean visit(final SuperConstructorInvocation it) {
+        return go(it);
+      }
       @Override public boolean visit(final Block it) {
         return go(it);
       }
@@ -116,7 +120,7 @@ public class Trimmer extends Spartanization {
       }
       private <N extends ASTNode> boolean go(final N n) {
         final Wring<N> w = Toolbox.instance.find(n);
-        return w == null || w.noneligible(n) || overrideInto(w.range(n), $);
+        return w == null || w.nonEligible(n) || overrideInto(w.range(n), $);
       }
     };
   }
@@ -124,6 +128,9 @@ public class Trimmer extends Spartanization {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final Block b) {
         return go(b);
+      }
+      @Override public boolean visit(final SuperConstructorInvocation i) {
+        return go(i);
       }
       @Override public boolean visit(final ConditionalExpression e) {
         return go(e);

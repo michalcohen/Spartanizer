@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 public enum Precedence {
   ;
   final static int UNDEFINED = -1;
-  private static final ChainStringToIntMap of = new ChainStringToIntMap()//
+  private static final ChainStringToIntegerMap of = new ChainStringToIntegerMap()//
       .putOn(1, "[]", ".", "() invoke", "++ post", "-- post", "MethodInvocation", "PostfixExpression", "ArrayAccess", "FieldAccess", "QualifiedName") //
       .putOn(2, "++ pre", "-- pre", "+ unary", "- unary", "!", "~", "PrefixExpression") //
       .putOn(3, "() cast", "new", "ArrayCreation", "ClassInstanceCreation", "CastExpression") //

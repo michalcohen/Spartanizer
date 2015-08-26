@@ -111,7 +111,7 @@ public class TrimmerTest {
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
   }
-  @Test public void a() {
+  @Test public void shortestBranchInIf() {
     assertConvertsTo("   int a=0;\n" + //
         "   if (s.equals(known)){\n" + //
         "     System.console();\n" + //
@@ -216,6 +216,15 @@ public class TrimmerTest {
   }
   @Test public void emptyThen1() {
     assertConvertsTo("if (b) ; else x();", "if (!b) x();");
+  }
+  @Test public void removeSuper() {
+    assertConvertsTo("class T { T() { super(); }", "class T { T() { }");
+  }
+  @Test public void removeSuperWithStatemen() {
+    assertConvertsTo("class T { T() { super(); a++;}", "class T { T() { ++a;}");
+  }
+  @Test public void removeSuperWithArgument() {
+    assertNoConversion("class T { T() { super(a); a();}");
   }
   @Test public void emptyThen2() {
     assertConvertsTo("if (b) {;;} else {x() ;}", "if (!b) x();");

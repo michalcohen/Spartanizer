@@ -22,6 +22,7 @@ public class JavaTypeNameParser {
     // variations
     return false;
   }
+  /** The type name managed by this instance */
   public final String typeName;
   /**
    * Instantiates this class
@@ -59,17 +60,12 @@ public class JavaTypeNameParser {
     return new Iterable<String>() {
       @Override public Iterator<String> iterator() {
         return new Iterator<String>() {
-
           @Override public boolean hasNext() {
-            // TODO Auto-generated method stub
-            return false;
+            return true;
           }
-
           @Override public String next() {
-            // TODO Auto-generated method stub
-            return null;
+            return shortName();
           }
-
           @Override public void remove() {
             // TODO Auto-generated method stub
 

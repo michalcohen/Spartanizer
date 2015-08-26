@@ -58,7 +58,7 @@ public abstract class Wring<N extends ASTNode> {
    *         the simplification offered by this object.
    * @see #eligible(InfixExpression)
    */
-  final boolean noneligible(final N n) {
+  final boolean nonEligible(final N n) {
     return !eligible(n);
   }
   /**

@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 /**
@@ -85,7 +86,7 @@ public class Toolbox {
           new TernaryShortestFirst(), //
           new TernaryPushdown(), //
           null) //
-      .seal();
+      .add(SuperConstructorInvocation.class, new SuperConstructorInvocationRemover()).seal();
 
   /**
    * A builder for the enclosing class.
