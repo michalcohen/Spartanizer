@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.IfStatement;

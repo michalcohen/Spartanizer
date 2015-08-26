@@ -74,10 +74,10 @@ public class TernaryShortestFirstTest {
         new String[] { "Actual simplified 2", "!f(o) ? null : Subject.operands(operands).to(e.getOperator())" }, //
         new String[] { "Actual simplified 1", "!f(operands) ? null : Subject.operands(operands).to(e.getOperator())" }, //
         new String[] { "Actual", "!tryToSort(operands) ? null : Subject.operands(operands).to(e.getOperator())" }, //
-         new String[] {"No boolean", "a?b:c"}, //
-         new String[] {"() T X", "a ? c : (((true )))"}, //
-         new String[] {"Actual example", "!inRange(m, e) ? true : inner.go(r, e)"}, //
-         new String[] {"Not same function invocation ", "a?b(x):d(x)"}, //
+        new String[] { "No boolean", "a?b:c" }, //
+        new String[] { "() T X", "a ? c : (((true )))" }, //
+        new String[] { "Actual example", "!inRange(m, e) ? true : inner.go(r, e)" }, //
+        new String[] { "Not same function invocation ", "a?b(x):d(x)" }, //
         new String[] { "identical method call", "a ? y.f(b) :y.f(b)" }, //
         new String[] { "identical function call", "a ? f(b) :f(b)" }, //
         new String[] { "identical assignment", "a ? (b=c) :(b=c)" }, //
@@ -126,7 +126,7 @@ public class TernaryShortestFirstTest {
         new String[] { "Bug of being cyclice", //
             "length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $", //
             "length(not(notConditional))+length(then)>=length(notConditional)+length(elze)?$:null",//
-        }, //
+    }, //
         null);
     /**
      * Generate test cases for this parameterized class.

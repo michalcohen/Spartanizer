@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
 import static org.spartan.refactoring.utils.Funcs.right;
@@ -58,7 +59,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
   };
   private static Specificity specificity = new Specificity();
   static int literalCompare(final Expression e1, final Expression e2) {
-    return -specificity.compare(e1,e2);
+    return -specificity.compare(e1, e2);
   }
   static int nodesCompare(final Expression e1, final Expression e2) {
     return round(nodesCount(e1) - nodesCount(e2), NODES_THRESHOLD);

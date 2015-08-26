@@ -35,7 +35,7 @@ public class ExtractTest {
   @Test public void prefixToPostfixDecrement() {
     final String from = "for (int i = 0; i < 100;  i--)  i--;";
     final Statement s = s(from);
-    assertThat(s, iz("{"+from +"}"));
+    assertThat(s, iz("{" + from + "}"));
     assertNotNull(s);
     final PostfixExpression e = Extract.findFirstPostfix(s);
     assertNotNull(e);

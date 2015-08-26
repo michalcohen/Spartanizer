@@ -51,7 +51,7 @@ public class OccurrencesTest {
     final List<Expression> into = new ArrayList<>();
     final ASTVisitor collector = Occurrences.lexicalUsesCollector(into, a);
     a.accept(collector);
-    assertThat(into.size(),is(1));
+    assertThat(into.size(), is(1));
   }
   @Test public void occurencesAinE() {
     assertThat(Occurrences.BOTH_SEMANTIC.of(a).in(e).size(), is(1));

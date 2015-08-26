@@ -291,8 +291,8 @@ public enum Occurrences {
    * Creates a function object for searching for a given value.
    *
    * @param e what to search for
-   * @return a function object to be used for searching for the parameter
-   *         in a given location
+   * @return a function object to be used for searching for the parameter in a
+   *         given location
    */
   public Of of(final Expression e) {
     return new Of() {

@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.makeThrowStatement;
 import static org.spartan.refactoring.utils.Funcs.then;
@@ -8,6 +9,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
+
 /**
  * A {@link Wring} to convert
  *

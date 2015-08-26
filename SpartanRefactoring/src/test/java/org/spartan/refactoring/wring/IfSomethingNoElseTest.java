@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -29,15 +30,15 @@ import org.spartan.utils.Utils;
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class IfSomethingNoElseTest {
-  static final Wring<IfStatement> WRING =new IfSomethingNoElse();
+  static final Wring<IfStatement> WRING = new IfSomethingNoElse();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Return only on one side", "if (a) return b; else c;"}, //
-         new String[] {"Simple if return", "if (a) return b; else return c;"}, //
-         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
-         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
+        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
+        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

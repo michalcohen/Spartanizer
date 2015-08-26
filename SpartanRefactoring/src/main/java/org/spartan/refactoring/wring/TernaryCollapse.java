@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;

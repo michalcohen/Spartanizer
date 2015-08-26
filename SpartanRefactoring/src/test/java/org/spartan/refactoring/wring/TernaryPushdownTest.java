@@ -25,22 +25,22 @@ public class TernaryPushdownTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Expression vs. Expression", " 6 - 7 < 2 + 1   "}, //
-         new String[] {"Literal vs. Literal", "1 < 102333"}, //
-         new String[] {"Actual example", "next < values().length"}, //
-         new String[] {"No boolean", "a?b:c"}, //
-         new String[] {"F X", "a ? false : c"}, //
-         new String[] {"T X", "a ? true : c"}, //
-         new String[] {"X F", "a ? b : false"}, //
-         new String[] {"X T", "a ? b : true"}, //
-         new String[] {"() F X", "a ?( false):true"}, //
-         new String[] {"() T X", "a ? (((true ))): c"}, //
-         new String[] {"() X F", "a ? b : (false)"}, //
-         new String[] {"() X T", "a ? b : ((true))"}, //
-         new String[] {"Actual example", "!inRange(m, e) ? true : inner.go(r, e)"}, //
-         new String[] {"Method invocation first", "a?b():c"}, //
-         new String[] {"Not same function invocation ", "a?b(x):d(x)"}, //
-         new String[] {"Not same function invocation ", "a?x.f(x):x.d(x)"}, //
+        new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
+        new String[] { "Literal vs. Literal", "1 < 102333" }, //
+        new String[] { "Actual example", "next < values().length" }, //
+        new String[] { "No boolean", "a?b:c" }, //
+        new String[] { "F X", "a ? false : c" }, //
+        new String[] { "T X", "a ? true : c" }, //
+        new String[] { "X F", "a ? b : false" }, //
+        new String[] { "X T", "a ? b : true" }, //
+        new String[] { "() F X", "a ?( false):true" }, //
+        new String[] { "() T X", "a ? (((true ))): c" }, //
+        new String[] { "() X F", "a ? b : (false)" }, //
+        new String[] { "() X T", "a ? b : ((true))" }, //
+        new String[] { "Actual example", "!inRange(m, e) ? true : inner.go(r, e)" }, //
+        new String[] { "Method invocation first", "a?b():c" }, //
+        new String[] { "Not same function invocation ", "a?b(x):d(x)" }, //
+        new String[] { "Not same function invocation ", "a?x.f(x):x.d(x)" }, //
         new String[] { "identical method call", "a ? y.f(b) :y.f(b)" }, //
         new String[] { "identical function call", "a ? f(b) :f(b)" }, //
         new String[] { "identical assignment", "a ? (b=c) :(b=c)" }, //

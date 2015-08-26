@@ -20,10 +20,9 @@ import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
-/*
- * @author Yossi Gil
- * @since 2014-07-13
- */
+/* @author Yossi Gil
+ * 
+ * @since 2014-07-13 */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class IfExpressionStatementElseSimilarExpressionStatementTest {
@@ -34,22 +33,22 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
     final IfStatement i = asIfStatement(s);
     assertNotNull(i);
     final boolean scopeIncludes = WRING.scopeIncludes(i);
-    assertThat(scopeIncludes,is(true));
+    assertThat(scopeIncludes, is(true));
   }
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Expression vs. Expression", " 6 - 7 < 2 + 1   "}, //
-         new String[] {"Literal vs. Literal", "if (a) return b; else c;"}, //
-         new String[] {"Simple if return", "if (a) return b; else return c;"}, //
-         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
-         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
-         new String[] {"Not same assignment", "if (a) a /= b; else a /= c;"}, //
-         new String[] {"Another distinct assignment", "if (a) a /= b; else a %= c;"}, //
-         new String[] {"Simple if assign", "if (a) a = b; else a = c;", }, //
-         new String[] {"Simple if plus assign", "if (a) a += b; else a += c;",}, //
-         new String[] {"Simple if plus assign", "if (a) a *= b; else a *= c;",}, //
+        new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
+        new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
+        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
+        new String[] { "Not same assignment", "if (a) a /= b; else a /= c;" }, //
+        new String[] { "Another distinct assignment", "if (a) a /= b; else a %= c;" }, //
+        new String[] { "Simple if assign", "if (a) a = b; else a = c;", }, //
+        new String[] { "Simple if plus assign", "if (a) a += b; else a += c;", }, //
+        new String[] { "Simple if plus assign", "if (a) a *= b; else a *= c;", }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -71,11 +70,11 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
-         new String[] {"Vanilla", "if (a) f(b); else f(c);", "f(a ? b: c);"}, //
-         new String[] {"Method call", "if (a) x.f(b); else x.f(c);", "x.f(a ? b: c);"}, //
-         new String[] {"Distinct receiver", "if (a) y.f(b); else x.f(b);", "(a ?y :x).f(b);"}, //
-         new String[] {"Distinct receiver no arguments", "if (a) y.f(); else x.f();", "(a ?y :x).f();"}, //
-         new String[] {"Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f(a,b,c);"}, //
+        new String[] { "Vanilla", "if (a) f(b); else f(c);", "f(a ? b: c);" }, //
+        new String[] { "Method call", "if (a) x.f(b); else x.f(c);", "x.f(a ? b: c);" }, //
+        new String[] { "Distinct receiver", "if (a) y.f(b); else x.f(b);", "(a ?y :x).f(b);" }, //
+        new String[] { "Distinct receiver no arguments", "if (a) y.f(); else x.f();", "(a ?y :x).f();" }, //
+        new String[] { "Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f(a,b,c);" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

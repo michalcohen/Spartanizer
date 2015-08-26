@@ -31,16 +31,14 @@ public class CleanupHandler extends BaseHandler {
   public CleanupHandler() {
     super(null);
   }
-
   static final int MaxSpartanizationTries = 20;
-
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) throws ExecutionException {
     final List<ICompilationUnit> compilationUnits = compilationUnits();
     final IWorkbench wb = PlatformUI.getWorkbench();
     int loopCounter = 0;
     boolean haveSuggestions = true;
-    while (haveSuggestions){
-    final IProgressService ps = wb.getProgressService();
+    while (haveSuggestions) {
+      final IProgressService ps = wb.getProgressService();
       try {
         ps.busyCursorWhile(new IRunnableWithProgress() {
           @Override public void run(final IProgressMonitor pm) {
@@ -59,13 +57,14 @@ public class CleanupHandler extends BaseHandler {
       }
       haveSuggestions = false;
       for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations)
-        if (s.haveSuggestions()) haveSuggestions = true;
+        if (s.haveSuggestions())
+          haveSuggestions = true;
       ++loopCounter;
-      if (loopCounter > MaxSpartanizationTries) throw new ExecutionException(null);
+      if (loopCounter > MaxSpartanizationTries)
+        throw new ExecutionException(null);
     }
     final ImageIcon i = new ImageIcon(this.getClass().getResource("/res/Spartan64.gif"));
     JOptionPane.showMessageDialog(null, "Your project has been Spartanized successfully!", "Spartanization", JOptionPane.INFORMATION_MESSAGE, i);
-
     return null;
   }
 }

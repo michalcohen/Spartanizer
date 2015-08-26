@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.then;
@@ -10,8 +11,8 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code>
- * into <code> a ? c(d,e) : f(g,h) </code>
+ * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code> into
+ * <code> a ? c(d,e) : f(g,h) </code>
  *
  * @author Yossi Gil
  * @since 2015-08-15

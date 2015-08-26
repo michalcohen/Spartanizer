@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_ACCESS;
 import static org.eclipse.jdt.core.dom.ASTNode.ARRAY_CREATION;
 import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
@@ -94,6 +95,7 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.TypeLiteral;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read

@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Extract.core;
@@ -25,7 +26,8 @@ import org.eclipse.jdt.core.dom.Statement;
 public enum Restructure {
   ;
   /**
-   * Duplicate all {@link Statement} object found in a given list into another list.
+   * Duplicate all {@link Statement} object found in a given list into another
+   * list.
    *
    * @param from JD
    * @param into JD

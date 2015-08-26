@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.wring.Wrings.emptyThen;
@@ -30,5 +31,4 @@ public final class IfEmptyThen extends Wring.OfIfStatement {
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && emptyThen(s);
   }
-
 }

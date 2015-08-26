@@ -49,7 +49,6 @@ public enum As {
     @Override public CompilationUnit ast(final String s) {
       return (CompilationUnit) makeParser(s).createAST(null);
     }
-
   },
   /**
    * Converts file, string or marker to expression.
@@ -120,7 +119,6 @@ public enum As {
   public static ICompilationUnit iCompilationUnit(final IMarker m) {
     return iCompilationUnit((IFile) m.getResource());
   }
-
   /**
    * Convert file contents into a {@link String}
    *
@@ -159,7 +157,9 @@ public enum As {
   private As(final int kind) {
     this.kind = kind;
   }
-  /** Parses a given {@link Document}.
+  /**
+   * Parses a given {@link Document}.
+   * 
    * @param d JD
    * @return the {@link ASTNode} obtained by parsing
    */
@@ -192,7 +192,6 @@ public enum As {
   public ASTNode ast(final IMarker m, final SubProgressMonitor pm) {
     return Make.of(this).parser(m).createAST(pm);
   }
-
   /**
    * String -> ASTNode converter
    *
@@ -239,5 +238,4 @@ public enum As {
     $.setResolveBindings(false);
     return $;
   }
-
 }

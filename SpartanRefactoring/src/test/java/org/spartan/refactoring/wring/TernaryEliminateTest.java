@@ -22,26 +22,25 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class TernaryEliminateTest
-{
+public class TernaryEliminateTest {
   static final Wring<ConditionalExpression> WRING = new TernaryEliminate();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"No boolean", "a?b:c"}, //
-         new String[] {"F X", "a ? false : c"}, //
-         new String[] {"T X", "a ? true : c"}, //
-         new String[] {"X F", "a ? b : false"}, //
-         new String[] {"X T", "a ? b : true"}, //
-         new String[] {"() F X", "a ?( false):true"}, //
-         new String[] {"() T X", "a ? (((true ))): c"}, //
-         new String[] {"() X F", "a ? b : (false)"}, //
-         new String[] {"() X T", "a ? b : ((true))"}, //
-         new String[] {"Actual example", "!inRange(m, e) ? true : inner.go(r, e)"}, //
-         new String[] {"Method invocation first", "a?b():c"}, //
-         new String[] {"Not same function invocation ", "a?b(x):d(x)"}, //
-         new String[] {"Not same function invocation ", "a?x.f(x):x.d(x)"}, //
+        new String[] { "No boolean", "a?b:c" }, //
+        new String[] { "F X", "a ? false : c" }, //
+        new String[] { "T X", "a ? true : c" }, //
+        new String[] { "X F", "a ? b : false" }, //
+        new String[] { "X T", "a ? b : true" }, //
+        new String[] { "() F X", "a ?( false):true" }, //
+        new String[] { "() T X", "a ? (((true ))): c" }, //
+        new String[] { "() X F", "a ? b : (false)" }, //
+        new String[] { "() X T", "a ? b : ((true))" }, //
+        new String[] { "Actual example", "!inRange(m, e) ? true : inner.go(r, e)" }, //
+        new String[] { "Method invocation first", "a?b():c" }, //
+        new String[] { "Not same function invocation ", "a?b(x):d(x)" }, //
+        new String[] { "Not same function invocation ", "a?x.f(x):x.d(x)" }, //
         new String[] { "function call", "a ? f(b) : f(c)" }, //
         new String[] { "a method call", "a ? y.f(b) :y.f(c)" }, //
         null);

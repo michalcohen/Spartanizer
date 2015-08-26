@@ -94,7 +94,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     assertNotNull($);
     return $;
   }
- protected  N asMe() {
+  protected N asMe() {
     return null;
   }
   protected PrefixExpression asPrefixExpression() {
@@ -242,7 +242,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       }
       @Test public void scopeDoesNotInclude() {
         if (inner != null)
-        assertThat(inner.scopeIncludes(asMe()), is(false));
+          assertThat(inner.scopeIncludes(asMe()), is(false));
       }
     }
 
@@ -530,7 +530,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void hasReplacement() {
       if (inner == null)
         return;
-      assertNotNull(inner.replacement((E)asExpression()));
+      assertNotNull(inner.replacement((E) asExpression()));
     }
     @Test public void noneligible() {
       if (inner == null)
@@ -969,7 +969,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         assertNotNull(Toolbox.instance.find(asExpression()));
       }
       @Test public void hasReplacement() {
-        assertNotNull(inner.replacement((N)asExpression()));
+        assertNotNull(inner.replacement((N) asExpression()));
       }
       @Test public void noneligible() {
         assertFalse(inner.noneligible((N) asExpression()));

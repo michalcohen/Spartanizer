@@ -1,11 +1,14 @@
 package org.spartan.refactoring.wring;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.hamcrest.OrderingComparison.greaterThan;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
@@ -71,7 +74,7 @@ public class DeclarationIfAssginmentTest {
     final IfStatement s = Extract.nextIfStatement(f);
     assertThat(s, is(Extract.firstIfStatement(u)));
     assertNotNull(s);
-    assertThat(s,iz("if (a + b) a=3;"));
+    assertThat(s, iz("if (a + b) a=3;"));
     assertTrue(Wrings.emptyElse(s));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
@@ -85,11 +88,11 @@ public class DeclarationIfAssginmentTest {
     assertThat(b.toString(), is("b"));
     final Of of = Occurrences.BOTH_SEMANTIC.of(b);
     assertNotNull(of);
-    final Expression  e =  s.getExpression() ;
+    final Expression e = s.getExpression();
     assertNotNull(e);
     assertThat(e, iz("a + b"));
     final List<Expression> in = of.in(e);
-    assertThat(in.size(),is(1));
+    assertThat(in.size(), is(1));
     assertThat(!in.isEmpty(), is(true));
     assertThat(Occurrences.BOTH_SEMANTIC.of(f).existIn(s.getExpression(), right(a)), is(true));
     assertThat(of.existIn(s.getExpression(), right(a)), is(true));

@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.flip;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
@@ -24,7 +25,6 @@ public final class InfixComparisonSpecific extends Wring.OfInfixExpression {
   @Override public boolean scopeIncludes(final InfixExpression e) {
     return !e.hasExtendedOperands() && Is.comparison(e) && (Specificity.defined(left(e)) || Specificity.defined(right(e)));
   }
-
   @Override Expression _replacement(final InfixExpression e) {
     return flip(e);
   }

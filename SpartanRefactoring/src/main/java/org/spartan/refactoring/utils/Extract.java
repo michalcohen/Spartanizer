@@ -1,4 +1,5 @@
 package org.spartan.refactoring.utils;
+
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
@@ -132,11 +133,12 @@ public enum Extract {
     return n == null ? null : asExpressionStatement(Extract.singleStatement(n));
   }
   /**
-   * Search for a {@link PrefixExpression} in the tree rooted at an {@link ASTNode}.
+   * Search for a {@link PrefixExpression} in the tree rooted at an
+   * {@link ASTNode}.
    *
    * @param n JD
-   * @return the first {@link PrefixExpression} found in an {@link ASTNode n}, or
-   *         <code><b>null</b> if there is no such statement.
+   * @return the first {@link PrefixExpression} found in an {@link ASTNode n},
+   *         or <code><b>null</b> if there is no such statement.
    */
   public static PostfixExpression findFirstPostfix(final ASTNode n) {
     if (n == null)
@@ -359,13 +361,11 @@ public enum Extract {
     return $.size() != 1 ? null : (Statement) $.get(0);
   }
   /**
-   * Finds the single statement in the "then" branch of an
-   * {@link IfStatement}
+   * Finds the single statement in the "then" branch of an {@link IfStatement}
    *
    * @param s JD
-   * @return the single statement in the "then" branch of the
-   *         parameter, or <code><b>null</b></code>, if no such statement
-   *         exists.
+   * @return the single statement in the "then" branch of the parameter, or
+   *         <code><b>null</b></code>, if no such statement exists.
    */
   public static Statement singleThen(final IfStatement s) {
     return Extract.singleStatement(then(s));

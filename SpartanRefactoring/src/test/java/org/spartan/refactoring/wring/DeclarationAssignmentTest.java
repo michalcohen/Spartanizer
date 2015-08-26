@@ -24,7 +24,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationAssignmentTest {
-  static final Wring<VariableDeclarationFragment> WRING =new DeclarationAssignment();
+  static final Wring<VariableDeclarationFragment> WRING = new DeclarationAssignment();
   @Test public void placeHolder() {
     // Place holder for future tests
     assertNotNull(WRING);
@@ -33,8 +33,8 @@ public class DeclarationAssignmentTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Wrong assignnet", "int a = 0; if (x)  a+= 5"}, //
-         new String[] {"Wrong assignnet", "int a = 0; if (a)  a= 5;"}, //
+        new String[] { "Wrong assignnet", "int a = 0; if (x)  a+= 5" }, //
+        new String[] { "Wrong assignnet", "int a = 0; if (a)  a= 5;" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

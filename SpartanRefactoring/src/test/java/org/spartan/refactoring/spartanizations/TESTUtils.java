@@ -1,11 +1,12 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.hamcrest.OrderingComparison.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -22,11 +23,10 @@ import org.spartan.refactoring.wring.Trimmer;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-@SuppressWarnings("javadoc")
-public enum TESTUtils {
+@SuppressWarnings("javadoc") public enum TESTUtils {
   ;
   static final String WHITES = "(?m)\\s+";
- public static void assertNoChange(final String input) {
+  public static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
   /**
@@ -68,11 +68,11 @@ public enum TESTUtils {
         .replaceAll("\\s$", "") // Closing whites
         ;
     for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
-    "[\\^]" })
+        "[\\^]" })
       $ = $ //
-      .replaceAll(WHITES + operator, operator) // Preceding whites
-      .replaceAll(operator + WHITES, operator) // Trailing whites
-      ;
+          .replaceAll(WHITES + operator, operator) // Preceding whites
+          .replaceAll(operator + WHITES, operator) // Trailing whites
+          ;
     return $;
   }
   public static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {

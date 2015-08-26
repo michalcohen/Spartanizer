@@ -42,14 +42,14 @@ public enum Precedence {
           "*=", "/=", "%=", // assignment, multiplicative
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
-          );
+  );
   /**
    * Compare precedence of two expressions.
    *
    * @param host JD
    * @param e2 JD
-   * @return <code><b>true</b></code> <i>iff</i> the precedence of the first parameter
-   *         is equal to that of the second parameter.
+   * @return <code><b>true</b></code> <i>iff</i> the precedence of the first
+   *         parameter is equal to that of the second parameter.
    */
   public static boolean equal(final ASTNode host, final ASTNode e2) {
     return Precedence.of(host) == Precedence.of(e2);
@@ -59,8 +59,8 @@ public enum Precedence {
    *
    * @param e1 JD
    * @param e2 JD
-   * @return <code><b>true</b></code> <i>iff</i> the precedence of the first parameter
-   *         is strictly greater than that of the second parameter.
+   * @return <code><b>true</b></code> <i>iff</i> the precedence of the first
+   *         parameter is strictly greater than that of the second parameter.
    */
   public static boolean greater(final ASTNode e1, final ASTNode e2) {
     return !Precedence.known(e1) || !Precedence.known(e2) || Precedence.of(e1) > Precedence.of(e2);
@@ -87,8 +87,7 @@ public enum Precedence {
     return of(o.toString());
   }
   /**
-   * Determine the precedence of an arbitrary
-   * {@link ASTNode}
+   * Determine the precedence of an arbitrary {@link ASTNode}
    *
    * @param n JD
    * @return the precedence of the parameter
@@ -122,7 +121,6 @@ public enum Precedence {
   public static int of(final InfixExpression.Operator o) {
     return of(o.toString());
   }
-
   /**
    * Determine the precedence of two expressions is the same.
    *

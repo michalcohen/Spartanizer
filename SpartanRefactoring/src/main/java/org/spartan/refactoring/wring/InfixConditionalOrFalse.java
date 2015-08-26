@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
+
 /**
  * A {@link Wring} that eliminate Boolean literals, when possible present on
  * logical AND an logical OR.
@@ -12,7 +13,6 @@ import org.spartan.refactoring.utils.Is;
  * @author Yossi Gil
  * @since 2015-07-20
  */
-
 public final class InfixConditionalOrFalse extends Wring.OfInfixExpression {
   @Override Expression _replacement(final InfixExpression e) {
     return Wrings.eliminateLiteral(e, false);

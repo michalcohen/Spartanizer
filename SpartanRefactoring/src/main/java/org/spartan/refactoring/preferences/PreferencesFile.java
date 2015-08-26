@@ -22,7 +22,7 @@ public class PreferencesFile {
     return new String[] { //
         "Preferences file for Spartanization rules profiles", //
         "Please avoid editing the file manually ", //
-    "--------------------------------------------------" };
+        "--------------------------------------------------" };
   }
   /**
    * @return Spartanization rules preferences file path.

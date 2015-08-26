@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.compatible;
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.left;

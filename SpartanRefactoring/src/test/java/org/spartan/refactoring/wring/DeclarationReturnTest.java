@@ -39,7 +39,7 @@ public class DeclarationReturnTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();"}, //
+        new String[] { "Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();" }, //
         new String[] { "Vanilla", "int a; a =3;", }, //
         new String[] { "Vanilla", "int a; if (x) b = 3; else ;", }, //
         new String[] { "Vanilla", "int a = 2; if (b) a =3;", }, //
@@ -72,7 +72,7 @@ public class DeclarationReturnTest {
                 + "   !messageFlagged ? mReadColorChip : mFlaggedReadColorChip: " //
                 + "    !messageFlagged ? mUnreadColorChip : mFlaggedUnreadColorChip; " //
                 + "   return $;", //
-        "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
+            "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -16,11 +16,11 @@ import org.spartan.refactoring.wring.Trimmer;
  * @since 2013/07/01
  */
 public class Spartanizations {
-  private static Spartanization[] all = {//
+  private static Spartanization[] all = { //
       new Trimmer(), //
-  //    new ForwardDeclaration(), //
-  //    new InlineSingleUse(), //
-  //    new RenameReturnVariableToDollar(), //
+      // new ForwardDeclaration(), //
+      // new InlineSingleUse(), //
+      // new RenameReturnVariableToDollar(), //
   };
   @SuppressWarnings("synthetic-access") //
   private static final Map<String, Spartanization> map = new HashMap<String, Spartanization>() {
@@ -56,7 +56,7 @@ public class Spartanizations {
    */
   public static Iterable<Spartanization> allAvailableSpartanizations() {
     return new Iterable<Spartanization>() {
-      @SuppressWarnings("synthetic-access")//
+      @SuppressWarnings("synthetic-access") //
       @Override public Iterator<Spartanization> iterator() {
         return new Iterator<Spartanization>() {
           int next = 0;

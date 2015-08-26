@@ -27,6 +27,7 @@ public enum Make {
   CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS); //
   /**
    * Converts the {@link As} value to its corresponding {@link Make} enum value
+   * 
    * @param a The {@link As} type
    * @return the corresponding {@link Make} value to the argument
    */

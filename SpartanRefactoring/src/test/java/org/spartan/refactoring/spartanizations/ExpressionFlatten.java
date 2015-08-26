@@ -1,4 +1,5 @@
 package org.spartan.refactoring.spartanizations;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;

@@ -4,21 +4,22 @@ import static org.spartan.refactoring.utils.Funcs.duplicate;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
+
 /**
-/**
- * A {@link Wring} to convert
+ * /** A {@link Wring} to convert
  *
  * <pre>
  * if (x)
  *   return b;
- * else
- *   {}
+ * else {
+ * }
  * </pre>
  *
  * into
  *
  * <pre>
- * if(x) return b;
+ * if (x)
+ *   return b;
  * </pre>
  *
  * @author Yossi Gil

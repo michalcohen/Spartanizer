@@ -68,8 +68,8 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
      * Zero based
      */
     ZeroBased, /**
-     * one based
-     */
+                * one based
+                */
     OneBased
   }
   /**
@@ -146,7 +146,7 @@ class UnionFind {
   }
   @SuppressWarnings("boxing") //
   public static void main(final String[] args) {
-    //  TODO Ofir: Tests, should be made better by me,
+    // TODO Ofir: Tests, should be made better by me,
     final ChainedHash<String, Integer> names = new ChainedHash<>();
     names.chain("bob", 2).chain("bob", 4).chain("bob", 8);
     names.chain("shraga", 1).chain("shraga", 3).chain("shraga", 5);

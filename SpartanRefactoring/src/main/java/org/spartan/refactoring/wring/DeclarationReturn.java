@@ -8,11 +8,13 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
+
 /**
  * A {@link Wring} to convert
  *
  * <pre>
- * int  a = 3; return a;
+ * int a = 3;
+ * return a;
  * </pre>
  *
  * into
@@ -25,8 +27,6 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-08-07
  */
 public final class DeclarationReturn extends Wring.OfVariableDeclarationFragmentAndSurrounding {
-
-
   @Override ASTRewrite fillReplacement(final VariableDeclarationFragment f, final ASTRewrite r) {
     final Expression initializer = f.getInitializer();
     if (initializer == null)
@@ -38,7 +38,7 @@ public final class DeclarationReturn extends Wring.OfVariableDeclarationFragment
     if (returnValue == null || !same(f.getName(), returnValue))
       return null;
     r.remove(Extract.statement(f), null);
-    r.replace(s,Subject.operand(initializer).toReturn(),null);
+    r.replace(s, Subject.operand(initializer).toReturn(), null);
     return r;
   }
 }

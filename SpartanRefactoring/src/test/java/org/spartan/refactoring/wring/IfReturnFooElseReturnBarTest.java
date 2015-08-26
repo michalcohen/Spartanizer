@@ -27,7 +27,7 @@ public enum IfReturnFooElseReturnBarTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Return only on one side", "if (a) return b; else c;"}, //
+        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -50,9 +50,9 @@ public enum IfReturnFooElseReturnBarTest {
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
         // Literal
-         new String[] {"Simple if return", "if (a) return b; else return c;", "return a ? b : c;"}, //
-         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;"}, //
-         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;"}, //
+        new String[] { "Simple if return", "if (a) return b; else return c;", "return a ? b : c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}", " if(a)return b;else return c;" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}", "return a ? b : c;" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.wring.TernaryPushdown.pushdown;
@@ -22,7 +23,7 @@ import org.spartan.refactoring.utils.Subject;
  * into
  *
  * <pre>
- * f(x ? a: b);
+ * f(x ? a : b);
  * </pre>
  *
  * @author Yossi Gil

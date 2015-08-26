@@ -11,6 +11,7 @@ import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
+
 /**
  * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
  * expression. Extra care is taken to leave intact the use of

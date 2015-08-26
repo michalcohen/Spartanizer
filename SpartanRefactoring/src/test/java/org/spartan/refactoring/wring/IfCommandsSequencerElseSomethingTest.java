@@ -38,15 +38,15 @@ public class IfCommandsSequencerElseSomethingTest {
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
     static String[][] cases = Utils.asArray(//
-         new String[] {"Literal vs. Literal", "if (a) return b; else c;"}, //
-         new String[] {"Simple if return", "if (a) return b; else return c;"}, //
-         new String[] {"Simply nested if return", "{if (a)  return b; else return c;}"}, //
-         new String[] {"Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}"}, //
-         new String[] {"Not same assignment", "if (a) a /= b; else a /= c;"}, //
-         new String[] {"Another distinct assignment", "if (a) a /= b; else a %= c;"}, //
-         new String[] {"Simple if assign", "if (a) a = b; else a = c;"}, //
-         new String[] {"Simple if plus assign", "if (a) a += b; else a += c;"}, //
-         new String[] {"Simple if plus assign", "if (a) a *= b; else a *= c;"}, //
+        new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
+        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
+        new String[] { "Not same assignment", "if (a) a /= b; else a /= c;" }, //
+        new String[] { "Another distinct assignment", "if (a) a /= b; else a %= c;" }, //
+        new String[] { "Simple if assign", "if (a) a = b; else a = c;" }, //
+        new String[] { "Simple if plus assign", "if (a) a += b; else a += c;" }, //
+        new String[] { "Simple if plus assign", "if (a) a *= b; else a *= c;" }, //
         null);
     /**
      * Generate test cases for this parameterized class.
@@ -68,23 +68,23 @@ public class IfCommandsSequencerElseSomethingTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = Utils.asArray(//
-         new String[] {"Vanilla: sequencer in then", "if (a) return b; else a();", "if(a)return b;a();"}, //
-         new String[] {"Vanilla: sequencer in else", "if (a) return b; else a();", "if(a)return b;a();"}, //
-         new String[] {"Plant two statements", "if (a) return b; else a(); f();", "if(a)return b;a(); f();"}, //
+        new String[] { "Vanilla: sequencer in then", "if (a) return b; else a();", "if(a)return b;a();" }, //
+        new String[] { "Vanilla: sequencer in else", "if (a) return b; else a();", "if(a)return b;a();" }, //
+        new String[] { "Plant two statements", "if (a) return b; else a(); f();", "if(a)return b;a(); f();" }, //
         null, //
-         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();"}, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();" }, //
         null, //
-         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();"}, //
-         new String[] {"Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();" }, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
             "" + //
                 " if (x) {\n" + //
                 "   f();\n" + //
                 "   return a;\n" + //
                 " }\n" + //
                 " g();\n" + //
-            ""},//
+                "" }, //
         null, //
-         new String[] {"Complex with many junk statements",
+        new String[] { "Complex with many junk statements",
             "" + //
                 " if (x) {\n" + //
                 "   ;\n" + //
@@ -97,13 +97,13 @@ public class IfCommandsSequencerElseSomethingTest {
                 "   }\n" + //
                 " }\n" + //
                 "",
-                "" + //
-                    " if (x) {\n" + //
-                    "   f();\n" + //
-                    "   return a;\n" + //
-                    " }\n" + //
-                    " g();\n" + //
-            ""},//
+            "" + //
+                " if (x) {\n" + //
+                "   f();\n" + //
+                "   return a;\n" + //
+                " }\n" + //
+                " g();\n" + //
+                "" }, //
         null);
     /**
      * Generate test cases for this parameterized class.

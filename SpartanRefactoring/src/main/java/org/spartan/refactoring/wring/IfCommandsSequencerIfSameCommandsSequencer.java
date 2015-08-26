@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Funcs.then;
@@ -52,6 +53,7 @@ public final class IfCommandsSequencerIfSameCommandsSequencer extends Wring.OfIf
     final List<Statement> ss1 = Extract.statements(then);
     final List<Statement> ss2 = Extract.statements(then(s2));
     return !same(ss1, ss2) || !Is.sequencer(last(ss1)) ? null
-        : Wrings.replaceTwoStatements(r, s1, makeIfWithoutElse(BlockSimplify.reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
+        : Wrings.replaceTwoStatements(r, s1,
+            makeIfWithoutElse(BlockSimplify.reorganizeNestedStatement(then), Subject.pair(s1.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
   }
 }

@@ -59,14 +59,12 @@ public class InlineSingleUse extends Spartanization {
         final SimpleName varName = n.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
         final List<Expression> uses = Occurrences.USES_SEMANTIC.of(varName).in(parent.getParent());
-        if (uses.size() == 1
-            && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
+        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, varName, parent.getParent()) == 1)) {
           r.replace(uses.get(0), n.getInitializer(), null);
           r.remove(parent.fragments().size() != 1 ? n : parent, null);
         }
         return true;
       }
-
     });
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {

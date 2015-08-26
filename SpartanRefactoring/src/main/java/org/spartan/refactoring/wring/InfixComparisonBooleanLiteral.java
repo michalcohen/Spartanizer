@@ -1,4 +1,5 @@
 package org.spartan.refactoring.wring;
+
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
@@ -14,6 +15,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Plant;
+
 /**
  * A {@link Wring} that eliminates redundant comparison with the two boolean
  * literals: <code><b>true</b></code> and <code><b>false</b></code>.
@@ -40,6 +42,6 @@ public final class InfixComparisonBooleanLiteral extends Wring.OfInfixExpression
     }
     nonliteral = Extract.core(nonliteral);
     final ASTNode parent = e.getParent();
-    return new Plant(!negating(e,literal) ? nonliteral : not(nonliteral)).into(parent);
+    return new Plant(!negating(e, literal) ? nonliteral : not(nonliteral)).into(parent);
   }
 }

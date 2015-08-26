@@ -61,7 +61,6 @@ public class FixedPointTest {
         "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
         "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
   }
-
   @Test public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
@@ -275,7 +274,6 @@ public class FixedPointTest {
   @Test public void shortestOperand35() {
     assertConvertsTo("return f(a,b,c,d) * moshe; ", "   return moshe * f(a,b,c,d);");
   }
-
   @Test public void sortAddition5() {
     assertSimplifiesTo("1 + 2  + 3 + a < 3 -4", "a + 1 + 2 + 3 < 3-4");
   }
