@@ -42,7 +42,7 @@ public final class DeclarationIfAssginment extends Wring.OfVariableDeclarationFr
     if (initializer == null)
       return null;
     final IfStatement s = Extract.nextIfStatement(f);
-    if (s == null || !Wrings.elseIsEmpty(s))
+    if (s == null || !Wrings.emptyElse(s))
       return null;
     s.setElseStatement(null);
     final Assignment a = Extract.assignment(then(s));

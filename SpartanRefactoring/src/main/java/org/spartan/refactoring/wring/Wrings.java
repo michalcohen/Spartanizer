@@ -1,8 +1,10 @@
 package org.spartan.refactoring.wring;
+
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.removeAll;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
 import java.util.Comparator;
@@ -19,16 +21,16 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * This enum represents an ordered list of all {@link Wring} objects.
+ * A number of utility functions common to all wrings.
  *
  * @author Yossi Gil
  * @since 2015-07-17
  */
-
 public enum Wrings {
   ;
   /**
    * Sorts the {@link Expression} list
+   *
    * @param es an {@link Expression} list to sort
    * @param c a {@link Comparator} to use for the sorting
    * @return True if the list was modified
@@ -63,11 +65,14 @@ public enum Wrings {
         return Subject.operands(operands).to(e.getOperator());
     }
   }
-  static boolean elseIsEmpty(final IfStatement s) {
+  static boolean emptyElse(final IfStatement s) {
     return Extract.statements(elze(s)).size() == 0;
   }
-  static boolean existingEmptyElse(final IfStatement s) {
-    return elze(s) != null && elseIsEmpty(s);
+  static boolean emptyThen(final IfStatement s) {
+    return Extract.statements(then(s)).size() == 0;
+  }
+  static boolean degenerateElse(final IfStatement s) {
+    return elze(s) != null && emptyElse(s);
   }
   static int length(final ASTNode... ns) {
     int $ = 0;
@@ -87,5 +92,4 @@ public enum Wrings {
     r.replace(parent, $, null);
     return r;
   }
-
 }

@@ -72,7 +72,7 @@ public class DeclarationIfAssginmentTest {
     assertThat(s, is(Extract.firstIfStatement(u)));
     assertNotNull(s);
     assertThat(s,iz("if (a + b) a=3;"));
-    assertTrue(Wrings.elseIsEmpty(s));
+    assertTrue(Wrings.emptyElse(s));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
     assertTrue(same(left(a), f.getName()));

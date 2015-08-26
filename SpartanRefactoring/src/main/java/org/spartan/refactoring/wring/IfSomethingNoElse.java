@@ -31,6 +31,6 @@ public final class IfSomethingNoElse extends Wring.OfIfStatement {
     return $;
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return s != null && Wrings.existingEmptyElse(s);
+    return s != null && Wrings.degenerateElse(s);
   }
 }

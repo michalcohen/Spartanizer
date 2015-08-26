@@ -24,7 +24,7 @@ import org.spartan.utils.Utils;
 
 /**
  * Unit tests for
- * {@link Wrings#IFX_SINGLE_RETURN_MISSING_ELSE_FOLLOWED_BY_RETURN}.
+ * {@link IfCommandsSequencerIfSameCommandsSequencer}.
  *
  * @author Yossi Gil
  * @since 2014-07-13

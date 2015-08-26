@@ -68,6 +68,7 @@ public class Toolbox {
       .add(IfStatement.class, //
           new IfThrowFooElseThrowBar(), //
           new IfReturnFooElseReturnBar(), //
+          new IfEmptyThen(), //
           new IfReturnNoElseReturn(), //
           new IfSomethingNoElse(), //
           new IfAssignToFooElseAssignToFoo(), //

@@ -104,7 +104,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Test public void checkIf() {
     final IfStatement s = findIf();
     assertThat(s, notNullValue());
-    assertThat(Wrings.elseIsEmpty(s),is(true));
+    assertThat(Wrings.emptyElse(s),is(true));
   }
   private IfStatement findIf() {
     return Extract.firstIfStatement(As.STATEMENTS.ast(input));
@@ -146,7 +146,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertNotNull(initializer);
     final IfStatement s = Extract.nextIfStatement(f);
     assertNotNull(s);
-    assertThat(Wrings.elseIsEmpty(s), is(true));
+    assertThat(Wrings.emptyElse(s), is(true));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
     final Expression leftHandSide = left(a);

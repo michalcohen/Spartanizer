@@ -43,10 +43,10 @@ public final class IfCommandsSequencerIfSameCommandsSequencer extends Wring.OfIf
     return $;
   }
   @Override ASTRewrite fillReplacement(final IfStatement s1, final ASTRewrite r) {
-    if (s1 == null || !Wrings.elseIsEmpty(s1))
+    if (s1 == null || !Wrings.emptyElse(s1))
       return null;
     final IfStatement s2 = Extract.nextIfStatement(s1);
-    if (s2 == null || !Wrings.elseIsEmpty(s2))
+    if (s2 == null || !Wrings.emptyElse(s2))
       return null;
     final Statement then = then(s1);
     final List<Statement> ss1 = Extract.statements(then);

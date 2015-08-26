@@ -45,6 +45,6 @@ public final class IfReturnNoElseReturn extends Wring.OfIfStatementAndSubsequent
   @Override boolean scopeIncludes(final IfStatement s) {
     final ReturnStatement then = Extract.returnStatement(then(s));
     final ReturnStatement elze = Extract.nextReturn(s);
-    return Wrings.elseIsEmpty(s) && then != null && elze != null;
+    return Wrings.emptyElse(s) && then != null && elze != null;
   }
 }

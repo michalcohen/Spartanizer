@@ -214,6 +214,12 @@ public class TrimmerTest {
         "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(x) ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(3, 56), s, f)",
         "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(x)&&!dotOutExists(d,name)?objects(name.replaceAll(3,56),s,f):null");
   }
+  @Test public void emptyThen1() {
+    assertConvertsTo("if (b) ; else x();", "if (!b) x();");
+  }
+  @Test public void emptyThen2() {
+    assertConvertsTo("if (b) {;;} else {x;}", "if (!b) x();");
+  }
   @Test public void bugIntroducingMISSINGWord3a() {
     assertSimplifiesTo("!name.endsWith(x) ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(3, 56), s, f)",
         "name.endsWith(x)&&!dotOutExists(d,name)?objects(name.replaceAll(3,56),s,f):null");
