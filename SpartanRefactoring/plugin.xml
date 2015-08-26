@@ -161,8 +161,8 @@
                id="org.spartan.refactoring.toolbars.spartanToolbar">
             <command
                   commandId="org.spartan.refactoring.commands.ApplySpartanization"
-                  icon="res/Spartan.gif"
-                  tooltip="Apply Spartanization to this file!"
+                  icon="src/main/icons/spartan-warrior.gif"
+                  tooltip="Spartanize this file"
                   id="org.spartan.refactoring.toolbars.ApplySpartanization">
             </command>
          </toolbar>

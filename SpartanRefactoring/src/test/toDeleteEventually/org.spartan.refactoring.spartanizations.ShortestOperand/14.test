@@ -1,8 +1,0 @@
-package p;
-
-public class SpongeBob {
-	public boolean squarePants() {
-	Integer t = new Integer(5);
-		return (t.toString() == null);   
-	}
-}

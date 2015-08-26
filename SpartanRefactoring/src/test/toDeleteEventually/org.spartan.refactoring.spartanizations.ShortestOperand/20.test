@@ -1,9 +1,0 @@
-package p;
-
-public class SpongeBob {
-	public int squarePants(Class k) {
-		SomeClass a;
-		String k = k.Concat("mmm...") + a.get().sum().toString();
-		return k.get() ^ a.get();
-	}
-}
