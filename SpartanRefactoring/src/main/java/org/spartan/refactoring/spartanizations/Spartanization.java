@@ -267,9 +267,6 @@ public abstract class Spartanization extends Refactoring {
           if (e.getElementType() == IJavaElement.PACKAGE_FRAGMENT)
             $.addAll(Arrays.asList(((IPackageFragment) e).getCompilationUnits()));
     pm.done();
-    for (final ICompilationUnit i : $)
-      for (final IPackageDeclaration d : i.getPackageDeclarations())
-        System.out.println(d.getElementName());
     return $;
   }
   /**
