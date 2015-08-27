@@ -114,12 +114,12 @@
       <command
             categoryId="org.spartan.refactoring.category"
             id="org.spartan.refactoring.commands.Cleanup"
-            name="- Auto project cleanup -">
+            name="Spartanize entire project">
       </command>
       <command
             categoryId="org.spartan.refactoring.category"
             id="org.spartan.refactoring.commands.ApplySpartanization"
-            name="Apply Spartanizations automatically">
+            name="Spartanize active window">
       </command>
    </extension>
    <extension point="org.eclipse.ui.handlers">
