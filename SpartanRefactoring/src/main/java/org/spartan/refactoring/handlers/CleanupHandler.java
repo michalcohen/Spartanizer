@@ -5,9 +5,6 @@ import static org.spartan.refactoring.handlers.ApplySpartanizationHandler.applyS
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +15,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Spartanizations;
+
+import static org.spartan.refactoring.spartanizations.DialogBoxes.announce;
 
 /**
  * A handler for {@link Spartanizations}. This handler executes all safe
@@ -31,20 +30,22 @@ public class CleanupHandler extends BaseHandler {
   public CleanupHandler() {
     super(null);
   }
-  static final int MaxSpartanizationTries = 20;
+  static final int MAX_PASSES = 20;
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) throws ExecutionException {
     final List<ICompilationUnit> compilationUnits = compilationUnits();
     final IWorkbench wb = PlatformUI.getWorkbench();
-    int loopCounter = 0;
-    boolean haveSuggestions = true;
-    while (haveSuggestions) {
+    final int initialCount = countSuggestios();
+    if (initialCount == 0)
+      return announce("Nothing to do");
+    final StringBuilder message = new StringBuilder().append(initialCount);
+    for (int i = 0, totalSuggestions = initialCount; i < MAX_PASSES; ++i) {
       final IProgressService ps = wb.getProgressService();
       try {
         ps.busyCursorWhile(new IRunnableWithProgress() {
           @Override public void run(final IProgressMonitor pm) {
             pm.beginTask("Spartanizing", compilationUnits.size());
-            for (final ICompilationUnit cu : compilationUnits) {
-              applySafeSpartanizationsTo(cu);
+            for (final ICompilationUnit u : compilationUnits) {
+              applySafeSpartanizationsTo(u);
               pm.worked(1);
             }
             pm.done();
@@ -55,16 +56,17 @@ public class CleanupHandler extends BaseHandler {
       } catch (final InterruptedException x) {
         x.printStackTrace();
       }
-      haveSuggestions = false;
-      for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations)
-        if (s.haveSuggestions())
-          haveSuggestions = true;
-      ++loopCounter;
-      if (loopCounter > MaxSpartanizationTries)
-        throw new ExecutionException(null);
+      final int countSuggestios = countSuggestios();
+      if (countSuggestios <= 0)
+        return announce("Completed in " + (1 + i) + " passes. \n" + "Total changes: " + totalSuggestions + " = " + message);
+      message.append(" + " + countSuggestios);
     }
-    final ImageIcon i = new ImageIcon(this.getClass().getResource("/src/main/icons/spartan-warrior64.gif"));
-    JOptionPane.showMessageDialog(null, "Your project has been Spartanized successfully!", "Spartanization", JOptionPane.INFORMATION_MESSAGE, i);
-    return null;
+    throw new ExecutionException("Too many iterations");
+  }
+  private static int countSuggestios() {
+    int $ = 0;
+    for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations)
+      $ += s.countSuggestions();
+    return $;
   }
 }

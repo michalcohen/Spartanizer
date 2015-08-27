@@ -20,10 +20,10 @@ public class JavaTypeNameParser {
   /**
    * Instantiates this class
    *
-   * @param name the Java type name to parse
+   * @param typeName the Java type name to parse
    */
-  public JavaTypeNameParser(final String name) {
-    typeName = name;
+  public JavaTypeNameParser(final String typeName) {
+    this.typeName = typeName;
   }
   String lastName() {
     return typeName.substring(lastNameIndex());
@@ -61,7 +61,6 @@ public class JavaTypeNameParser {
           }
           @Override public void remove() {
             // TODO Auto-generated method stub
-
           }
         };
       }
