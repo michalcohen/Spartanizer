@@ -847,6 +847,12 @@ public class TrimmerTest {
   @Test public void pushdownNotSummation() {
     assertNoChange("a+b");
   }
+  @Test public void pushdownTernaryReceiverNoReceiver() {
+    assertNoChange("a < b ? a.f() : f()");
+  }
+  @Test public void pushdownTernaryNoReceiverReceiver() {
+    assertNoChange("a < b ? f() : a.f()");
+  }
   @Test public void pushdownTernaryActualExample() {
     assertNoChange("next < values().length");
   }

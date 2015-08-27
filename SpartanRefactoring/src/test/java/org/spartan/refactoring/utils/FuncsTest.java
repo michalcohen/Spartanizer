@@ -19,6 +19,7 @@ import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.i;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.junit.FixMethodOrder;
@@ -83,5 +84,26 @@ public class FuncsTest {
   }
   @Test public void isDeMorganOR() {
     assertTrue(Is.deMorgan(CONDITIONAL_OR));
+  }
+  @Test public void sameOfTwoExpressionsIdentical() {
+    assertTrue(Funcs.same(e("a+b"), e("a+b")));
+  }
+  @Test public void sameOfTwoExpressionsNotSame() {
+    assertFalse(Funcs.same(e("a+b+c"), e("a+b")));
+  }
+  @Test public void sameOfNulls() {
+    final ASTNode n1 = null;
+    final ASTNode n2 = null;
+    assertTrue(Funcs.same(n1, n2));
+  }
+  @Test public void sameOfNullAndSomething() {
+    final ASTNode n1 = null;
+    final ASTNode n2 = e("a");
+    assertFalse(Funcs.same(n1, n2));
+  }
+  @Test public void sameOfSomethingAndNull() {
+    final ASTNode n1 = e("a");
+    final ASTNode n2 = null;
+    assertFalse(Funcs.same(n1, n2));
   }
 }

@@ -621,13 +621,16 @@ public enum Funcs {
   /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
+   * <p>
+   * Each of the parameters may be <code><b>null</b></code>; a
+   * <code><b>null</b></code> is only equal to< code><b>null</b></code>
    *
-   * @param n1 first list to compare
-   * @param n2 second list to compare
-   * @return are the lists equal string-wise
+   * @param n1 JD
+   * @param n2 JD
+   * @return <code><b>true</b></code> if the parameters are the same.
    */
   public static boolean same(final ASTNode n1, final ASTNode n2) {
-    return n1 == n2 || n1.getNodeType() == n2.getNodeType() && n1.toString().equals(n2.toString());
+    return n1 == n2 || n1 != null && n2 != null && n1.getNodeType() == n2.getNodeType() && n1.toString().equals(n2.toString());
   }
   /**
    * Determine whether two lists of nodes are the same, in the sense that their
