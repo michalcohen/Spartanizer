@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
@@ -46,7 +47,7 @@ public class IfEmptyThenEmptyElseTest {
   @Test public void emptyElse() {
     assertTrue(Wrings.emptyElse(IF));
   }
-  @Test public void runGo() throws IllegalArgumentException, MalformedTreeException {
+  @Test public void runGo() throws IllegalArgumentException, MalformedTreeException, BadLocationException {
     final String input = Wrap.Statement.on(INPUT + "");
     final Document d = new Document(input);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d.get());
@@ -57,6 +58,7 @@ public class IfEmptyThenEmptyElseTest {
     final TextEdit e = r.rewriteAST(d, null);
     assertNotNull(e);
     assertThat(e.getChildren().length, greaterThan(0));
+    e.apply(d);
     assertNull(d.get(), Extract.firstIfStatement(As.COMPILIATION_UNIT.ast(d.get())));
   }
 }

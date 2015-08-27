@@ -848,7 +848,7 @@ public class TrimmerTest {
     assertNoChange("a+b");
   }
   @Test public void pushdownTernaryReceiverNoReceiver() {
-    assertNoChange("a < b ? a.f() : f()");
+    assertSimplifiesTo("a < b ? a.f() : f()", "a>=b?f():a.f()");
   }
   @Test public void pushdownTernaryNoReceiverReceiver() {
     assertNoChange("a < b ? f() : a.f()");
