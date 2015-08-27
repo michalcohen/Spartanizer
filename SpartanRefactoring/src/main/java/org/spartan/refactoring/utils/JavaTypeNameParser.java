@@ -13,14 +13,7 @@ import java.util.Iterator;
  */
 public class JavaTypeNameParser {
   boolean isGenericVariation(final String variableName) {
-    // TODO: Spartanize this code
-    if (typeName.equalsIgnoreCase(variableName))
-      return true;
-    if (typeName.toLowerCase().contains(variableName.toLowerCase()))
-      return true;
-    // TODO Daniel: Also examine examples from the dataset to find more
-    // variations
-    return false;
+    return typeName.equalsIgnoreCase(variableName) || typeName.toLowerCase().contains(variableName.toLowerCase());
   }
   /** The type name managed by this instance */
   public final String typeName;

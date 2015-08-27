@@ -56,6 +56,9 @@ import org.spartan.refactoring.utils.Is;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) //
 public class TrimmerTest {
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
+  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -107,18 +110,6 @@ public class TrimmerTest {
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
-  }
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
-  }
-  @Test public void shortestBranchInIf() {
-    assertConvertsTo("   int a=0;\n" + //
-        "   if (s.equals(known)){\n" + //
-        "     System.console();\n" + //
-        "   } else {\n" + //
-        "     a=3;\n" + //
-        "   }\n" + //
-        "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -213,21 +204,6 @@ public class TrimmerTest {
     assertSimplifiesTo(
         "name.endsWith(testSuffix) && -1 == As.stringBuilder(f).indexOf(testKeyword) ? objects(s, name, makeInFile(f)) : !name.endsWith(x) ? null : dotOutExists(d, name) ? null : objects(name.replaceAll(3, 56), s, f)",
         "name.endsWith(testSuffix)&&As.stringBuilder(f).indexOf(testKeyword)==-1?objects(s,name,makeInFile(f)):name.endsWith(x)&&!dotOutExists(d,name)?objects(name.replaceAll(3,56),s,f):null");
-  }
-  @Test public void emptyThen1() {
-    assertConvertsTo("if (b) ; else x();", "if (!b) x();");
-  }
-  @Test public void removeSuper() {
-    assertConvertsTo("class T { T() { super(); }", "class T { T() { }");
-  }
-  @Test public void removeSuperWithStatemen() {
-    assertConvertsTo("class T { T() { super(); a++;}", "class T { T() { ++a;}");
-  }
-  @Test public void removeSuperWithArgument() {
-    assertNoConversion("class T { T() { super(a); a();}");
-  }
-  @Test public void emptyThen2() {
-    assertConvertsTo("if (b) {;;} else {x() ;}", "if (!b) x();");
   }
   @Test public void bugIntroducingMISSINGWord3a() {
     assertSimplifiesTo(//
@@ -430,6 +406,12 @@ public class TrimmerTest {
   @Test public void emptyIsNotChangedStatement() {
     assertNoChange("");
   }
+  @Test public void emptyThen1() {
+    assertConvertsTo("if (b) ; else x();", "if (!b) x();");
+  }
+  @Test public void emptyThen2() {
+    assertConvertsTo("if (b) {;;} else {x() ;}", "if (!b) x();");
+  }
   @Ignore @Test public void extractMethodSplitDifferentStories() {
     assertSimplifiesTo("", "");
   }
@@ -550,7 +532,7 @@ public class TrimmerTest {
     final Expression e1 = left(e);
     final Expression e2 = right(e);
     assertFalse(hasNull(e1, e2));
-    final boolean tokenWiseGreater = nodesCount(e1) > NODES_THRESHOLD + nodesCount(e2);
+    final boolean tokenWiseGreater = nodesCount(e1) > nodesCount(e2) + NODES_THRESHOLD;
     assertFalse(tokenWiseGreater);
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
@@ -1064,6 +1046,15 @@ public class TrimmerTest {
   @Ignore @Test public void reanmeReturnVariableToDollar11() {
     assertNoChange("");
   }
+  @Test public void removeSuper() {
+    assertConvertsTo("class T { T() { super(); }", "class T { T() { }");
+  }
+  @Test public void removeSuperWithArgument() {
+    assertNoConversion("class T { T() { super(a); a();}");
+  }
+  @Test public void removeSuperWithStatemen() {
+    assertConvertsTo("class T { T() { super(); a++;}", "class T { T() { ++a;}");
+  }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
     final Wring<InfixExpression> w = Toolbox.instance.find(e);
@@ -1082,6 +1073,15 @@ public class TrimmerTest {
         "if (a) {b++; c++; ++d;} else { f++; g++; return x;}", //
         "if (!a) {f++; g++; return x;} b++; c++; ++d; " //
     );
+  }
+  @Test public void shortestBranchInIf() {
+    assertConvertsTo("   int a=0;\n" + //
+        "   if (s.equals(known)){\n" + //
+        "     System.console();\n" + //
+        "   } else {\n" + //
+        "     a=3;\n" + //
+        "   }\n" + //
+        "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
   @Test public void shortestIfBranchFirst00() {
     assertConvertsTo(
@@ -1271,21 +1271,6 @@ public class TrimmerTest {
   @Test public void simplifyLogicalNegationOfOr() {
     assertSimplifiesTo("!(f() || f(5))", "!f() && !f(5)");
   }
-  @Test public void sortAdditionClassConstantAndLiteral() {
-    assertSimplifiesTo(//
-        "1+A< 12", //
-        "A+1<12");
-  }
-  @Test public void sortAdditionVariableClassConstantAndLiteral() {
-    assertSimplifiesTo(//
-        "1+A+a< 12", //
-        "a+A+1<12");
-  }
-  @Test public void sortAdditionFunctionClassConstantAndLiteral() {
-    assertSimplifiesTo(//
-        "1+A+f()< 12", //
-        "f()+A+1<12");
-  }
   @Test public void sortAddition1() {
     assertSimplifiesTo(//
         "1 + 2 - 3 - 4 + 5 / 6 - 7 + 8 * 9  + A> k + 4", //
@@ -1302,8 +1287,23 @@ public class TrimmerTest {
         "a + 11 + 2 < 3 & 7 + 4 > 2 + 1", //
         "7 + 4 > 2 + 1 & a + 11 + 2 < 3");
   }
+  @Test public void sortAdditionClassConstantAndLiteral() {
+    assertSimplifiesTo(//
+        "1+A< 12", //
+        "A+1<12");
+  }
+  @Test public void sortAdditionFunctionClassConstantAndLiteral() {
+    assertSimplifiesTo(//
+        "1+A+f()< 12", //
+        "f()+A+1<12");
+  }
   @Test public void sortAdditionUncertain() {
     assertNoChange("1+a");
+  }
+  @Test public void sortAdditionVariableClassConstantAndLiteral() {
+    assertSimplifiesTo(//
+        "1+A+a< 12", //
+        "a+A+1<12");
   }
   @Test public void sortConstantMultiplication() {
     assertSimplifiesTo("a*2", "2*a");

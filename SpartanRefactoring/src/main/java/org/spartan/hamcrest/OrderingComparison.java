@@ -10,8 +10,7 @@ import org.hamcrest.Matcher;
  * @author Yossi Gil
  * @since 2015-07-18
  */
-public enum OrderingComparison {
-  ;
+public class OrderingComparison {
   /**
    * A non-auto-boxing wrapper of the original (auto-boxing) Hamcrest matcher
    * {@link org.hamcrest.number.OrderingComparison#comparesEqualTo} for

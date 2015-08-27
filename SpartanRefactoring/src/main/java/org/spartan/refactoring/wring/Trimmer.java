@@ -94,9 +94,6 @@ public class Trimmer extends Spartanization {
   }
   @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
     return new ASTVisitor() {
-      @Override public boolean visit(final SuperConstructorInvocation it) {
-        return go(it);
-      }
       @Override public boolean visit(final Block it) {
         return go(it);
       }
@@ -115,6 +112,9 @@ public class Trimmer extends Spartanization {
       @Override public boolean visit(final PrefixExpression it) {
         return go(it);
       }
+      @Override public boolean visit(final SuperConstructorInvocation it) {
+        return go(it);
+      }
       @Override public boolean visit(final VariableDeclarationFragment it) {
         return go(it);
       }
@@ -128,9 +128,6 @@ public class Trimmer extends Spartanization {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final Block b) {
         return go(b);
-      }
-      @Override public boolean visit(final SuperConstructorInvocation i) {
-        return go(i);
       }
       @Override public boolean visit(final ConditionalExpression e) {
         return go(e);
@@ -146,6 +143,9 @@ public class Trimmer extends Spartanization {
       }
       @Override public boolean visit(final PrefixExpression e) {
         return go(e);
+      }
+      @Override public boolean visit(final SuperConstructorInvocation i) {
+        return go(i);
       }
       @Override public boolean visit(final VariableDeclarationFragment f) {
         return go(f);

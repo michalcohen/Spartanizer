@@ -56,16 +56,26 @@ public class FixedPointTest {
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  @Test public void multipleIfDeclarationAssignment() {
-    assertConvertsTo(//
-        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
-        "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
-  }
   @Test public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
   @Test public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
+  }
+  @Test public void duplicateIfBody() {
+    assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
+  }
+  @Test public void eliminateRedundantIf1() {
+    assertConvertsTo("{if (a) ; }", "");
+  }
+  @Test public void eliminateRedundantIf2() {
+    assertConvertsTo("{if (a) ; else {;}}", "");
+  }
+  @Test public void eliminateRedundantIf3() {
+    assertConvertsTo("{if (a) {;} else {;;}}", "");
+  }
+  @Test public void eliminateRedundantIf4() {
+    assertConvertsTo("{if (a) {;}} ", "");
   }
   @Test public void longChainComparison() {
     assertNoChange("a == b == c == d");
@@ -78,6 +88,11 @@ public class FixedPointTest {
   }
   @Test public void longerChainParenthesisComparison() {
     assertNoChange("(a == b == c == d == e) == d");
+  }
+  @Test public void multipleIfDeclarationAssignment() {
+    assertConvertsTo(//
+        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
+        "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
   }
   @Test public void shorterChainParenthesisComparison() {
     assertNoChange("a == b == c");
@@ -332,9 +347,6 @@ public class FixedPointTest {
             "    else\n" + //
             "      System.out.println(\"ho\" + res + a);",
         "final String s;final String res=s;final int a=0;System.out.println(s.equals(res)?\"hey\"+res:\"ho\"+res+a);");
-  }
-  @Test public void duplicateIfBody() {
-    assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
   }
   @Test public void ternarize23() {
     assertConvertsTo(//

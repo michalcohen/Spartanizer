@@ -69,9 +69,10 @@ public class Toolbox {
       .add(IfStatement.class, //
           new IfThrowFooElseThrowBar(), //
           new IfReturnFooElseReturnBar(), //
+          new IfEmptyThenEmptyElse(), //
+          new IfEmptyElse(), //
           new IfEmptyThen(), //
           new IfReturnNoElseReturn(), //
-          new IfSomethingNoElse(), //
           new IfAssignToFooElseAssignToFoo(), //
           new IfExpressionStatementElseSimilarExpressionStatement(), //
           new IfCommandsSequencerElseSomething(), //
