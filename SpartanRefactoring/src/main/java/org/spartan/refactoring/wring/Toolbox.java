@@ -69,14 +69,14 @@ public class Toolbox {
       .add(IfStatement.class, //
           new IfThrowFooElseThrowBar(), //
           new IfReturnFooElseReturnBar(), //
-          new IfEmptyThenEmptyElse(), //
-          new IfEmptyElse(), //
-          new IfEmptyThen(), //
           new IfReturnNoElseReturn(), //
           new IfAssignToFooElseAssignToFoo(), //
           new IfExpressionStatementElseSimilarExpressionStatement(), //
           new IfCommandsSequencerElseSomething(), //
           new IfCommandsSequencerIfSameCommandsSequencer(), //
+          new IfEmptyThenEmptyElse(), //
+          new IfEmptyElse(), //
+          new IfEmptyThen(), //
           new IfShortestFirst(), //
           null)//
       .add(PrefixExpression.class, new PrefixNotPushdown()) //

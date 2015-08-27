@@ -60,9 +60,9 @@ public class IfEmptyElseTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
-        new String[] { "Vanilla {}", "if (a) return b; else {}", "if (a) return b;" }, //
-        new String[] { "Vanilla ; ", "if (a) return b; else ;", "if (a) return b;" }, //
-        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}}", "if (a) return b;" }, //
+        new String[] { "Vanilla {}", "if (a) f(); else {}", "if (a) f();" }, //
+        new String[] { "Vanilla ; ", "if (a) f(); else ;", "if (a) f();" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) f(); else {;{;{};};{;{}}}", "if (a) f();" }, //
         null);
     /**
      * Generate test cases for this parameterized class.
