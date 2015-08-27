@@ -63,7 +63,7 @@ public class CleanupHandler extends BaseHandler {
       if (loopCounter > MaxSpartanizationTries)
         throw new ExecutionException(null);
     }
-    final ImageIcon i = new ImageIcon(this.getClass().getResource("/res/Spartan64.gif"));
+    final ImageIcon i = new ImageIcon(this.getClass().getResource("/src/main/icons/spartan-warrior64.gif"));
     JOptionPane.showMessageDialog(null, "Your project has been Spartanized successfully!", "Spartanization", JOptionPane.INFORMATION_MESSAGE, i);
     return null;
   }
