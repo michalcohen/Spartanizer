@@ -63,7 +63,7 @@ public class CleanupHandler extends BaseHandler {
     }
     throw new ExecutionException("Too many iterations");
   }
-  private static int countSuggestios() {
+  private int countSuggestios() {
     int $ = 0;
     for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations)
       $ += s.countSuggestions();

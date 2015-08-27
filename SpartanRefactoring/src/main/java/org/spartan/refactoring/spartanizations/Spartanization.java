@@ -135,11 +135,12 @@ public abstract class Spartanization extends Refactoring {
   /**
    * Count the number of suggestions offered by this instance.
    * <p>
-   * This is an slow operation. Do not call lightheadedly.
+   * This is an slow operation. Do not call light-headedly.
    *
    * @return the total number of suggestions offered by this instance
    */
   public int countSuggestions() {
+    setMarker(null);
     try {
       checkFinalConditions(new NullProgressMonitor());
     } catch (final OperationCanceledException e) {
