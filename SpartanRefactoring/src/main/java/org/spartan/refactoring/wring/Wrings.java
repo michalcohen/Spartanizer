@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
@@ -80,7 +81,7 @@ public enum Wrings {
       $ += n.toString().length();
     return $;
   }
-  static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by) {
+  static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by, final TextEditGroup g) {
     final Block parent = asBlock(what.getParent());
     final List<Statement> siblings = Extract.statements(parent);
     final int i = siblings.indexOf(what);
@@ -89,7 +90,7 @@ public enum Wrings {
     siblings.add(i, by);
     final Block $ = parent.getAST().newBlock();
     duplicateInto(siblings, $.statements());
-    r.replace(parent, $, null);
+    r.replace(parent, $, g);
     return r;
   }
 }

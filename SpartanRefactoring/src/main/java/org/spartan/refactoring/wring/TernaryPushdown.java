@@ -26,7 +26,7 @@ import org.spartan.refactoring.utils.Plant;
 import org.spartan.refactoring.utils.Precedence;
 import org.spartan.refactoring.utils.Subject;
 
-final class TernaryPushdown extends Wring.OfConditionalExpression {
+final class TernaryPushdown extends Wring.Replacing<ConditionalExpression> {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {
     int $ = -1;
     for (int i = 0; i < es1.size(); ++i)
@@ -138,13 +138,13 @@ final class TernaryPushdown extends Wring.OfConditionalExpression {
         return null;
     }
   }
-  @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
-    return true;
-  }
-  @Override Expression _replacement(final ConditionalExpression e) {
+  @Override Expression replacement(final ConditionalExpression e) {
     return pushdown(e);
   }
   @Override boolean scopeIncludes(final ConditionalExpression e) {
     return pushdown(e) != null;
+  }
+  @Override String description(@SuppressWarnings("unused") final ConditionalExpression _) {
+    return "Pushdown ?: into expression";
   }
 }

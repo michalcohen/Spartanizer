@@ -60,7 +60,7 @@ public enum Restructure {
   /**
    * Flatten the list of arguments to an {@link InfixExpression}, e.g., convert
    * an expression such as <code>(a + b) + c</code> whose inner form is roughly
-   * "+(+(a,b),c)", into <code> a + b + c </code>, whose inner form is (roughly)
+   * "+(+(a,b),c)", into <code>a + b + c</code>, whose inner form is (roughly)
    * "+(a,b,c)".
    *
    * @param $ JD

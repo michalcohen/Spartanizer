@@ -13,11 +13,14 @@ import org.spartan.refactoring.utils.Plant;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class TernaryEliminate extends Wring.OfConditionalExpression {
-  @Override Expression _replacement(final ConditionalExpression e) {
+public final class TernaryEliminate extends Wring.Replacing<ConditionalExpression> {
+  @Override Expression replacement(final ConditionalExpression e) {
     return new Plant(Extract.core(e.getThenExpression())).into(e.getParent());
   }
   @Override boolean scopeIncludes(final ConditionalExpression e) {
     return e != null && same(e.getThenExpression(), e.getElseExpression());
+  }
+  @Override String description(@SuppressWarnings("unused") final ConditionalExpression _) {
+    return "Eliminate conditional exprssion with identical branches";
   }
 }

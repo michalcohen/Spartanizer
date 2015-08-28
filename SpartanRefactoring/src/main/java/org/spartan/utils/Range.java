@@ -39,12 +39,12 @@ public class Range {
     this.to = to;
   }
   /**
-   * Instantiates from a single ASTNode
+   * Instantiates using values found in another intance
    *
-   * @param n arbitrary
+   * @param other other
    */
-  public Range(final ASTNode n) {
-    this(n.getStartPosition(), n.getStartPosition() + n.getLength());
+  public Range(final Range other) {
+    this(other.from, other.to);
   }
   /**
    * @param r arbitrary
@@ -60,9 +60,9 @@ public class Range {
    * @param rs some arbitrary {@link Range} objects
    * @return the first {@link Range} object among the parameters that contains
    *         <code><b>true</b></code>, or <code><b>true</b></code> <i>iff</i>
-   *         <code><b>null</b></code> if not such object can be vound.
+   *         <code><b>null</b></code> if not such object can be found.
    */
-  public Range findIncludedIn(final Iterable<Range> rs) {
+  public Range findIncludedIn(final Iterable<? extends Range> rs) {
     for (final Range $ : rs)
       if (includedIn($))
         return $;
@@ -73,7 +73,7 @@ public class Range {
    *
    * @param rs JD
    */
-  public void pruneIncluders(final List<Range> rs) {
+  public void pruneIncluders(final List<? extends Range> rs) {
     for (;;) {
       final Range includesMe = findIncludedIn(rs);
       if (includesMe == null)

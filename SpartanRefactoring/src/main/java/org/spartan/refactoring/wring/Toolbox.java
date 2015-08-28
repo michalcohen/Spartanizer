@@ -53,13 +53,13 @@ public class Toolbox {
       .add(Block.class, new BlockSimplify()) //
       .add(PostfixExpression.class, new PostfixToPrefix()) //
       .add(InfixExpression.class, //
-          new InfixAdditionSort(), //
+          new InfixSortAddition(), //
           new InfixComparisonBooleanLiteral(), //
           new InfixConditionalAndTrue(), //
           new InfixConditionalOrFalse(), //
           new InfixComparisonSpecific(), //
-          new InfixMultiplicationSort(), //
-          new InfixPseudoAdditionSort(), //
+          new InfixSortMultiplication(), //
+          new InfixSortPseudoAddition(), //
           null)
       .add(VariableDeclarationFragment.class, //
           new DeclarationAssignment(), //

@@ -10,26 +10,16 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert
- *
- * <pre>
- * if (x)
+ * A {@link Wring} to convert <code>if (x)
  *   return b;
  * else
- *   return c;
- * </pre>
- *
- * into
- *
- * <pre>
- * return  x? b : c
- * </pre>
+ *   return c;</code> into <code>return  x? b : c</code>
  *
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfReturnFooElseReturnBar extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement s) {
+public final class IfReturnFooElseReturnBar extends Wring.Replacing<IfStatement> {
+  @Override Statement replacement(final IfStatement s) {
     final Expression condition = s.getExpression();
     final Expression then = Extract.returnExpression(then(s));
     final Expression elze = Extract.returnExpression(elze(s));
@@ -37,5 +27,8 @@ public final class IfReturnFooElseReturnBar extends Wring.OfIfStatement {
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && Extract.returnExpression(then(s)) != null && Extract.returnExpression(elze(s)) != null;
+  }
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
+    return "Replace if statement with a single return statement";
   }
 }

@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Spartanizations;
 import org.spartan.refactoring.utils.As;
-import org.spartan.utils.Range;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
@@ -86,14 +86,14 @@ public class Builder extends IncrementalProjectBuilder {
   }
   private static void addMarkers(final IFile f, final CompilationUnit u) throws CoreException {
     for (final Spartanization s : Spartanizations.all())
-      for (final Range r : s.findOpportunities(u))
+      for (final Rewrite r : s.findOpportunities(u))
         if (r != null)
           addMarker(s, r, f.createMarker(MARKER_TYPE));
   }
-  private static void addMarker(final Spartanization s, final Range r, final IMarker m) throws CoreException {
+  private static void addMarker(final Spartanization s, final Rewrite r, final IMarker m) throws CoreException {
     m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
     m.setAttribute(SPARTANIZATION_TYPE_KEY, s.toString());
-    m.setAttribute(IMarker.MESSAGE, prefix() + s.getMessage());
+    m.setAttribute(IMarker.MESSAGE, prefix() + r.description);
     m.setAttribute(IMarker.CHAR_START, r.from);
     m.setAttribute(IMarker.CHAR_END, r.to);
     m.setAttribute(IMarker.TRANSIENT, false);

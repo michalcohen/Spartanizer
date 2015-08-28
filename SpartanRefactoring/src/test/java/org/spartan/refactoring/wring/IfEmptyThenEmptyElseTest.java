@@ -3,7 +3,6 @@ package org.spartan.refactoring.wring;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
@@ -23,6 +22,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Into;
+import org.spartan.refactoring.utils.Rewrite;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class IfEmptyThenEmptyElseTest {
@@ -51,10 +51,11 @@ public class IfEmptyThenEmptyElseTest {
     final String input = Wrap.Statement.on(INPUT + "");
     final Document d = new Document(input);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d.get());
-    final IfStatement ifStatement = Extract.firstIfStatement(u);
-    assertThat(ifStatement, iz("if(b);else;"));
+    final IfStatement s = Extract.firstIfStatement(u);
+    assertThat(s, iz("if(b);else;"));
     final ASTRewrite r = ASTRewrite.create(u.getAST());
-    WRING.go(r, ifStatement);
+    final Rewrite t = WRING.make(s);
+    t.go(r, null);
     final TextEdit e = r.rewriteAST(d, null);
     assertNotNull(e);
     assertThat(e.getChildren().length, greaterThan(0));

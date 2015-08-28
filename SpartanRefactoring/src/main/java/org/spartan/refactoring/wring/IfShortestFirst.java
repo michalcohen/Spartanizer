@@ -11,14 +11,14 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e) </code> into
- * <code> a ? c(d,e) : f(g,h) </code>
+ * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e)</code> into
+ * <code>a ? c(d,e) : f(g,h)</code>
  *
  * @author Yossi Gil
  * @since 2015-08-15
  */
-public final class IfShortestFirst extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement s) {
+public final class IfShortestFirst extends Wring.Replacing<IfStatement> {
+  @Override Statement replacement(final IfStatement s) {
     final Statement then = then(s);
     final Statement elze = elze(s);
     if (elze == null)
@@ -35,5 +35,8 @@ public final class IfShortestFirst extends Wring.OfIfStatement {
     final int l1 = Wrings.length(not(notConditional), then);
     final int l2 = Wrings.length(notConditional, elze);
     return l1 > l2 ? $ : null;
+  }
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
+    return "Invert logical conditiona and swap branches of 'if' to make the shortest branch first";
   }
 }

@@ -11,14 +11,15 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert ternary expressions which include a binary literal
- * (<code><b>true</b></code> or <code><b>false</b></code>) into a simpler
- * Boolean expression.
+ * A {@link Wring} to simplify a conditional expression containing another
+ * conditional expression, when two of the three inner expressions are
+ * identical, e.g., converting <code>a ? b ? x : z :z</code> into
+ * <code>a && b ? x : z</code>.
  *
  * @author Yossi Gil
  * @since 2015-9-19
  */
-public class TernaryCollapse extends Wring.OfConditionalExpression {
+public class TernaryCollapse extends Wring.Replacing<ConditionalExpression> {
   private static Expression collapse(final ConditionalExpression e) {
     if (e == null)
       return null;
@@ -46,13 +47,14 @@ public class TernaryCollapse extends Wring.OfConditionalExpression {
     return same(thenElse, elze) ? Subject.pair(thenThen, elze).toCondition(Subject.pair(e.getExpression(), then.getExpression()).to(CONDITIONAL_AND))
         : !same(thenThen, elze) ? null : Subject.pair(thenElse, elze).toCondition(Subject.pair(e.getExpression(), not(then.getExpression())).to(CONDITIONAL_AND));
   }
-  @Override boolean _eligible(@SuppressWarnings("unused") final ConditionalExpression _) {
-    return true;
-  }
-  @Override Expression _replacement(final ConditionalExpression e) {
+  @Override Expression replacement(final ConditionalExpression e) {
     return collapse(e);
   }
   @Override boolean scopeIncludes(final ConditionalExpression e) {
     return collapse(e) != null;
+  }
+  @Override String description(final ConditionalExpression n) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

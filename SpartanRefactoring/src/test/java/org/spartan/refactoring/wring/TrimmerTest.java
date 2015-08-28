@@ -71,7 +71,7 @@ public class TrimmerTest {
     assertNotNull(u);
     final Document d = new Document(from);
     assertNotNull(d);
-    return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring", ""), u, d).get();
+    return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring"), u, d).get();
   }
   private static void assertConvertsTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Statement);
@@ -506,7 +506,7 @@ public class TrimmerTest {
     assertEquals("f(a,b,c)", right(e).toString());
     assertEquals("f(a,b,c,d,e)", left(e).toString());
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
-    assertThat(s, instanceOf(InfixMultiplicationSort.class));
+    assertThat(s, instanceOf(InfixSortMultiplication.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = left(e);
@@ -517,7 +517,7 @@ public class TrimmerTest {
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final ASTNode replacement = s.replacement(e);
+    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d,e)", replacement.toString());
   }
@@ -526,7 +526,7 @@ public class TrimmerTest {
     assertEquals("f(a,b,c)", right(e).toString());
     assertEquals("f(a,b,c,d)", left(e).toString());
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
-    assertThat(s, instanceOf(InfixMultiplicationSort.class));
+    assertThat(s, instanceOf(InfixSortMultiplication.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     final Expression e1 = left(e);
@@ -537,7 +537,7 @@ public class TrimmerTest {
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final ASTNode replacement = s.replacement(e);
+    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
@@ -1067,7 +1067,7 @@ public class TrimmerTest {
     assertNotNull(w);
     assertTrue(w.scopeIncludes(e));
     assertTrue(w.eligible(e));
-    final ASTNode replacement = w.replacement(e);
+    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) w).replacement(e);
     assertNotNull(replacement);
     assertEquals("a != null", replacement.toString());
   }

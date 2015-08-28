@@ -11,26 +11,16 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert
- *
- * <pre>
- * if (x)
+ * A {@link Wring} to convert <code>if (x)
  *   f(a);
  * else
- *   f(b);
- * </pre>
- *
- * into
- *
- * <pre>
- * f(x ? a : b);
- * </pre>
+ *   f(b);</code> into <code>f(x ? a : b);</code>
  *
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement s) {
+public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.Replacing<IfStatement> {
+  @Override Statement replacement(final IfStatement s) {
     final Expression then = Extract.expression(Extract.expressionStatement(then(s)));
     if (then == null)
       return null;
@@ -40,7 +30,7 @@ public final class IfExpressionStatementElseSimilarExpressionStatement extends W
     final Expression e = pushdown(Subject.pair(then, elze).toCondition(s.getExpression()));
     return e == null ? null : Subject.operand(e).toStatement();
   }
-  @Override boolean scopeIncludes(final IfStatement s) {
-    return _replacement(s) != null;
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
+    return "Consolidate two branches of an 'if' into a single ";
   }
 }

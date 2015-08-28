@@ -3,7 +3,6 @@ package org.spartan.refactoring.spartanizations;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -12,9 +11,10 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.utils.Range;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Artium Nihamkin (original)
@@ -49,9 +49,9 @@ import org.spartan.utils.Range;
 public class InlineSingleUse extends Spartanization {
   /** Instantiates this class */
   public InlineSingleUse() {
-    super("Inline Single Use", "Inline variable used once");
+    super("Inline Single Use");
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
         if (!inRange(m, n) || !(n.getParent() instanceof VariableDeclarationStatement))
@@ -67,7 +67,7 @@ public class InlineSingleUse extends Spartanization {
       }
     });
   }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
+  @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
         return !(node.getParent() instanceof VariableDeclarationStatement) || go(node, node.getName());
@@ -75,7 +75,11 @@ public class InlineSingleUse extends Spartanization {
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
         if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
-          $.add(new Range(v));
+          $.add(new Rewrite("", v) {
+            @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+              // TODO Auto-generated method stub
+            }
+          });
         return true;
       }
     };

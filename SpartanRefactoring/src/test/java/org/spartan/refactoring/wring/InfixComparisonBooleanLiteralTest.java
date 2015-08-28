@@ -18,9 +18,11 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Wrap;
+import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.utils.Utils;
@@ -42,14 +45,22 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixExpression> {
-  static final Wring<InfixExpression> WRING = new InfixComparisonBooleanLiteral();
+  static final InfixComparisonBooleanLiteral WRING = new InfixComparisonBooleanLiteral();
   public InfixComparisonBooleanLiteralTest() {
     super(WRING);
   }
-  @Test public void removeParenthesis() {
+  @Test public void removeParenthesis() throws MalformedTreeException, BadLocationException {
     final String s = " (2) == true";
     final String wrap = Wrap.Expression.on(s);
-    final String unpeeled = TrimmerTest.apply(new Trimmer(), wrap);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
+    assertNotNull(u);
+    final Document d = new Document(wrap);
+    assertNotNull(d);
+    final Trimmer t = new Trimmer();
+    final ASTRewrite r = t.createRewrite(u, null);
+    final TextEdit x = r.rewriteAST(d, null);
+    x.apply(d);
+    final String unpeeled = d.get();
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + s);
     final String peeled = Wrap.Expression.off(unpeeled);
@@ -66,7 +77,11 @@ public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixEx
         new String[] { "", "a == b == c == true", "a == b == c" }, //
         new String[] { "", "a == true", "a" }, //
         new String[] { "", "a == false", "!a" }, //
+        new String[] { "", "(a) == false", "!a" }, //
+        new String[] { "", "(a) == (false)", "!a" }, //
         new String[] { "", "true == a", "a" }, //
+        new String[] { "", "true == (a)", "a" }, //
+        new String[] { "", "(true) == (a)", "a" }, //
         new String[] { "", "a != true", "!a" }, //
         new String[] { "", "a != false", "a" }, //
         new String[] { "", "false == a", "!a" }, //

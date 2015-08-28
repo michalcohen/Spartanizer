@@ -45,10 +45,10 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "javadoc", "static-method" }) //
-public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpression> {
-  static final Wring<InfixExpression> WRING = new InfixMultiplicationSort();
+public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpression> {
+  static final InfixSortMultiplication WRING = new InfixSortMultiplication();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
-  public InfixMultiplicationSortTest() {
+  public InfixSortMultiplicationTest() {
     super(WRING);
   }
   @Test public void scopeIncludesTrue1() {
@@ -66,11 +66,11 @@ public class InfixMultiplicationSortTest extends AbstractWringTest<InfixExpressi
     assertThat(inner.scopeIncludes(e), is(true));
     assertThat(inner.eligible(e), is(true));
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
-    assertThat(s, instanceOf(InfixMultiplicationSort.class));
+    assertThat(s, instanceOf(InfixSortMultiplication.class));
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
-    final ASTNode replacement = s.replacement(e);
+    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }

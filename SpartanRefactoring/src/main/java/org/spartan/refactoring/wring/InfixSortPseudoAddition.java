@@ -17,28 +17,31 @@ import org.spartan.refactoring.utils.Subject;
 /**
  * A {@link Wring} that sorts the arguments of an expression using the same
  * sorting order as {@link Operator#PLUS} expression, except that we do not
- * worry about commutativity. Unlike {@link InfixAdditionSort}, we know that the
+ * worry about commutativity. Unlike {@link InfixSortAddition}, we know that the
  * reordering is always possible.
  *
- * @see InfixAdditionSort
+ * @see InfixSortAddition
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixPseudoAdditionSort extends Wring.OfInfixExpression {
+public final class InfixSortPseudoAddition extends Wring.Replacing<InfixExpression> {
   private static boolean sort(final InfixExpression e) {
     return sort(Extract.allOperands(e));
   }
   private static boolean sort(final List<Expression> es) {
     return Wrings.sort(es, ExpressionComparator.ADDITION);
   }
-  @Override boolean _eligible(final InfixExpression e) {
+  @Override boolean eligible(final InfixExpression e) {
     return sort(e);
   }
-  @Override Expression _replacement(final InfixExpression e) {
+  @Override Expression replacement(final InfixExpression e) {
     final List<Expression> operands = Extract.allOperands(e);
     return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), OR, XOR, AND);
+  }
+  @Override String description(final InfixExpression e) {
+    return "Reorder operands of " + e.getOperator();
   }
 }

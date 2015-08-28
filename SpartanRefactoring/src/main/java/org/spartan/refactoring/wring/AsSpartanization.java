@@ -3,7 +3,6 @@ package org.spartan.refactoring.wring;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
@@ -15,10 +14,10 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.utils.Range;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
- * An adapter which makes it possible to use a single @{link Wring} as a
+ * An adapter that converts the @{link Wring} protocol into that of
  * {@link Spartanization}
  *
  * @author Yossi Gil
@@ -31,71 +30,63 @@ public class AsSpartanization extends Spartanization {
    *
    * @param inner The wring we wish to convert
    * @param name The title of the refactoring
-   * @param description One line description of the refactoring
    */
-  @SuppressWarnings("unchecked") public AsSpartanization(final Wring<? extends ASTNode> inner, final String name, final String description) {
-    super(name, description);
+  @SuppressWarnings("unchecked") public AsSpartanization(final Wring<? extends ASTNode> inner, final String name) {
+    super(name);
     this.inner = (Wring<ASTNode>) inner;
   }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
+  @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new ASTVisitor() {
-      @Override public boolean visit(final Block e) {
-        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
-          return true;
-        $.add(new Range(e));
-        return true;
+      @Override public boolean visit(final Block it) {
+        return process(it);
       }
-      @Override public boolean visit(final ConditionalExpression e) {
-        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
-          return true;
-        $.add(new Range(e));
-        return true;
+      @Override public boolean visit(final ConditionalExpression it) {
+        return process(it);
       }
-      @Override public boolean visit(final IfStatement e) {
-        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
-          return true;
-        $.add(new Range(e));
-        return true;
+      @Override public boolean visit(final IfStatement it) {
+        return process(it);
       }
-      @Override public boolean visit(final InfixExpression e) {
-        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
-          return true;
-        $.add(new Range(e));
-        return true;
+      @Override public boolean visit(final InfixExpression it) {
+        return process(it);
       }
-      @Override public boolean visit(final PrefixExpression e) {
-        if (!inner.scopeIncludes(e) || inner.nonEligible(e))
-          return true;
-        $.add(new Range(e));
-        return true;
+      @Override public boolean visit(final PrefixExpression it) {
+        return process(it);
       }
-      @Override public boolean visit(final VariableDeclarationFragment f) {
-        if (!inner.scopeIncludes(f) || inner.nonEligible(f))
+      @Override public boolean visit(final VariableDeclarationFragment it) {
+        return process(it);
+      }
+      <N extends ASTNode> boolean process(final N n) {
+        if (!inner.scopeIncludes(n) || inner.nonEligible(n))
           return true;
-        $.add(new Range(f));
+        $.add(inner.make(n));
         return true;
       }
     };
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit u, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final Block e) {
-        return !inRange(m, e) || inner.go(r, e);
+        return go(e);
       }
       @Override public boolean visit(final ConditionalExpression e) {
-        return !inRange(m, e) || inner.go(r, e);
+        return go(e);
       }
       @Override public boolean visit(final IfStatement e) {
-        return !inRange(m, e) || inner.go(r, e);
+        return go(e);
       }
       @Override public boolean visit(final InfixExpression e) {
-        return !inRange(m, e) || inner.go(r, e);
+        return go(e);
       }
       @Override public boolean visit(final PrefixExpression e) {
-        return !inRange(m, e) || inner.go(r, e);
+        return go(e);
       }
       @Override public boolean visit(final VariableDeclarationFragment f) {
-        return !inRange(m, f) || inner.go(r, f);
+        return go(f);
+      }
+      private <N extends ASTNode> boolean go(final N n) {
+        if (inRange(m, n))
+          inner.make(n).go(r, null);
+        return true;
       }
     });
   }

@@ -1,7 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
-import static org.spartan.utils.Utils.in;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
 
 import java.util.List;
 
@@ -10,6 +9,7 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.spartan.refactoring.utils.ExpressionComparator;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -20,21 +20,26 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixMultiplicationSort extends Wring.OfInfixExpression {
+public final class InfixSortAddition extends Wring.Replacing<InfixExpression> {
   private static boolean sort(final InfixExpression e) {
     return sort(Extract.allOperands(e));
   }
   private static boolean sort(final List<Expression> es) {
-    return Wrings.sort(es, ExpressionComparator.MULTIPLICATION);
+    return Wrings.sort(es, ExpressionComparator.ADDITION);
   }
-  @Override boolean _eligible(final InfixExpression e) {
-    return sort(e);
+  @Override boolean eligible(final InfixExpression e) {
+    return Is.notString(e) && sort(e);
   }
-  @Override Expression _replacement(final InfixExpression e) {
+  @Override Expression replacement(final InfixExpression e) {
     final List<Expression> operands = Extract.allOperands(e);
-    return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
+    final boolean notString = Is.notString(e);
+    final boolean canSort = sort(operands);
+    return !notString || !canSort ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
-    return in(e.getOperator(), TIMES);
+    return e.getOperator() == PLUS;
+  }
+  @Override String description(final InfixExpression e) {
+    return "Reorder operands of " + e.getOperator();
   }
 }

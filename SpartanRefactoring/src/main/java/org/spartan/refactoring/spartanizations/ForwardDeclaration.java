@@ -1,9 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
 import java.util.List;
-
+import static org.spartan.refactoring.utils.Funcs.*;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
@@ -13,8 +12,9 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.utils.Range;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Artium Nihamkin (original)
@@ -45,9 +45,9 @@ import org.spartan.utils.Range;
 public class ForwardDeclaration extends Spartanization {
   /** Instantiates this class */
   public ForwardDeclaration() {
-    super("Forward declaration", "Forward declaration of a variable just prior to first use");
+    super("Forward declaration");
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment v) {
         if (!inRange(m, v))
@@ -62,22 +62,22 @@ public class ForwardDeclaration extends Spartanization {
         final int declaredIdx = b.statements().indexOf(v.getParent());
         if (nextNodeIsAlreadyFixed(b, v, declaredIdx))
           return true;
-        final int beginingOfDeclarationsBlockIdx = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
-        if (declaredIdx >= beginingOfDeclarationsBlockIdx)
+        final int i = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
+        if (declaredIdx >= i)
           return true;
         final ASTNode declarationNode = (ASTNode) b.statements().get(declaredIdx);
         if (((VariableDeclarationStatement) declarationNode).fragments().size() == 1)
-          rewrite(beginingOfDeclarationsBlockIdx, declarationNode, r.getListRewrite(b, Block.STATEMENTS_PROPERTY));
+          rewrite(i, declarationNode, r.getListRewrite(b, Block.STATEMENTS_PROPERTY));
         else {
-          r.getListRewrite(b, Block.STATEMENTS_PROPERTY).insertAt(t.newVariableDeclarationStatement((VariableDeclarationFragment) ASTNode.copySubtree(t, v)),
-              1 + beginingOfDeclarationsBlockIdx, null);
+          final VariableDeclarationFragment copySubtree = duplicate(v);
+          r.getListRewrite(b, Block.STATEMENTS_PROPERTY).insertAt(b.getAST().newVariableDeclarationStatement(copySubtree), 1 + i, null);
           r.remove(v, null);
         }
         return true;
       }
       private void rewrite(final int beginingOfDeclarationsBlockIdx, final ASTNode n, final ListRewrite lr) {
         lr.remove(n, null);
-        lr.insertAt(ASTNode.copySubtree(t, n), 1 + beginingOfDeclarationsBlockIdx, null);
+        lr.insertAt(duplicate(n), 1 + beginingOfDeclarationsBlockIdx, null);
       }
     });
   }
@@ -96,7 +96,7 @@ public class ForwardDeclaration extends Spartanization {
     }
     return false;
   }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $$) {
+  @Override protected ASTVisitor collect(final List<Rewrite> $$) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment n) {
         final ASTNode $ = n.getParent().getParent();
@@ -110,7 +110,11 @@ public class ForwardDeclaration extends Spartanization {
         if (nextNodeIsAlreadyFixed(b, n, declaredIdx))
           return true;
         if (declaredIdx < findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx))
-          $$.add(new Range(n));
+          $$.add(new Rewrite("", n) {
+            @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+              // TODO Auto-generated method stub
+            }
+          });
         return true;
       }
     };

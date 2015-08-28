@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -14,8 +13,9 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.refactoring.utils.UnifiedGroup;
-import org.spartan.utils.Range;
 
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /
@@ -29,23 +29,25 @@ import org.spartan.utils.Range;
 public class ExtractMethod extends Spartanization {
   /** Instantiates this class */
   public ExtractMethod() {
-    super("Split method", "Extract a new method from the current one based on Spartan hyuristics");
+    super("Split method");
   }
   CompilationUnit oldCu;
-  @Override protected ASTVisitor collectOpportunities(final List<Range> opportunities) {
+  @Override protected ASTVisitor collect(final List<Rewrite> $) {
     // TODO Ofir: No opportunities for now, if it's 2016 and not added yet,
     // blame
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
-        opportunities.add(new Range(n));
+        $.add(new Rewrite("Extract method", n) {
+          @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+          }
+        });
         return true;
       }
     };
   }
   final int MinimumGroupSizeForExtraction = 3;
   final int MaximunGroupRelativeToMethodSize = 3;
-  @Override protected final void fillRewrite(@SuppressWarnings("unused") final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit cu,
-      @SuppressWarnings("unused") final IMarker m) {
+  @Override protected final void fillRewrite(@SuppressWarnings("unused") final ASTRewrite r, final CompilationUnit cu, @SuppressWarnings("unused") final IMarker m) {
     cu.accept(new ASTVisitor() {
       @SuppressWarnings("boxing") @Override public boolean visit(final MethodDeclaration md) {
         final Block b = md.getBody();

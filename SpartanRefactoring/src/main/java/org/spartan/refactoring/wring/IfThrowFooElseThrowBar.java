@@ -11,26 +11,16 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert
- *
- * <pre>
- * if (x)
+ * A {@link Wring} to convert <code>if (x)
  *   throw b;
  * else
- *   throw c;
- * </pre>
- *
- * into
- *
- * <pre>
- * throw x? b : c
- * </pre>
+ *   throw c;</code> into <code>throw x? b : c</code>
  *
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfThrowFooElseThrowBar extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement s) {
+public final class IfThrowFooElseThrowBar extends Wring.Replacing<IfStatement> {
+  @Override Statement replacement(final IfStatement s) {
     final Expression condition = s.getExpression();
     final Expression then = Extract.throwExpression(then(s));
     final Expression elze = Extract.throwExpression(elze(s));
@@ -38,5 +28,8 @@ public final class IfThrowFooElseThrowBar extends Wring.OfIfStatement {
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && Extract.throwExpression(then(s)) != null && Extract.throwExpression(elze(s)) != null;
+  }
+  @Override String description(final IfStatement n) {
+    return "Consolidate into a single 'throw'";
   }
 }

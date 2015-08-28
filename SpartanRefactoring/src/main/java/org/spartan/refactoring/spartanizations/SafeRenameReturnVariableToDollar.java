@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -20,10 +19,11 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.AncestorSearch;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.utils.Range;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Ofir Elmakias <code><Elmakias [at] outlook.com></code> (original)
@@ -32,10 +32,10 @@ import org.spartan.utils.Range;
 public class SafeRenameReturnVariableToDollar extends Spartanization {
   /** Instantiates this class */
   public SafeRenameReturnVariableToDollar() {
-    super("Rename returned variable to '$'", "Rename the variable returned by a function to '$'");
+    super("Rename returned variable to '$'");
   }
   static boolean declaredInMethod = false;
-  @Override protected final void fillRewrite(final ASTRewrite r, final AST t, final CompilationUnit cu, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
       @Override public boolean visit(final ReturnStatement rs) {
         final Expression n = rs.getExpression();
@@ -48,10 +48,10 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
           return true;
         md.accept(new ASTVisitor() {
           @Override public boolean visit(final SimpleName sn) {
-            if (same(sn, t.newSimpleName("$")))
+            if (same(sn, sn.getAST().newSimpleName("$")))
               return true;
             if (same(sn, n))
-              r.replace(sn, t.newSimpleName("$"), null);
+              r.replace(sn, sn.getAST().newSimpleName("$"), null);
             return true;
           }
         });
@@ -162,12 +162,16 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
       $ += Occurrences.BOTH_LEXICAL.of(v).in(r).size();
     return $;
   }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
+  @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment v = selectReturnVariable(n);
         if (v != null)
-          $.add(new Range(new AncestorSearch(ASTNode.METHOD_DECLARATION).of(v)));
+          $.add(new Rewrite("", new AncestorSearch(ASTNode.METHOD_DECLARATION).of(v)) {
+            @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+              // TODO Auto-generated method stub
+            }
+          });
         return true;
       }
     };

@@ -15,11 +15,14 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-08-26
  */
-public final class IfEmptyThen extends Wring.OfIfStatement {
-  @Override Statement _replacement(final IfStatement s) {
+public final class IfEmptyThen extends Wring.Replacing<IfStatement> {
+  @Override Statement replacement(final IfStatement s) {
     return Subject.pair(elze(s), null).toIf(not(s.getExpression()));
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && emptyThen(s) && !emptyElse(s);
+  }
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
+    return "Invert conditional and remove vacuous 'then' branch";
   }
 }

@@ -7,17 +7,19 @@ import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Is;
 
 /**
- * A {@link Wring} that eliminate Boolean literals, when possible present on
- * logical AND an logical OR.
+ * A {@link Wring} to covert <code>b || false</code> to <code>b</code>
  *
  * @author Yossi Gil
  * @since 2015-07-20
  */
-public final class InfixConditionalOrFalse extends Wring.OfInfixExpression {
-  @Override Expression _replacement(final InfixExpression e) {
+public final class InfixConditionalOrFalse extends Wring.Replacing<InfixExpression> {
+  @Override Expression replacement(final InfixExpression e) {
     return Wrings.eliminateLiteral(e, false);
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return e != null && Is.conditionalOr(e) && Have.falseLiteral(Extract.allOperands(e));
+  }
+  @Override String description(@SuppressWarnings("unused") final InfixExpression _) {
+    return "Remove 'false' argument to '||'";
   }
 }

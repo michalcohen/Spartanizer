@@ -39,8 +39,8 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class InfixAdditionSortTest {
-  static final Wring<InfixExpression> WRING = new InfixAdditionSort();
+public class InfixSortAdditionTest {
+  static final Wring<InfixExpression> WRING = new InfixSortAddition();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.ADDITION;
   @Test public void subjectOperandsWithParenthesis() {
     final Expression e = Into.e("(2 + a) * b");
@@ -51,7 +51,7 @@ public class InfixAdditionSortTest {
     assertThat(operands.size(), is(2));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
     assertThat(r, iz("2+a"));
-    final Wring.OfInfixExpression inner = new InfixAdditionSort();
+    final InfixSortAddition inner = new InfixSortAddition();
     final Expression replacement = inner.replacement(plus);
     assertThat(replacement, iz("a+2"));
   }

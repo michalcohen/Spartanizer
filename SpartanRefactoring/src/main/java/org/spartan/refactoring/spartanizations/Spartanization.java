@@ -20,7 +20,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -36,7 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Make;
-import org.spartan.utils.Range;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * the base class for all Spartanization Refactoring classes, contains common
@@ -62,7 +61,7 @@ public abstract class Spartanization extends Refactoring {
     pm.beginTask("Gathering project information...", 1);
     final List<ICompilationUnit> $ = new ArrayList<>();
     if (u == null) {
-      announce("Cannot find current compilatio unit " + u);
+      announce("Cannot find current compilation unit " + u);
       return $;
     }
     final IJavaProject javaProject = u.getJavaProject();
@@ -96,24 +95,13 @@ public abstract class Spartanization extends Refactoring {
   private IMarker marker = null;
   final Collection<TextFileChange> changes = new ArrayList<>();
   private final String name;
-  private final String message;
   /***
    * Instantiates this class, with message identical to name
    *
-   * @param name a short name of this refactoring
+   * @param name a short name of this instance
    */
   protected Spartanization(final String name) {
-    this(name, name);
-  }
-  /***
-   * Instantiates this class
-   *
-   * @param name a short name of this refactoring
-   * @param message the message to display in the quickfix
-   */
-  protected Spartanization(final String name, final String message) {
     this.name = name;
-    this.message = message;
   }
   @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
     changes.clear();
@@ -162,19 +150,19 @@ public abstract class Spartanization extends Refactoring {
    * @return an ASTRewrite which contains the changes
    */
   public final ASTRewrite createRewrite(final CompilationUnit u, final SubProgressMonitor pm) {
-    return createRewrite(pm, u.getAST(), u, (IMarker) null);
+    return createRewrite(pm, u, (IMarker) null);
   }
   /**
    * Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
    * spartanization suggestions
    *
    * @param u what to check
-   * @return a collection of {@link Range} objects each containing a
+   * @return a collection of {@link Rewrite} objects each containing a
    *         spartanization opportunity
    */
-  public final List<Range> findOpportunities(final CompilationUnit u) {
-    final List<Range> $ = new ArrayList<>();
-    u.accept(collectOpportunities($));
+  public final List<Rewrite> findOpportunities(final CompilationUnit u) {
+    final List<Rewrite> $ = new ArrayList<>();
+    u.accept(collect($));
     return $;
   }
   /**
@@ -243,12 +231,6 @@ public abstract class Spartanization extends Refactoring {
         }
       }
     };
-  }
-  /**
-   * @return the message to display in the quickfix
-   */
-  public String getMessage() {
-    return message;
   }
   @Override public final String getName() {
     return name;
@@ -327,8 +309,8 @@ public abstract class Spartanization extends Refactoring {
   @Override public String toString() {
     return name;
   }
-  protected abstract ASTVisitor collectOpportunities(final List<Range> $);
-  protected abstract void fillRewrite(ASTRewrite r, AST t, CompilationUnit cu, IMarker m);
+  protected abstract ASTVisitor collect(final List<Rewrite> $);
+  protected abstract void fillRewrite(ASTRewrite r, CompilationUnit cu, IMarker m);
   /**
    * Determines if the node is outside of the selected text.
    *
@@ -379,21 +361,14 @@ public abstract class Spartanization extends Refactoring {
       scanCompilationUnit(cu, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     pm.done();
   }
-  private ASTRewrite createRewrite(final AST t, final CompilationUnit cu, final IMarker m) {
-    final ASTRewrite $ = ASTRewrite.create(t);
-    fillRewrite($, t, cu, m);
-    return $;
-  }
-  private ASTRewrite createRewrite(final SubProgressMonitor pm, final AST t, final CompilationUnit cu, final IMarker m) {
+  private ASTRewrite createRewrite(final SubProgressMonitor pm, final CompilationUnit cu, final IMarker m) {
     if (pm != null)
       pm.beginTask("Creating rewrite operation...", 1);
-    final ASTRewrite $ = createRewrite(t, cu, m);
+    final ASTRewrite $ = ASTRewrite.create(cu.getAST());
+    fillRewrite($, cu, m);
     if (pm != null)
       pm.done();
     return $;
-  }
-  private ASTRewrite createRewrite(final SubProgressMonitor pm, final CompilationUnit cu, final IMarker m) {
-    return createRewrite(pm, cu.getAST(), cu, m);
   }
   /**
    * creates an ASTRewrite, under the context of a text marker, which contains

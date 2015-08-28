@@ -35,7 +35,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class PrefixNotPushdownTest {
   /** The {@link Wring} under test */
-  static final Wring<PrefixExpression> WRING = new PrefixNotPushdown();
+  static final PrefixNotPushdown WRING = new PrefixNotPushdown();
   @Test public void notOfFalse() {
     final PrefixExpression e = p("!false");
     assertThat(e, is(notNullValue()));

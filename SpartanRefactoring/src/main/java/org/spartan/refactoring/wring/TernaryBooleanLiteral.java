@@ -14,39 +14,32 @@ import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * <code>
- * a ? b : c
- * </code> is the same as <code>
- * (a && b) || (!a && c)
- * </code> if b is false than: <code>
- * (a && false) || (!a && c) == (!a && c)
- * </code> if b is true than: <code>
- * (a && true) || (!a && c) == a || (!a && c) == a || c
- * </code> if c is false than: <code>
- * (a && b) || (!a && false) == (!a && c)
- * </code> if c is true than <code>
- * (a && b) || (!a && true) == (a && b) || (!a) == !a || b
- * </code> keywords <code><b>this</b></code> or <code><b>null</b></code>.
+ * <code>a ? b : c</code> is the same as <code>(a && b) || (!a && c)</code> if b
+ * is false than: <code>(a && false) || (!a && c) == (!a && c)</code> if b is
+ * true than: <code>(a && true) || (!a && c) == a || (!a && c) == a || c</code>
+ * if c is false than: <code>(a && b) || (!a && false) == (!a && c)</code> if c
+ * is true than
+ * <code>(a && b) || (!a && true) == (a && b) || (!a) == !a || b</code> keywords
+ * <code><b>this</b></code> or <code><b>null</b></code>.
  *
  * @author Yossi Gil
  * @since 2015-07-20
  */
-public final class TernaryBooleanLiteral extends Wring.OfConditionalExpression {
-  @Override Expression _replacement(final ConditionalExpression e) {
+public final class TernaryBooleanLiteral extends Wring.Replacing<ConditionalExpression> {
+  @Override Expression replacement(final ConditionalExpression e) {
     return simplifyTernary(e);
   }
   @Override boolean scopeIncludes(final ConditionalExpression e) {
     return isTernaryOfBooleanLitreral(e);
   }
   /**
-   * Consider an expression <code> a ? b : c </code>; in a sense it is the same
-   * as <code> (a && b) || (!a && c) </code>
+   * Consider an expression <code>a ? b : c</code>; in a sense it is the same as
+   * <code>(a && b) || (!a && c)</code>
    * <ol>
-   * <li>if b is false then: <code>
-   * (a && false) || (!a && c) == !a && c </code>
+   * <li>if b is false then: <code>(a && false) || (!a && c) == !a && c</code>
    * <li>if b is true then:
-   * <code>(a && true) || (!a && c) == a || (!a && c) == a || c </code>
-   * <li>if c is false then: <code>(a && b) || (!a && false) == a && b </code>
+   * <code>(a && true) || (!a && c) == a || (!a && c) == a || c</code>
+   * <li>if c is false then: <code>(a && b) || (!a && false) == a && b</code>
    * <li>if c is true then <code>(a && b) || (!a && true) == !a || b</code>
    * </ol>
    */
@@ -61,5 +54,8 @@ public final class TernaryBooleanLiteral extends Wring.OfConditionalExpression {
     final Expression other = takeThen ? then : elze;
     final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
     return Subject.pair(literal != takeThen ? main : not(main), other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
+  }
+  @Override String description(final ConditionalExpression n) {
+    return "Convert conditional expression into logical expression";
   }
 }

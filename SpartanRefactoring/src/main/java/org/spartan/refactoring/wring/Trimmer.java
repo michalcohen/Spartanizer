@@ -1,12 +1,10 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.assertNotNull;
 import static org.spartan.utils.Utils.removeDuplicates;
 
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
@@ -25,6 +23,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.utils.Range;
 
 /**
@@ -48,7 +47,6 @@ public class Trimmer extends Spartanization {
       final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast($.get());
       final ASTRewrite r = trimmer.createRewrite(u, null);
       final TextEdit e = r.rewriteAST($, null);
-      assertNotNull($);
       try {
         e.apply($);
       } catch (final MalformedTreeException | IllegalArgumentException | BadLocationException x) {
@@ -80,19 +78,18 @@ public class Trimmer extends Spartanization {
     removeDuplicates(rs);
     return $;
   }
-  static boolean overrideInto(final ASTNode e, final List<Range> rs) {
-    return overrideInto(new Range(e), rs);
-  }
-  static boolean overrideInto(final Range r, final List<Range> rs) {
-    r.pruneIncluders(rs);
-    rs.add(r);
+  static boolean overrideInto(final Rewrite r, final List<Rewrite> rs) {
+    if (r != null) {
+      r.pruneIncluders(rs);
+      rs.add(r);
+    }
     return true;
   }
   /** Instantiates this class */
   public Trimmer() {
-    super("Trimmer", "Simiplifies expression once");
+    super("Trimmer");
   }
-  @Override protected ASTVisitor collectOpportunities(final List<Range> $) {
+  @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final Block it) {
         return go(it);
@@ -120,11 +117,11 @@ public class Trimmer extends Spartanization {
       }
       private <N extends ASTNode> boolean go(final N n) {
         final Wring<N> w = Toolbox.instance.find(n);
-        return w == null || w.nonEligible(n) || overrideInto(w.range(n), $);
+        return w == null || w.nonEligible(n) || overrideInto(w.make(n), $);
       }
     };
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, @SuppressWarnings("unused") final AST t, final CompilationUnit u, final IMarker m) {
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
       @Override public boolean visit(final Block b) {
         return go(b);
@@ -154,7 +151,12 @@ public class Trimmer extends Spartanization {
         if (!inRange(m, n))
           return true;
         final Wring<N> w = Toolbox.instance.find(n);
-        return w == null || w.go(r, n);
+        if (w != null) {
+          final Rewrite make = w.make(n);
+          if (make != null)
+            make.go(r, null);
+        }
+        return true;
       }
     });
   }

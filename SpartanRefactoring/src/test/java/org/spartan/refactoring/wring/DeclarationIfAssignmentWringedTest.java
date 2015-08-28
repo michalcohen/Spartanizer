@@ -46,8 +46,8 @@ import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Occurrences;
+import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.refactoring.utils.Subject;
-import org.spartan.utils.Range;
 import org.spartan.utils.Utils;
 
 @SuppressWarnings({ "javadoc" }) //
@@ -119,7 +119,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Test public void hasOpportunity() {
     assertTrue(inner.scopeIncludes(asMe()));
     final CompilationUnit u = asCompilationUnit();
-    final List<Range> findOpportunities = new Trimmer().findOpportunities(u);
+    final List<Rewrite> findOpportunities = new Trimmer().findOpportunities(u);
     assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(1)));
   }
   @Test public void hasSimplifier() {
@@ -158,7 +158,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final ASTRewrite r = ASTRewrite.create(f.getAST());
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
-    final ASTRewrite fillReplacement = WRING.fillReplacement(f, r);
+    final ASTRewrite fillReplacement = WRING.go(r, f, null);
     final boolean scopeIncludes = fillReplacement != null;
     assertThat(asMe().toString(), scopeIncludes, is(true));
   }

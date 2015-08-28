@@ -37,7 +37,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-7-17
  */
-public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
+public final class PrefixNotPushdown extends Wring.Replacing<PrefixExpression> {
   /**
    * @param o JD
    * @return the operator that produces the logical negation of the parameter
@@ -120,7 +120,10 @@ public final class PrefixNotPushdown extends Wring.OfPrefixExpression {
   @Override public boolean scopeIncludes(final PrefixExpression e) {
     return e != null && asNot(e) != null && hasOpportunity(asNot(e));
   }
-  @Override Expression _replacement(final PrefixExpression e) {
+  @Override Expression replacement(final PrefixExpression e) {
     return simplifyNot(e);
+  }
+  @Override String description(@SuppressWarnings("unused") final PrefixExpression _) {
+    return "Pushdown logical negation ('!')";
   }
 }
