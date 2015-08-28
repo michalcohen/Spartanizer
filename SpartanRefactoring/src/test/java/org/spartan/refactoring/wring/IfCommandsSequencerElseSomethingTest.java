@@ -83,7 +83,6 @@ public class IfCommandsSequencerElseSomethingTest {
     final Document d = new Document(wrap);
     assertNotNull(d);
     assertThat(d.get(), equalToIgnoringWhiteSpace(wrap.toString()));
-    final Trimmer t = new Trimmer();
     final TextEdit x = r.rewriteAST(d, null);
     x.apply(d);
     final String unpeeled = d.get();

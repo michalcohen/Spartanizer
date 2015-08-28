@@ -45,7 +45,7 @@ public final class IfCommandsSequencerElseSomething extends Wring<IfStatement> {
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Remove redundant else";
   }
-  @Override boolean eligible(final IfStatement n) {
+  @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
   }
   static void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {

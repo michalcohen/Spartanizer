@@ -29,7 +29,7 @@ public final class IfThrowFooElseThrowBar extends Wring.Replacing<IfStatement> {
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && Extract.throwExpression(then(s)) != null && Extract.throwExpression(elze(s)) != null;
   }
-  @Override String description(final IfStatement n) {
-    return "Consolidate into a single 'throw'";
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
+    return "Consolidate 'if' into a 'throw' statement of a conditional expression";
   }
 }

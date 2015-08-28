@@ -53,8 +53,7 @@ public class TernaryCollapse extends Wring.Replacing<ConditionalExpression> {
   @Override boolean scopeIncludes(final ConditionalExpression e) {
     return collapse(e) != null;
   }
-  @Override String description(final ConditionalExpression n) {
-    // TODO Auto-generated method stub
-    return null;
+  @Override String description(@SuppressWarnings("unused") final ConditionalExpression _) {
+    return "Eliminate nested conditional expression";
   }
 }

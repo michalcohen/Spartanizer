@@ -48,5 +48,11 @@ public abstract class Rewrite extends Range {
   static Range singleNodeRange(final ASTNode n) {
     return new Range(n.getStartPosition(), n.getStartPosition() + n.getLength());
   }
+  /**
+   * Convert the rewrite into changes on an {@link ASTRewrite}
+   *
+   * @param r where to place the changes
+   * @param editGroup to be associated with these changes
+   */
   public abstract void go(ASTRewrite r, TextEditGroup editGroup);
 }

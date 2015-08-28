@@ -19,7 +19,7 @@ public final class InfixConditionalAndTrue extends Wring.Replacing<InfixExpressi
   @Override boolean scopeIncludes(final InfixExpression e) {
     return Is.conditionalAnd(e) && Have.trueLiteral(Extract.allOperands(e));
   }
-  @Override String description(final InfixExpression n) {
+  @Override String description(@SuppressWarnings("unused") final InfixExpression _) {
     return "Remove 'true' argument to '&&'";
   }
 }
