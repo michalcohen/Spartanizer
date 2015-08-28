@@ -238,7 +238,7 @@ public class FixedPointTest {
   @Test(timeout = 100) public void shortestIfBranchFirst13() {
     assertConvertsTo(
         "    int a = 0;\n" + "    if (a > 0)\n" + "      return 6;\n" + "    else {\n" + "      int b = 9;\n" + "      b *= b;\n" + "      return b;\n" + "    }\n" + "    ;",
-        "int a=0;if(a>0)return 6;int b=9;b*=b;return b;");
+        "int a=0;if(a>0)return 6;int b=9;return b*=b;");
   }
   @Test(timeout = 100) public void shortestIfBranchFirst14() {
     assertConvertsTo("    int a = 0;\n" + //
@@ -308,7 +308,7 @@ public class FixedPointTest {
   }
   @Test(timeout = 100) public void ternarize04() {
     assertConvertsTo("  int res = 0;if (s.equals(532))    res += 6;else    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;",
-        "int res=0;res+=s.equals(532)?6:9;return res;");
+        "int res=0;return res+=s.equals(532)?6:9;");
   }
   @Test(timeout = 100) public void ternarize06() {
     assertConvertsTo(//

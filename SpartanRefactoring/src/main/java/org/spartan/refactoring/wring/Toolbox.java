@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -50,6 +51,7 @@ public class Toolbox {
   }
   /** The default instance of this class */
   public static final Toolbox instance = new Maker()//
+      .add(Assignment.class, new AssignmentAndReturn()) //
       .add(Block.class, new BlockSimplify()) //
       .add(PostfixExpression.class, new PostfixToPrefix()) //
       .add(InfixExpression.class, //
@@ -79,7 +81,9 @@ public class Toolbox {
           new IfEmptyThen(), //
           new IfShortestFirst(), //
           null)//
-      .add(PrefixExpression.class, new PrefixNotPushdown()) //
+      .add(PrefixExpression.class, //
+          new PrefixIncrementDecrementReturn(), //
+          new PrefixNotPushdown()) //
       .add(ConditionalExpression.class, //
           new TernaryBooleanLiteral(), //
           new TernaryCollapse(), //

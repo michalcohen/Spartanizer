@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
@@ -91,6 +92,9 @@ public class Trimmer extends Spartanization {
   }
   @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new ASTVisitor() {
+      @Override public boolean visit(final Assignment a) {
+        return go(a);
+      }
       @Override public boolean visit(final Block it) {
         return go(it);
       }
@@ -123,6 +127,9 @@ public class Trimmer extends Spartanization {
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
+      @Override public boolean visit(final Assignment a) {
+        return go(a);
+      }
       @Override public boolean visit(final Block b) {
         return go(b);
       }

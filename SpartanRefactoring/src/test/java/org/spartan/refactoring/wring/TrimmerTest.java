@@ -133,6 +133,21 @@ public class TrimmerTest {
       assertNotEquals("Simpification of " + from1 + " is just reformatting", compressSpaces(peeled), compressSpaces(from1));
     assertSimilar(expected1, peeled);
   }
+  @Test public void assignmentReturn0() {
+    assertConvertsTo("a = 3; return a;", "return a = 3;");
+  }
+  @Test public void assignmentReturn1() {
+    assertConvertsTo("a = 3; return (a);", "return a = 3;");
+  }
+  @Test public void assignmentReturn2() {
+    assertConvertsTo("a += 3; return a;", "return a += 3;");
+  }
+  @Test public void assignmentReturn3() {
+    assertConvertsTo("a *= 3; return a;", "return a *= 3;");
+  }
+  @Test public void assignmentReturniNo() {
+    assertNoConversion("b = a = 3; return a;");
+  }
   @Test public void bugIntroducingMISSINGWord1() {
     assertSimplifiesTo(//
         "b.f(a) && -1 == As.g(f).h(c) ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)",
@@ -739,6 +754,15 @@ public class TrimmerTest {
   @Test public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
+  @Test public void postDecreementReturn() {
+    assertConvertsTo("a--; return a;", "--a;return a;");
+  }
+  @Test public void postIncrementReturn() {
+    assertConvertsTo("a++; return a;", "++a;return a;");
+  }
+  @Test public void preDecreementReturn() {
+    assertConvertsTo("--a.b.c; return a.b.c;", "return--a.b.c;");
+  }
   @Test public void prefixToPosfixIncreementSimple() {
     assertSimplifiesTo("i++", "++i");
   }
@@ -762,6 +786,15 @@ public class TrimmerTest {
   }
   @Test public void prefixToPostfixIncreement() {
     assertConvertsTo("for (int i = 0; i < 100; i++) i++;", "for(int i=0;i<100;++i)++i;");
+  }
+  @Test public void preIncrementReturn() {
+    assertConvertsTo("++a; return a;", "return ++a;");
+  }
+  @Test public void preDecrementReturn() {
+    assertConvertsTo("--a; return a;", "return --a;");
+  }
+  @Test public void preDecrementReturn1() {
+    assertConvertsTo("--this.a; return this.a;", "return --this.a;");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -846,12 +879,6 @@ public class TrimmerTest {
   }
   @Test public void pushdownNotSummation() {
     assertNoChange("a+b");
-  }
-  @Test public void pushdownTernaryReceiverNoReceiver() {
-    assertSimplifiesTo("a < b ? a.f() : f()", "a>=b?f():a.f()");
-  }
-  @Test public void pushdownTernaryNoReceiverReceiver() {
-    assertNoChange("a < b ? f() : a.f()");
   }
   @Test public void pushdownTernaryActualExample() {
     assertNoChange("next < values().length");
@@ -954,6 +981,9 @@ public class TrimmerTest {
   @Test public void pushdownTernaryNoBoolean() {
     assertNoChange("a?b:c");
   }
+  @Test public void pushdownTernaryNoReceiverReceiver() {
+    assertNoChange("a < b ? f() : a.f()");
+  }
   @Test public void pushdownTernaryNotOnMINUS() {
     assertNoChange("a ? -c :-d");
   }
@@ -992,6 +1022,9 @@ public class TrimmerTest {
   }
   @Test public void pushdownTernaryParXT() {
     assertSimplifiesTo("a ? b : ((true))", "!a || b");
+  }
+  @Test public void pushdownTernaryReceiverNoReceiver() {
+    assertSimplifiesTo("a < b ? a.f() : f()", "a>=b?f():a.f()");
   }
   @Test public void pushdownTernaryTX() {
     assertSimplifiesTo("a ? true : c", "a || c");
