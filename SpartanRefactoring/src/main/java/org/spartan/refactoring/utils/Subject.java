@@ -2,14 +2,18 @@ package org.spartan.refactoring.utils;
 
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.rebase;
+import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -138,7 +142,7 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
     private final Statement then;
     StatementPair(final Statement then, final Statement elze) {
       super(then);
-      this.then = claim(then);
+      this.then = hasElse(then) ? claim(then) : blockify(then);
       this.elze = claim(elze);
     }
     public IfStatement toIf(final Expression condition) {
@@ -149,6 +153,23 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
       if (elze != null)
         $.setElseStatement(elze);
       return $;
+    }
+    Block blockify(final Statement s) {
+      final List<Statement> ls = Extract.statements(claim(s));
+      final Block $ = s.getAST().newBlock();
+      duplicateInto(ls, $.statements());
+      return $;
+    }
+    static boolean hasElse(final Statement s) {
+      final AtomicBoolean hasElse = new AtomicBoolean(true);
+      s.accept(new ASTVisitor() {
+        @Override public boolean visit(final IfStatement is) {
+          if (is.getElseStatement() == null)
+            hasElse.set(false);
+          return true;
+        }
+      });
+      return hasElse.get();
     }
   }
 
