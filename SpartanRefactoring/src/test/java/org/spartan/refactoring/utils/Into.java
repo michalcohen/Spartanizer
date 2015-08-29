@@ -116,6 +116,17 @@ public enum Into {
   public static Assignment a(final String expression) {
     return (Assignment) e(expression);
   }
+  /**
+   * Convert a given {@link String} into an {@link MethodDeclaration} by
+   * appropriately wrapping it with text to make it a reasonably looking
+   * {@link CompilationUnit}, parsing it, and then extracting the first method
+   * in it. possible
+   *
+   * @param methodDelclaration a {@link String} that represents a Java method
+   *          declaration
+   * @return an {@link MethodDeclaration} data structure representing the
+   *         parameter.
+   */
   public static MethodDeclaration d(final String methodDelclaration) {
     assertThat(methodDelclaration, notNullValue());
     return Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(methodDelclaration));

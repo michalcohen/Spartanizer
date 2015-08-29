@@ -12,11 +12,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -29,7 +26,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.spartan.utils.Wrapper;
 
@@ -97,20 +93,20 @@ public enum Extract {
     }
   }
   /**
-   * @param node a node to extract an expression from
-   * @return null if the statement is not an expression or return statement or
-   *         the expression if they are
+   * @param n a node to extract an expression from
+   * @return null if the statement is not an expression, nor a return statement,
+   *         nor a throw statement. Otherwise, the expression in these.
    */
-  public static Expression expression(final ASTNode node) {
-    if (node == null)
+  public static Expression expression(final ASTNode n) {
+    if (n == null)
       return null;
-    switch (node.getNodeType()) {
+    switch (n.getNodeType()) {
       case ASTNode.EXPRESSION_STATEMENT:
-        return ((ExpressionStatement) node).getExpression();
+        return ((ExpressionStatement) n).getExpression();
       case ASTNode.RETURN_STATEMENT:
-        return ((ReturnStatement) node).getExpression();
+        return ((ReturnStatement) n).getExpression();
       case ASTNode.THROW_STATEMENT:
-        return ((ThrowStatement) node).getExpression();
+        return ((ThrowStatement) n).getExpression();
       default:
         return null;
     }
@@ -135,8 +131,6 @@ public enum Extract {
    *         or <code><b>null</b> if there is no such statement.
    */
   public static PostfixExpression findFirstPostfix(final ASTNode n) {
-    if (n == null)
-      return null;
     final Wrapper<PostfixExpression> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
       @Override public boolean visit(final PostfixExpression e) {
@@ -176,8 +170,6 @@ public enum Extract {
    *         <code><b>null</b> if there is no such statement.
    */
   public static MethodDeclaration firstMethodDeclaration(final ASTNode n) {
-    if (n == null)
-      return null;
     final Wrapper<MethodDeclaration> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration i) {
@@ -198,8 +190,6 @@ public enum Extract {
    *         value could be found.
    */
   public static InfixExpression firstPlus(final ASTNode n) {
-    if (n == null)
-      return null;
     final Wrapper<InfixExpression> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
       @Override public boolean visit(final InfixExpression e) {
@@ -366,37 +356,6 @@ public enum Extract {
    */
   public static ReturnStatement returnStatement(final ASTNode n) {
     return asReturnStatement(Extract.singleStatement(n));
-  }
-  /**
-   * Computes the list of all return statements found in a
-   * {@link MethodDeclaration}.
-   * <p>
-   * This method correctly ignores return statements found within nested types.
-   *
-   * @param d JD
-   * @return a list of {@link ReturnStatement} from the given method.
-   */
-  public static List<ReturnStatement> returnStatements(final MethodDeclaration d) {
-    final List<ReturnStatement> $ = new ArrayList<>();
-    d.accept(new ASTVisitor() {
-      @Override public boolean visit(@SuppressWarnings("unused") final AnnotationTypeDeclaration _) {
-        return false;
-      }
-      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
-        return false;
-      }
-      @Override public boolean visit(@SuppressWarnings("unused") final EnumDeclaration _) {
-        return false;
-      }
-      @Override public boolean visit(final ReturnStatement s) {
-        $.add(s);
-        return true;
-      }
-      @Override public boolean visit(@SuppressWarnings("unused") final TypeDeclaration _) {
-        return false;
-      }
-    });
-    return $;
   }
   /**
    * Finds the single statement in the <code><b>else</b></code> branch of an

@@ -10,12 +10,9 @@ import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
 import org.spartan.refactoring.spartanizations.Wrap;
@@ -49,11 +46,5 @@ import org.spartan.refactoring.spartanizations.Wrap;
     final String input = "int f() { return a; }";
     final MethodDeclaration d = Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(input));
     assertThat(d, iz(input));
-  }
-  @Test public void returnStatementsExists() {
-    final MethodDeclaration d = Into.d("int f() { return a; }");
-    final List<ReturnStatement> a = Extract.returnStatements(d);
-    assertThat(a, notNullValue());
-    assertThat(a.size(), is(1));
   }
 }
