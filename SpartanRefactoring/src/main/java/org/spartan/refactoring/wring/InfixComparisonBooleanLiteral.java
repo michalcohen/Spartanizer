@@ -25,7 +25,7 @@ import org.spartan.refactoring.utils.Plant;
  */
 public final class InfixComparisonBooleanLiteral extends Wring.Replacing<InfixExpression> {
   private static BooleanLiteral literal(final InfixExpression e) {
-    return literalOnLeft(e) ? asBooleanLiteral(core(left(e))) : asBooleanLiteral(core(right(e)));
+    return asBooleanLiteral(core(literalOnLeft(e) ? left(e) : right(e)));
   }
   private static boolean negating(final InfixExpression e, final BooleanLiteral literal) {
     return literal.booleanValue() != (e.getOperator() == EQUALS);
