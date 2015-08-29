@@ -54,8 +54,7 @@ import org.spartan.refactoring.utils.Is;
  * @since 2014-07-10
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "static-method", "javadoc" }) 
-public class TrimmerTest {
+@SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();
   }
@@ -171,6 +170,9 @@ public class TrimmerTest {
   }
   @Test public void bugIntroducingMISSINGWord1e() {
     assertSimplifiesTo("Y ? Z : R ? null : S ? null : T", "Y?Z:!R&&!S?T:null");
+  }
+  @Test public void ifEmptyElsewWithinIf() {
+    assertConvertsTo("if (a) if (b) f(); else ;", "if (a) if (b) f();");
   }
   @Test public void bugIntroducingMISSINGWord2() {
     assertSimplifiesTo(//
@@ -1122,35 +1124,29 @@ public class TrimmerTest {
         "   }\n" + //
         "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
-  @Test public void shortestIfBranchFirst00() {
-    assertConvertsTo(
-        "if (s.equals(0xDEAD)) {int res=0;    for (int i=0; i<s.length(); ++i)     if (s.charAt(i)=='a')      res += 2;    } else if (s.charAt(i)=='d')      res -= 1;",
-        "if(!s.equals(0xDEAD))if(s.charAt(i)=='d')res-=1;else{int res=0;for(int i=0;i<s.length();++i)if(s.charAt(i)=='a')res+=2;}");
-  }
   @Test public void shortestIfBranchFirst01() {
     assertConvertsTo(""//
-        + "if (s.equals(0xDEAD))   {\n"//
+        + "if (s.equals(0xDEAD)) {\n"//
         + " int res=0; "//
         + " for (int i=0; i<s.length(); ++i)     "//
         + " if (s.charAt(i)=='a')      "//
         + "   res += 2;    "//
-        + "} "//
-        + "else "//
-        + "if (s.charAt(i)=='d') "//
+        + "} else "//
+        + " if (s.charAt(i)=='d') "//
         + "  res -= 1;  "//
         + "return res;  "//
         ,
         ""//
-            + "if (!s.equals(0xDEAD))"//
-            + "if(s.charAt(i)=='d')"//
-            + "res-=1;"//
-            + "else {"//
-            + "int res=0;"//
-            + " for(int i=0;i<s.length();++i)"//
-            + "  if(s.charAt(i)=='a')"//
-            + "    res+=2;"//
-            + "}"//
-            + "return res;");
+            + "if (!s.equals(0xDEAD)) {"//
+            + " if(s.charAt(i)=='d')"//
+            + "  res-=1;"//
+            + "} else {"//
+            + "  int res=0;"//
+            + "  for(int i=0;i<s.length();++i)"//
+            + "   if(s.charAt(i)=='a')"//
+            + "     res+=2;"//
+            + " }"//
+            + " return res;");
   }
   @Test public void shortestOperand02() {
     assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
@@ -1516,5 +1512,62 @@ public class TrimmerTest {
   }
   @Test public void xorSortClassConstantsAtEnd() {
     assertNoChange("f(a,b,c,d) ^ BOB");
+  }
+  @Test public void ifBugSecondTry() {
+    assertConvertsTo(
+        "" + //
+            " final int c = 2;\n" + //
+            "    if (c == c + 1) {\n" + //
+            "      if (c == c + 2)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    } else if (Character.digit(c, 16) == -1)\n" + //
+            "      return null;\n" + //
+            "    return null;",
+        "" + //
+            "    final int c = 2;\n" + //
+            "    if (c != c + 1) {\n" + //
+            "      if (Character.digit(c, 16) == -1)\n" + //
+            "        return null;\n" + //
+            "    } else {\n" + //
+            "      if (c == c + 2)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    }\n" + //
+            "    return null;");//
+  }
+  @Test public void ifBugSimplified() {
+    assertConvertsTo(
+        "" + //
+            "    if (x) {\n" + //
+            "      if (z)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    } else if (y)\n" + //
+            "      return;\n" + //
+            "",
+        "" + //
+            "    if (!x) {\n" + //
+            "      if (y)\n" + //
+            "        return;\n" + //
+            "    } else {\n" + //
+            "      if (z)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    }\n" + //
+            "");//
+  }
+  @Test public void ifBugWithPlainEmptyElse() {
+    assertConvertsTo(
+        "" + //
+            "      if (z)\n" + //
+            "        f();\n" + //
+            "      else\n" + //
+            "         ; \n" + //
+            "",
+        "" + //
+            "      if (z)\n" + //
+            "        f();\n" + //
+            "");//
   }
 }

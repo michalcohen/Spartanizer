@@ -165,4 +165,14 @@ import org.spartan.refactoring.wring.Wrings;
     assertThat(s, iz("{s();}"));
     assertThat(Subject.pair(s, s("f();")).toIf(e("a")), iz("if(a)s(); else f();"));
   }
+  @Test public void makeIfNotStatement() {
+    final Statement s = s("s();");
+    assertThat(s, iz("{s();}"));
+    assertThat(Subject.pair(s, s("f();")).toNot(e("a")), iz("if(!a)s(); else f();"));
+  }
+  @Test public void makeIfStatementOfNestedIf() {
+    final Statement then = s("if (a) return b;");
+    final Statement elze = s("if (c) return d;");
+    assertThat(Subject.pair(then, elze).toIf(e("x")), iz("if(x) {if (a) return b; } else if (c) return d;"));
+  }
 }

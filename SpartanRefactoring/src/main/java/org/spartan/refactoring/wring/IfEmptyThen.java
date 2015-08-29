@@ -1,7 +1,6 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.wring.Wrings.*;
 
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -17,7 +16,7 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfEmptyThen extends Wring.Replacing<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
-    return Subject.pair(elze(s), null).toIf(not(s.getExpression()));
+    return Subject.pair(elze(s), null).toNot(s.getExpression());
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && emptyThen(s) && !emptyElse(s);

@@ -57,18 +57,38 @@ public enum IfShortestFirstTest {
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
     private static String[][] cases = Utils.asArray(//
         new String[] { "Vanilla", "if (a) a(x,y,z,w); else b();", "if (!a) b(); else a(x,y,z,w);" }, //
-        new String[] { "Two statemens are greater than one", //
+        new String[] { //
+            "Two statemens are greater than one", //
             "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
-            "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} ", //
-    }, //
-        null);
+            "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} " }, //
+        new String[] { //
+            "If bug simplified", //
+            "" + //
+                "    if (x) {\n" + //
+                "      if (z)\n" + //
+                "        return null;\n" + //
+                "      c = f().charAt(3);\n" + //
+                "    } else if (y)\n" + //
+                "      return;\n" + //
+                "",
+            "" + //
+                "    if (!x) {\n" + //
+                "      if (y)\n" + //
+                "        return;\n" + //
+                "    } else {\n" + //
+                "      if (z)\n" + //
+                "        return null;\n" + //
+                "      c = f().charAt(3);\n" + //
+                "    }\n" + //
+                ""//
+    }, null);
     /**
      * Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
      *         objects, the test case name, the input, and the file.
      */
-    @Parameters(name = DESCRIPTION) //
+    @Parameters(name = "Test #{index}. ({0}) ") //
     public static Collection<Object[]> cases() {
       return collect(cases);
     }

@@ -3,7 +3,6 @@ package org.spartan.refactoring.wring;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
@@ -61,7 +60,7 @@ public final class IfCommandsSequencerElseSomething extends Wring<IfStatement> {
     return new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         assert scopeIncludes(s);
-        final IfStatement shorterIf = endsWithSequencer(then(s)) ? duplicate(s) : Subject.pair(elze(s), then(s)).toIf(not(s.getExpression()));
+        final IfStatement shorterIf = endsWithSequencer(then(s)) ? duplicate(s) : Subject.pair(elze(s), then(s)).toNot(s.getExpression());
         final List<Statement> remainder = Extract.statements(elze(shorterIf));
         shorterIf.setElseStatement(null);
         final Block parent = asBlock(s.getParent());
