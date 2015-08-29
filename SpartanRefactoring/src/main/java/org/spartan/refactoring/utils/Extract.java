@@ -3,18 +3,7 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
-import static org.spartan.refactoring.utils.Funcs.asAssignment;
-import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asExpressionStatement;
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-import static org.spartan.refactoring.utils.Funcs.asMethodInvocation;
-import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
-import static org.spartan.refactoring.utils.Funcs.asStatement;
-import static org.spartan.refactoring.utils.Funcs.asThrowStatement;
-import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 import static org.spartan.utils.Utils.last;
 
@@ -23,12 +12,16 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
@@ -36,6 +29,7 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.spartan.utils.Wrapper;
 
@@ -174,6 +168,27 @@ public enum Extract {
     return $.get();
   }
   /**
+   * Search for an {@link MethodDeclaration} in the tree rooted at an
+   * {@link ASTNode}.
+   *
+   * @param n JD
+   * @return the first {@link IfStatement} found in an {@link ASTNode n}, or
+   *         <code><b>null</b> if there is no such statement.
+   */
+  public static MethodDeclaration firstMethodDeclaration(final ASTNode n) {
+    if (n == null)
+      return null;
+    final Wrapper<MethodDeclaration> $ = new Wrapper<>();
+    n.accept(new ASTVisitor() {
+      @Override public boolean visit(final MethodDeclaration i) {
+        if ($.get() == null)
+          $.set(i);
+        return false;
+      }
+    });
+    return $.get();
+  }
+  /**
    * Find the first {@link InfixExpression} representing an addition, under a
    * given node, as found in the usual visitation order.
    *
@@ -239,6 +254,19 @@ public enum Extract {
    */
   public static ASTNode lastStatement(final Statement s) {
     return last(statements(s));
+  }
+  /**
+   * Extract the {@link MethodDeclaration} that contains a given node.
+   *
+   * @param n JD
+   * @return the inner most {@link MethodDeclaration} in which the parameter is
+   *         nested, or <code><b>null</b></code>, if no such statement exists.
+   */
+  public static MethodDeclaration methodDeclaration(final ASTNode n) {
+    for (ASTNode $ = n; $ != null; $ = $.getParent())
+      if (Is.methodDeclaration($))
+        return asMethodDeclaration($);
+    return null;
   }
   /**
    * @param n JD
@@ -338,6 +366,37 @@ public enum Extract {
    */
   public static ReturnStatement returnStatement(final ASTNode n) {
     return asReturnStatement(Extract.singleStatement(n));
+  }
+  /**
+   * Computes the list of all return statements found in a
+   * {@link MethodDeclaration}.
+   * <p>
+   * This method correctly ignores return statements found within nested types.
+   *
+   * @param d JD
+   * @return a list of {@link ReturnStatement} from the given method.
+   */
+  public static List<ReturnStatement> returnStatements(final MethodDeclaration d) {
+    final List<ReturnStatement> $ = new ArrayList<>();
+    d.accept(new ASTVisitor() {
+      @Override public boolean visit(@SuppressWarnings("unused") final AnnotationTypeDeclaration _) {
+        return false;
+      }
+      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
+        return false;
+      }
+      @Override public boolean visit(@SuppressWarnings("unused") final EnumDeclaration _) {
+        return false;
+      }
+      @Override public boolean visit(final ReturnStatement s) {
+        $.add(s);
+        return true;
+      }
+      @Override public boolean visit(@SuppressWarnings("unused") final TypeDeclaration _) {
+        return false;
+      }
+    });
+    return $;
   }
   /**
    * Finds the single statement in the <code><b>else</b></code> branch of an

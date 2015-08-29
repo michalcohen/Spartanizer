@@ -73,11 +73,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     this.inner = inner;
   }
   protected CompilationUnit asCompilationUnit() {
-    final String s = input;
-    final ASTNode $ = As.COMPILIATION_UNIT.ast(Wrap.Expression.on(s));
-    assertThat($, is(notNullValue()));
-    assertThat($, is(instanceOf(CompilationUnit.class)));
-    return (CompilationUnit) $;
+    return Wrap.Expression.intoCompilationUnit(input);
   }
   protected ConditionalExpression asConditionalExpression() {
     final ConditionalExpression $ = c(input);

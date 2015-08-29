@@ -18,7 +18,7 @@ public class AncestorSearch {
   public AncestorSearch(final int type) {
     this.type = type;
   }
-  int type;
+  final int type;
   /**
    * @param n JD
    * @return the closest ancestor whose type matches the given type.

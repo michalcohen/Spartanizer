@@ -33,7 +33,7 @@ import org.junit.runners.MethodSorters;
  * @since 2015-07-18
  * @see Funcs
  */
-@SuppressWarnings({ "static-method", "javadoc" }) //
+@SuppressWarnings({ "static-method", "javadoc" }) 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class FuncsTest {
   @Test public void chainComparison() {

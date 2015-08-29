@@ -54,7 +54,7 @@ import org.spartan.refactoring.utils.Is;
  * @since 2014-07-10
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "static-method", "javadoc" }) //
+@SuppressWarnings({ "static-method", "javadoc" }) 
 public class TrimmerTest {
   public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
     return s.findOpportunities(u).size();

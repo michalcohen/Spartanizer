@@ -1,6 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.EXPRESSION_STATEMENT;
@@ -13,7 +13,6 @@ import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
@@ -44,6 +43,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.PostfixExpression;
@@ -97,14 +97,24 @@ public enum Funcs {
     return $.getNodeType() != BLOCK ? null : (Block) $;
   }
   /**
-   * Convert, is possible, an {@link ASTNode} to a {@link Block}
+   * Convert, is possible, an {@link ASTNode} to a {@link SimpleName}
    *
    * @param $ JD
-   * @return the argument, but down-casted to a {@link Block}, or
+   * @return the argument, but down-casted to a {@link SimpleName}, or
    *         <code><b>null</b></code> if no such down-cast is possible..
    */
   public static SimpleName asSimpleName(final ASTNode $) {
     return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName) $;
+  }
+  /**
+   * Convert, is possible, an {@link ASTNode} to a {@link MethodDeclaration}
+   *
+   * @param $ JD
+   * @return the argument, but down-casted to a {@link MethodDeclaration}, or
+   *         <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static MethodDeclaration asMethodDeclaration(final ASTNode $) {
+    return $.getNodeType() != METHOD_DECLARATION ? null : (MethodDeclaration) $;
   }
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}

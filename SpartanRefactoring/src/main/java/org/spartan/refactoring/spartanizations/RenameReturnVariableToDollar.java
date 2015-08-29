@@ -7,12 +7,15 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -33,11 +36,13 @@ public class RenameReturnVariableToDollar extends Spartanization {
   public RenameReturnVariableToDollar() {
     super("Rename returned variable to '$'");
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit cu, final IMarker m) {
-    cu.accept(new ASTVisitor() {
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
+    u.accept(new ASTVisitor() {
       @Override public boolean visit(final MethodDeclaration n) {
+        if (!inRange(m, n))
+          return true;
         final VariableDeclarationFragment returnVar = selectReturnVariable(n);
-        if (returnVar == null || !inRange(m, returnVar))
+        if (returnVar == null)
           return true;
         final List<Expression> es = Occurrences.BOTH_LEXICAL.of(returnVar).in(n);
         return replace(es, returnVar.getName(), n.getAST().newSimpleName("$"));
@@ -70,31 +75,12 @@ public class RenameReturnVariableToDollar extends Spartanization {
     });
     return $;
   }
-  static List<ReturnStatement> getReturnStatements(final ASTNode container) {
-    final List<ReturnStatement> $ = new ArrayList<>();
-    container.accept(new ASTVisitor() {
-      /**
-       * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
-       *      AnonymousClassDeclaration)
-       * @param _ ignored, we don't want to visit declarations inside anonymous
-       *          classes
-       */
-      @Override public boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration _) {
-        return false;
-      }
-      @Override public boolean visit(final ReturnStatement node) {
-        $.add(node);
-        return true;
-      }
-    });
-    return $;
+  static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration d) {
+    final List<VariableDeclarationFragment> vs = getCandidates(d);
+    return vs == null || vs.isEmpty() || hasDollar(vs) ? null : selectReturnVariable(vs, prune(getReturnStatements(d)));
   }
-  static VariableDeclarationFragment selectReturnVariable(final MethodDeclaration m) {
-    final List<VariableDeclarationFragment> vs = getCandidates(m);
-    return vs == null || vs.isEmpty() || hasDollar(vs) ? null : selectReturnVariable(vs, prune(getReturnStatements(m)));
-  }
-  private static VariableDeclarationFragment selectReturnVariable(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
-    return rs == null || rs.isEmpty() ? null : bestCandidate(vs, rs);
+  private static VariableDeclarationFragment selectReturnVariable(final List<VariableDeclarationFragment> fs, final List<ReturnStatement> ss) {
+    return ss == null || ss.isEmpty() ? null : bestCandidate(fs, ss);
   }
   private static boolean hasDollar(final List<VariableDeclarationFragment> vs) {
     for (final VariableDeclaration v : vs)
@@ -129,10 +115,10 @@ public class RenameReturnVariableToDollar extends Spartanization {
         return false;
     return true;
   }
-  private static int bestScore(final List<VariableDeclarationFragment> vs, final List<ReturnStatement> rs) {
+  private static int bestScore(final List<VariableDeclarationFragment> fs, final List<ReturnStatement> rs) {
     int $ = 0;
-    for (final VariableDeclarationFragment v : vs)
-      $ = Math.max($, score(v, rs));
+    for (final VariableDeclarationFragment f : fs)
+      $ = Math.max($, score(f, rs));
     return $;
   }
   private static int score(final VariableDeclarationFragment v, final List<ReturnStatement> rs) {

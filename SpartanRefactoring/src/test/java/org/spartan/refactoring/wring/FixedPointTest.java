@@ -25,7 +25,7 @@ import org.spartan.refactoring.utils.As;
  * @since 2014-07-10
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "static-method", "javadoc" }) //
+@SuppressWarnings({ "static-method", "javadoc" }) 
 public class FixedPointTest {
   private static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
