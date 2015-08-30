@@ -1413,6 +1413,36 @@ import org.spartan.refactoring.utils.Is;
         "1+A+f()< 12", //
         "f()+A+1<12");
   }
+  @Test public void sortAdditionThreeOperands1() {
+    assertNoChange("1.0+2222+3");
+  }
+  @Test public void sortAdditionThreeOperands2() {
+    assertNoChange("1.0+1+124+1");
+  }
+  @Test public void sortAdditionThreeOperands3() {
+    assertNoChange("1+2F+33+142+1");
+  }
+  @Test public void sortAdditionThreeOperands4() {
+    assertNoChange("1+2+'a'");
+  }
+  @Test public void sortAdditionTwoOperands0CheckThatWeSortByLength_a() {
+    assertSimplifiesTo("1111+211", "211+1111");
+  }
+  @Test public void sortAdditionTwoOperands0CheckThatWeSortByLength_b() {
+    assertNoChange("211+1111");
+  }
+  @Test public void sortAdditionTwoOperands1() {
+    assertNoChange("1+2F");
+  }
+  @Test public void sortAdditionTwoOperands2() {
+    assertSimplifiesTo("2.0+1", "1+2.0");
+  }
+  @Test public void sortAdditionTwoOperands3() {
+    assertNoChange("1+2L");
+  }
+  @Test public void sortAdditionTwoOperands4() {
+    assertSimplifiesTo("2L+1", "1+2L");
+  }
   @Test public void sortAdditionUncertain() {
     assertNoChange("1+a");
   }

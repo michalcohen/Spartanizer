@@ -1,6 +1,9 @@
 package org.spartan.refactoring.wring;
 
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
@@ -8,6 +11,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Rewrite;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A wring is a transformation that works on an AstNode. Such a transformation
@@ -19,6 +23,17 @@ import org.spartan.refactoring.utils.Rewrite;
  * @since 2015-07-09
  */
 public abstract class Wring<N extends ASTNode> {
+  static abstract class InfixSorting extends Replacing<InfixExpression> {
+    @Override boolean eligible(final InfixExpression e) {
+      final List<Expression> es = Extract.allOperands(e);
+      return !Wrings.mixedLiteralKind(es) && sort(es);
+    }
+    @Override Expression replacement(final InfixExpression e) {
+      final List<Expression> operands = Extract.allOperands(e);
+      return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
+    }
+    abstract boolean sort(List<Expression> operands);
+  }
   /**
    * Determine whether the parameter is "eligible" for application of this
    * instance. The parameter must be within the scope of the current instance.

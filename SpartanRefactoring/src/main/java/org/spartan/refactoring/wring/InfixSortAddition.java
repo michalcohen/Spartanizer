@@ -1,7 +1,6 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
-
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.Expression;
@@ -20,15 +19,12 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixSortAddition extends Wring.Replacing<InfixExpression> {
-  private static boolean sort(final InfixExpression e) {
-    return sort(Extract.allOperands(e));
-  }
-  private static boolean sort(final List<Expression> es) {
+public final class InfixSortAddition extends Wring.InfixSorting {
+  @Override boolean sort(final List<Expression> es) {
     return ExpressionComparator.ADDITION.sort(es);
   }
   @Override boolean eligible(final InfixExpression e) {
-    return Is.notString(e) && sort(e);
+    return Is.notString(e) && super.eligible(e);
   }
   @Override Expression replacement(final InfixExpression e) {
     final List<Expression> operands = Extract.allOperands(e);

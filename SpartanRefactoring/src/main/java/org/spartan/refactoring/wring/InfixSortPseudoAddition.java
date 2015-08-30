@@ -11,8 +11,6 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.spartan.refactoring.utils.ExpressionComparator;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} that sorts the arguments of an expression using the same
@@ -24,19 +22,9 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixSortPseudoAddition extends Wring.Replacing<InfixExpression> {
-  private static boolean sort(final InfixExpression e) {
-    return sort(Extract.allOperands(e));
-  }
-  private static boolean sort(final List<Expression> es) {
+public final class InfixSortPseudoAddition extends Wring.InfixSorting {
+  @Override boolean sort(final List<Expression> es) {
     return ExpressionComparator.ADDITION.sort(es);
-  }
-  @Override boolean eligible(final InfixExpression e) {
-    return sort(e);
-  }
-  @Override Expression replacement(final InfixExpression e) {
-    final List<Expression> operands = Extract.allOperands(e);
-    return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), OR, XOR, AND);

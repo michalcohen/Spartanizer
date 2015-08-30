@@ -1,7 +1,6 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
-import static org.spartan.refactoring.wring.Wrings.mixedLiteralKind;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -10,8 +9,6 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.spartan.refactoring.utils.ExpressionComparator;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}
@@ -21,20 +18,9 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixSortMultiplication extends Wring.Replacing<InfixExpression> {
-  private static boolean sort(final InfixExpression e) {
-    final List<Expression> operands = Extract.allOperands(e);
-    return !mixedLiteralKind(operands) && sort(operands);
-  }
-  private static boolean sort(final List<Expression> es) {
+public final class InfixSortMultiplication extends Wring.InfixSorting {
+  @Override boolean sort(final List<Expression> es) {
     return ExpressionComparator.MULTIPLICATION.sort(es);
-  }
-  @Override boolean eligible(final InfixExpression e) {
-    return sort(e);
-  }
-  @Override Expression replacement(final InfixExpression e) {
-    final List<Expression> operands = Extract.allOperands(e);
-    return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), TIMES);
