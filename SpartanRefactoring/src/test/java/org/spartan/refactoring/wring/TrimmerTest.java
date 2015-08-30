@@ -21,7 +21,7 @@ import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.i;
-import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.refactoring.utils.Into.s;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -659,18 +659,6 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void noChange2() {
     assertNoChange("plain + kludge");
-  }
-  @Test public void noOrderChangeDoubleInt1() {
-    assertNoChange("1*2.0");
-  }
-  @Test public void noOrderChangeDoubleInt2() {
-    assertNoChange("2.0*1");
-  }
-  @Test public void noOrderChangeLongInt1() {
-    assertNoChange("1*2L");
-  }
-  @Test public void noOrderChangeLongInt2() {
-    assertNoChange("1L*2");
   }
   @Test public void notOfAnd() {
     assertSimplifiesTo("!(A && B)", "!A || !B");
@@ -1435,6 +1423,36 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void sortConstantMultiplication() {
     assertSimplifiesTo("a*2", "2*a");
+  }
+  @Test public void sortThreeOperands1() {
+    assertNoChange("1.0*2222*3");
+  }
+  @Test public void sortThreeOperands2() {
+    assertNoChange("1.0*1*124*1");
+  }
+  @Test public void sortThreeOperands3() {
+    assertNoChange("1*2F*33*142*1");
+  }
+  @Test public void sortThreeOperands4() {
+    assertNoChange("1*2*'a'");
+  }
+  @Test public void sortTwoOperands0CheckThatWeSortByLength_a() {
+    assertSimplifiesTo("1111*211", "211*1111");
+  }
+  @Test public void sortTwoOperands0CheckThatWeSortByLength_b() {
+    assertNoChange("211*1111");
+  }
+  @Test public void sortTwoOperands1() {
+    assertNoChange("1*2F");
+  }
+  @Test public void sortTwoOperands2() {
+    assertSimplifiesTo("2.0*1", "1*2.0");
+  }
+  @Test public void sortTwoOperands3() {
+    assertNoChange("1*2L");
+  }
+  @Test public void sortTwoOperands4() {
+    assertSimplifiesTo("2L*1", "1*2L");
   }
   @Test public void ternarize05() {
     assertConvertsTo(" int res = 0; "//

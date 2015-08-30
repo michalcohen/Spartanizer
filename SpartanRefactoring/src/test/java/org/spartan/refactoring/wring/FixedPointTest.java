@@ -259,9 +259,8 @@ import org.spartan.refactoring.utils.As;
     assertConvertsTo("return (1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1);", //
         "return(1+2<3&4+7>1+2||6-7<1+2);");
   }
-  @Test(timeout = 100) public void shortestOperand06() {
-    assertConvertsTo("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;",
-        "int a,b,c;String t=\"eureka!\";if(2*180*3.1415>a||t.concat(\"<!>\")==\"1984\"&&t.length()>3)return c>5;");
+  @Test(timeout = 100) public void donotSorMixedTypes() {
+    assertNoChange("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;");
   }
   @Test(timeout = 100) public void shortestOperand07() {
     assertConvertsTo("int y,o,g,i,s;return ( y + o + s > s + i |  g > 42);", "int y,o,g,i,s;return(g>42|o+s+y>i+s);");

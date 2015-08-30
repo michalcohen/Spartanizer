@@ -159,7 +159,7 @@ public enum As {
   }
   /**
    * Parses a given {@link Document}.
-   * 
+   *
    * @param d JD
    * @return the {@link ASTNode} obtained by parsing
    */

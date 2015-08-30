@@ -1,6 +1,7 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.TIMES;
+import static org.spartan.refactoring.wring.Wrings.mixedLiteralKind;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -22,10 +23,11 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class InfixSortMultiplication extends Wring.Replacing<InfixExpression> {
   private static boolean sort(final InfixExpression e) {
-    return sort(Extract.allOperands(e));
+    final List<Expression> operands = Extract.allOperands(e);
+    return !mixedLiteralKind(operands) && sort(operands);
   }
   private static boolean sort(final List<Expression> es) {
-    return Wrings.sort(es, ExpressionComparator.MULTIPLICATION);
+    return ExpressionComparator.MULTIPLICATION.sort(es);
   }
   @Override boolean eligible(final InfixExpression e) {
     return sort(e);

@@ -12,7 +12,7 @@ public class Wrapper<T> {
   private T t = null;
   /**
    * Instantiates this class
-   * 
+   *
    * @param t JD
    */
   public Wrapper(final T t) {

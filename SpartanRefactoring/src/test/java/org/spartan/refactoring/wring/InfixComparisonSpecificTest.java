@@ -290,13 +290,13 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     @Test public void sortTwiceADDITION() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = Extract.operands(flatten(e));
-      Wrings.sort(operands, ExpressionComparator.ADDITION);
-      assertFalse(Wrings.sort(operands, ExpressionComparator.ADDITION));
+      ExpressionComparator.ADDITION.sort(operands);
+      assertFalse(ExpressionComparator.ADDITION.sort(operands));
     }
     @Test public void sortTwiceMULTIPLICATION() {
       final List<Expression> operands = Extract.operands(flatten(asInfixExpression()));
-      Wrings.sort(operands, ExpressionComparator.MULTIPLICATION);
-      assertFalse(Wrings.sort(operands, ExpressionComparator.MULTIPLICATION));
+      ExpressionComparator.MULTIPLICATION.sort(operands);
+      assertFalse(ExpressionComparator.MULTIPLICATION.sort(operands));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
