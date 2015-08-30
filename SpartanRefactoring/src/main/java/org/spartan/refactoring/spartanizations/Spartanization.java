@@ -33,6 +33,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
+import org.spartan.refactoring.handlers.BaseHandler;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Make;
 import org.spartan.refactoring.utils.Rewrite;
@@ -384,7 +385,8 @@ public abstract class Spartanization extends Refactoring {
   }
   private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
     if (!isTextSelected())
-      return getAllProjectCompilationUnits(compilationUnit, new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+      return getAllProjectCompilationUnits(compilationUnit == null ? BaseHandler.getCompilationUnit() : compilationUnit,
+          new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     final List<ICompilationUnit> $ = new ArrayList<>();
     $.add(compilationUnit);
     return $;
