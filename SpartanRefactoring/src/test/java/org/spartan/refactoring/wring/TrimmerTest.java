@@ -21,7 +21,7 @@ import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.i;
-import static org.spartan.refactoring.utils.Into.s;
+import static org.spartan.refactoring.utils.Into.*;
 import static org.spartan.utils.Utils.hasNull;
 import static org.spartan.utils.Utils.in;
 
@@ -170,9 +170,6 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void bugIntroducingMISSINGWord1e() {
     assertSimplifiesTo("Y ? Z : R ? null : S ? null : T", "Y?Z:!R&&!S?T:null");
-  }
-  @Test public void ifEmptyElsewWithinIf() {
-    assertConvertsTo("if (a) if (b) f(); else ;", "if (a) if (b) f();");
   }
   @Test public void bugIntroducingMISSINGWord2() {
     assertSimplifiesTo(//
@@ -463,6 +460,66 @@ import org.spartan.refactoring.utils.Is;
         "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ",
         "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
   }
+  @Test public void ifBugSecondTry() {
+    assertConvertsTo(
+        "" + //
+            " final int c = 2;\n" + //
+            "    if (c == c + 1) {\n" + //
+            "      if (c == c + 2)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    } else if (Character.digit(c, 16) == -1)\n" + //
+            "      return null;\n" + //
+            "    return null;",
+        "" + //
+            "    final int c = 2;\n" + //
+            "    if (c != c + 1) {\n" + //
+            "      if (Character.digit(c, 16) == -1)\n" + //
+            "        return null;\n" + //
+            "    } else {\n" + //
+            "      if (c == c + 2)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    }\n" + //
+            "    return null;");//
+  }
+  @Test public void ifBugSimplified() {
+    assertConvertsTo(
+        "" + //
+            "    if (x) {\n" + //
+            "      if (z)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    } else if (y)\n" + //
+            "      return;\n" + //
+            "",
+        "" + //
+            "    if (!x) {\n" + //
+            "      if (y)\n" + //
+            "        return;\n" + //
+            "    } else {\n" + //
+            "      if (z)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    }\n" + //
+            "");//
+  }
+  @Test public void ifBugWithPlainEmptyElse() {
+    assertConvertsTo(
+        "" + //
+            "      if (z)\n" + //
+            "        f();\n" + //
+            "      else\n" + //
+            "         ; \n" + //
+            "",
+        "" + //
+            "      if (z)\n" + //
+            "        f();\n" + //
+            "");//
+  }
+  @Test public void ifEmptyElsewWithinIf() {
+    assertConvertsTo("if (a) if (b) f(); else ;", "if (a) if (b) f();");
+  }
   @Test public void ifFunctionCall() {
     assertConvertsTo("if (x) f(a); else f(b);", "f(x ? a: b);");
   }
@@ -578,6 +635,18 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void noChange2() {
     assertNoChange("plain + kludge");
+  }
+  @Test public void noOrderChangeDoubleInt1() {
+    assertNoChange("1*2.0");
+  }
+  @Test public void noOrderChangeDoubleInt2() {
+    assertNoChange("2.0*1");
+  }
+  @Test public void noOrderChangeLongInt1() {
+    assertNoChange("1*2L");
+  }
+  @Test public void noOrderChangeLongInt2() {
+    assertNoChange("1L*2");
   }
   @Test public void notOfAnd() {
     assertSimplifiesTo("!(A && B)", "!A || !B");
@@ -765,6 +834,12 @@ import org.spartan.refactoring.utils.Is;
   @Test public void preDecreementReturn() {
     assertConvertsTo("--a.b.c; return a.b.c;", "return--a.b.c;");
   }
+  @Test public void preDecrementReturn() {
+    assertConvertsTo("--a; return a;", "return --a;");
+  }
+  @Test public void preDecrementReturn1() {
+    assertConvertsTo("--this.a; return this.a;", "return --this.a;");
+  }
   @Test public void prefixToPosfixIncreementSimple() {
     assertSimplifiesTo("i++", "++i");
   }
@@ -791,12 +866,6 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void preIncrementReturn() {
     assertConvertsTo("++a; return a;", "return ++a;");
-  }
-  @Test public void preDecrementReturn() {
-    assertConvertsTo("--a; return a;", "return --a;");
-  }
-  @Test public void preDecrementReturn1() {
-    assertConvertsTo("--this.a; return this.a;", "return --this.a;");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -1512,62 +1581,5 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     assertNoChange("f(a,b,c,d) ^ BOB");
-  }
-  @Test public void ifBugSecondTry() {
-    assertConvertsTo(
-        "" + //
-            " final int c = 2;\n" + //
-            "    if (c == c + 1) {\n" + //
-            "      if (c == c + 2)\n" + //
-            "        return null;\n" + //
-            "      c = f().charAt(3);\n" + //
-            "    } else if (Character.digit(c, 16) == -1)\n" + //
-            "      return null;\n" + //
-            "    return null;",
-        "" + //
-            "    final int c = 2;\n" + //
-            "    if (c != c + 1) {\n" + //
-            "      if (Character.digit(c, 16) == -1)\n" + //
-            "        return null;\n" + //
-            "    } else {\n" + //
-            "      if (c == c + 2)\n" + //
-            "        return null;\n" + //
-            "      c = f().charAt(3);\n" + //
-            "    }\n" + //
-            "    return null;");//
-  }
-  @Test public void ifBugSimplified() {
-    assertConvertsTo(
-        "" + //
-            "    if (x) {\n" + //
-            "      if (z)\n" + //
-            "        return null;\n" + //
-            "      c = f().charAt(3);\n" + //
-            "    } else if (y)\n" + //
-            "      return;\n" + //
-            "",
-        "" + //
-            "    if (!x) {\n" + //
-            "      if (y)\n" + //
-            "        return;\n" + //
-            "    } else {\n" + //
-            "      if (z)\n" + //
-            "        return null;\n" + //
-            "      c = f().charAt(3);\n" + //
-            "    }\n" + //
-            "");//
-  }
-  @Test public void ifBugWithPlainEmptyElse() {
-    assertConvertsTo(
-        "" + //
-            "      if (z)\n" + //
-            "        f();\n" + //
-            "      else\n" + //
-            "         ; \n" + //
-            "",
-        "" + //
-            "      if (z)\n" + //
-            "        f();\n" + //
-            "");//
   }
 }
