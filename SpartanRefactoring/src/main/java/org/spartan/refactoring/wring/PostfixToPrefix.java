@@ -1,9 +1,11 @@
 package org.spartan.refactoring.wring;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression.Operator;
 import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.spartan.refactoring.utils.Have;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -24,7 +26,7 @@ public final class PostfixToPrefix extends Wring.Replacing<PostfixExpression> {
     return o == PostfixExpression.Operator.DECREMENT ? PrefixExpression.Operator.DECREMENT : PrefixExpression.Operator.INCREMENT;
   }
   @Override protected boolean eligible(final PostfixExpression e) {
-    return !(e.getParent() instanceof Expression);
+    return !(e.getParent() instanceof Expression || Have.ancestorOf(ASTNode.VARIABLE_DECLARATION_STATEMENT, e));
   }
   @Override String description(final PostfixExpression e) {
     return "Convert post-" + description(e.getOperator()) + " of " + e.getOperand() + " to pre-" + description(e.getOperator());
