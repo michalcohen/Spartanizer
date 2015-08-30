@@ -167,7 +167,7 @@ public class SafeRenameReturnVariableToDollar extends Spartanization {
       @Override public boolean visit(final MethodDeclaration n) {
         final VariableDeclarationFragment v = selectReturnVariable(n);
         if (v != null)
-          $.add(new Rewrite("", new AncestorSearch(ASTNode.METHOD_DECLARATION).of(v)) {
+          $.add(new Rewrite("", AncestorSearch.forType(ASTNode.METHOD_DECLARATION).from(v)) {
             @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
               // TODO Auto-generated method stub
             }
