@@ -1658,9 +1658,15 @@ import org.spartan.refactoring.utils.Is;
   @Test public void postfixToPrefixAvoidChangeOnVariableDeclaration() {
     // We expect to print 2, but ++s will make it print 3
     assertNoConversion(//
-    "int s = 2;" + //
-    "int n = s++;" + //
-    "System.out.print(n);" //
+        "int s = 2;" + //
+            "int n = s++;" + //
+            "System.out.print(n);" //
     );
+  }
+  @Test public void postfixToPrefixAvoidChangeOnLoopInitializer() {
+    assertNoConversion("for (int s = i++; i < 10; ++s);");
+  }
+  @Test public void postfixToPrefixAvoidChangeOnLoopCondition() {
+    assertNoConversion("for (int s = i; ++i; ++s);");
   }
 }

@@ -26,7 +26,10 @@ public final class PostfixToPrefix extends Wring.Replacing<PostfixExpression> {
     return o == PostfixExpression.Operator.DECREMENT ? PrefixExpression.Operator.DECREMENT : PrefixExpression.Operator.INCREMENT;
   }
   @Override protected boolean eligible(final PostfixExpression e) {
-    return !(e.getParent() instanceof Expression) || AncestorSearch.forType(ASTNode.VARIABLE_DECLARATION_STATEMENT).from(e) != null;
+    return !(e.getParent() instanceof Expression) //
+        && AncestorSearch.forType(ASTNode.VARIABLE_DECLARATION_STATEMENT).from(e) == null //
+        && AncestorSearch.forType(ASTNode.SINGLE_VARIABLE_DECLARATION).from(e) == null //
+        && AncestorSearch.forType(ASTNode.VARIABLE_DECLARATION_EXPRESSION).from(e) == null;
   }
   @Override String description(final PostfixExpression e) {
     return "Convert post-" + description(e.getOperator()) + " of " + e.getOperand() + " to pre-" + description(e.getOperator());

@@ -37,24 +37,6 @@ public class MethodExplorer {
     this.inner = inner;
   }
   /**
-   * Computes the list of all return statements found in a
-   * {@link MethodDeclaration}.
-   * <p>
-   * This method correctly ignores return statements found within nested types.
-   *
-   * @return a list of {@link ReturnStatement} from the given method.
-   */
-  public List<ReturnStatement> returnStatements() {
-    final List<ReturnStatement> $ = new ArrayList<>();
-    inner.accept(new IgnoreNestedMethods() {
-      @Override public boolean visit(final ReturnStatement s) {
-        $.add(s);
-        return true;
-      }
-    });
-    return $;
-  }
-  /**
    * Computes the list of all local variable declarations found in a method.
    * {@link MethodDeclaration}.
    * <p>
@@ -67,16 +49,21 @@ public class MethodExplorer {
   public List<SimpleName> localVariables() {
     final List<SimpleName> $ = new ArrayList<>();
     inner.accept(new IgnoreNestedMethods() {
-      @Override public boolean visit(final VariableDeclarationStatement s) {
-        addFragments(s.fragments());
-        return true;
+      @Override public boolean visit(final CatchClause s) {
+        return add(s.getException());
       }
-      private void addFragments(final List<VariableDeclarationFragment> fs) {
-        for (final VariableDeclarationFragment f : fs)
-          $.add(f.getName());
+      @Override public boolean visit(final EnhancedForStatement s) {
+        return add(s.getParameter());
       }
       @Override public boolean visit(final ForStatement s) {
         return add(s.initializers());
+      }
+      @Override public boolean visit(final TryStatement s) {
+        return add(s.resources());
+      }
+      @Override public boolean visit(final VariableDeclarationStatement s) {
+        addFragments(s.fragments());
+        return true;
       }
       private boolean add(final List<VariableDeclarationExpression> initializers) {
         for (final Object o : initializers)
@@ -84,17 +71,30 @@ public class MethodExplorer {
             addFragments(((VariableDeclarationExpression) o).fragments());
         return true;
       }
-      @Override public boolean visit(final EnhancedForStatement s) {
-        return add(s.getParameter());
-      }
-      @Override public boolean visit(final TryStatement s) {
-        return add(s.resources());
-      }
-      @Override public boolean visit(final CatchClause s) {
-        return add(s.getException());
-      }
       private boolean add(final SingleVariableDeclaration d) {
         $.add(d.getName());
+        return true;
+      }
+      private void addFragments(final List<VariableDeclarationFragment> fs) {
+        for (final VariableDeclarationFragment f : fs)
+          $.add(f.getName());
+      }
+    });
+    return $;
+  }
+  /**
+   * Computes the list of all return statements found in a
+   * {@link MethodDeclaration}.
+   * <p>
+   * This method correctly ignores return statements found within nested types.
+   *
+   * @return a list of {@link ReturnStatement} from the given method.
+   */
+  public List<ReturnStatement> returnStatements() {
+    final List<ReturnStatement> $ = new ArrayList<>();
+    inner.accept(new IgnoreNestedMethods() {
+      @Override public boolean visit(final ReturnStatement s) {
+        $.add(s);
         return true;
       }
     });
