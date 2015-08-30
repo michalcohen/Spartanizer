@@ -1607,7 +1607,7 @@ import org.spartan.refactoring.utils.Is;
   @Test public void xorSortClassConstantsAtEnd() {
     assertNoChange("f(a,b,c,d) ^ BOB");
   }
-  @Test public void postIncrementAvoidChangeOnFutureUse() {
+  @Test public void postfixToPrefixAvoidChangeOnVariableDeclaration() {
     // We expect to print 2, but ++s will make it print 3
     assertNoConversion(//
     "int s = 2;" + //

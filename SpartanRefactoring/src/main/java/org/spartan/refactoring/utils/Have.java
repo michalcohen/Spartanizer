@@ -5,6 +5,7 @@ import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Expression;
 
 /**
@@ -118,6 +119,21 @@ public enum Have {
   public static boolean falseLiteral(final List<Expression> es) {
     for (final Expression e : es)
       if (Is.booleanLiteral(core(e)) && !asBooleanLiteral(core(e)).booleanValue())
+        return true;
+    return false;
+  }
+  /**
+   * @param nodeType
+   *          node type from ASTNode class
+   * @param n
+   *          the node we want to check its ancestors
+   * @return <code><b>true</b></code> <i>iff</i> there exist an ancestor
+   *         (parent, parent of parent...) of <b>nodeType</b>
+   */
+  public static boolean ancestorOf(final int nodeType, final ASTNode n) {
+    ASTNode p = n;
+    while ((p = p.getParent()) != null)
+      if (p.getNodeType() == nodeType)
         return true;
     return false;
   }
