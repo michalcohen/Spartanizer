@@ -25,8 +25,7 @@ import org.spartan.refactoring.utils.As;
  * @since 2014-07-10
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-@SuppressWarnings({ "static-method", "javadoc" }) 
-public class FixedPointTest {
+@SuppressWarnings({ "static-method", "javadoc" }) public class FixedPointTest {
   private static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -61,9 +60,6 @@ public class FixedPointTest {
   }
   @Test(timeout = 100) public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
-  }
-  @Test(timeout = 100) public void duplicateIfBody() {
-    assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
   }
   @Test(timeout = 100) public void eliminateRedundantIf1() {
     assertConvertsTo("{if (a) ; }", "");

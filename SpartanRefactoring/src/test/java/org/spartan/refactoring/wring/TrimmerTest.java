@@ -408,6 +408,30 @@ import org.spartan.refactoring.utils.Is;
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
   }
+  @Test public void duplicateBothIfBranches() {
+    assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
+  }
+  @Test public void duplicatePartialIfBranches() {
+    assertConvertsTo(
+        "" + //
+            "    if (a) {\n" + //
+            "      f();\n" + //
+            "      g();\n" + //
+            "      ++i;\n" + //
+            "    } else {\n" + //
+            "      f();\n" + //
+            "      g();\n" + //
+            "      --i;\n" + //
+            "    }",
+        "" + ////
+            "   f();\n" + //
+            "   g();\n" + //
+            "    if (a) \n" + //
+            "      ++i;\n" + //
+            "    else \n" + //
+            "      --i;" //
+    );
+  }
   @Test public void emptyElse() {
     assertConvertsTo("if (x) b = 3; else ;", "if (x) b = 3;");
   }
@@ -1541,7 +1565,8 @@ import org.spartan.refactoring.utils.Is;
     assertNoConversion("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {    c = d;c = e;");
   }
   @Test public void ternarize53() {
-    assertConvertsTo("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;",
+    assertConvertsTo(//
+        "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;", //
         "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;"//
     );
   }
