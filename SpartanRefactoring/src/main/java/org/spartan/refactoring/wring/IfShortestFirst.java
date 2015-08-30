@@ -1,10 +1,8 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Funcs.then;
 
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.spartan.refactoring.utils.Extract;
@@ -27,14 +25,17 @@ public final class IfShortestFirst extends Wring.Replacing<IfStatement> {
     final int n2 = Extract.statements(elze).size();
     if (n1 < n2)
       return null;
-    final Expression notConditional = not(s.getExpression());
-    final Statement $ = Subject.pair(elze, then).toIf(notConditional);
+    final IfStatement $ = invert(s);
     if (n1 > n2)
       return $;
     assert n1 == n2;
-    final int l1 = Wrings.length(not(notConditional), then);
-    final int l2 = Wrings.length(notConditional, elze);
-    return l1 > l2 ? $ : null;
+    return positivePrefixLength($) < positivePrefixLength(invert($)) ? $ : null;
+  }
+  private static IfStatement invert(final IfStatement s) {
+    return Subject.pair(elze(s), then(s)).toNot(s.getExpression());
+  }
+  private static int positivePrefixLength(final IfStatement $) {
+    return Wrings.length($.getExpression(), then($));
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Invert logical conditiona and swap branches of 'if' to make the shortest branch first";

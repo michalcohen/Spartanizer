@@ -639,6 +639,63 @@ import org.spartan.refactoring.utils.Is;
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
+  @Test(timeout = 100) public void issue39base() {
+    assertNoConversion("" + //
+        "if (name == null) {\n" + //
+        "    if (other.name != null)\n" + //
+        "        return false;\n" + //
+        "} else if (!name.equals(other.name))\n" + //
+        "    return false;\n" + //
+        "return true;"); //
+  }
+  @Test(timeout = 100) public void issue39baseDual() {
+    assertConvertsTo(
+        "if (name != null) {\n" + //
+            "    if (!name.equals(other.name))\n" + //
+            "        return false;\n" + //
+            "} else if (other.name != null)\n" + //
+            "    return false;\n" + //
+            "return true;",
+        "" + //
+            "if (name == null) {\n" + //
+            "    if (other.name != null)\n" + //
+            "        return false;\n" + //
+            "} else if (!name.equals(other.name))\n" + //
+            "    return false;\n" + //
+            "return true;");
+  }
+  @Test(timeout = 100) public void issue39versionA() {
+    assertConvertsTo(
+        "" + //
+            "if (varArgs) {\n" + //
+            "    if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
+            "        return false;\n" + //
+            "    }\n" + //
+            "} else if (parameterTypes.length != argumentTypes.length) {\n" + //
+            "    return false;\n" + //
+            "}" //
+            ,
+        "" + //
+            "if (!varArgs) {\n" + //
+            "    if (parameterTypes.length != argumentTypes.length) {\n" + //
+            "        return false;\n" + //
+            "    }\n" + //
+            "} else if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
+            "    return false;\n" + //
+            "}" //
+    );
+  }
+  @Test(timeout = 100) public void issue39versionAdual() {
+    assertNoConversion("" + //
+        "if (!varArgs) {\n" + //
+        "    if (parameterTypes.length != argumentTypes.length) {\n" + //
+        "        return false;\n" + //
+        "    }\n" + //
+        "} else if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
+        "    return false;\n" + //
+        "}" + //
+        "");
+  }
   @Test public void linearTransformation() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
@@ -839,6 +896,20 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void postDecreementReturn() {
     assertConvertsTo("a--; return a;", "--a;return a;");
+  }
+  @Test public void postfixToPrefixAvoidChangeOnLoopCondition() {
+    assertNoConversion("for (int s = i; ++i; ++s);");
+  }
+  @Test public void postfixToPrefixAvoidChangeOnLoopInitializer() {
+    assertNoConversion("for (int s = i++; i < 10; ++s);");
+  }
+  @Test public void postfixToPrefixAvoidChangeOnVariableDeclaration() {
+    // We expect to print 2, but ++s will make it print 3
+    assertNoConversion(//
+        "int s = 2;" + //
+            "int n = s++;" + //
+            "System.out.print(n);" //
+    );
   }
   @Test public void postIncrementReturn() {
     assertConvertsTo("a++; return a;", "++a;return a;");
@@ -1654,19 +1725,5 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     assertNoChange("f(a,b,c,d) ^ BOB");
-  }
-  @Test public void postfixToPrefixAvoidChangeOnVariableDeclaration() {
-    // We expect to print 2, but ++s will make it print 3
-    assertNoConversion(//
-        "int s = 2;" + //
-            "int n = s++;" + //
-            "System.out.print(n);" //
-    );
-  }
-  @Test public void postfixToPrefixAvoidChangeOnLoopInitializer() {
-    assertNoConversion("for (int s = i++; i < 10; ++s);");
-  }
-  @Test public void postfixToPrefixAvoidChangeOnLoopCondition() {
-    assertNoConversion("for (int s = i; ++i; ++s);");
   }
 }

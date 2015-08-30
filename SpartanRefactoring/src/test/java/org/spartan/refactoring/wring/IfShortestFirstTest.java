@@ -2,14 +2,22 @@ package org.spartan.refactoring.wring;
 
 import java.util.Collection;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.utils.Funcs.*;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
+import org.spartan.refactoring.spartanizations.Wrap;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.utils.Utils;
 
 /**
@@ -20,8 +28,21 @@ import org.spartan.utils.Utils;
  */
 @SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public enum IfShortestFirstTest {
-  ;
+public class IfShortestFirstTest {
+  @Test public void statmentCount() {
+    final CompilationUnit u = Wrap.Statement.intoCompilationUnit("" + //
+        "if (name == null) {\n" + //
+        "    if (other.name != null)\n" + //
+        "        return false;\n" + //
+        "} else if (!name.equals(other.name))\n" + //
+        "    return false;\n" + //
+        "return true;" //
+        + ""//
+    );
+    final IfStatement s = Extract.firstIfStatement(u);
+    assertThat(Extract.statements(then(s)).size(), is(1));
+    assertThat(Extract.statements(elze(s)).size(), is(1));
+  }
   static final Wring<IfStatement> WRING = new IfShortestFirst();
 
   @RunWith(Parameterized.class) //
