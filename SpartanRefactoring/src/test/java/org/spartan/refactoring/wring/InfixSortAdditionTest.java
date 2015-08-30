@@ -93,13 +93,13 @@ public class InfixSortAdditionTest {
     @Test public void isPlus() {
       assertTrue(asInfixExpression().getOperator() == Operator.PLUS);
     }
-    @Test public void sort() {
-      assertFalse(Wrings.sort(Extract.operands(flatten(asInfixExpression())), COMPARATOR));
+    @Test public void sortTest() {
+      assertFalse(COMPARATOR.sort(Extract.operands(flatten(asInfixExpression()))));
     }
     @Test public void sortTwice() {
       final List<Expression> operands = Extract.operands(flatten(asInfixExpression()));
-      assertFalse(Wrings.sort(operands, COMPARATOR));
-      assertFalse(Wrings.sort(operands, COMPARATOR));
+      assertFalse(COMPARATOR.sort(operands));
+      assertFalse(COMPARATOR.sort(operands));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
@@ -154,20 +154,20 @@ public class InfixSortAdditionTest {
       for (final Expression e : Extract.operands(flatten(asInfixExpression())))
         assertThat(e.toString(), Is.notString(e), is(true));
     }
-    @Test public void sort() {
+    @Test public void sortTest() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = Extract.operands(flatten(e));
       assertThat(operands.size(), greaterThanOrEqualTo(2));
       assertThat(//
           "Before: " + Extract.operands(flatten(e)) + "\n" + //
               "After: " + operands + "\n", //
-          Wrings.sort(operands, COMPARATOR), is(true));
+          COMPARATOR.sort(operands), is(true));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = Extract.operands(flatten(e));
-      assertTrue(e.toString(), Wrings.sort(operands, COMPARATOR));
-      assertFalse(e.toString(), Wrings.sort(operands, COMPARATOR));
+      assertTrue(e.toString(), COMPARATOR.sort(operands));
+      assertFalse(e.toString(), COMPARATOR.sort(operands));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));

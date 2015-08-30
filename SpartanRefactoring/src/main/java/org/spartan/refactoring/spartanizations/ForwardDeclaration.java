@@ -1,7 +1,9 @@
 package org.spartan.refactoring.spartanizations;
 
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+
 import java.util.List;
-import static org.spartan.refactoring.utils.Funcs.*;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;

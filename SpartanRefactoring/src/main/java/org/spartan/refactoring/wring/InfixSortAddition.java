@@ -25,7 +25,7 @@ public final class InfixSortAddition extends Wring.Replacing<InfixExpression> {
     return sort(Extract.allOperands(e));
   }
   private static boolean sort(final List<Expression> es) {
-    return Wrings.sort(es, ExpressionComparator.ADDITION);
+    return ExpressionComparator.ADDITION.sort(es);
   }
   @Override boolean eligible(final InfixExpression e) {
     return Is.notString(e) && sort(e);

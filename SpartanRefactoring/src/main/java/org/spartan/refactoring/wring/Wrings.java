@@ -7,18 +7,20 @@ import static org.spartan.refactoring.utils.Funcs.removeAll;
 import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.LiteralParser;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -29,30 +31,20 @@ import org.spartan.refactoring.utils.Subject;
  */
 public enum Wrings {
   ;
-  /**
-   * Sorts the {@link Expression} list
-   *
-   * @param es an {@link Expression} list to sort
-   * @param c a {@link Comparator} to use for the sorting
-   * @return True if the list was modified
-   */
-  public static boolean sort(final List<Expression> es, final Comparator<Expression> c) {
-    boolean $ = false;
-    // Bubble sort
-    for (int i = 0, size = es.size(); i < size; ++i)
-      for (int j = 0; j < size - 1; ++j) {
-        final Expression e0 = es.get(j);
-        final Expression e1 = es.get(j + 1);
-        if (c.compare(e0, e1) <= 0)
-          continue;
-        // Replace locations i,j with e0 and e1
-        es.remove(j);
-        es.remove(j);
-        es.add(j, e0);
-        es.add(j, e1);
-        $ = true;
+  static boolean mixedLiteralKind(final List<Expression> es) {
+    if (es.size() <= 2)
+      return false;
+    int previousKind = -1;
+    for (final Expression e : es)
+      if (e instanceof NumberLiteral || e instanceof CharacterLiteral) {
+        final int currentKind = new LiteralParser(e.toString()).kind();
+        assert currentKind >= 0;
+        if (previousKind == -1)
+          previousKind = currentKind;
+        else if (previousKind != currentKind)
+          return true;
       }
-    return $;
+    return false;
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = Extract.allOperands(e);

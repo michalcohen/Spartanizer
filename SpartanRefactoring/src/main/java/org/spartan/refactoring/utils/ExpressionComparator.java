@@ -6,6 +6,7 @@ import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.utils.Utils.hasNull;
 
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -163,5 +164,29 @@ public enum ExpressionComparator implements Comparator<Expression> {
       }
     });
     return $.inner;
+  }
+  /**
+   * Sorts the {@link Expression} list
+   *
+   * @param es an {@link Expression} list to sort
+   * @return True if the list was modified
+   */
+  public boolean sort(final List<Expression> es) {
+    boolean $ = false;
+    // Bubble sort
+    for (int i = 0, size = es.size(); i < size; ++i)
+      for (int j = 0; j < size - 1; ++j) {
+        final Expression e0 = es.get(j);
+        final Expression e1 = es.get(j + 1);
+        if (compare(e0, e1) <= 0)
+          continue;
+        // Replace locations i,j with e0 and e1
+        es.remove(j);
+        es.remove(j);
+        es.add(j, e0);
+        es.add(j, e1);
+        $ = true;
+      }
+    return $;
   }
 }

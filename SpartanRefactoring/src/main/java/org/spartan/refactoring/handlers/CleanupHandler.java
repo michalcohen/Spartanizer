@@ -1,6 +1,7 @@
 package org.spartan.refactoring.handlers;
 
 import static org.spartan.refactoring.handlers.ApplySpartanizationHandler.applySafeSpartanizationsTo;
+import static org.spartan.refactoring.spartanizations.DialogBoxes.announce;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -15,8 +16,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.spartanizations.Spartanizations;
-
-import static org.spartan.refactoring.spartanizations.DialogBoxes.announce;
 
 /**
  * A handler for {@link Spartanizations}. This handler executes all safe

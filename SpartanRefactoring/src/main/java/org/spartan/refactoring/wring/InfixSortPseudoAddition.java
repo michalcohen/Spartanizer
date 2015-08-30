@@ -29,7 +29,7 @@ public final class InfixSortPseudoAddition extends Wring.Replacing<InfixExpressi
     return sort(Extract.allOperands(e));
   }
   private static boolean sort(final List<Expression> es) {
-    return Wrings.sort(es, ExpressionComparator.ADDITION);
+    return ExpressionComparator.ADDITION.sort(es);
   }
   @Override boolean eligible(final InfixExpression e) {
     return sort(e);

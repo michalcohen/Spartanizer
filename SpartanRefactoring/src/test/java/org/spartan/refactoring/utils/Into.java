@@ -4,6 +4,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -130,5 +133,11 @@ public enum Into {
   public static MethodDeclaration d(final String methodDelclaration) {
     assertThat(methodDelclaration, notNullValue());
     return Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(methodDelclaration));
+  }
+  public static List<Expression> es(final String... expressions) {
+    final List<Expression> $ = new ArrayList<>();
+    for (final String expression : expressions)
+      $.add(e(expression));
+    return $;
   }
 }

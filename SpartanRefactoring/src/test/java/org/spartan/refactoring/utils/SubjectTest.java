@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Subject.Pair;
-import org.spartan.refactoring.wring.Wrings;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class SubjectTest {
   @Test public void vanilla() {
@@ -73,7 +72,7 @@ import org.spartan.refactoring.wring.Wrings;
     assertThat(operands.size(), is(2));
     assertThat(operands.get(0).toString(), is("1"));
     assertThat(operands.get(1).toString(), is("2 * 3"));
-    assertTrue(Wrings.sort(operands, ExpressionComparator.ADDITION));
+    assertTrue(ExpressionComparator.ADDITION.sort(operands));
     assertThat(operands.get(0).toString(), is("2 * 3"));
     assertThat(operands.get(1).toString(), is("1"));
     final InfixExpression refit = Subject.operands(operands).to(e.getOperator());
@@ -87,7 +86,7 @@ import org.spartan.refactoring.wring.Wrings;
     assertTrue(Is.notString(plus));
     final List<Expression> operands = Extract.operands(flatten(plus));
     assertThat(operands.size(), is(2));
-    final boolean b = Wrings.sort(operands, ExpressionComparator.ADDITION);
+    final boolean b = ExpressionComparator.ADDITION.sort(operands);
     assertThat(b, is(true));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
     assertThat(r, iz("a +2"));
@@ -99,7 +98,7 @@ import org.spartan.refactoring.wring.Wrings;
     assertTrue(Is.notString(plus));
     final List<Expression> operands = Extract.operands(flatten(plus));
     assertThat(operands.size(), is(2));
-    final boolean b = Wrings.sort(operands, ExpressionComparator.ADDITION);
+    final boolean b = ExpressionComparator.ADDITION.sort(operands);
     assertThat(b, is(true));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
     assertThat(r, iz("a +2"));

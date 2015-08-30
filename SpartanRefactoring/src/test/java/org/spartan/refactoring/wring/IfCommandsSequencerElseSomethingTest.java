@@ -1,17 +1,24 @@
 package org.spartan.refactoring.wring;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Collection;
+
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
@@ -20,18 +27,16 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
-import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Rewrite;
-import java.util.Collection;
-
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.spartanizations.Wrap;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;

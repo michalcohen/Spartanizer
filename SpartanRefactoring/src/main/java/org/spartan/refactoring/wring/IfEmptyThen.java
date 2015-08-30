@@ -1,7 +1,8 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.wring.Wrings.*;
+import static org.spartan.refactoring.wring.Wrings.emptyElse;
+import static org.spartan.refactoring.wring.Wrings.emptyThen;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;

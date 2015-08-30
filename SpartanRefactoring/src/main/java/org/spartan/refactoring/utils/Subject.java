@@ -1,12 +1,14 @@
 package org.spartan.refactoring.utils;
 
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.rebase;
 import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.rebase;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.jdt.core.dom.*;
+
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.ConditionalExpression;

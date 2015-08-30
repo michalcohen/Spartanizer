@@ -1,11 +1,12 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
 import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.EXPRESSION_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.METHOD_DECLARATION;
 import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
 import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
 import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
@@ -13,6 +14,7 @@ import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
 import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
 import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
 import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;

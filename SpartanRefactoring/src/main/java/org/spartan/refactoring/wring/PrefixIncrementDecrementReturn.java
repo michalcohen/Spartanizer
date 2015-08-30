@@ -1,6 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.DECREMENT;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.INCREMENT;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
+import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.utils.Utils.in;
+
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
@@ -8,10 +14,6 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
-
-import static org.spartan.refactoring.utils.Extract.*;
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.utils.Utils.*;
 
 /**
  * A {@link Wring} to convert <code>a = 3;return a;</code> to
