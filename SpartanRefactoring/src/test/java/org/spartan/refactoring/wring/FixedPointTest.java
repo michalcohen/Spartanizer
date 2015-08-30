@@ -67,29 +67,6 @@ import org.spartan.refactoring.utils.As;
   @Test(timeout = 100) public void eliminateRedundantIf2() {
     assertConvertsTo("{if (a) ; else {;}}", "");
   }
-  @Test(timeout = 100) public void issue39base() {
-    assertConvertsTo(
-        "" + //
-            "if (name == null) {\n" + //
-            "    if (other.name != null)\n" + //
-            "        return false;\n" + //
-            "} else if (!name.equals(other.name))\n" + //
-            "    return false;\n" + //
-            "return true;", //
-        "");
-  }
-  @Test(timeout = 100) public void issue39versionA() {
-    assertConvertsTo(
-        "" + //
-            "if (varArgs) {\n" + //
-            "    if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
-            "        return false;\n" + //
-            "    }\n" + //
-            "} else if (parameterTypes.length != argumentTypes.length) {\n" + //
-            "    return false;\n" + //
-            "}", //
-        "");
-  }
   @Test(timeout = 100) public void eliminateRedundantIf3() {
     assertConvertsTo("{if (a) {;} else {;;}}", "");
   }
