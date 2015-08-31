@@ -63,6 +63,28 @@ import org.spartan.refactoring.spartanizations.Wrap;
         "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
         "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
   }
+  @Test public void commonPrefixIfBranchesInBlock() {
+    assertConvertsTo(
+        "{" + //
+            "    if (a) {\n" + //
+            "      f();\n" + //
+            "      g();\n" + //
+            "      ++i;\n" + //
+            "    } else {\n" + //
+            "      f();\n" + //
+            "      g();\n" + //
+            "      --i;\n" + //
+            "    }" + //
+            "}",
+        "" + ////
+            "   f();\n" + //
+            "   g();\n" + //
+            "    if (a) \n" + //
+            "      ++i;\n" + //
+            "    else \n" + //
+            "      --i;" //
+    );
+  }
   @Test(timeout = 1000) public void shortestIfBranchFirst02() {
     assertConvertsTo(
         "" //

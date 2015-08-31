@@ -21,43 +21,34 @@ import org.eclipse.jdt.core.dom.*;
   public static Several operands(final List<Expression> es) {
     return new Several(es);
   }
-  public static SeveralStatemens statements(final List<Statement> ss) {
-    return new SeveralStatemens(ss);
-  }
-  public static SeveralStatemens statements(final Statement... ss) {
-    return statements(Arrays.asList(ss));
-  }
-
-  public static class SeveralStatemens extends Claimer {
-    private final List<Statement> inner;
-    public SeveralStatemens(final List<Statement> inner) {
-      super(inner.get(0));
-      this.inner = inner;
-    }
-    public Statement toOptionalBlockOrNull() {
-      return inner.isEmpty() ? null : toOptionalBlock();
-    }
-    public Statement toOptionalBlock() {
-      switch (inner.size()) {
-        case 0:
-          return ast.newEmptyStatement();
-        case 1:
-          return inner.get(0);
-        default:
-          return toBlock();
-      }
-    }
-    public Block toBlock() {
-      final Block $ = ast.newBlock();
-      $.statements().addAll(inner);
-      return $;
-    }
-  }
   public static Pair pair(final Expression left, final Expression right) {
     return new Pair(left, right);
   }
   public static StatementPair pair(final Statement s1, final Statement s2) {
     return new StatementPair(s1, s2);
+  }
+  public static SeveralStatemens statement(final Statement s) {
+    return statements(s);
+  }
+  public static SeveralStatemens ss(final List<Statement> ss) {
+    return new SeveralStatemens(ss);
+  }
+  public static SeveralStatemens statements(final Statement... ss) {
+    return ss(Arrays.asList(ss));
+  }
+
+  public static class Claimer {
+    protected final AST ast;
+    public Claimer(final ASTNode n) {
+      ast = n == null ? null : n.getAST();
+    }
+    Expression claim(final Expression e) {
+      return rebase(duplicate(Extract.core(e)), ast);
+    }
+    Statement claim(final Statement s) {
+      final Statement core = Extract.core(s);
+      return core == null ? null : rebase(duplicate(core), ast);
+    }
   }
 
   public static class Operand extends Claimer {
@@ -153,6 +144,34 @@ import org.eclipse.jdt.core.dom.*;
     }
   }
 
+  public static class SeveralStatemens extends Claimer {
+    private final List<Statement> inner;
+    public SeveralStatemens(final List<Statement> inner) {
+      super(inner.isEmpty() ? null : inner.get(0));
+      this.inner = new ArrayList<>();
+      for (final Statement s : inner)
+        this.inner.add(claim(s));
+    }
+    public Block toBlock() {
+      final Block $ = ast.newBlock();
+      $.statements().addAll(inner);
+      return $;
+    }
+    public Statement toOptionalBlock() {
+      switch (inner.size()) {
+        case 0:
+          return ast.newEmptyStatement();
+        case 1:
+          return inner.get(0);
+        default:
+          return toBlock();
+      }
+    }
+    public Statement toOneStatementOrNull() {
+      return inner.isEmpty() ? null : toOptionalBlock();
+    }
+  }
+
   public static class StatementPair extends Claimer {
     private final Statement elze;
     private final Statement then;
@@ -160,9 +179,6 @@ import org.eclipse.jdt.core.dom.*;
       super(then);
       this.then = claim(then);
       this.elze = claim(elze);
-    }
-    public IfStatement toNot(final Expression condition) {
-      return toIf(not(condition));
     }
     public IfStatement toIf(final Expression condition) {
       final IfStatement $ = ast.newIfStatement();
@@ -173,19 +189,8 @@ import org.eclipse.jdt.core.dom.*;
         $.setElseStatement(elze);
       return $;
     }
-  }
-
-  public static class Claimer {
-    protected final AST ast;
-    public Claimer(final ASTNode n) {
-      ast = n.getAST();
-    }
-    Expression claim(final Expression e) {
-      return rebase(duplicate(Extract.core(e)), ast);
-    }
-    Statement claim(final Statement s) {
-      final Statement core = Extract.core(s);
-      return core == null ? null : rebase(duplicate(core), ast);
+    public IfStatement toNot(final Expression condition) {
+      return toIf(not(condition));
     }
   }
 }

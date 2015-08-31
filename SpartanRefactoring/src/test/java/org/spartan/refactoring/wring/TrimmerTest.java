@@ -47,7 +47,9 @@ import org.spartan.refactoring.utils.*;
     assertNotNull(u);
     final Document d = new Document(from);
     assertNotNull(d);
-    return TESTUtils.rewrite(t, u, d).get();
+    final Document rewrite = TESTUtils.rewrite(t, u, d);
+    assertNotNull(rewrite);
+    return rewrite.get();
   }
   private static String apply(final Wring<? extends ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
@@ -275,6 +277,14 @@ import org.spartan.refactoring.utils.*;
   @Test public void comaprisonWithSpecificInParenthesis() {
     assertSimplifiesTo("(null==a)", "(a==null)");
   }
+  @Test public void commonPrefixEntirelyIfBranches() {
+    assertConvertsTo("if (s.equals(532)) System.out.close();else System.out.close();", "System.out.close(); ");
+  }
+  @Test public void commonPrefixIfBranchesInFor() {
+    assertConvertsTo(//
+        "for (;;) if (a) {i++;j++;j++;} else { i++;j++; i++;}", //
+        "for(;;){i++;j++;if(a)j++;else i++;}");
+  }
   @Test public void compareWithBoolean00() {
     assertSimplifiesTo("a == true", "a");
   }
@@ -395,9 +405,6 @@ import org.spartan.refactoring.utils.*;
   @Test public void donotSorMixedTypes() {
     assertNoChange("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;");
   }
-  @Test public void duplicateBothIfBranches() {
-    assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
-  }
   @Test public void duplicatePartialIfBranches() {
     assertConvertsTo(
         "" + //
@@ -410,28 +417,6 @@ import org.spartan.refactoring.utils.*;
             "      g();\n" + //
             "      --i;\n" + //
             "    }",
-        "" + ////
-            "   f();\n" + //
-            "   g();\n" + //
-            "    if (a) \n" + //
-            "      ++i;\n" + //
-            "    else \n" + //
-            "      --i;" //
-    );
-  }
-  @Test public void duplicatePartialIfBranchesInBlock() {
-    assertConvertsTo(
-        "{" + //
-            "    if (a) {\n" + //
-            "      f();\n" + //
-            "      g();\n" + //
-            "      ++i;\n" + //
-            "    } else {\n" + //
-            "      f();\n" + //
-            "      g();\n" + //
-            "      --i;\n" + //
-            "    }" + //
-            "}",
         "" + ////
             "   f();\n" + //
             "   g();\n" + //

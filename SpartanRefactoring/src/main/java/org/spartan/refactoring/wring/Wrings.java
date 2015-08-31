@@ -35,6 +35,9 @@ public enum Wrings {
       }
     return false;
   }
+  static IfStatement invert(final IfStatement s) {
+    return Subject.pair(elze(s), then(s)).toNot(s.getExpression());
+  }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = Extract.allOperands(e);
     removeAll(b, operands);

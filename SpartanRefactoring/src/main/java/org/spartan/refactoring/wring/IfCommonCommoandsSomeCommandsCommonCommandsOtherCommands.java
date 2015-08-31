@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.spartan.refactoring.wring.Wrings.*;
 import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.ArrayList;
@@ -10,9 +11,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>if (X)
@@ -44,27 +43,45 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
       return null;
     return new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        insertBefore(n, commonPrefix, r, g);
-        if (then.isEmpty() && elze.isEmpty()) {
-          r.remove(n, g);
-          return;
+        final IfStatement newIf = replacement(n, then, elze);
+        if (Is.block(n.getParent())) {
+          final ListRewrite lr = insertBefore(n, commonPrefix, r, g);
+          if (newIf != null)
+            lr.insertBefore(newIf, n, g);
+          lr.remove(n, g);
+        } else {
+          final Block b = Subject.ss(commonPrefix).toBlock();
+          if (newIf != null)
+            b.statements().add(newIf);
+          r.replace(n, b, g);
         }
-        final Statement then1 = Subject.statements(then).toOptionalBlock();
-        final Statement elze1 = Subject.statements(elze).toOptionalBlock();
-        if (then1 == null)
-          r.replace(n, Subject.pair(elze1, null).toNot(n.getExpression()), g);
-        else
-          r.replace(n, Subject.pair(then1, elze1).toIf(n.getExpression()), g);
       }
-      private void insertBefore(final Statement location, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
-        final Block b = asBlock(n.getParent());
-        if (b == null)
-          return;
-        final ListRewrite listRewrite = r.getListRewrite(b, Block.STATEMENTS_PROPERTY);
+      private IfStatement replacement(final IfStatement n, final List<Statement> then, final List<Statement> elze) {
+        return replacement(n.getExpression(), Subject.ss(then).toOneStatementOrNull(), Subject.ss(elze).toOneStatementOrNull());
+      }
+      private IfStatement replacement(final Expression condition, final Statement then, final Statement elze) {
+        if (then == null && elze == null)
+          return null;
+        final IfStatement $ = Subject.pair(then, elze).toIf(condition);
+        return then != null ? $ : invert($);
+      }
+      private ListRewrite insertBefore(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
+        final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
         for (final Statement s : what)
-          listRewrite.insertBefore(s, location, g);
+          $.insertBefore(s, where, g);
+        return $;
       }
     };
+  }
+  protected Block makeContainingBlock(final Statement s, final ASTRewrite r, final TextEditGroup g) {
+    final ASTNode parent = s.getParent();
+    if (Is.block(parent))
+      return (Block) parent;
+    final Block b = Subject.statement(s).toBlock();
+    System.err.println("uust before replacing");
+    r.replace(s, b, g);
+    System.err.println("uust afer replacing");
+    return b;
   }
   private static List<Statement> commonPrefix(final List<Statement> ss1, final List<Statement> ss2) {
     final List<Statement> $ = new ArrayList<>();

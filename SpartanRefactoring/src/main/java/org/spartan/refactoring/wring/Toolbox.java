@@ -58,6 +58,7 @@ public class Toolbox {
           new DeclarationReturn(), //
           null) //
       .add(IfStatement.class, //
+          new IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands(), //
           new IfThrowFooElseThrowBar(), //
           new IfReturnFooElseReturnBar(), //
           new IfReturnNoElseReturn(), //
@@ -69,7 +70,6 @@ public class Toolbox {
           new IfEmptyElse(), //
           new IfEmptyThen(), //
           new IfShortestFirst(), //
-          new IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands(), //
           null)//
       .add(PrefixExpression.class, //
           new PrefixIncrementDecrementReturn(), //

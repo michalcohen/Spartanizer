@@ -66,14 +66,9 @@ import org.spartan.refactoring.wring.Trimmer;
     try {
       s.createRewrite(u, null).rewriteAST($, null).apply($);
       return $;
-    } catch (final MalformedTreeException e) {
-      e.printStackTrace();
-    } catch (final IllegalArgumentException e) {
-      e.printStackTrace();
-    } catch (final BadLocationException e) {
-      e.printStackTrace();
+    } catch (MalformedTreeException | IllegalArgumentException | BadLocationException e) {
+      throw new AssertionError(e);
     }
-    return null;
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
