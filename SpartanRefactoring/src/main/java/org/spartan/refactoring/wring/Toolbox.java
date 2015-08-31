@@ -69,6 +69,7 @@ public class Toolbox {
           new IfEmptyElse(), //
           new IfEmptyThen(), //
           new IfShortestFirst(), //
+          new IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands(), //
           null)//
       .add(PrefixExpression.class, //
           new PrefixIncrementDecrementReturn(), //

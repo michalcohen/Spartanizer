@@ -12,6 +12,7 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Rewrite;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>if (X)
@@ -43,12 +44,25 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
       return null;
     return new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
+        insertBefore(n, commonPrefix, r, g);
+        if (then.isEmpty() && elze.isEmpty()) {
+          r.remove(n, g);
+          return;
+        }
+        final Statement then1 = Subject.statements(then).toOptionalBlock();
+        final Statement elze1 = Subject.statements(elze).toOptionalBlock();
+        if (then1 == null)
+          r.replace(n, Subject.pair(elze1, null).toNot(n.getExpression()), g);
+        else
+          r.replace(n, Subject.pair(then1, elze1).toIf(n.getExpression()), g);
+      }
+      private void insertBefore(final Statement location, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
         final Block b = asBlock(n.getParent());
         if (b == null)
           return;
         final ListRewrite listRewrite = r.getListRewrite(b, Block.STATEMENTS_PROPERTY);
-        for (final Statement s : commonPrefix)
-          listRewrite.insertBefore(s, n, g);
+        for (final Statement s : what)
+          listRewrite.insertBefore(s, location, g);
       }
     };
   }
@@ -66,7 +80,6 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
     return $;
   }
   @Override Rewrite make(final IfStatement n, final Set<ASTNode> exclude) {
-    // TODO Auto-generated method stub
     return super.make(n, exclude);
   }
   @Override boolean scopeIncludes(final IfStatement n) {

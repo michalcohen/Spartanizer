@@ -293,11 +293,11 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
   /**
    * Remove all non-essential spaces from a string that represents Java code.
    *
-   * @param s JD
+   * @param javaCodeFragment JD
    * @return the parameter, with all redundant spaces removes from it
    */
-  public static String compressSpaces(final String s) {
-    String $ = s//
+  public static String compressSpaces(final String javaCodeFragment) {
+    String $ = javaCodeFragment//
         .replaceAll("(?m)\\s+", " ") // Squeeze whites
         .replaceAll("^\\s", "") // Opening whites
         .replaceAll("\\s$", "") // Closing whites

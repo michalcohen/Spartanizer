@@ -21,6 +21,38 @@ import org.eclipse.jdt.core.dom.*;
   public static Several operands(final List<Expression> es) {
     return new Several(es);
   }
+  public static SeveralStatemens statements(final List<Statement> ss) {
+    return new SeveralStatemens(ss);
+  }
+  public static SeveralStatemens statements(final Statement... ss) {
+    return statements(Arrays.asList(ss));
+  }
+
+  public static class SeveralStatemens extends Claimer {
+    private final List<Statement> inner;
+    public SeveralStatemens(final List<Statement> inner) {
+      super(inner.get(0));
+      this.inner = inner;
+    }
+    public Statement toOptionalBlockOrNull() {
+      return inner.isEmpty() ? null : toOptionalBlock();
+    }
+    public Statement toOptionalBlock() {
+      switch (inner.size()) {
+        case 0:
+          return ast.newEmptyStatement();
+        case 1:
+          return inner.get(0);
+        default:
+          return toBlock();
+      }
+    }
+    public Block toBlock() {
+      final Block $ = ast.newBlock();
+      $.statements().addAll(inner);
+      return $;
+    }
+  }
   public static Pair pair(final Expression left, final Expression right) {
     return new Pair(left, right);
   }

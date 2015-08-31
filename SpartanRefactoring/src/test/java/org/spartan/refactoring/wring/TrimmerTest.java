@@ -419,6 +419,28 @@ import org.spartan.refactoring.utils.*;
             "      --i;" //
     );
   }
+  @Test public void duplicatePartialIfBranchesInBlock() {
+    assertConvertsTo(
+        "{" + //
+            "    if (a) {\n" + //
+            "      f();\n" + //
+            "      g();\n" + //
+            "      ++i;\n" + //
+            "    } else {\n" + //
+            "      f();\n" + //
+            "      g();\n" + //
+            "      --i;\n" + //
+            "    }" + //
+            "}",
+        "" + ////
+            "   f();\n" + //
+            "   g();\n" + //
+            "    if (a) \n" + //
+            "      ++i;\n" + //
+            "    else \n" + //
+            "      --i;" //
+    );
+  }
   @Test public void emptyElse() {
     assertConvertsTo("if (x) b = 3; else ;", "if (x) b = 3;");
   }
