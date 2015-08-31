@@ -1,10 +1,12 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.utils.Utils.hasNull;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 

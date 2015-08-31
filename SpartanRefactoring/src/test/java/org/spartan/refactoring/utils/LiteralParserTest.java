@@ -1,14 +1,14 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.*;
+import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 
-import org.junit.*;
-import org.spartan.refactoring.utils.LiteralParser.*;
+import org.junit.Test;
+import org.spartan.refactoring.utils.LiteralParser.Kinds;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class LiteralParserTest {
   @Test public void hasConstructor() {

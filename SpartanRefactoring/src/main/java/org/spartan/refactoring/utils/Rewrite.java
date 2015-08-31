@@ -1,9 +1,9 @@
 package org.spartan.refactoring.utils;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.utils.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.utils.Range;
 
 /**
  * A function object representing a sequence of operations on an

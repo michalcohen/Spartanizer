@@ -1,6 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
  * A class to search in the ancestry line of a given node.

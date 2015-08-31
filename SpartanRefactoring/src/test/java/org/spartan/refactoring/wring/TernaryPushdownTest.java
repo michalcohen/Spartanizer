@@ -1,14 +1,15 @@
 package org.spartan.refactoring.wring;
 
-import java.util.*;
+import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.*;
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.junit.runners.Parameterized.*;
-import org.spartan.refactoring.wring.AbstractWringTest.*;
-import org.spartan.utils.*;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.junit.FixMethodOrder;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.utils.Utils;
 
 /**
  * Unit tests for {@link Wrings#ADDITION_SORTER}.

@@ -1,8 +1,8 @@
 package org.spartan.refactoring.utils;
 
-import java.util.*;
+import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Expression;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

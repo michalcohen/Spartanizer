@@ -3,7 +3,8 @@ package org.spartan.refactoring.wring;
 import static org.spartan.refactoring.utils.Funcs.*;
 
 import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>if (x)

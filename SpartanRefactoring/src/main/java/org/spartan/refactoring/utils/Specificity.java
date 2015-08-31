@@ -1,8 +1,9 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
+import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
 
-import java.util.*;
+import java.util.Comparator;
 
 import org.eclipse.jdt.core.dom.*;
 

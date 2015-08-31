@@ -1,10 +1,11 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.removePrefix;
+import static org.spartan.utils.Utils.removeSuffix;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jface.text.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jface.text.Document;
+import org.spartan.refactoring.utils.As;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

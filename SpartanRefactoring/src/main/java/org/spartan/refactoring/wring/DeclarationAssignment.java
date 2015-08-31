@@ -3,9 +3,9 @@ package org.spartan.refactoring.wring;
 import static org.spartan.refactoring.utils.Funcs.*;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
 
 /**
  * A {@link Wring} to convert <code>int a;

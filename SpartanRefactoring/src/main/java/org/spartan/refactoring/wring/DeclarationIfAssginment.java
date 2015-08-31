@@ -2,12 +2,15 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Occurrences;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>int a = 2;

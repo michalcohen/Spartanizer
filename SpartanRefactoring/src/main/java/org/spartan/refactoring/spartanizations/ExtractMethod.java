@@ -1,15 +1,17 @@
 package org.spartan.refactoring.spartanizations;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.jdt.internal.corext.refactoring.code.*;
-import org.eclipse.ltk.core.refactoring.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Rewrite;
+import org.spartan.refactoring.utils.UnifiedGroup;
 
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /

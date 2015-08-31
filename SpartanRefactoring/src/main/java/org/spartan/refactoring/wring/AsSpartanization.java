@@ -1,12 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import java.util.*;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.spartan.refactoring.spartanizations.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * An adapter that converts the @{link Wring} protocol into that of

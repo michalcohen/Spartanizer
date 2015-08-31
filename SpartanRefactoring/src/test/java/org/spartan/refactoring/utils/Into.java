@@ -1,12 +1,14 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.spartanizations.Wrap;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -18,7 +20,6 @@ import org.spartan.refactoring.spartanizations.*;
  */
 public enum Into {
   ;
-  static final String WHITES = "(?m)\\s+";
   /**
    * Convert a given {@link String} into an {@link ConditionalExpression}, or
    * fail the current test, if such a conversion is not possible
@@ -32,26 +33,6 @@ public enum Into {
     assertThat(conditionalExpression, $, notNullValue());
     assertThat(conditionalExpression, $, instanceOf(ConditionalExpression.class));
     return (ConditionalExpression) $;
-  }
-  /**
-   * Remove all non-essential spaces from a string that represents Java code.
-   *
-   * @param javaCode JD
-   * @return the parameter, with all redundant spaces removes from it
-   */
-  public static String compressSpaces(final String javaCode) {
-    String $ = javaCode//
-        .replaceAll("(?m)\\s+", " ") // Squeeze whites
-        .replaceAll("^\\s", "") // Opening whites
-        .replaceAll("\\s$", "") // Closing whites
-        ;
-    for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
-        "[\\^]" })
-      $ = $ //
-          .replaceAll(WHITES + operator, operator) // Preceding whites
-          .replaceAll(operator + WHITES, operator) // Trailing whites
-          ;
-    return $;
   }
   /**
    * Convert a given {@link String} into an {@link Expression}, or fail the

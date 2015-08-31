@@ -1,9 +1,9 @@
 package org.spartan.hamcrest;
 
-import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.spartan.hamcrest.CoreMatchers.is;
 
-import org.hamcrest.*;
-import org.spartan.utils.*;
+import org.hamcrest.Matcher;
+import org.spartan.utils.Wrapper;
 
 /**
  * Non-auto-boxing version for all primitive types of the family of Hamcrest
@@ -290,7 +290,13 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
   public static final Wrapper<String> iz(final String s) {
     return new Wrapper<>(s);
   }
-  private static String compressSpaces(final String s) {
+  /**
+   * Remove all non-essential spaces from a string that represents Java code.
+   *
+   * @param s JD
+   * @return the parameter, with all redundant spaces removes from it
+   */
+  public static String compressSpaces(final String s) {
     String $ = s//
         .replaceAll("(?m)\\s+", " ") // Squeeze whites
         .replaceAll("^\\s", "") // Opening whites

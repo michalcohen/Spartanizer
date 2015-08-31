@@ -1,9 +1,11 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.same;
 
-import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Plant;
 
 /**
  * A {@link Wring} to eliminate a ternary in which both branches are identical

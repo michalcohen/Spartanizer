@@ -1,6 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
  * A utility class designed to help generate the environment of a method (i.e

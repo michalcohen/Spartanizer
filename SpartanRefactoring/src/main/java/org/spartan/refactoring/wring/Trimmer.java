@@ -1,17 +1,22 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.removeDuplicates;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.spartanizations.*;
-import org.spartan.refactoring.utils.*;
-import org.spartan.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
+import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Rewrite;
+import org.spartan.utils.Range;
 
 /**
  * Applies the first applicable {@link Wring} object found in

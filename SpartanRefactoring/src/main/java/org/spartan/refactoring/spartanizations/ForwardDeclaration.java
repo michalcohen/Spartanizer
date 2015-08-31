@@ -1,14 +1,16 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 
-import java.util.*;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Occurrences;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Artium Nihamkin (original)

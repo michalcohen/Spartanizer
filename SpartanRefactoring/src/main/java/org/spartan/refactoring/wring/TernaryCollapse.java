@@ -1,11 +1,14 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.spartan.refactoring.utils.Extract.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
+import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.same;
 
-import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to simplify a conditional expression containing another

@@ -1,11 +1,15 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.*;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
+import static org.spartan.hamcrest.MatcherAssert.compressSpaces;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 
-import org.junit.*;
-import org.junit.runners.*;
-import org.spartan.refactoring.spartanizations.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.spartanizations.Wrap;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note

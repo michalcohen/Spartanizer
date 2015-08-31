@@ -1,8 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
 
 /**
  * /** A {@link Wring} to convert <code>if (x)

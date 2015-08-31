@@ -1,15 +1,19 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.spartan.refactoring.utils.Extract.*;
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Restructure.*;
+import static org.spartan.refactoring.utils.Restructure.conjugate;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.InfixExpression.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} that pushes down "<code>!</code>", the negation operator as

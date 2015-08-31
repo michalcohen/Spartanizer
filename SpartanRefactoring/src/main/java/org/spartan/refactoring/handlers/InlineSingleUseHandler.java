@@ -1,6 +1,6 @@
 package org.spartan.refactoring.handlers;
 
-import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.spartanizations.InlineSingleUse;
 
 /**
  * a handler for {@link InlineSingleUse}

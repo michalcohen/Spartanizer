@@ -1,11 +1,11 @@
 package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
-import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.utils.Into.e;
 
-import org.junit.*;
+import org.junit.Test;
 
 /**
  * Test class for class {@link Is}

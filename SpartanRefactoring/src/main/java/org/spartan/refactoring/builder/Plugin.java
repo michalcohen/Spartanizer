@@ -1,8 +1,9 @@
 package org.spartan.refactoring.builder;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.plugin.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * @author Artium Nihamkin

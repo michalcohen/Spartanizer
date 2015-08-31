@@ -1,15 +1,20 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.utils.Utils.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
+import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.utils.Utils.last;
 
-import java.util.*;
+import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>if (X)

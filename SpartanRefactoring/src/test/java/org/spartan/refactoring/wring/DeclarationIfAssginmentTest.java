@@ -1,30 +1,40 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.*;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.hamcrest.MatcherAssert.compressSpaces;
+import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.hamcrest.OrderingComparison.greaterThan;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.text.edits.*;
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.junit.runners.Parameterized.*;
-import org.spartan.refactoring.spartanizations.*;
-import org.spartan.refactoring.utils.*;
-import org.spartan.refactoring.utils.Occurrences.*;
-import org.spartan.refactoring.wring.AbstractWringTest.*;
-import org.spartan.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.UndoEdit;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.spartanizations.TESTUtils;
+import org.spartan.refactoring.spartanizations.Wrap;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Occurrences;
+import org.spartan.refactoring.utils.Occurrences.Of;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.utils.Utils;
 
 /**
  * @author Yossi Gil

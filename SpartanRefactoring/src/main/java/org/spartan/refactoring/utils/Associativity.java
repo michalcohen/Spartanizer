@@ -1,8 +1,9 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.intIsIn;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

@@ -1,22 +1,26 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.refactoring.spartanizations.DialogBoxes.*;
+import static org.spartan.refactoring.spartanizations.DialogBoxes.announce;
 
 import java.util.*;
-import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.jface.text.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ltk.core.refactoring.*;
-import org.eclipse.ltk.ui.refactoring.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.spartan.refactoring.handlers.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IMarkerResolution;
+import org.spartan.refactoring.handlers.BaseHandler;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Make;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * the base class for all Spartanization Refactoring classes, contains common

@@ -1,11 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.wring.Wrings.*;
+import static org.spartan.refactoring.wring.Wrings.emptyElse;
+import static org.spartan.refactoring.wring.Wrings.emptyThen;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * A {@link Wring} to eliminate degenerate if statements such as

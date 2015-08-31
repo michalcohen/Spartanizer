@@ -1,14 +1,17 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
+import static org.eclipse.jdt.core.dom.ASTNode.EMPTY_STATEMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.PARENTHESIZED_EXPRESSION;
 import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Restructure.*;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.utils.Utils.last;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.spartan.utils.*;
+import org.spartan.utils.Wrapper;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

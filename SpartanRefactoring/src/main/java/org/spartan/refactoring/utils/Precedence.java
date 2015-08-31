@@ -1,7 +1,8 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
+import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
+import static org.spartan.refactoring.utils.Funcs.asExpression;
 
 import org.eclipse.jdt.core.dom.*;
 

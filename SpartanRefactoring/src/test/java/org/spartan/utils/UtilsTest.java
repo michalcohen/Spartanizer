@@ -1,14 +1,18 @@
 package org.spartan.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.*;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.hamcrest.OrderingComparison.greaterThan;
+import static org.spartan.hamcrest.OrderingComparison.lessThan;
+import static org.spartan.utils.Utils.in;
 
-import org.junit.*;
-import org.junit.runners.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.JVM) //
 @SuppressWarnings({ "static-method", "javadoc", }) //

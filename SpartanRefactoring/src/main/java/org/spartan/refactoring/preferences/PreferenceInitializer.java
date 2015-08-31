@@ -1,10 +1,10 @@
 package org.spartan.refactoring.preferences;
 
-import static org.spartan.refactoring.spartanizations.Spartanizations.*;
+import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
 
-import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.jface.preference.*;
-import org.spartan.refactoring.builder.*;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.spartan.refactoring.builder.Plugin;
 
 /**
  * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> @since

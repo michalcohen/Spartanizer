@@ -1,11 +1,11 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
-import static org.spartan.refactoring.utils.Into.*;
-import static org.spartan.refactoring.wring.Wrings.*;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.refactoring.utils.Into.es;
+import static org.spartan.refactoring.wring.Wrings.mixedLiteralKind;
 
-import org.junit.*;
+import org.junit.Test;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class WringsTest {
   @Test public void mixedLiteralKindEmptyList() {

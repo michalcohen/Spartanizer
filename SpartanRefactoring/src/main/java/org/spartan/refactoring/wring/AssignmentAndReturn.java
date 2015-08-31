@@ -1,12 +1,17 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Extract.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.same;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>a = 3;return a;</code> to

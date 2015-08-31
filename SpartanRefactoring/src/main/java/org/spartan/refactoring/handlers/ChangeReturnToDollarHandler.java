@@ -1,6 +1,7 @@
 package org.spartan.refactoring.handlers;
 
-import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.spartanizations.RenameReturnVariableToDollar;
+import org.spartan.refactoring.spartanizations.SafeRenameReturnVariableToDollar;
 
 /**
  * a handler for {@link RenameReturnVariableToDollar}

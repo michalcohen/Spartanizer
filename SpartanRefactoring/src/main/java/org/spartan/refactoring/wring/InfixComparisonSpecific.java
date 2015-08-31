@@ -1,9 +1,13 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.flip;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
 
-import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Specificity;
 
 /**
  * A {@link Wring} that reorder comparisons so that the specific value is placed

@@ -1,17 +1,24 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.*;
-import static org.spartan.refactoring.wring.TrimmerTest.*;
+import static org.spartan.hamcrest.MatcherAssert.compressSpaces;
+import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
+import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
-import org.spartan.refactoring.wring.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.wring.Trimmer;
 
 /**
  * @author Yossi Gil
@@ -54,20 +61,6 @@ import org.spartan.refactoring.wring.*;
     final ASTNode n = As.STATEMENTS.ast(statement);
     assertThat(n, notNullValue());
     return Extract.singleStatement(n);
-  }
-  public static String compressSpaces(final String s) {
-    String $ = s//
-        .replaceAll("(?m)\\s+", " ") // Squeeze whites
-        .replaceAll("^\\s", "") // Opening whites
-        .replaceAll("\\s$", "") // Closing whites
-        ;
-    for (final String operator : new String[] { ":", ",", "\\{", "\\}", "=", ":", "\\?", ";", "\\+", ">", ">=", "!=", "==", "<", "<=", "-", "\\*", "\\|", "\\&", "%", "\\(", "\\)",
-        "[\\^]" })
-      $ = $ //
-          .replaceAll(WHITES + operator, operator) // Preceding whites
-          .replaceAll(operator + WHITES, operator) // Trailing whites
-          ;
-    return $;
   }
   public static Document rewrite(final Spartanization s, final CompilationUnit u, final Document $) {
     try {

@@ -3,12 +3,13 @@ package org.spartan.refactoring.utils;
 import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.in;
+import static org.spartan.utils.Utils.intIsIn;
 
-import java.util.*;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.InfixExpression.*;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

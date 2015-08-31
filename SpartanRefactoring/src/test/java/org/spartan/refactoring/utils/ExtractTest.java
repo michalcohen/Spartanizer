@@ -1,17 +1,18 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.refactoring.utils.Into.i;
+import static org.spartan.refactoring.utils.Into.s;
 
 import org.eclipse.jdt.core.dom.*;
-import org.junit.*;
-import org.spartan.refactoring.spartanizations.*;
+import org.junit.Test;
+import org.spartan.refactoring.spartanizations.Wrap;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class ExtractTest {
   @Test public void core() {

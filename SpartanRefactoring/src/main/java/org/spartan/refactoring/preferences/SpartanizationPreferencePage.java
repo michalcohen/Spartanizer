@@ -1,14 +1,16 @@
 package org.spartan.refactoring.preferences;
 
 import static org.spartan.refactoring.preferences.PreferencesStrings.*;
-import static org.spartan.refactoring.spartanizations.Spartanizations.*;
+import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 import org.eclipse.jface.preference.*;
-import org.eclipse.ui.*;
-import org.spartan.refactoring.builder.*;
-import org.spartan.refactoring.preferences.PreferencesStrings.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.spartan.refactoring.builder.Plugin;
+import org.spartan.refactoring.preferences.PreferencesStrings.Strings;
 
 /**
  * This class represents a preference page that is contributed to the

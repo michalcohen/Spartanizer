@@ -2,16 +2,16 @@ package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
 import static org.spartan.utils.Utils.*;
 
 import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.InfixExpression.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.spartan.refactoring.wring.*;
-import org.spartan.utils.*;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.spartan.refactoring.wring.PrefixNotPushdown;
+import org.spartan.utils.Utils;
 
 /**
  * Useful Functions

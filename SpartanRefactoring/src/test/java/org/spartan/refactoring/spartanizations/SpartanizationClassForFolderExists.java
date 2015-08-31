@@ -1,14 +1,15 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.objects;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Collection;
 
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.junit.runners.Parameterized.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Tests that each directory in our test suite is a name of valid

@@ -1,11 +1,12 @@
 package org.spartan.refactoring.spartanizations;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.*;
 
 /**

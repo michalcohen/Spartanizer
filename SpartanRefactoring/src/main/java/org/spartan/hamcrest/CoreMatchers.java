@@ -1,6 +1,6 @@
 package org.spartan.hamcrest;
 
-import org.hamcrest.*;
+import org.hamcrest.Matcher;
 
 /**
  * @author Yossi Gil

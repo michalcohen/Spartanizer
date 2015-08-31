@@ -2,12 +2,16 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * A {@link Wring} to convert <code>if (X)
@@ -39,7 +43,12 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
       return null;
     return new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        asBlock(n.getParent());
+        final Block b = asBlock(n.getParent());
+        if (b == null)
+          return;
+        final ListRewrite listRewrite = r.getListRewrite(b, Block.STATEMENTS_PROPERTY);
+        for (final Statement s : commonPrefix)
+          listRewrite.insertBefore(s, n, g);
       }
     };
   }

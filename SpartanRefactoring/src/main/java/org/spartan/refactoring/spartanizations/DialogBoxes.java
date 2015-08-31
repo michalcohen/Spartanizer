@@ -1,6 +1,7 @@
 package org.spartan.refactoring.spartanizations;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  * A class to manage dialog boxes and other GUI elements.

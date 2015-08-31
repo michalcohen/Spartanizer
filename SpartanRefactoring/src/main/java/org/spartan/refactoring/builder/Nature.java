@@ -1,8 +1,8 @@
 package org.spartan.refactoring.builder;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.spartan.utils.*;
+import org.eclipse.core.runtime.CoreException;
+import org.spartan.utils.Utils;
 
 /**
  * @author Artium Nihamkin

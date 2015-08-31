@@ -1,8 +1,10 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 
 /**
  * A fluent API class that wraps an {@link Expression} with parenthesis, if the

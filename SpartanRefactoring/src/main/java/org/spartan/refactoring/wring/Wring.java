@@ -1,11 +1,14 @@
 package org.spartan.refactoring.wring;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.rewrite.*;
-import org.eclipse.text.edits.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Rewrite;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A wring is a transformation that works on an AstNode. Such a transformation

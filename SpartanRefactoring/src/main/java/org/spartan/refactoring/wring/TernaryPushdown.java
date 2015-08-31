@@ -1,11 +1,13 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.spartan.refactoring.utils.Extract.*;
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Restructure.*;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Restructure.parenthesize;
 
-import java.util.*;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 import org.spartan.refactoring.utils.*;

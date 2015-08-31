@@ -1,11 +1,17 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.spartan.refactoring.utils.Extract.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
+import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.not;
 
-import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.ConditionalExpression;
+import org.eclipse.jdt.core.dom.Expression;
+import org.spartan.refactoring.utils.Have;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * <code>a ? b : c</code> is the same as <code>(a && b) || (!a && c)</code> if b

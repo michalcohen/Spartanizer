@@ -1,12 +1,13 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.utils.Utils.asArray;
 
 import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
-import org.spartan.utils.*;
+import org.spartan.utils.Utils;
 
 /**
  * A utility class for finding occurrences of an {@link Expression} in an

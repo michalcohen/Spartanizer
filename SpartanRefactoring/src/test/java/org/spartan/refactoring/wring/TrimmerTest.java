@@ -1,26 +1,32 @@
 package org.spartan.refactoring.wring;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
-import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.utils.ExpressionComparator.*;
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Into.*;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.hamcrest.MatcherAssert.compressSpaces;
+import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.refactoring.utils.ExpressionComparator.NODES_THRESHOLD;
+import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Into.i;
+import static org.spartan.refactoring.utils.Into.s;
+import static org.spartan.utils.Utils.hasNull;
+import static org.spartan.utils.Utils.in;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.InfixExpression.*;
-import org.eclipse.jface.text.*;
-import org.junit.*;
-import org.junit.runners.*;
-import org.spartan.refactoring.spartanizations.*;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.eclipse.jface.text.Document;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.spartanizations.TESTUtils;
+import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
 
 /**

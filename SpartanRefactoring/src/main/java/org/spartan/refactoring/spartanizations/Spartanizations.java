@@ -2,7 +2,7 @@ package org.spartan.refactoring.spartanizations;
 
 import java.util.*;
 
-import org.spartan.refactoring.wring.*;
+import org.spartan.refactoring.wring.Trimmer;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)

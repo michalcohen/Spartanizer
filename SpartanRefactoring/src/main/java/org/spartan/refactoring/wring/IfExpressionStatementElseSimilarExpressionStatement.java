@@ -1,10 +1,14 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.wring.TernaryPushdown.*;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.wring.TernaryPushdown.pushdown;
 
-import org.eclipse.jdt.core.dom.*;
-import org.spartan.refactoring.utils.*;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>if (x)

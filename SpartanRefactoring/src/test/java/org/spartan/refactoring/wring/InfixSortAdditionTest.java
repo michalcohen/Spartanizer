@@ -1,24 +1,30 @@
 package org.spartan.refactoring.wring;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.*;
-import static org.spartan.refactoring.utils.Restructure.*;
+import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
+import static org.spartan.refactoring.utils.Restructure.flatten;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.InfixExpression.*;
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.junit.runners.Parameterized.*;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.utils.*;
-import org.spartan.refactoring.wring.AbstractWringTest.*;
-import org.spartan.utils.*;
+import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
+import org.spartan.utils.Utils;
 
 /**
  * Unit tests for {@link Wrings#ADDITION_SORTER}.

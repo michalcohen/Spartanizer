@@ -1,21 +1,25 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertNotNull;
+import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
 import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.*;
+import java.util.Collection;
 
-import org.eclipse.jdt.core.dom.*;
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.runners.*;
-import org.junit.runners.Parameterized.*;
-import org.spartan.refactoring.utils.*;
-import org.spartan.refactoring.wring.AbstractWringTest.*;
-import org.spartan.utils.*;
+import org.eclipse.jdt.core.dom.Assignment;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
+import org.spartan.utils.Utils;
 
 /**
  * Unit tests for {@link Wrings#ADDITION_SORTER}.

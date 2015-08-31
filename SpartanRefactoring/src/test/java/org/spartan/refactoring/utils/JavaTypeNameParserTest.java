@@ -1,10 +1,11 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.CoreMatchers.is;
 
-import org.junit.*;
-import org.junit.runners.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //

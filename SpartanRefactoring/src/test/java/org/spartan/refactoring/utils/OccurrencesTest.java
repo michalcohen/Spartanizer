@@ -1,18 +1,22 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.same;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import org.junit.*;
-import org.junit.runners.*;
-import org.spartan.refactoring.spartanizations.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import org.spartan.refactoring.spartanizations.Wrap;
 
 /**
  * @author Yossi Gil
