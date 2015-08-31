@@ -408,6 +408,9 @@ import org.spartan.refactoring.utils.Is;
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
   }
+  @Test public void donotSorMixedTypes() {
+    assertNoChange("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;");
+  }
   @Test public void duplicateBothIfBranches() {
     assertConvertsTo("if (s.equals(532))    System.out.close();else    System.out.close();", " System.out.close();} ");
   }
@@ -639,6 +642,38 @@ import org.spartan.refactoring.utils.Is;
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
+  @Test public void issue37() {
+    assertConvertsTo(
+        "" + //
+            "    int result = mockedType.hashCode();\n" + //
+            "    result = 31 * result + types.hashCode();\n" + //
+            "    return result;\n" + //
+            "", //
+        "return types.hashCode() + 31 * mockedType.hashCode();");
+  }
+  @Test public void issue37abbreviated() {
+    assertConvertsTo(
+        "" + //
+            "    int a = 3;\n" + //
+            "    a = 31 * a;\n" + //
+            "    return a;\n" + //
+            "", //
+        "return 31 * 3;");
+  }
+  @Test public void issue37Simplified() {
+    assertConvertsTo(
+        "" + //
+            "    int a = 3;\n" + //
+            "    a = 31 * a;" + //
+            "", //
+        "int a = 31 * 3; ");
+  }
+  @Test public void issue37SimplifiedVariant() {
+    assertNoConversion("" + //
+        "    int a = 3;\n" + //
+        "    a += 31 * a;" + //
+        "");
+  }
   @Test(timeout = 100) public void issue39base() {
     assertNoConversion("" + //
         "if (name == null) {\n" + //
@@ -696,43 +731,23 @@ import org.spartan.refactoring.utils.Is;
         "}" + //
         "");
   }
-  @Test public void issue37() {
-    assertConvertsTo(
-        "" + //
-            "    int result = mockedType.hashCode();\n" + //
-            "    result = 31 * result + types.hashCode();\n" + //
-            "    return result;\n" + //
-            "", //
-        "return types.hashCode() + 31 * mockedType.hashCode();");
-  }
-  @Test public void issue37abbreviated() {
-    assertConvertsTo(
-        "" + //
-            "    int a = 3;\n" + //
-            "    a = 31 * a;\n" + //
-            "    return a;\n" + //
-            "", //
-        "return 31 * 3;");
-  }
-  @Test public void issue37Simplified() {
-    assertConvertsTo(
-        "" + //
-            "    int a = 3;\n" + //
-            "    a = 31 * a;" + //
-            "", //
-        "int a = 31 * 3; ");
-  }
-  @Test public void issue37SimplifiedVariant() {
-    assertNoConversion("" + //
-        "    int a = 3;\n" + //
-        "    a += 31 * a;" + //
-        "");
-  }
   @Test public void linearTransformation() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
   @Test public void literalVsLiteral() {
     assertNoChange("1 < 102333");
+  }
+  @Test public void longChainComparison() {
+    assertNoChange("a == b == c == d");
+  }
+  @Test public void longChainParenthesisComparison() {
+    assertNoChange("(a == b == c) == d");
+  }
+  @Test public void longChainParenthesisNotComparison() {
+    assertNoChange("(a == b == c) != d");
+  }
+  @Test public void longerChainParenthesisComparison() {
+    assertNoChange("(a == b == c == d == e) == d");
   }
   @Test public void noChange() {
     assertNoChange("12");
@@ -1299,6 +1314,12 @@ import org.spartan.refactoring.utils.Is;
         "if (!a) {f++; g++; return x;} b++; c++; ++d; " //
     );
   }
+  @Test public void shorterChainParenthesisComparison() {
+    assertNoChange("a == b == c");
+  }
+  @Test public void shorterChainParenthesisComparisonLast() {
+    assertNoChange("b == a * b * c * d * e * f * g * h == a");
+  }
   @Test public void shortestBranchInIf() {
     assertConvertsTo("   int a=0;\n" + //
         "   if (s.equals(known)){\n" + //
@@ -1332,6 +1353,9 @@ import org.spartan.refactoring.utils.Is;
             + " }"//
             + " return res;");
   }
+  @Test public void shortestOperand01() {
+    assertNoChange("x + y > z");
+  }
   @Test public void shortestOperand02() {
     assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
   }
@@ -1339,6 +1363,15 @@ import org.spartan.refactoring.utils.Is;
     assertNoConversion(//
         "    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
             "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";");
+  }
+  @Test public void shortestOperand09() {
+    assertNoChange("return 2 - 4 < 50 - 20 - 10 - 5;} ");
+  }
+  @Test public void shortestOperand10() {
+    assertNoChange("return b == true;} ");
+  }
+  @Test public void shortestOperand11() {
+    assertNoChange("int h,u,m,a,n;return b == true && n + a > m - u || h > u;");
   }
   @Test public void shortestOperand12() {
     assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
@@ -1665,6 +1698,9 @@ import org.spartan.refactoring.utils.Is;
   }
   @Test public void ternarize36() {
     assertNoChange("int a, b=0, c=0;   a=4;   if (c==3){    b=2;   a=6; ");
+  }
+  @Test public void ternarize38() {
+    assertNoChange("int a, b=0;if (b==3){    a+=2+r();a-=6;}");
   }
   @Test public void ternarize41() {
     assertConvertsTo(//
