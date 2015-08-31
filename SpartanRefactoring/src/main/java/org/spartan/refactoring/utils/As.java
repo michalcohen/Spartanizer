@@ -1,28 +1,15 @@
 package org.spartan.refactoring.utils;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jface.text.Document;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.*;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

@@ -1,12 +1,10 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.wring.Wrings.emptyElse;
-import static org.spartan.refactoring.wring.Wrings.emptyThen;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.wring.Wrings.*;
 
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>if (x) ; else  {a;}</code> into

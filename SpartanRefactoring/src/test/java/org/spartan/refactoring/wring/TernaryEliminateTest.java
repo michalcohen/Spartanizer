@@ -1,18 +1,16 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-import java.util.Collection;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
-import org.spartan.utils.Utils;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.wring.AbstractWringTest.*;
+import org.spartan.utils.*;
 
 /**
  * Unit tests for {@link Wrings#ADDITION_SORTER}.

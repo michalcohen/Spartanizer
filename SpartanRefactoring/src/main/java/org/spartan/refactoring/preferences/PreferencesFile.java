@@ -1,10 +1,7 @@
 package org.spartan.refactoring.preferences;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 /**
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (original /

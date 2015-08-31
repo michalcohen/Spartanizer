@@ -1,12 +1,10 @@
 package org.spartan.refactoring.handlers;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.spartanizations.Spartanizations;
-import org.spartan.refactoring.wring.Trimmer;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.wring.*;
 
 /**
  * A handler for {@link Spartanizations} This handler executes all safe

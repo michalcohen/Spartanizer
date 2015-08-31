@@ -1,14 +1,11 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.CHARACTER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.NUMBER_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.THIS_EXPRESSION;
-import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Into.e;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.spartan.hamcrest.MatcherAssert.*;
+import static org.spartan.refactoring.utils.Into.*;
 
-import org.junit.Test;
+import org.junit.*;
 
 /**
  * Test class for class {@link Is}

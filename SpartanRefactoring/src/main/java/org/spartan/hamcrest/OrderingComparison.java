@@ -1,7 +1,6 @@
 package org.spartan.hamcrest;
 
-import org.hamcrest.Factory;
-import org.hamcrest.Matcher;
+import org.hamcrest.*;
 
 /**
  * Non-auto-boxing version for all primitive types of Hamcrest number comparison

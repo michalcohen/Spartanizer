@@ -1,29 +1,18 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.spartanizations.Wrap;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.junit.runners.*;
+import org.spartan.refactoring.spartanizations.*;
 
 /**
  * @author Yossi Gil

@@ -1,13 +1,12 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jface.text.Document;
-import org.junit.Test;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.*;
+import org.junit.*;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class WrapTest {
   @Test public void method() {

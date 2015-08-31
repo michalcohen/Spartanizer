@@ -1,9 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Rewrite;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.text.edits.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A wring to remove <code>super()</code> calls which take no arguments, as

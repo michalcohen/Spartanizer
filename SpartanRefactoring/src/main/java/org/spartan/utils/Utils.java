@@ -1,11 +1,6 @@
 package org.spartan.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An empty <code><b>enum</b></code> with a variety of <code>public

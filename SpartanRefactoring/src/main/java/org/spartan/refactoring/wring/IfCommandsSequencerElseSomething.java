@@ -1,22 +1,14 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.then;
-import static org.spartan.refactoring.utils.Restructure.duplicateInto;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.text.edits.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>if (x) {

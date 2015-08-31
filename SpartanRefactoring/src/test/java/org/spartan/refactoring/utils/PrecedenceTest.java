@@ -1,20 +1,14 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.comparesEqualTo;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.utils.Into.a;
-import static org.spartan.refactoring.utils.Into.c;
-import static org.spartan.refactoring.utils.Into.e;
-import static org.spartan.refactoring.utils.Into.p;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.refactoring.utils.Into.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.FieldAccess;
-import org.junit.Test;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
 
 /**
  * @author Yossi Gil

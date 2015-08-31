@@ -1,12 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression.Operator;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.spartan.refactoring.utils.AncestorSearch;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.PostfixExpression.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} that converts, whenever possible, postfix increment/decrement

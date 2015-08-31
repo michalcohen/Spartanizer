@@ -1,10 +1,7 @@
 package org.spartan.refactoring.utils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.*;
+import java.util.Map.*;
 
 class ChainStringToIntegerMap {
   public Map<String, Integer> inner = new HashMap<>();

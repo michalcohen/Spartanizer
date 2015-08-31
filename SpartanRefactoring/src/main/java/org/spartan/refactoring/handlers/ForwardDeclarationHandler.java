@@ -1,6 +1,6 @@
 package org.spartan.refactoring.handlers;
 
-import org.spartan.refactoring.spartanizations.ForwardDeclaration;
+import org.spartan.refactoring.spartanizations.*;
 
 /**
  * a handler for {@link ForwardDeclaration}

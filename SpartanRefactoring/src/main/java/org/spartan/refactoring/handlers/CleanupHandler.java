@@ -1,21 +1,18 @@
 package org.spartan.refactoring.handlers;
 
-import static org.spartan.refactoring.handlers.ApplySpartanizationHandler.applySafeSpartanizationsTo;
-import static org.spartan.refactoring.spartanizations.DialogBoxes.announce;
+import static org.spartan.refactoring.handlers.ApplySpartanizationHandler.*;
+import static org.spartan.refactoring.spartanizations.DialogBoxes.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
-import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.spartanizations.Spartanizations;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.progress.*;
+import org.spartan.refactoring.spartanizations.*;
 
 /**
  * A handler for {@link Spartanizations}. This handler executes all safe

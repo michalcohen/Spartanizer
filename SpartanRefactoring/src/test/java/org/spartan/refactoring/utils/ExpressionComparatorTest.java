@@ -1,15 +1,13 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThan;
-import static org.spartan.hamcrest.OrderingComparison.lessThan;
-import static org.spartan.refactoring.utils.Into.e;
+import static org.spartan.hamcrest.CoreMatchers.*;
+import static org.spartan.hamcrest.MatcherAssert.*;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.refactoring.utils.Into.*;
 
-import org.eclipse.jdt.core.dom.Expression;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.junit.runners.*;
 
 /**
  * Test class for {@link ExpressionComparator}

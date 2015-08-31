@@ -1,12 +1,9 @@
 package org.spartan.refactoring.utils;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jface.text.Document;
+import org.eclipse.core.resources.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.*;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say

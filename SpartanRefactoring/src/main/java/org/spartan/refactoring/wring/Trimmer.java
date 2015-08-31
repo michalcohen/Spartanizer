@@ -1,33 +1,17 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.utils.Utils.removeDuplicates;
+import static org.spartan.utils.Utils.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
-import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.utils.Range;
+import org.eclipse.core.resources.*;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.text.edits.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.utils.*;
+import org.spartan.utils.*;
 
 /**
  * Applies the first applicable {@link Wring} object found in

@@ -1,54 +1,28 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.TESTUtils;
-import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Subject;
-import org.spartan.utils.Utils;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.text.edits.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.utils.*;
+import org.spartan.utils.*;
 
 @SuppressWarnings({ "javadoc" }) //
 @RunWith(Parameterized.class) //

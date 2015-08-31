@@ -1,13 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
-import org.junit.Test;
-import org.junit.runners.Parameterized.Parameter;
-import org.spartan.refactoring.spartanizations.Wrap;
+import org.junit.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.spartanizations.*;
 
 @SuppressWarnings({ "javadoc" }) //
 public class AbstractTestBase {

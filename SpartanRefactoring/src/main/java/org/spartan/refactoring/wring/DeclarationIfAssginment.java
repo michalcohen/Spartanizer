@@ -1,24 +1,13 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.text.edits.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>int a = 2;

@@ -1,30 +1,22 @@
 package org.spartan.refactoring.utils;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Into.e;
-import static org.spartan.refactoring.utils.Into.i;
-import static org.spartan.refactoring.utils.Into.s;
-import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.Statement;
-import org.junit.Test;
-import org.spartan.refactoring.utils.Subject.Pair;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.spartan.refactoring.utils.Subject.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class SubjectTest {
   @Test public void vanilla() {

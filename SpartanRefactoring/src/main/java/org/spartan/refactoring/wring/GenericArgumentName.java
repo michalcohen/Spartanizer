@@ -1,9 +1,7 @@
 package org.spartan.refactoring.wring;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.spartan.refactoring.utils.JavaTypeNameParser;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert a method argument's name to its short version

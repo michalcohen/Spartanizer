@@ -1,20 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.not;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.utils.Utils.in;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.spartan.refactoring.utils.Extract.*;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.utils.Utils.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Plant;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} that eliminates redundant comparison with the two boolean

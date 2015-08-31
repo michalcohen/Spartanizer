@@ -1,14 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Restructure.duplicateInto;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.Statement;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>{;; g(); {}{;{;{;}};} }</code> into

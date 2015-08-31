@@ -1,30 +1,14 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.CLASS_INSTANCE_CREATION;
-import static org.eclipse.jdt.core.dom.ASTNode.FIELD_ACCESS;
-import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
-import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Restructure.parenthesize;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.spartan.refactoring.utils.Extract.*;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.FieldAccess;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Plant;
-import org.spartan.refactoring.utils.Precedence;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 final class TernaryPushdown extends Wring.Replacing<ConditionalExpression> {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {

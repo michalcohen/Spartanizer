@@ -1,8 +1,8 @@
 package org.spartan.utils;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.*;
 
 /**
  * An immutable integral range, representing all integers between {@link #from},

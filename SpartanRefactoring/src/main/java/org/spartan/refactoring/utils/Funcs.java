@@ -1,64 +1,17 @@
 package org.spartan.refactoring.utils;
 
-import static org.eclipse.jdt.core.dom.ASTNode.ASSIGNMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.BLOCK;
-import static org.eclipse.jdt.core.dom.ASTNode.BOOLEAN_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.EXPRESSION_STATEMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.IF_STATEMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.INFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.ASTNode.METHOD_DECLARATION;
-import static org.eclipse.jdt.core.dom.ASTNode.METHOD_INVOCATION;
-import static org.eclipse.jdt.core.dom.ASTNode.NULL_LITERAL;
-import static org.eclipse.jdt.core.dom.ASTNode.POSTFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.ASTNode.PREFIX_EXPRESSION;
-import static org.eclipse.jdt.core.dom.ASTNode.RETURN_STATEMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.SIMPLE_NAME;
-import static org.eclipse.jdt.core.dom.ASTNode.VARIABLE_DECLARATION_STATEMENT;
-import static org.eclipse.jdt.core.dom.ASTNode.copySubtree;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.NOT;
-import static org.spartan.utils.Utils.hasNull;
-import static org.spartan.utils.Utils.in;
-import static org.spartan.utils.Utils.inRange;
-import static org.spartan.utils.Utils.last;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
+import static org.spartan.utils.Utils.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.ExpressionStatement;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.InstanceofExpression;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Modifier;
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.ThrowStatement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.spartan.refactoring.wring.PrefixNotPushdown;
-import org.spartan.utils.Utils;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.InfixExpression.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.spartan.refactoring.wring.*;
+import org.spartan.utils.*;
 
 /**
  * Useful Functions

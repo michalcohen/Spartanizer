@@ -1,11 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.*;
 
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e)</code> into

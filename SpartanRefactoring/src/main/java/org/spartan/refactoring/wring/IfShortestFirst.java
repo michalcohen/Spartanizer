@@ -1,12 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.utils.Funcs.*;
 
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e)</code> into

@@ -1,34 +1,15 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.GREATER_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.LESS_EQUALS;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.NOT_EQUALS;
-import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.asAndOrOr;
-import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
-import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.asNot;
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.not;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Restructure.conjugate;
-import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.spartan.refactoring.utils.Extract.*;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.BooleanLiteral;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.InfixExpression.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} that pushes down "<code>!</code>", the negation operator as

@@ -1,16 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.spartan.refactoring.utils.ExpressionComparator;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Subject;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.InfixExpression.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} that sorts the arguments of a {@link Operator#PLUS}

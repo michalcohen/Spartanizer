@@ -1,18 +1,12 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Funcs.removeWhites;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.utils.Utils.hasNull;
+import static org.spartan.utils.Utils.*;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.*;
 
 /**
  * Various methods for comparing

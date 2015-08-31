@@ -1,23 +1,13 @@
 package org.spartan.refactoring.handlers;
 
-import static org.spartan.utils.Utils.append;
-import static org.spartan.utils.Utils.delete;
+import static org.spartan.utils.Utils.*;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
-import org.spartan.refactoring.builder.Builder;
-import org.spartan.refactoring.builder.Nature;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.handlers.*;
+import org.spartan.refactoring.builder.*;
 
 /**
  * A command handler which toggles the spartanization nature

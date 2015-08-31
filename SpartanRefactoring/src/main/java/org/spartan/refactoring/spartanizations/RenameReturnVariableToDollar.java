@@ -1,21 +1,12 @@
 package org.spartan.refactoring.spartanizations;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.MethodExplorer;
-import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.refactoring.utils.Rewrite;
+import org.eclipse.core.resources.*;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.text.edits.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * @author Artium Nihamkin (original)

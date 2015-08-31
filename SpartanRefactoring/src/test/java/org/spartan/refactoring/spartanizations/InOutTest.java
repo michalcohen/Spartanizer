@@ -1,22 +1,20 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
-import static org.spartan.refactoring.wring.TrimmerTest.countOpportunities;
-import static org.spartan.utils.Utils.objects;
+import static org.junit.Assert.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.spartan.refactoring.wring.TrimmerTest.*;
+import static org.spartan.utils.Utils.*;
 
-import java.io.File;
-import java.util.Collection;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jface.text.Document;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.As;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jface.text.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * Run tests in which a specific transformation is not supposed to change the

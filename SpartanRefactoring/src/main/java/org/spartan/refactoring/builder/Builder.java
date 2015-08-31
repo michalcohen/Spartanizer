@@ -1,23 +1,12 @@
 package org.spartan.refactoring.builder;
 
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.spartanizations.Spartanizations;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Rewrite;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.dom.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.utils.*;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>

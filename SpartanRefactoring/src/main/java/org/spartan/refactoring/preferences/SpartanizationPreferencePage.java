@@ -1,26 +1,14 @@
 package org.spartan.refactoring.preferences;
 
-import static org.spartan.refactoring.preferences.PreferencesStrings.BothLiteralsOptions;
-import static org.spartan.refactoring.preferences.PreferencesStrings.NullAndBoolOptions;
-import static org.spartan.refactoring.preferences.PreferencesStrings.bothLiteralsHeader;
-import static org.spartan.refactoring.preferences.PreferencesStrings.nullAndBoolHeader;
-import static org.spartan.refactoring.preferences.PreferencesStrings.repositionRightLiteralsHeader;
-import static org.spartan.refactoring.preferences.PreferencesStrings.rightLiteralOptions;
-import static org.spartan.refactoring.preferences.PreferencesStrings.swapMessageHeader;
-import static org.spartan.refactoring.preferences.PreferencesStrings.swapMessageOptions;
-import static org.spartan.refactoring.spartanizations.Spartanizations.allRulesNames;
+import static org.spartan.refactoring.preferences.PreferencesStrings.*;
+import static org.spartan.refactoring.spartanizations.Spartanizations.*;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.spartan.refactoring.builder.Plugin;
-import org.spartan.refactoring.preferences.PreferencesStrings.Strings;
+import org.eclipse.jface.preference.*;
+import org.eclipse.ui.*;
+import org.spartan.refactoring.builder.*;
+import org.spartan.refactoring.preferences.PreferencesStrings.*;
 
 /**
  * This class represents a preference page that is contributed to the

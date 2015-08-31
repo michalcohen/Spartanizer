@@ -1,24 +1,22 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.spartan.hamcrest.CoreMatchers.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.Collection;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.utils.Utils;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.utils.*;
+import org.spartan.utils.*;
 
 /**
  * Unit tests for {@link Wrings#MULTIPLCATION_SORTER}.

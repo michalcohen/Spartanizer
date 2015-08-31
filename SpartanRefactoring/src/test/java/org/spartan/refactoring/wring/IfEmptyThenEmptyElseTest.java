@@ -1,28 +1,18 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.hamcrest.OrderingComparison.greaterThan;
+import static org.spartan.hamcrest.OrderingComparison.*;
 
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
-import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Into;
-import org.spartan.refactoring.utils.Rewrite;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.text.edits.*;
+import org.junit.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.utils.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class IfEmptyThenEmptyElseTest {

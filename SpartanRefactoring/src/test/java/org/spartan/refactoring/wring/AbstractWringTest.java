@@ -1,58 +1,29 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.spartanizations.TESTUtils.asSingle;
-import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static org.spartan.refactoring.spartanizations.TESTUtils.compressSpaces;
-import static org.spartan.refactoring.utils.Funcs.asBlock;
-import static org.spartan.refactoring.utils.Funcs.asIfStatement;
-import static org.spartan.refactoring.utils.Into.c;
-import static org.spartan.refactoring.utils.Into.e;
-import static org.spartan.refactoring.utils.Into.i;
-import static org.spartan.refactoring.utils.Into.p;
-import static org.spartan.refactoring.utils.Into.s;
-import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConditionalExpression;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
-import org.junit.Test;
-import org.junit.runners.Parameterized.Parameter;
-import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.spartanizations.TESTUtils;
-import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Funcs;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Conditional;
-import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.Infix;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.text.edits.*;
+import org.junit.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.wring.AbstractWringTest.WringedExpression.*;
 
 /**
  * @author Yossi Gil

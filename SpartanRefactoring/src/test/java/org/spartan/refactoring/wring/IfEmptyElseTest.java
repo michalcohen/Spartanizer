@@ -1,25 +1,22 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.Collection;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.IfStatement;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
-import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
-import org.spartan.utils.Utils;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.wring.AbstractWringTest.*;
+import org.spartan.utils.*;
 
 /**
  * Unit tests for {@link Wrings#IFX_SOMETHING_EXISTING_EMPTY_ELSE}.

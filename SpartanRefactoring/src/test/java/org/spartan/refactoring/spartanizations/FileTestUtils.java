@@ -1,16 +1,11 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
-import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.*;
 
 /**
  * An abstract representation of our test suite, which is represented in

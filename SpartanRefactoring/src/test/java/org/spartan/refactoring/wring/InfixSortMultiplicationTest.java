@@ -1,44 +1,30 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Into.e;
-import static org.spartan.refactoring.utils.Into.i;
-import static org.spartan.refactoring.utils.Restructure.flatten;
+import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.InfixExpression.Operator;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.utils.ExpressionComparator;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.LiteralParser;
-import org.spartan.refactoring.utils.LiteralParser.Kinds;
-import org.spartan.refactoring.wring.AbstractWringTest.Noneligible;
-import org.spartan.utils.Utils;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.InfixExpression.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.text.edits.*;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
+import org.junit.runners.Parameterized.*;
+import org.spartan.refactoring.spartanizations.*;
+import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.LiteralParser.*;
+import org.spartan.refactoring.wring.AbstractWringTest.*;
+import org.spartan.utils.*;
 
 /**
  * Unit tests for {@link Wrings#MULTIPLCATION_SORTER}.

@@ -1,15 +1,14 @@
 package org.spartan.refactoring.utils;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.*;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.hamcrest.MatcherAssert.iz;
-import static org.spartan.refactoring.utils.Into.e;
+import static org.spartan.refactoring.utils.Into.*;
 
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.junit.Test;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class PlantTest {
   @Test public void plantIntoNull() {

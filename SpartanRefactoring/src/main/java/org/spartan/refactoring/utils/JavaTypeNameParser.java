@@ -1,6 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * A utility parser that resolves a variable's short name, and determines

@@ -1,9 +1,9 @@
 package org.spartan.hamcrest;
 
-import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.CoreMatchers.*;
 
-import org.hamcrest.Matcher;
-import org.spartan.utils.Wrapper;
+import org.hamcrest.*;
+import org.spartan.utils.*;
 
 /**
  * Non-auto-boxing version for all primitive types of the family of Hamcrest

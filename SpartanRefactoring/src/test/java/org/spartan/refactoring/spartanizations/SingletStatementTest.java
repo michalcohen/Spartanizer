@@ -1,24 +1,19 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
-import static org.spartan.refactoring.utils.Into.s;
-import static org.spartan.refactoring.utils.Restructure.singleStatement;
+import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.refactoring.utils.Restructure.*;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Statement;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
+import org.eclipse.jdt.core.dom.*;
+import org.junit.*;
+import org.junit.runners.*;
+import org.spartan.refactoring.utils.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //

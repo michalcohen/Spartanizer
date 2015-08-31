@@ -1,11 +1,8 @@
 package org.spartan.refactoring.spartanizations;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.spartan.refactoring.wring.Trimmer;
+import org.spartan.refactoring.wring.*;
 
 /**
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
