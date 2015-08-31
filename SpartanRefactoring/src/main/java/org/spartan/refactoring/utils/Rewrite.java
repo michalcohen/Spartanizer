@@ -46,7 +46,8 @@ public abstract class Rewrite extends Range {
     return r;
   }
   static Range singleNodeRange(final ASTNode n) {
-    return new Range(n.getStartPosition(), n.getStartPosition() + n.getLength());
+    final int from = n.getStartPosition();
+    return new Range(from, from + n.getLength());
   }
   /**
    * Convert the rewrite into changes on an {@link ASTRewrite}
