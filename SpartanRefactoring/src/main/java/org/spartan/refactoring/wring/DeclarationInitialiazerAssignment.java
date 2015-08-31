@@ -1,18 +1,22 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
-import org.spartan.refactoring.utils.Extract;
+import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.same;
+
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Assignment;
-import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Occurrences;
 
 /**

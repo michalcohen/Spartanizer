@@ -1,6 +1,7 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.PLUS;
+
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.Expression;
