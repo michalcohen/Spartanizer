@@ -330,7 +330,7 @@ import org.spartan.refactoring.utils.As;
         "    else if (b == 3)\n" + //
         "      b = r();\n" + //
         "    else\n" + //
-        "      b = a;", "int a=3,b=5;b=b!=3?a:r();");
+        "      b = a;", "int a=3,b=5!=3?a:r();");
   }
   @Test(timeout = 100) public void ternarize18() {
     assertConvertsTo(//

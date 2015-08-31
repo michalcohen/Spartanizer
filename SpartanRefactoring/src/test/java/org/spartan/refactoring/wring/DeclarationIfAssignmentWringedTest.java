@@ -158,7 +158,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final ASTRewrite r = ASTRewrite.create(f.getAST());
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
-    final ASTRewrite fillReplacement = WRING.go(r, f, null);
+    final ASTRewrite fillReplacement = WRING.go(r, f, null, null);
     final boolean scopeIncludes = fillReplacement != null;
     assertThat(asMe().toString(), scopeIncludes, is(true));
   }

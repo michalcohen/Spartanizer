@@ -705,6 +705,29 @@ import org.spartan.refactoring.utils.Is;
             "", //
         "return types.hashCode() + 31 * mockedType.hashCode();");
   }
+  @Test public void issue40abbreviated() {
+    assertConvertsTo(
+        "" + //
+            "    int a = 3;\n" + //
+            "    a = 31 * a;\n" + //
+            "    return a;\n" + //
+            "", //
+        "return 31 * 3;");
+  }
+  @Test public void issue40Simplified() {
+    assertConvertsTo(
+        "" + //
+            "    int a = 3;\n" + //
+            "    a = 31 * a;" + //
+            "", //
+        "int a = 31 * 3; ");
+  }
+  @Test public void issue40SimplifiedVariant() {
+    assertNoConversion("" + //
+        "    int a = 3;\n" + //
+        "    a += 31 * a;" + //
+        "");
+  }
   @Test public void linearTransformation() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }

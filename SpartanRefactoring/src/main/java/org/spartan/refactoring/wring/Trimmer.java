@@ -2,7 +2,9 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.utils.Utils.removeDuplicates;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -119,14 +121,20 @@ public class Trimmer extends Spartanization {
       @Override public boolean visit(final VariableDeclarationFragment it) {
         return go(it);
       }
+      final Set<ASTNode> exclude = new HashSet<>();
       private <N extends ASTNode> boolean go(final N n) {
+        if (exclude.contains(n)) {
+          exclude.remove(n);
+          return false;
+        }
         final Wring<N> w = Toolbox.instance.find(n);
-        return w == null || w.nonEligible(n) || overrideInto(w.make(n), $);
+        return w == null || w.nonEligible(n) || overrideInto(w.make(n, exclude), $);
       }
     };
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
+      final Set<ASTNode> exclude = new HashSet<>();
       @Override public boolean visit(final Assignment a) {
         return go(a);
       }
@@ -157,9 +165,13 @@ public class Trimmer extends Spartanization {
       private <N extends ASTNode> boolean go(final N n) {
         if (!inRange(m, n))
           return true;
+        if (exclude.contains(n)) {
+          exclude.remove(n);
+          return false;
+        }
         final Wring<N> w = Toolbox.instance.find(n);
         if (w != null) {
-          final Rewrite make = w.make(n);
+          final Rewrite make = w.make(n, exclude);
           if (make != null)
             make.go(r, null);
         }

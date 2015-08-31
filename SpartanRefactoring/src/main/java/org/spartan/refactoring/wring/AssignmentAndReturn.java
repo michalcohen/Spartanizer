@@ -21,7 +21,7 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-08-28
  */
 public class AssignmentAndReturn extends Wring.ReplaceToNextStatement<Assignment> {
-  @Override ASTRewrite go(final ASTRewrite r, final Assignment a, final TextEditGroup g) {
+  @Override ASTRewrite go(final ASTRewrite r, final Assignment a, final Statement s1, final TextEditGroup g) {
     final Statement parent = asStatement(a.getParent());
     if (parent == null)
       return null;

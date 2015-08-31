@@ -11,6 +11,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -28,7 +29,7 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-08-07
  */
 public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final TextEditGroup g) {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
     final Expression initializer = f.getInitializer();
     if (initializer == null)
       return null;

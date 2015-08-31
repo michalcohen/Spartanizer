@@ -4,6 +4,7 @@ import static org.spartan.refactoring.utils.Funcs.same;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -18,7 +19,7 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-08-07
  */
 public final class DeclarationReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final TextEditGroup g) {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
     final Expression initializer = f.getInitializer();
     if (initializer == null)
       return null;

@@ -23,7 +23,7 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-08-28
  */
 public class PrefixIncrementDecrementReturn extends Wring.ReplaceToNextStatement<PrefixExpression> {
-  @Override ASTRewrite go(final ASTRewrite r, final PrefixExpression e, final TextEditGroup g) {
+  @Override ASTRewrite go(final ASTRewrite r, final PrefixExpression e, final Statement nextStatement, final TextEditGroup g) {
     if (!in(e.getOperator(), INCREMENT, DECREMENT))
       return null;
     final Statement parent = asStatement(e.getParent());

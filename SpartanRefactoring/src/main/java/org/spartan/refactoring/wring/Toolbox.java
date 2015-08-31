@@ -65,6 +65,7 @@ public class Toolbox {
           null)
       .add(VariableDeclarationFragment.class, //
           new DeclarationAssignment(), //
+          new DeclarationInitialiazerAssignment(), //
           new DeclarationIfAssginment(), //
           new DeclarationReturn(), //
           null) //
