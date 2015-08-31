@@ -42,11 +42,6 @@ public final class DeclarationInitialiazerAssignment extends Wring.ReplaceToNext
     }
     return null;
   }
-  private static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
-    final VariableDeclarationFragment $ = duplicate(f);
-    $.setInitializer(duplicate(e));
-    return $;
-  }
   @Override String description(final VariableDeclarationFragment n) {
     return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";
   }
