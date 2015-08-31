@@ -696,7 +696,7 @@ import org.spartan.refactoring.utils.Is;
         "}" + //
         "");
   }
-  @Test public void issue40() {
+  @Test public void issue37() {
     assertConvertsTo(
         "" + //
             "    int result = mockedType.hashCode();\n" + //
@@ -705,7 +705,7 @@ import org.spartan.refactoring.utils.Is;
             "", //
         "return types.hashCode() + 31 * mockedType.hashCode();");
   }
-  @Test public void issue40abbreviated() {
+  @Test public void issue37abbreviated() {
     assertConvertsTo(
         "" + //
             "    int a = 3;\n" + //
@@ -714,7 +714,7 @@ import org.spartan.refactoring.utils.Is;
             "", //
         "return 31 * 3;");
   }
-  @Test public void issue40Simplified() {
+  @Test public void issue37Simplified() {
     assertConvertsTo(
         "" + //
             "    int a = 3;\n" + //
@@ -722,7 +722,7 @@ import org.spartan.refactoring.utils.Is;
             "", //
         "int a = 31 * 3; ");
   }
-  @Test public void issue40SimplifiedVariant() {
+  @Test public void issue37SimplifiedVariant() {
     assertNoConversion("" + //
         "    int a = 3;\n" + //
         "    a += 31 * a;" + //
