@@ -26,9 +26,8 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil
  * @since 2014-07-13
  */
-@SuppressWarnings("javadoc") //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
-public class IfShortestFirstTest {
+@SuppressWarnings({ "static-method", "javadoc" }) public class IfShortestFirstTest {
   @Test public void statmentCount() {
     final CompilationUnit u = Wrap.Statement.intoCompilationUnit("" + //
         "if (name == null) {\n" + //
