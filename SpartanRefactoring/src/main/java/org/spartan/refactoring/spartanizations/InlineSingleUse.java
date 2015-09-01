@@ -7,8 +7,8 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Occurrences;
 import org.spartan.refactoring.utils.Rewrite;
+import org.spartan.refactoring.utils.Search;
 
 /**
  * @author Artium Nihamkin (original)
@@ -52,8 +52,8 @@ public class InlineSingleUse extends Spartanization {
           return true;
         final SimpleName name = n.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
-        final List<Expression> uses = Occurrences.USES_SEMANTIC.of(name).in(parent.getParent());
-        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, name, parent.getParent()) == 1)) {
+        final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(parent.getParent());
+        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Search.DEFINITIONS, name, parent.getParent()) == 1)) {
           r.replace(uses.get(0), n.getInitializer(), null);
           r.remove(parent.fragments().size() != 1 ? n : parent, null);
         }
@@ -68,7 +68,8 @@ public class InlineSingleUse extends Spartanization {
       }
       private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
-        if (numOfOccur(Occurrences.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || numOfOccur(Occurrences.ASSIGNMENTS, n, parent.getParent()) == 1))
+        if (numOfOccur(Search.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || //
+            numOfOccur(Search.DEFINITIONS, n, parent.getParent()) == 1))
           $.add(new Rewrite("", v) {
             @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
               // TODO Auto-generated method stub
@@ -78,7 +79,7 @@ public class InlineSingleUse extends Spartanization {
       }
     };
   }
-  static int numOfOccur(final Occurrences typeOfOccur, final Expression of, final ASTNode in) {
+  static int numOfOccur(final Search typeOfOccur, final Expression of, final ASTNode in) {
     return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
   }
 }

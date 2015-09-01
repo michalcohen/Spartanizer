@@ -1,9 +1,10 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.utils.Utils.in;
 import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.utils.Utils.asArray;
+import static org.spartan.utils.Utils.in;
 
 import java.util.*;
 
@@ -18,7 +19,7 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil <yossi.gil @ gmail.com> (major refactoring 2013/07/10)
  * @since 2013/07/01
  */
-public enum Occurrences {
+public enum Search {
   /** collects semantic (multiple uses for loops) uses of an expression */
   USES_SEMANTIC {
     @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
@@ -32,7 +33,7 @@ public enum Occurrences {
     }
   },
   /** collects assignments of an expression */
-  ASSIGNMENTS {
+  DEFINITIONS {
     @Override ASTVisitor[] collectors(final Expression e, final List<Expression> into) {
       return asArray(definitionsCollector(into, e));
     }
@@ -55,6 +56,48 @@ public enum Occurrences {
       return asArray(lexicalUsesCollector(into, e), definitionsCollector(into, e));
     }
   };
+  static Searcher forDefinitions(final SimpleName n) {
+    return new Searcher(n);
+  }
+  public static Checker findDefinitions(final SimpleName n) {
+    return new Checker(n);
+  }
+  public static NoChecker noDefinitions(final SimpleName n) {
+    return new NoChecker(n);
+  }
+
+  public static class NoChecker {
+    private final SimpleName name;
+    public NoChecker(final SimpleName name) {
+      this.name = name;
+    }
+    public boolean in(final ASTNode... ns) {
+      return forDefinitions(name).in(ns).isEmpty();
+    }
+  }
+
+  public static class Checker {
+    private final SimpleName name;
+    public Checker(final SimpleName name) {
+      this.name = name;
+    }
+    public boolean in(final ASTNode... ns) {
+      return !forDefinitions(name).in(ns).isEmpty();
+    }
+  }
+
+  public static class Searcher {
+    private final SimpleName name;
+    public Searcher(final SimpleName name) {
+      this.name = name;
+    }
+    public List<Expression> in(final ASTNode... ns) {
+      final List<Expression> $ = new ArrayList<>();
+      for (final ASTNode n : ns)
+        n.accept(definitionsCollector($, name));
+      return $;
+    }
+  }
   static final ASTMatcher matcher = new ASTMatcher();
   static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
     return new MethodExplorer.IgnoreNestedMethods() {
@@ -313,7 +356,7 @@ public enum Occurrences {
    * for the search, will carry out the search for the captured value in its
    * location parameter.
    *
-   * @see Occurrences#of(Expression)
+   * @see Search#of(Expression)
    * @author Yossi Gil <yossi.gil @ gmail.com>
    * @since 2013/14/07
    */

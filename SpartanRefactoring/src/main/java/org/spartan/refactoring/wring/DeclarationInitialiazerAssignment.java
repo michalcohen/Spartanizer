@@ -9,7 +9,8 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Occurrences;
+import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Search;
 
 /**
  * A {@link Wring} to convert <code>int a;
@@ -20,6 +21,8 @@ import org.spartan.refactoring.utils.Occurrences;
  */
 public final class DeclarationInitialiazerAssignment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
+    if (!Is.variableDeclarationStatement(f.getParent()))
+      return null;
     final Expression firstInitializer = f.getInitializer();
     if (firstInitializer == null)
       return null;
@@ -28,12 +31,12 @@ public final class DeclarationInitialiazerAssignment extends Wring.ReplaceToNext
       return null;
     final SimpleName name = f.getName();
     final Expression secondInitializer = right(a);
-    final List<Expression> uses = Occurrences.USES_SEMANTIC.of(name).in(secondInitializer);
-    if (uses.size() == 1 && Occurrences.ASSIGNMENTS.of(name).in(secondInitializer).isEmpty()) {
+    final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(secondInitializer);
+    if (uses.size() == 1 && Search.noDefinitions(name).in(secondInitializer)) {
       r.remove(Extract.statement(a), g);
       final ASTNode betterInitializer = duplicate(secondInitializer);
       r.replace(firstInitializer, betterInitializer, g);
-      r.replace(Occurrences.USES_SEMANTIC.of(name).in(betterInitializer).get(0), firstInitializer, g);
+      r.replace(Search.USES_SEMANTIC.of(name).in(betterInitializer).get(0), firstInitializer, g);
       return r;
     }
     return null;

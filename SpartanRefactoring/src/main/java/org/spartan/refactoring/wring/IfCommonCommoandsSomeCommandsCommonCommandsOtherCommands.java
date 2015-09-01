@@ -1,7 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.wring.Wrings.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.wring.Wrings.invert;
 
 import java.util.ArrayList;
 import java.util.List;

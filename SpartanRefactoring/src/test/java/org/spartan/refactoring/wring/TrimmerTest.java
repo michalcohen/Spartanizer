@@ -1399,10 +1399,17 @@ import org.spartan.refactoring.utils.*;
   @Test public void shortestOperand02() {
     assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
   }
+  @Test public void replaceInitializationInReturn() {
+    assertConvertsTo("int a = 3; return a + 4;", "return 3 + 4;");
+  }
+  @Test public void replaceTwiceInitializationInReturn() {
+    assertConvertsTo("int a = 3; return a + 4 << a;", "return 3 + 4 << 3;");
+  }
   @Test public void shortestOperand05() {
-    assertNoConversion(//
+    assertConvertsTo(//
         "    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
-            "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";");
+            "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";",
+        "return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
   }
   @Test public void shortestOperand09() {
     assertNoChange("return 2 - 4 < 50 - 20 - 10 - 5;} ");
@@ -1414,7 +1421,7 @@ import org.spartan.refactoring.utils.*;
     assertNoChange("int h,u,m,a,n;return b == true && n + a > m - u || h > u;");
   }
   @Test public void shortestOperand12() {
-    assertConvertsTo("int k = 15;   return 7 < k; ", "int k = 15; return k > 7;");
+    assertConvertsTo("int k = 15;   return 7 < k; ", "return 7<15;");
   }
   @Test public void shortestOperand13() {
     assertConvertsTo("return (2 > 2 + a) == true;", "return 2>a+2;");
@@ -1429,10 +1436,104 @@ import org.spartan.refactoring.utils.*;
     assertSimplifiesTo("2 == true", "2 ");
   }
   @Test public void shortestOperand14() {
-    assertNoConversion("Integer t = new Integer(5);   return (t.toString() == null);    ");
+    assertConvertsTo(//
+        "Integer t = new Integer(5);   return (t.toString() == null);    ", //
+        "return((new Integer(5)).toString()==null);");
   }
   @Test public void shortestOperand15() {
-    assertNoConversion("String t = Bob + Wants + To + \"Sleep \";   return (right_now + t);    ");
+    assertConvertsTo(
+        "" //
+            + "String t = Bob + Wants + To + \"Sleep \"; "//
+            + "  return (right_now + t);    ", //
+        "return(right_now+Bob+Wants+To+\"Sleep \");");
+  }
+  @Test public void shortestIfBranchFirst02() {
+    assertConvertsTo(
+        "" //
+            + "if (!s.equals(0xDEAD)) { "//
+            + " int res=0;"//
+            + " for (int i=0;i<s.length();++i)     "//
+            + "   if (s.charAt(i)=='a')      "//
+            + "     res += 2;"//
+            + "   else "//
+            + "  if (s.charAt(i)=='d')      "//
+            + "       res -= 1;"//
+            + "  return res;"//
+            + "} else {    "//
+            + " return 8;"//
+            + "}",
+        "" //
+            + " if (!s.equals(0xDEAD)) {\n" + //
+            "      int res = 0;\n" + //
+            "      for (int i = 0;i < s.length();++i)\n" + //
+            "       if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else " + "       if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "    }\n" + //
+            "    return 8;"//
+    );
+  }
+  @Test public void forLoopBug() {
+    assertNoConversion("" + //
+        "      for (int i = 0;i < s.length();++i)\n" + //
+        "       if (s.charAt(i) == 'a')\n" + //
+        "          res += 2;\n" + //
+        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "          res -= 1;\n" + //
+        "      return res;\n" + //
+        " if (b) i = 3;"//
+    );
+  }
+  @Test public void shortestIfBranchFirst02a() {
+    assertNoConversion("" //
+        + " if (!s.equals(0xDEAD)) {\n" + //
+        "      int res = 0;\n" + //
+        "      for (int i = 0;i < s.length();++i)\n" + //
+        "       if (s.charAt(i) == 'a')\n" + //
+        "          res += 2;\n" + //
+        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "          res -= 1;\n" + //
+        "      return res;\n" + //
+        "    }\n" + //
+        "    return 8;"//
+    );
+  }
+  @Test public void shortestIfBranchFirst02b() {
+    assertNoConversion("" + //
+        "      int res = 0;\n" + //
+        "      for (int i = 0;i < s.length();++i)\n" + //
+        "       if (s.charAt(i) == 'a')\n" + //
+        "          res += 2;\n" + //
+        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "          res -= 1;\n" + //
+        "      return res;\n" + //
+        "");
+  }
+  @Test public void shortestIfBranchFirst02c() {
+    final CompilationUnit u = Wrap.Statement.intoCompilationUnit("" + //
+        "      int res = 0;\n" + //
+        "      for (int i = 0;i < s.length();++i)\n" + //
+        "       if (s.charAt(i) == 'a')\n" + //
+        "          res += 2;\n" + //
+        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "          res -= 1;\n" + //
+        "      return res;\n" + //
+        ""//
+    );
+    final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(u);
+    assertThat(f, notNullValue());
+    assertThat(f, iz(" res = 0"));
+    final Statement s = Extract.nextStatement(f);
+    assertThat(s,
+        iz(" for (int i = 0;i < s.length();++i)\n" + //
+            "       if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else " + //
+            "       if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" //
+    ));
   }
   @Test public void shortestOperand16() {
     assertNoConversion("String t = Z2;   t = t.concat(A).concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");

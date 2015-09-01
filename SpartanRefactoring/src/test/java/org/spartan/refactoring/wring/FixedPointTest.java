@@ -109,7 +109,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
             + "if (!s.equals(0xDEAD)) { "//
             + " int res=0;"//
             + " for (int i=0;i<s.length();++i)     "//
-            + "if (s.charAt(i)=='a')      "//
+            + "   if (s.charAt(i)=='a')      "//
             + "     res += 2;"//
             + "   else "//
             + "  if (s.charAt(i)=='d')      "//
@@ -122,9 +122,9 @@ import org.spartan.refactoring.spartanizations.Wrap;
             + " if (!s.equals(0xDEAD)) {\n" + //
             "      int res = 0;\n" + //
             "      for (int i = 0;i < s.length();++i)\n" + //
-            "  if (s.charAt(i) == 'a')\n" + //
+            "       if (s.charAt(i) == 'a')\n" + //
             "          res += 2;\n" + //
-            "        else if (s.charAt(i) == 'd')\n" + //
+            "        else " + "       if (s.charAt(i) == 'd')\n" + //
             "          res -= 1;\n" + //
             "      return res;\n" + //
             "    }\n" + //
@@ -240,8 +240,15 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst13() {
     assertConvertsTo(
-        "    int a = 0;\n" + "    if (a > 0)\n" + "      return 6;\n" + "    else {\n" + "      int b = 9;\n" + "      b *= b;\n" + "      return b;\n" + "    }\n" + "    ;",
-        "int a=0;if(a>0)return 6;int b=9;return b*=b;");
+        "    int a = 0;\n" + //
+            "    if (a > 0)\n" //
+            + "      return 6;\n" //
+            + "    else {\n" //
+            + "      int b = 9;\n" //
+            + "      b *= b;\n" //
+            + "      return b;\n" //
+            + "    }\n" + "    ;", //
+        "return 0>0?6:9*9;");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst14() {
     assertConvertsTo("    int a = 0;\n" + //
@@ -252,7 +259,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
         "    } else {\n" + //
         "      a = 5;\n" + //
         "      return b;\n" + //
-        "    }", "int a=0;if(a>0){int b=9;b*=b;return 6;}a=5;return b;");
+        "    }", "int a=0;if(a>0){return 6;}a=5;return b;");
   }
   @Test(timeout = 2000) public void shortestOperand03() {
     assertConvertsTo(//
@@ -295,7 +302,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void ternarize04() {
     assertConvertsTo("  int res = 0;if (s.equals(532))    res += 6;else    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;",
-        "int res=0;return res+=s.equals(532)?6:9;");
+        "return 0+(s.equals(532)?6:9);");
   }
   @Test(timeout = 2000) public void ternarize06() {
     assertConvertsTo(//
@@ -337,7 +344,8 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void ternarize23() {
     assertConvertsTo(//
-        "int a=0;if (s.equals(532))   a+=y(2)+10;else a+=r(3)-6;", "int a=0;a+=s.equals(532)?y(2)+10:r(3)-6;");
+        "int a=0;if (s.equals(532))   a+=y(2)+10;else a+=r(3)-6;", //
+        "int a=0+(s.equals(532)?y(2)+10:r(3)-6);");
   }
   @Test(timeout = 2000) public void ternarize24() {
     assertConvertsTo(//

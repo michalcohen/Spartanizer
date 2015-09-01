@@ -1,8 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.compressSpaces;
@@ -31,8 +31,8 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.refactoring.utils.Occurrences.Of;
+import org.spartan.refactoring.utils.Search;
+import org.spartan.refactoring.utils.Search.Of;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.utils.Utils;
 
@@ -76,7 +76,7 @@ public class DeclarationIfAssginmentTest {
     assertThat(x.get(0), is(f));
     final VariableDeclarationFragment b = x.get(1);
     assertThat(b.toString(), is("b"));
-    final Of of = Occurrences.BOTH_SEMANTIC.of(b);
+    final Of of = Search.BOTH_SEMANTIC.of(b);
     assertNotNull(of);
     final Expression e = s.getExpression();
     assertNotNull(e);
@@ -84,7 +84,7 @@ public class DeclarationIfAssginmentTest {
     final List<Expression> in = of.in(e);
     assertThat(in.size(), is(1));
     assertThat(!in.isEmpty(), is(true));
-    assertThat(Occurrences.BOTH_SEMANTIC.of(f).existIn(s.getExpression(), right(a)), is(true));
+    assertThat(Search.BOTH_SEMANTIC.of(f).existIn(s.getExpression(), right(a)), is(true));
     assertThat(of.existIn(s.getExpression(), right(a)), is(true));
   }
 

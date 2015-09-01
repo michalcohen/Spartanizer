@@ -1,14 +1,15 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.same;
+
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>int a = 3;
@@ -17,7 +18,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
+public final class DeclarationInitializerInlineIntoReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
     if (!Is.variableDeclarationStatement(f.getParent()))
       return null;
@@ -28,10 +29,21 @@ public final class DeclarationReturn extends Wring.ReplaceToNextStatement<Variab
     if (s == null)
       return null;
     final Expression returnValue = Extract.expression(s);
-    if (returnValue == null || !same(f.getName(), returnValue))
+    if (returnValue == null)
+      return null;
+    final SimpleName name = f.getName();
+    if (same(f.getName(), returnValue))
+      return null;
+    final Expression newReturnValue = duplicate(returnValue);
+    if (Search.findDefinitions(name).in(newReturnValue))
+      return null;
+    final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(newReturnValue);
+    if (!Is.sideEffectFree(initializer) && uses.size() > 1)
       return null;
     r.remove(Extract.statement(f), g);
-    r.replace(s, Subject.operand(initializer).toReturn(), g);
+    r.replace(returnValue, newReturnValue, g);
+    for (final Expression e : uses)
+      r.replace(e, new Plant(initializer).into(e.getParent()), g);
     return r;
   }
   @Override String description(final VariableDeclarationFragment f) {

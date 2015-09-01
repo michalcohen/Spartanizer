@@ -2,7 +2,9 @@ package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.Assignment.Operator.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.left;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.same;
 
 import java.util.List;
 
@@ -21,6 +23,8 @@ import org.spartan.refactoring.utils.*;
  */
 public final class DeclarationInitialiazelUpdateAssignment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
+    if (!Is.variableDeclarationStatement(f.getParent()))
+      return null;
     final Expression firstInitializer = f.getInitializer();
     if (firstInitializer == null)
       return null;
@@ -34,22 +38,22 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Replace
     if (o == ASSIGN)
       return null;
     final Expression secondInitializer = right(a);
-    final List<Expression> uses = Occurrences.USES_SEMANTIC.of(name).in(secondInitializer);
-    if (uses.size() >= 2 || !Occurrences.ASSIGNMENTS.of(name).in(secondInitializer).isEmpty())
+    final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(secondInitializer);
+    if (uses.size() >= 2 || Search.findDefinitions(name).in(secondInitializer))
       return null;
     final ASTNode alternateInitializer = alernateInitializer(firstInitializer, secondInitializer, o, name);
     if (alternateInitializer == null)
       return null;
     r.remove(nextStatement, g);
     r.replace(firstInitializer, alternateInitializer, g);
-    final List<Expression> in = Occurrences.USES_SEMANTIC.of(name).in(alternateInitializer);
+    final List<Expression> in = Search.USES_SEMANTIC.of(name).in(alternateInitializer);
     if (!in.isEmpty())
       r.replace(in.get(0), firstInitializer, g);
     return r;
   }
   private static InfixExpression alernateInitializer(final Expression firstInitializer, final Expression secondInitializer, final Operator o, final SimpleName name) {
     final InfixExpression $ = Subject.pair(firstInitializer, secondInitializer).to(asInfix(o));
-    return Is.sideEffectFree(firstInitializer) || Occurrences.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? $ : null;
+    return Is.sideEffectFree(firstInitializer) || Search.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? $ : null;
   }
   private static InfixExpression.Operator asInfix(final Assignment.Operator o) {
     if (o == PLUS_ASSIGN)

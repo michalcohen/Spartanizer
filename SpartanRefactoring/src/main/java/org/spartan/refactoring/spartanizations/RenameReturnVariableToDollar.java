@@ -16,7 +16,7 @@ import org.spartan.refactoring.utils.*;
  */
 public class RenameReturnVariableToDollar extends Spartanization {
   static boolean replace(final MethodDeclaration d, final SimpleName n, final ASTRewrite r, final TextEditGroup g) {
-    for (final Expression e : Occurrences.BOTH_LEXICAL.of(n).in(d))
+    for (final Expression e : Search.BOTH_LEXICAL.of(n).in(d))
       r.replace(e, n, g);
     return true;
   }
@@ -67,7 +67,7 @@ public class RenameReturnVariableToDollar extends Spartanization {
   private static int score(final SimpleName n, final List<ReturnStatement> rs) {
     int $ = 0;
     for (final ReturnStatement r : rs)
-      $ += Occurrences.BOTH_LEXICAL.of(n).in(r).size();
+      $ += Search.BOTH_LEXICAL.of(n).in(r).size();
     return $;
   }
   private static SimpleName selectReturnVariable(final List<SimpleName> ns, final List<ReturnStatement> ss) {

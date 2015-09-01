@@ -8,9 +8,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Occurrences;
-import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>int a = 2;
@@ -22,6 +20,8 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
+    if (!Is.variableDeclarationStatement(f.getParent()))
+      return null;
     final Expression initializer = f.getInitializer();
     if (initializer == null)
       return null;
@@ -33,7 +33,7 @@ public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<
     if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN)
       return null;
     for (final VariableDeclarationFragment b : forbiddenSiblings(f))
-      if (Occurrences.BOTH_SEMANTIC.of(b).existIn(s.getExpression(), right(a)))
+      if (Search.BOTH_SEMANTIC.of(b).existIn(s.getExpression(), right(a)))
         return null;
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), g);
     r.remove(s, g);

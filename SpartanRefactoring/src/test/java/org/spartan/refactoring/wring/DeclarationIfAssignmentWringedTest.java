@@ -136,7 +136,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertNotNull(leftHandSide);
     assertTrue(same(leftHandSide, f.getName()));
     assertThat(a.getOperator(), is(Assignment.Operator.ASSIGN));
-    final List<Expression> in = Occurrences.BOTH_SEMANTIC.of(f).in(s.getExpression(), right(a));
+    final List<Expression> in = Search.BOTH_SEMANTIC.of(f).in(s.getExpression(), right(a));
     assertThat(in, notNullValue());
     final ASTRewrite r = ASTRewrite.create(f.getAST());
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
