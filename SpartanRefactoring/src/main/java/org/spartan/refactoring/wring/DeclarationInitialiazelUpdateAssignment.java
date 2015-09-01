@@ -54,6 +54,26 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Replace
   private static InfixExpression.Operator asInfix(final Assignment.Operator o) {
     if (o == PLUS_ASSIGN)
       return PLUS;
+    if (o == MINUS_ASSIGN)
+      return MINUS;
+    if (o == TIMES_ASSIGN)
+      return TIMES;
+    if (o == DIVIDE_ASSIGN)
+      return DIVIDE;
+    if (o == BIT_AND_ASSIGN)
+      return AND;
+    if (o == BIT_OR_ASSIGN)
+      return OR;
+    if (o == BIT_XOR_ASSIGN)
+      return XOR;
+    if (o == REMAINDER_ASSIGN)
+      return REMAINDER;
+    if (o == LEFT_SHIFT_ASSIGN)
+      return LEFT_SHIFT;
+    if (o == RIGHT_SHIFT_SIGNED_ASSIGN)
+      return RIGHT_SHIFT_SIGNED;
+    if (o == RIGHT_SHIFT_UNSIGNED_ASSIGN)
+      return RIGHT_SHIFT_UNSIGNED;
     return null;
   }
   @Override String description(final VariableDeclarationFragment n) {

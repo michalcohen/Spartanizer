@@ -96,24 +96,6 @@ import org.spartan.refactoring.utils.*;
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
-  @Test public void issue41() {
-    assertConvertsTo("int a = 3;a += 2;", "int a = 3+2;");
-  }
-  @Test public void issue41FunctionCall() {
-    assertConvertsTo("int a = f();a += 2;", "int a = f()+2;");
-  }
-  @Test public void issue41FunctionCallWithReuse() {
-    assertNoChange("int a = f();a += 2*f();");
-  }
-  @Test public void issue41Increment() {
-    assertConvertsTo("int a = ++i;a += j;", "int a = ++i + j;");
-  }
-  @Test public void issue41IncrementTwice() {
-    assertNoConversion("int a = ++i;a += a + j;");
-  }
-  @Test public void issue41WithReuse() {
-    assertConvertsTo("int a = 3;a += 2*a;", "int a = 3+2*3;");
-  }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
@@ -413,6 +395,69 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void declarationIfUsesLaterVariable() {
     assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
+  }
+  @Test public void declarationAssignmentWithIncrement() {
+    assertNoConversion("int a=0; a=++a;");
+  }
+  @Test public void declarationAssignmentWithPostIncrement() {
+    assertNoConversion("int a=0; a=a++;");
+  }
+  @Test public void declarationAssignmentUpdateWithIncrement() {
+    assertNoConversion("int a=0; a+=++a;");
+  }
+  @Test public void declarationAssignmentUpdateWithPostIncrement() {
+    assertNoConversion("int a=0; a+=a++;");
+  }
+  @Test public void declarationInitializeRightShift() {
+    assertConvertsTo("int a = 3;a>>=2;", "int a = 3 >> 2;");
+  }
+  @Test public void declarationInitializesRotate() {
+    assertConvertsTo("int a = 3;a>>>=2;", "int a = 3 >>> 2;");
+  }
+  @Test public void declarationInitializeUpdateAnd() {
+    assertConvertsTo("int a = 3;a&=2;", "int a = 3 & 2;");
+  }
+  @Test public void declarationInitializeUpdateAssignment() {
+    assertConvertsTo("int a = 3;a += 2;", "int a = 3+2;");
+  }
+  @Test public void declarationInitializeUpdateAssignmentFunctionCallWithReuse() {
+    assertNoChange("int a = f();a += 2*f();");
+  }
+  @Test public void declarationInitializeUpdateAssignmentFunctionCallWIthReuse() {
+    assertConvertsTo("int a = x;a += a + 2*f();", "int a=x+x+2*f();");
+  }
+  @Test public void declarationInitializeUpdateAssignmentIncrement() {
+    assertConvertsTo("int a = ++i;a += j;", "int a = ++i + j;");
+  }
+  @Test public void declarationInitializeUpdateAssignmentIncrementTwice() {
+    assertNoConversion("int a = ++i;a += a + j;");
+  }
+  @Test public void declarationInitializeUpdateAssignmentWithReuse() {
+    assertConvertsTo("int a = 3;a += 2*a;", "int a = 3+2*3;");
+  }
+  @Test public void declarationInitializeUpdateDividies() {
+    assertConvertsTo("int a = 3;a/=2;", "int a = 3 / 2;");
+  }
+  @Test public void declarationInitializeUpdateLeftShift() {
+    assertConvertsTo("int a = 3;a<<=2;", "int a = 3 << 2;");
+  }
+  @Test public void declarationInitializeUpdateMinus() {
+    assertConvertsTo("int a = 3;a-=2;", "int a = 3 - 2;");
+  }
+  @Test public void declarationInitializeUpdateModulo() {
+    assertConvertsTo("int a = 3;a%= 2;", "int a = 3 % 2;");
+  }
+  @Test public void declarationInitializeUpdatePlus() {
+    assertConvertsTo("int a = 3;a+=2;", "int a = 3 + 2;");
+  }
+  @Test public void declarationInitializeUpdateTimes() {
+    assertConvertsTo("int a = 3;a*=2;", "int a = 3 * 2;");
+  }
+  @Test public void declarationInitializeUpdateXor() {
+    assertConvertsTo("int a = 3;a^=2;", "int a = 3 ^ 2;");
+  }
+  @Test public void declarationInitializeUpdatOr() {
+    assertConvertsTo("int a = 3;a|=2;", "int a = 3 | 2;");
   }
   @Test public void delcartionIfAssignmentNotPlain() {
     assertNoConversion("int a=0;   if (y) a+=3; ");
@@ -722,6 +767,9 @@ import org.spartan.refactoring.utils.*;
         "    return false;\n" + //
         "}" + //
         "");
+  }
+  @Test public void issue41FunctionCall() {
+    assertConvertsTo("int a = f();a += 2;", "int a = f()+2;");
   }
   @Test public void linearTransformation() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");

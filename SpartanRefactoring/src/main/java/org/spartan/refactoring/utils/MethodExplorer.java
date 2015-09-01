@@ -86,7 +86,7 @@ public class MethodExplorer {
     return $;
   }
 
-  abstract static class IgnoreNestedMethods extends ASTVisitor {
+  public abstract static class IgnoreNestedMethods extends ASTVisitor {
     @Override public final boolean visit(@SuppressWarnings("unused") final AnnotationTypeDeclaration _) {
       return false;
     }
