@@ -32,9 +32,7 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Replace
     if (name == null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
-    if (a == null || !same(name, left(a)))
-      return null;
-    if (useForbiddenSiblings(f, right(a)))
+    if (a == null || !same(name, left(a)) || useForbiddenSiblings(f, right(a)))
       return null;
     final Operator o = a.getOperator();
     if (o == ASSIGN)

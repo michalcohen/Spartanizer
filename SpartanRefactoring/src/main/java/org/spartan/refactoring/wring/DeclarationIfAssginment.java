@@ -27,9 +27,7 @@ public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<
       return null;
     s.setElseStatement(null);
     final Assignment a = Extract.assignment(then(s));
-    if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN)
-      return null;
-    if (useForbiddenSiblings(f, s.getExpression(), right(a)))
+    if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN || useForbiddenSiblings(f, s.getExpression(), right(a)))
       return null;
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), g);
     r.remove(s, g);

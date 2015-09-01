@@ -17,14 +17,10 @@ import org.spartan.refactoring.utils.Is;
  */
 public final class DeclarationAssignment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
-    if (!Is.variableDeclarationStatement(f.getParent()))
-      return null;
-    if (f.getInitializer() != null)
+    if (!Is.variableDeclarationStatement(f.getParent()) || f.getInitializer() != null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
-    if (a == null || !same(f.getName(), left(a)))
-      return null;
-    if (useForbiddenSiblings(f, right(a)))
+    if (a == null || !same(f.getName(), left(a)) || useForbiddenSiblings(f, right(a)))
       return null;
     r.replace(f, makeVariableDeclarationFragement(f, right(a)), g);
     r.remove(Extract.statement(a), g);

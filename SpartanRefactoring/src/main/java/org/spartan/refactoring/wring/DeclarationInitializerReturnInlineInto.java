@@ -18,7 +18,7 @@ import org.spartan.refactoring.utils.*;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationInitializerInlineIntoReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
+public final class DeclarationInitializerReturnInlineInto extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
     if (!Is.variableDeclarationStatement(f.getParent()))
       return null;

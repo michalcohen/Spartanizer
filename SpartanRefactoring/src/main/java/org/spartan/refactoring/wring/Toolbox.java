@@ -55,7 +55,7 @@ public class Toolbox {
           new DeclarationAssignment(), //
           new DeclarationInitialiazerAssignment(), //
           new DeclarationInitialiazelUpdateAssignment(), //
-          new DeclarationInitializerInlineIntoReturn(), //
+          new DeclarationInitializerReturnInlineInto(), //
           new DeclarationIfAssginment(), //
           new DeclarationInitializerReturn(), //
           null) //

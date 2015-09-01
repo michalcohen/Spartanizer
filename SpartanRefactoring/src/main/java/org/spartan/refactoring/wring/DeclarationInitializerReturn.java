@@ -1,8 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
-import static org.spartan.refactoring.utils.Funcs.same;
-
+import static org.spartan.refactoring.utils.Funcs.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -31,9 +29,13 @@ public final class DeclarationInitializerReturn extends Wring.ReplaceToNextState
     final Expression returnValue = Extract.expression(s);
     if (returnValue == null || !same(f.getName(), returnValue))
       return null;
-    r.remove(Extract.statement(f), g);
+    remove(f, r, g);
     r.replace(s, Subject.operand(initializer).toReturn(), g);
     return r;
+  }
+  private void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
+    final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+    r.remove(parent.fragments().size() > 1 ? f : parent, g);
   }
   @Override String description(final VariableDeclarationFragment f) {
     return "Eliminate temporary " + f.getName() + " and return its value";
