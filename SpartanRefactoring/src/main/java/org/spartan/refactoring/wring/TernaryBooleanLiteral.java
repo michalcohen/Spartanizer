@@ -5,7 +5,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asBooleanLiteral;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.logicalNot;
 
 import org.eclipse.jdt.core.dom.ConditionalExpression;
 import org.eclipse.jdt.core.dom.Expression;
@@ -53,7 +53,7 @@ public final class TernaryBooleanLiteral extends Wring.Replacing<ConditionalExpr
     final boolean takeThen = !Is.booleanLiteral(then);
     final Expression other = takeThen ? then : elze;
     final boolean literal = asBooleanLiteral(takeThen ? elze : then).booleanValue();
-    return Subject.pair(literal != takeThen ? main : not(main), other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
+    return Subject.pair(literal != takeThen ? main : logicalNot(main), other).to(literal ? CONDITIONAL_OR : CONDITIONAL_AND);
   }
   @Override String description(@SuppressWarnings("unused") final ConditionalExpression _) {
     return "Convert conditional expression into logical expression";

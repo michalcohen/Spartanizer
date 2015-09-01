@@ -3,7 +3,6 @@ package org.spartan.refactoring.wring;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Restructure.conjugate;
 import static org.spartan.refactoring.utils.Restructure.flatten;
 
 import java.util.ArrayList;
@@ -27,14 +26,17 @@ public final class PrefixNotPushdown extends Wring.Replacing<PrefixExpression> {
    * @param o JD
    * @return the operator that produces the logical negation of the parameter
    */
-  public static Operator negate(final Operator o) {
+  public static Operator conjugate(final Operator o) {
     return o == null ? null
-        : o.equals(EQUALS) ? NOT_EQUALS
-            : o.equals(NOT_EQUALS) ? EQUALS
-                : o.equals(LESS_EQUALS) ? GREATER
-                    : o.equals(GREATER) ? LESS_EQUALS //
-                        : o.equals(GREATER_EQUALS) ? LESS //
-                            : !o.equals(LESS) ? null : GREATER_EQUALS;
+        : o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR //
+            : o.equals(CONDITIONAL_OR) ? CONDITIONAL_AND //
+                : o.equals(EQUALS) ? NOT_EQUALS
+                    : o.equals(NOT_EQUALS) ? EQUALS
+                        : o.equals(LESS_EQUALS) ? GREATER
+                            : o.equals(GREATER) ? LESS_EQUALS //
+                                : o.equals(GREATER_EQUALS) ? LESS //
+                                    : o.equals(LESS) ? GREATER_EQUALS // ;
+                                        : null;
   }
   /**
    * A utility function, which tries to simplify a boolean expression, whose top
@@ -49,11 +51,11 @@ public final class PrefixNotPushdown extends Wring.Replacing<PrefixExpression> {
   private static Expression applyDeMorgan(final InfixExpression inner) {
     final List<Expression> operands = new ArrayList<>();
     for (final Expression e : Extract.operands(flatten(inner)))
-      operands.add(not(e));
+      operands.add(logicalNot(e));
     return Subject.operands(operands).to(conjugate(inner.getOperator()));
   }
   private static Expression comparison(final InfixExpression e) {
-    return Subject.pair(left(e), right(e)).to(negate(e.getOperator()));
+    return Subject.pair(left(e), right(e)).to(conjugate(e.getOperator()));
   }
   private static boolean hasOpportunity(final Expression inner) {
     return Is.booleanLiteral(inner) || asNot(inner) != null || asAndOrOr(inner) != null || asComparison(inner) != null;

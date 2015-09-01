@@ -1,13 +1,13 @@
 package org.spartan.refactoring.utils;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.not;
 import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;

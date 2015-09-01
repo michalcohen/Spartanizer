@@ -218,7 +218,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void shortestIfBranchFirst09() {
     assertSimplifiesTo("s.equals(532) ? 9 * yada3(s.length()) : 6 ", "!s.equals(532)?6:9*yada3(s.length())");
   }
-  @Test(timeout = 2000) public void shortestIfBranchFirst10() {
+  @Test public void shortestIfBranchFirst10() {
     assertConvertsTo(
         "      for (final String s : contents.split(\"\\n\"))\n" + "  if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {\n" + //
             "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //

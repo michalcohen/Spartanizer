@@ -1,7 +1,7 @@
 package org.spartan.refactoring.utils;
 
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.logicalNot;
 import static org.spartan.refactoring.utils.Funcs.rebase;
 
 import java.util.ArrayList;
@@ -190,7 +190,7 @@ import org.eclipse.jdt.core.dom.*;
       return $;
     }
     public IfStatement toNot(final Expression condition) {
-      return toIf(not(condition));
+      return toIf(logicalNot(condition));
     }
   }
 }

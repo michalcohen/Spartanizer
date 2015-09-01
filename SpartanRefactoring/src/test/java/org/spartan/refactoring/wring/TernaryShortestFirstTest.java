@@ -6,7 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.hamcrest.OrderingComparison.greaterThan;
-import static org.spartan.refactoring.utils.Funcs.not;
+import static org.spartan.refactoring.utils.Funcs.logicalNot;
 
 import java.util.Collection;
 
@@ -37,7 +37,7 @@ public class TernaryShortestFirstTest {
     assertThat(e, notNullValue());
     final Expression elze = Extract.core(e.getElseExpression());
     final Expression then = Extract.core(e.getThenExpression());
-    final Expression $ = Subject.pair(elze, then).toCondition(not(e.getExpression()));
+    final Expression $ = Subject.pair(elze, then).toCondition(logicalNot(e.getExpression()));
     assertThat($, iz("!a?a:f(b,c,d)"));
   }
   @Test public void trace2() {
@@ -45,7 +45,7 @@ public class TernaryShortestFirstTest {
     assertThat(e, notNullValue());
     final Expression elze = Extract.core(e.getElseExpression());
     final Expression then = Extract.core(e.getThenExpression());
-    final Expression $ = Subject.pair(elze, then).toCondition(not(e.getExpression()));
+    final Expression $ = Subject.pair(elze, then).toCondition(logicalNot(e.getExpression()));
     assertFalse(then.toString(), Is.conditional(then));
     assertFalse(elze.toString(), Is.conditional(elze));
     assertThat($.toString().length(), greaterThan(0));
@@ -56,7 +56,7 @@ public class TernaryShortestFirstTest {
     assertThat(e, notNullValue());
     final Expression elze = Extract.core(e.getElseExpression());
     final Expression then = Extract.core(e.getThenExpression());
-    final Expression $ = Subject.pair(elze, then).toCondition(not(e.getExpression()));
+    final Expression $ = Subject.pair(elze, then).toCondition(logicalNot(e.getExpression()));
     assertFalse(then.toString(), Is.conditional(then));
     assertFalse(elze.toString(), Is.conditional(elze));
     assertThat($.toString().length(), greaterThan(0));

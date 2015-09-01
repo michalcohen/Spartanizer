@@ -531,7 +531,7 @@ public enum Funcs {
    * @param e JD
    * @return the parameter, but logically negated and simplified
    */
-  public static Expression not(final Expression e) {
+  public static Expression logicalNot(final Expression e) {
     final PrefixExpression $ = Subject.operand(e).to(NOT);
     final Expression $$ = PrefixNotPushdown.simplifyNot($);
     return $$ == null ? $ : $$;
