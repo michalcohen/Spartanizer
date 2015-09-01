@@ -1,14 +1,13 @@
 package org.spartan.refactoring.wring;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A wring is a transformation that works on an AstNode. Such a transformation
@@ -91,6 +90,25 @@ public abstract class Wring<N extends ASTNode> {
           ReplaceToNextStatement.this.go(r, n, nextStatement, g);
         }
       };
+    }
+    static boolean useForbiddenSiblings(final VariableDeclarationFragment f, final ASTNode... ns) {
+      for (final VariableDeclarationFragment b : forbiddenSiblings(f))
+        if (Search.BOTH_SEMANTIC.of(b).existIn(ns))
+          return true;
+      return false;
+    }
+    static List<VariableDeclarationFragment> forbiddenSiblings(final VariableDeclarationFragment f) {
+      final List<VariableDeclarationFragment> $ = new ArrayList<>();
+      boolean collecting = false;
+      for (final VariableDeclarationFragment brother : (List<VariableDeclarationFragment>) ((VariableDeclarationStatement) f.getParent()).fragments()) {
+        if (brother == f) {
+          collecting = true;
+          continue;
+        }
+        if (collecting)
+          $.add(brother);
+      }
+      return $;
     }
     @Override boolean scopeIncludes(final N n) {
       final Statement nextStatement = Extract.nextStatement(n);

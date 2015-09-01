@@ -2,9 +2,6 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -32,25 +29,13 @@ public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<
     final Assignment a = Extract.assignment(then(s));
     if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN)
       return null;
-    for (final VariableDeclarationFragment b : forbiddenSiblings(f))
-      if (Search.BOTH_SEMANTIC.of(b).existIn(s.getExpression(), right(a)))
-        return null;
+    if (useForbiddenSiblings(f, s.getExpression(), right(a)))
+      return null;
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), g);
     r.remove(s, g);
     return r;
   }
-  static List<VariableDeclarationFragment> forbiddenSiblings(final VariableDeclarationFragment f) {
-    final List<VariableDeclarationFragment> $ = new ArrayList<>();
-    boolean collecting = false;
-    for (final VariableDeclarationFragment brother : (List<VariableDeclarationFragment>) ((VariableDeclarationStatement) f.getParent()).fragments()) {
-      if (brother == f)
-        collecting = true;
-      if (collecting)
-        $.add(brother);
-    }
-    return $;
-  }
-  @Override String description(final VariableDeclarationFragment f) {
+  @Override public String description(final VariableDeclarationFragment f) {
     return "Consolidate initialization of " + f.getName() + " with the subsequent conditional assignment to it";
   }
 }

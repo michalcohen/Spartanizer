@@ -57,7 +57,7 @@ public class Toolbox {
           new DeclarationInitialiazelUpdateAssignment(), //
           new DeclarationInitializerInlineIntoReturn(), //
           new DeclarationIfAssginment(), //
-          new DeclarationReturn(), //
+          new DeclarationInitializerReturn(), //
           null) //
       .add(IfStatement.class, //
           new IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands(), //

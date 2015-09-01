@@ -31,6 +31,8 @@ public final class DeclarationInitialiazerAssignment extends Wring.ReplaceToNext
       return null;
     final SimpleName name = f.getName();
     final Expression secondInitializer = right(a);
+    if (useForbiddenSiblings(f, secondInitializer))
+      return null;
     final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(secondInitializer);
     if (uses.size() == 1 && Search.noDefinitions(name).in(secondInitializer)) {
       r.remove(Extract.statement(a), g);

@@ -34,6 +34,8 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Replace
     final Assignment a = Extract.assignment(nextStatement);
     if (a == null || !same(name, left(a)))
       return null;
+    if (useForbiddenSiblings(f, right(a)))
+      return null;
     final Operator o = a.getOperator();
     if (o == ASSIGN)
       return null;
@@ -52,7 +54,8 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Replace
     return r;
   }
   private static InfixExpression alernateInitializer(final Expression firstInitializer, final Expression secondInitializer, final Operator o, final SimpleName name) {
-    return !Is.sideEffectFree(firstInitializer) && !Search.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? null : Subject.pair(firstInitializer, secondInitializer).to(asInfix(o));
+    return !Is.sideEffectFree(firstInitializer) && !Search.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? null
+        : Subject.pair(firstInitializer, secondInitializer).to(asInfix(o));
   }
   private static InfixExpression.Operator asInfix(final Assignment.Operator o) {
     return o == PLUS_ASSIGN ? PLUS

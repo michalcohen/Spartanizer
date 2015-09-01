@@ -226,6 +226,35 @@ import org.spartan.refactoring.utils.*;
   @Test public void bugOfMissingTry() {
     assertSimplifiesTo("!(A && B && C && true && D)", "!A||!B||!C||false||!D");
   }
+  @Test public void canonicalFragementExamples() {
+    assertConvertsTo("int a; a = 3;", "int a = 3;");
+    assertConvertsTo("int a = 2; if (b) a = 3; ", "int a = b ? 3 : 2;");
+    assertConvertsTo("int a = 2; a += 3; ", "int a = 2 + 3;");
+    assertConvertsTo("int a = 2; a = 3 * a; ", "int a = 3 * 2;");
+    assertConvertsTo("int a = 2; return 3 * a; ", "return 3 * 2;");
+    assertConvertsTo("int a = 2; return a; ", "return 2;");
+  }
+  @Test public void canonicalFragementExamplesWithExraFragments() {
+    assertConvertsTo("int a,b; a = 3;", "int a = 3, b;");
+    assertNoChange("int a,b=2; a = b;");
+    assertNoChange("int a = 2,b=1; if (b) a = 3; ");
+    assertConvertsTo("int a = 2; a += 3; ", "int a = 2 + 3;");
+    assertConvertsTo("int a = 2; a += b; ", "int a = 2 + b;");
+    assertNoChange("int a = 2, b; a += b; ");
+    assertNoChange("int a = 2, b=1; a += b; ");
+    assertConvertsTo("int a = 2; a = 3 * a; ", "int a = 3 * 2;");
+    assertConvertsTo("int a = 2; a = 3 * a * b; ", "int a = 3 * 2 * b;");
+    assertNoChange("int a = 2, b; a = 3 * a * b; ");
+    assertNoChange("int a = 2, b = 1; a = 3 * a * b; ");
+    assertConvertsTo("int a = 2; return 3 * a * a; ", "return 3 * 2 * 2;");
+    assertConvertsTo("int a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
+    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
+    assertConvertsTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int b = 5, c; return 3 * 2 * b;");
+    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "return 3 * 2 * b;");
+    assertNoChange("int a = 2, b; return a + 3 * b; ");
+    assertNoChange("int a = 2, b = 1; return a + 3 * b; ");
+    assertConvertsTo("int a = 2; return a; ", "return 2;");
+  }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
     assertEquals("c", right(e).toString());
@@ -378,6 +407,18 @@ import org.spartan.refactoring.utils.*;
   @Test public void compreaeExpressionToExpression() {
     assertSimplifiesTo("6 - 7 < 2 + 1   ", "6 -7 < 1 + 2");
   }
+  @Test public void declarationAssignmentUpdateWithIncrement() {
+    assertNoConversion("int a=0; a+=++a;");
+  }
+  @Test public void declarationAssignmentUpdateWithPostIncrement() {
+    assertNoConversion("int a=0; a+=a++;");
+  }
+  @Test public void declarationAssignmentWithIncrement() {
+    assertNoConversion("int a=0; a=++a;");
+  }
+  @Test public void declarationAssignmentWithPostIncrement() {
+    assertNoConversion("int a=0; a=a++;");
+  }
   @Test public void declarationIfAssignment() {
     assertConvertsTo( //
         "" + //
@@ -395,18 +436,6 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void declarationIfUsesLaterVariable() {
     assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
-  }
-  @Test public void declarationAssignmentWithIncrement() {
-    assertNoConversion("int a=0; a=++a;");
-  }
-  @Test public void declarationAssignmentWithPostIncrement() {
-    assertNoConversion("int a=0; a=a++;");
-  }
-  @Test public void declarationAssignmentUpdateWithIncrement() {
-    assertNoConversion("int a=0; a+=++a;");
-  }
-  @Test public void declarationAssignmentUpdateWithPostIncrement() {
-    assertNoConversion("int a=0; a+=a++;");
   }
   @Test public void declarationInitializeRightShift() {
     assertConvertsTo("int a = 3;a>>=2;", "int a = 3 >> 2;");
@@ -509,6 +538,17 @@ import org.spartan.refactoring.utils.*;
   }
   @Ignore @Test public void extractMethodSplitDifferentStories() {
     assertSimplifiesTo("", "");
+  }
+  @Test public void forLoopBug() {
+    assertNoConversion("" + //
+        "      for (int i = 0;i < s.length();++i)\n" + //
+        "       if (s.charAt(i) == 'a')\n" + //
+        "          res += 2;\n" + //
+        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "          res -= 1;\n" + //
+        "      return res;\n" + //
+        " if (b) i = 3;"//
+    );
   }
   @Ignore @Test public void forwardDeclaration1() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = 6;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ",
@@ -1335,6 +1375,12 @@ import org.spartan.refactoring.utils.*;
   @Test public void removeSuperWithStatemen() {
     assertConvertsTo("class T { T() { super(); a++;}", "class T { T() { ++a;}");
   }
+  @Test public void replaceInitializationInReturn() {
+    assertConvertsTo("int a = 3; return a + 4;", "return 3 + 4;");
+  }
+  @Test public void replaceTwiceInitializationInReturn() {
+    assertConvertsTo("int a = 3; return a + 4 << a;", "return 3 + 4 << 3;");
+  }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
     final Wring<InfixExpression> w = Toolbox.instance.find(e);
@@ -1393,60 +1439,6 @@ import org.spartan.refactoring.utils.*;
             + " }"//
             + " return res;");
   }
-  @Test public void shortestOperand01() {
-    assertNoChange("x + y > z");
-  }
-  @Test public void shortestOperand02() {
-    assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
-  }
-  @Test public void replaceInitializationInReturn() {
-    assertConvertsTo("int a = 3; return a + 4;", "return 3 + 4;");
-  }
-  @Test public void replaceTwiceInitializationInReturn() {
-    assertConvertsTo("int a = 3; return a + 4 << a;", "return 3 + 4 << 3;");
-  }
-  @Test public void shortestOperand05() {
-    assertConvertsTo(//
-        "    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
-            "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";",
-        "return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
-  }
-  @Test public void shortestOperand09() {
-    assertNoChange("return 2 - 4 < 50 - 20 - 10 - 5;} ");
-  }
-  @Test public void shortestOperand10() {
-    assertNoChange("return b == true;} ");
-  }
-  @Test public void shortestOperand11() {
-    assertNoChange("int h,u,m,a,n;return b == true && n + a > m - u || h > u;");
-  }
-  @Test public void shortestOperand12() {
-    assertConvertsTo("int k = 15;   return 7 < k; ", "return 7<15;");
-  }
-  @Test public void shortestOperand13() {
-    assertConvertsTo("return (2 > 2 + a) == true;", "return 2>a+2;");
-  }
-  @Test public void shortestOperand13a() {
-    assertSimplifiesTo("(2 > 2 + a) == true", "2>a+2 ");
-  }
-  @Test public void shortestOperand13b() {
-    assertSimplifiesTo("(2) == true", "2 ");
-  }
-  @Test public void shortestOperand13c() {
-    assertSimplifiesTo("2 == true", "2 ");
-  }
-  @Test public void shortestOperand14() {
-    assertConvertsTo(//
-        "Integer t = new Integer(5);   return (t.toString() == null);    ", //
-        "return((new Integer(5)).toString()==null);");
-  }
-  @Test public void shortestOperand15() {
-    assertConvertsTo(
-        "" //
-            + "String t = Bob + Wants + To + \"Sleep \"; "//
-            + "  return (right_now + t);    ", //
-        "return(right_now+Bob+Wants+To+\"Sleep \");");
-  }
   @Test public void shortestIfBranchFirst02() {
     assertConvertsTo(
         "" //
@@ -1473,17 +1465,6 @@ import org.spartan.refactoring.utils.*;
             "      return res;\n" + //
             "    }\n" + //
             "    return 8;"//
-    );
-  }
-  @Test public void forLoopBug() {
-    assertNoConversion("" + //
-        "      for (int i = 0;i < s.length();++i)\n" + //
-        "       if (s.charAt(i) == 'a')\n" + //
-        "          res += 2;\n" + //
-        "        else " + "       if (s.charAt(i) == 'd')\n" + //
-        "          res -= 1;\n" + //
-        "      return res;\n" + //
-        " if (b) i = 3;"//
     );
   }
   @Test public void shortestIfBranchFirst02a() {
@@ -1534,6 +1515,54 @@ import org.spartan.refactoring.utils.*;
             "       if (s.charAt(i) == 'd')\n" + //
             "          res -= 1;\n" //
     ));
+  }
+  @Test public void shortestOperand01() {
+    assertNoChange("x + y > z");
+  }
+  @Test public void shortestOperand02() {
+    assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
+  }
+  @Test public void shortestOperand05() {
+    assertConvertsTo(//
+        "    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
+            "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";",
+        "return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
+  }
+  @Test public void shortestOperand09() {
+    assertNoChange("return 2 - 4 < 50 - 20 - 10 - 5;} ");
+  }
+  @Test public void shortestOperand10() {
+    assertNoChange("return b == true;} ");
+  }
+  @Test public void shortestOperand11() {
+    assertNoChange("int h,u,m,a,n;return b == true && n + a > m - u || h > u;");
+  }
+  @Test public void shortestOperand12() {
+    assertConvertsTo("int k = 15;   return 7 < k; ", "return 7<15;");
+  }
+  @Test public void shortestOperand13() {
+    assertConvertsTo("return (2 > 2 + a) == true;", "return 2>a+2;");
+  }
+  @Test public void shortestOperand13a() {
+    assertSimplifiesTo("(2 > 2 + a) == true", "2>a+2 ");
+  }
+  @Test public void shortestOperand13b() {
+    assertSimplifiesTo("(2) == true", "2 ");
+  }
+  @Test public void shortestOperand13c() {
+    assertSimplifiesTo("2 == true", "2 ");
+  }
+  @Test public void shortestOperand14() {
+    assertConvertsTo(//
+        "Integer t = new Integer(5);   return (t.toString() == null);    ", //
+        "return((new Integer(5)).toString()==null);");
+  }
+  @Test public void shortestOperand15() {
+    assertConvertsTo(
+        "" //
+            + "String t = Bob + Wants + To + \"Sleep \"; "//
+            + "  return (right_now + t);    ", //
+        "return(right_now+Bob+Wants+To+\"Sleep \");");
   }
   @Test public void shortestOperand16() {
     assertNoConversion("String t = Z2;   t = t.concat(A).concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");

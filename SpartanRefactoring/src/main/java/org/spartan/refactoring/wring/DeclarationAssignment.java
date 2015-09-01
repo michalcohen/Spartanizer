@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
 
 /**
  * A {@link Wring} to convert <code>int a;
@@ -16,10 +17,14 @@ import org.spartan.refactoring.utils.Extract;
  */
 public final class DeclarationAssignment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
+    if (!Is.variableDeclarationStatement(f.getParent()))
+      return null;
     if (f.getInitializer() != null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
     if (a == null || !same(f.getName(), left(a)))
+      return null;
+    if (useForbiddenSiblings(f, right(a)))
       return null;
     r.replace(f, makeVariableDeclarationFragement(f, right(a)), g);
     r.remove(Extract.statement(a), g);

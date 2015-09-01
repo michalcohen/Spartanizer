@@ -13,11 +13,12 @@ import org.spartan.refactoring.utils.Subject;
 /**
  * A {@link Wring} to convert <code>int a = 3;
  * return a;</code> into <code>return a;</code>
+ * https://docs.oracle.com/javase/tutorial/java/nutsandbolts/op1.html
  *
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
+public final class DeclarationInitializerReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
     if (!Is.variableDeclarationStatement(f.getParent()))
       return null;
