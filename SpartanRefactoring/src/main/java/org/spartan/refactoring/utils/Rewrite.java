@@ -37,8 +37,7 @@ public abstract class Rewrite extends Range {
    * @param ns
    */
   static Range range(final ASTNode n, final ASTNode... ns) {
-    final Range $ = singleNodeRange(n);
-    return range($, ns);
+    return range(singleNodeRange(n), ns);
   }
   static Range range(final Range r, final ASTNode... ns) {
     for (final ASTNode n : ns)

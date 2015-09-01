@@ -52,33 +52,19 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Replace
     return r;
   }
   private static InfixExpression alernateInitializer(final Expression firstInitializer, final Expression secondInitializer, final Operator o, final SimpleName name) {
-    final InfixExpression $ = Subject.pair(firstInitializer, secondInitializer).to(asInfix(o));
-    return Is.sideEffectFree(firstInitializer) || Search.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? $ : null;
+    return !Is.sideEffectFree(firstInitializer) && !Search.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? null : Subject.pair(firstInitializer, secondInitializer).to(asInfix(o));
   }
   private static InfixExpression.Operator asInfix(final Assignment.Operator o) {
-    if (o == PLUS_ASSIGN)
-      return PLUS;
-    if (o == MINUS_ASSIGN)
-      return MINUS;
-    if (o == TIMES_ASSIGN)
-      return TIMES;
-    if (o == DIVIDE_ASSIGN)
-      return DIVIDE;
-    if (o == BIT_AND_ASSIGN)
-      return AND;
-    if (o == BIT_OR_ASSIGN)
-      return OR;
-    if (o == BIT_XOR_ASSIGN)
-      return XOR;
-    if (o == REMAINDER_ASSIGN)
-      return REMAINDER;
-    if (o == LEFT_SHIFT_ASSIGN)
-      return LEFT_SHIFT;
-    if (o == RIGHT_SHIFT_SIGNED_ASSIGN)
-      return RIGHT_SHIFT_SIGNED;
-    if (o == RIGHT_SHIFT_UNSIGNED_ASSIGN)
-      return RIGHT_SHIFT_UNSIGNED;
-    return null;
+    return o == PLUS_ASSIGN ? PLUS
+        : o == MINUS_ASSIGN ? MINUS
+            : o == TIMES_ASSIGN ? TIMES
+                : o == DIVIDE_ASSIGN ? DIVIDE
+                    : o == BIT_AND_ASSIGN ? AND
+                        : o == BIT_OR_ASSIGN ? OR
+                            : o == BIT_XOR_ASSIGN ? XOR
+                                : o == REMAINDER_ASSIGN ? REMAINDER
+                                    : o == LEFT_SHIFT_ASSIGN ? LEFT_SHIFT
+                                        : o == RIGHT_SHIFT_SIGNED_ASSIGN ? RIGHT_SHIFT_SIGNED : o != RIGHT_SHIFT_UNSIGNED_ASSIGN ? null : RIGHT_SHIFT_UNSIGNED;
   }
   @Override String description(final VariableDeclarationFragment n) {
     return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";

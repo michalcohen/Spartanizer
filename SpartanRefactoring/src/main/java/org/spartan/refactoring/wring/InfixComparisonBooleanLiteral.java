@@ -42,7 +42,6 @@ public final class InfixComparisonBooleanLiteral extends Wring.Replacing<InfixEx
   @Override Expression replacement(final InfixExpression e) {
     final BooleanLiteral literal = literal(e);
     final Expression nonliteral = core(nonLiteral(e));
-    final ASTNode parent = e.getParent();
-    return new Plant(!negating(e, literal) ? nonliteral : logicalNot(nonliteral)).into(parent);
+    return new Plant(!negating(e, literal) ? nonliteral : logicalNot(nonliteral)).into(e.getParent());
   }
 }

@@ -35,8 +35,7 @@ public final class PrefixNotPushdown extends Wring.Replacing<PrefixExpression> {
                         : o.equals(LESS_EQUALS) ? GREATER
                             : o.equals(GREATER) ? LESS_EQUALS //
                                 : o.equals(GREATER_EQUALS) ? LESS //
-                                    : o.equals(LESS) ? GREATER_EQUALS // ;
-                                        : null;
+                                    : !o.equals(LESS) ? null : GREATER_EQUALS;
   }
   /**
    * A utility function, which tries to simplify a boolean expression, whose top

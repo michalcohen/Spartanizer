@@ -82,9 +82,7 @@ public abstract class Wring<N extends ASTNode> {
     }
     @Override Rewrite make(final N n, final Set<ASTNode> exclude) {
       final Statement nextStatement = Extract.nextStatement(n);
-      if (nextStatement == null)
-        return null;
-      if (!eligible(n))
+      if (nextStatement == null || !eligible(n))
         return null;
       if (exclude != null)
         exclude.add(nextStatement);

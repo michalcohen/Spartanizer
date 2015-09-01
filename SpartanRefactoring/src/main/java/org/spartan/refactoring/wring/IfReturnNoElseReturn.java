@@ -37,8 +37,7 @@ public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfS
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     final ReturnStatement then = Extract.returnStatement(then(s));
-    final ReturnStatement elze = Extract.nextReturn(s);
-    return Wrings.emptyElse(s) && then != null && elze != null;
+    return Wrings.emptyElse(s) && then != null && Extract.nextReturn(s) != null;
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Consolidate into a single 'return'";

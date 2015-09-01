@@ -41,21 +41,19 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
     if (elze.isEmpty())
       return null;
     final List<Statement> commonPrefix = commonPrefix(then, elze);
-    if (commonPrefix.isEmpty())
-      return null;
-    return new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
+    return commonPrefix.isEmpty() ? null : new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         final IfStatement newIf = replacement();
-        if (Is.block(n.getParent())) {
-          final ListRewrite lr = insertBefore(n, commonPrefix, r, g);
-          if (newIf != null)
-            lr.insertBefore(newIf, n, g);
-          lr.remove(n, g);
-        } else {
+        if (!Is.block(n.getParent())) {
           final Block b = Subject.ss(commonPrefix).toBlock();
           if (newIf != null)
             b.statements().add(newIf);
           r.replace(n, b, g);
+        } else {
+          final ListRewrite lr = insertBefore(n, commonPrefix, r, g);
+          if (newIf != null)
+            lr.insertBefore(newIf, n, g);
+          lr.remove(n, g);
         }
       }
       private IfStatement replacement() {

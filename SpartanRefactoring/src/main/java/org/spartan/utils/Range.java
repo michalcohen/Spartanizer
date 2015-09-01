@@ -101,10 +101,8 @@ public class Range {
     this(from.getStartPosition(), to.getStartPosition() + to.getLength());
   }
   @Override public int hashCode() {
-    final int $ = from;
-    final int $$ = to;
     // Cantor pairing function
-    return (int) ($ + 0.5 * ($ + $$) * ($ + $$ + 1));
+    return (int) (from + 0.5 * (to + from) * (to + from + 1));
   }
   @Override public boolean equals(final Object o) {
     boolean $ = false;

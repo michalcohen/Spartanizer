@@ -577,8 +577,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       return (CompilationUnit) $;
     }
     @Override protected Document asDocument() {
-      final String s = input;
-      return new Document(Wrap.Expression.on(s));
+      return new Document(Wrap.Expression.on(input));
     }
     @Override protected E asMe() {
       final E $ = (E) e(input);
@@ -760,8 +759,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       return (CompilationUnit) $;
     }
     @Override protected final Document asDocument() {
-      final String s = input;
-      return new Document(Wrap.Statement.on(s));
+      return new Document(Wrap.Statement.on(input));
     }
     @Override protected N asMe() {
       final N $ = (N) s(input);
@@ -864,8 +862,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
      * @param inner
      */
     @Override protected final Document asDocument() {
-      final String s = input;
-      return new Document(Wrap.Statement.on(s));
+      return new Document(Wrap.Statement.on(input));
     }
     @Override protected VariableDeclarationFragment asMe() {
       return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));

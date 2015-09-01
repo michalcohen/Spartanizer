@@ -108,9 +108,7 @@ public enum Search {
         return add(s.initializers());
       }
       @Override public boolean visit(final PostfixExpression e) {
-        if (in(e.getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT))
-          return add(e.getOperand());
-        return true;
+        return !in(e.getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT) || add(e.getOperand());
       }
       @Override public boolean visit(final PrefixExpression e) {
         return add(e.getOperand());

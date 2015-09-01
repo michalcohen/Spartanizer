@@ -116,8 +116,7 @@ public abstract class FileTestUtils {
    * Creates a temporary file - including lazy deletion.
    */
   static File createTempFile(final StringBuilder b, final TestDirection direction, final File f) {
-    final File $ = createTempFile(direction, f);
-    return createTemporaryRandomAccessFile($, b.toString());
+    return createTemporaryRandomAccessFile(createTempFile(direction, f), b.toString());
   }
   static Spartanization makeSpartanizationObject(final File f) {
     return makeSpartanizationObject(f.getName());
