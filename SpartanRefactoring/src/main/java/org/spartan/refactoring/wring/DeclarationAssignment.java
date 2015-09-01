@@ -18,7 +18,7 @@ public final class DeclarationAssignment extends Wring.ReplaceToNextStatement<Va
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
     if (f.getInitializer() != null)
       return null;
-    final Assignment a = Extract.nextAssignment(f);
+    final Assignment a = Extract.assignment(nextStatement);
     if (a == null || !same(f.getName(), left(a)))
       return null;
     r.replace(f, makeVariableDeclarationFragement(f, right(a)), g);

@@ -96,6 +96,24 @@ import org.spartan.refactoring.utils.*;
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
+  @Test public void issue41() {
+    assertConvertsTo("int a = 3;a += 2;", "int a = 3+2;");
+  }
+  @Test public void issue41FunctionCall() {
+    assertConvertsTo("int a = f();a += 2;", "int a = f()+2;");
+  }
+  @Test public void issue41FunctionCallWithReuse() {
+    assertNoChange("int a = f();a += 2*f();");
+  }
+  @Test public void issue41Increment() {
+    assertConvertsTo("int a = ++i;a += j;", "int a = ++i + j;");
+  }
+  @Test public void issue41IncrementTwice() {
+    assertNoConversion("int a = ++i;a += a + j;");
+  }
+  @Test public void issue41WithReuse() {
+    assertConvertsTo("int a = 3;a += 2*a;", "int a = 3+2*3;");
+  }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
@@ -642,10 +660,11 @@ import org.spartan.refactoring.utils.*;
         "int a = 31 * 3; ");
   }
   @Test public void issue37SimplifiedVariant() {
-    assertNoConversion("" + //
-        "    int a = 3;\n" + //
-        "    a += 31 * a;" + //
-        "");
+    assertConvertsTo(
+        "" + //
+            "    int a = 3;\n" + //
+            "    a += 31 * a;", //
+        "int a=3+31*3;");
   }
   @Test(timeout = 100) public void issue39base() {
     assertNoConversion("" + //
