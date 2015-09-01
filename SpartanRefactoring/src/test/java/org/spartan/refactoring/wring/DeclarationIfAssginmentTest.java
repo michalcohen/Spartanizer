@@ -34,6 +34,7 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Search;
 import org.spartan.refactoring.utils.Search.Of;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
+import org.spartan.refactoring.wring.Wring.ReplaceToNextStatement;
 import org.spartan.utils.Utils;
 
 /**
@@ -70,11 +71,10 @@ public class DeclarationIfAssginmentTest {
     assertNotNull(a);
     assertTrue(same(left(a), f.getName()));
     assertThat(a.getOperator(), is(Assignment.Operator.ASSIGN));
-    final List<VariableDeclarationFragment> x = DeclarationIfAssginment.forbiddenSiblings(f);
+    final List<VariableDeclarationFragment> x = ReplaceToNextStatement.forbiddenSiblings(f);
     assertThat(x.size(), greaterThan(0));
-    assertThat(x.size(), is(2));
-    assertThat(x.get(0), is(f));
-    final VariableDeclarationFragment b = x.get(1);
+    assertThat(x.size(), is(1));
+    final VariableDeclarationFragment b = x.get(0);
     assertThat(b.toString(), is("b"));
     final Of of = Search.BOTH_SEMANTIC.of(b);
     assertNotNull(of);

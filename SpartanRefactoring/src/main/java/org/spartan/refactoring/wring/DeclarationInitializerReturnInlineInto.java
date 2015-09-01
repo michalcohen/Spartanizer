@@ -40,7 +40,7 @@ public final class DeclarationInitializerReturnInlineInto extends Wring.ReplaceT
     final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(newReturnValue);
     if (!Is.sideEffectFree(initializer) && uses.size() > 1)
       return null;
-    r.remove(Extract.statement(f), g);
+    remove(f, r, g);
     r.replace(returnValue, newReturnValue, g);
     for (final Expression e : uses)
       r.replace(e, new Plant(initializer).into(e.getParent()), g);

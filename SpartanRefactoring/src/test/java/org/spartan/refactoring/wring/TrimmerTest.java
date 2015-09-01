@@ -249,11 +249,19 @@ import org.spartan.refactoring.utils.*;
     assertConvertsTo("int a = 2; return 3 * a * a; ", "return 3 * 2 * 2;");
     assertConvertsTo("int a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
     assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
-    assertConvertsTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int b = 5, c; return 3 * 2 * b;");
-    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "return 3 * 2 * b;");
+    assertConvertsTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int b = 5; return 3 * 2 * b * c;");
+    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "int b=5,a=2;return 3*a*b*4;");
     assertNoChange("int a = 2, b; return a + 3 * b; ");
     assertNoChange("int a = 2, b = 1; return a + 3 * b; ");
     assertConvertsTo("int a = 2; return a; ", "return 2;");
+    assertNoChange("int a; if (x) a = 3; else a++;");
+    assertConvertsTo("int a =2; if (x) a = 2*a;", "int a=x?2*a:2;");
+    assertConvertsTo("int a =2,b; if (x) a = 2*a;", "int a=x?2*a:2, b;");
+    assertConvertsTo("int a =2,b=2; if (x) a = 2*a;", "int a=x?2*a:2, b=2;");
+    // new String[] { "Uses variable in condition", "int a =2; if (a != 2) a =
+    // 3;", }, //
+    // new String[] { "Not plain assignment", "int a = 2; if (b) a =a+2;", }, //
+    // new String[] { "Uses later variable", "int a = 2,b; if (b) a =3;", }, //
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
@@ -1810,14 +1818,17 @@ import org.spartan.refactoring.utils.*;
         "return s.equals(532)?6:9; ");
   }
   @Test public void ternarize10() {
-    assertConvertsTo("String res = s, foo = bar;   "//
-        + "if (res.equals(532)==true)    " + //
-        "res = s + 0xABBA;   "//
-        + "System.out.println(res); ", "String res=s,foo=bar;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
+    assertConvertsTo(
+        "String res = s, foo = bar;   "//
+            + "if (res.equals(532)==true)    " //
+            + "res = s + 0xABBA;   "//
+            + "System.out.println(res); ", //
+        "String res=res.equals(532)==true?s+0xABBA:s,foo=bar;System.out.println(res);");
   }
   @Test public void ternarize12() {
     assertConvertsTo(//
-        "String res = s;   if (s.equals(532)==true)    res = res + 0xABBA;   System.out.println(res); ", "String res=s;if(s.equals(532))res=res+0xABBA;System.out.println(res);");
+        "String res = s;   if (s.equals(532))    res = res + 0xABBA;   System.out.println(res); ", //
+        "String res=s.equals(532)?res+0xABBA:s;System.out.println(res);");
   }
   @Test public void ternarize13() {
     assertConvertsTo(//

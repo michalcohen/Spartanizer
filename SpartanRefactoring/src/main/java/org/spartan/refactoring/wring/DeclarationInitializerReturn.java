@@ -33,10 +33,6 @@ public final class DeclarationInitializerReturn extends Wring.ReplaceToNextState
     r.replace(s, Subject.operand(initializer).toReturn(), g);
     return r;
   }
-  private void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
-    final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-    r.remove(parent.fragments().size() > 1 ? f : parent, g);
-  }
   @Override String description(final VariableDeclarationFragment f) {
     return "Eliminate temporary " + f.getName() + " and return its value";
   }

@@ -1,9 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static org.spartan.refactoring.utils.Funcs.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -90,6 +89,25 @@ public abstract class Wring<N extends ASTNode> {
           ReplaceToNextStatement.this.go(r, n, nextStatement, g);
         }
       };
+    }
+    static void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
+      final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+      final List<VariableDeclarationFragment> live = collect(f, parent.fragments());
+      if (live.isEmpty()) {
+        r.remove(parent, g);
+        return;
+      }
+      final VariableDeclarationStatement newParent = duplicate(parent);
+      newParent.fragments().clear();
+      newParent.fragments().addAll(live);
+      r.replace(parent, newParent, g);
+    }
+    private static List<VariableDeclarationFragment> collect(final VariableDeclarationFragment f, final List<VariableDeclarationFragment> fs) {
+      final List<VariableDeclarationFragment> $ = new ArrayList<>();
+      for (final VariableDeclarationFragment brother : fs)
+        if (brother != null && brother != f && brother.getInitializer() != null)
+          $.add(duplicate(brother));
+      return $;
     }
     static boolean useForbiddenSiblings(final VariableDeclarationFragment f, final ASTNode... ns) {
       for (final VariableDeclarationFragment b : forbiddenSiblings(f))
