@@ -14,6 +14,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.spartan.refactoring.spartanizations.Spartanization;
+import org.spartan.refactoring.utils.AncestorSearch;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.utils.Range;
@@ -82,82 +83,18 @@ public class Trimmer extends Spartanization {
     super("Trimmer");
   }
   @Override protected ASTVisitor collect(final List<Rewrite> $) {
-    return new ASTVisitor() {
-      @Override public boolean visit(final Assignment a) {
-        return go(a);
-      }
-      @Override public boolean visit(final Block it) {
-        return go(it);
-      }
-      @Override public boolean visit(final ConditionalExpression it) {
-        return go(it);
-      }
-      @Override public boolean visit(final IfStatement it) {
-        return go(it);
-      }
-      @Override public boolean visit(final InfixExpression it) {
-        return go(it);
-      }
-      @Override public boolean visit(final PostfixExpression it) {
-        return go(it);
-      }
-      @Override public boolean visit(final PrefixExpression it) {
-        return go(it);
-      }
-      @Override public boolean visit(final SuperConstructorInvocation it) {
-        return go(it);
-      }
-      @Override public boolean visit(final VariableDeclarationFragment it) {
-        return go(it);
-      }
-      final Set<ASTNode> exclude = new HashSet<>();
-      private <N extends ASTNode> boolean go(final N n) {
-        if (exclude.contains(n)) {
-          exclude.remove(n);
-          return false;
-        }
+    return new DispatchingVisitor() {
+      @Override <N extends ASTNode> boolean go(final N n) {
         final Wring<N> w = Toolbox.instance.find(n);
         return w == null || w.nonEligible(n) || overrideInto(w.make(n, exclude), $);
       }
     };
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
-    u.accept(new ASTVisitor() {
-      final Set<ASTNode> exclude = new HashSet<>();
-      @Override public boolean visit(final Assignment a) {
-        return go(a);
-      }
-      @Override public boolean visit(final Block b) {
-        return go(b);
-      }
-      @Override public boolean visit(final ConditionalExpression e) {
-        return go(e);
-      }
-      @Override public boolean visit(final IfStatement s) {
-        return go(s);
-      }
-      @Override public boolean visit(final InfixExpression e) {
-        return go(e);
-      }
-      @Override public boolean visit(final PostfixExpression e) {
-        return go(e);
-      }
-      @Override public boolean visit(final PrefixExpression e) {
-        return go(e);
-      }
-      @Override public boolean visit(final SuperConstructorInvocation i) {
-        return go(i);
-      }
-      @Override public boolean visit(final VariableDeclarationFragment f) {
-        return go(f);
-      }
-      private <N extends ASTNode> boolean go(final N n) {
+    u.accept(new DispatchingVisitor() {
+      @Override <N extends ASTNode> boolean go(final N n) {
         if (!inRange(m, n))
           return true;
-        if (exclude.contains(n)) {
-          exclude.remove(n);
-          return false;
-        }
         final Wring<N> w = Toolbox.instance.find(n);
         if (w != null) {
           final Rewrite make = w.make(n, exclude);
@@ -167,5 +104,46 @@ public class Trimmer extends Spartanization {
         return true;
       }
     });
+  }
+
+  abstract class DispatchingVisitor extends ASTVisitor {
+    final Set<ASTNode> exclude = new HashSet<ASTNode>();
+    @Override public final boolean visit(final Assignment a) {
+      return cautiousGo(a);
+    }
+    @Override public final boolean visit(final Block it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final ConditionalExpression it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final IfStatement it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final InfixExpression it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final PostfixExpression it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final PrefixExpression it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final SuperConstructorInvocation it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final VariableDeclarationFragment it) {
+      return cautiousGo(it);
+    }
+    private boolean cautiousGo(final ASTNode n) {
+      return !excluded(n) && go(n);
+    }
+    private boolean excluded(final ASTNode n) {
+      for (final ASTNode ancestor : AncestorSearch.ancestors(n))
+        if (exclude.contains(ancestor))
+          return true;
+      return false;
+    }
+    abstract <N extends ASTNode> boolean go(final N n);
   }
 }

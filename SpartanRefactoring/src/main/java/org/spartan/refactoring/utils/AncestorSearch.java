@@ -1,5 +1,7 @@
 package org.spartan.refactoring.utils;
 
+import java.util.Iterator;
+
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**
@@ -29,6 +31,26 @@ public abstract class AncestorSearch {
    */
   public static AncestorSearch forClass(final Class<? extends ASTNode> c) {
     return new ByNodeClass(c);
+  }
+  public static Iterable<ASTNode> ancestors(final ASTNode n) {
+    return new Iterable<ASTNode>() {
+      @Override public Iterator<ASTNode> iterator() {
+        return new Iterator<ASTNode>() {
+          ASTNode current = n;
+          @Override public boolean hasNext() {
+            return current != null;
+          }
+          @Override public ASTNode next() {
+            final ASTNode $ = current;
+            current = current.getParent();
+            return $;
+          }
+          @Override public void remove() {
+            throw new UnsupportedOperationException();
+          }
+        };
+      }
+    };
   }
   /**
    * @param n JD

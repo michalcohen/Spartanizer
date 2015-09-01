@@ -633,24 +633,6 @@ import org.spartan.refactoring.utils.*;
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
-  @Test public void issue37() {
-    assertConvertsTo(
-        "" + //
-            "    int result = mockedType.hashCode();\n" + //
-            "    result = 31 * result + types.hashCode();\n" + //
-            "    return result;\n" + //
-            "", //
-        "return types.hashCode() + 31 * mockedType.hashCode();");
-  }
-  @Test public void issue37abbreviated() {
-    assertConvertsTo(
-        "" + //
-            "    int a = 3;\n" + //
-            "    a = 31 * a;\n" + //
-            "    return a;\n" + //
-            "", //
-        "return 31 * 3;");
-  }
   @Test public void issue37Simplified() {
     assertConvertsTo(
         "" + //

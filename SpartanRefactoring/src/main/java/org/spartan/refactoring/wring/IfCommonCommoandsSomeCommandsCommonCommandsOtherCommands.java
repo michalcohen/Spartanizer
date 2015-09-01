@@ -43,7 +43,7 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
       return null;
     return new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        final IfStatement newIf = replacement(n, then, elze);
+        final IfStatement newIf = replacement();
         if (Is.block(n.getParent())) {
           final ListRewrite lr = insertBefore(n, commonPrefix, r, g);
           if (newIf != null)
@@ -56,14 +56,14 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
           r.replace(n, b, g);
         }
       }
-      private IfStatement replacement(final IfStatement n, final List<Statement> then, final List<Statement> elze) {
+      private IfStatement replacement() {
         return replacement(n.getExpression(), Subject.ss(then).toOneStatementOrNull(), Subject.ss(elze).toOneStatementOrNull());
       }
-      private IfStatement replacement(final Expression condition, final Statement then, final Statement elze) {
-        if (then == null && elze == null)
+      private IfStatement replacement(final Expression condition, final Statement trimmedThen, final Statement trimmedElse) {
+        if (trimmedThen == null && trimmedElse == null)
           return null;
-        final IfStatement $ = Subject.pair(then, elze).toIf(condition);
-        return then != null ? $ : invert($);
+        final IfStatement $ = Subject.pair(trimmedThen, trimmedElse).toIf(condition);
+        return trimmedThen != null ? $ : invert($);
       }
       private ListRewrite insertBefore(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
         final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
@@ -78,9 +78,7 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
     if (Is.block(parent))
       return (Block) parent;
     final Block b = Subject.statement(s).toBlock();
-    System.err.println("uust before replacing");
     r.replace(s, b, g);
-    System.err.println("uust afer replacing");
     return b;
   }
   private static List<Statement> commonPrefix(final List<Statement> ss1, final List<Statement> ss2) {
