@@ -5,7 +5,8 @@ import static org.spartan.refactoring.utils.Funcs.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>int a = 2;
@@ -16,20 +17,27 @@ import org.spartan.refactoring.utils.*;
  * @since 2015-08-07
  */
 public final class DeclarationIfAssginment extends Wring.VariableDeclarationFragementAndStatement {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
-    if (initializer == null)
-      return null;
-    final IfStatement s = Extract.nextIfStatement(f);
-    if (s == null || !Wrings.emptyElse(s))
-      return null;
-    s.setElseStatement(null);
-    final Assignment a = Extract.assignment(then(s));
-    if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || useForbiddenSiblings(f, s.getExpression(), right(a)))
-      return null;
-    r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), g);
-    r.remove(s, g);
-    return r;
-  }
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
+      final TextEditGroup g) {
+        if (initializer == null)
+          return null;
+        final IfStatement s = Extract.nextIfStatement(f);
+        if (s == null || !Wrings.emptyElse(s))
+          return null;
+        s.setElseStatement(null);
+        final Expression condition = s.getExpression();
+        if (condition == null)
+          return null;
+        final Assignment a = Extract.assignment(then(s));
+        if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a))
+            || !canInlineInto(n, initializer, condition, right(a)))
+          return null;
+        final ConditionalExpression newInitializer = Subject.pair(right(a), initializer).toCondition(condition);
+        r.replace(initializer, newInitializer, g);
+        inlineInto(r, g, n, initializer, then(newInitializer), newInitializer.getExpression());
+        r.remove(s, g);
+        return r;
+      }
   @Override public String description(final VariableDeclarationFragment f) {
     return "Consolidate initialization of " + f.getName() + " with the subsequent conditional assignment to it";
   }

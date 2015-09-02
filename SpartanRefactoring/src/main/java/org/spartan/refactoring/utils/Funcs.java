@@ -377,6 +377,24 @@ public enum Funcs {
     return s.getThenStatement();
   }
   /**
+   * Shorthand for {@link ConditionalExpression#getThenExpression()}
+   *
+   * @param e JD
+   * @return the then part of the parameter
+   */
+  public static Expression then(final ConditionalExpression e) {
+    return e.getThenExpression();
+  }
+  /**
+   * Shorthand for {@link ConditionalExpression#getElseExpression()}
+   *
+   * @param e JD
+   * @return the else part of the parameter
+   */
+  public static Expression elze(final ConditionalExpression e) {
+    return e.getElseExpression();
+  }
+  /**
    * Shorthand for {@link IfStatement#getElseStatement}
    *
    * @param s JD

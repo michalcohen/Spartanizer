@@ -7,6 +7,7 @@ import static org.spartan.refactoring.wring.Wrings.invert;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;

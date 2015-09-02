@@ -36,7 +36,7 @@ public final class IfCommandsSequencerElseSomething extends Wring<IfStatement> {
     return Is.sequencer(Extract.lastStatement(s));
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
-    return "Remove redundant else";
+    return "Remove redundant else (possibly after inverting if statement)";
   }
   @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
@@ -54,7 +54,7 @@ public final class IfCommandsSequencerElseSomething extends Wring<IfStatement> {
     return new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         assert scopeIncludes(s);
-        final IfStatement shorterIf = endsWithSequencer(then(s)) ? duplicate(s) : Subject.pair(elze(s), then(s)).toNot(s.getExpression());
+        final IfStatement shorterIf = makeShorterIf(s);
         final List<Statement> remainder = Extract.statements(elze(shorterIf));
         shorterIf.setElseStatement(null);
         final Block parent = asBlock(s.getParent());
@@ -67,6 +67,9 @@ public final class IfCommandsSequencerElseSomething extends Wring<IfStatement> {
           duplicateInto(remainder, newParent.statements());
           r.replace(s, newParent, g);
         }
+      }
+      private IfStatement makeShorterIf(final IfStatement s) {
+        return endsWithSequencer(then(s)) ? duplicate(s) : Subject.pair(elze(s), then(s)).toNot(s.getExpression());
       }
     };
   }

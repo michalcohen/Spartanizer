@@ -27,14 +27,14 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     if (initializer == null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
-    if (a == null || !same(n, left(a)) || useForbiddenSiblings(f, right(a)))
+    if (a == null || !same(n, left(a)) || doesUseForbiddenSiblings(f, right(a)))
       return null;
     final Operator o = a.getOperator();
     if (o == ASSIGN)
       return null;
     final Expression secondInitializer = right(a);
     final List<Expression> uses = Search.USES_SEMANTIC.of(n).in(secondInitializer);
-    if (uses.size() >= 2 || Search.findDefinitions(n).in(secondInitializer))
+    if (uses.size() >= 2 || Search.findsDefinitions(n).in(secondInitializer))
       return null;
     final ASTNode alternateInitializer = alernateInitializer(initializer, secondInitializer, o, n);
     if (alternateInitializer == null)

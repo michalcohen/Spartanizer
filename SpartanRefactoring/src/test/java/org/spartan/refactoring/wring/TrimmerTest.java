@@ -39,9 +39,6 @@ import org.spartan.refactoring.utils.*;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
-  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -95,6 +92,9 @@ import org.spartan.refactoring.utils.*;
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
+  }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -234,9 +234,6 @@ import org.spartan.refactoring.utils.*;
     assertConvertsTo("int a = 2; return 3 * a; ", "return 3 * 2;");
     assertConvertsTo("int a = 2; return a; ", "return 2;");
   }
-  @Test public void correctSubstitutionInIfAssignment() {
-    assertConvertsTo("int a = 2+3; if (a+b) a =a *7;", "int a = (a+b) ? (2+3) * 7 : 2+3; ");
-  }
   @Test public void canonicalFragementExamplesWithExraFragments() {
     assertConvertsTo("int a,b; a = 3;", "int a = 3, b;");
     assertNoChange("int a,b=2; a = b;");
@@ -257,22 +254,9 @@ import org.spartan.refactoring.utils.*;
     assertNoChange("int a = 2, b = 1; return a + 3 * b; ");
     assertConvertsTo("int a = 2; return a; ", "return 2;");
     assertNoChange("int a; if (x) a = 3; else a++;");
-    assertConvertsTo("int a =2; if (x) a = 2*a;", "int a=x?2*a:2;");
-    assertConvertsTo("int a =2,b; if (x) a = 2*a;", "int a=x?2*a:2, b;");
-    assertConvertsTo("int a =2,b=2; if (x) a = 2*a;", "int a=x?2*a:2, b=2;");
-    // new String[] { "Uses variable in condition", "int a =2; if (a != 2) a =
-    // 3;", }, //
-    // new String[] { "Not plain assignment", "int a = 2; if (b) a =a+2;", }, //
-    // new String[] { "Uses later variable", "int a = 2,b; if (b) a =3;", }, //
-  }
-  @Test public void inlineInitializers() {
-    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3*2*b;");
-  }
-  @Test public void inlineInitializersFirstStep() {
-    assertConvertsTo("int b=4,a = 2; return 3 * a * b; ", "int a = 2; return 3*a*4;");
-  }
-  @Test public void inlineInitializersSecondStep() {
-    assertConvertsTo("int a = 2; return 3*a*4;", "return 3 * 2 * 4;");
+    assertConvertsTo("int a =2; if (x) a = 3*a;", "int a=x?3*2:2;");
+    assertConvertsTo("int a =2,b; if (x) a = 2*a;", "int a=x?2*2:2, b;");
+    assertConvertsTo("int a =2,b=2; if (x) a = 2*a;", "int a=x?2*2:2, b=2;");
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
@@ -426,6 +410,10 @@ import org.spartan.refactoring.utils.*;
   @Test public void compreaeExpressionToExpression() {
     assertSimplifiesTo("6 - 7 < 2 + 1   ", "6 -7 < 1 + 2");
   }
+  @Test public void correctSubstitutionInIfAssignment() {
+    assertConvertsTo("int a = 2+3; if (a+b > a << b) a =a *7 << a;", //
+        "int a=2+3+b>2+3<<b?(2+3)*7<<2+3:2+3;");
+  }
   @Test public void declarationAssignmentUpdateWithIncrement() {
     assertNoConversion("int a=0; a+=++a;");
   }
@@ -441,17 +429,19 @@ import org.spartan.refactoring.utils.*;
   @Test public void declarationIfAssignment() {
     assertConvertsTo( //
         "" + //
-            "    final String y = empty;\n" + //
-            "    final String s = empty;\n" + //
             "    String res = s;\n" + //
             "    if (s.equals(y))\n" + //
             "      res = s + blah;\n" + //
             "    System.out.println(res);",
         "" + //
-            "    final String y = empty;\n" + //
-            "    final String s = empty;\n" + //
             "    String res = s.equals(y) ? s + blah :s;\n" + //
             "    System.out.println(res);");
+  }
+  @Test public void declarationIfAssignment3() {
+    assertConvertsTo("int a =2; if (a != 2) a = 3;", "int a = 2 != 2 ? 3 : 2;");
+  }
+  @Test public void declarationIfAssignment4() {
+    assertConvertsTo("int a =2; if (x) a = 2*a;", "int a = x ? 2*2: 2;");
   }
   @Test public void declarationIfUsesLaterVariable() {
     assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
@@ -674,6 +664,39 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void ifPlusPlusPreExpression() {
     assertNoChange("x? ++a:++b");
+  }
+  @Test public void ifSequencerThenSequencer0() {
+    assertConvertsTo("if (a) return; else break;", "if (!a) return; break;");
+  }
+  @Test public void ifSequencerThenSequencer1() {
+    assertConvertsTo("if (a) break; else break;", "if (!a) break; return;");
+  }
+  @Test public void ifSequencerThenSequencer3() {
+    assertConvertsTo("if (a) return; else continue;", "if (!a) return; continue;");
+  }
+  @Test public void ifSequencerThenSequencer4() {
+    assertConvertsTo("if (a) continue; else return;", "if (!a) continue; return;");
+  }
+  @Test public void ifSequencerThenSequencer5() {
+    assertConvertsTo("if (a) throw e; else break;", "if (!a) throw e; break;");
+  }
+  @Test public void ifSequencerThenSequencer6() {
+    assertConvertsTo("if (a) break; else break;", "if (!a) break; throw e;");
+  }
+  @Test public void ifSequencerThenSequencer7() {
+    assertConvertsTo("if (a) throw e; else continue;", "if (!a) throw e; continue;");
+  }
+  @Test public void ifSequencerThenSequencer8() {
+    assertConvertsTo("if (a) break; else continue;", "if (!a) break; continue;");
+  }
+  @Test public void inlineInitializers() {
+    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3*2*b;");
+  }
+  @Test public void inlineInitializersFirstStep() {
+    assertConvertsTo("int b=4,a = 2; return 3 * a * b; ", "int a = 2; return 3*a*4;");
+  }
+  @Test public void inlineInitializersSecondStep() {
+    assertConvertsTo("int a = 2; return 3*a*4;", "return 3 * 2 * 4;");
   }
   @Ignore @Test public void inlineSingleUse01() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ",
@@ -1834,12 +1857,12 @@ import org.spartan.refactoring.utils.*;
             + "if (res.equals(532)==true)    " //
             + "res = s + 0xABBA;   "//
             + "System.out.println(res); ", //
-        "String res=res.equals(532)==true?s+0xABBA:s,foo=bar;System.out.println(res);");
+        "String res=s.equals(532)==true?s+0xABBA:s,foo=bar;System.out.println(res);");
   }
   @Test public void ternarize12() {
     assertConvertsTo(//
         "String res = s;   if (s.equals(532))    res = res + 0xABBA;   System.out.println(res); ", //
-        "String res=s.equals(532)?res+0xABBA:s;System.out.println(res);");
+        "String res=s.equals(532)?s+0xABBA:s;System.out.println(res);");
   }
   @Test public void ternarize13() {
     assertConvertsTo(//

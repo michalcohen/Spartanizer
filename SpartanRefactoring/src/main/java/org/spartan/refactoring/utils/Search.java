@@ -56,49 +56,16 @@ public enum Search {
       return asArray(lexicalUsesCollector(into, e), definitionsCollector(into, e));
     }
   };
-  static Searcher forDefinitions(final SimpleName n) {
-    return new Searcher(n);
-  }
-  public static Checker findDefinitions(final SimpleName n) {
+  static final ASTMatcher matcher = new ASTMatcher();
+  public static Checker findsDefinitions(final SimpleName n) {
     return new Checker(n);
+  }
+  public static Of findUses(final SimpleName n) {
+    return Search.USES_SEMANTIC.of(n);
   }
   public static NoChecker noDefinitions(final SimpleName n) {
     return new NoChecker(n);
   }
-
-  public static class NoChecker {
-    private final SimpleName name;
-    public NoChecker(final SimpleName name) {
-      this.name = name;
-    }
-    public boolean in(final ASTNode... ns) {
-      return forDefinitions(name).in(ns).isEmpty();
-    }
-  }
-
-  public static class Checker {
-    private final SimpleName name;
-    public Checker(final SimpleName name) {
-      this.name = name;
-    }
-    public boolean in(final ASTNode... ns) {
-      return !forDefinitions(name).in(ns).isEmpty();
-    }
-  }
-
-  public static class Searcher {
-    private final SimpleName name;
-    public Searcher(final SimpleName name) {
-      this.name = name;
-    }
-    public List<Expression> in(final ASTNode... ns) {
-      final List<Expression> $ = new ArrayList<>();
-      for (final ASTNode n : ns)
-        n.accept(definitionsCollector($, name));
-      return $;
-    }
-  }
-  static final ASTMatcher matcher = new ASTMatcher();
   static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
     return new MethodExplorer.IgnoreNestedMethods() {
       @Override public boolean visit(final Assignment a) {
@@ -139,6 +106,9 @@ public enum Search {
           add(f.getName());
       }
     };
+  }
+  static Searcher forDefinitions(final SimpleName n) {
+    return new Searcher(n);
   }
   static ASTVisitor lexicalUsesCollector(final List<Expression> into, final Expression what) {
     return usesCollector(what, into, true);
@@ -344,6 +314,26 @@ public enum Search {
   }
   abstract ASTVisitor[] collectors(final Expression e, final List<Expression> into);
 
+  public static class Checker {
+    private final SimpleName name;
+    public Checker(final SimpleName name) {
+      this.name = name;
+    }
+    public boolean in(final ASTNode... ns) {
+      return !forDefinitions(name).in(ns).isEmpty();
+    }
+  }
+
+  public static class NoChecker {
+    private final SimpleName name;
+    public NoChecker(final SimpleName name) {
+      this.name = name;
+    }
+    public boolean in(final ASTNode... ns) {
+      return forDefinitions(name).in(ns).isEmpty();
+    }
+  }
+
   /**
    * An auxiliary class which makes it possible to use an easy invocation
    * sequence for the various offerings of the containing class. This class
@@ -376,5 +366,18 @@ public enum Search {
      * @return a list of occurrences of the captured value in the parameter.
      */
     public abstract List<Expression> in(ASTNode... ns);
+  }
+
+  public static class Searcher {
+    private final SimpleName name;
+    public Searcher(final SimpleName name) {
+      this.name = name;
+    }
+    public List<Expression> in(final ASTNode... ns) {
+      final List<Expression> $ = new ArrayList<>();
+      for (final ASTNode n : ns)
+        n.accept(definitionsCollector($, name));
+      return $;
+    }
   }
 }

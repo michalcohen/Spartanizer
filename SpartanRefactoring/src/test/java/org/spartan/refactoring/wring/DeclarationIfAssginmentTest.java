@@ -143,10 +143,8 @@ public class DeclarationIfAssginmentTest {
     static String[][] cases = Utils.asArray(//
         new String[] { "Vanilla", "int a; a =3;", }, //
         new String[] { "Not empty else", "int a; if (x) a = 3; else a++;", }, //
-        new String[] { "Uses variable in assignment", "int a =2; if (x) a = 2*a;", }, //
-        new String[] { "Uses variable in condition", "int a =2; if (a != 2) a = 3;", }, //
-        new String[] { "Not plain assignment", "int a = 2; if (b) a =a+2;", }, //
-        new String[] { "Uses later variable", "int a = 2,b; if (b) a =3;", }, //
+        new String[] { "Not plain assignment", "int a = 2; if (b) a +=a+2;", }, //
+        new String[] { "Uses later variable", "int a = 2,b = true; if (b) a =3;", }, //
         null);
     /**
      * Generate test cases for this parameterized class.

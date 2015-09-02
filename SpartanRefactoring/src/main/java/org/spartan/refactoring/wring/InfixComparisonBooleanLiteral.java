@@ -6,7 +6,9 @@ import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.utils.Utils.in;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Plant;
 

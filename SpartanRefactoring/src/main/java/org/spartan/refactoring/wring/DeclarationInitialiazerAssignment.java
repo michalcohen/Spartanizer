@@ -19,14 +19,15 @@ import org.spartan.refactoring.utils.Search;
  * @since 2015-08-07
  */
 public final class DeclarationInitialiazerAssignment extends Wring.VariableDeclarationFragementAndStatement {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
+      final TextEditGroup g) {
     if (initializer == null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
     if (a == null || !same(n, left(a)) || a.getOperator() != ASSIGN)
       return null;
     final Expression secondInitializer = right(a);
-    if (useForbiddenSiblings(f, secondInitializer))
+    if (doesUseForbiddenSiblings(f, secondInitializer))
       return null;
     final List<Expression> uses = Search.USES_SEMANTIC.of(n).in(secondInitializer);
     if (uses.size() == 1 && Search.noDefinitions(n).in(secondInitializer)) {

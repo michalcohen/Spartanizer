@@ -20,7 +20,7 @@ public final class DeclarationAssignment extends Wring.VariableDeclarationFragem
     if (initializer != null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
-    if (a == null || !same(n, left(a)) || useForbiddenSiblings(f, right(a)))
+    if (a == null || !same(n, left(a)) || doesUseForbiddenSiblings(f, right(a)))
       return null;
     r.replace(f, makeVariableDeclarationFragement(f, right(a)), g);
     r.remove(Extract.statement(a), g);

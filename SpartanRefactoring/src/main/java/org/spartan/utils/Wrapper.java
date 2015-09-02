@@ -9,6 +9,9 @@ package org.spartan.utils;
  * @param <T> JD
  */
 public class Wrapper<T> {
+  @Override public String toString() {
+    return "Wrapper of " + t.toString();
+  }
   private T t = null;
   /**
    * Instantiates this class

@@ -99,7 +99,6 @@ public class Trimmer extends Spartanization {
       }
     });
   }
-
   @SuppressWarnings("static-method") ExclusionManager makeExcluder() {
     return new ExclusionManager();
   }
