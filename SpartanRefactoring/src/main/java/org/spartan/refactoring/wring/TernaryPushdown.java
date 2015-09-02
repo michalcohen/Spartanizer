@@ -12,7 +12,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.*;
 import org.spartan.refactoring.utils.*;
 
-final class TernaryPushdown extends Wring.Replacing<ConditionalExpression> {
+final class TernaryPushdown extends Wring.ReplaceCurrentNode<ConditionalExpression> {
   private static int findSingleDifference(final List<Expression> es1, final List<Expression> es2) {
     int $ = -1;
     for (int i = 0; i < es1.size(); ++i)

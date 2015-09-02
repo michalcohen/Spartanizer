@@ -19,7 +19,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-9-19
  */
-public class TernaryCollapse extends Wring.Replacing<ConditionalExpression> {
+public class TernaryCollapse extends Wring.ReplaceCurrentNode<ConditionalExpression> {
   private static Expression collapse(final ConditionalExpression e) {
     if (e == null)
       return null;

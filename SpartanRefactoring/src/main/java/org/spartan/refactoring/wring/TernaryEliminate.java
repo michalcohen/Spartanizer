@@ -13,7 +13,7 @@ import org.spartan.refactoring.utils.Plant;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class TernaryEliminate extends Wring.Replacing<ConditionalExpression> {
+public final class TernaryEliminate extends Wring.ReplaceCurrentNode<ConditionalExpression> {
   @Override Expression replacement(final ConditionalExpression e) {
     return new Plant(Extract.core(e.getThenExpression())).into(e.getParent());
   }

@@ -17,7 +17,7 @@ import org.spartan.refactoring.utils.Plant;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixComparisonBooleanLiteral extends Wring.Replacing<InfixExpression> {
+public final class InfixComparisonBooleanLiteral extends Wring.ReplaceCurrentNode<InfixExpression> {
   private static BooleanLiteral literal(final InfixExpression e) {
     return asBooleanLiteral(core(literalOnLeft(e) ? left(e) : right(e)));
   }

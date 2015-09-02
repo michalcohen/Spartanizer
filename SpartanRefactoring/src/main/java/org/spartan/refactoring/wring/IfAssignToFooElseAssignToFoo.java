@@ -15,7 +15,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfAssignToFooElseAssignToFoo extends Wring.Replacing<IfStatement> {
+public final class IfAssignToFooElseAssignToFoo extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     final Assignment then = Extract.assignment(then(s));
     final Assignment elze = Extract.assignment(elze(s));

@@ -14,7 +14,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-08-14
  */
-public final class TernaryShortestFirst extends Wring.Replacing<ConditionalExpression> {
+public final class TernaryShortestFirst extends Wring.ReplaceCurrentNode<ConditionalExpression> {
   @Override ConditionalExpression replacement(final ConditionalExpression e) {
     final ConditionalExpression $ = Subject.pair(e.getElseExpression(), e.getThenExpression()).toCondition(logicalNot(e.getExpression()));
     final Expression then = $.getElseExpression();

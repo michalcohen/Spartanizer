@@ -17,7 +17,7 @@ import org.spartan.refactoring.utils.Specificity;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixComparisonSpecific extends Wring.Replacing<InfixExpression> {
+public final class InfixComparisonSpecific extends Wring.ReplaceCurrentNode<InfixExpression> {
   @Override boolean eligible(final InfixExpression e) {
     return specifity.compare(left(e), right(e)) < 0;
   }

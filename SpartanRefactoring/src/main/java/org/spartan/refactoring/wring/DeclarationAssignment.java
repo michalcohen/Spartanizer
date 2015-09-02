@@ -6,7 +6,6 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
 
 /**
  * A {@link Wring} to convert <code>int a;
@@ -15,12 +14,13 @@ import org.spartan.refactoring.utils.Is;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationAssignment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
-    if (!Is.variableDeclarationStatement(f.getParent()) || f.getInitializer() != null)
+public final class DeclarationAssignment extends Wring.VariableDeclarationFragementAndStatement {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
+      final TextEditGroup g) {
+    if (initializer != null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
-    if (a == null || !same(f.getName(), left(a)) || useForbiddenSiblings(f, right(a)))
+    if (a == null || !same(n, left(a)) || useForbiddenSiblings(f, right(a)))
       return null;
     r.replace(f, makeVariableDeclarationFragement(f, right(a)), g);
     r.remove(Extract.statement(a), g);

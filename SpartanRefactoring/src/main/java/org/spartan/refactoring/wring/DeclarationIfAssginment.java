@@ -15,11 +15,8 @@ import org.spartan.refactoring.utils.*;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
-    if (!Is.variableDeclarationStatement(f.getParent()))
-      return null;
-    final Expression initializer = f.getInitializer();
+public final class DeclarationIfAssginment extends Wring.VariableDeclarationFragementAndStatement {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
     if (initializer == null)
       return null;
     final IfStatement s = Extract.nextIfStatement(f);
@@ -27,7 +24,7 @@ public final class DeclarationIfAssginment extends Wring.ReplaceToNextStatement<
       return null;
     s.setElseStatement(null);
     final Assignment a = Extract.assignment(then(s));
-    if (a == null || !same(left(a), f.getName()) || a.getOperator() != Assignment.Operator.ASSIGN || useForbiddenSiblings(f, s.getExpression(), right(a)))
+    if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || useForbiddenSiblings(f, s.getExpression(), right(a)))
       return null;
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), g);
     r.remove(s, g);

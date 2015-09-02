@@ -346,7 +346,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       @Test public void hasReplacementAsInfix() {
         if (inner == null)
           return;
-        assertNotNull(((Wring.Replacing<InfixExpression>) inner).replacement(asInfixExpression()));
+        assertNotNull(((Wring.ReplaceCurrentNode<InfixExpression>) inner).replacement(asInfixExpression()));
       }
       @Test public void inputIsInfixExpression() {
         if (inner == null)
@@ -411,7 +411,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void hasReplacement() {
       if (inner == null)
         return;
-      assertNotNull(((Wring.Replacing<Block>) inner).replacement(asMe()));
+      assertNotNull(((Wring.ReplaceCurrentNode<Block>) inner).replacement(asMe()));
     }
     @Test public void noneligible() {
       if (inner == null)
@@ -505,7 +505,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void hasReplacement() {
       if (inner == null)
         return;
-      assertNotNull(((Wring.Replacing<E>) inner).replacement((E) asExpression()));
+      assertNotNull(((Wring.ReplaceCurrentNode<E>) inner).replacement((E) asExpression()));
     }
     @Test public void noneligible() {
       if (inner == null)
@@ -627,7 +627,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       @Test public void hasReplacementAsInfix() {
         if (input == null)
           return;
-        assertNotNull(((Wring.Replacing<InfixExpression>) inner).replacement(asInfixExpression()));
+        assertNotNull(((Wring.ReplaceCurrentNode<InfixExpression>) inner).replacement(asInfixExpression()));
       }
       @Test public void inputIsInfixExpression() {
         if (input == null)
@@ -687,7 +687,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Test public void hasReplacement() {
       if (inner == null)
         return;
-      assertNotNull(((Wring.Replacing<IfStatement>) inner).replacement(asMe()));
+      assertNotNull(((Wring.ReplaceCurrentNode<IfStatement>) inner).replacement(asMe()));
     }
     @Test public void hasSimplifier() {
       if (inner == null)
@@ -941,7 +941,7 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         assertNotNull(Toolbox.instance.find(asExpression()));
       }
       @Test public void hasReplacement() {
-        assertNotNull(((Wring.Replacing<N>) inner).replacement((N) asExpression()));
+        assertNotNull(((Wring.ReplaceCurrentNode<N>) inner).replacement((N) asExpression()));
       }
       @Test public void noneligible() {
         assertFalse(inner.nonEligible((N) asExpression()));

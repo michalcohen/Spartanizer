@@ -5,7 +5,6 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -16,11 +15,8 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationInitializerReturn extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
-    if (!Is.variableDeclarationStatement(f.getParent()))
-      return null;
-    final Expression initializer = f.getInitializer();
+public final class DeclarationInitializerReturn extends Wring.VariableDeclarationFragementAndStatement {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
     if (initializer == null)
       return null;
     final ReturnStatement s = asReturnStatement(nextStatement);

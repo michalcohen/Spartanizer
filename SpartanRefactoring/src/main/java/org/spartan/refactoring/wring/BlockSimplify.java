@@ -17,7 +17,7 @@ import org.spartan.refactoring.utils.Is;
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public class BlockSimplify extends Wring.Replacing<Block> {
+public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> {
   static Statement reorganizeNestedStatement(final Statement s) {
     final List<Statement> ss = Extract.statements(s);
     switch (ss.size()) {

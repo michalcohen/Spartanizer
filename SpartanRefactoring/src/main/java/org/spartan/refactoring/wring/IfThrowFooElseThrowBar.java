@@ -19,7 +19,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfThrowFooElseThrowBar extends Wring.Replacing<IfStatement> {
+public final class IfThrowFooElseThrowBar extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     final Expression condition = s.getExpression();
     final Expression then = Extract.throwExpression(then(s));

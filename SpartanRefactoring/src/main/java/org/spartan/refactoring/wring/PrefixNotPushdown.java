@@ -21,7 +21,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-7-17
  */
-public final class PrefixNotPushdown extends Wring.Replacing<PrefixExpression> {
+public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpression> {
   /**
    * @param o JD
    * @return the operator that produces the logical negation of the parameter

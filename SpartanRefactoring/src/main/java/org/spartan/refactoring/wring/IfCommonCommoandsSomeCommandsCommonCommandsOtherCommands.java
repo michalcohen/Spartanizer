@@ -7,8 +7,6 @@ import static org.spartan.refactoring.wring.Wrings.invert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
@@ -94,7 +92,7 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
     }
     return $;
   }
-  @Override Rewrite make(final IfStatement n, final Set<ASTNode> exclude) {
+  @Override Rewrite make(final IfStatement n, final ExclusionManager exclude) {
     return super.make(n, exclude);
   }
   @Override boolean scopeIncludes(final IfStatement n) {

@@ -43,6 +43,9 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
   }
+  @Test(timeout = 2000) public void multipleInline() {
+    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "return 2*3*4*5;");
+  }
   @Test(timeout = 2000) public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
   }
@@ -57,6 +60,9 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void eliminateRedundantIf4() {
     assertConvertsTo("{if (a) {;}} ", "");
+  }
+  @Test(timeout = 2000) public void inlineInitializers() {
+    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 2 * 3 * b;");
   }
   @Test(timeout = 2000) public void multipleIfDeclarationAssignment() {
     assertConvertsTo(//

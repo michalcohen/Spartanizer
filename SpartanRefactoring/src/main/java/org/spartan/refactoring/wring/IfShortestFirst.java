@@ -15,7 +15,7 @@ import org.spartan.refactoring.utils.Extract;
  * @author Yossi Gil
  * @since 2015-08-15
  */
-public final class IfShortestFirst extends Wring.Replacing<IfStatement> {
+public final class IfShortestFirst extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     final Statement then = then(s);
     final Statement elze = elze(s);

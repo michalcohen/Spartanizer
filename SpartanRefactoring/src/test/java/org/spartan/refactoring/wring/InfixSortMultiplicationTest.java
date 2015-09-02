@@ -70,7 +70,7 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
     assertNotNull(s);
     assertTrue(s.scopeIncludes(e));
     assertTrue(s.eligible(e));
-    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) s).replacement(e);
+    final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }

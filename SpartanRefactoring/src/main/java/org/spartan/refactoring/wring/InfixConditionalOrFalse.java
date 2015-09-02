@@ -12,7 +12,7 @@ import org.spartan.refactoring.utils.Is;
  * @author Yossi Gil
  * @since 2015-07-20
  */
-public final class InfixConditionalOrFalse extends Wring.Replacing<InfixExpression> {
+public final class InfixConditionalOrFalse extends Wring.ReplaceCurrentNode<InfixExpression> {
   @Override Expression replacement(final InfixExpression e) {
     return Wrings.eliminateLiteral(e, false);
   }

@@ -15,7 +15,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-08-26
  */
-public final class IfEmptyThen extends Wring.Replacing<IfStatement> {
+public final class IfEmptyThen extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     return Subject.pair(elze(s), null).toNot(s.getExpression());
   }

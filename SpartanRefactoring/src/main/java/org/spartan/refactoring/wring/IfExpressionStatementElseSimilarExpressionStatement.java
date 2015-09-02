@@ -19,7 +19,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.Replacing<IfStatement> {
+public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     final Expression then = Extract.expression(Extract.expressionStatement(then(s)));
     if (then == null)

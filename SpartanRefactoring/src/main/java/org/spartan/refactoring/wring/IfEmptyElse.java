@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.dom.Statement;
  * @author Yossi Gil
  * @since 2015-08-01
  */
-public final class IfEmptyElse extends Wring.Replacing<IfStatement> {
+public final class IfEmptyElse extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     final IfStatement $ = duplicate(s);
     $.setElseStatement(null);

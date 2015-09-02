@@ -234,6 +234,9 @@ import org.spartan.refactoring.utils.*;
     assertConvertsTo("int a = 2; return 3 * a; ", "return 3 * 2;");
     assertConvertsTo("int a = 2; return a; ", "return 2;");
   }
+  @Test public void correctSubstitutionInIfAssignment() {
+    assertConvertsTo("int a = 2+3; if (a+b) a =a *7;", "int a = (a+b) ? (2+3) * 7 : 2+3; ");
+  }
   @Test public void canonicalFragementExamplesWithExraFragments() {
     assertConvertsTo("int a,b; a = 3;", "int a = 3, b;");
     assertNoChange("int a,b=2; a = b;");
@@ -248,9 +251,8 @@ import org.spartan.refactoring.utils.*;
     assertNoChange("int a = 2, b = 1; a = 3 * a * b; ");
     assertConvertsTo("int a = 2; return 3 * a * a; ", "return 3 * 2 * 2;");
     assertConvertsTo("int a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
-    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
-    assertConvertsTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int b = 5; return 3 * 2 * b * c;");
-    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "int b=5,a=2;return 3*a*b*4;");
+    assertConvertsTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int a = 2; return 3 * a * 5 * c;");
+    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "int a=2,c=4;return 3*a*5*c;");
     assertNoChange("int a = 2, b; return a + 3 * b; ");
     assertNoChange("int a = 2, b = 1; return a + 3 * b; ");
     assertConvertsTo("int a = 2; return a; ", "return 2;");
@@ -262,6 +264,15 @@ import org.spartan.refactoring.utils.*;
     // 3;", }, //
     // new String[] { "Not plain assignment", "int a = 2; if (b) a =a+2;", }, //
     // new String[] { "Uses later variable", "int a = 2,b; if (b) a =3;", }, //
+  }
+  @Test public void inlineInitializers() {
+    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3*2*b;");
+  }
+  @Test public void inlineInitializersFirstStep() {
+    assertConvertsTo("int b=4,a = 2; return 3 * a * b; ", "int a = 2; return 3*a*4;");
+  }
+  @Test public void inlineInitializersSecondStep() {
+    assertConvertsTo("int a = 2; return 3*a*4;", "return 3 * 2 * 4;");
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
@@ -720,7 +731,7 @@ import org.spartan.refactoring.utils.*;
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) s).replacement(e);
+    final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d,e)", replacement.toString());
   }
@@ -740,7 +751,7 @@ import org.spartan.refactoring.utils.*;
     assertTrue(ExpressionComparator.moreArguments(e1, e2));
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(e.toString(), s.eligible(e));
-    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) s).replacement(e);
+    final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
@@ -1395,7 +1406,7 @@ import org.spartan.refactoring.utils.*;
     assertNotNull(w);
     assertTrue(w.scopeIncludes(e));
     assertTrue(w.eligible(e));
-    final ASTNode replacement = ((Wring.Replacing<InfixExpression>) w).replacement(e);
+    final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) w).replacement(e);
     assertNotNull(replacement);
     assertEquals("a != null", replacement.toString());
   }

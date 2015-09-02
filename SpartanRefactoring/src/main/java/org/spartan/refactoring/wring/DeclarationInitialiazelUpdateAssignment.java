@@ -21,34 +21,29 @@ import org.spartan.refactoring.utils.*;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationInitialiazelUpdateAssignment extends Wring.ReplaceToNextStatement<VariableDeclarationFragment> {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final Statement nextStatement, final TextEditGroup g) {
-    if (!Is.variableDeclarationStatement(f.getParent()))
-      return null;
-    final Expression firstInitializer = f.getInitializer();
-    if (firstInitializer == null)
-      return null;
-    final SimpleName name = f.getName();
-    if (name == null)
+public final class DeclarationInitialiazelUpdateAssignment extends Wring.VariableDeclarationFragementAndStatement {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
+      final TextEditGroup g) {
+    if (initializer == null)
       return null;
     final Assignment a = Extract.assignment(nextStatement);
-    if (a == null || !same(name, left(a)) || useForbiddenSiblings(f, right(a)))
+    if (a == null || !same(n, left(a)) || useForbiddenSiblings(f, right(a)))
       return null;
     final Operator o = a.getOperator();
     if (o == ASSIGN)
       return null;
     final Expression secondInitializer = right(a);
-    final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(secondInitializer);
-    if (uses.size() >= 2 || Search.findDefinitions(name).in(secondInitializer))
+    final List<Expression> uses = Search.USES_SEMANTIC.of(n).in(secondInitializer);
+    if (uses.size() >= 2 || Search.findDefinitions(n).in(secondInitializer))
       return null;
-    final ASTNode alternateInitializer = alernateInitializer(firstInitializer, secondInitializer, o, name);
+    final ASTNode alternateInitializer = alernateInitializer(initializer, secondInitializer, o, n);
     if (alternateInitializer == null)
       return null;
     r.remove(nextStatement, g);
-    r.replace(firstInitializer, alternateInitializer, g);
-    final List<Expression> in = Search.USES_SEMANTIC.of(name).in(alternateInitializer);
+    r.replace(initializer, alternateInitializer, g);
+    final List<Expression> in = Search.USES_SEMANTIC.of(n).in(alternateInitializer);
     if (!in.isEmpty())
-      r.replace(in.get(0), firstInitializer, g);
+      r.replace(in.get(0), initializer, g);
     return r;
   }
   private static InfixExpression alernateInitializer(final Expression firstInitializer, final Expression secondInitializer, final Operator o, final SimpleName name) {

@@ -2,9 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.utils.Utils.removeDuplicates;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
@@ -14,15 +12,11 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.spartan.refactoring.spartanizations.Spartanization;
-import org.spartan.refactoring.utils.AncestorSearch;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.utils.Range;
 
 /**
- * Applies the first applicable {@link Wring} object found in
- * <code><b>enum</b></code> {@link Wrings} to a tree.
- *
  * @author Yossi Gil
  * @since 2015/07/10
  */
@@ -106,8 +100,12 @@ public class Trimmer extends Spartanization {
     });
   }
 
+  @SuppressWarnings("static-method") ExclusionManager makeExcluder() {
+    return new ExclusionManager();
+  }
+
   abstract class DispatchingVisitor extends ASTVisitor {
-    final Set<ASTNode> exclude = new HashSet<ASTNode>();
+    final ExclusionManager exclude = makeExcluder();
     @Override public final boolean visit(final Assignment a) {
       return cautiousGo(a);
     }
@@ -136,13 +134,7 @@ public class Trimmer extends Spartanization {
       return cautiousGo(it);
     }
     private boolean cautiousGo(final ASTNode n) {
-      return !excluded(n) && go(n);
-    }
-    private boolean excluded(final ASTNode n) {
-      for (final ASTNode ancestor : AncestorSearch.ancestors(n))
-        if (exclude.contains(ancestor))
-          return true;
-      return false;
+      return !exclude.isExcluded(n) && go(n);
     }
     abstract <N extends ASTNode> boolean go(final N n);
   }

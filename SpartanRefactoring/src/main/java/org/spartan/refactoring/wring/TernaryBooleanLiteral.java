@@ -25,7 +25,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-07-20
  */
-public final class TernaryBooleanLiteral extends Wring.Replacing<ConditionalExpression> {
+public final class TernaryBooleanLiteral extends Wring.ReplaceCurrentNode<ConditionalExpression> {
   @Override Expression replacement(final ConditionalExpression e) {
     return simplifyTernary(e);
   }

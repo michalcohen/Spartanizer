@@ -16,7 +16,7 @@ import org.spartan.refactoring.utils.JavaTypeNameParser;
  * @see JavaTypeNameParser
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  */
-public class GenericArgumentName extends Wring.Replacing<MethodDeclaration> {
+public class GenericArgumentName extends Wring.ReplaceCurrentNode<MethodDeclaration> {
   @Override ASTNode replacement(final MethodDeclaration n) {
     // TODO Check that the method has exactly one argument
     // TODO Check that the argument's name is a generic variation of the type
