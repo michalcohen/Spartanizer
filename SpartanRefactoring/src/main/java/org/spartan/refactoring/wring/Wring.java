@@ -117,9 +117,7 @@ public abstract class Wring<N extends ASTNode> {
       if (!Is.variableDeclarationStatement(f.getParent()))
         return null;
       final SimpleName n = f.getName();
-      if (n == null)
-        return null;
-      return go(r, f, n, f.getInitializer(), nextStatement, g);
+      return n == null ? null : go(r, f, n, f.getInitializer(), nextStatement, g);
     }
     abstract ASTRewrite go(ASTRewrite r, VariableDeclarationFragment f, SimpleName n, Expression initializer, Statement nextStatement, TextEditGroup g);
     static List<VariableDeclarationFragment> forbiddenSiblings(final VariableDeclarationFragment f) {
