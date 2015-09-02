@@ -136,10 +136,8 @@ public abstract class Wring<N extends ASTNode> {
       return $;
     }
     static void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
-      System.err.println("Removing f=" + f + "; r = " + r);
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
       final List<VariableDeclarationFragment> live = live(f, parent.fragments());
-      System.err.println("LIve liveis : " + live);
       if (live.isEmpty()) {
         r.remove(parent, g);
         return;
