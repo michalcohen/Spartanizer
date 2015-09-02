@@ -2,7 +2,6 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
-
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
@@ -20,6 +19,24 @@ import org.spartan.refactoring.utils.Subject;
  */
 public enum Wrings {
   ;
+  static boolean thenIsShorter(final IfStatement s) {
+    final Statement then = then(s);
+    final Statement elze = elze(s);
+    if (elze == null)
+      return true;
+    final int n1 = Extract.statements(then).size();
+    final int n2 = Extract.statements(elze).size();
+    if (n1 < n2)
+      return true;
+    final IfStatement $ = invert(s);
+    if (n1 > n2)
+      return false;
+    assert n1 == n2;
+    return positivePrefixLength($) >= positivePrefixLength(invert($));
+  }
+  private static int positivePrefixLength(final IfStatement $) {
+    return Wrings.length($.getExpression(), then($));
+  }
   static boolean mixedLiteralKind(final List<Expression> es) {
     if (es.size() <= 2)
       return false;

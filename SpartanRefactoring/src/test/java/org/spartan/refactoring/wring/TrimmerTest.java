@@ -666,28 +666,28 @@ import org.spartan.refactoring.utils.*;
     assertNoChange("x? ++a:++b");
   }
   @Test public void ifSequencerThenSequencer0() {
-    assertConvertsTo("if (a) return; else break;", "if (!a) return; break;");
+    assertConvertsTo("if (a) return; else break;", "if (a) return; break;");
   }
   @Test public void ifSequencerThenSequencer1() {
-    assertConvertsTo("if (a) break; else break;", "if (!a) break; return;");
+    assertConvertsTo("if (a) break; else return;", "if (!a) return; break;");
   }
   @Test public void ifSequencerThenSequencer3() {
-    assertConvertsTo("if (a) return; else continue;", "if (!a) return; continue;");
+    assertConvertsTo("if (a) return; else continue;", "if (a) return; continue;");
   }
   @Test public void ifSequencerThenSequencer4() {
-    assertConvertsTo("if (a) continue; else return;", "if (!a) continue; return;");
+    assertConvertsTo("if (a) continue; else return;", "if (!a) return; continue;");
   }
   @Test public void ifSequencerThenSequencer5() {
-    assertConvertsTo("if (a) throw e; else break;", "if (!a) throw e; break;");
+    assertConvertsTo("if (a) throw e; else break;", "if (a) throw e; break;");
   }
   @Test public void ifSequencerThenSequencer6() {
-    assertConvertsTo("if (a) break; else break;", "if (!a) break; throw e;");
+    assertConvertsTo("if (a) break; else throw e;", "if (!a) throw e; break;");
   }
   @Test public void ifSequencerThenSequencer7() {
-    assertConvertsTo("if (a) throw e; else continue;", "if (!a) throw e; continue;");
+    assertConvertsTo("if (a) throw e; else continue;", "if (a) throw e; continue;");
   }
   @Test public void ifSequencerThenSequencer8() {
-    assertConvertsTo("if (a) break; else continue;", "if (!a) break; continue;");
+    assertConvertsTo("if (a) break; else throw e;", "if (!a) throw e; break;");
   }
   @Test public void inlineInitializers() {
     assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3*2*b;");
@@ -1497,16 +1497,15 @@ import org.spartan.refactoring.utils.*;
             + " return 8;"//
             + "}",
         "" //
-            + " if (!s.equals(0xDEAD)) {\n" + //
+            + " if (s.equals(0xDEAD)) \n" + //
+            "    return 8;" + //
             "      int res = 0;\n" + //
             "      for (int i = 0;i < s.length();++i)\n" + //
             "       if (s.charAt(i) == 'a')\n" + //
             "          res += 2;\n" + //
             "        else " + "       if (s.charAt(i) == 'd')\n" + //
             "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    }\n" + //
-            "    return 8;"//
+            "      return res;\n" //
     );
   }
   @Test public void shortestIfBranchFirst02a() {

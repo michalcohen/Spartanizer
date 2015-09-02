@@ -125,40 +125,16 @@ import org.spartan.refactoring.spartanizations.Wrap;
             + " return 8;"//
             + "}",
         "" //
-            + " if (!s.equals(0xDEAD)) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0;i < s.length();++i)\n" + //
-            "       if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else " + "       if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    }\n" + //
-            "    return 8;"//
+            + " if (s.equals(0xDEAD)) \n" + //
+            "    return 8;" + //
+            "   int res = 0;\n" + //
+            "   for (int i = 0;i < s.length();++i)\n" + //
+            "     if (s.charAt(i) == 'a')\n" + //
+            "       res += 2;\n" + //
+            "      else " + "       if (s.charAt(i) == 'd')\n" + //
+            "        res -= 1;\n" + //
+            "  return res;\n" //
     );
-  }
-  @Test(timeout = 2000) public void shortestIfBranchFirst03() {
-    assertConvertsTo(
-        "  if (s.length() > 6) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0;i < s.length();i++)\n" + //
-            "  if ('a' == s.charAt(i))\n" + //
-            "          res += 2;\n" + //
-            "        else if ('d' == s.charAt(i))\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    } else\n" + //
-            "      return 8;", //
-        "  if (s.length() > 6) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0;i < s.length();++i)\n" + //
-            "  if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    }\n" + //
-            "    return 8;");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst03a() {
     assertConvertsTo(
@@ -188,32 +164,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
             "      int res = 0;\n" + //
             "      for (int i = 0;i < s.length();++i)\n" + //
             "  if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    }\n" + //
-            "    return 8;");
-  }
-  @Test(timeout = 2000) public void shortestIfBranchFirst04() {
-    assertConvertsTo(
-        "    String s;\n" + //
-            "    if (s.length() >= 6) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0; i < s.length(); i++)\n" + //
-            "        if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    } else {\n" + //
-            "      return 8;\n" + //
-            "    }",
-        "     String s;\n" + //
-            "    if (s.length() >= 6) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0; i < s.length(); ++i)\n" + //
-            "        if (s.charAt(i) == 'a')\n" + //
             "          res += 2;\n" + //
             "        else if (s.charAt(i) == 'd')\n" + //
             "          res -= 1;\n" + //
@@ -263,9 +213,9 @@ import org.spartan.refactoring.spartanizations.Wrap;
         "      b *= b;\n" + //
         "      return 6;\n" + //
         "    } else {\n" + //
-        "      a = 5;\n" + //
+        "      int a = 5;\n" + //
         "      return b;\n" + //
-        "    }", "int a=0;if(a>0){return 6;}a=5;return b;");
+        "    }", "return 0>0?6:b;");
   }
   @Test(timeout = 2000) public void shortestOperand03() {
     assertConvertsTo(//
