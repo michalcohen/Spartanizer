@@ -27,6 +27,16 @@ import org.spartan.refactoring.spartanizations.Wrap;
   private static void assertSimplifiesTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Expression);
   }
+  @Test public void issue43() {
+    assertConvertsTo(
+        "" //
+            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
+            + "return (t + 3);    ", //
+        ""//
+            + "return(Z2.f(A).f(b)+Z2.f(c)+3);" //
+            + "" //
+    );
+  }
   private static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
     final String wrap = w.on(from);
     assertEquals(from, w.off(wrap));
@@ -66,8 +76,8 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void multipleIfDeclarationAssignment() {
     assertConvertsTo(//
-        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else          b = a;else if (b == 3)         b = 2;else         b = a*a;",
-        "int a =3, b=5; b=a==4?b==3?2:a:b==3?2:a*a;");
+        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else b = a;else if (b == 3) b = 2;else b = a*a;", //
+        "int a =3, b=a==4?5==3?2:a:5==3?2:a*a;");
   }
   @Test public void commonPrefixIfBranchesInBlock() {
     assertConvertsTo(
@@ -211,7 +221,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void ternarize01() {
     assertConvertsTo(//
         "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;else    res = SPAM;System.out.println(res);",
-        "String res=s;res=!s.equals(532)?SPAM:s+0xABBA;System.out.println(res);");
+        "String res=!s.equals(532)?SPAM:s+0xABBA;System.out.println(res);");
   }
   @Test(timeout = 2000) public void ternarize02() {
     assertConvertsTo(//

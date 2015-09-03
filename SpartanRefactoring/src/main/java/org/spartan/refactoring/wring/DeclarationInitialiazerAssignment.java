@@ -3,13 +3,10 @@ package org.spartan.refactoring.wring;
 import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
 import static org.spartan.refactoring.utils.Funcs.*;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Search;
 
 /**
  * A {@link Wring} to convert <code>int a;
@@ -26,18 +23,15 @@ public final class DeclarationInitialiazerAssignment extends Wring.VariableDecla
     final Assignment a = Extract.assignment(nextStatement);
     if (a == null || !same(n, left(a)) || a.getOperator() != ASSIGN)
       return null;
-    final Expression secondInitializer = right(a);
-    if (doesUseForbiddenSiblings(f, secondInitializer))
+    final Expression inlinedInitializer = duplicate(right(a));
+    if (doesUseForbiddenSiblings(f, inlinedInitializer))
       return null;
-    final List<Expression> uses = Search.USES_SEMANTIC.of(n).in(secondInitializer);
-    if (uses.size() == 1 && Search.noDefinitions(n).in(secondInitializer)) {
-      r.remove(Extract.statement(a), g);
-      final ASTNode betterInitializer = duplicate(secondInitializer);
-      r.replace(initializer, betterInitializer, g);
-      r.replace(Search.USES_SEMANTIC.of(n).in(betterInitializer).get(0), initializer, g);
-      return r;
-    }
-    return null;
+    if (!canInlineInto(n, initializer, inlinedInitializer))
+      return null;
+    r.replace(initializer, inlinedInitializer, g);
+    inlineInto(r, g, n, initializer, inlinedInitializer);
+    r.remove(Extract.statement(a), g);
+    return r;
   }
   @Override String description(final VariableDeclarationFragment n) {
     return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";

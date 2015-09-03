@@ -119,6 +119,9 @@ import org.spartan.refactoring.utils.*;
   @Test public void assignmentReturn0() {
     assertConvertsTo("a = 3; return a;", "return a = 3;");
   }
+  @Test public void overridenDeclaration() {
+    assertConvertsTo("int a = 3; a = f() ? 3 : 4;", "int a = f() ? 3: 4;");
+  }
   @Test public void assignmentReturn1() {
     assertConvertsTo("a = 3; return (a);", "return a = 3;");
   }
@@ -1670,8 +1673,16 @@ import org.spartan.refactoring.utils.*;
             + "  return (right_now + t);    ", //
         "return(right_now+Bob+Wants+To+\"Sleep \");");
   }
-  @Test public void shortestOperand16() {
-    assertNoConversion("String t = Z2;   t = t.concat(A).concat(\"b\") + t.concat(\"c\");   return (t + \"...\");    ");
+  @Test public void issue43() {
+    assertConvertsTo(
+        "" //
+            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
+            + "return (t + 3);    ", //
+        ""//
+            + "String t = Z2.f(A).f(b) + Z2.f(c);" //
+            + "return (t + 3);" //
+            + "" //
+    );
   }
   @Test public void shortestOperand17() {
     assertSimplifiesTo("5 ^ a.getNum()", "a.getNum() ^ 5");
@@ -1936,7 +1947,7 @@ import org.spartan.refactoring.utils.*;
   @Test public void ternarize14() {
     assertConvertsTo(//
         "String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);", //
-        "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=2;k=8;System.out.println(foo);");
+        "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);");
   }
   @Test public void ternarize16() {
     assertNoConversion(//
