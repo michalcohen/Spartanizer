@@ -665,6 +665,39 @@ import org.spartan.refactoring.utils.*;
   @Test public void ifPlusPlusPreExpression() {
     assertNoChange("x? ++a:++b");
   }
+  @Test public void ifSequencerNoElseSequencer0() {
+    assertNoChange("if (a) return; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer01() {
+    assertNoChange("if (a) throw e; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer02() {
+    assertConvertsTo("if (a) break; break;", "break;");
+  }
+  @Test public void ifSequencerNoElseSequencer03() {
+    assertNoChange("if (a) continue; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer04() {
+    assertConvertsTo("if (a) break; return;", "if (!a) return; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer05() {
+    assertNoChange("if (a) {x() return;} continue;");
+  }
+  @Test public void ifSequencerNoElseSequencer06() {
+    assertNoChange("if (a) throw e; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer07() {
+    assertConvertsTo("if (a) break; throw e;", "if (!a) throw e; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer08() {
+    assertNoChange("if (a) throw e; continue;");
+  }
+  @Test public void ifSequencerNoElseSequencer09() {
+    assertConvertsTo("if (a) break; throw e;", "if (!a) throw e; break;");
+  }
+  @Test public void ifSequencerNoElseSequencer10() {
+    assertConvertsTo("if (a) continue; return;", "if (!a) return; continue;");
+  }
   @Test public void ifSequencerThenSequencer0() {
     assertConvertsTo("if (a) return; else break;", "if (a) return; break;");
   }
@@ -1515,18 +1548,28 @@ import org.spartan.refactoring.utils.*;
     );
   }
   @Test public void shortestIfBranchFirst02a() {
-    assertNoConversion("" //
-        + " if (!s.equals(0xDEAD)) {\n" + //
-        "      int res = 0;\n" + //
-        "      for (int i = 0;i < s.length();++i)\n" + //
-        "       if (s.charAt(i) == 'a')\n" + //
-        "          res += 2;\n" + //
-        "        else " + "       if (s.charAt(i) == 'd')\n" + //
-        "          res -= 1;\n" + //
-        "      return res;\n" + //
-        "    }\n" + //
-        "    return 8;"//
-    );
+    assertConvertsTo(
+        "" + //
+            " if (!s.equals(0xDEAD)) {\n" + //
+            "      int res = 0;\n" + //
+            "      for (int i = 0;i < s.length();++i)\n" + //
+            "       if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else " + "       if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "    }\n" + //
+            "    return 8;" + //
+            "", //
+        " if (s.equals(0xDEAD)) " + "return 8; " + //
+            "      int res = 0;\n" + //
+            "      for (int i = 0;i < s.length();++i)\n" + //
+            "       if (s.charAt(i) == 'a')\n" + //
+            "          res += 2;\n" + //
+            "        else " + "       if (s.charAt(i) == 'd')\n" + //
+            "          res -= 1;\n" + //
+            "      return res;\n" + //
+            "");
   }
   @Test public void shortestIfBranchFirst02b() {
     assertNoConversion("" + //
@@ -1568,16 +1611,16 @@ import org.spartan.refactoring.utils.*;
         "" + //
             "if (a) {" + //
             " f();" + //
-            " f();" + //
-            " f();" + //
+            " g();" + //
+            " h();" + //
             " return a;" + //
             "}\n" + //
             "return c;", //
         "" + //
             "if (!a) return c;" + //
             "f();" + //
-            "f();" + //
-            "f();" + //
+            "g();" + //
+            "h();" + //
             "return a;" + //
             "");
   }

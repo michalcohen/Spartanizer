@@ -32,31 +32,31 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
   @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
   }
-  @Override Rewrite make(final IfStatement n) {
-    final List<Statement> then = Extract.statements(then(n));
+  @Override Rewrite make(final IfStatement s) {
+    final List<Statement> then = Extract.statements(then(s));
     if (then.isEmpty())
       return null;
-    final List<Statement> elze = Extract.statements(elze(n));
+    final List<Statement> elze = Extract.statements(elze(s));
     if (elze.isEmpty())
       return null;
     final List<Statement> commonPrefix = commonPrefix(then, elze);
-    return commonPrefix.isEmpty() ? null : new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", n) {
+    return commonPrefix.isEmpty() ? null : new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         final IfStatement newIf = replacement();
-        if (!Is.block(n.getParent())) {
+        if (!Is.block(s.getParent())) {
           final Block b = Subject.ss(commonPrefix).toBlock();
           if (newIf != null)
             b.statements().add(newIf);
-          r.replace(n, b, g);
+          r.replace(s, b, g);
         } else {
-          final ListRewrite lr = insertBefore(n, commonPrefix, r, g);
+          final ListRewrite lr = insertBefore(s, commonPrefix, r, g);
           if (newIf != null)
-            lr.insertBefore(newIf, n, g);
-          lr.remove(n, g);
+            lr.insertBefore(newIf, s, g);
+          lr.remove(s, g);
         }
       }
       private IfStatement replacement() {
-        return replacement(n.getExpression(), Subject.ss(then).toOneStatementOrNull(), Subject.ss(elze).toOneStatementOrNull());
+        return replacement(s.getExpression(), Subject.ss(then).toOneStatementOrNull(), Subject.ss(elze).toOneStatementOrNull());
       }
       private IfStatement replacement(final Expression condition, final Statement trimmedThen, final Statement trimmedElse) {
         if (trimmedThen == null && trimmedElse == null)

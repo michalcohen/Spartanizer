@@ -149,28 +149,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
             "          res -= 1;\n" + //
             "");
   }
-  @Test(timeout = 2000) public void shortestIfBranchFirst03b() {
-    assertConvertsTo(
-        "    if (s.length() > 6) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0; i < s.length(); ++i)\n" + //
-            "        if ('a' == s.charAt(i))\n" + //
-            "          res += 2;\n" + //
-            "        else if ('d' == s.charAt(i))\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    }\n" + "    return 8;", //
-        "  if (s.length() > 6) {\n" + //
-            "      int res = 0;\n" + //
-            "      for (int i = 0;i < s.length();++i)\n" + //
-            "  if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" + //
-            "      return res;\n" + //
-            "    }\n" + //
-            "    return 8;");
-  }
   @Test(timeout = 2000) public void shortestIfBranchFirst09() {
     assertSimplifiesTo("s.equals(532) ? 9 * yada3(s.length()) : 6 ", "!s.equals(532)?6:9*yada3(s.length())");
   }

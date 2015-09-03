@@ -95,19 +95,6 @@ public enum Wrings {
     r.replace(parent, $, g);
     return r;
   }
-  static void replaceWithShorterIf(final IfStatement s, final IfStatement shorterIf, final ASTRewrite r, final TextEditGroup g) {
-    final List<Statement> remainder = Extract.statements(elze(shorterIf));
-    shorterIf.setElseStatement(null);
-    final Block parent = asBlock(s.getParent());
-    final Block newParent = s.getAST().newBlock();
-    if (parent != null)
-      addAllReplacing(newParent.statements(), parent.statements(), s, shorterIf, remainder);
-    else {
-      newParent.statements().add(shorterIf);
-      duplicateInto(remainder, newParent.statements());
-    }
-    r.replace(s, newParent, g);
-  }
   static boolean shoudlInvert(final IfStatement s) {
     final int rankThen = sequencerRank(Extract.lastStatement(then(s)));
     final int rankElse = sequencerRank(Extract.lastStatement(elze(s)));
