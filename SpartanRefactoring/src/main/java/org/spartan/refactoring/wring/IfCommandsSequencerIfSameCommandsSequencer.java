@@ -2,7 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_OR;
 import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.utils.Utils.last;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public final class IfCommandsSequencerIfSameCommandsSequencer extends Wring.Repl
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
     if (s == null || !Wrings.emptyElse(s))
       return null;
-    final IfStatement s2 = Extract.nextIfStatement(s);
+    final IfStatement s2 = asIfStatement(nextStatement);
     if (s2 == null || !Wrings.emptyElse(s2))
       return null;
     final Statement then = then(s);

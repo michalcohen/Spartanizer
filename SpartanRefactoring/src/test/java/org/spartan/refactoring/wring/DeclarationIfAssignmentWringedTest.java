@@ -123,28 +123,6 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Test public void scopeIncludesAsMe() {
     assertThat(asMe().toString(), inner.scopeIncludes(asMe()), is(true));
   }
-  @Test public void scopeIncludesAsMeExpanded() {
-    final VariableDeclarationFragment f = asMe();
-    final Expression initializer = f.getInitializer();
-    assertNotNull(initializer);
-    final IfStatement s = Extract.nextIfStatement(f);
-    assertNotNull(s);
-    assertThat(Wrings.emptyElse(s), is(true));
-    final Assignment a = Extract.assignment(then(s));
-    assertNotNull(a);
-    final Expression leftHandSide = left(a);
-    assertNotNull(leftHandSide);
-    assertTrue(same(leftHandSide, f.getName()));
-    assertThat(a.getOperator(), is(Assignment.Operator.ASSIGN));
-    final List<Expression> in = Search.BOTH_SEMANTIC.of(f).in(s.getExpression(), right(a));
-    assertThat(in, notNullValue());
-    final ASTRewrite r = ASTRewrite.create(f.getAST());
-    r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
-    r.remove(s, null);
-    final ASTRewrite fillReplacement = WRING.go(r, f, null, null);
-    final boolean scopeIncludes = fillReplacement != null;
-    assertThat(asMe().toString(), scopeIncludes, is(true));
-  }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
     if (inner == null)
       return;

@@ -133,9 +133,6 @@ public abstract class Wring<N extends ASTNode> {
     protected static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
       return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);
     }
-    @SafeVarargs protected static boolean canInlineInto(final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
-      return canInlineInto(n, replacement, strip(es));
-    }
     @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
       for (final Wrapper<Expression> e : es)
         inlineIntoSingleton(r, g, n, replacement, e);
