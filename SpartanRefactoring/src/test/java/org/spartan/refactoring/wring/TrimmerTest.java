@@ -99,6 +99,15 @@ import org.spartan.refactoring.utils.*;
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
+  @Test public void declarationUpdateReturn() {
+    assertConvertsTo("int a = 3; return a += 2;", "return 3 + 2;");
+  }
+  @Test public void declarationUpdateReturnTwice() {
+    assertConvertsTo("int a = 3; return a += 2 * a;", "return 3 + 2 *3 ;");
+  }
+  @Test public void declarationUpdateReturnNone() {
+    assertNoConversion("int a = f(); return a += 2 * a;");
+  }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
     final String expected = "a + 2 < b";
@@ -455,6 +464,9 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void declarationInitializeUpdateAnd() {
     assertConvertsTo("int a = 3;a&=2;", "int a = 3 & 2;");
+  }
+  @Test public void declarationInitializerReturnAssignment() {
+    assertConvertsTo("int a = 3; return a = 2 * a;", "return 2 * 3;");
   }
   @Test public void declarationInitializeUpdateAssignment() {
     assertConvertsTo("int a = 3;a += 2;", "int a = 3+2;");

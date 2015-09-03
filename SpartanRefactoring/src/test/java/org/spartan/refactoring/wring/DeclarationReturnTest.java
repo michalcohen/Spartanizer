@@ -31,7 +31,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationReturnTest {
-  static final Wring<VariableDeclarationFragment> WRING = new DeclarationInitializerReturn();
+  static final Wring<VariableDeclarationFragment> WRING = new DeclarationInitializerReturnVariable();
   @Test public void placeHolder() {
     assertNotNull(WRING);
   }

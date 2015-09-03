@@ -1,5 +1,7 @@
 package org.spartan.refactoring.wring;
 
+import static org.eclipse.jdt.core.dom.Assignment.Operator.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 
 import java.util.ArrayList;
@@ -129,6 +131,19 @@ public abstract class Wring<N extends ASTNode> {
       for (final Expression t : ts)
         $[i++] = new Wrapper<>(t);
       return $;
+    }
+    protected static InfixExpression.Operator asInfix(final Assignment.Operator o) {
+      return o == PLUS_ASSIGN ? PLUS
+          : o == MINUS_ASSIGN ? MINUS
+              : o == TIMES_ASSIGN ? TIMES
+                  : o == DIVIDE_ASSIGN ? DIVIDE
+                      : o == BIT_AND_ASSIGN ? AND
+                          : o == BIT_OR_ASSIGN ? OR
+                              : o == BIT_XOR_ASSIGN ? XOR
+                                  : o == REMAINDER_ASSIGN ? REMAINDER
+                                      : o == LEFT_SHIFT_ASSIGN ? LEFT_SHIFT //
+                                          : o == RIGHT_SHIFT_SIGNED_ASSIGN ? RIGHT_SHIFT_SIGNED //
+                                              : o != RIGHT_SHIFT_UNSIGNED_ASSIGN ? null : RIGHT_SHIFT_UNSIGNED;
     }
     protected static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
       return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);

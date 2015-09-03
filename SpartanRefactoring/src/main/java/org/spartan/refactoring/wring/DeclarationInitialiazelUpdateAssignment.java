@@ -1,7 +1,6 @@
 package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.Assignment.Operator.*;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Funcs.same;
@@ -37,18 +36,6 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     inlineInto(r, g, n, initializer, alternateInitializer);
     r.remove(nextStatement, g);
     return r;
-  }
-  private static InfixExpression.Operator asInfix(final Assignment.Operator o) {
-    return o == PLUS_ASSIGN ? PLUS
-        : o == MINUS_ASSIGN ? MINUS
-            : o == TIMES_ASSIGN ? TIMES
-                : o == DIVIDE_ASSIGN ? DIVIDE
-                    : o == BIT_AND_ASSIGN ? AND
-                        : o == BIT_OR_ASSIGN ? OR
-                            : o == BIT_XOR_ASSIGN ? XOR
-                                : o == REMAINDER_ASSIGN ? REMAINDER
-                                    : o == LEFT_SHIFT_ASSIGN ? LEFT_SHIFT
-                                        : o == RIGHT_SHIFT_SIGNED_ASSIGN ? RIGHT_SHIFT_SIGNED : o != RIGHT_SHIFT_UNSIGNED_ASSIGN ? null : RIGHT_SHIFT_UNSIGNED;
   }
   @Override String description(final VariableDeclarationFragment n) {
     return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";

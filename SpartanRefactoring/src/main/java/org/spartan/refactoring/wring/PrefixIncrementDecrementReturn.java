@@ -1,10 +1,9 @@
 package org.spartan.refactoring.wring;
 
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.DECREMENT;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.INCREMENT;
 import static org.spartan.refactoring.utils.Extract.core;
-import static org.spartan.refactoring.utils.Funcs.asStatement;
-import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.utils.Utils.in;
 
 import org.eclipse.jdt.core.dom.PrefixExpression;
@@ -12,7 +11,6 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
@@ -29,7 +27,7 @@ public class PrefixIncrementDecrementReturn extends Wring.ReplaceToNextStatement
     final Statement parent = asStatement(e.getParent());
     if (parent == null)
       return null;
-    final ReturnStatement s = Extract.nextReturn(e);
+    final ReturnStatement s = asReturnStatement(nextStatement);
     if (s == null || !same(e.getOperand(), core(s.getExpression())))
       return null;
     r.remove(parent, g);

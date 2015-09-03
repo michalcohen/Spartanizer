@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.then;
+import static org.spartan.refactoring.utils.Funcs.*;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -32,7 +32,7 @@ import org.spartan.refactoring.utils.Subject;
 public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfStatement> {
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
     final ReturnStatement then = Extract.returnStatement(then(s));
-    final ReturnStatement elze = Extract.nextReturn(s);
+    final ReturnStatement elze = asReturnStatement(nextStatement);
     return Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(Extract.expression(then), Extract.expression(elze)).toCondition(s.getExpression())).toReturn(), g);
   }
   @Override boolean scopeIncludes(final IfStatement s) {

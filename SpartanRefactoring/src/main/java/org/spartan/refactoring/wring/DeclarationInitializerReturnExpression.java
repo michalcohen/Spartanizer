@@ -15,7 +15,7 @@ import org.spartan.refactoring.utils.Extract;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationInitializerReturnInlineInto extends Wring.VariableDeclarationFragementAndStatement {
+public final class DeclarationInitializerReturnExpression extends Wring.VariableDeclarationFragementAndStatement {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
       final TextEditGroup g) {
     if (initializer == null)
