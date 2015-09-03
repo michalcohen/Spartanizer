@@ -25,7 +25,7 @@ import org.spartan.refactoring.utils.*;
  * @since 2015-07-29
  */
 public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands extends Wring<IfStatement> {
-  @Override String description(final IfStatement n) {
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Factor out commmon prefix of then and else branches to just before if statement";
   }
   @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
@@ -70,14 +70,6 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
         return $;
       }
     };
-  }
-  protected Block makeContainingBlock(final Statement s, final ASTRewrite r, final TextEditGroup g) {
-    final ASTNode parent = s.getParent();
-    if (Is.block(parent))
-      return (Block) parent;
-    final Block b = Subject.statement(s).toBlock();
-    r.replace(s, b, g);
-    return b;
   }
   private static List<Statement> commonPrefix(final List<Statement> ss1, final List<Statement> ss2) {
     final List<Statement> $ = new ArrayList<>();

@@ -74,11 +74,11 @@ public enum Search {
       @Override public boolean visit(final ForStatement s) {
         return add(s.initializers());
       }
-      @Override public boolean visit(final PostfixExpression e) {
-        return !in(e.getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT) || add(e.getOperand());
+      @Override public boolean visit(final PostfixExpression it) {
+        return !in(it.getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT) || add(it.getOperand());
       }
-      @Override public boolean visit(final PrefixExpression e) {
-        return add(e.getOperand());
+      @Override public boolean visit(final PrefixExpression it) {
+        return add(it.getOperand());
       }
       @Override public boolean visit(final TryStatement s) {
         return add(s.resources());

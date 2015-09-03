@@ -21,7 +21,7 @@ public final class DeclarationIfAssginment extends Wring.VariableDeclarationFrag
       final TextEditGroup g) {
     if (initializer == null)
       return null;
-    final IfStatement s = Extract.nextIfStatement(f);
+    final IfStatement s = asIfStatement(nextStatement);
     if (s == null || !Wrings.emptyElse(s))
       return null;
     s.setElseStatement(null);
