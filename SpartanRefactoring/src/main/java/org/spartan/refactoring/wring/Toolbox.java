@@ -66,11 +66,12 @@ public class Toolbox {
           new IfReturnNoElseReturn(), //
           new IfAssignToFooElseAssignToFoo(), //
           new IfExpressionStatementElseSimilarExpressionStatement(), //
-          new IfCommandsSequencerElseSomething(), //
+          new IfThenOrElseIsCommandsFollowedBySequencer(), //
           new IfCommandsSequencerIfSameCommandsSequencer(), //
           new IfEmptyThenEmptyElse(), //
           new IfEmptyElse(), //
           new IfEmptyThen(), //
+          new IfCommandsSequencerNoElseSingletonSequencer(), //
           new IfShortestFirst(), //
           null)//
       .add(PrefixExpression.class, //

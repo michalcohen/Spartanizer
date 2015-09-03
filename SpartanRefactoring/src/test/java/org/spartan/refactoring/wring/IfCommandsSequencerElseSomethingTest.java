@@ -46,7 +46,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class IfCommandsSequencerElseSomethingTest {
-  static final IfCommandsSequencerElseSomething WRING = new IfCommandsSequencerElseSomething();
+  static final IfThenOrElseIsCommandsFollowedBySequencer WRING = new IfThenOrElseIsCommandsFollowedBySequencer();
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) return a = b; else a = c;");
     assertNotNull(s);

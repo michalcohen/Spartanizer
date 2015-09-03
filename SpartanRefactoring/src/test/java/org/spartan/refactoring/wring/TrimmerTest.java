@@ -39,6 +39,9 @@ import org.spartan.refactoring.utils.*;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
+  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -92,9 +95,6 @@ import org.spartan.refactoring.utils.*;
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
-  }
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -1066,6 +1066,9 @@ import org.spartan.refactoring.utils.*;
   @Test public void postDecreementReturn() {
     assertConvertsTo("a--; return a;", "--a;return a;");
   }
+  @Test public void postDecremntInFunctionCall() {
+    assertNoConversion("f(a++, i--, b++, ++b);");
+  }
   @Test public void postfixToPrefixAvoidChangeOnLoopCondition() {
     assertNoConversion("for (int s = i; ++i; ++s);");
   }
@@ -1079,6 +1082,9 @@ import org.spartan.refactoring.utils.*;
             "int n = s++;" + //
             "System.out.print(n);" //
     );
+  }
+  @Test public void postIncrementInFunctionCall() {
+    assertNoConversion("f(i++);");
   }
   @Test public void postIncrementReturn() {
     assertConvertsTo("a++; return a;", "++a;return a;");
@@ -1556,6 +1562,24 @@ import org.spartan.refactoring.utils.*;
             "       if (s.charAt(i) == 'd')\n" + //
             "          res -= 1;\n" //
     ));
+  }
+  @Test public void shortestIfBranchWithFollowingCommandsSequencer() {
+    assertConvertsTo(
+        "" + //
+            "if (a) {" + //
+            " f();" + //
+            " f();" + //
+            " f();" + //
+            " return a;" + //
+            "}\n" + //
+            "return c;", //
+        "" + //
+            "if (!a) return c;" + //
+            "f();" + //
+            "f();" + //
+            "f();" + //
+            "return a;" + //
+            "");
   }
   @Test public void shortestOperand01() {
     assertNoChange("x + y > z");
