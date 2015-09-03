@@ -152,18 +152,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void shortestIfBranchFirst09() {
     assertSimplifiesTo("s.equals(532) ? 9 * yada3(s.length()) : 6 ", "!s.equals(532)?6:9*yada3(s.length())");
   }
-  @Test public void shortestIfBranchFirst10() {
-    assertConvertsTo(
-        "      for (final String s : contents.split(\"\\n\"))\n" + "  if (!foundPackage && s.contains(Strings.JAVA_PACKAGE)) {\n" + //
-            "          $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + //
-            "          foundPackage = true;\n" + //
-            "        } else\n" + //
-            "          $.append(replaceClassName(s, className, newClassName) + \"\\n\");\n" + //
-            "      return asString($);",
-        "    for (final String s : contents.split(\"\\n\"))\n" + "      if (foundPackage || !s.contains(Strings.JAVA_PACKAGE))\n"
-            + "        $.append(replaceClassName(s, className, newClassName) + \"\\n\");\n" + "      else {\n"
-            + "        $.append(s.replace(\";\", \".\" + folderName + \";\") + \"\\n\" + imports);\n" + "        foundPackage = true;\n" + "      }\n" + "    return asString($);");
-  }
   @Test(timeout = 2000) public void shortestIfBranchFirst11() {
     assertSimplifiesTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
         "b==null||b.getNodeType()!=ASTNode.BLOCK?b:getBlockSingleStmnt((Block)b)");
