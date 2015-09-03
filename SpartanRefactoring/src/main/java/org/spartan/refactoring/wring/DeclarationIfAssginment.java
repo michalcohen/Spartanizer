@@ -19,25 +19,25 @@ import org.spartan.refactoring.utils.Subject;
 public final class DeclarationIfAssginment extends Wring.VariableDeclarationFragementAndStatement {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
       final TextEditGroup g) {
-        if (initializer == null)
-          return null;
-        final IfStatement s = Extract.nextIfStatement(f);
-        if (s == null || !Wrings.emptyElse(s))
-          return null;
-        s.setElseStatement(null);
-        final Expression condition = s.getExpression();
-        if (condition == null)
-          return null;
-        final Assignment a = Extract.assignment(then(s));
-        if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a))
-            || !canInlineInto(n, initializer, condition, right(a)))
-          return null;
-        final ConditionalExpression newInitializer = Subject.pair(right(a), initializer).toCondition(condition);
-        r.replace(initializer, newInitializer, g);
-        inlineInto(r, g, n, initializer, then(newInitializer), newInitializer.getExpression());
-        r.remove(s, g);
-        return r;
-      }
+    if (initializer == null)
+      return null;
+    final IfStatement s = Extract.nextIfStatement(f);
+    if (s == null || !Wrings.emptyElse(s))
+      return null;
+    s.setElseStatement(null);
+    final Expression condition = s.getExpression();
+    if (condition == null)
+      return null;
+    final Assignment a = Extract.assignment(then(s));
+    if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a))
+        || !canInlineInto(n, initializer, condition, right(a)))
+      return null;
+    final ConditionalExpression newInitializer = Subject.pair(right(a), initializer).toCondition(condition);
+    r.replace(initializer, newInitializer, g);
+    inlineInto(r, g, n, initializer, then(newInitializer), newInitializer.getExpression());
+    r.remove(s, g);
+    return r;
+  }
   @Override public String description(final VariableDeclarationFragment f) {
     return "Consolidate initialization of " + f.getName() + " with the subsequent conditional assignment to it";
   }
