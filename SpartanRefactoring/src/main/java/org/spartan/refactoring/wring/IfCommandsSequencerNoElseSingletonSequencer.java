@@ -48,15 +48,14 @@ public final class IfCommandsSequencerNoElseSingletonSequencer extends Wring.Rep
     final IfStatement canonicalIf = invert(asVirtualIf);
     final List<Statement> ss = Extract.statements(elze(canonicalIf));
     canonicalIf.setElseStatement(null);
-    if (Is.block(s.getParent())) {
+    if (!Is.block(s.getParent())) {
+      ss.add(0, canonicalIf);
+      r.replace(s, Subject.ss(ss).toBlock(), g);
+      r.remove(nextStatement, g);
+    } else {
       final ListRewrite lr = insertAfter(s, ss, r, g);
       lr.replace(s, canonicalIf, g);
       lr.remove(nextStatement, g);
-    } else {
-      ss.add(0, canonicalIf);
-      final Block b = Subject.ss(ss).toBlock();
-      r.replace(s, b, g);
-      r.remove(nextStatement, g);
     }
     return r;
   }

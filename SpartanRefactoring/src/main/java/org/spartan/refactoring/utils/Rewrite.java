@@ -31,7 +31,8 @@ public abstract class Rewrite extends Range {
     this.description = description;
   }
   /**
-   * A factory function that converts a single ASTNode into a {@link Range}
+   * A factory function that converts a sequence of ASTNodes into a
+   * {@link Range}
    *
    * @param n arbitrary
    * @param ns
@@ -40,9 +41,10 @@ public abstract class Rewrite extends Range {
     return range(singleNodeRange(n), ns);
   }
   static Range range(final Range r, final ASTNode... ns) {
+    Range $ = r;
     for (final ASTNode n : ns)
-      r.merge(singleNodeRange(n));
-    return r;
+      $ = $.merge(singleNodeRange(n));
+    return $;
   }
   static Range singleNodeRange(final ASTNode n) {
     final int from = n.getStartPosition();

@@ -102,21 +102,19 @@ import org.spartan.refactoring.utils.*;
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
     final String expected = "a + 2 < b";
-    final String from1 = from;
-    final String expected1 = expected;
     final Wrap w = Wrap.Expression;
-    final String wrap = w.on(from1);
-    assertEquals(from1, w.off(wrap));
+    final String wrap = w.on(from);
+    assertEquals(from, w.off(wrap));
     final Trimmer t = new Trimmer();
     final String unpeeled = TrimmerTest.apply(t, wrap);
     if (wrap.equals(unpeeled))
-      fail("Nothing done on " + from1);
+      fail("Nothing done on " + from);
     final String peeled = w.off(unpeeled);
-    if (peeled.equals(from1))
-      assertNotEquals("No similification of " + from1, from1, peeled);
-    if (compressSpaces(peeled).equals(compressSpaces(from1)))
-      assertNotEquals("Simpification of " + from1 + " is just reformatting", compressSpaces(peeled), compressSpaces(from1));
-    assertSimilar(expected1, peeled);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
   }
   @Test public void assignmentReturn0() {
     assertConvertsTo("a = 3; return a;", "return a = 3;");

@@ -26,7 +26,7 @@ public final class DeclarationInitializerReturn extends Wring.VariableDeclaratio
     if (s == null)
       return null;
     final Expression returnValue = Extract.expression(s);
-    if (returnValue == null || !same(f.getName(), returnValue))
+    if (returnValue == null || !same(n, returnValue))
       return null;
     remove(f, r, g);
     r.replace(s, Subject.operand(initializer).toReturn(), g);

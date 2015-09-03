@@ -26,8 +26,7 @@ import org.spartan.refactoring.utils.*;
  */
 public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands extends Wring<IfStatement> {
   @Override String description(final IfStatement n) {
-    // TODO Auto-generated method stub
-    return null;
+    return "Factor out commmon prefix of then and else branches to just before if statement";
   }
   @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
@@ -40,7 +39,7 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
     if (elze.isEmpty())
       return null;
     final List<Statement> commonPrefix = commonPrefix(then, elze);
-    return commonPrefix.isEmpty() ? null : new Rewrite("Factor out commmon prefix of then and else branches to just before if statement", s) {
+    return commonPrefix.isEmpty() ? null : new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         final IfStatement newIf = replacement();
         if (!Is.block(s.getParent())) {

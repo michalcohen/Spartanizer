@@ -123,7 +123,7 @@ public abstract class Wring<N extends ASTNode> {
         $[i++] = w.get();
       return $;
     }
-    public static <T> Wrapper<Expression>[] wrap(final Expression[] ts) {
+    public static Wrapper<Expression>[] wrap(final Expression[] ts) {
       @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
       int i = 0;
       for (final Expression t : ts)

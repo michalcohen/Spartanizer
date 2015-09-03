@@ -6,8 +6,6 @@ import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Funcs.same;
 
-import java.util.List;
-
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -32,23 +30,13 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     final Operator o = a.getOperator();
     if (o == ASSIGN)
       return null;
-    final Expression secondInitializer = right(a);
-    final List<Expression> uses = Search.USES_SEMANTIC.of(n).in(secondInitializer);
-    if (uses.size() >= 2 || Search.findsDefinitions(n).in(secondInitializer))
+    final InfixExpression alternateInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
+    if (!canInlineInto(n, initializer, alternateInitializer))
       return null;
-    final ASTNode alternateInitializer = alernateInitializer(initializer, secondInitializer, o, n);
-    if (alternateInitializer == null)
-      return null;
-    r.remove(nextStatement, g);
     r.replace(initializer, alternateInitializer, g);
-    final List<Expression> in = Search.USES_SEMANTIC.of(n).in(alternateInitializer);
-    if (!in.isEmpty())
-      r.replace(in.get(0), initializer, g);
+    inlineInto(r, g, n, initializer, alternateInitializer);
+    r.remove(nextStatement, g);
     return r;
-  }
-  private static InfixExpression alernateInitializer(final Expression firstInitializer, final Expression secondInitializer, final Operator o, final SimpleName name) {
-    return !Is.sideEffectFree(firstInitializer) && !Search.USES_SEMANTIC.of(name).in(secondInitializer).isEmpty() ? null
-        : Subject.pair(firstInitializer, secondInitializer).to(asInfix(o));
   }
   private static InfixExpression.Operator asInfix(final Assignment.Operator o) {
     return o == PLUS_ASSIGN ? PLUS
