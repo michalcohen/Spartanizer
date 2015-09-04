@@ -19,9 +19,7 @@ public final class IfEmptyThen extends Wring.ReplaceCurrentNode<IfStatement> {
   @Override Statement replacement(final IfStatement s) {
     final IfStatement $ = Subject.pair(elze(s), null).toNot(s.getExpression());
     final IfStatement parent = asIfStatement(s.getParent());
-    if (parent == null || then(parent) != s)
-      return $;
-    return Subject.statement($).toBlock();
+    return parent == null || then(parent) != s ? $ : Subject.statement($).toBlock();
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && emptyThen(s) && !emptyElse(s);

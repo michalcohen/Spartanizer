@@ -21,9 +21,7 @@ public final class IfDegenerateElse extends Wring.ReplaceCurrentNode<IfStatement
     final IfStatement $ = duplicate(s);
     $.setElseStatement(null);
     final IfStatement parent = asIfStatement(s.getParent());
-    if (parent == null || then(parent) != s)
-      return $;
-    return Subject.statement($).toBlock();
+    return parent == null || then(parent) != s ? $ : Subject.statement($).toBlock();
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && then(s) != null && degenerateElse(s);

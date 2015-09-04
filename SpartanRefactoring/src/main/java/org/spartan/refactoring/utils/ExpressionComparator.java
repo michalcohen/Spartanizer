@@ -176,9 +176,8 @@ public enum ExpressionComparator implements Comparator<Expression> {
         if (Statement.class.isAssignableFrom(n.getClass()))
           switch (n.getNodeType()) {
             case BLOCK:
-              final Block block = (Block) n;
               if (Extract.statements(n).size() > 1)
-                $.inner++;
+                ++$.inner;
               return;
             case EMPTY_STATEMENT:
               return;
@@ -191,7 +190,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
               $.inner += 4;
               final IfStatement i = asIfStatement(n);
               if (elze(i) != null)
-                $.inner++;
+                ++$.inner;
               return;
             default:
               $.inner += 3;

@@ -56,11 +56,9 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
         return replacement(s.getExpression(), Subject.ss(then).toOneStatementOrNull(), Subject.ss(elze).toOneStatementOrNull());
       }
       private IfStatement replacement(final Expression condition, final Statement trimmedThen, final Statement trimmedElse) {
-        if (trimmedThen == null && trimmedElse == null)
-          return null;
-        if (trimmedThen == null)
-          return Subject.pair(trimmedElse, null).toNot(condition);
-        return Subject.pair(trimmedThen, trimmedElse).toIf(condition);
+        return trimmedThen == null && trimmedElse == null ? null//
+            : trimmedThen == null ? Subject.pair(trimmedElse, null).toNot(condition)//
+                : Subject.pair(trimmedThen, trimmedElse).toIf(condition);
       }
       private ListRewrite insertBefore(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
         final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
