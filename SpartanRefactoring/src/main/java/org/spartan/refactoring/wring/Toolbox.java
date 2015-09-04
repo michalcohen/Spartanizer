@@ -71,10 +71,11 @@ public class Toolbox {
           new IfExpressionStatementElseSimilarExpressionStatement(), //
           new IfThenOrElseIsCommandsFollowedBySequencer(), //
           new IfCommandsSequencerIfSameCommandsSequencer(), //
-          new IfEmptyThenEmptyElse(), //
-          new IfEmptyElse(), //
-          new IfEmptyThen(), //
           new IfCommandsSequencerNoElseSingletonSequencer(), //
+          new IfThenIfThenNoElseNoElse(), //
+          new IfEmptyThenEmptyElse(), //
+          new IfDegenerateElse(), //
+          new IfEmptyThen(), //
           new IfShortestFirst(), //
           null)//
       .add(PrefixExpression.class, //

@@ -39,6 +39,9 @@ import org.spartan.refactoring.utils.*;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
+  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -92,9 +95,6 @@ import org.spartan.refactoring.utils.*;
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
-  }
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
   }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
@@ -672,8 +672,14 @@ import org.spartan.refactoring.utils.*;
             "        f();\n" + //
             "");//
   }
+  @Test public void ifDegenerateThenInIf() {
+    assertConvertsTo(//
+        "if (a) if (b) {} else f(); x();", //
+        "if (a) { if (!b) f(); } x();"//
+    );
+  }
   @Test public void ifEmptyElsewWithinIf() {
-    assertConvertsTo("if (a) if (b) f(); else ;", "if (a) if (b) f();");
+    assertConvertsTo("if (a) if (b) {;;;f();} else {;}", "if(a&&b){;;;f();}");
   }
   @Test public void ifFunctionCall() {
     assertConvertsTo("if (x) f(a); else f(b);", "f(x ? a: b);");
@@ -939,6 +945,66 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void longerChainParenthesisComparison() {
     assertNoChange("(a == b == c == d == e) == d");
+  }
+  @Test public void nestedIf1() {
+    assertConvertsTo("if (a) if (b) i++;", "if (a && b) i++;");
+  }
+  @Test public void nestedIf2() {
+    assertConvertsTo(//
+        "if (a) if (b) i++; else ; else ; "//
+        , //
+        "if (a && b) i++; else ;"//
+    );
+  }
+  @Test public void nestedIf3() {
+    assertConvertsTo(//
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); }", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();}" //
+    );
+  }
+  @Test public void nestedIf33() {
+    assertConvertsTo(//
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();}", //
+        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
+    );
+  }
+  @Test public void nestedIf3a() {
+    assertConvertsTo(//
+        "if (x) { if (a && b) i++; } else { y++; f(); g(); }", //
+        "if(x){if(a&&b)++i;}else{++y;f();g();}"//
+    );
+  }
+  @Test public void nestedIf3b() {
+    assertConvertsTo(//
+        "if (x) if (a && b) i++; else; else { y++; f(); g(); }" //
+        , //
+        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
+    );
+  }
+  @Test public void nestedIf3c() {
+    assertConvertsTo(//
+        "if (x) if (a && b) i++; else; else { y++; f(); g(); }" //
+        , //
+        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
+    );
+  }
+  @Test public void nestedIf3d() {
+    assertConvertsTo(//
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); }", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();}" //
+    );
+  }
+  @Test public void nestedIf3e() {
+    assertConvertsTo(//
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); }", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();}" //
+    );
+  }
+  @Test public void nestedIf3f() {
+    assertConvertsTo(//
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();}", //
+        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
+    );
   }
   @Test public void noChange() {
     assertNoChange("12");
@@ -1978,8 +2044,51 @@ import org.spartan.refactoring.utils.*;
         "int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
-    assertConvertsTo("String res;   res = s;   if (res.equals(532)==true)    res = s + 0xABBA;   System.out.println(res); ", //
-        "String res=s;if(res.equals(532))res=s+0xABBA;System.out.println(res);");
+    assertConvertsTo("" //
+        + "String res;" //
+        + "res = s;   " //
+        + "if (res.equals(532)==true)    " //
+        + "  res = s + 0xABBA;   " //
+        + "System.out.println(res); " //
+        + "" //
+        ,
+        "" //
+            + "String res =s ;" //
+            + "if (res.equals(532))    " //
+            + "  res = s + 0xABBA;   " //
+            + "System.out.println(res); " //
+            + "" //
+    );
+  }
+  @Test public void ternarize07a() {
+    assertConvertsTo("" //
+        + "String res;" //
+        + "res = s;   " //
+        + "if (res==true)    " //
+        + "  res = s + 0xABBA;   " //
+        + "System.out.println(res); " //
+        + "" //
+        , "String res=s;if(res)res=s+0xABBA;System.out.println(res);" //
+    );
+  }
+  @Test public void ternarize07aa() {
+    assertConvertsTo(//
+        "String res=s;if(res==true)res=s+0xABBA;System.out.println(res);" //
+        , //
+        "String res=s==true?s+0xABBA:s;System.out.println(res);" //
+    );
+  }
+  @Test public void ternarize07b() {
+    assertConvertsTo( //
+        "" //
+            + "String res =s ;" //
+            + "if (res.equals(532)==true)    " //
+            + "  res = s + 0xABBA;   " //
+            + "System.out.println(res); " //
+            ,
+        "" //
+            + "String res=s.equals(532)==true?s+0xABBA:s;System.out.println(res);" //
+    );
   }
   @Test public void ternarize09() {
     assertConvertsTo("if (s.equals(532)) {    return 6;}else {    return 9;}", //
@@ -2001,12 +2110,47 @@ import org.spartan.refactoring.utils.*;
   @Test public void ternarize13() {
     assertConvertsTo(//
         "String res = mode, foo;  if (mode.equals(f())==true)   foo = M; ", //
-        "String res=mode,foo;if(mode.equals(f()))foo=M;");
+        "String res = mode, foo;  if (mode.equals(f())) foo=M;");
+  }
+  @Test public void ternarize13Simplified() {
+    assertConvertsTo(//
+        "String r = m, foo;  if (m.equals(f())==true)   foo = M; ", //
+        "String r = m, foo;  if (m.equals(f())) foo=M;");
+  }
+  @Test public void ternarize13SimplifiedMore() {
+    assertConvertsTo(//
+        "if (m.equals(f())==true)   foo = M; ", //
+        "if (m.equals(f())) foo=M;");
+  }
+  @Test public void ternarize13SimplifiedMoreAndMore() {
+    assertConvertsTo(//
+        "f (m.equals(f())==true); foo = M; ", //
+        "f (m.equals(f())); foo=M;");
+  }
+  @Test public void ternarize13SimplifiedMoreAndMoreAndMore() {
+    assertConvertsTo(//
+        "f (m.equals(f())==true);  ", //
+        "f (m.equals(f()));");
+  }
+  @Test public void ternarize13SimplifiedMoreVariant() {
+    assertConvertsTo(//
+        "if (m==true)   foo = M; ", //
+        "if (m) foo=M;");
+  }
+  @Test public void ternarize13SimplifiedMoreVariantShorter() {
+    assertConvertsTo(//
+        "if (m==true)   f(); ", //
+        "if (m) f();");
+  }
+  @Test public void ternarize13SimplifiedMoreVariantShorterAsExpression() {
+    assertConvertsTo(//
+        "f (m==true);   f(); ", //
+        "f (m); f();");
   }
   @Test public void ternarize14() {
     assertConvertsTo(//
-        "String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);", //
-        "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);");
+        "String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);}", //
+        "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);}");
   }
   @Test public void ternarize16() {
     assertNoConversion(//
@@ -2118,6 +2262,9 @@ import org.spartan.refactoring.utils.*;
     assertConvertsTo(
         "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\"+ target); progressBarCurrent.setValue(current * 100 / target);", //
         "if(target==0){progressBarCurrent.setString(X);progressBarCurrent.setValue(0);progressBarCurrent.setString(current+\"/\"+target);progressBarCurrent.setValue(100*current / target);");
+  }
+  @Test public void ternarizeIntoSuperMethodInvocation() {
+    assertSimplifiesTo("a ? super.f(a, b, c) : super.f(a, x, c)", "super.f(a, a ? b : x, c)");
   }
   @Test public void ternaryPushdownOfReciever() {
     assertSimplifiesTo("a ? b.f():c.f()", "(a?b:c).f()");

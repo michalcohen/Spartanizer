@@ -405,6 +405,7 @@ public enum Is {
       case SUPER_FIELD_ACCESS:
         return true;
       case SUPER_CONSTRUCTOR_INVOCATION:
+      case SUPER_METHOD_INVOCATION:
       case METHOD_INVOCATION:
       case CLASS_INSTANCE_CREATION:
       case ASSIGNMENT:

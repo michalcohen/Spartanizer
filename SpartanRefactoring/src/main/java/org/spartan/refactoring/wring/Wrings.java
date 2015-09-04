@@ -27,8 +27,13 @@ public enum Wrings {
         duplicateInto(by2, to);
       }
   }
-  static boolean degenerateElse(final IfStatement s) {
-    return elze(s) != null && emptyElse(s);
+  static IfStatement blockIfNeeded(final IfStatement s, final ASTRewrite r, final TextEditGroup g) {
+    final IfStatement parent = asIfStatement(s.getParent());
+    if (parent == null || then(parent) != s)
+      return s;
+    final Block b = Subject.statement(s).toBlock();
+    r.replace(s, b, g);
+    return (IfStatement) b.statements().get(0);
   }
   static Expression eliminateLiteral(final InfixExpression e, final boolean b) {
     final List<Expression> operands = Extract.allOperands(e);

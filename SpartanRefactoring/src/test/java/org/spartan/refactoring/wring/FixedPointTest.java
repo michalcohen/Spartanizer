@@ -56,6 +56,17 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void multipleInline() {
     assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "return 2*3*4*5;");
   }
+  @Test public void ternarize07a() {
+    assertConvertsTo("" //
+        + "String res;" //
+        + "res = s;   " //
+        + "if (res==true)    " //
+        + "  res = s + 0xABBA;   " //
+        + "System.out.println(res); " //
+        + "" //
+        , "String res=!s?s:s+0xABBA;System.out.println(res);" //
+    );
+  }
   @Test(timeout = 2000) public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
   }

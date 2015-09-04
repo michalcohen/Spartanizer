@@ -89,6 +89,21 @@ final class TernaryPushdown extends Wring.ReplaceCurrentNode<ConditionalExpressi
     $.arguments().add(i, Subject.pair(es1.get(i), es2.get(i)).toCondition(e.getExpression()));
     return $;
   }
+  private static Expression pushdown(final ConditionalExpression e, final SuperMethodInvocation e1, final SuperMethodInvocation e2) {
+    if (!same(e1.getName(), e2.getName()))
+      return null;
+    final List<Expression> es1 = e1.arguments();
+    final List<Expression> es2 = e2.arguments();
+    if (es1.size() != es2.size())
+      return null;
+    final int i = findSingleDifference(es1, es2);
+    if (i < 0)
+      return null;
+    final SuperMethodInvocation $ = duplicate(e1);
+    $.arguments().remove(i);
+    $.arguments().add(i, Subject.pair(es1.get(i), es2.get(i)).toCondition(e.getExpression()));
+    return $;
+  }
   static Expression pushdown(final ConditionalExpression e, final Assignment a1, final Assignment a2) {
     if (a1.getOperator() != a2.getOperator() || !same(left(a1), left(a2)))
       return null;
@@ -110,6 +125,8 @@ final class TernaryPushdown extends Wring.ReplaceCurrentNode<ConditionalExpressi
     if (e1.getNodeType() != e2.getNodeType())
       return null;
     switch (e1.getNodeType()) {
+      case SUPER_METHOD_INVOCATION:
+        return pushdown(e, (SuperMethodInvocation) e1, (SuperMethodInvocation) e2);
       case METHOD_INVOCATION:
         return pushdown(e, (MethodInvocation) e1, (MethodInvocation) e2);
       case INFIX_EXPRESSION:
