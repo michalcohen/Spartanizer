@@ -1,11 +1,13 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Funcs.*;
-import static org.spartan.refactoring.utils.Restructure.duplicateInto;
+import static org.spartan.utils.Utils.last;
+
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.*;
@@ -66,12 +68,17 @@ public enum Wrings {
     return $;
   }
   static IfStatement makeShorterIf(final IfStatement s) {
-    final Statement then1 = then(s);
-    final Statement elze1 = elze(s);
+    final List<Statement> then = Extract.statements(then(s));
+    final List<Statement> elze = Extract.statements(elze(s));
     final IfStatement inverse = invert(s);
-    final int rankThen = Wrings.sequencerRank(Extract.lastStatement(then1));
-    final int rankElse = Wrings.sequencerRank(Extract.lastStatement(elze1));
-    return rankElse > rankThen || rankThen == rankElse && !Wrings.thenIsShorter(s) ? inverse : duplicate(s);
+    if (then.isEmpty())
+      return inverse;
+    final IfStatement main = duplicate(s);
+    if (elze.isEmpty())
+      return main;
+    final int rankThen = Wrings.sequencerRank(last(then));
+    final int rankElse = Wrings.sequencerRank(last(elze));
+    return rankElse > rankThen || rankThen == rankElse && !Wrings.thenIsShorter(s) ? inverse : main;
   }
   static boolean mixedLiteralKind(final List<Expression> es) {
     if (es.size() <= 2)

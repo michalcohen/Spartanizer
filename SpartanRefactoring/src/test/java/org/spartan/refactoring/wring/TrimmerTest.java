@@ -116,6 +116,46 @@ import org.spartan.refactoring.utils.*;
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
+  @Test public void ifEmptyThenThrow() {
+    assertConvertsTo(
+        "" //
+            + "if (b) {\n" //
+            + " /* empty */" //
+            + "} else {\n" //
+            + " throw new Excpetion();\n" //
+            + "}",
+        "" //
+            + "if (!b) " //
+            + "  throw new Excpetion();" //
+            + "");
+  }
+  @Test public void ifEmptyThenThrowVariant() {
+    assertConvertsTo(
+        "" //
+            + "if (b) {\n" //
+            + " /* empty */" //
+            + "; \n" //
+            + "} // no else \n" //
+            + " throw new Excpetion();\n" //
+            + "",
+        "" //
+            + "  throw new Excpetion();" //
+            + "");
+  }
+  @Test public void ifEmptyThenThrowWitinIf() {
+    assertConvertsTo("" //
+        + "if (x) if (b) {\n" //
+        + " /* empty */" //
+        + "} else {\n" //
+        + " throw new Excpetion();\n" //
+        + "} else { f();f();f();f();f();f();f();f();}"//
+        , //
+        "" //
+            + "if (x) { if (!b) \n" //
+            + "  throw new Excpetion();" //
+            + "} else { f();f();f();f();f();f();f();f();}"//
+    );
+  }
   @Test public void andWithCONSTANT() {
     assertNoChange("(x >> 18) & MASK_BITS");
     assertNoChange("(x >> 18) & MASK_6BITS");
