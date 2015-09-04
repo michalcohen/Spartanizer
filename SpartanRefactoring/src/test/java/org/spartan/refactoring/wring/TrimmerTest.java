@@ -39,9 +39,6 @@ import org.spartan.refactoring.utils.*;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
-  }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -96,21 +93,11 @@ import org.spartan.refactoring.utils.*;
       assertNotEquals("Simpification of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
+  }
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
-  }
-  @Test public void andWithCONSTANT() {
-    assertNoChange("(x >> 18) & MASK_BITS");
-    assertNoChange("(x >> 18) & MASK_6BITS");
-  }
-  @Test public void declarationUpdateReturn() {
-    assertConvertsTo("int a = 3; return a += 2;", "return 3 + 2;");
-  }
-  @Test public void declarationUpdateReturnTwice() {
-    assertConvertsTo("int a = 3; return a += 2 * a;", "return 3 + 2 *3 ;");
-  }
-  @Test public void declarationUpdateReturnNone() {
-    assertNoConversion("int a = f(); return a += 2 * a;");
   }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
@@ -129,11 +116,12 @@ import org.spartan.refactoring.utils.*;
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
+  @Test public void andWithCONSTANT() {
+    assertNoChange("(x >> 18) & MASK_BITS");
+    assertNoChange("(x >> 18) & MASK_6BITS");
+  }
   @Test public void assignmentReturn0() {
     assertConvertsTo("a = 3; return a;", "return a = 3;");
-  }
-  @Test public void overridenDeclaration() {
-    assertConvertsTo("int a = 3; a = f() ? 3 : 4;", "int a = f() ? 3: 4;");
   }
   @Test public void assignmentReturn1() {
     assertConvertsTo("a = 3; return (a);", "return a = 3;");
@@ -440,17 +428,6 @@ import org.spartan.refactoring.utils.*;
   @Test public void declarationAssignmentWithPostIncrement() {
     assertNoConversion("int a=0; a=a++;");
   }
-  @Test public void declarationIfUpdateAssignment() {
-    assertConvertsTo( //
-        "" + //
-            "    String res = s;\n" + //
-            "    if (s.equals(y))\n" + //
-            "      res += s + blah;\n" + //
-            "    System.out.println(res);",
-        "" + //
-            "    String res = s.equals(y) ? s + s + blah :s;\n" + //
-            "    System.out.println(res);");
-  }
   @Test public void declarationIfAssignment() {
     assertConvertsTo( //
         "" + //
@@ -468,20 +445,31 @@ import org.spartan.refactoring.utils.*;
   @Test public void declarationIfAssignment4() {
     assertConvertsTo("int a =2; if (x) a = 2*a;", "int a = x ? 2*2: 2;");
   }
+  @Test public void declarationIfUpdateAssignment() {
+    assertConvertsTo( //
+        "" + //
+            "    String res = s;\n" + //
+            "    if (s.equals(y))\n" + //
+            "      res += s + blah;\n" + //
+            "    System.out.println(res);",
+        "" + //
+            "    String res = s.equals(y) ? s + s + blah :s;\n" + //
+            "    System.out.println(res);");
+  }
   @Test public void declarationIfUsesLaterVariable() {
     assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
   }
   @Test public void declarationInitializeRightShift() {
     assertConvertsTo("int a = 3;a>>=2;", "int a = 3 >> 2;");
   }
+  @Test public void declarationInitializerReturnAssignment() {
+    assertConvertsTo("int a = 3; return a = 2 * a;", "return 2 * 3;");
+  }
   @Test public void declarationInitializesRotate() {
     assertConvertsTo("int a = 3;a>>>=2;", "int a = 3 >>> 2;");
   }
   @Test public void declarationInitializeUpdateAnd() {
     assertConvertsTo("int a = 3;a&=2;", "int a = 3 & 2;");
-  }
-  @Test public void declarationInitializerReturnAssignment() {
-    assertConvertsTo("int a = 3; return a = 2 * a;", "return 2 * 3;");
   }
   @Test public void declarationInitializeUpdateAssignment() {
     assertConvertsTo("int a = 3;a += 2;", "int a = 3+2;");
@@ -524,6 +512,15 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void declarationInitializeUpdatOr() {
     assertConvertsTo("int a = 3;a|=2;", "int a = 3 | 2;");
+  }
+  @Test public void declarationUpdateReturn() {
+    assertConvertsTo("int a = 3; return a += 2;", "return 3 + 2;");
+  }
+  @Test public void declarationUpdateReturnNone() {
+    assertNoConversion("int a = f(); return a += 2 * a;");
+  }
+  @Test public void declarationUpdateReturnTwice() {
+    assertConvertsTo("int a = 3; return a += 2 * a;", "return 3 + 2 *3 ;");
   }
   @Test public void delcartionIfAssignmentNotPlain() {
     assertConvertsTo("int a=0;   if (y) a+=3; ", "int a = y ? 0 + 3 : 0;");
@@ -914,6 +911,17 @@ import org.spartan.refactoring.utils.*;
   @Test public void issue41FunctionCall() {
     assertConvertsTo("int a = f();a += 2;", "int a = f()+2;");
   }
+  @Test public void issue43() {
+    assertConvertsTo(
+        "" //
+            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
+            + "return (t + 3);    ", //
+        ""//
+            + "String t = Z2.f(A).f(b) + Z2.f(c);" //
+            + "return (t + 3);" //
+            + "" //
+    );
+  }
   @Test public void linearTransformation() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
   }
@@ -1121,6 +1129,9 @@ import org.spartan.refactoring.utils.*;
   @Test public void orFalseTrueAndTrueA() {
     assertSimplifiesTo("true && true", "true");
   }
+  @Test public void overridenDeclaration() {
+    assertConvertsTo("int a = 3; a = f() ? 3 : 4;", "int a = f() ? 3: 4;");
+  }
   @Test public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
@@ -1185,6 +1196,38 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void preIncrementReturn() {
     assertConvertsTo("++a; return a;", "return ++a;");
+  }
+  @Test public void pushdowConditionalActualExampleFirstPass() {
+    assertConvertsTo(
+        "" //
+            + "return determineEncoding(bytes) == Encoding.B " //
+            + "? f((ENC_WORD_PREFIX + mimeCharset + B), text, charset, bytes)\n" //
+            + ": f((ENC_WORD_PREFIX + mimeCharset + Q), text, charset, bytes)\n" //
+            + ";",
+        "" //
+            + "return f(" + "   determineEncoding(bytes)==Encoding.B" //
+            + "     ? ENC_WORD_PREFIX+mimeCharset+B" //
+            + "     : ENC_WORD_PREFIX+mimeCharset+Q," //
+            + "text,charset,bytes)" //
+            + ";" //
+            + "");
+  }
+  @Test public void pushdowConditionalActualExampleSecondtest() {
+    assertConvertsTo(
+        "" //
+            + "return f(" + "   determineEncoding(bytes)==Encoding.B" //
+            + "     ? ENC_WORD_PREFIX+mimeCharset+B" //
+            + "     : ENC_WORD_PREFIX+mimeCharset+Q," //
+            + "text,charset,bytes)" //
+            + ";" //
+            + "",
+        "" //
+            + "return f(" + "  ENC_WORD_PREFIX + mimeCharset + " //
+            + " (determineEncoding(bytes)==Encoding.B ?B : Q)," //
+            + "   text,charset,bytes" //
+            + ")" //
+            + ";" //
+            + "");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -1699,17 +1742,6 @@ import org.spartan.refactoring.utils.*;
             + "String t = Bob + Wants + To + \"Sleep \"; "//
             + "  return (right_now + t);    ", //
         "return(right_now+Bob+Wants+To+\"Sleep \");");
-  }
-  @Test public void issue43() {
-    assertConvertsTo(
-        "" //
-            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
-            + "return (t + 3);    ", //
-        ""//
-            + "String t = Z2.f(A).f(b) + Z2.f(c);" //
-            + "return (t + 3);" //
-            + "" //
-    );
   }
   @Test public void shortestOperand17() {
     assertSimplifiesTo("5 ^ a.getNum()", "a.getNum() ^ 5");
