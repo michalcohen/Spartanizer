@@ -44,7 +44,6 @@ public final class IfThenOrElseIsCommandsFollowedBySequencer extends Wring<IfSta
   @Override Rewrite make(final IfStatement s) {
     return new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        assert scopeIncludes(s);
         final IfStatement shorterIf = makeShorterIf(s);
         final List<Statement> remainder = Extract.statements(elze(shorterIf));
         shorterIf.setElseStatement(null);

@@ -35,7 +35,7 @@ public final class IfCommandsSequencerIfSameCommandsSequencer extends Wring.Repl
     return $;
   }
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
-    if (s == null || !Wrings.emptyElse(s))
+    if (!Wrings.emptyElse(s))
       return null;
     final IfStatement s2 = asIfStatement(nextStatement);
     if (s2 == null || !Wrings.emptyElse(s2))

@@ -27,8 +27,6 @@ public final class DeclarationInitializerIfUpdateAssignment extends Wring.Variab
       return null;
     s.setElseStatement(null);
     final Expression condition = s.getExpression();
-    if (condition == null)
-      return null;
     final Assignment a = Extract.assignment(then(s));
     if (a == null || !same(left(a), n) || doesUseForbiddenSiblings(f, condition, right(a)))
       return null;
