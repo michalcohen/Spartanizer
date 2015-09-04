@@ -110,14 +110,21 @@ public enum Wrings {
     final Statement elze = elze(s);
     if (elze == null)
       return true;
-    final int n1 = Extract.statements(then).size();
+    final int s1 = ExpressionComparator.lineCount(then);
+    final int s2 = ExpressionComparator.lineCount(elze);
+    if (s1 < s2)
+      return true;
+    if (s1 > s2)
+      return false;
+    assert s1 == s2;
     final int n2 = Extract.statements(elze).size();
+    final int n1 = Extract.statements(then).size();
     if (n1 < n2)
       return true;
-    final IfStatement $ = invert(s);
     if (n1 > n2)
       return false;
     assert n1 == n2;
+    final IfStatement $ = invert(s);
     return positivePrefixLength($) >= positivePrefixLength(invert($));
   }
   private static int positivePrefixLength(final IfStatement $) {

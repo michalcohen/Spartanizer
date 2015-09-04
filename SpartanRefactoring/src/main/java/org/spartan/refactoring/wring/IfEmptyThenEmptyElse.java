@@ -17,7 +17,6 @@ import org.spartan.refactoring.utils.Rewrite;
  */
 public final class IfEmptyThenEmptyElse extends Wring<IfStatement> {
   @Override final boolean eligible(final IfStatement s) {
-    assert scopeIncludes(s);
     return true;
   }
   @Override final Rewrite make(final IfStatement s) {

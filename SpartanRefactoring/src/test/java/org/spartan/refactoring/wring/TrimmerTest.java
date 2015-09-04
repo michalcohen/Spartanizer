@@ -319,6 +319,31 @@ import org.spartan.refactoring.utils.*;
         "for (;;) if (a) {i++;j++;j++;} else { i++;j++; i++;}", //
         "for(;;){i++;j++;if(a)j++;else i++;}");
   }
+  @Test public void ifWithCommonNotInBlock() {
+    assertConvertsTo(//
+        "for (;;) if (a) {i++;j++;f();} else { i++;j++; g();}", //
+        "for(;;){i++;j++;if(a)f();else g();}");
+  }
+  @Test public void ifWithCommonNotInBlockiLongerThen() {
+    assertConvertsTo(//
+        "for (;;) if (a) {i++;j++;f();} else { i++;j++; }", //
+        "for(;;){i++;j++; if(a)f();}");
+  }
+  @Test public void ifWithCommonNotInBlockDegenerate() {
+    assertConvertsTo(//
+        "for (;;) if (a) {i++; f();} else { i++;j++; }", //
+        "for(;;){i++; if(a)f(); else j++;}");
+  }
+  @Test public void ifWithCommonNotInBlockiLongerElse() {
+    assertConvertsTo(//
+        "for (;;) if (a) {i++;j++;f();} else { i++;j++;  f(); h();}", //
+        "for(;;){i++;j++; f(); if(!a) h();}");
+  }
+  @Test public void ifWithCommonNotInBlockNothingLeft() {
+    assertConvertsTo(//
+        "for (;;) if (a) {i++;j++;} else { i++;j++; }", //
+        "for(;;){i++;j++;}");
+  }
   @Test public void compareWithBoolean00() {
     assertSimplifiesTo("a == true", "a");
   }
@@ -956,10 +981,16 @@ import org.spartan.refactoring.utils.*;
         "if (a && b) i++; else ;"//
     );
   }
+  @Test public void nestedIf3x() {
+    assertConvertsTo(//
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
+    );
+  }
   @Test public void nestedIf3() {
     assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); }", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();}" //
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
     );
   }
   @Test public void nestedIf33() {
@@ -990,14 +1021,14 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void nestedIf3d() {
     assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); }", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();}" //
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
     );
   }
   @Test public void nestedIf3e() {
     assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); }", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();}" //
+        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
+        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
     );
   }
   @Test public void nestedIf3f() {
@@ -1294,6 +1325,18 @@ import org.spartan.refactoring.utils.*;
             + ")" //
             + ";" //
             + "");
+  }
+  @Test public void pushdownTernaryToClasConstrctor() {
+    assertSimplifiesTo(//
+        "a ? new B(a,b,c) : new B(a,x,c)", //
+        "new B(a,a ? b : x ,c)"//
+    );
+  }
+  @Test public void pushdownTernaryToClasConstrctorTwoDifferenes() {
+    assertNoConversion("a ? new B(a,b,d) : new B(a,x,d)");
+  }
+  @Test public void pushdownTernaryToClassConstrctorNotSameNumberOfArgument() {
+    assertNoConversion("a ? new B(a,b) : new B(a,b,c)");
   }
   @Test public void pushdownNot2LevelNotOfFalse() {
     assertSimplifiesTo("!!false", "false");
@@ -1623,6 +1666,40 @@ import org.spartan.refactoring.utils.*;
   }
   @Test public void shorterChainParenthesisComparisonLast() {
     assertNoChange("b == a * b * c * d * e * f * g * h == a");
+  }
+  @Test public void shortestBranchIfWithComplexSimpler() {
+    assertConvertsTo(//
+        "if (a) {f(); g(); h();} else  i++; j++;", //
+        "if(!a)i++;else{f();g();h();}++j;");
+  }
+  @Test public void shortestBranchIfWithComplexNestedIfPlain() {
+    assertConvertsTo("if (a) {f(); g(); h();} else { i++; j++;}", "if(!a){i++;j++;}else{f();g();h();}");
+  }
+  @Test public void shortestBranchIfWithComplexNestedIf3() {
+    assertNoConversion("if (a) {f(); g(); h();} else if (a) ++i; else ++j;");
+  }
+  @Test public void shortestBranchIfWithComplexNestedIf4() {
+    assertConvertsTo("if (a) {f(); g(); h(); ++i;} else if (a) ++i; else j++;", //
+        "if(!a)if(a)++i;else j++;else{f();g();h();++i;}");
+  }
+  @Test public void shortestBranchIfWithComplexNestedIf5() {
+    assertConvertsTo("if (a) {f(); g(); h(); ++i; f();} else if (a) ++i; else j++;", //
+        "if(!a)if(a)++i;else j++;else{f();g();h();++i;f();}");
+  }
+  @Test public void shortestBranchIfWithComplexNestedIf6() {
+    assertConvertsTo(//
+        "if (a) {f(); g(); h(); ++i; f(); j++;} else if (a) ++i; else j++;", //
+        "if(!a)if(a)++i;else j++;else{f();g();h();++i;f();j++;}"
+    //
+    );
+  }
+  @Test public void shortestBranchIfWithComplexNestedIf7() {
+    assertConvertsTo("if (a) {f(); ++i; g(); h(); ++i; f(); j++;} else if (a) ++i; else j++;", //
+        "if(!a)if(a)++i;else j++;else{f();++i;g();h();++i;f();j++;}");
+  }
+  @Test public void shortestBranchIfWithComplexNestedIf8() {
+    assertConvertsTo("if (a) {f(); ++i; g(); h(); ++i; u++; f(); j++;} else if (a) ++i; else j++;", //
+        "if(!a)if(a)++i;else j++;else{f();++i;g();h();++i;u++;f();j++;}");
   }
   @Test public void shortestBranchInIf() {
     assertConvertsTo("   int a=0;\n" + //

@@ -3,8 +3,6 @@ package org.spartan.refactoring.wring;
 import static org.spartan.refactoring.utils.Funcs.elze;
 import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.refactoring.utils.Funcs.then;
-import static org.spartan.refactoring.wring.Wrings.invert;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +41,9 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         final IfStatement newIf = replacement();
         if (!Is.block(s.getParent())) {
-          final Block b = Subject.ss(commonPrefix).toBlock();
           if (newIf != null)
-            b.statements().add(newIf);
+            commonPrefix.add(newIf);
+          final Block b = Subject.ss(commonPrefix).toBlock();
           r.replace(s, b, g);
         } else {
           final ListRewrite lr = insertBefore(s, commonPrefix, r, g);
@@ -60,8 +58,9 @@ public final class IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands exte
       private IfStatement replacement(final Expression condition, final Statement trimmedThen, final Statement trimmedElse) {
         if (trimmedThen == null && trimmedElse == null)
           return null;
-        final IfStatement $ = Subject.pair(trimmedThen, trimmedElse).toIf(condition);
-        return trimmedThen != null ? $ : invert($);
+        if (trimmedThen == null)
+          return Subject.pair(trimmedElse, null).toNot(condition);
+        return Subject.pair(trimmedThen, trimmedElse).toIf(condition);
       }
       private ListRewrite insertBefore(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
         final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);

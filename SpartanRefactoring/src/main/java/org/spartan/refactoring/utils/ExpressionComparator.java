@@ -1,9 +1,8 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.removeWhites;
-import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.utils.Utils.hasNull;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -157,6 +156,46 @@ public enum ExpressionComparator implements Comparator<Expression> {
        */
       @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
         ++$.inner;
+      }
+    });
+    return $.inner;
+  }
+  /**
+   * Counts the number of statements in a tree rooted at a given node
+   *
+   * @param n JD
+   * @return Number of abstract syntax tree nodes under the parameter.
+   */
+  public static int lineCount(final ASTNode n) {
+    class Integer {
+      int inner = 0;
+    }
+    final Integer $ = new Integer();
+    n.accept(new ASTVisitor() {
+      @Override public void preVisit(final ASTNode n) {
+        if (Statement.class.isAssignableFrom(n.getClass()))
+          switch (n.getNodeType()) {
+            case BLOCK:
+              final Block block = (Block) n;
+              if (Extract.statements(n).size() > 1)
+                $.inner++;
+              return;
+            case EMPTY_STATEMENT:
+              return;
+            case FOR_STATEMENT:
+            case ENHANCED_FOR_STATEMENT:
+            case DO_STATEMENT:
+              $.inner += 4;
+              return;
+            case IF_STATEMENT:
+              $.inner += 4;
+              final IfStatement i = asIfStatement(n);
+              if (elze(i) != null)
+                $.inner++;
+              return;
+            default:
+              $.inner += 3;
+          }
       }
     });
     return $.inner;
