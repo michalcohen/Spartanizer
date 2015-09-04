@@ -99,6 +99,10 @@ import org.spartan.refactoring.utils.*;
   @Test public void actualExampleForSortAddition() {
     assertNoChange("1 + b.statements().indexOf(declarationStmt)");
   }
+  @Test public void andWithCONSTANT() {
+    assertNoChange("(x >> 18) & MASK_BITS");
+    assertNoChange("(x >> 18) & MASK_6BITS");
+  }
   @Test public void declarationUpdateReturn() {
     assertConvertsTo("int a = 3; return a += 2;", "return 3 + 2;");
   }
@@ -436,6 +440,17 @@ import org.spartan.refactoring.utils.*;
   @Test public void declarationAssignmentWithPostIncrement() {
     assertNoConversion("int a=0; a=a++;");
   }
+  @Test public void declarationIfUpdateAssignment() {
+    assertConvertsTo( //
+        "" + //
+            "    String res = s;\n" + //
+            "    if (s.equals(y))\n" + //
+            "      res += s + blah;\n" + //
+            "    System.out.println(res);",
+        "" + //
+            "    String res = s.equals(y) ? s + s + blah :s;\n" + //
+            "    System.out.println(res);");
+  }
   @Test public void declarationIfAssignment() {
     assertConvertsTo( //
         "" + //
@@ -511,7 +526,7 @@ import org.spartan.refactoring.utils.*;
     assertConvertsTo("int a = 3;a|=2;", "int a = 3 | 2;");
   }
   @Test public void delcartionIfAssignmentNotPlain() {
-    assertNoConversion("int a=0;   if (y) a+=3; ");
+    assertConvertsTo("int a=0;   if (y) a+=3; ", "int a = y ? 0 + 3 : 0;");
   }
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");

@@ -41,6 +41,9 @@ public class ExpressionComparatorTest {
   @Test public void twoClassConstants() {
     assertThat(ExpressionComparator.ADDITION.compare(e("SPONGE"), e("BOB")), greaterThan(0));
   }
+  @Test public void twoClassConstantsLongExpressionWithClassConstantsWithDigits() {
+    assertThat(ExpressionComparator.ADDITION.compare(e("f(a,b,c)"), e("ABC0")), lessThan(0));
+  }
   @Test public void literalAndProductMULITIPLICATION() {
     final Expression e1 = e("1");
     final Expression e2 = e("2*3");

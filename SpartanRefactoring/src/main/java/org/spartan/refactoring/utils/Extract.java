@@ -179,11 +179,10 @@ public enum Extract {
       @Override public boolean visit(final InfixExpression e) {
         if ($.get() != null)
           return false;
-        if (e.getOperator() == InfixExpression.Operator.PLUS) {
-          $.set(e);
-          return false;
-        }
-        return true;
+        if (e.getOperator() != InfixExpression.Operator.PLUS)
+          return true;
+        $.set(e);
+        return false;
       }
     });
     return $.get();

@@ -3,6 +3,7 @@ package org.spartan.refactoring.wring;
 import static org.spartan.refactoring.utils.Funcs.*;
 
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
@@ -16,7 +17,7 @@ import org.spartan.refactoring.utils.Subject;
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationIfAssginment extends Wring.VariableDeclarationFragementAndStatement {
+public final class DeclarationInitializerIfUpdateAssignment extends Wring.VariableDeclarationFragementAndStatement {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
       final TextEditGroup g) {
     if (initializer == null)
@@ -29,10 +30,14 @@ public final class DeclarationIfAssginment extends Wring.VariableDeclarationFrag
     if (condition == null)
       return null;
     final Assignment a = Extract.assignment(then(s));
-    if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a))
-        || !canInlineInto(n, initializer, condition, right(a)))
+    if (a == null || !same(left(a), n) || doesUseForbiddenSiblings(f, condition, right(a)))
       return null;
-    final ConditionalExpression newInitializer = Subject.pair(right(a), initializer).toCondition(condition);
+    final Operator o = a.getOperator();
+    if (o == Assignment.Operator.ASSIGN)
+      return null;
+    final ConditionalExpression newInitializer = Subject.pair(assignmentAsExpression(a), initializer).toCondition(condition);
+    if (!canInlineInto(n, initializer, newInitializer))
+      return null;
     r.replace(initializer, newInitializer, g);
     inlineInto(r, g, n, initializer, then(newInitializer), newInitializer.getExpression());
     r.remove(s, g);

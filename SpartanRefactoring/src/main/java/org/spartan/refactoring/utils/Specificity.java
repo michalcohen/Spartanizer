@@ -58,7 +58,7 @@ public class Specificity implements Comparator<Expression> {
     },
     CLASS_CONSTANT {
       @Override boolean includes(final ASTNode n) {
-        return n.getNodeType() == SIMPLE_NAME && ((SimpleName) n).getIdentifier().matches("[A-Z_]+");
+        return n.getNodeType() == SIMPLE_NAME && ((SimpleName) n).getIdentifier().matches("[A-Z_0-9]+");
       }
     },
     THIS {

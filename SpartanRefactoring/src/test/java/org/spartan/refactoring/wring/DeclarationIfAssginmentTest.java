@@ -44,7 +44,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationIfAssginmentTest {
-  static final DeclarationIfAssginment WRING = new DeclarationIfAssginment();
+  static final DeclarationInitializerIfAssignment WRING = new DeclarationInitializerIfAssignment();
   @Test public void traceForbiddenSiblings() {
     assertNotNull(WRING);
     final String from = "int a = 2,b; if (b) a =3;";

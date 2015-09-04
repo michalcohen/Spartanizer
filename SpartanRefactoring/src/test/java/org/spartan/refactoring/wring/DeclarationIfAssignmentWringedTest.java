@@ -37,7 +37,7 @@ import org.spartan.utils.Utils;
 @RunWith(Parameterized.class) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<VariableDeclarationFragment> {
-  final static DeclarationIfAssginment WRING = new DeclarationIfAssginment();
+  final static DeclarationInitializerIfAssignment WRING = new DeclarationInitializerIfAssignment();
   /** Description of a test case for {@link Parameter} annotation */
   protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
   private static String[][] cases = Utils.asArray(//
