@@ -1,9 +1,10 @@
-package org.spartan.refactoring.spartanizations;
+package org.spartan.refactoring.wring;
+
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -12,9 +13,10 @@ import org.spartan.refactoring.utils.*;
 /**
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
+ * @author Yossi Gil (v3)
  * @since 2013/01/01
  */
-public class RenameReturnVariableToDollar extends Spartanization {
+public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
   static boolean replace(final MethodDeclaration d, final SimpleName n, final ASTRewrite r, final TextEditGroup g) {
     for (final Expression e : Search.BOTH_LEXICAL.of(n).in(d))
       r.replace(e, n, g);
@@ -73,32 +75,32 @@ public class RenameReturnVariableToDollar extends Spartanization {
   private static SimpleName selectReturnVariable(final List<SimpleName> ns, final List<ReturnStatement> ss) {
     return ss == null || ss.isEmpty() ? null : bestCandidate(ns, ss);
   }
-  /** Instantiates this class */
-  public RenameReturnVariableToDollar() {
-    super("Rename returned variable to '$'");
+  @Override String description(final MethodDeclaration d) {
+    return d.getName().toString();
   }
-  @Override protected ASTVisitor collect(final List<Rewrite> $) {
-    return new ASTVisitor() {
-      @Override public boolean visit(final MethodDeclaration d) {
-        final SimpleName n = selectReturnVariable(d);
-        if (n != null)
-          $.add(new Rewrite("rename variable " + d + " to $", d) {
-            @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-              replace(d, n, r, g);
-            }
-          });
-        return true;
+  @Override boolean eligible(final MethodDeclaration n) {
+    return true;
+  }
+  @Override Rewrite make(final MethodDeclaration d) {
+    return make(d, null);
+  }
+  @Override Rewrite make(final MethodDeclaration d, final ExclusionManager exclude) {
+    final Type t = d.getReturnType2();
+    if (t instanceof PrimitiveType && ((PrimitiveType) t).getPrimitiveTypeCode() == PrimitiveType.VOID)
+      return null;
+    final SimpleName n = selectReturnVariable(d);
+    if (n == null)
+      return null;
+    if (exclude != null)
+      exclude.exclude(d);
+    return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
+      @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+        fail("Something went wrong");
       }
     };
   }
-  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
-    u.accept(new ASTVisitor() {
-      @Override public boolean visit(final MethodDeclaration d) {
-        if (!inRange(m, d))
-          return true;
-        final SimpleName f = selectReturnVariable(d);
-        return f == null || replace(d, f, r, null);
-      }
-    });
+  @Override boolean scopeIncludes(final MethodDeclaration n) {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

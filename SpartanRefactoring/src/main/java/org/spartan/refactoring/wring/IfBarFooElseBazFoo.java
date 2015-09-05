@@ -46,29 +46,26 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> {
     if (elze.isEmpty())
       return null;
     final List<Statement> commmonSuffix = commmonSuffix(then, elze);
-    if (then.isEmpty() && elze.isEmpty())
-      return null;
-    return commmonSuffix.isEmpty() ? null : new Rewrite(description(s), s) {
+    return then.isEmpty() && elze.isEmpty() || commmonSuffix.isEmpty() ? null : new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         final IfStatement newIf = replacement();
-        if (!Is.block(s.getParent())) {
+        if (Is.block(s.getParent())) {
+          final ListRewrite lr = insertAfter(s, commmonSuffix, r, g);
+          lr.insertAfter(newIf, s, g);
+          lr.remove(s, g);
+        } else {
           if (newIf != null)
             commmonSuffix.add(0, newIf);
           final Block b = Subject.ss(commmonSuffix).toBlock();
           r.replace(s, b, g);
-        } else {
-          final ListRewrite lr = insertAfter(s, commmonSuffix, r, g);
-          lr.insertAfter(newIf, s, g);
-          lr.remove(s, g);
         }
       }
       private IfStatement replacement() {
         return replacement(s.getExpression(), Subject.ss(then).toOneStatementOrNull(), Subject.ss(elze).toOneStatementOrNull());
       }
       private IfStatement replacement(final Expression condition, final Statement trimmedThen, final Statement trimmedElse) {
-        return trimmedThen == null && trimmedElse == null ? null//
-            : trimmedThen == null ? Subject.pair(trimmedElse, null).toNot(condition)//
-                : Subject.pair(trimmedThen, trimmedElse).toIf(condition);
+        return trimmedThen == null && trimmedElse == null ? null
+            : trimmedThen == null ? Subject.pair(trimmedElse, null).toNot(condition) : Subject.pair(trimmedThen, trimmedElse).toIf(condition);
       }
     };
   }

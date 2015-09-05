@@ -97,9 +97,7 @@ import static org.hamcrest.CoreMatchers.is;
       if (wrap.equals(unpeeled))
         return;
       final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()))
-        return;
-      if (compressSpaces(peeled).equals(compressSpaces(get())))
+      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
         return;
       assertSimilar(get(), peeled);
     }

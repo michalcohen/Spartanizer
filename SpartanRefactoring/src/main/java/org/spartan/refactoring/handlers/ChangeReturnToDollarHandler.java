@@ -1,10 +1,10 @@
 package org.spartan.refactoring.handlers;
 
-import org.spartan.refactoring.spartanizations.RenameReturnVariableToDollar;
 import org.spartan.refactoring.spartanizations.SafeRenameReturnVariableToDollar;
+import org.spartan.refactoring.wring.MethodRenameReturnToDollar;
 
 /**
- * a handler for {@link RenameReturnVariableToDollar}
+ * a handler for {@link MethodRenameReturnToDollar}
  *
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code> (major refactoring
