@@ -44,43 +44,8 @@ import static org.hamcrest.CoreMatchers.is;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
-  static class Operand extends Wrapper<String> {
-    public Operand(final String inner) {
-      super(inner);
-    }
-    private void checkExpected(final String expected) {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
-      final String wrap = w.on(get());
-      final String unpeeled = apply(new Trimmer(), wrap);
-      if (wrap.equals(unpeeled))
-        fail("Nothing done on " + get());
-      final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()))
-        assertNotEquals("No trimming of " + get(), get(), peeled);
-      if (compressSpaces(peeled).equals(compressSpaces(get())))
-        assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
-      assertSimilar(expected, peeled);
-    }
-    private void checkSame() {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
-      final String wrap = w.on(get());
-      final String unpeeled = apply(new Trimmer(), wrap);
-      if (wrap.equals(unpeeled))
-        return;
-      final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
-        return;
-      assertSimilar(get(), peeled);
-    }
-    public Operand to(final String expected) {
-      if (expected == null || expected.isEmpty())
-        checkSame();
-      else
-        checkExpected(expected);
-      return new Operand(expected);
-    }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
@@ -109,9 +74,6 @@ import static org.hamcrest.CoreMatchers.is;
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
-  }
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
   }
   private static Operand trimming(final String from) {
     return new Operand(from);
@@ -1886,15 +1848,6 @@ import static org.hamcrest.CoreMatchers.is;
   @Test public void shortestOperand12() {
     trimming("int k = 15;   return 7 < k; ").to("return 7<15;");
   }
-  @Test public void sortDivisionNo() {
-    trimming("2.1/3").to("");
-  }
-  @Test public void sortDivision() {
-    trimming("2.1/34.2/1.0").to("2.1/1.0/34.2");
-  }
-  @Test public void sortDivisionLetters() {
-    trimming("x/b/a").to("x/a/b");
-  }
   @Test public void shortestOperand13() {
     trimming("return (2 > 2 + a) == true;").to("return 2>a+2;");
   }
@@ -2094,6 +2047,15 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void sortConstantMultiplication() {
     trimming("a*2").to("2*a");
+  }
+  @Test public void sortDivision() {
+    trimming("2.1/34.2/1.0").to("2.1/1.0/34.2");
+  }
+  @Test public void sortDivisionLetters() {
+    trimming("x/b/a").to("x/a/b");
+  }
+  @Test public void sortDivisionNo() {
+    trimming("2.1/3").to("");
   }
   @Test public void sortSubstraction() {
     trimming("1-c-b").to("1-b-c");
@@ -2352,5 +2314,43 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
+  }
+  static class Operand extends Wrapper<String> {
+    public Operand(final String inner) {
+      super(inner);
+    }
+    public Operand to(final String expected) {
+      if (expected == null || expected.isEmpty())
+        checkSame();
+      else
+        checkExpected(expected);
+      return new Operand(expected);
+    }
+    private void checkExpected(final String expected) {
+      final Wrap w = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final String wrap = w.on(get());
+      final String unpeeled = apply(new Trimmer(), wrap);
+      if (wrap.equals(unpeeled))
+        fail("Nothing done on " + get());
+      final String peeled = w.off(unpeeled);
+      if (peeled.equals(get()))
+        assertNotEquals("No trimming of " + get(), get(), peeled);
+      if (compressSpaces(peeled).equals(compressSpaces(get())))
+        assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
+      assertSimilar(expected, peeled);
+    }
+    private void checkSame() {
+      final Wrap w = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final String wrap = w.on(get());
+      final String unpeeled = apply(new Trimmer(), wrap);
+      if (wrap.equals(unpeeled))
+        return;
+      final String peeled = w.off(unpeeled);
+      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
+        return;
+      assertSimilar(get(), peeled);
+    }
   }
 }
