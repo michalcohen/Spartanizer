@@ -35,6 +35,7 @@ public class ExtractMethod extends Spartanization {
       @Override public boolean visit(final MethodDeclaration n) {
         $.add(new Rewrite("Extract method", n) {
           @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+            // TODO: Missing implementation
           }
         });
         return true;

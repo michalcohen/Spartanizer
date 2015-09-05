@@ -110,6 +110,23 @@ public abstract class Wring<N extends ASTNode> {
     abstract boolean sort(List<Expression> operands);
   }
 
+  static abstract class InfixSortingFromSecond extends ReplaceCurrentNode<InfixExpression> {
+    @Override boolean eligible(final InfixExpression e) {
+      final List<Expression> es = Extract.allOperands(e);
+      es.remove(0);
+      return !Wrings.mixedLiteralKind(es) && sort(es);
+    }
+    @Override Expression replacement(final InfixExpression e) {
+      final List<Expression> operands = Extract.allOperands(e);
+      final Expression first = operands.remove(0);
+      if (!sort(operands))
+        return null;
+      operands.add(0, first);
+      return Subject.operands(operands).to(e.getOperator());
+    }
+    abstract boolean sort(List<Expression> operands);
+  }
+
   static abstract class ReplaceCurrentNode<N extends ASTNode> extends Wring<N> {
     @Override boolean eligible(@SuppressWarnings("unused") final N _) {
       return true;

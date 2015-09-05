@@ -50,6 +50,7 @@ public class Toolbox {
           new InfixComparisonSpecific(), //
           new InfixSortMultiplication(), //
           new InfixSortPseudoAddition(), //
+          new InfixSortSubstraction(), //
           null)
       .add(MethodDeclaration.class, new MethodRenameReturnToDollar()) //
       .add(VariableDeclarationFragment.class, //

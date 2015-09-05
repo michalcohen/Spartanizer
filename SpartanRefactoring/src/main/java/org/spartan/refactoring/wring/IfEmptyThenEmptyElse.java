@@ -16,7 +16,7 @@ import org.spartan.refactoring.utils.Rewrite;
  * @since 2015-08-26
  */
 public final class IfEmptyThenEmptyElse extends Wring<IfStatement> {
-  @Override final boolean eligible(final IfStatement s) {
+  @Override final boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;
   }
   @Override final Rewrite make(final IfStatement s) {

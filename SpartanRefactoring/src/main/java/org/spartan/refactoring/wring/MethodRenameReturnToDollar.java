@@ -20,7 +20,7 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
   @Override String description(final MethodDeclaration d) {
     return d.getName().toString();
   }
-  @Override boolean eligible(final MethodDeclaration n) {
+  @Override boolean eligible(@SuppressWarnings("unused") final MethodDeclaration _) {
     return true;
   }
   @Override Rewrite make(final MethodDeclaration d) {
@@ -91,13 +91,13 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
             return noRivals($, ns, rs) ? $ : null;
       return null;
     }
-    private int bestScore(final List<SimpleName> ns, final List<ReturnStatement> rs) {
+    private static int bestScore(final List<SimpleName> ns, final List<ReturnStatement> rs) {
       int $ = 0;
       for (final SimpleName n : ns)
         $ = Math.max($, score(n, rs));
       return $;
     }
-    private boolean noRivals(final SimpleName candidate, final List<SimpleName> ns, final List<ReturnStatement> rs) {
+    private static boolean noRivals(final SimpleName candidate, final List<SimpleName> ns, final List<ReturnStatement> rs) {
       for (final SimpleName rival : ns)
         if (rival != candidate && score(rival, rs) >= score(candidate, rs))
           return false;

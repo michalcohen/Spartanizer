@@ -54,6 +54,6 @@ import static org.spartan.hamcrest.MatcherAssert.*;
     assertThat(Search.findsDefinitions(n).in(alternateInitializer), is(false)); // &&
     assertThat(Is.sideEffectFree(initializer), is(false));
     assertThat(Search.findUses(n).in(alternateInitializer).size(), is(2));
-    assertThat(Wring.VariableDeclarationFragementAndStatement.canInlineInto(n, initializer, alternateInitializer), is(false));
+    assertThat(Wring.canInlineInto(n, initializer, alternateInitializer), is(false));
   }
 }

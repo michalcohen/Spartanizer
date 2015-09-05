@@ -120,6 +120,9 @@ import static org.hamcrest.CoreMatchers.is;
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
+  @Test public void sortSubstraction() {
+    trimming("1-c-b").to("1-b-c");
+  }
   @Test public void simpleMethod() {
     trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
         .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
@@ -1867,7 +1870,7 @@ import static org.hamcrest.CoreMatchers.is;
             .to("return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
   }
   @Test public void shortestOperand09() {
-    trimming("return 2 - 4 < 50 - 20 - 10 - 5;} ").to("");
+    trimming("return 2 - 4 < 50 - 20 - 10 - 5;} ").to("return 2 - 4 < 50 - 5 - 10 - 20 ;");
   }
   @Test public void shortestOperand10() {
     trimming("return b == true;} ").to("return b;}");
