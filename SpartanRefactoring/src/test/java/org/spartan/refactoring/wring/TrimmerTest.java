@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -61,8 +62,19 @@ import static org.hamcrest.CoreMatchers.is;
     assertNotNull(d);
     return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring"), u, d).get();
   }
-  private static void assertConvertsTo(final String from, final String expected) {
-    assertWrappedTranslation(from, expected, Wrap.Statement);
+  private static void assertTrimmedTo(final String from, final String expected) {
+    final Wrap w = Wrap.find(from);
+    assertThat(from, w, notNullValue());
+    final String wrap = w.on(from);
+    final String unpeeled = apply(new Trimmer(), wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    final String peeled = w.off(unpeeled);
+    if (peeled.equals(from))
+      assertNotEquals("No trimming of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Trimming of " + from + "is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
   }
   private static void assertNoChange(final String input) {
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
@@ -124,16 +136,16 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("(x >> 18) & MASK_6BITS");
   }
   @Test public void assignmentReturn0() {
-    assertConvertsTo("a = 3; return a;", "return a = 3;");
+    assertTrimmedTo("a = 3; return a;", "return a = 3;");
   }
   @Test public void assignmentReturn1() {
-    assertConvertsTo("a = 3; return (a);", "return a = 3;");
+    assertTrimmedTo("a = 3; return (a);", "return a = 3;");
   }
   @Test public void assignmentReturn2() {
-    assertConvertsTo("a += 3; return a;", "return a += 3;");
+    assertTrimmedTo("a += 3; return a;", "return a += 3;");
   }
   @Test public void assignmentReturn3() {
-    assertConvertsTo("a *= 3; return a;", "return a *= 3;");
+    assertTrimmedTo("a *= 3; return a;", "return a *= 3;");
   }
   @Test public void assignmentReturniNo() {
     assertNoConversion("b = a = 3; return a;");
@@ -232,36 +244,36 @@ import static org.hamcrest.CoreMatchers.is;
     assertSimplifiesTo("!(A && B && C && true && D)", "!A||!B||!C||false||!D");
   }
   @Test public void canonicalFragementExamples() {
-    assertConvertsTo("int a; a = 3;", "int a = 3;");
-    assertConvertsTo("int a = 2; if (b) a = 3; ", "int a = b ? 3 : 2;");
-    assertConvertsTo("int a = 2; a += 3; ", "int a = 2 + 3;");
-    assertConvertsTo("int a = 2; a = 3 * a; ", "int a = 3 * 2;");
-    assertConvertsTo("int a = 2; return 3 * a; ", "return 3 * 2;");
-    assertConvertsTo("int a = 2; return a; ", "return 2;");
+    assertTrimmedTo("int a; a = 3;", "int a = 3;");
+    assertTrimmedTo("int a = 2; if (b) a = 3; ", "int a = b ? 3 : 2;");
+    assertTrimmedTo("int a = 2; a += 3; ", "int a = 2 + 3;");
+    assertTrimmedTo("int a = 2; a = 3 * a; ", "int a = 3 * 2;");
+    assertTrimmedTo("int a = 2; return 3 * a; ", "return 3 * 2;");
+    assertTrimmedTo("int a = 2; return a; ", "return 2;");
   }
   @Test public void canonicalFragementExamplesWithExraFragments() {
-    assertConvertsTo("int a,b; a = 3;", "int a = 3, b;");
+    assertTrimmedTo("int a,b; a = 3;", "int a = 3, b;");
     assertNoChange("int a,b=2; a = b;");
     assertNoChange("int a = 2,b=1; if (b) a = 3; ");
-    assertConvertsTo("int a = 2; a += 3; ", "int a = 2 + 3;");
-    assertConvertsTo("int a = 2; a += b; ", "int a = 2 + b;");
+    assertTrimmedTo("int a = 2; a += 3; ", "int a = 2 + 3;");
+    assertTrimmedTo("int a = 2; a += b; ", "int a = 2 + b;");
     assertNoChange("int a = 2, b; a += b; ");
     assertNoChange("int a = 2, b=1; a += b; ");
-    assertConvertsTo("int a = 2; a = 3 * a; ", "int a = 3 * 2;");
-    assertConvertsTo("int a = 2; a = 3 * a * b; ", "int a = 3 * 2 * b;");
+    assertTrimmedTo("int a = 2; a = 3 * a; ", "int a = 3 * 2;");
+    assertTrimmedTo("int a = 2; a = 3 * a * b; ", "int a = 3 * 2 * b;");
     assertNoChange("int a = 2, b; a = 3 * a * b; ");
     assertNoChange("int a = 2, b = 1; a = 3 * a * b; ");
-    assertConvertsTo("int a = 2; return 3 * a * a; ", "return 3 * 2 * 2;");
-    assertConvertsTo("int a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
-    assertConvertsTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int a = 2; return 3 * a * 5 * c;");
-    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "int a=2,c=4;return 3*a*5*c;");
+    assertTrimmedTo("int a = 2; return 3 * a * a; ", "return 3 * 2 * 2;");
+    assertTrimmedTo("int a = 2; return 3 * a * b; ", "return 3 * 2 * b;");
+    assertTrimmedTo("int b=5,a = 2,c; return 3 * a * b * c; ", "int a = 2; return 3 * a * 5 * c;");
+    assertTrimmedTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "int a=2,c=4;return 3*a*5*c;");
     assertNoChange("int a = 2, b; return a + 3 * b; ");
     assertNoChange("int a = 2, b = 1; return a + 3 * b; ");
-    assertConvertsTo("int a = 2; return a; ", "return 2;");
+    assertTrimmedTo("int a = 2; return a; ", "return 2;");
     assertNoChange("int a; if (x) a = 3; else a++;");
-    assertConvertsTo("int a =2; if (x) a = 3*a;", "int a=x?3*2:2;");
-    assertConvertsTo("int a =2,b; if (x) a = 2*a;", "int a=x?2*2:2, b;");
-    assertConvertsTo("int a =2,b=2; if (x) a = 2*a;", "int a=x?2*2:2, b=2;");
+    assertTrimmedTo("int a =2; if (x) a = 3*a;", "int a=x?3*2:2;");
+    assertTrimmedTo("int a =2,b; if (x) a = 2*a;", "int a=x?2*2:2, b;");
+    assertTrimmedTo("int a =2,b=2; if (x) a = 2*a;", "int a=x?2*2:2, b=2;");
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
@@ -315,22 +327,20 @@ import static org.hamcrest.CoreMatchers.is;
     assertSimplifiesTo("(null==a)", "(a==null)");
   }
   @Test public void commonPrefixEntirelyIfBranches() {
-    assertConvertsTo("if (s.equals(532)) System.out.close();else System.out.close();", "System.out.close(); ");
+    assertTrimmedTo("if (s.equals(532)) System.out.close();else System.out.close();", "System.out.close(); ");
   }
   @Test public void commonPrefixIfBranchesInFor() {
-    assertConvertsTo(//
-        "for (;;) if (a) {i++;j++;j++;} else { i++;j++; i++;}", //
-        "for(;;){i++;j++;if(a)j++;else i++;}");
+    assertTrimmedTo("for (;;) if (a) {i++;j++;j++;} else { i++;j++; i++;}", "for(;;){i++;j++;if(a)j++;else i++;}");
   }
   @Test public void commonSuffixIfBranches() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "if (a) { \n" + //
             "++i;\n" + //
             "f();\n" + //
             "} else {\n" + //
             "++j;\n" + //
             "f();\n" + //
-            "}", //
+            "}",
         "if (a)  \n" + //
             "++i;\n" + //
             "else \n" + //
@@ -339,39 +349,39 @@ import static org.hamcrest.CoreMatchers.is;
             "f();");//
   }
   @Test public void commonSuffixIfBranchesDisappearingElse() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "if (a) { \n" + //
             "++i;\n" + //
             "f();\n" + //
             "} else {\n" + //
             "f();\n" + //
-            "}", //
+            "}",
         "if (a)  \n" + //
             "++i;\n" + //
             "\n" + //
             "f();");//
   }
   @Test public void commonSuffixIfBranchesDisappearingThen() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "if (a) { \n" + //
             "f();\n" + //
             "} else {\n" + //
             "++j;\n" + //
             "f();\n" + //
-            "}", //
+            "}",
         "if (!a)  \n" + //
             "++j;\n" + //
             "\n" + //
             "f();");//
   }
   @Test public void commonSuffixIfBranchesDisappearingThenWithinIf() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "if (x)  if (a) { \n" + //
             "f();\n" + //
             "} else {\n" + //
             "++j;\n" + //
             "f();\n" + //
-            "} else { h(); ++i; ++j; ++k; if (a) f(); else g(); }", //
+            "} else { h(); ++i; ++j; ++k; if (a) f(); else g(); }",
         "if (x) { if (!a)  \n" + //
             "++j;\n" + //
             "\n" + //
@@ -471,8 +481,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertSimplifiesTo("6 - 7 < 2 + 1   ", "6 -7 < 1 + 2");
   }
   @Test public void correctSubstitutionInIfAssignment() {
-    assertConvertsTo("int a = 2+3; if (a+b > a << b) a =a *7 << a;", //
-        "int a=2+3+b>2+3<<b?(2+3)*7<<2+3:2+3;");
+    assertTrimmedTo("int a = 2+3; if (a+b > a << b) a =a *7 << a;", "int a=2+3+b>2+3<<b?(2+3)*7<<2+3:2+3;");
   }
   @Test public void declarationAssignmentUpdateWithIncrement() {
     assertNoConversion("int a=0; a+=++a;");
@@ -487,7 +496,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("int a=0; a=a++;");
   }
   @Test public void declarationIfAssignment() {
-    assertConvertsTo( //
+    assertTrimmedTo(
         "" + //
             "    String res = s;\n" + //
             "    if (s.equals(y))\n" + //
@@ -498,13 +507,13 @@ import static org.hamcrest.CoreMatchers.is;
             "    System.out.println(res);");
   }
   @Test public void declarationIfAssignment3() {
-    assertConvertsTo("int a =2; if (a != 2) a = 3;", "int a = 2 != 2 ? 3 : 2;");
+    assertTrimmedTo("int a =2; if (a != 2) a = 3;", "int a = 2 != 2 ? 3 : 2;");
   }
   @Test public void declarationIfAssignment4() {
-    assertConvertsTo("int a =2; if (x) a = 2*a;", "int a = x ? 2*2: 2;");
+    assertTrimmedTo("int a =2; if (x) a = 2*a;", "int a = x ? 2*2: 2;");
   }
   @Test public void declarationIfUpdateAssignment() {
-    assertConvertsTo( //
+    assertTrimmedTo(
         "" + //
             "    String res = s;\n" + //
             "    if (s.equals(y))\n" + //
@@ -518,70 +527,70 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
   }
   @Test public void declarationInitializeRightShift() {
-    assertConvertsTo("int a = 3;a>>=2;", "int a = 3 >> 2;");
+    assertTrimmedTo("int a = 3;a>>=2;", "int a = 3 >> 2;");
   }
   @Test public void declarationInitializerReturnAssignment() {
-    assertConvertsTo("int a = 3; return a = 2 * a;", "return 2 * 3;");
+    assertTrimmedTo("int a = 3; return a = 2 * a;", "return 2 * 3;");
   }
   @Test public void declarationInitializesRotate() {
-    assertConvertsTo("int a = 3;a>>>=2;", "int a = 3 >>> 2;");
+    assertTrimmedTo("int a = 3;a>>>=2;", "int a = 3 >>> 2;");
   }
   @Test public void declarationInitializeUpdateAnd() {
-    assertConvertsTo("int a = 3;a&=2;", "int a = 3 & 2;");
+    assertTrimmedTo("int a = 3;a&=2;", "int a = 3 & 2;");
   }
   @Test public void declarationInitializeUpdateAssignment() {
-    assertConvertsTo("int a = 3;a += 2;", "int a = 3+2;");
+    assertTrimmedTo("int a = 3;a += 2;", "int a = 3+2;");
   }
   @Test public void declarationInitializeUpdateAssignmentFunctionCallWithReuse() {
     assertNoChange("int a = f();a += 2*f();");
   }
   @Test public void declarationInitializeUpdateAssignmentFunctionCallWIthReuse() {
-    assertConvertsTo("int a = x;a += a + 2*f();", "int a=x+x+2*f();");
+    assertTrimmedTo("int a = x;a += a + 2*f();", "int a=x+x+2*f();");
   }
   @Test public void declarationInitializeUpdateAssignmentIncrement() {
-    assertConvertsTo("int a = ++i;a += j;", "int a = ++i + j;");
+    assertTrimmedTo("int a = ++i;a += j;", "int a = ++i + j;");
   }
   @Test public void declarationInitializeUpdateAssignmentIncrementTwice() {
     assertNoConversion("int a = ++i;a += a + j;");
   }
   @Test public void declarationInitializeUpdateAssignmentWithReuse() {
-    assertConvertsTo("int a = 3;a += 2*a;", "int a = 3+2*3;");
+    assertTrimmedTo("int a = 3;a += 2*a;", "int a = 3+2*3;");
   }
   @Test public void declarationInitializeUpdateDividies() {
-    assertConvertsTo("int a = 3;a/=2;", "int a = 3 / 2;");
+    assertTrimmedTo("int a = 3;a/=2;", "int a = 3 / 2;");
   }
   @Test public void declarationInitializeUpdateLeftShift() {
-    assertConvertsTo("int a = 3;a<<=2;", "int a = 3 << 2;");
+    assertTrimmedTo("int a = 3;a<<=2;", "int a = 3 << 2;");
   }
   @Test public void declarationInitializeUpdateMinus() {
-    assertConvertsTo("int a = 3;a-=2;", "int a = 3 - 2;");
+    assertTrimmedTo("int a = 3;a-=2;", "int a = 3 - 2;");
   }
   @Test public void declarationInitializeUpdateModulo() {
-    assertConvertsTo("int a = 3;a%= 2;", "int a = 3 % 2;");
+    assertTrimmedTo("int a = 3;a%= 2;", "int a = 3 % 2;");
   }
   @Test public void declarationInitializeUpdatePlus() {
-    assertConvertsTo("int a = 3;a+=2;", "int a = 3 + 2;");
+    assertTrimmedTo("int a = 3;a+=2;", "int a = 3 + 2;");
   }
   @Test public void declarationInitializeUpdateTimes() {
-    assertConvertsTo("int a = 3;a*=2;", "int a = 3 * 2;");
+    assertTrimmedTo("int a = 3;a*=2;", "int a = 3 * 2;");
   }
   @Test public void declarationInitializeUpdateXor() {
-    assertConvertsTo("int a = 3;a^=2;", "int a = 3 ^ 2;");
+    assertTrimmedTo("int a = 3;a^=2;", "int a = 3 ^ 2;");
   }
   @Test public void declarationInitializeUpdatOr() {
-    assertConvertsTo("int a = 3;a|=2;", "int a = 3 | 2;");
+    assertTrimmedTo("int a = 3;a|=2;", "int a = 3 | 2;");
   }
   @Test public void declarationUpdateReturn() {
-    assertConvertsTo("int a = 3; return a += 2;", "return 3 + 2;");
+    assertTrimmedTo("int a = 3; return a += 2;", "return 3 + 2;");
   }
   @Test public void declarationUpdateReturnNone() {
     assertNoConversion("int a = f(); return a += 2 * a;");
   }
   @Test public void declarationUpdateReturnTwice() {
-    assertConvertsTo("int a = 3; return a += 2 * a;", "return 3 + 2 *3 ;");
+    assertTrimmedTo("int a = 3; return a += 2 * a;", "return 3 + 2 *3 ;");
   }
   @Test public void delcartionIfAssignmentNotPlain() {
-    assertConvertsTo("int a=0;   if (y) a+=3; ", "int a = y ? 0 + 3 : 0;");
+    assertTrimmedTo("int a=0;   if (y) a+=3; ", "int a = y ? 0 + 3 : 0;");
   }
   @Ignore @Test public void doNotIntroduceDoubleNegation() {
     assertSimplifiesTo("!Y ? null :!Z ? null : F", "Y&&Z?F:null");
@@ -590,7 +599,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;");
   }
   @Test public void duplicatePartialIfBranches() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             "    if (a) {\n" + //
             "      f();\n" + //
@@ -607,14 +616,13 @@ import static org.hamcrest.CoreMatchers.is;
             "    if (a) \n" + //
             "      ++i;\n" + //
             "    else \n" + //
-            "      --i;" //
-    );
+            "      --i;");
   }
   @Test public void emptyElse() {
-    assertConvertsTo("if (x) b = 3; else ;", "if (x) b = 3;");
+    assertTrimmedTo("if (x) b = 3; else ;", "if (x) b = 3;");
   }
   @Test public void emptyElseBlock() {
-    assertConvertsTo("if (x) b = 3; else { ;}", "if (x) b = 3;");
+    assertTrimmedTo("if (x) b = 3; else { ;}", "if (x) b = 3;");
   }
   @Test public void emptyIsNotChangedExpression() {
     assertNoConversion("");
@@ -623,10 +631,10 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("");
   }
   @Test public void emptyThen1() {
-    assertConvertsTo("if (b) ; else x();", "if (!b) x();");
+    assertTrimmedTo("if (b) ; else x();", "if (!b) x();");
   }
   @Test public void emptyThen2() {
-    assertConvertsTo("if (b) {;;} else {x() ;}", "if (!b) x();");
+    assertTrimmedTo("if (b) {;;} else {x() ;}", "if (!b) x();");
   }
   @Ignore @Test public void extractMethodSplitDifferentStories() {
     assertSimplifiesTo("", "");
@@ -674,7 +682,7 @@ import static org.hamcrest.CoreMatchers.is;
         "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
   }
   @Test public void ifBugSecondTry() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             " final int c = 2;\n" + //
             "    if (c == c + 1) {\n" + //
@@ -697,7 +705,7 @@ import static org.hamcrest.CoreMatchers.is;
             "    return null;");//
   }
   @Test public void ifBugSimplified() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             "    if (x) {\n" + //
             "      if (z)\n" + //
@@ -718,7 +726,7 @@ import static org.hamcrest.CoreMatchers.is;
             "");//
   }
   @Test public void ifBugWithPlainEmptyElse() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             "      if (z)\n" + //
             "        f();\n" + //
@@ -731,16 +739,13 @@ import static org.hamcrest.CoreMatchers.is;
             "");//
   }
   @Test public void ifDegenerateThenInIf() {
-    assertConvertsTo(//
-        "if (a) if (b) {} else f(); x();", //
-        "if (a) { if (!b) f(); } x();"//
-    );
+    assertTrimmedTo("if (a) if (b) {} else f(); x();", "if (a) { if (!b) f(); } x();");
   }
   @Test public void ifEmptyElsewWithinIf() {
-    assertConvertsTo("if (a) if (b) {;;;f();} else {;}", "if(a&&b){;;;f();}");
+    assertTrimmedTo("if (a) if (b) {;;;f();} else {;}", "if(a&&b){;;;f();}");
   }
   @Test public void ifEmptyThenThrow() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" //
             + "if (b) {\n" //
             + " /* empty */" //
@@ -753,37 +758,36 @@ import static org.hamcrest.CoreMatchers.is;
             + "");
   }
   @Test public void ifEmptyThenThrowVariant() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" //
             + "if (b) {\n" //
             + " /* empty */" //
             + "; \n" //
             + "} // no else \n" //
-            + " throw new Excpetion();\n" //
+            + " throw new Exception();\n" //
             + "",
         "" //
-            + "  throw new Excpetion();" //
+            + "  throw new Exception();" //
             + "");
   }
   @Test public void ifEmptyThenThrowWitinIf() {
-    assertConvertsTo("" //
-        + "if (x) if (b) {\n" //
-        + " /* empty */" //
-        + "} else {\n" //
-        + " throw new Excpetion();\n" //
-        + "} else { f();f();f();f();f();f();f();f();}"//
-        , //
+    assertTrimmedTo(
+        "" //
+            + "if (x) if (b) {\n" //
+            + " /* empty */" //
+            + "} else {\n" //
+            + " throw new Excpetion();\n" //
+            + "} else { f();f();f();f();f();f();f();f();}",
         "" //
             + "if (x) { if (!b) \n" //
             + "  throw new Excpetion();" //
-            + "} else { f();f();f();f();f();f();f();f();}"//
-    );
+            + "} else { f();f();f();f();f();f();f();f();}");
   }
   @Test public void ifFunctionCall() {
-    assertConvertsTo("if (x) f(a); else f(b);", "f(x ? a: b);");
+    assertTrimmedTo("if (x) f(a); else f(b);", "f(x ? a: b);");
   }
   @Test public void ifPlusPlusPost() {
-    assertConvertsTo("if (x) a++; else b++;", "if(x)++a;else++b;");
+    assertTrimmedTo("if (x) a++; else b++;", "if(x)++a;else++b;");
   }
   @Test public void ifPlusPlusPostExpression() {
     assertNoChange("x? a++:b++");
@@ -801,13 +805,13 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("if (a) throw e; break;");
   }
   @Test public void ifSequencerNoElseSequencer02() {
-    assertConvertsTo("if (a) break; break;", "break;");
+    assertTrimmedTo("if (a) break; break;", "break;");
   }
   @Test public void ifSequencerNoElseSequencer03() {
     assertNoChange("if (a) continue; break;");
   }
   @Test public void ifSequencerNoElseSequencer04() {
-    assertConvertsTo("if (a) break; return;", "if (!a) return; break;");
+    assertTrimmedTo("if (a) break; return;", "if (!a) return; break;");
   }
   @Test public void ifSequencerNoElseSequencer05() {
     assertNoChange("if (a) {x() return;} continue;");
@@ -816,74 +820,64 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("if (a) throw e; break;");
   }
   @Test public void ifSequencerNoElseSequencer07() {
-    assertConvertsTo("if (a) break; throw e;", "if (!a) throw e; break;");
+    assertTrimmedTo("if (a) break; throw e;", "if (!a) throw e; break;");
   }
   @Test public void ifSequencerNoElseSequencer08() {
     assertNoChange("if (a) throw e; continue;");
   }
   @Test public void ifSequencerNoElseSequencer09() {
-    assertConvertsTo("if (a) break; throw e;", "if (!a) throw e; break;");
+    assertTrimmedTo("if (a) break; throw e;", "if (!a) throw e; break;");
   }
   @Test public void ifSequencerNoElseSequencer10() {
-    assertConvertsTo("if (a) continue; return;", "if (!a) return; continue;");
+    assertTrimmedTo("if (a) continue; return;", "if (!a) return; continue;");
   }
   @Test public void ifSequencerThenSequencer0() {
-    assertConvertsTo("if (a) return; else break;", "if (a) return; break;");
+    assertTrimmedTo("if (a) return; else break;", "if (a) return; break;");
   }
   @Test public void ifSequencerThenSequencer1() {
-    assertConvertsTo("if (a) break; else return;", "if (!a) return; break;");
+    assertTrimmedTo("if (a) break; else return;", "if (!a) return; break;");
   }
   @Test public void ifSequencerThenSequencer3() {
-    assertConvertsTo("if (a) return; else continue;", "if (a) return; continue;");
+    assertTrimmedTo("if (a) return; else continue;", "if (a) return; continue;");
   }
   @Test public void ifSequencerThenSequencer4() {
-    assertConvertsTo("if (a) continue; else return;", "if (!a) return; continue;");
+    assertTrimmedTo("if (a) continue; else return;", "if (!a) return; continue;");
   }
   @Test public void ifSequencerThenSequencer5() {
-    assertConvertsTo("if (a) throw e; else break;", "if (a) throw e; break;");
+    assertTrimmedTo("if (a) throw e; else break;", "if (a) throw e; break;");
   }
   @Test public void ifSequencerThenSequencer6() {
-    assertConvertsTo("if (a) break; else throw e;", "if (!a) throw e; break;");
+    assertTrimmedTo("if (a) break; else throw e;", "if (!a) throw e; break;");
   }
   @Test public void ifSequencerThenSequencer7() {
-    assertConvertsTo("if (a) throw e; else continue;", "if (a) throw e; continue;");
+    assertTrimmedTo("if (a) throw e; else continue;", "if (a) throw e; continue;");
   }
   @Test public void ifSequencerThenSequencer8() {
-    assertConvertsTo("if (a) break; else throw e;", "if (!a) throw e; break;");
+    assertTrimmedTo("if (a) break; else throw e;", "if (!a) throw e; break;");
   }
   @Test public void ifWithCommonNotInBlock() {
-    assertConvertsTo(//
-        "for (;;) if (a) {i++;j++;f();} else { i++;j++; g();}", //
-        "for(;;){i++;j++;if(a)f();else g();}");
+    assertTrimmedTo("for (;;) if (a) {i++;j++;f();} else { i++;j++; g();}", "for(;;){i++;j++;if(a)f();else g();}");
   }
   @Test public void ifWithCommonNotInBlockDegenerate() {
-    assertConvertsTo(//
-        "for (;;) if (a) {i++; f();} else { i++;j++; }", //
-        "for(;;){i++; if(a)f(); else j++;}");
+    assertTrimmedTo("for (;;) if (a) {i++; f();} else { i++;j++; }", "for(;;){i++; if(a)f(); else j++;}");
   }
   @Test public void ifWithCommonNotInBlockiLongerElse() {
-    assertConvertsTo(//
-        "for (;;) if (a) {i++;j++;f();} else { i++;j++;  f(); h();}", //
-        "for(;;){i++;j++; f(); if(!a) h();}");
+    assertTrimmedTo("for (;;) if (a) {i++;j++;f();} else { i++;j++;  f(); h();}", "for(;;){i++;j++; f(); if(!a) h();}");
   }
   @Test public void ifWithCommonNotInBlockiLongerThen() {
-    assertConvertsTo(//
-        "for (;;) if (a) {i++;j++;f();} else { i++;j++; }", //
-        "for(;;){i++;j++; if(a)f();}");
+    assertTrimmedTo("for (;;) if (a) {i++;j++;f();} else { i++;j++; }", "for(;;){i++;j++; if(a)f();}");
   }
   @Test public void ifWithCommonNotInBlockNothingLeft() {
-    assertConvertsTo(//
-        "for (;;) if (a) {i++;j++;} else { i++;j++; }", //
-        "for(;;){i++;j++;}");
+    assertTrimmedTo("for (;;) if (a) {i++;j++;} else { i++;j++; }", "for(;;){i++;j++;}");
   }
   @Test public void inlineInitializers() {
-    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 3*2*b;");
+    assertTrimmedTo("int b,a = 2; return 3 * a * b; ", "return 3*2*b;");
   }
   @Test public void inlineInitializersFirstStep() {
-    assertConvertsTo("int b=4,a = 2; return 3 * a * b; ", "int a = 2; return 3*a*4;");
+    assertTrimmedTo("int b=4,a = 2; return 3 * a * b; ", "int a = 2; return 3*a*4;");
   }
   @Test public void inlineInitializersSecondStep() {
-    assertConvertsTo("int a = 2; return 3*a*4;", "return 3 * 2 * 4;");
+    assertTrimmedTo("int a = 2; return 3*a*4;", "return 3 * 2 * 4;");
   }
   @Ignore @Test public void inlineSingleUse01() {
     assertSimplifiesTo("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ",
@@ -966,19 +960,15 @@ import static org.hamcrest.CoreMatchers.is;
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
   @Test public void issue37Simplified() {
-    assertConvertsTo(
-        "" + //
-            "    int a = 3;\n" + //
-            "    a = 31 * a;" + //
-            "", //
-        "int a = 31 * 3; ");
+    assertTrimmedTo("" + //
+        "    int a = 3;\n" + //
+        "    a = 31 * a;" + //
+        "", "int a = 31 * 3; ");
   }
   @Test public void issue37SimplifiedVariant() {
-    assertConvertsTo(
-        "" + //
-            "    int a = 3;\n" + //
-            "    a += 31 * a;", //
-        "int a=3+31*3;");
+    assertTrimmedTo("" + //
+        "    int a = 3;\n" + //
+        "    a += 31 * a;", "int a=3+31*3;");
   }
   @Test(timeout = 100) public void issue39base() {
     assertNoConversion("" + //
@@ -990,7 +980,7 @@ import static org.hamcrest.CoreMatchers.is;
         "return true;"); //
   }
   @Test(timeout = 100) public void issue39baseDual() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "if (name != null) {\n" + //
             "    if (!name.equals(other.name))\n" + //
             "        return false;\n" + //
@@ -1006,7 +996,7 @@ import static org.hamcrest.CoreMatchers.is;
             "return true;");
   }
   @Test(timeout = 100) public void issue39versionA() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             "if (varArgs) {\n" + //
             "    if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
@@ -1014,8 +1004,7 @@ import static org.hamcrest.CoreMatchers.is;
             "    }\n" + //
             "} else if (parameterTypes.length != argumentTypes.length) {\n" + //
             "    return false;\n" + //
-            "}" //
-            ,
+            "}",
         "" + //
             "if (!varArgs) {\n" + //
             "    if (parameterTypes.length != argumentTypes.length) {\n" + //
@@ -1023,8 +1012,7 @@ import static org.hamcrest.CoreMatchers.is;
             "    }\n" + //
             "} else if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
             "    return false;\n" + //
-            "}" //
-    );
+            "}");
   }
   @Test(timeout = 100) public void issue39versionAdual() {
     assertNoConversion("" + //
@@ -1038,18 +1026,17 @@ import static org.hamcrest.CoreMatchers.is;
         "");
   }
   @Test public void issue41FunctionCall() {
-    assertConvertsTo("int a = f();a += 2;", "int a = f()+2;");
+    assertTrimmedTo("int a = f();a += 2;", "int a = f()+2;");
   }
   @Test public void issue43() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" //
             + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
-            + "return (t + 3);    ", //
+            + "return (t + 3);    ",
         ""//
             + "String t = Z2.f(A).f(b) + Z2.f(c);" //
             + "return (t + 3);" //
-            + "" //
-    );
+            + "");
   }
   @Test public void linearTransformation() {
     assertSimplifiesTo("plain * the + kludge", "the*plain+kludge");
@@ -1070,70 +1057,37 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("(a == b == c == d == e) == d");
   }
   @Test public void nestedIf1() {
-    assertConvertsTo("if (a) if (b) i++;", "if (a && b) i++;");
+    assertTrimmedTo("if (a) if (b) i++;", "if (a && b) i++;");
   }
   @Test public void nestedIf2() {
-    assertConvertsTo(//
-        "if (a) if (b) i++; else ; else ; "//
-        , //
-        "if (a && b) i++; else ;"//
-    );
+    assertTrimmedTo("if (a) if (b) i++; else ; else ; ", "if (a && b) i++; else ;");
   }
   @Test public void nestedIf3() {
-    assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
-    );
+    assertTrimmedTo("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
   }
   @Test public void nestedIf33() {
-    assertConvertsTo(//
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();}", //
-        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
-    );
+    assertTrimmedTo("if(x){if(a&&b)i++;else;}else{++y;f();g();}", "if(x){if(a&&b)i++;}else{++y;f();g();}");
   }
   @Test public void nestedIf3a() {
-    assertConvertsTo(//
-        "if (x) { if (a && b) i++; } else { y++; f(); g(); }", //
-        "if(x){if(a&&b)++i;}else{++y;f();g();}"//
-    );
+    assertTrimmedTo("if (x) { if (a && b) i++; } else { y++; f(); g(); }", "if(x){if(a&&b)++i;}else{++y;f();g();}");
   }
   @Test public void nestedIf3b() {
-    assertConvertsTo(//
-        "if (x) if (a && b) i++; else; else { y++; f(); g(); }" //
-        , //
-        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
-    );
+    assertTrimmedTo("if (x) if (a && b) i++; else; else { y++; f(); g(); }", "if(x){if(a&&b)i++;}else{++y;f();g();}");
   }
   @Test public void nestedIf3c() {
-    assertConvertsTo(//
-        "if (x) if (a && b) i++; else; else { y++; f(); g(); }" //
-        , //
-        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
-    );
+    assertTrimmedTo("if (x) if (a && b) i++; else; else { y++; f(); g(); }", "if(x){if(a&&b)i++;}else{++y;f();g();}");
   }
   @Test public void nestedIf3d() {
-    assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
-    );
+    assertTrimmedTo("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
   }
   @Test public void nestedIf3e() {
-    assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
-    );
+    assertTrimmedTo("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
   }
   @Test public void nestedIf3f() {
-    assertConvertsTo(//
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();}", //
-        "if(x){if(a&&b)i++;}else{++y;f();g();}" //
-    );
+    assertTrimmedTo("if(x){if(a&&b)i++;else;}else{++y;f();g();}", "if(x){if(a&&b)i++;}else{++y;f();g();}");
   }
   @Test public void nestedIf3x() {
-    assertConvertsTo(//
-        "if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", //
-        "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}" //
-    );
+    assertTrimmedTo("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}", "if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
   }
   @Test public void noChange() {
     assertNoChange("12");
@@ -1325,13 +1279,13 @@ import static org.hamcrest.CoreMatchers.is;
     assertSimplifiesTo("true && true", "true");
   }
   @Test public void overridenDeclaration() {
-    assertConvertsTo("int a = 3; a = f() ? 3 : 4;", "int a = f() ? 3: 4;");
+    assertTrimmedTo("int a = 3; a = f() ? 3 : 4;", "int a = f() ? 3: 4;");
   }
   @Test public void parenthesizeOfpushdownTernary() {
     assertSimplifiesTo("a ? b+x+e+f:b+y+e+f", "b+(a ? x : y)+e+f");
   }
   @Test public void postDecreementReturn() {
-    assertConvertsTo("a--; return a;", "--a;return a;");
+    assertTrimmedTo("a--; return a;", "--a;return a;");
   }
   @Test public void postDecremntInFunctionCall() {
     assertNoConversion("f(a++, i--, b++, ++b);");
@@ -1354,16 +1308,16 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("f(i++);");
   }
   @Test public void postIncrementReturn() {
-    assertConvertsTo("a++; return a;", "++a;return a;");
+    assertTrimmedTo("a++; return a;", "++a;return a;");
   }
   @Test public void preDecreementReturn() {
-    assertConvertsTo("--a.b.c; return a.b.c;", "return--a.b.c;");
+    assertTrimmedTo("--a.b.c; return a.b.c;", "return--a.b.c;");
   }
   @Test public void preDecrementReturn() {
-    assertConvertsTo("--a; return a;", "return --a;");
+    assertTrimmedTo("--a; return a;", "return --a;");
   }
   @Test public void preDecrementReturn1() {
-    assertConvertsTo("--this.a; return this.a;", "return --this.a;");
+    assertTrimmedTo("--this.a; return this.a;", "return --this.a;");
   }
   @Test public void prefixToPosfixIncreementSimple() {
     assertSimplifiesTo("i++", "++i");
@@ -1384,16 +1338,16 @@ import static org.hamcrest.CoreMatchers.is;
     assertThat(new PostfixToPrefix().eligible(e), is(true));
     final Expression r = new PostfixToPrefix().replacement(e);
     assertThat(r, iz("--i"));
-    assertConvertsTo(from, "for(int i=0;i<100;--i)--i;");
+    assertTrimmedTo(from, "for(int i=0;i<100;--i)--i;");
   }
   @Test public void prefixToPostfixIncreement() {
-    assertConvertsTo("for (int i = 0; i < 100; i++) i++;", "for(int i=0;i<100;++i)++i;");
+    assertTrimmedTo("for (int i = 0; i < 100; i++) i++;", "for(int i=0;i<100;++i)++i;");
   }
   @Test public void preIncrementReturn() {
-    assertConvertsTo("++a; return a;", "return ++a;");
+    assertTrimmedTo("++a; return a;", "return ++a;");
   }
   @Test public void pushdowConditionalActualExampleFirstPass() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" //
             + "return determineEncoding(bytes) == Encoding.B " //
             + "? f((ENC_WORD_PREFIX + mimeCharset + B), text, charset, bytes)\n" //
@@ -1408,7 +1362,7 @@ import static org.hamcrest.CoreMatchers.is;
             + "");
   }
   @Test public void pushdowConditionalActualExampleSecondtest() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" //
             + "return f(" + "   determineEncoding(bytes)==Encoding.B" //
             + "     ? ENC_WORD_PREFIX+mimeCharset+B" //
@@ -1594,8 +1548,7 @@ import static org.hamcrest.CoreMatchers.is;
         "!a?new S(new Ineger(3)):new S(a,new Integer(4),b)                                                                                                                  ");
   }
   @Test public void pushdownTernaryIntoPrintln() {
-    assertConvertsTo(//
-        "    if (s.equals(t))\n" + "      System.out.println(Hey + res);\n" + "    else\n" + "      System.out.println(Ho + x + a);", //
+    assertTrimmedTo("    if (s.equals(t))\n" + "      System.out.println(Hey + res);\n" + "    else\n" + "      System.out.println(Ho + x + a);",
         "System.out.println(s.equals(t)?Hey+res:Ho+x+a);");
   }
   @Test public void pushdownTernaryLongFieldRefernece() {
@@ -1726,19 +1679,19 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("");
   }
   @Test public void removeSuper() {
-    assertConvertsTo("class T { T() { super(); }", "class T { T() { }");
+    assertTrimmedTo("class T { T() { super(); }", "class T { T() { }");
   }
   @Test public void removeSuperWithArgument() {
     assertNoConversion("class T { T() { super(a); a();}");
   }
   @Test public void removeSuperWithStatemen() {
-    assertConvertsTo("class T { T() { super(); a++;}", "class T { T() { ++a;}");
+    assertTrimmedTo("class T { T() { super(); a++;}", "class T { T() { ++a;}");
   }
   @Test public void replaceInitializationInReturn() {
-    assertConvertsTo("int a = 3; return a + 4;", "return 3 + 4;");
+    assertTrimmedTo("int a = 3; return a + 4;", "return 3 + 4;");
   }
   @Test public void replaceTwiceInitializationInReturn() {
-    assertConvertsTo("int a = 3; return a + 4 << a;", "return 3 + 4 << 3;");
+    assertTrimmedTo("int a = 3; return a + 4 << a;", "return 3 + 4 << 3;");
   }
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
@@ -1754,10 +1707,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertThat(Toolbox.instance.find(i("null != a")), instanceOf(InfixComparisonSpecific.class));
   }
   @Test public void sequencerFirstInElse() {
-    assertConvertsTo(//
-        "if (a) {b++; c++; ++d;} else { f++; g++; return x;}", //
-        "if (!a) {f++; g++; return x;} b++; c++; ++d; " //
-    );
+    assertTrimmedTo("if (a) {b++; c++; ++d;} else { f++; g++; return x;}", "if (!a) {f++; g++; return x;} b++; c++; ++d; ");
   }
   @Test public void shorterChainParenthesisComparison() {
     assertNoChange("a == b == c");
@@ -1769,38 +1719,28 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("if (a) {f(); g(); h();} else if (a) ++i; else ++j;");
   }
   @Test public void shortestBranchIfWithComplexNestedIf4() {
-    assertConvertsTo("if (a) {f(); g(); h(); ++i;} else if (a) ++i; else j++;", //
-        "if(!a)if(a)++i;else j++;else{f();g();h();++i;}");
+    assertTrimmedTo("if (a) {f(); g(); h(); ++i;} else if (a) ++i; else j++;", "if(!a)if(a)++i;else j++;else{f();g();h();++i;}");
   }
   @Test public void shortestBranchIfWithComplexNestedIf5() {
-    assertConvertsTo("if (a) {f(); g(); h(); ++i; f();} else if (a) ++i; else j++;", //
-        "if(!a)if(a)++i;else j++;else{f();g();h();++i;f();}");
+    assertTrimmedTo("if (a) {f(); g(); h(); ++i; f();} else if (a) ++i; else j++;", "if(!a)if(a)++i;else j++;else{f();g();h();++i;f();}");
   }
   @Test public void shortestBranchIfWithComplexNestedIf6() {
-    assertConvertsTo(//
-        "if (a) {f(); g(); h(); ++i; f(); j++;} else if (a) ++i; else j++;", //
-        "if(!a)if(a)++i;else j++;else{f();g();h();++i;f();j++;}"
-    //
-    );
+    assertTrimmedTo("if (a) {f(); g(); h(); ++i; f(); j++;} else if (a) ++i; else j++;", "if(!a)if(a)++i;else j++;else{f();g();h();++i;f();j++;}");
   }
   @Test public void shortestBranchIfWithComplexNestedIf7() {
-    assertConvertsTo("if (a) {f(); ++i; g(); h(); ++i; f(); j++;} else if (a) ++i; else j++;", //
-        "if(!a)if(a)++i;else j++;else{f();++i;g();h();++i;f();j++;}");
+    assertTrimmedTo("if (a) {f(); ++i; g(); h(); ++i; f(); j++;} else if (a) ++i; else j++;", "if(!a)if(a)++i;else j++;else{f();++i;g();h();++i;f();j++;}");
   }
   @Test public void shortestBranchIfWithComplexNestedIf8() {
-    assertConvertsTo("if (a) {f(); ++i; g(); h(); ++i; u++; f(); j++;} else if (a) ++i; else j++;", //
-        "if(!a)if(a)++i;else j++;else{f();++i;g();h();++i;u++;f();j++;}");
+    assertTrimmedTo("if (a) {f(); ++i; g(); h(); ++i; u++; f(); j++;} else if (a) ++i; else j++;", "if(!a)if(a)++i;else j++;else{f();++i;g();h();++i;u++;f();j++;}");
   }
   @Test public void shortestBranchIfWithComplexNestedIfPlain() {
-    assertConvertsTo("if (a) {f(); g(); h();} else { i++; j++;}", "if(!a){i++;j++;}else{f();g();h();}");
+    assertTrimmedTo("if (a) {f(); g(); h();} else { i++; j++;}", "if(!a){i++;j++;}else{f();g();h();}");
   }
   @Test public void shortestBranchIfWithComplexSimpler() {
-    assertConvertsTo(//
-        "if (a) {f(); g(); h();} else  i++; j++;", //
-        "if(!a)i++;else{f();g();h();}++j;");
+    assertTrimmedTo("if (a) {f(); g(); h();} else  i++; j++;", "if(!a)i++;else{f();g();h();}++j;");
   }
   @Test public void shortestBranchInIf() {
-    assertConvertsTo("   int a=0;\n" + //
+    assertTrimmedTo("   int a=0;\n" + //
         "   if (s.equals(known)){\n" + //
         "     System.console();\n" + //
         "   } else {\n" + //
@@ -1809,17 +1749,17 @@ import static org.hamcrest.CoreMatchers.is;
         "", "int a=0; if(!s.equals(known))a=3;else System.console();");
   }
   @Test public void shortestIfBranchFirst01() {
-    assertConvertsTo(""//
-        + "if (s.equals(0xDEAD)) {\n"//
-        + " int res=0; "//
-        + " for (int i=0; i<s.length(); ++i)     "//
-        + " if (s.charAt(i)=='a')      "//
-        + "   res += 2;    "//
-        + "} else "//
-        + " if (s.charAt(i)=='d') "//
-        + "  res -= 1;  "//
-        + "return res;  "//
-        ,
+    assertTrimmedTo(
+        ""//
+            + "if (s.equals(0xDEAD)) {\n"//
+            + " int res=0; "//
+            + " for (int i=0; i<s.length(); ++i)     "//
+            + " if (s.charAt(i)=='a')      "//
+            + "   res += 2;    "//
+            + "} else "//
+            + " if (s.charAt(i)=='d') "//
+            + "  res -= 1;  "//
+            + "return res;  ",
         ""//
             + "if (!s.equals(0xDEAD)) {"//
             + " if(s.charAt(i)=='d')"//
@@ -1833,7 +1773,7 @@ import static org.hamcrest.CoreMatchers.is;
             + " return res;");
   }
   @Test public void shortestIfBranchFirst02() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" //
             + "if (!s.equals(0xDEAD)) { "//
             + " int res=0;"//
@@ -1856,11 +1796,10 @@ import static org.hamcrest.CoreMatchers.is;
             "          res += 2;\n" + //
             "        else " + "       if (s.charAt(i) == 'd')\n" + //
             "          res -= 1;\n" + //
-            "      return res;\n" //
-    );
+            "      return res;\n");
   }
   @Test public void shortestIfBranchFirst02a() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             " if (!s.equals(0xDEAD)) {\n" + //
             "      int res = 0;\n" + //
@@ -1872,7 +1811,7 @@ import static org.hamcrest.CoreMatchers.is;
             "      return res;\n" + //
             "    }\n" + //
             "    return 8;" + //
-            "", //
+            "",
         " if (s.equals(0xDEAD)) " + "return 8; " + //
             "      int res = 0;\n" + //
             "      for (int i = 0;i < s.length();++i)\n" + //
@@ -1919,7 +1858,7 @@ import static org.hamcrest.CoreMatchers.is;
     ));
   }
   @Test public void shortestIfBranchWithFollowingCommandsSequencer() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "" + //
             "if (a) {" + //
             " f();" + //
@@ -1927,7 +1866,7 @@ import static org.hamcrest.CoreMatchers.is;
             " h();" + //
             " return a;" + //
             "}\n" + //
-            "return c;", //
+            "return c;",
         "" + //
             "if (!a) return c;" + //
             "f();" + //
@@ -1943,7 +1882,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
   }
   @Test public void shortestOperand05() {
-    assertConvertsTo(//
+    assertTrimmedTo(
         "    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
             "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";",
         "return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
@@ -1958,10 +1897,10 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("int h,u,m,a,n;return b == true && n + a > m - u || h > u;");
   }
   @Test public void shortestOperand12() {
-    assertConvertsTo("int k = 15;   return 7 < k; ", "return 7<15;");
+    assertTrimmedTo("int k = 15;   return 7 < k; ", "return 7<15;");
   }
   @Test public void shortestOperand13() {
-    assertConvertsTo("return (2 > 2 + a) == true;", "return 2>a+2;");
+    assertTrimmedTo("return (2 > 2 + a) == true;", "return 2>a+2;");
   }
   @Test public void shortestOperand13a() {
     assertSimplifiesTo("(2 > 2 + a) == true", "2>a+2 ");
@@ -1973,16 +1912,12 @@ import static org.hamcrest.CoreMatchers.is;
     assertSimplifiesTo("2 == true", "2 ");
   }
   @Test public void shortestOperand14() {
-    assertConvertsTo(//
-        "Integer t = new Integer(5);   return (t.toString() == null);    ", //
-        "return((new Integer(5)).toString()==null);");
+    assertTrimmedTo("Integer t = new Integer(5);   return (t.toString() == null);    ", "return((new Integer(5)).toString()==null);");
   }
   @Test public void shortestOperand15() {
-    assertConvertsTo(
-        "" //
-            + "String t = Bob + Wants + To + \"Sleep \"; "//
-            + "  return (right_now + t);    ", //
-        "return(right_now+Bob+Wants+To+\"Sleep \");");
+    assertTrimmedTo("" //
+        + "String t = Bob + Wants + To + \"Sleep \"; "//
+        + "  return (right_now + t);    ", "return(right_now+Bob+Wants+To+\"Sleep \");");
   }
   @Test public void shortestOperand17() {
     assertSimplifiesTo("5 ^ a.getNum()", "a.getNum() ^ 5");
@@ -2044,10 +1979,10 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("return sansJavaExtension(f) + n + \".\"+ extension(f);");
   }
   @Test public void simplifyBlockComplexEmpty0() {
-    assertConvertsTo("{}", "");
+    assertTrimmedTo("{}", "");
   }
   @Test public void simplifyBlockComplexEmpty1() {
-    assertConvertsTo("{;;{;{{}}}{;}{};}", "");
+    assertTrimmedTo("{;;{;{{}}}{;}{};}", "");
   }
   @Test public void simplifyBlockComplexSingleton() {
     assertSimplifiesTo("{;{{;;return b; }}}", "return b;", new BlockSimplify(), Wrap.Statement);
@@ -2208,123 +2143,91 @@ import static org.hamcrest.CoreMatchers.is;
     assertSimplifiesTo("2L*1", "1*2L");
   }
   @Test public void ternarize05() {
-    assertConvertsTo(" int res = 0; "//
+    assertTrimmedTo(" int res = 0; "//
         + "if (s.equals(532))    "//
         + "res += 6;   "//
         + "else    "//
         + "res += 9;      ", "int res=0;res+=s.equals(532)?6:9;");
   }
   @Test public void ternarize05a() {
-    assertConvertsTo(" int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ",
-        "int res=0;res+=s.equals(532)?6:9;return res;");
+    assertTrimmedTo(" int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ", "int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
-    assertConvertsTo("" //
-        + "String res;" //
-        + "res = s;   " //
-        + "if (res.equals(532)==true)    " //
-        + "  res = s + 0xABBA;   " //
-        + "System.out.println(res); " //
-        + "" //
-        ,
+    assertTrimmedTo(
+        "" //
+            + "String res;" //
+            + "res = s;   " //
+            + "if (res.equals(532)==true)    " //
+            + "  res = s + 0xABBA;   " //
+            + "System.out.println(res); " //
+            + "",
         "" //
             + "String res =s ;" //
             + "if (res.equals(532))    " //
             + "  res = s + 0xABBA;   " //
             + "System.out.println(res); " //
-            + "" //
-    );
+            + "");
   }
   @Test public void ternarize07a() {
-    assertConvertsTo("" //
+    assertTrimmedTo("" //
         + "String res;" //
         + "res = s;   " //
         + "if (res==true)    " //
         + "  res = s + 0xABBA;   " //
         + "System.out.println(res); " //
-        + "" //
-        , "String res=s;if(res)res=s+0xABBA;System.out.println(res);" //
-    );
+        + "", "String res=s;if(res)res=s+0xABBA;System.out.println(res);");
   }
   @Test public void ternarize07aa() {
-    assertConvertsTo(//
-        "String res=s;if(res==true)res=s+0xABBA;System.out.println(res);" //
-        , //
-        "String res=s==true?s+0xABBA:s;System.out.println(res);" //
-    );
+    assertTrimmedTo("String res=s;if(res==true)res=s+0xABBA;System.out.println(res);", "String res=s==true?s+0xABBA:s;System.out.println(res);");
   }
   @Test public void ternarize07b() {
-    assertConvertsTo( //
+    assertTrimmedTo(
         "" //
             + "String res =s ;" //
             + "if (res.equals(532)==true)    " //
             + "  res = s + 0xABBA;   " //
-            + "System.out.println(res); " //
-            ,
+            + "System.out.println(res); ",
         "" //
-            + "String res=s.equals(532)==true?s+0xABBA:s;System.out.println(res);" //
-    );
+            + "String res=s.equals(532)==true?s+0xABBA:s;System.out.println(res);");
   }
   @Test public void ternarize09() {
-    assertConvertsTo("if (s.equals(532)) {    return 6;}else {    return 9;}", //
-        "return s.equals(532)?6:9; ");
+    assertTrimmedTo("if (s.equals(532)) {    return 6;}else {    return 9;}", "return s.equals(532)?6:9; ");
   }
   @Test public void ternarize10() {
-    assertConvertsTo(
-        "String res = s, foo = bar;   "//
-            + "if (res.equals(532)==true)    " //
-            + "res = s + 0xABBA;   "//
-            + "System.out.println(res); ", //
-        "String res=s.equals(532)==true?s+0xABBA:s,foo=bar;System.out.println(res);");
+    assertTrimmedTo("String res = s, foo = bar;   "//
+        + "if (res.equals(532)==true)    " //
+        + "res = s + 0xABBA;   "//
+        + "System.out.println(res); ", "String res=s.equals(532)==true?s+0xABBA:s,foo=bar;System.out.println(res);");
   }
   @Test public void ternarize12() {
-    assertConvertsTo(//
-        "String res = s;   if (s.equals(532))    res = res + 0xABBA;   System.out.println(res); ", //
-        "String res=s.equals(532)?s+0xABBA:s;System.out.println(res);");
+    assertTrimmedTo("String res = s;   if (s.equals(532))    res = res + 0xABBA;   System.out.println(res); ", "String res=s.equals(532)?s+0xABBA:s;System.out.println(res);");
   }
   @Test public void ternarize13() {
-    assertConvertsTo(//
-        "String res = mode, foo;  if (mode.equals(f())==true)   foo = M; ", //
-        "String res = mode, foo;  if (mode.equals(f())) foo=M;");
+    assertTrimmedTo("String res = mode, foo;  if (mode.equals(f())==true)   foo = M; ", "String res = mode, foo;  if (mode.equals(f())) foo=M;");
   }
   @Test public void ternarize13Simplified() {
-    assertConvertsTo(//
-        "String r = m, foo;  if (m.equals(f())==true)   foo = M; ", //
-        "String r = m, foo;  if (m.equals(f())) foo=M;");
+    assertTrimmedTo("String r = m, foo;  if (m.equals(f())==true)   foo = M; ", "String r = m, foo;  if (m.equals(f())) foo=M;");
   }
   @Test public void ternarize13SimplifiedMore() {
-    assertConvertsTo(//
-        "if (m.equals(f())==true)   foo = M; ", //
-        "if (m.equals(f())) foo=M;");
+    assertTrimmedTo("if (m.equals(f())==true)   foo = M; ", "if (m.equals(f())) foo=M;");
   }
   @Test public void ternarize13SimplifiedMoreAndMore() {
-    assertConvertsTo(//
-        "f (m.equals(f())==true); foo = M; ", //
-        "f (m.equals(f())); foo=M;");
+    assertTrimmedTo("f (m.equals(f())==true); foo = M; ", "f (m.equals(f())); foo=M;");
   }
   @Test public void ternarize13SimplifiedMoreAndMoreAndMore() {
-    assertConvertsTo(//
-        "f (m.equals(f())==true);  ", //
-        "f (m.equals(f()));");
+    assertTrimmedTo("f (m.equals(f())==true);  ", "f (m.equals(f()));");
   }
   @Test public void ternarize13SimplifiedMoreVariant() {
-    assertConvertsTo(//
-        "if (m==true)   foo = M; ", //
-        "if (m) foo=M;");
+    assertTrimmedTo("if (m==true)   foo = M; ", "if (m) foo=M;");
   }
   @Test public void ternarize13SimplifiedMoreVariantShorter() {
-    assertConvertsTo(//
-        "if (m==true)   f(); ", //
-        "if (m) f();");
+    assertTrimmedTo("if (m==true)   f(); ", "if (m) f();");
   }
   @Test public void ternarize13SimplifiedMoreVariantShorterAsExpression() {
-    assertConvertsTo(//
-        "f (m==true);   f(); ", //
-        "f (m); f();");
+    assertTrimmedTo("f (m==true);   f(); ", "f (m); f();");
   }
   @Test public void ternarize14() {
-    assertConvertsTo(//
-        "String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);}", //
+    assertTrimmedTo("String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);}",
         "String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);}");
   }
   @Test public void ternarize16() {
@@ -2332,11 +2235,9 @@ import static org.hamcrest.CoreMatchers.is;
         "String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
   }
   @Test public void ternarize16a() {
-    assertConvertsTo(
-        "int n1, n2 = 0, n3;\n" + //
-            "  if (d)\n" + //
-            "    n2 = 2;", //
-        "int n1, n2 = d ? 2: 0, n3;");
+    assertTrimmedTo("int n1, n2 = 0, n3;\n" + //
+        "  if (d)\n" + //
+        "    n2 = 2;", "int n1, n2 = d ? 2: 0, n3;");
   }
   @Test public void ternarize21() {
     assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
@@ -2371,8 +2272,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoChange("int a, b=0;if (b==3){    a+=2+r();a-=6;}");
   }
   @Test public void ternarize41() {
-    assertConvertsTo(//
-        "int a,b,c,d;a = 3;b = 5; d = 7;if (a == 4)while (b == 3) c = a; else while (d == 3)c =a*a; ", //
+    assertTrimmedTo("int a,b,c,d;a = 3;b = 5; d = 7;if (a == 4)while (b == 3) c = a; else while (d == 3)c =a*a; ",
         "int a=3,b,c,d;b=5;d=7;if(a==4)while(b==3)c=a;else while(d==3)c=a*a;");
   }
   @Test public void ternarize42() {
@@ -2383,7 +2283,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
   }
   @Test public void ternarize46() {
-    assertConvertsTo(
+    assertTrimmedTo(
         "   int a , b=0;\n" + "   if (mode.equals(NG)==true)\n" + "     if (b==3){\n" + "       return 3;\n" + "     } else {\n" + "       a+=7;\n" + "     }\n" + "   else\n"
             + "     if (b==3){\n" + "       return 2;\n" + "     } else {\n" + "       a=7;\n" + "     }",
         "int a,b=0;if(mode.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
@@ -2395,7 +2295,7 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
   }
   @Test public void ternarize49a() {
-    assertConvertsTo(
+    assertTrimmedTo(
         ""//
             + "    int size = 0;\n"//
             + "   if (mode.equals(153)==true)\n"//
@@ -2420,22 +2320,18 @@ import static org.hamcrest.CoreMatchers.is;
     assertNoConversion("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {    c = d;c = e;");
   }
   @Test public void ternarize53() {
-    assertConvertsTo(//
-        "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;", //
-        "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;"//
-    );
+    assertTrimmedTo("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;",
+        "int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;");
   }
   @Test public void ternarize55() {
-    assertConvertsTo(//
-        "if (key.equals(markColumn))\n" + //
-            " to.put(key, a.toString());\n" + //
-            "else\n" + //
-            "  to.put(key, missing(key, a) ? Z2 : get(key, a));", //
-        "to.put(key,key.equals(markColumn)?a.toString():missing(key,a)?Z2:get(key,a));");
+    assertTrimmedTo("if (key.equals(markColumn))\n" + //
+        " to.put(key, a.toString());\n" + //
+        "else\n" + //
+        "  to.put(key, missing(key, a) ? Z2 : get(key, a));", "to.put(key,key.equals(markColumn)?a.toString():missing(key,a)?Z2:get(key,a));");
   }
   @Test public void ternarize56() {
-    assertConvertsTo(
-        "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\"+ target); progressBarCurrent.setValue(current * 100 / target);", //
+    assertTrimmedTo(
+        "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\"+ target); progressBarCurrent.setValue(current * 100 / target);",
         "if(target==0){progressBarCurrent.setString(X);progressBarCurrent.setValue(0);progressBarCurrent.setString(current+\"/\"+target);progressBarCurrent.setValue(100*current / target);");
   }
   @Test public void ternarizeIntoSuperMethodInvocation() {

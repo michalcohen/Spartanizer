@@ -38,9 +38,9 @@ public enum Wrap {
           /** Algorithm for wrapping/unwrapping an expression */
   Expression(
       "" + Statement.before + //
-          "   return ", //
+          "   if (", //
       "" + //
-          ";\n" + //
+          ") patrick();\n" + //
           Statement.after + //
           ""), //
   //
@@ -98,15 +98,23 @@ public enum Wrap {
    *         parsed appropriately.
    */
   public static Wrap find(final String codeFragment) {
-    for (final Wrap $ : values()) {
+    for (final Wrap $ : new Wrap[] { Statement, Expression, Statement, Method }) {
       final CompilationUnit u = $.intoCompilationUnit(codeFragment);
       final String parsedString = u.toString();
-      if (contains(parsedString, codeFragment))
+      if ($.contains(parsedString, codeFragment))
         return $;
     }
     return null;
   }
-  private static boolean contains(final String wrap, final String inner) {
-    return compressSpaces(wrap).contains(compressSpaces(inner));
+  private boolean contains(final String wrap, final String inner) {
+    return essence(off(wrap)).contains(essence(inner));
+  }
+  static String essence(final String codeFragment) {
+    return compressSpaces(removeComments(codeFragment));
+  }
+  static String removeComments(final String codeFragment) {
+    return codeFragment//
+        .replaceAll("//.*?\n", "\n")//
+        .replaceAll("/\\*(?=(?:(?!\\*/)[\\s\\S])*?)(?:(?!\\*/)[\\s\\S])*\\*/", "");
   }
 }
