@@ -52,9 +52,9 @@ import static org.hamcrest.CoreMatchers.is;
     assertNotNull(u);
     final Document d = new Document(from);
     assertNotNull(d);
-    final Document rewrite = TESTUtils.rewrite(t, u, d);
-    assertNotNull(rewrite);
-    return rewrite.get();
+    final Document $ = TESTUtils.rewrite(t, u, d);
+    assertNotNull($);
+    return $.get();
   }
   private static String apply(final Wring<? extends ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
@@ -123,6 +123,10 @@ import static org.hamcrest.CoreMatchers.is;
   @Test public void simpleMethod() {
     trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
         .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
+  }
+  @Test public void simpleBooleanMethod() {
+    trimming("boolean f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
+        .to("boolean f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
   }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
@@ -2320,5 +2324,22 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
+  }
+  @Test public void inline01() {
+    trimming("" + //
+        "  public int y() {\n" + //
+        "    final Z res = new Z(6);\n" + //
+        "    System.out.println(res.j);\n" + //
+        "    return res;\n" + //
+        "  }\n" + //
+        "}\n" + //
+        "").to(//
+            "  public int y() {\n" + // //
+                "    final Z $ = new Z(6);\n" + ////
+                "    System.out.println($.j);\n" + ////
+                "    return $;\n" + // //
+                "  }\n" + //
+                "}\n" + //
+                "");
   }
 }

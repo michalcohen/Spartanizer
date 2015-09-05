@@ -449,9 +449,9 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
     @Override protected Block asMe() {
       final Statement s = s(input);
       assertNotNull(s);
-      final Block b = asBlock(s);
-      assertNotNull(b);
-      return b;
+      final Block $ = asBlock(s);
+      assertNotNull($);
+      return $;
     }
   }
 

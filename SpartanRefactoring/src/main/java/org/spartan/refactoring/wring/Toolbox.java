@@ -13,9 +13,9 @@ import org.eclipse.jdt.core.dom.*;
  */
 public class Toolbox {
   private static <N extends ASTNode> Wring<N> find(final N n, final List<Wring<N>> ws) {
-    for (final Wring<N> w : ws)
-      if (w.scopeIncludes(n))
-        return w;
+    for (final Wring<N> $ : ws)
+      if ($.scopeIncludes(n))
+        return $;
     return null;
   }
   private final Map<Class<? extends ASTNode>, List<Object>> inner = new HashMap<>();

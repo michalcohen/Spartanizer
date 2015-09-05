@@ -79,7 +79,7 @@ public enum Wrings {
       return main;
     final int rankThen = Wrings.sequencerRank(last(then));
     final int rankElse = Wrings.sequencerRank(last(elze));
-    return rankElse > rankThen || rankThen == rankElse && !Wrings.thenIsShorter(s) ? inverse : main;
+    return rankElse <= rankThen && (rankThen != rankElse || Wrings.thenIsShorter(s)) ? main : inverse;
   }
   static boolean mixedLiteralKind(final List<Expression> es) {
     if (es.size() <= 2)

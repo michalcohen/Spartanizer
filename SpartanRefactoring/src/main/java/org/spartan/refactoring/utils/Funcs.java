@@ -644,15 +644,15 @@ public enum Funcs {
     ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
-    for (final Expression e : es)
-      if (Is.booleanLiteral(e) && b == asBooleanLiteral(e).booleanValue())
-        return e;
+    for (final Expression $ : es)
+      if (Is.booleanLiteral($) && b == asBooleanLiteral($).booleanValue())
+        return $;
     return null;
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
-    for (final VariableDeclarationFragment o : frags)
-      if (same(name, o.getName()))
-        return o;
+    for (final VariableDeclarationFragment $ : frags)
+      if (same(name, $.getName()))
+        return $;
     return null;
   }
   private static boolean is(final ASTNode n, final int type) {
