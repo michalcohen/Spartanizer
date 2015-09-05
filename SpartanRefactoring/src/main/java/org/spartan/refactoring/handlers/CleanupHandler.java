@@ -56,6 +56,7 @@ public class CleanupHandler extends BaseHandler {
         x.printStackTrace();
       }
       final int countSuggestios = countSuggestios();
+      totalSuggestions += countSuggestios;
       if (countSuggestios <= 0)
         return announce("Completed in " + (1 + i) + " passes. \n" + "Total changes: " + totalSuggestions + " = " + message);
       message.append(" + " + countSuggestios);
