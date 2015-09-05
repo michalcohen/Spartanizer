@@ -1,13 +1,13 @@
 package org.spartan.refactoring.wring;
 
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.utils.Utils.last;
 
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;

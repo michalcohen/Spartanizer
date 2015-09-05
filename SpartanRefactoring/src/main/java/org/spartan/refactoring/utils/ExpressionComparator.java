@@ -1,8 +1,8 @@
 package org.spartan.refactoring.utils;
 
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.utils.Utils.hasNull;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
 
 import java.util.Comparator;
 import java.util.List;

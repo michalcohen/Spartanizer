@@ -62,7 +62,7 @@ public class ForwardDeclaration extends Spartanization {
         if (declaredIdx >= i)
           return true;
         final ASTNode declarationNode = (ASTNode) b.statements().get(declaredIdx);
-        ListRewrite listRewrite = r.getListRewrite(b, Block.STATEMENTS_PROPERTY);
+        final ListRewrite listRewrite = r.getListRewrite(b, Block.STATEMENTS_PROPERTY);
         if (((VariableDeclarationStatement) declarationNode).fragments().size() == 1)
           rewrite(i, declarationNode, listRewrite);
         else {

@@ -1,9 +1,11 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.DECREMENT;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.INCREMENT;
 import static org.spartan.refactoring.utils.Extract.core;
+import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.asStatement;
+import static org.spartan.refactoring.utils.Funcs.same;
 import static org.spartan.utils.Utils.in;
 
 import org.eclipse.jdt.core.dom.PrefixExpression;

@@ -1,6 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asIfStatement;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.refactoring.wring.Wrings.emptyElse;
 import static org.spartan.refactoring.wring.Wrings.emptyThen;
 
