@@ -351,6 +351,22 @@ import org.spartan.refactoring.utils.*;
   @Test public void comaprisonWithSpecificInParenthesis() {
     assertSimplifiesTo("(null==a)", "(a==null)");
   }
+  @Test public void commonSuffixIfBranches() {
+    assertConvertsTo(
+        "if (a) { \n" + //
+            "i++;\n" + //
+            "f();\n" + //
+            "} else {\n" + //
+            "j++;\n" + //
+            "f();\n" + //
+            "}", //
+        "if (a) { \n" + //
+            "i++;\n" + //
+            "} else {\n" + //
+            "j++;\n" + //
+            "}\n" + //
+            "f();");//
+  }
   @Test public void commonPrefixEntirelyIfBranches() {
     assertConvertsTo("if (s.equals(532)) System.out.close();else System.out.close();", "System.out.close(); ");
   }

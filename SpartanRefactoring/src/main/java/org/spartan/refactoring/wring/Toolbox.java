@@ -63,7 +63,7 @@ public class Toolbox {
           new DeclarationInitializerReturnUpdateAssignment(), //
           null) //
       .add(IfStatement.class, //
-          new IfCommonCommoandsSomeCommandsCommonCommandsOtherCommands(), //
+          new IfThenFooHumpyBarElseFooDumptyBar(), //
           new IfThrowFooElseThrowBar(), //
           new IfReturnFooElseReturnBar(), //
           new IfReturnNoElseReturn(), //
