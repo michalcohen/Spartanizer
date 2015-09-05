@@ -47,7 +47,7 @@ import org.spartan.refactoring.wring.Trimmer;
    */
   public static void assertSimilar(final String expected, final String actual) {
     if (!expected.equals(actual))
-      assertEquals(compressSpaces(expected), compressSpaces(actual));
+      assertEquals(Wrap.essence(expected), Wrap.essence(actual));
   }
   /**
    * Convert a given {@link String} into an {@link Statement}, or fail the
