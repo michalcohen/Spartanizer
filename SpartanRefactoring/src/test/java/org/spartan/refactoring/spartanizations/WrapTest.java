@@ -46,8 +46,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
   }
   @Test public void expression() {
     final Wrap w = Wrap.Expression;
-    final String input = "a+b";
-    assertThat(w.off(w.on(input)), is(input));
+    final String codeFragment = "a+b";
+    assertThat(w.off(w.on(codeFragment)), is(codeFragment));
   }
   @Test public void findEmptyBlock() {
     assertThat(Wrap.find("{}"), is(Wrap.Statement));
@@ -69,22 +69,22 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
   }
   @Test public void intoCompilationUnit() {
     final Wrap w = Wrap.Expression;
-    final String input = "a + b * c";
-    final CompilationUnit u = w.intoCompilationUnit(input);
+    final String codeFragment = "a + b * c";
+    final CompilationUnit u = w.intoCompilationUnit(codeFragment);
     assertThat(u, notNullValue());
-    assertThat(w.off(u.toString()), containsString(input));
+    assertThat(w.off(u.toString()), containsString(codeFragment));
   }
   @Test public void intoDocument() {
     final Wrap w = Wrap.Expression;
-    final String input = "a + b * c";
-    final Document d = w.intoDocument(input);
+    final String codeFragment = "a + b * c";
+    final Document d = w.intoDocument(codeFragment);
     assertThat(d, notNullValue());
-    assertThat(w.off(d.get()), containsString(input));
+    assertThat(w.off(d.get()), containsString(codeFragment));
   }
   @Test public void method() {
     final Wrap w = Wrap.Method;
-    final String input = "int f() { return a; }";
-    assertThat(w.off(w.on(input)), is(input));
+    final String codeFragment = "int f() { return a; }";
+    assertThat(w.off(w.on(codeFragment)), is(codeFragment));
   }
   @Test public void removeComments() {
     final String codeFragment = "" //
@@ -97,8 +97,12 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
   }
   @Test public void statement() {
     final Wrap w = Wrap.Statement;
-    final String input = "int a;";
-    assertThat(w.off(w.on(input)), is(input));
+    final String codeFragment = "int a;";
+    assertThat(w.off(w.on(codeFragment)), is(codeFragment));
+  }
+  @Test public void intMethod() {
+    final String codeFragment = "int f() { int s = 0; for (int i = 0; i < 10; ++i) s += i; return s;}";
+    assertThat(Wrap.find(codeFragment), is(Wrap.Method));
   }
   private void similar(final String s1, final String s2) {
     assertEquals(essence(s1), essence(s2));

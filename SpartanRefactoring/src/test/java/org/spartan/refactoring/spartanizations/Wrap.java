@@ -29,7 +29,7 @@ public enum Wrap {
           /** Algorithm for wrapping/unwrapping a statement */
   Statement(
       "" + Method.before + //
-          "public boolean squarePants(){\n" + //
+          "public void squarePants(){\n" + //
           "",
       "" + //
           "} // END OF METHOD \n" + //

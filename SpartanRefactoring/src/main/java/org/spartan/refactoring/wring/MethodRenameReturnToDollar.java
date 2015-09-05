@@ -1,7 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import static org.junit.Assert.fail;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -94,13 +92,12 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
     if (exclude != null)
       exclude.exclude(d);
     return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
-      @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
-        fail("Something went wrong");
+      @Override public void go(final ASTRewrite r, final TextEditGroup g) {
+        inlineInto(r, g, n, d.getAST().newSimpleName("$"), Search.findUses(n).in(d).toArray(new Expression[] {}));
       }
     };
   }
-  @Override boolean scopeIncludes(final MethodDeclaration n) {
-    // TODO Auto-generated method stub
-    return false;
+  @Override boolean scopeIncludes(final MethodDeclaration d) {
+    return make(d) != null;
   }
 }

@@ -26,6 +26,31 @@ import org.spartan.utils.Wrapper;
  * @since 2015-07-09
  */
 public abstract class Wring<N extends ASTNode> {
+  @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Expression... es) {
+    inlineInto(r, g, n, replacement, wrap(es));
+  }
+  private static void inlineIntoSingleton(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression> e) {
+    final Expression oldExpression = e.get();
+    final Expression newExpression = duplicate(e.get());
+    e.set(newExpression);
+    r.replace(oldExpression, newExpression, g);
+    for (final Expression use : Search.findUses(n).in(newExpression))
+      r.replace(use, new Plant(replacement).into(use.getParent()), g);
+  }
+  static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
+    return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);
+  }
+  @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
+    for (final Wrapper<Expression> e : es)
+      inlineIntoSingleton(r, g, n, replacement, e);
+  }
+  static Expression[] strip(final Wrapper<Expression>[] ws) {
+    final Expression[] $ = new Expression[ws.length];
+    int i = 0;
+    for (final Wrapper<Expression> w : ws)
+      $[i++] = w.get();
+    return $;
+  }
   abstract String description(N n);
   /**
    * Determine whether the parameter is "eligible" for application of this
@@ -37,6 +62,13 @@ public abstract class Wring<N extends ASTNode> {
    */
   abstract boolean eligible(final N n);
   abstract Rewrite make(N n);
+  public static Wrapper<Expression>[] wrap(final Expression[] ts) {
+    @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
+    int i = 0;
+    for (final Expression t : ts)
+      $[i++] = new Wrapper<>(t);
+    return $;
+  }
   Rewrite make(final N n, @SuppressWarnings("unused") final ExclusionManager exclude) {
     return make(n);
   }
@@ -121,20 +153,6 @@ public abstract class Wring<N extends ASTNode> {
   }
 
   static abstract class VariableDeclarationFragementAndStatement extends ReplaceToNextStatement<VariableDeclarationFragment> {
-    public static Expression[] strip(final Wrapper<Expression>[] ws) {
-      final Expression[] $ = new Expression[ws.length];
-      int i = 0;
-      for (final Wrapper<Expression> w : ws)
-        $[i++] = w.get();
-      return $;
-    }
-    public static Wrapper<Expression>[] wrap(final Expression[] ts) {
-      @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
-      int i = 0;
-      for (final Expression t : ts)
-        $[i++] = new Wrapper<>(t);
-      return $;
-    }
     protected static InfixExpression.Operator asInfix(final Assignment.Operator o) {
       return o == PLUS_ASSIGN ? PLUS
           : o == MINUS_ASSIGN ? MINUS
@@ -147,16 +165,6 @@ public abstract class Wring<N extends ASTNode> {
                                       : o == LEFT_SHIFT_ASSIGN ? LEFT_SHIFT //
                                           : o == RIGHT_SHIFT_SIGNED_ASSIGN ? RIGHT_SHIFT_SIGNED //
                                               : o != RIGHT_SHIFT_UNSIGNED_ASSIGN ? null : RIGHT_SHIFT_UNSIGNED;
-    }
-    protected static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
-      return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);
-    }
-    @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
-      for (final Wrapper<Expression> e : es)
-        inlineIntoSingleton(r, g, n, replacement, e);
-    }
-    @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Expression... es) {
-      inlineInto(r, g, n, replacement, wrap(es));
     }
     static Expression assignmentAsExpression(final Assignment a) {
       final Operator o = a.getOperator();
@@ -192,14 +200,6 @@ public abstract class Wring<N extends ASTNode> {
       newParent.fragments().clear();
       newParent.fragments().addAll(live);
       r.replace(parent, newParent, g);
-    }
-    private static void inlineIntoSingleton(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression> e) {
-      final Expression oldExpression = e.get();
-      final Expression newExpression = duplicate(e.get());
-      e.set(newExpression);
-      r.replace(oldExpression, newExpression, g);
-      for (final Expression use : Search.findUses(n).in(newExpression))
-        r.replace(use, new Plant(replacement).into(use.getParent()), g);
     }
     private static List<VariableDeclarationFragment> live(final VariableDeclarationFragment f, final List<VariableDeclarationFragment> fs) {
       final List<VariableDeclarationFragment> $ = new ArrayList<>();

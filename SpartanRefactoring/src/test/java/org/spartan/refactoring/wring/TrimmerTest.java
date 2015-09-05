@@ -120,6 +120,10 @@ import static org.hamcrest.CoreMatchers.is;
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
+  @Test public void simpleMethod() {
+    trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
+        .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
+  }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
     final String expected = "a + 2 < b";
