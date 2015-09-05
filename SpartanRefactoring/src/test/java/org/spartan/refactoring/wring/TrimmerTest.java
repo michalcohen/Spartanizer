@@ -91,7 +91,7 @@ import static org.hamcrest.CoreMatchers.is;
     }
     private void checkSame() {
       final Wrap w = Wrap.find(get());
-      assertThat(get(), w, notNullValue());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
       final String wrap = w.on(get());
       final String unpeeled = apply(new Trimmer(), wrap);
       if (wrap.equals(unpeeled))
@@ -107,12 +107,8 @@ import static org.hamcrest.CoreMatchers.is;
   private static Operand trimming(final String from) {
     return new Operand(from);
   }
-  private static void assertNoConversion(final String input) {
-    assertSimilar(input, Wrap.Statement.off(apply(new Trimmer(), Wrap.Statement.on(input))));
-  }
   private static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> wring, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
-    assertEquals(from, wrapper.off(wrap));
     final String unpeeled = apply(wring, wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
@@ -160,7 +156,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("a *= 3; return a;").to("return a *= 3;");
   }
   @Test public void assignmentReturniNo() {
-    assertNoConversion("b = a = 3; return a;");
+    trimming("b = a = 3; return a;").to("");
   }
   @Test public void bugIntroducingMISSINGWord1() {
     trimming("b.f(a) && -1 == As.g(f).h(c) ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)")
@@ -481,16 +477,16 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("int a = 2+3; if (a+b > a << b) a =a *7 << a;").to("int a=2+3+b>2+3<<b?(2+3)*7<<2+3:2+3;");
   }
   @Test public void declarationAssignmentUpdateWithIncrement() {
-    assertNoConversion("int a=0; a+=++a;");
+    trimming("int a=0; a+=++a;").to("");
   }
   @Test public void declarationAssignmentUpdateWithPostIncrement() {
-    assertNoConversion("int a=0; a+=a++;");
+    trimming("int a=0; a+=a++;").to("");
   }
   @Test public void declarationAssignmentWithIncrement() {
-    assertNoConversion("int a=0; a=++a;");
+    trimming("int a=0; a=++a;").to("");
   }
   @Test public void declarationAssignmentWithPostIncrement() {
-    assertNoConversion("int a=0; a=a++;");
+    trimming("int a=0; a=a++;").to("");
   }
   @Test public void declarationIfAssignment() {
     trimming("" + //
@@ -519,7 +515,7 @@ import static org.hamcrest.CoreMatchers.is;
                 "    System.out.println(res);");
   }
   @Test public void declarationIfUsesLaterVariable() {
-    assertNoConversion("int a=0, b=0;if (b==3)   a=4;");
+    trimming("int a=0, b=0;if (b==3)   a=4;").to("");
   }
   @Test public void declarationInitializeRightShift() {
     trimming("int a = 3;a>>=2;").to("int a = 3 >> 2;");
@@ -546,7 +542,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("int a = ++i;a += j;").to("int a = ++i + j;");
   }
   @Test public void declarationInitializeUpdateAssignmentIncrementTwice() {
-    assertNoConversion("int a = ++i;a += a + j;");
+    trimming("int a = ++i;a += a + j;").to("");
   }
   @Test public void declarationInitializeUpdateAssignmentWithReuse() {
     trimming("int a = 3;a += 2*a;").to("int a = 3+2*3;");
@@ -579,7 +575,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("int a = 3; return a += 2;").to("return 3 + 2;");
   }
   @Test public void declarationUpdateReturnNone() {
-    assertNoConversion("int a = f(); return a += 2 * a;");
+    trimming("int a = f(); return a += 2 * a;").to("");
   }
   @Test public void declarationUpdateReturnTwice() {
     trimming("int a = 3; return a += 2 * a;").to("return 3 + 2 *3 ;");
@@ -619,7 +615,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("if (x) b = 3; else { ;}").to("if (x) b = 3;");
   }
   @Test public void emptyIsNotChangedExpression() {
-    assertNoConversion("");
+    trimming("").to("");
   }
   @Test public void emptyIsNotChangedStatement() {
     trimming("").to("");
@@ -634,15 +630,14 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("").to("");
   }
   @Test public void forLoopBug() {
-    assertNoConversion("" + //
+    trimming("" + //
         "      for (int i = 0;i < s.length();++i)\n" + //
         "       if (s.charAt(i) == 'a')\n" + //
         "          res += 2;\n" + //
         "        else " + "       if (s.charAt(i) == 'd')\n" + //
         "          res -= 1;\n" + //
         "      return res;\n" + //
-        " if (b) i = 3;"//
-    );
+        " if (b) i = 3;").to("");
   }
   @Ignore @Test public void forwardDeclaration1() {
     trimming("/*    * This is a comment    */      int i = 6;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ")
@@ -781,7 +776,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("x? a++:b++").to("");
   }
   @Test public void ifPlusPlusPre() {
-    assertNoConversion("if (x) ++a; else ++b;");
+    trimming("if (x) ++a; else ++b;").to("");
   }
   @Test public void ifPlusPlusPreExpression() {
     trimming("x? ++a:++b").to("");
@@ -964,13 +959,13 @@ import static org.hamcrest.CoreMatchers.is;
         "    a += 31 * a;").to("int a=3+31*3;");
   }
   @Test(timeout = 100) public void issue39base() {
-    assertNoConversion("" + //
+    trimming("" + //
         "if (name == null) {\n" + //
         "    if (other.name != null)\n" + //
         "        return false;\n" + //
         "} else if (!name.equals(other.name))\n" + //
         "    return false;\n" + //
-        "return true;"); //
+        "return true;").to(""); //
   }
   @Test(timeout = 100) public void issue39baseDual() {
     trimming("if (name != null) {\n" + //
@@ -1006,7 +1001,7 @@ import static org.hamcrest.CoreMatchers.is;
                 "}");
   }
   @Test(timeout = 100) public void issue39versionAdual() {
-    assertNoConversion("" + //
+    trimming("" + //
         "if (!varArgs) {\n" + //
         "    if (parameterTypes.length != argumentTypes.length) {\n" + //
         "        return false;\n" + //
@@ -1014,7 +1009,7 @@ import static org.hamcrest.CoreMatchers.is;
         "} else if (argumentTypes.length < parameterTypes.length - 1) {\n" + //
         "    return false;\n" + //
         "}" + //
-        "");
+        "").to("");
   }
   @Test public void issue41FunctionCall() {
     trimming("int a = f();a += 2;").to("int a = f()+2;");
@@ -1278,24 +1273,22 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("a--; return a;").to("--a;return a;");
   }
   @Test public void postDecremntInFunctionCall() {
-    assertNoConversion("f(a++, i--, b++, ++b);");
+    trimming("f(a++, i--, b++, ++b);").to("");
   }
   @Test public void postfixToPrefixAvoidChangeOnLoopCondition() {
-    assertNoConversion("for (int s = i; ++i; ++s);");
+    trimming("for (int s = i; ++i; ++s);").to("");
   }
   @Test public void postfixToPrefixAvoidChangeOnLoopInitializer() {
-    assertNoConversion("for (int s = i++; i < 10; ++s);");
+    trimming("for (int s = i++; i < 10; ++s);").to("");
   }
   @Test public void postfixToPrefixAvoidChangeOnVariableDeclaration() {
     // We expect to print 2, but ++s will make it print 3
-    assertNoConversion(//
-        "int s = 2;" + //
-            "int n = s++;" + //
-            "System.out.print(n);" //
-    );
+    trimming("int s = 2;" + //
+        "int n = s++;" + //
+        "System.out.print(n);").to("");
   }
   @Test public void postIncrementInFunctionCall() {
-    assertNoConversion("f(i++);");
+    trimming("f(i++);").to("");
   }
   @Test public void postIncrementReturn() {
     trimming("a++; return a;").to("++a;return a;");
@@ -1598,10 +1591,10 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("a ? new B(a,b,c) : new B(a,x,c)").to("new B(a,a ? b : x ,c)");
   }
   @Test public void pushdownTernaryToClasConstrctorTwoDifferenes() {
-    assertNoConversion("a ? new B(a,b,d) : new B(a,x,d)");
+    trimming("a ? new B(a,b,c) : new B(a,x,y)").to("");
   }
   @Test public void pushdownTernaryToClassConstrctorNotSameNumberOfArgument() {
-    assertNoConversion("a ? new B(a,b) : new B(a,b,c)");
+    trimming("a ? new B(a,b) : new B(a,b,c)").to("");
   }
   @Test public void pushdownTernaryTX() {
     trimming("a ? true : c").to("a || c");
@@ -1667,7 +1660,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("class T { T() { super(); }").to("class T { T() { }");
   }
   @Test public void removeSuperWithArgument() {
-    assertNoConversion("class T { T() { super(a); a();}");
+    trimming("class T { T() { super(a); a();}").to("");
   }
   @Test public void removeSuperWithStatemen() {
     trimming("class T { T() { super(); a++;}").to("class T { T() { ++a;}");
@@ -1701,7 +1694,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("b == a * b * c * d * e * f * g * h == a").to("");
   }
   @Test public void shortestBranchIfWithComplexNestedIf3() {
-    assertNoConversion("if (a) {f(); g(); h();} else if (a) ++i; else ++j;");
+    trimming("if (a) {f(); g(); h();} else if (a) ++i; else ++j;").to("");
   }
   @Test public void shortestBranchIfWithComplexNestedIf4() {
     trimming("if (a) {f(); g(); h(); ++i;} else if (a) ++i; else j++;").to("if(!a)if(a)++i;else j++;else{f();g();h();++i;}");
@@ -1805,7 +1798,7 @@ import static org.hamcrest.CoreMatchers.is;
                 "");
   }
   @Test public void shortestIfBranchFirst02b() {
-    assertNoConversion("" + //
+    trimming("" + //
         "      int res = 0;\n" + //
         "      for (int i = 0;i < s.length();++i)\n" + //
         "       if (s.charAt(i) == 'a')\n" + //
@@ -1813,7 +1806,7 @@ import static org.hamcrest.CoreMatchers.is;
         "        else " + "       if (s.charAt(i) == 'd')\n" + //
         "          res -= 1;\n" + //
         "      return res;\n" + //
-        "");
+        "").to("");
   }
   @Test public void shortestIfBranchFirst02c() {
     final CompilationUnit u = Wrap.Statement.intoCompilationUnit("" + //
@@ -1860,7 +1853,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("x + y > z").to("");
   }
   @Test public void shortestOperand02() {
-    assertNoConversion("k = k + 4;if (2 * 6 + 4 == k) return true;");
+    trimming("k = k + 4;if (2 * 6 + 4 == k) return true;").to("");
   }
   @Test public void shortestOperand05() {
     trimming("    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
@@ -1909,10 +1902,10 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("k.get() ^ a.get()").to("a.get() ^ k.get()");
   }
   @Test public void shortestOperand22() {
-    assertNoConversion("return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f f(a,b) + f(a) + f();     } ");
+    trimming("return f(a,b,c,d,e) + f(a,b,c,d) + f(a,b,c) + f(a,b) + f(a) + f();").to("");
   }
   @Test public void shortestOperand23() {
-    assertNoConversion("return f() + \".\";     }");
+    trimming("return f() + \".\";     }").to("");
   }
   @Test public void shortestOperand24() {
     trimming("f(a,b,c,d) & 175 & 0").to("f(a,b,c,d) & 0 & 175");
@@ -1921,7 +1914,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("f(a,b,c,d) & bob & 0 ").to("bob & f(a,b,c,d) & 0");
   }
   @Test public void shortestOperand27() {
-    assertNoConversion("return f(a,b,c,d) + f(a,b,c) + f();     } ");
+    trimming("return f(a,b,c,d) + f(a,b,c) + f();     } ").to("");
   }
   @Test public void shortestOperand28() {
     trimming("return f(a,b,c,d) * f(a,b,c) * f();     } ").to("return f()*f(a,b,c)*f(a,b,c,d);}");
@@ -1933,16 +1926,16 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("f(a,b,c,d) & f()").to("f() & f(a,b,c,d)");
   }
   @Test public void shortestOperand31() {
-    assertNoConversion("return f(a,b,c,d) | \".\";     }");
+    trimming("return f(a,b,c,d) | \".\";     }").to("");
   }
   @Test public void shortestOperand32() {
-    assertNoConversion("return f(a,b,c,d) && f();     }");
+    trimming("return f(a,b,c,d) && f();     }").to("");
   }
   @Test public void shortestOperand33() {
-    assertNoConversion("return f(a,b,c,d) || f();     }");
+    trimming("return f(a,b,c,d) || f();     }").to("");
   }
   @Test public void shortestOperand34() {
-    assertNoConversion("return f(a,b,c,d) + someVar; ");
+    trimming("return f(a,b,c,d) + someVar; ").to("");
   }
   @Test public void shortestOperand37() {
     trimming("return sansJavaExtension(f) + n + \".\"+ extension(f);").to("");
@@ -2160,7 +2153,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("String res = s;   if (s.equals(532))    res = res + 0xABBA;   System.out.println(res); ").to("String res=s.equals(532)?s+0xABBA:s;System.out.println(res);");
   }
   @Test public void ternarize13() {
-    trimming("String res = mode, foo;  if (mode.equals(f())==true)   foo = M; ").to("String res = mode, foo;  if (mode.equals(f())) foo=M;");
+    trimming("String res = m, foo;  if (m.equals(f())==true)   foo = M; ").to("String res = m, foo;  if (m.equals(f())) foo=M;");
   }
   @Test public void ternarize13Simplified() {
     trimming("String r = m, foo;  if (m.equals(f())==true)   foo = M; ").to("String r = m, foo;  if (m.equals(f())) foo=M;");
@@ -2184,12 +2177,11 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("f (m==true);   f(); ").to("f (m); f();");
   }
   @Test public void ternarize14() {
-    trimming("String res=mode,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);}")
-        .to("String res=mode,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);}");
+    trimming("String res=m,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);}")
+        .to("String res=m,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);}");
   }
   @Test public void ternarize16() {
-    assertNoConversion(//
-        "String res = mode;  int num1, num2, num3;  if (mode.equals(f()))   num2 = 2; ");
+    trimming("String res = m;  int num1, num2, num3;  if (m.equals(f()))   num2 = 2; ").to("");
   }
   @Test public void ternarize16a() {
     trimming("int n1, n2 = 0, n3;\n" + //
@@ -2197,27 +2189,26 @@ import static org.hamcrest.CoreMatchers.is;
         "    n2 = 2;").to("int n1, n2 = d ? 2: 0, n3;");
   }
   @Test public void ternarize21() {
-    assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
+    trimming("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ").to("");
   }
   @Test public void ternarize21a() {
-    assertNoConversion(//
-        "   if (s.equals(known)){\n" + //
-            "     System.out.println(gG);\n" + //
-            "   } else {\n" + //
-            "     System.out.append(kKz);\n" + //
-            "   }");
+    trimming("   if (s.equals(known)){\n" + //
+        "     System.out.println(gG);\n" + //
+        "   } else {\n" + //
+        "     System.out.append(kKz);\n" + //
+        "   }").to("");
   }
   @Test public void ternarize22() {
-    assertNoConversion("int a=0;   if (s.equals(532)){    System.console();    a=3; ");
+    trimming("int a=0;   if (s.equals(532)){    System.console();    a=3; ").to("");
   }
   @Test public void ternarize26() {
-    assertNoConversion("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ");
+    trimming("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ").to("");
   }
   @Test public void ternarize29() {
-    assertNoConversion("int a=0;   int b=0;   a=5;   if (a==3){    a=4; }");
+    trimming("int a=0;   int b=0;   a=5;   if (a==3){    a=4; }").to("");
   }
   @Test public void ternarize33() {
-    assertNoConversion("int a, b=0;   if (b==3){    a=4; ");
+    trimming("int a, b=0;   if (b==3){    a=4; ").to("");
   }
   @Test public void ternarize35() {
     trimming("int a,b=0,c=0;a=4;if(c==3){b=2;}").to("int a=4,b=0,c=0;if(c==3){b=2;}");
@@ -2233,27 +2224,39 @@ import static org.hamcrest.CoreMatchers.is;
         .to("int a=3,b,c,d;b=5;d=7;if(a==4)while(b==3)c=a;else while(d==3)c=a*a;");
   }
   @Test public void ternarize42() {
-    assertNoConversion(
-        " int a, b;      a = 3;      b = 5;      if (a == 4)        if (b == 3)          b = 2;        else{          b = a;          b=3;     else       if (b == 3)         b = 2;       else{         b = a*a;         b=3; ");
+    trimming(" int a, b; a = 3;b = 5; if (a == 4) if (b == 3) b = 2; else{b = a; b=3;}  else if (b == 3) b = 2; else{ b = a*a;         b=3; }")//
+        .to("int a=3,b;b=5;if(a==4)if(b==3)b=2;else{b=a;b=3;}else if(b==3)b=2;else{b=a*a;b=3;}") //
+        .to("int a=3,b=5;if(a==4)if(b==3)b=2;else{b=a;b=3;}else if(b==3)b=2;else{b=a*a;b=3;}") //
+        .to("") //
+        ;
   }
   @Test public void ternarize45() {
-    assertNoConversion("if (mode.equals(f())==true)    if (b==3){     return 3;     return 7;   else    if (b==3){     return 2;     a=7; ");
+    trimming("if (m.equals(f())==true) if (b==3){ return 3; return 7;}   else    if (b==3){ return 2;}     a=7; ")//
+        .to("if (m.equals(f())) {if (b==3){ return 3; return 7;} if (b==3){ return 2;}   }  a=7; ");
   }
   @Test public void ternarize46() {
-    trimming("   int a , b=0;\n" + "   if (mode.equals(NG)==true)\n" + "     if (b==3){\n" + "       return 3;\n" + "     } else {\n" + "       a+=7;\n" + "     }\n" + "   else\n"
-        + "     if (b==3){\n" + "       return 2;\n" + "     } else {\n" + "       a=7;\n" + "     }")
-            .to("int a,b=0;if(mode.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
-  }
-  @Test public void ternarize48() {
-    assertNoConversion(" int size = 0, a, b;   if (mode.equals(f())==true)    for (int i=0; i < size; i++){     a+=7;     b=2;   else    for (int i=0; i < size; i++){     a+=8; ");
+    trimming(//
+        "   int a , b=0;\n" + //
+            "   if (m.equals(NG)==true)\n" + //
+            "     if (b==3){\n" + //
+            "       return 3;\n" + //
+            "     } else {\n" + //
+            "       a+=7;\n" + //
+            "     }\n" + //
+            "   else\n" + //
+            "     if (b==3){\n" + //
+            "       return 2;\n" + //
+            "     } else {\n" + //
+            "       a=7;\n" + //
+            "     }").to("int a,b=0;if(m.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
   }
   @Test public void ternarize49() {
-    assertNoConversion("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ");
+    trimming("if (s.equals(532)){ System.out.println(gG); System.out.append(kKz); }").to("");
   }
   @Test public void ternarize49a() {
     trimming(""//
         + "    int size = 0;\n"//
-        + "   if (mode.equals(153)==true)\n"//
+        + "   if (m.equals(153)==true)\n"//
         + "     for (int i=0; i < size; i++){\n"//
         + "       System.out.println(HH);\n"//
         + "     }\n"//
@@ -2263,7 +2266,7 @@ import static org.hamcrest.CoreMatchers.is;
         + "     }")
             .to(""//
                 + "int size=0;"//
-                + "if(mode.equals(153))"//
+                + "if(m.equals(153))"//
                 + "for(int i=0;i<size;++i){"//
                 + "  System.out.println(HH);"//
                 + "} "//
@@ -2272,7 +2275,7 @@ import static org.hamcrest.CoreMatchers.is;
                 + "    System.out.append('f');" + "  }");
   }
   @Test public void ternarize52() {
-    assertNoConversion("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {    c = d;c = e;");
+    trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {    c = d;c = e;").to("");
   }
   @Test public void ternarize53() {
     trimming("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;")
