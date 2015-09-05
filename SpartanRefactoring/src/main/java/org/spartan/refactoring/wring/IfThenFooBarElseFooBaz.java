@@ -22,7 +22,7 @@ import org.spartan.refactoring.utils.*;
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfThenFooHumpyBarElseFooDumptyBar extends Wring<IfStatement> {
+public final class IfThenFooBarElseFooBaz extends Wring<IfStatement> {
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Factor out commmon prefix of then and else branches to just before if statement";
   }
