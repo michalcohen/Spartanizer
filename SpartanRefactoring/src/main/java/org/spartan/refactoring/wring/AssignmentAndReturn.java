@@ -33,6 +33,6 @@ public class AssignmentAndReturn extends Wring.ReplaceToNextStatement<Assignment
     return r;
   }
   @Override String description(final Assignment n) {
-    return "Consolidate assignment to " + left(n) + " with its subsequent 'return'";
+    return "Inline assignment to " + left(n) + " with its subsequent 'return'";
   }
 }

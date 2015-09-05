@@ -2,6 +2,7 @@ package org.spartan.refactoring.spartanizations;
 
 import static org.spartan.utils.Utils.removePrefix;
 import static org.spartan.utils.Utils.removeSuffix;
+import static org.spartan.hamcrest.MatcherAssert.*;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.Document;
@@ -88,5 +89,24 @@ public enum Wrap {
    */
   public Document intoDocument(final String codeFragment) {
     return new Document(on(codeFragment));
+  }
+  /**
+   * Finds the most appropriate Wrap for a given code fragment
+   *
+   * @param codeFragment JD
+   * @return the most appropriate Wrap, or null, if the parameter could not be
+   *         parsed appropriately.
+   */
+  public static Wrap find(final String codeFragment) {
+    for (final Wrap $ : values()) {
+      final CompilationUnit u = $.intoCompilationUnit(codeFragment);
+      final String parsedString = u.toString();
+      if (contains(parsedString, codeFragment))
+        return $;
+    }
+    return null;
+  }
+  private static boolean contains(final String wrap, final String inner) {
+    return compressSpaces(wrap).contains(compressSpaces(inner));
   }
 }
