@@ -19,16 +19,15 @@ import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Rewrite;
 
 /**
- * A {@link Wring} to convert <code>if (x) {
- *   ;
- *   f();
- *   return a;
- * } else {
- *   ;
- *   g();
- *   {
- *   }
- * }</code> into <code>if (x) {
+ * A {@link Wring} to convert <code> f() {
+  x++;
+  y++;
+  if (a) {
+     i++;
+     j++;
+     k++;
+  }
+}</code> }</code> into <code>if (x) {
  *   f();
  *   return a;
  * }

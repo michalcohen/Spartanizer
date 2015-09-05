@@ -78,6 +78,31 @@ import static org.hamcrest.CoreMatchers.is;
   private static Operand trimming(final String from) {
     return new Operand(from);
   }
+  @Test public void issue46() {
+    trimming("" + //
+        "int f() {\n" + //
+        "  x++;\n" + //
+        "  y++;\n" + //
+        "  if (a) {\n" + //
+        "     i++; \n" + //
+        "     j++; \n" + //
+        "     k++;\n" + //
+        "  }\n" + //
+        "}")//
+            .to("" + //
+                "int f() {\n" + //
+                "  x++;\n" + //
+                "  y++;\n" + //
+                "  if (!a)\n" + //
+                "    return;\n" + //
+                "  i++;\n" + //
+                "  j++; \n" + //
+                "  k++;\n" + //
+                "}");
+  }
+  @Test public void methodWithLastIf() {
+    trimming("int f() { if (a) { f(); g(); h();}").to("int f() { if (!a) return;  f(); g(); h();");
+  }
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
@@ -2315,6 +2340,7 @@ import static org.hamcrest.CoreMatchers.is;
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
   }
+
   static class Operand extends Wrapper<String> {
     public Operand(final String inner) {
       super(inner);
