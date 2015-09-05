@@ -59,12 +59,4 @@ public final class IfCommandsSequencerNoElseSingletonSequencer extends Wring.Rep
     }
     return r;
   }
-  private static ListRewrite insertAfter(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
-    final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
-    for (int i = what.size() - 1; i >= 0; --i) {
-      final Statement s = what.get(i);
-      $.insertAfter(s, where, g);
-    }
-    return $;
-  }
 }

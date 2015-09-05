@@ -24,7 +24,7 @@ import org.spartan.refactoring.utils.*;
  */
 public final class IfThenFooBarElseFooBaz extends Wring<IfStatement> {
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
-    return "Factor out commmon prefix of then and else branches to just before if statement";
+    return "Condolidate commmon prefix of then and else branches to just before if statement";
   }
   @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
     return true;

@@ -63,11 +63,12 @@ public class Toolbox {
           new DeclarationInitializerReturnUpdateAssignment(), //
           null) //
       .add(IfStatement.class, //
-          new IfThenFooBarElseFooBaz(), //
-          new IfThrowFooElseThrowBar(), //
           new IfReturnFooElseReturnBar(), //
           new IfReturnNoElseReturn(), //
           new IfAssignToFooElseAssignToFoo(), //
+          new IfThenFooBarElseFooBaz(), //
+          new IfBarFooElseBazFoo(), //
+          new IfThrowFooElseThrowBar(), //
           new IfExpressionStatementElseSimilarExpressionStatement(), //
           new IfThenOrElseIsCommandsFollowedBySequencer(), //
           new IfCommandsSequencerIfSameCommandsSequencer(), //

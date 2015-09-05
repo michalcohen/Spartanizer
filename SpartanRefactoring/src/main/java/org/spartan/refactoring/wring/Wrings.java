@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.*;
 import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.*;
 
@@ -150,5 +151,13 @@ public enum Wrings {
       case THROW_STATEMENT:
         return 3;
     }
+  }
+  static ListRewrite insertAfter(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
+    final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
+    for (int i = what.size() - 1; i >= 0; --i) {
+      final Statement s = what.get(i);
+      $.insertAfter(s, where, g);
+    }
+    return $;
   }
 }
