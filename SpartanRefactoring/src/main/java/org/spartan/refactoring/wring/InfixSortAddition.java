@@ -33,7 +33,4 @@ public final class InfixSortAddition extends Wring.InfixSorting {
   @Override boolean scopeIncludes(final InfixExpression e) {
     return e.getOperator() == PLUS;
   }
-  @Override String description(final InfixExpression e) {
-    return "Reorder operands of " + e.getOperator();
-  }
 }

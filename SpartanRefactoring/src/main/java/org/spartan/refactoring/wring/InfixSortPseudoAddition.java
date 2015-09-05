@@ -29,7 +29,4 @@ public final class InfixSortPseudoAddition extends Wring.InfixSorting {
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), OR, XOR, AND);
   }
-  @Override String description(final InfixExpression e) {
-    return "Reorder operands of " + e.getOperator();
-  }
 }

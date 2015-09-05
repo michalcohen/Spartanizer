@@ -98,7 +98,14 @@ public abstract class Wring<N extends ASTNode> {
    */
   abstract boolean scopeIncludes(N n);
 
-  static abstract class InfixSorting extends ReplaceCurrentNode<InfixExpression> {
+  static abstract class AbstractSorting extends ReplaceCurrentNode<InfixExpression> {
+    @Override final String description(final InfixExpression e) {
+      return "Reorder operands of " + e.getOperator();
+    }
+    abstract boolean sort(List<Expression> operands);
+  }
+
+  static abstract class InfixSorting extends AbstractSorting {
     @Override boolean eligible(final InfixExpression e) {
       final List<Expression> es = Extract.allOperands(e);
       return !Wrings.mixedLiteralKind(es) && sort(es);
@@ -107,10 +114,9 @@ public abstract class Wring<N extends ASTNode> {
       final List<Expression> operands = Extract.allOperands(e);
       return !sort(operands) ? null : Subject.operands(operands).to(e.getOperator());
     }
-    abstract boolean sort(List<Expression> operands);
   }
 
-  static abstract class InfixSortingFromSecond extends ReplaceCurrentNode<InfixExpression> {
+  static abstract class InfixSortingFromSecond extends AbstractSorting {
     @Override boolean eligible(final InfixExpression e) {
       final List<Expression> es = Extract.allOperands(e);
       es.remove(0);
@@ -124,7 +130,6 @@ public abstract class Wring<N extends ASTNode> {
       operands.add(0, first);
       return Subject.operands(operands).to(e.getOperator());
     }
-    abstract boolean sort(List<Expression> operands);
   }
 
   static abstract class ReplaceCurrentNode<N extends ASTNode> extends Wring<N> {

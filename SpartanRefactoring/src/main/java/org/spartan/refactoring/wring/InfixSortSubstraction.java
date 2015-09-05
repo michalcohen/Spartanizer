@@ -25,7 +25,4 @@ public final class InfixSortSubstraction extends Wring.InfixSortingFromSecond {
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), MINUS);
   }
-  @Override String description(final InfixExpression e) {
-    return "Reorder operands of " + e.getOperator();
-  }
 }

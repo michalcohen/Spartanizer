@@ -24,6 +24,15 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
         + "}";
     similar(codeFragment, "if (b) {;} { throw new Exception(); }");
   }
+  @Test public void dealWithComment() {
+    final String codeFragment = "" //
+        + "if (b) {\n" //
+        + " /* empty */" //
+        + "} else {\n" //
+        + " throw new Exception();\n" //
+        + "}";
+    assertThat(Wrap.find(codeFragment), is(Wrap.Statement));
+  }
   @Test public void essenceTest() {
     final String codeFragment = "" //
         + "if (b) {\n" // Exception
@@ -35,19 +44,23 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
     final String essence = essence(codeFragment);
     assertEquals(essence, "if(b){;}throw new Exception();");
   }
-  @Test public void dealWithComment() {
-    final String codeFragment = "" //
-        + "if (b) {\n" //
-        + " /* empty */" //
-        + "} else {\n" //
-        + " throw new Exception();\n" //
-        + "}";
-    assertThat(Wrap.find(codeFragment), is(Wrap.Statement));
+  @Test public void offDivision() {
+    final String codeFragment = "a/b";
+    assertEquals(Wrap.Expression.off(Wrap.Expression.on(codeFragment)), codeFragment);
   }
   @Test public void expression() {
     final Wrap w = Wrap.Expression;
     final String codeFragment = "a+b";
     assertThat(w.off(w.on(codeFragment)), is(codeFragment));
+  }
+  @Test public void findAddition() {
+    assertThat(Wrap.find("a+b"), is(Wrap.Expression));
+  }
+  @Test public void findDivision() {
+    assertThat(Wrap.find("a/b"), is(Wrap.Expression));
+  }
+  @Test public void findDivisionOfExpressions() {
+    assertThat(Wrap.find("(a+b)/++b"), is(Wrap.Expression));
   }
   @Test public void findEmptyBlock() {
     assertThat(Wrap.find("{}"), is(Wrap.Statement));
@@ -66,6 +79,10 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
   }
   @Test public void findTwoStatements() {
     assertThat(Wrap.find("a(); b();"), is(Wrap.Statement));
+  }
+  @Test public void intMethod() {
+    final String codeFragment = "int f() { int s = 0; for (int i = 0; i < 10; ++i) s += i; return s;}";
+    assertThat(Wrap.find(codeFragment), is(Wrap.Method));
   }
   @Test public void intoCompilationUnit() {
     final Wrap w = Wrap.Expression;
@@ -95,16 +112,12 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
         + "}";
     similar(Wrap.removeComments(codeFragment), "if (b) {} else { throw new Exception(); }");
   }
+  private void similar(final String s1, final String s2) {
+    assertEquals(essence(s1), essence(s2));
+  }
   @Test public void statement() {
     final Wrap w = Wrap.Statement;
     final String codeFragment = "int a;";
     assertThat(w.off(w.on(codeFragment)), is(codeFragment));
-  }
-  @Test public void intMethod() {
-    final String codeFragment = "int f() { int s = 0; for (int i = 0; i < 10; ++i) s += i; return s;}";
-    assertThat(Wrap.find(codeFragment), is(Wrap.Method));
-  }
-  private void similar(final String s1, final String s2) {
-    assertEquals(essence(s1), essence(s2));
   }
 }

@@ -44,40 +44,13 @@ import static org.hamcrest.CoreMatchers.is;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
-  }
-  static String apply(final Trimmer t, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    final Document $ = TESTUtils.rewrite(t, u, d);
-    assertNotNull($);
-    return $.get();
-  }
-  private static String apply(final Wring<? extends ASTNode> w, final String from) {
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
-    assertNotNull(u);
-    final Document d = new Document(from);
-    assertNotNull(d);
-    return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring"), u, d).get();
-  }
-
   static class Operand extends Wrapper<String> {
     public Operand(final String inner) {
       super(inner);
     }
-    public Operand to(final String expected) {
-      if (expected == null || expected.isEmpty())
-        checkSame();
-      else
-        checkExpected(expected);
-      return new Operand(expected);
-    }
     private void checkExpected(final String expected) {
       final Wrap w = Wrap.find(get());
-      assertThat(get(), w, notNullValue());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
       final String wrap = w.on(get());
       final String unpeeled = apply(new Trimmer(), wrap);
       if (wrap.equals(unpeeled))
@@ -101,9 +74,29 @@ import static org.hamcrest.CoreMatchers.is;
         return;
       assertSimilar(get(), peeled);
     }
+    public Operand to(final String expected) {
+      if (expected == null || expected.isEmpty())
+        checkSame();
+      else
+        checkExpected(expected);
+      return new Operand(expected);
+    }
   }
-  private static Operand trimming(final String from) {
-    return new Operand(from);
+  static String apply(final Trimmer t, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    final Document $ = TESTUtils.rewrite(t, u, d);
+    assertNotNull($);
+    return $.get();
+  }
+  private static String apply(final Wring<? extends ASTNode> w, final String from) {
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
+    assertNotNull(u);
+    final Document d = new Document(from);
+    assertNotNull(d);
+    return TESTUtils.rewrite(new AsSpartanization(w, "Tested Refactoring"), u, d).get();
   }
   private static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> wring, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
@@ -117,19 +110,14 @@ import static org.hamcrest.CoreMatchers.is;
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
   }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
+  }
+  private static Operand trimming(final String from) {
+    return new Operand(from);
+  }
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
-  }
-  @Test public void sortSubstraction() {
-    trimming("1-c-b").to("1-b-c");
-  }
-  @Test public void simpleMethod() {
-    trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
-        .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
-  }
-  @Test public void simpleBooleanMethod() {
-    trimming("boolean f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
-        .to("boolean f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
   }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
@@ -861,6 +849,23 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void ifWithCommonNotInBlockNothingLeft() {
     trimming("for (;;) if (a) {i++;j++;} else { i++;j++; }").to("for(;;){i++;j++;}");
+  }
+  @Test public void inline01() {
+    trimming("" + //
+        "  public int y() {\n" + //
+        "    final Z res = new Z(6);\n" + //
+        "    System.out.println(res.j);\n" + //
+        "    return res;\n" + //
+        "  }\n" + //
+        "}\n" + //
+        "").to(//
+            "  public int y() {\n" + // //
+                "    final Z $ = new Z(6);\n" + ////
+                "    System.out.println($.j);\n" + ////
+                "    return $;\n" + // //
+                "  }\n" + //
+                "}\n" + //
+                "");
   }
   @Test public void inlineInitializers() {
     trimming("int b,a = 2; return 3 * a * b; ").to("return 3*2*b;");
@@ -1870,7 +1875,7 @@ import static org.hamcrest.CoreMatchers.is;
             .to("return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
   }
   @Test public void shortestOperand09() {
-    trimming("return 2 - 4 < 50 - 20 - 10 - 5;} ").to("return 2 - 4 < 50 - 5 - 10 - 20 ;");
+    trimming("return 2 - 4 < 50 - 20 - 10 - 5;").to("return 2 - 4 < 50 - 5 - 10 - 20 ;");
   }
   @Test public void shortestOperand10() {
     trimming("return b == true;} ").to("return b;}");
@@ -1880,6 +1885,15 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void shortestOperand12() {
     trimming("int k = 15;   return 7 < k; ").to("return 7<15;");
+  }
+  @Test public void sortDivisionNo() {
+    trimming("2.1/3").to("");
+  }
+  @Test public void sortDivision() {
+    trimming("2.1/34.2/1.0").to("2.1/1.0/34.2");
+  }
+  @Test public void sortDivisionLetters() {
+    trimming("x/b/a").to("x/a/b");
   }
   @Test public void shortestOperand13() {
     trimming("return (2 > 2 + a) == true;").to("return 2>a+2;");
@@ -1948,6 +1962,14 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void shortestOperand37() {
     trimming("return sansJavaExtension(f) + n + \".\"+ extension(f);").to("");
+  }
+  @Test public void simpleBooleanMethod() {
+    trimming("boolean f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
+        .to("boolean f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
+  }
+  @Test public void simpleMethod() {
+    trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
+        .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
   }
   @Test public void simplifyBlockComplexEmpty0() {
     trimming("{}").to("/* empty */    ");
@@ -2072,6 +2094,9 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void sortConstantMultiplication() {
     trimming("a*2").to("2*a");
+  }
+  @Test public void sortSubstraction() {
+    trimming("1-c-b").to("1-b-c");
   }
   @Test public void sortThreeOperands1() {
     trimming("1.0*2222*3").to("");
@@ -2327,22 +2352,5 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
-  }
-  @Test public void inline01() {
-    trimming("" + //
-        "  public int y() {\n" + //
-        "    final Z res = new Z(6);\n" + //
-        "    System.out.println(res.j);\n" + //
-        "    return res;\n" + //
-        "  }\n" + //
-        "}\n" + //
-        "").to(//
-            "  public int y() {\n" + // //
-                "    final Z $ = new Z(6);\n" + ////
-                "    System.out.println($.j);\n" + ////
-                "    return $;\n" + // //
-                "  }\n" + //
-                "}\n" + //
-                "");
   }
 }

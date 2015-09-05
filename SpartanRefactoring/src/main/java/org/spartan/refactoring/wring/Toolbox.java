@@ -51,6 +51,7 @@ public class Toolbox {
           new InfixSortMultiplication(), //
           new InfixSortPseudoAddition(), //
           new InfixSortSubstraction(), //
+          new InfixSortDivision(), //
           null)
       .add(MethodDeclaration.class, new MethodRenameReturnToDollar()) //
       .add(VariableDeclarationFragment.class, //
