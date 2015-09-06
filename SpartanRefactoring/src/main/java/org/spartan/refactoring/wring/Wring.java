@@ -26,13 +26,6 @@ import org.spartan.utils.Wrapper;
  * @since 2015-07-09
  */
 public abstract class Wring<N extends ASTNode> {
-  static Expression[] strip(final Wrapper<Expression>[] ws) {
-    final Expression[] $ = new Expression[ws.length];
-    int i = 0;
-    for (final Wrapper<Expression> w : ws)
-      $[i++] = w.get();
-    return $;
-  }
   abstract String description(N n);
   /**
    * Determine whether the parameter is "eligible" for application of this
@@ -45,7 +38,9 @@ public abstract class Wring<N extends ASTNode> {
   boolean eligible(@SuppressWarnings("unused") final N n) {
     return true;
   }
-  abstract Rewrite make(N n);
+  Rewrite make(final N n) {
+    return make(n, null);
+  }
   Rewrite make(final N n, @SuppressWarnings("unused") final ExclusionManager exclude) {
     return make(n);
   }
@@ -127,9 +122,6 @@ public abstract class Wring<N extends ASTNode> {
 
   static abstract class ReplaceToNextStatement<N extends ASTNode> extends Wring<N> {
     abstract ASTRewrite go(ASTRewrite r, N n, Statement nextStatement, TextEditGroup g);
-    @Override final Rewrite make(final N n) {
-      return make(n, null);
-    }
     @Override Rewrite make(final N n, final ExclusionManager exclude) {
       final Statement nextStatement = Extract.nextStatement(n);
       if (nextStatement == null || !eligible(n))
