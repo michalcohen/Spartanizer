@@ -96,6 +96,118 @@ import org.spartan.utils.Wrapper;
                 "  ++k;\n" + //
                 "}");
   }
+  @Test public void bugInLastIfInMethod() {
+    trimming("" + //
+        "        @Override public void messageFinished(final LocalMessage message, final int number, final int ofTotal) {\n" + //
+        "          if (!isMessageSuppressed(message)) {\n" + //
+        "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "            if (listener != null)\n" + //
+        "              listener.listLocalMessagesAddMessages(account, null, messages);\n" + //
+        "          }\n" + //
+        "        }").to(
+            "@Override public void messageFinished(final LocalMessage message,final int number,final int ofTotal){if(isMessageSuppressed(message))return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
+  }
+  @Test public void bugInLastIfInMethod1() {
+    trimming("" + //
+        "        @Override public void f() {\n" + //
+        "          if (!isMessageSuppressed(message)) {\n" + //
+        "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "            if (listener != null)\n" + //
+        "              listener.listLocalMessagesAddMessages(account, null, messages);\n" + //
+        "          }\n" + //
+        "        }").to(
+            "@Override public void f(){if(isMessageSuppressed(message))return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
+  }
+  @Test public void bugInLastIfInMethod2() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (!g(message)) {\n" + //
+        "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "            if (listener != null)\n" + //
+        "              listener.listLocalMessagesAddMessages(account, null, messages);\n" + //
+        "          }\n" + //
+        "        }").to(
+            "public void f(){if(g(message))return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
+  }
+  @Test public void bugInLastIfInMethod3() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (!g(a)) {\n" + //
+        "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "            if (listener != null)\n" + //
+        "              listener.listLocalMessagesAddMessages(account, null, messages);\n" + //
+        "          }\n" + //
+        "        }").to(
+            "public void f(){if(g(a))return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
+  }
+  @Test public void bugInLastIfInMethod4() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (!g) {\n" + //
+        "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "            if (listener != null)\n" + //
+        "              listener.listLocalMessagesAddMessages(account, null, messages);\n" + //
+        "          }\n" + //
+        "        }").to(
+            "public void f(){if(g)return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
+  }
+  @Test public void bugInLastIfInMethod5() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (!g) {\n" + //
+        "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "          }\n" + //
+        "        }").to(
+            "public void f(){if(g)return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;}");
+  }
+  @Test public void bugInLastIfInMethod6() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (!g) {\n" + //
+        "            final int messages = 3;\n" + //
+        "            messages.add(message);\n" + //
+        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "          }\n" + //
+        "        }").to(
+            "public void f(){if(g)return;final int messages=3;messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;}");
+  }
+  @Test public void bugInLastIfInMethod7() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (!g) {\n" + //
+        "            foo();\n" + //
+        "            bar();\n" + //
+        "          }\n" + //
+        "        }").to("public void f(){if(g)return;foo();bar();}");
+  }
+  @Test public void bugInLastIfInMethod8() {
+    trimming("" + //
+        "        public void f() {\n" + //
+        "          if (g) {\n" + //
+        "            foo();\n" + //
+        "            bar();\n" + //
+        "          }\n" + //
+        "        }").to("public void f(){if(!g)return;foo();bar();}");
+  }
   @Test public void methodWithLastIf() {
     trimming("int f() { if (a) { f(); g(); h();}").to("int f() { if (!a) return;  f(); g(); h();");
   }

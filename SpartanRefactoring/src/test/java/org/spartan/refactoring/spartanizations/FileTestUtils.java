@@ -144,11 +144,11 @@ public abstract class FileTestUtils {
      * traversal
      */
     @Override public final void go(final List<Object[]> $, final File f) {
-      if (f.isDirectory()) {
-        final Object[] c = makeCase(f);
-        if (c != null)
-          $.add(c);
-      }
+      if (!f.isDirectory())
+        return;
+      final Object[] c = makeCase(f);
+      if (c != null)
+        $.add(c);
     }
     abstract Object[] makeCase(File d);
   }

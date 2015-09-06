@@ -234,11 +234,11 @@ public enum Search {
         return collect(n.getExpression());
       }
       void collectExpression(final Expression e, final Expression candidate) {
-        if (candidate != null && e.getNodeType() == candidate.getNodeType() && candidate.subtreeMatch(matcher, e)) {
+        if (candidate == null || e.getNodeType() != candidate.getNodeType() || !candidate.subtreeMatch(matcher, e))
+          return;
+        into.add(candidate);
+        if (repeated())
           into.add(candidate);
-          if (repeated())
-            into.add(candidate);
-        }
       }
       private boolean add(final Object o) {
         return collect((Expression) o);
