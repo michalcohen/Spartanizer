@@ -17,7 +17,6 @@ public class Spartanizations {
       new Trimmer(), //
       // new ForwardDeclaration(), //
       // new InlineSingleUse(), //
-      // new RenameReturnVariableToDollar(), //
   };
   @SuppressWarnings("synthetic-access") //
   private static final Map<String, Spartanization> map = new HashMap<String, Spartanization>() {

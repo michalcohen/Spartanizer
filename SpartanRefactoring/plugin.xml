@@ -78,11 +78,6 @@
       </category>
       <command
             categoryId="org.spartan.refactoring.category"
-            id="org.spartan.refactoring.commands.ChangeReturnToDollar"
-            name="Change return variable to $">
-      </command>
-      <command
-            categoryId="org.spartan.refactoring.category"
             id="org.spartan.refactoring.commands.ShortestOperand"
             name="Shortest operand first">
       </command>
@@ -127,10 +122,7 @@
             class="org.spartan.refactoring.handlers.ToggleSpartanizationHandler"
             commandId="org.spartan.commands.ToggleCommand">
       </handler>
-      <handler
-            class="org.spartan.refactoring.handlers.ChangeReturnToDollarHandler"
-            commandId="org.spartan.refactoring.commands.ChangeReturnToDollar">
-      </handler>
+
       <handler
             class="org.spartan.refactoring.handlers.ExtractMethodHandler"
             commandId="org.spartan.refactoring.commands.ExtractMethod">
@@ -233,11 +225,7 @@
                label="Refactor">
             <menu
                   label="Spartanization">
-               <command
-                     commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
-                     id="org.spartan.menus.ChangeReturnToDollarCommand"
-                     style="push">
-               </command>
+
                <command
                      commandId="org.spartan.refactoring.commands.ShortestOperand"
                      id="org.spartan.menus.ShortestOperandCommand"
@@ -287,11 +275,7 @@
          <menu
                id="org.eclipse.jdt.ui.refactoring.menu2"
                label="Spartanization">
-            <command
-                  commandId="org.spartan.refactoring.commands.ChangeReturnToDollar"
-                  style="push">
-            </command>
-            <command
+          <command
                   commandId="org.spartan.refactoring.commands.ShortestOperand"
                   style="push">
             </command>
