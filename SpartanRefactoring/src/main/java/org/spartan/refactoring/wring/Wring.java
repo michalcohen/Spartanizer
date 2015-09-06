@@ -221,7 +221,7 @@ public abstract class Wring<N extends ASTNode> {
   }
 }
 
-final class LocalNameReplacer {
+final class LocalInliner {
   static Wrapper<Expression>[] wrap(final Expression[] ts) {
     @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
     int i = 0;
@@ -232,20 +232,20 @@ final class LocalNameReplacer {
   final SimpleName name;
   final ASTRewrite rewriter;
   final TextEditGroup editGroup;
-  LocalNameReplacer(final SimpleName name) {
+  LocalInliner(final SimpleName name) {
     this(name, null, null);
   }
-  LocalNameReplacer(final SimpleName name, final ASTRewrite rewriter, final TextEditGroup editGroup) {
+  LocalInliner(final SimpleName name, final ASTRewrite rewriter, final TextEditGroup editGroup) {
     this.name = name;
     this.rewriter = rewriter;
     this.editGroup = editGroup;
   }
-  LocalNameReplacerWithValue byValue(final Expression replacement) {
-    return new LocalNameReplacerWithValue(replacement);
+  LocalInlineWithValue byValue(final Expression replacement) {
+    return new LocalInlineWithValue(replacement);
   }
 
-  class LocalNameReplacerWithValue extends Wrapper<Expression> {
-    LocalNameReplacerWithValue(final Expression replacement) {
+  class LocalInlineWithValue extends Wrapper<Expression> {
+    LocalInlineWithValue(final Expression replacement) {
       super(Extract.core(replacement));
     }
     @SafeVarargs protected final void inlineInto(final Expression... es) {
@@ -270,14 +270,14 @@ final class LocalNameReplacer {
       return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(get()) || uses(es).size() <= 1);
     }
     private List<Expression> uses(final Expression... es) {
-      return Search.findUses(name).in(es);
+      return Search.forUses(name).in(es);
     }
     private void inlineIntoSingleton(final Expression replacement, final Wrapper<Expression> e) {
       final Expression oldExpression = e.get();
       final Expression newExpression = duplicate(e.get());
       e.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
-      for (final Expression use : Search.findUses(name).in(newExpression))
+      for (final Expression use : Search.forUses(name).in(newExpression))
         rewriter.replace(use, new Plant(replacement).into(use.getParent()), editGroup);
     }
   }

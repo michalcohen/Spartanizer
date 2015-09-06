@@ -79,7 +79,7 @@ public class InlineSingleUse extends Spartanization {
       }
     };
   }
-  static int numOfOccur(final Search typeOfOccur, final Expression of, final ASTNode in) {
+  static int numOfOccur(final Search typeOfOccur, final SimpleName of, final ASTNode in) {
     return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
   }
 }

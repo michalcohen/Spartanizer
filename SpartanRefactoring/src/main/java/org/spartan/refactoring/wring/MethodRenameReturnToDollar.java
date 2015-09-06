@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 
 /**
  * @author Artium Nihamkin (original)
@@ -34,7 +35,9 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
       exclude.exclude(d);
     return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        new LocalNameReplacer(n, r, g).byValue(d.getAST().newSimpleName("$")).inlineInto(Search.findUses(n).in(d).toArray(new Expression[] {}));
+        final LocalInlineWithValue inliner = new LocalInliner(n, r, g).byValue(d.getAST().newSimpleName("$"));
+        inliner.inlineInto(Search.forUses(n).in(d).toArray(new Expression[] {}));
+        inliner.inlineInto(Search.forDefinitions(n).in(d).toArray(new Expression[] {}));
       }
     };
   }

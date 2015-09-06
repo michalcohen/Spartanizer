@@ -9,7 +9,7 @@ import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.wring.LocalNameReplacer.LocalNameReplacerWithValue;
+import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 
 /**
  * A {@link Wring} to convert <code>int a = 3;
@@ -33,7 +33,7 @@ public final class DeclarationInitializerReturnUpdateAssignment extends Wring.Va
         if (o == ASSIGN)
           return null;
         final Expression newReturnValue = assignmentAsExpression(a);
-        final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+        final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
         if (!i.canInlineInto(newReturnValue) || i.replacedSize(newReturnValue) - removeSavings(f) - size(newReturnValue) > 0)
           return null;
         r.replace(a, newReturnValue, g);

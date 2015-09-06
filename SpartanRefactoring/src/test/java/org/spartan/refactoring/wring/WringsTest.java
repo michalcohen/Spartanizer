@@ -52,7 +52,7 @@ import org.spartan.refactoring.utils.*;
     assertThat(alternateInitializer, iz("a + 2 * a"));
     assertThat(Search.findsDefinitions(n).in(alternateInitializer), is(false)); // &&
     assertThat(Is.sideEffectFree(initializer), is(false));
-    assertThat(Search.findUses(n).in(alternateInitializer).size(), is(2));
-    assertThat(new LocalNameReplacer(n).byValue(initializer).canInlineInto(alternateInitializer), is(false));
+    assertThat(Search.forUses(n).in(alternateInitializer).size(), is(2));
+    assertThat(new LocalInliner(n).byValue(initializer).canInlineInto(alternateInitializer), is(false));
   }
 }

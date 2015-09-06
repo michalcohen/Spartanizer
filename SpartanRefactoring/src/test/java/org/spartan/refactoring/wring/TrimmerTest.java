@@ -74,27 +74,44 @@ import org.spartan.utils.Wrapper;
   private static Operand trimming(final String from) {
     return new Operand(from);
   }
-  @Test public void issue46() {
-    trimming("" + //
-        "int f() {\n" + //
-        "  x++;\n" + //
-        "  y++;\n" + //
-        "  if (a) {\n" + //
-        "     i++; \n" + //
-        "     j++; \n" + //
-        "     k++;\n" + //
-        "  }\n" + //
-        "}")//
-            .to("" + //
-                "int f() {\n" + //
-                "  ++x;\n" + //
-                "  ++y;\n" + //
-                "  if (!a)\n" + //
-                "    return;\n" + //
-                "  ++i;\n" + //
-                "  ++j; \n" + //
-                "  ++k;\n" + //
-                "}");
+  @Test public void actualExampleForSortAddition() {
+    trimming("1 + b.statements().indexOf(declarationStmt)").to("");
+  }
+  @Test public void actualExampleForSortAdditionInContext() {
+    final String from = "2 + a < b";
+    final String expected = "a + 2 < b";
+    final Wrap w = Wrap.Expression;
+    final String wrap = w.on(from);
+    assertEquals(from, w.off(wrap));
+    final Trimmer t = new Trimmer();
+    final String unpeeled = TrimmerTest.apply(t, wrap);
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + from);
+    final String peeled = w.off(unpeeled);
+    if (peeled.equals(from))
+      assertNotEquals("No similification of " + from, from, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(from)))
+      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
+    assertSimilar(expected, peeled);
+  }
+  @Test public void andWithCONSTANT() {
+    trimming("(x >> 18) & MASK_BITS").to("");
+    trimming("(x >> 18) & MASK_6BITS").to("");
+  }
+  @Test public void assignmentReturn0() {
+    trimming("a = 3; return a;").to("return a = 3;");
+  }
+  @Test public void assignmentReturn1() {
+    trimming("a = 3; return (a);").to("return a = 3;");
+  }
+  @Test public void assignmentReturn2() {
+    trimming("a += 3; return a;").to("return a += 3;");
+  }
+  @Test public void assignmentReturn3() {
+    trimming("a *= 3; return a;").to("return a *= 3;");
+  }
+  @Test public void assignmentReturniNo() {
+    trimming("b = a = 3; return a;").to("");
   }
   @Test public void bugInLastIfInMethod() {
     trimming("" + //
@@ -207,48 +224,6 @@ import org.spartan.utils.Wrapper;
         "            bar();\n" + //
         "          }\n" + //
         "        }").to("public void f(){if(!g)return;foo();bar();}");
-  }
-  @Test public void methodWithLastIf() {
-    trimming("int f() { if (a) { f(); g(); h();}").to("int f() { if (!a) return;  f(); g(); h();");
-  }
-  @Test public void actualExampleForSortAddition() {
-    trimming("1 + b.statements().indexOf(declarationStmt)").to("");
-  }
-  @Test public void actualExampleForSortAdditionInContext() {
-    final String from = "2 + a < b";
-    final String expected = "a + 2 < b";
-    final Wrap w = Wrap.Expression;
-    final String wrap = w.on(from);
-    assertEquals(from, w.off(wrap));
-    final Trimmer t = new Trimmer();
-    final String unpeeled = TrimmerTest.apply(t, wrap);
-    if (wrap.equals(unpeeled))
-      fail("Nothing done on " + from);
-    final String peeled = w.off(unpeeled);
-    if (peeled.equals(from))
-      assertNotEquals("No similification of " + from, from, peeled);
-    if (compressSpaces(peeled).equals(compressSpaces(from)))
-      assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
-    assertSimilar(expected, peeled);
-  }
-  @Test public void andWithCONSTANT() {
-    trimming("(x >> 18) & MASK_BITS").to("");
-    trimming("(x >> 18) & MASK_6BITS").to("");
-  }
-  @Test public void assignmentReturn0() {
-    trimming("a = 3; return a;").to("return a = 3;");
-  }
-  @Test public void assignmentReturn1() {
-    trimming("a = 3; return (a);").to("return a = 3;");
-  }
-  @Test public void assignmentReturn2() {
-    trimming("a += 3; return a;").to("return a += 3;");
-  }
-  @Test public void assignmentReturn3() {
-    trimming("a *= 3; return a;").to("return a *= 3;");
-  }
-  @Test public void assignmentReturniNo() {
-    trimming("b = a = 3; return a;").to("");
   }
   @Test public void bugIntroducingMISSINGWord1() {
     trimming("b.f(a) && -1 == As.g(f).h(c) ? o(s, b, g(f)) : !b.f(\".in\") ? null : y(d, b) ? null : o(b.z(u, v), s, f)")
@@ -616,6 +591,11 @@ import org.spartan.utils.Wrapper;
   @Test public void declarationInitializerReturnAssignment() {
     trimming("int a = 3; return a = 2 * a;").to("return 2 * 3;");
   }
+  @Test public void declarationInitializerReturnExpression() {
+    trimming("" //
+        + "String t = Bob + Wants + To + \"Sleep \"; "//
+        + "  return (right_now + t);    ").to("return(right_now+Bob+Wants+To+\"Sleep \");");
+  }
   @Test public void declarationInitializesRotate() {
     trimming("int a = 3;a>>>=2;").to("int a = 3 >>> 2;");
   }
@@ -946,6 +926,48 @@ import org.spartan.utils.Wrapper;
   @Test public void ifWithCommonNotInBlockNothingLeft() {
     trimming("for (;;) if (a) {i++;j++;} else { i++;j++; }").to("for(;;){i++;j++;}");
   }
+  Object a() {
+    class a {
+      a a;;
+      Object a() {
+        return a;
+      }
+    }
+    final a a = new a();
+    if (a instanceof a)
+      new Object();
+    a();
+    return a;
+  }
+  @Ignore @Test public void inline00() {
+    trimming("" + //
+        "  Object a() { " + //
+        "    class a {\n" + //
+        "      a a;\n" + //
+        "      Object a() {\n" + //
+        "        return a;\n" + ///
+        "      }" + //
+        "    }\n" + //
+        "    final Object a = new Object();\n" + //
+        "    if (a instanceof a)\n" + //
+        "      new Object();  \n" + //
+        "    final Object a = new Object();\n" + //
+        "    if (a instanceof a)\n" + //
+        "      new Object();" + //
+        "}\n" + //
+        "").to(//
+            "  Object a() { " + //
+                "    class a {\n" + //
+                "    }\n" + //
+                "    final Object a = new Object();\n" + //
+                "    if (a instanceof a)\n" + //
+                "      new Object();  \n" + //
+                "    final Object a = new Object();\n" + //
+                "    if (a instanceof a)\n" + //
+                "      new Object();" + //
+                "}\n" + //
+                "");
+  }
   @Test public void inline01() {
     trimming("" + //
         "  public int y() {\n" + //
@@ -1110,7 +1132,7 @@ import org.spartan.utils.Wrapper;
                 "    return false;\n" + //
                 "}");
   }
-  @Test(timeout = 100) public void issue39versionAdual() {
+  public void issue39versionAdual() {
     trimming("" + //
         "if (!varArgs) {\n" + //
         "    if (parameterTypes.length != argumentTypes.length) {\n" + //
@@ -1133,6 +1155,32 @@ import org.spartan.utils.Wrapper;
                 + "return (t + 3);" //
                 + "");
   }
+  @Test public void issue46() {
+    trimming("" + //
+        "int f() {\n" + //
+        "  x++;\n" + //
+        "  y++;\n" + //
+        "  if (a) {\n" + //
+        "     i++; \n" + //
+        "     j++; \n" + //
+        "     k++;\n" + //
+        "  }\n" + //
+        "}")//
+            .to("" + //
+                "int f() {\n" + //
+                "  ++x;\n" + //
+                "  ++y;\n" + //
+                "  if (!a)\n" + //
+                "    return;\n" + //
+                "  ++i;\n" + //
+                "  ++j; \n" + //
+                "  ++k;\n" + //
+                "}");
+  }
+  @Test public void issue49() {
+    trimming("int f() { int f = 0; for (int i: X) $ += f(i); return f;}")//
+        .to("int $(){int $=0;for(int i:X)$+=f(i);return $;}");
+  }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");
   }
@@ -1150,6 +1198,9 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void longerChainParenthesisComparison() {
     trimming("(a == b == c == d == e) == d").to("");
+  }
+  @Test public void methodWithLastIf() {
+    trimming("int f() { if (a) { f(); g(); h();}").to("int f() { if (!a) return;  f(); g(); h();");
   }
   @Test public void nestedIf1() {
     trimming("if (a) if (b) i++;").to("if (a && b) i++;");
@@ -1965,9 +2016,8 @@ import org.spartan.utils.Wrapper;
     trimming("k = k + 4;if (2 * 6 + 4 == k) return true;").to("");
   }
   @Test public void shortestOperand05() {
-    trimming("    final StringBuilder s = new StringBuilder(\"bob\");\n" + //
-        "    return s.append(\"-ha\").append(\"-ba\").toString() == \"bob-ha-banai\";")
-            .to("return(new StringBuilder(\"bob\")).append(\"-ha\").append(\"-ba\").toString()==\"bob-ha-banai\";");
+    trimming("    final W s = new W(\"bob\");\n" + //
+        "    return s.l(hZ).l(\"-ba\").toString() == \"bob-ha-banai\";").to("return(new W(\"bob\")).l(hZ).l(\"-ba\").toString()==\"bob-ha-banai\";");
   }
   @Test public void shortestOperand09() {
     trimming("return 2 - 4 < 50 - 20 - 10 - 5;").to("return 2 - 4 < 50 - 5 - 10 - 20 ;");
@@ -1979,7 +2029,7 @@ import org.spartan.utils.Wrapper;
     trimming("int h,u,m,a,n;return b == true && n + a > m - u || h > u;").to("int h,u,m,a,n;return b&&a+n>m-u||h>u;");
   }
   @Test public void shortestOperand12() {
-    trimming("int k = 15;   return 7 < k; ").to("return 7<15;");
+    trimming("int k = 15; return 7 < k; ").to("return 7<15;");
   }
   @Test public void shortestOperand13() {
     trimming("return (2 > 2 + a) == true;").to("return 2>a+2;");
@@ -1995,11 +2045,6 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void shortestOperand14() {
     trimming("Integer t = new Integer(5);   return (t.toString() == null);    ").to("return((new Integer(5)).toString()==null);");
-  }
-  @Test public void declarationInitializerReturnExpression() {
-    trimming("" //
-        + "String t = Bob + Wants + To + \"Sleep \"; "//
-        + "  return (right_now + t);    ").to("return(right_now+Bob+Wants+To+\"Sleep \");");
   }
   @Test public void shortestOperand17() {
     trimming("5 ^ a.getNum()").to("a.getNum() ^ 5");
@@ -2318,14 +2363,14 @@ import org.spartan.utils.Wrapper;
         "    n2 = 2;").to("int n1, n2 = d ? 2: 0, n3;");
   }
   @Test public void ternarize21() {
-    trimming("if (s.equals(532)){    S.out.println(gG);    S.out.append(kKz);} f(); ").to("");
+    trimming("if (s.equals(532)){    S.out.println(gG);    S.out.l(kKz);} f(); ").to("");
   }
   @Test public void ternarize21a() {
     trimming("   if (s.equals(known)){\n" + //
-        "     S.out.println(gG);\n" + //
+        "     S.out.l(gG);\n" + //
         "   } else {\n" + //
-        "     S.out.append(kKz);\n" + //
-        "   }").to("");
+        "     S.out.l(kKz);\n" + //
+        "   }").to("S.out.l(s.equals(known)?gG:kKz);");
   }
   @Test public void ternarize22() {
     trimming("int a=0;   if (s.equals(532)){    S.console();    a=3;} f(); ").to("");
@@ -2380,28 +2425,28 @@ import org.spartan.utils.Wrapper;
             "     }").to("int a,b=0;if(m.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
   }
   @Test public void ternarize49() {
-    trimming("if (s.equals(532)){ S.out.println(gG); S.out.append(kKz); } f();").to("");
+    trimming("if (s.equals(532)){ S.out.println(gG); S.out.l(kKz); } f();").to("");
   }
   @Test public void ternarize49a() {
     trimming(""//
         + "    int size = 0;\n"//
         + "   if (m.equals(153)==true)\n"//
         + "     for (int i=0; i < size; i++){\n"//
-        + "       S.out.println(HH);\n"//
+        + "       S.out.l(HH);\n"//
         + "     }\n"//
         + "   else\n"//
         + "     for (int i=0; i < size; i++){\n"//
-        + "       S.out.append('f');\n"//
+        + "       S.out.l('f');\n"//
         + "     }")
             .to(""//
                 + "int size=0;"//
                 + "if(m.equals(153))"//
                 + "for(int i=0;i<size;++i){"//
-                + "  S.out.println(HH);"//
+                + "  S.out.l(HH);"//
                 + "} "//
                 + "else "//
                 + "  for(int i=0;i<size;++i){"//
-                + "    S.out.append('f');" + "  }");
+                + "    S.out.l('f');" + "  }");
   }
   @Test public void ternarize52() {
     trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {c = d;c = e;} f();")//

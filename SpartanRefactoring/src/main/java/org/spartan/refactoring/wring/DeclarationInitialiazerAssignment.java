@@ -8,7 +8,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.wring.LocalNameReplacer.LocalNameReplacerWithValue;
+import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 
 /**
  * A {@link Wring} to convert <code>int a;
@@ -28,7 +28,7 @@ public final class DeclarationInitialiazerAssignment extends Wring.VariableDecla
         final Expression newInitializer = duplicate(right(a));
         if (doesUseForbiddenSiblings(f, newInitializer))
           return null;
-        final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+        final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
         if (!i.canInlineInto(newInitializer) || i.replacedSize(newInitializer) - size(nextStatement, initializer) > 0)
           return null;
         r.replace(initializer, newInitializer, g);

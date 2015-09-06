@@ -341,6 +341,15 @@ public enum Funcs {
     return e.getLeftOperand();
   }
   /**
+   * Shorthand for {@link CastExpression#getExpression()}
+   *
+   * @param e JD
+   * @return the right operand of the parameter
+   */
+  public static Expression right(final CastExpression e) {
+    return e.getExpression();
+  }
+  /**
    * Shorthand for {@link Assignment#getLeftHandSide()}
    *
    * @param a JD
