@@ -21,28 +21,26 @@ import org.spartan.refactoring.wring.LocalNameReplacer.LocalNameReplacerWithValu
 public final class DeclarationInitializerReturnAssignment extends Wring.VariableDeclarationFragementAndStatement {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
       final TextEditGroup g) {
-    if (initializer == null)
-      return null;
-    final ReturnStatement s = asReturnStatement(nextStatement);
-    if (s == null)
-      return null;
-    final Assignment a = asAssignment(Extract.expression(s));
-    if (a == null || !same(n, left(a)))
-      return null;
-    final Operator o = a.getOperator();
-    if (o != ASSIGN)
-      return null;
-    final Expression newReturnValue = duplicate(right(a));
-    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
-    if (!i.canInlineInto(newReturnValue))
-      return null;
-    if (i.replacedSize(newReturnValue) - size(newReturnValue) - removeSavings(f) > 0)
-      return null;
-    r.replace(a, newReturnValue, g);
-    i.inlineInto(newReturnValue);
-    remove(f, r, g);
-    return r;
-  }
+        if (initializer == null)
+          return null;
+        final ReturnStatement s = asReturnStatement(nextStatement);
+        if (s == null)
+          return null;
+        final Assignment a = asAssignment(Extract.expression(s));
+        if (a == null || !same(n, left(a)))
+          return null;
+        final Operator o = a.getOperator();
+        if (o != ASSIGN)
+          return null;
+        final Expression newReturnValue = duplicate(right(a));
+        final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+        if (!i.canInlineInto(newReturnValue) || i.replacedSize(newReturnValue) - removeSavings(f) - size(newReturnValue) > 0)
+          return null;
+        r.replace(a, newReturnValue, g);
+        i.inlineInto(newReturnValue);
+        remove(f, r, g);
+        return r;
+      }
   @Override String description(final VariableDeclarationFragment f) {
     return "Eliminate temporary " + f.getName() + " and inline its value into the expression of the subsequent return statement";
   }
