@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.spartan.refactoring.utils.ExpressionComparator.*;
 import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
@@ -80,6 +81,12 @@ public enum Wrings {
     int $ = 0;
     for (final ASTNode n : ns)
       $ += n.toString().length();
+    return $;
+  }
+  static int size(final ASTNode... ns) {
+    int $ = 0;
+    for (final ASTNode n : ns)
+      $ += nodesCount(n);
     return $;
   }
   static IfStatement makeShorterIf(final IfStatement s) {

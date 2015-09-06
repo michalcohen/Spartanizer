@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
 import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.wring.Wrings.size;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -24,15 +25,17 @@ public final class DeclarationInitialiazerAssignment extends Wring.VariableDecla
     final Assignment a = Extract.assignment(nextStatement);
     if (a == null || !same(n, left(a)) || a.getOperator() != ASSIGN)
       return null;
-    final Expression inlinedInitializer = duplicate(right(a));
-    if (doesUseForbiddenSiblings(f, inlinedInitializer))
+    final Expression newInitializer = duplicate(right(a));
+    if (doesUseForbiddenSiblings(f, newInitializer))
       return null;
-    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
-    if (!i.canInlineInto(inlinedInitializer))
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+    if (!i.canInlineInto(newInitializer))
       return null;
-    r.replace(initializer, inlinedInitializer, g);
-    i.inlineInto(inlinedInitializer);
-    r.remove(Extract.statement(a), g);
+    if (i.replacedSize(newInitializer) - size(nextStatement, initializer) > 0)
+      return null;
+    r.replace(initializer, newInitializer, g);
+    i.inlineInto(newInitializer);
+    r.remove(nextStatement, g);
     return r;
   }
   @Override String description(final VariableDeclarationFragment n) {

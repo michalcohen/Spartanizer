@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
 import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.wring.Wrings.size;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
@@ -31,12 +32,14 @@ public final class DeclarationInitializerReturnAssignment extends Wring.Variable
     final Operator o = a.getOperator();
     if (o != ASSIGN)
       return null;
-    final Expression alternateReturn = duplicate(right(a));
-    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
-    if (!i.canInlineInto(alternateReturn))
+    final Expression newReturnValue = duplicate(right(a));
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+    if (!i.canInlineInto(newReturnValue))
       return null;
-    r.replace(a, alternateReturn, g);
-    i.inlineInto(alternateReturn);
+    if (i.replacedSize(newReturnValue) - size(newReturnValue) - removeSavings(f) > 0)
+      return null;
+    r.replace(a, newReturnValue, g);
+    i.inlineInto(newReturnValue);
     remove(f, r, g);
     return r;
   }

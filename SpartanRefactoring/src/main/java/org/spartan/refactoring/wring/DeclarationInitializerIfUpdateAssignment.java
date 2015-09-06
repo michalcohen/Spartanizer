@@ -1,6 +1,7 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.wring.Wrings.size;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
@@ -35,12 +36,14 @@ public final class DeclarationInitializerIfUpdateAssignment extends Wring.Variab
     if (o == Assignment.Operator.ASSIGN)
       return null;
     final ConditionalExpression newInitializer = Subject.pair(assignmentAsExpression(a), initializer).toCondition(condition);
-    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
     if (!i.canInlineInto(newInitializer))
+      return null;
+    if (i.replacedSize(newInitializer) - size(nextStatement, initializer) > 0)
       return null;
     r.replace(initializer, newInitializer, g);
     i.inlineInto(then(newInitializer), newInitializer.getExpression());
-    r.remove(s, g);
+    r.remove(nextStatement, g);
     return r;
   }
   @Override public String description(final VariableDeclarationFragment f) {

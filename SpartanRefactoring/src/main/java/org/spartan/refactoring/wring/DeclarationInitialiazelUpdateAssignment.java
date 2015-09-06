@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.spartan.refactoring.wring.Wrings.*;
 import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
@@ -31,12 +32,14 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     final Operator o = a.getOperator();
     if (o == ASSIGN)
       return null;
-    final InfixExpression alternateInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
-    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
-    if (!i.canInlineInto(alternateInitializer))
+    final InfixExpression newInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+    if (!i.canInlineInto(newInitializer))
       return null;
-    r.replace(initializer, alternateInitializer, g);
-    i.inlineInto(alternateInitializer);
+    if (i.replacedSize(newInitializer) - size(nextStatement, initializer) > 0)
+      return null;
+    r.replace(initializer, newInitializer, g);
+    i.inlineInto(newInitializer);
     r.remove(nextStatement, g);
     return r;
   }

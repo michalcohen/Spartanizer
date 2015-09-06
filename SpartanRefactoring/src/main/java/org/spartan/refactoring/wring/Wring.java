@@ -5,7 +5,7 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
-
+import static org.spartan.refactoring.wring.Wrings.size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +21,7 @@ import org.spartan.utils.Wrapper;
  * make a single simplification of the tree. A wring is so small that it is
  * idempotent: Applying a wring to the output of itself is the empty operation.
  *
- * @param <N> type of node to transform
+ * @param <N> type of node which triggers the transformation.
  * @author Yossi Gil
  * @since 2015-07-09
  */
@@ -176,6 +176,16 @@ public abstract class Wring<N extends ASTNode> {
       }
       return $;
     }
+    static int removeSavings(final VariableDeclarationFragment f) {
+      final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+      final List<VariableDeclarationFragment> live = live(f, parent.fragments());
+      if (live.isEmpty())
+        return size(parent);
+      final VariableDeclarationStatement newParent = duplicate(parent);
+      newParent.fragments().clear();
+      newParent.fragments().addAll(live);
+      return size(parent) + size(newParent);
+    }
     static void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
       final List<VariableDeclarationFragment> live = live(f, parent.fragments());
@@ -212,41 +222,55 @@ public abstract class Wring<N extends ASTNode> {
 }
 
 final class LocalNameReplacer {
-  public LocalNameReplacer(final SimpleName name) {
-    this(name, null, null);
-  }
-  public LocalNameReplacer(final SimpleName name, final ASTRewrite rewriter, final TextEditGroup editGroup) {
-    this.name = name;
-    this.rewriter = rewriter;
-    this.editGroup = editGroup;
-  }
-  final SimpleName name;
-  final ASTRewrite rewriter;
-  final TextEditGroup editGroup;
-  public static Wrapper<Expression>[] wrap(final Expression[] ts) {
+  static Wrapper<Expression>[] wrap(final Expression[] ts) {
     @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
     int i = 0;
     for (final Expression t : ts)
       $[i++] = new Wrapper<>(t);
     return $;
   }
-  LocalNameReplacerWithValue usingInitializer(final Expression replacement) {
+  final SimpleName name;
+  final ASTRewrite rewriter;
+  final TextEditGroup editGroup;
+  LocalNameReplacer(final SimpleName name) {
+    this(name, null, null);
+  }
+  LocalNameReplacer(final SimpleName name, final ASTRewrite rewriter, final TextEditGroup editGroup) {
+    this.name = name;
+    this.rewriter = rewriter;
+    this.editGroup = editGroup;
+  }
+  LocalNameReplacerWithValue byValue(final Expression replacement) {
     return new LocalNameReplacerWithValue(replacement);
   }
 
   class LocalNameReplacerWithValue extends Wrapper<Expression> {
     LocalNameReplacerWithValue(final Expression replacement) {
-      super(replacement);
-    }
-    boolean canInlineInto(final Expression... es) {
-      return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(get()) || Search.findUses(name).in(es).size() <= 1);
-    }
-    @SafeVarargs protected final void inlineInto(final Wrapper<Expression>... es) {
-      for (final Wrapper<Expression> e : es)
-        inlineIntoSingleton(get(), e);
+      super(Extract.core(replacement));
     }
     @SafeVarargs protected final void inlineInto(final Expression... es) {
       inlineInto(wrap(es));
+    }
+    @SafeVarargs private final void inlineInto(final Wrapper<Expression>... es) {
+      for (final Wrapper<Expression> e : es)
+        inlineIntoSingleton(get(), e);
+    }
+    /**
+     * Computes the number of AST nodes in the replaced parameters
+     *
+     * @param es JD
+     * @return A non-negative integer, computed from original size of the
+     *         parameters, the number of occurrences of {@link #name} in the
+     *         operands, and the size of the replacement.
+     */
+    int replacedSize(final Expression... es) {
+      return size(es) + uses(es).size() * (size(get()) - 1);
+    }
+    boolean canInlineInto(final Expression... es) {
+      return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(get()) || uses(es).size() <= 1);
+    }
+    private List<Expression> uses(final Expression... es) {
+      return Search.findUses(name).in(es);
     }
     private void inlineIntoSingleton(final Expression replacement, final Wrapper<Expression> e) {
       final Expression oldExpression = e.get();

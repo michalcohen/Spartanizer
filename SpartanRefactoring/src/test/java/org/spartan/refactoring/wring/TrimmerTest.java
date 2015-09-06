@@ -566,7 +566,8 @@ import org.spartan.utils.Wrapper;
     trimming("6 - 7 < 2 + 1   ").to("6 -7 < 1 + 2");
   }
   @Test public void correctSubstitutionInIfAssignment() {
-    trimming("int a = 2+3; if (a+b > a << b) a =a *7 << a;").to("int a=2+3+b>2+3<<b?(2+3)*7<<2+3:2+3;");
+    trimming("int a = 2+3; if (a+b > a << b) a =(((((a *7 << a)))));")//
+        .to("int a=2+3+b>2+3<<b?(2+3)*7<<2+3:2+3;");
   }
   @Test public void declarationAssignmentUpdateWithIncrement() {
     trimming("int a=0; a+=++a;").to("");
@@ -1995,7 +1996,7 @@ import org.spartan.utils.Wrapper;
   @Test public void shortestOperand14() {
     trimming("Integer t = new Integer(5);   return (t.toString() == null);    ").to("return((new Integer(5)).toString()==null);");
   }
-  @Test public void shortestOperand15() {
+  @Test public void declarationInitializerReturnExpression() {
     trimming("" //
         + "String t = Bob + Wants + To + \"Sleep \"; "//
         + "  return (right_now + t);    ").to("return(right_now+Bob+Wants+To+\"Sleep \");");

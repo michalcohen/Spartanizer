@@ -150,10 +150,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
     }
     final Integer $ = new Integer();
     n.accept(new ASTVisitor() {
-      /**
-       * @see org.eclipse.jdt.core.dom.ASTVisitor#preVisit(org.eclipse.jdt.core.dom.ASTNode)
-       * @param _ ignored
-       */
       @Override public void preVisit(@SuppressWarnings("unused") final ASTNode _) {
         ++$.inner;
       }
@@ -172,11 +168,11 @@ public enum ExpressionComparator implements Comparator<Expression> {
     }
     final Integer $ = new Integer();
     n.accept(new ASTVisitor() {
-      @Override public void preVisit(final ASTNode n) {
-        if (Statement.class.isAssignableFrom(n.getClass()))
-          switch (n.getNodeType()) {
+      @Override public void preVisit(final ASTNode child) {
+        if (Statement.class.isAssignableFrom(child.getClass()))
+          switch (child.getNodeType()) {
             case BLOCK:
-              if (Extract.statements(n).size() > 1)
+              if (Extract.statements(child).size() > 1)
                 ++$.inner;
               return;
             case EMPTY_STATEMENT:
@@ -188,7 +184,7 @@ public enum ExpressionComparator implements Comparator<Expression> {
               return;
             case IF_STATEMENT:
               $.inner += 4;
-              final IfStatement i = asIfStatement(n);
+              final IfStatement i = asIfStatement(child);
               if (elze(i) != null)
                 ++$.inner;
               return;

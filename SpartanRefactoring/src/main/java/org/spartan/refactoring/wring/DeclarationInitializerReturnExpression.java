@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.wring.Wrings.*;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -24,11 +25,14 @@ public final class DeclarationInitializerReturnExpression extends Wring.Variable
     final ReturnStatement s = asReturnStatement(nextStatement);
     if (s == null)
       return null;
-    final Expression returnValue = Extract.expression(s);
-    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
-    if (returnValue == null || same(n, returnValue) || !i.canInlineInto(returnValue))
+    final Expression newReturnValue = Extract.expression(s);
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).byValue(initializer);
+    if (newReturnValue == null || same(n, newReturnValue) || !i.canInlineInto(newReturnValue))
       return null;
-    i.inlineInto(returnValue);
+    if (i.replacedSize(newReturnValue) - size(newReturnValue) - removeSavings(f) > 0)
+      return null;
+    r.replace(s.getExpression(), newReturnValue, g);
+    i.inlineInto(newReturnValue);
     remove(f, r, g);
     return r;
   }

@@ -34,7 +34,7 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
       exclude.exclude(d);
     return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        new LocalNameReplacer(n, r, g).usingInitializer(d.getAST().newSimpleName("$")).inlineInto(Search.findUses(n).in(d).toArray(new Expression[] {}));
+        new LocalNameReplacer(n, r, g).byValue(d.getAST().newSimpleName("$")).inlineInto(Search.findUses(n).in(d).toArray(new Expression[] {}));
       }
     };
   }
@@ -80,7 +80,7 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
     public Aggressive(final MethodDeclaration inner) {
       super(inner);
     }
-    private SimpleName bestCandidate(final List<SimpleName> ns, final List<ReturnStatement> rs) {
+    private static SimpleName bestCandidate(final List<SimpleName> ns, final List<ReturnStatement> rs) {
       final int bestScore = bestScore(ns, rs);
       if (bestScore > 0)
         for (final SimpleName $ : ns)

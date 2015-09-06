@@ -2,7 +2,6 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
 import static org.spartan.refactoring.utils.Funcs.same;
-
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
