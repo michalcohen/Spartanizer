@@ -35,9 +35,6 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> {
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Consolidate commmon suffix of then and else branches to just after if statement";
   }
-  @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
-    return true;
-  }
   @Override Rewrite make(final IfStatement s) {
     final List<Statement> then = Extract.statements(then(s));
     if (then.isEmpty())
@@ -84,8 +81,5 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> {
   }
   @Override Rewrite make(final IfStatement n, final ExclusionManager exclude) {
     return super.make(n, exclude);
-  }
-  @Override boolean scopeIncludes(final IfStatement n) {
-    return make(n) != null;
   }
 }

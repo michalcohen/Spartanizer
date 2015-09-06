@@ -1,6 +1,6 @@
 package org.spartan.refactoring.wring;
 
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.MINUS;
 import static org.spartan.utils.Utils.in;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import org.spartan.refactoring.utils.ExpressionComparator;
  * @author Yossi Gil
  * @since 2015-07-17
  */
-public final class InfixSortSubstraction extends Wring.InfixSortingFromSecond {
+public final class InfixSortSubstraction extends Wring.InfixSortingOfCDR {
   @Override boolean sort(final List<Expression> es) {
     return ExpressionComparator.ADDITION.sort(es);
   }

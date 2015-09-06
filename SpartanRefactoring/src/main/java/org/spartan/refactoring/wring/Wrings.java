@@ -59,6 +59,20 @@ public enum Wrings {
   static boolean endsWithSequencer(final Statement s) {
     return Is.sequencer(Extract.lastStatement(s));
   }
+  static ListRewrite insertAfter(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
+    final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
+    for (int i = what.size() - 1; i >= 0; --i) {
+      final Statement s = what.get(i);
+      $.insertAfter(s, where, g);
+    }
+    return $;
+  }
+  static ListRewrite insertBefore(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
+    final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
+    for (final Statement s : what)
+      $.insertBefore(s, where, g);
+    return $;
+  }
   static IfStatement invert(final IfStatement s) {
     return Subject.pair(elze(s), then(s)).toNot(s.getExpression());
   }
@@ -151,13 +165,5 @@ public enum Wrings {
       case THROW_STATEMENT:
         return 3;
     }
-  }
-  static ListRewrite insertAfter(final Statement where, final List<Statement> what, final ASTRewrite r, final TextEditGroup g) {
-    final ListRewrite $ = r.getListRewrite(where.getParent(), Block.STATEMENTS_PROPERTY);
-    for (int i = what.size() - 1; i >= 0; --i) {
-      final Statement s = what.get(i);
-      $.insertAfter(s, where, g);
-    }
-    return $;
   }
 }

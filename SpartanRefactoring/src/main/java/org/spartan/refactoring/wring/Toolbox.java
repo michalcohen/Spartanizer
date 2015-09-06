@@ -66,6 +66,7 @@ public class Toolbox {
           new DeclarationInitializerReturnUpdateAssignment(), //
           null) //
       .add(IfStatement.class, //
+          new IfStatementLastInMethod(), //
           new IfReturnFooElseReturnBar(), //
           new IfReturnNoElseReturn(), //
           new IfAssignToFooElseAssignToFoo(), //

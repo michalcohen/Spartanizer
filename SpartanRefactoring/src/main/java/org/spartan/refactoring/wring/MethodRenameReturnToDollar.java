@@ -20,9 +20,6 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
   @Override String description(final MethodDeclaration d) {
     return d.getName().toString();
   }
-  @Override boolean eligible(@SuppressWarnings("unused") final MethodDeclaration _) {
-    return true;
-  }
   @Override Rewrite make(final MethodDeclaration d) {
     return make(d, null);
   }

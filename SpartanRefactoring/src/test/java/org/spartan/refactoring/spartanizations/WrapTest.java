@@ -1,17 +1,14 @@
 package org.spartan.refactoring.spartanizations;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.spartan.hamcrest.CoreMatchers.is;
-import org.eclipse.jface.text.Document;
-import org.junit.Test;
-import org.spartan.refactoring.spartanizations.Wrap;
 import static org.spartan.refactoring.spartanizations.Wrap.essence;
-import static org.hamcrest.CoreMatchers.is;
 
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jface.text.Document;
+import org.junit.Test;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class WrapTest {
   @Test public void dealWithBothKindsOfComment() {

@@ -2,6 +2,7 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.es;
@@ -12,8 +13,6 @@ import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.junit.Test;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
-
-import static org.spartan.hamcrest.MatcherAssert.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class WringsTest {
   @Test public void mixedLiteralKindEmptyList() {

@@ -1,8 +1,12 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.hamcrest.CoreMatchers.*;
-import static org.spartan.hamcrest.MatcherAssert.*;
-import static org.spartan.hamcrest.OrderingComparison.*;
+import static org.spartan.hamcrest.CoreMatchers.is;
+import static org.spartan.hamcrest.MatcherAssert.assertThat;
+import static org.spartan.hamcrest.MatcherAssert.iz;
+import static org.spartan.hamcrest.OrderingComparison.greaterThan;
+import static org.spartan.hamcrest.OrderingComparison.lessThan;
+import static org.spartan.hamcrest.OrderingComparison.lessThanOrEqualTo;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;

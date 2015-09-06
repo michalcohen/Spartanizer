@@ -43,9 +43,6 @@ public final class IfThenOrElseIsCommandsFollowedBySequencer extends Wring<IfSta
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Remove redundant else (possibly after inverting if statement)";
   }
-  @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
-    return true;
-  }
   @Override Rewrite make(final IfStatement s) {
     return new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {

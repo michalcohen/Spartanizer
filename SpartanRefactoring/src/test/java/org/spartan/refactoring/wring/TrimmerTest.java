@@ -1,6 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -30,9 +29,6 @@ import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
 import org.spartan.utils.Wrapper;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
@@ -91,13 +87,13 @@ import static org.hamcrest.CoreMatchers.is;
         "}")//
             .to("" + //
                 "int f() {\n" + //
-                "  x++;\n" + //
-                "  y++;\n" + //
+                "  ++x;\n" + //
+                "  ++y;\n" + //
                 "  if (!a)\n" + //
                 "    return;\n" + //
-                "  i++;\n" + //
-                "  j++; \n" + //
-                "  k++;\n" + //
+                "  ++i;\n" + //
+                "  ++j; \n" + //
+                "  ++k;\n" + //
                 "}");
   }
   @Test public void methodWithLastIf() {
@@ -308,7 +304,7 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("(null==a)").to("(a==null)");
   }
   @Test public void commonPrefixEntirelyIfBranches() {
-    trimming("if (s.equals(532)) System.out.close();else System.out.close();").to("System.out.close(); ");
+    trimming("if (s.equals(532)) S.out.close();else S.out.close();").to("S.out.close(); ");
   }
   @Test public void commonPrefixIfBranchesInFor() {
     trimming("for (;;) if (a) {i++;j++;j++;} else { i++;j++; i++;}").to("for(;;){i++;j++;if(a)j++;else i++;}");
@@ -477,10 +473,10 @@ import static org.hamcrest.CoreMatchers.is;
         "    String res = s;\n" + //
         "    if (s.equals(y))\n" + //
         "      res = s + blah;\n" + //
-        "    System.out.println(res);")
+        "    S.out.println(res);")
             .to("" + //
                 "    String res = s.equals(y) ? s + blah :s;\n" + //
-                "    System.out.println(res);");
+                "    S.out.println(res);");
   }
   @Test public void declarationIfAssignment3() {
     trimming("int a =2; if (a != 2) a = 3;").to("int a = 2 != 2 ? 3 : 2;");
@@ -493,10 +489,10 @@ import static org.hamcrest.CoreMatchers.is;
         "    String res = s;\n" + //
         "    if (s.equals(y))\n" + //
         "      res += s + blah;\n" + //
-        "    System.out.println(res);")
+        "    S.out.println(res);")
             .to("" + //
                 "    String res = s.equals(y) ? s + s + blah :s;\n" + //
-                "    System.out.println(res);");
+                "    S.out.println(res);");
   }
   @Test public void declarationIfUsesLaterVariable() {
     trimming("int a=0, b=0;if (b==3)   a=4;").to("");
@@ -624,12 +620,12 @@ import static org.hamcrest.CoreMatchers.is;
         " if (b) i = 3;").to("");
   }
   @Ignore @Test public void forwardDeclaration1() {
-    trimming("/*    * This is a comment    */      int i = 6;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ")
-        .to(" /*    * This is a comment    */      int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
+    trimming("/*    * This is a comment    */      int i = 6;   int j = 2;   int k = i+2;   S.out.println(i-j+k); ")
+        .to(" /*    * This is a comment    */      int j = 2;   int i = 6;   int k = i+2;   S.out.println(i-j+k); ");
   }
   @Ignore @Test public void forwardDeclaration2() {
-    trimming("/*    * This is a comment    */      int i = 6, h = 7;   int j = 2;   int k = i+2;   System.out.println(i-j+k); ")
-        .to(" /*    * This is a comment    */      int h = 7;   int j = 2;   int i = 6;   int k = i+2;   System.out.println(i-j+k); ");
+    trimming("/*    * This is a comment    */      int i = 6, h = 7;   int j = 2;   int k = i+2;   S.out.println(i-j+k); ")
+        .to(" /*    * This is a comment    */      int h = 7;   int j = 2;   int i = 6;   int k = i+2;   S.out.println(i-j+k); ");
   }
   @Ignore @Test public void forwardDeclaration3() {
     trimming("/*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   yada3(i);   yada3(i+m); ")
@@ -651,8 +647,8 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Ignore @Test public void forwardDeclaration7() {
     trimming(
-        "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ")
-            .to("  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ");
+        "  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     S.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     S.out.println(res2.j);        private BlahClass res;   S.out.println(res.j);   return res; ")
+            .to("  j = 2*i;   }      public final int j;    private BlahClass yada6() {   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     S.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     S.out.println(res2.j);        private BlahClass res;   final BlahClass res = new BlahClass(6);   S.out.println(res.j);   return res; ");
   }
   @Test public void ifBugSecondTry() {
     trimming("" + //
@@ -841,14 +837,14 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("" + //
         "  public int y() {\n" + //
         "    final Z res = new Z(6);\n" + //
-        "    System.out.println(res.j);\n" + //
+        "    S.out.println(res.j);\n" + //
         "    return res;\n" + //
         "  }\n" + //
         "}\n" + //
         "").to(//
             "  public int y() {\n" + // //
                 "    final Z $ = new Z(6);\n" + ////
-                "    System.out.println($.j);\n" + ////
+                "    S.out.println($.j);\n" + ////
                 "    return $;\n" + // //
                 "  }\n" + //
                 "}\n" + //
@@ -885,17 +881,17 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Ignore @Test public void inlineSingleUse06() {
     trimming(
-        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     for (final Integer pi : outdated)      coes.remove(pi);     System.out.println(coes.size()); ")
+        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     S.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     for (final Integer pi : outdated)      coes.remove(pi);     S.out.println(coes.size()); ")
             .to("");
   }
   @Test public void inlineSingleUse07() {
     trimming(
-        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size()); ")
+        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     S.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     S.out.println(coes.size()); ")
             .to("");
   }
   @Ignore @Test public void inlineSingleUse08() {
     trimming(
-        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     System.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     System.out.println(coes.size());     System.out.println(outdated.size()); ")
+        "   final Collection<Integer> outdated = new ArrayList<>();     int x = 6, y = 7;     S.out.println(x+y);     final Collection<Integer> coes = new ArrayList<>();     for (final Integer pi : coes)      if (pi.intValue() < x - y)       outdated.add(pi);     S.out.println(coes.size());     S.out.println(outdated.size()); ")
             .to("");
   }
   @Ignore @Test public void inlineSingleUse09() {
@@ -1286,7 +1282,7 @@ import static org.hamcrest.CoreMatchers.is;
     // We expect to print 2, but ++s will make it print 3
     trimming("int s = 2;" + //
         "int n = s++;" + //
-        "System.out.print(n);").to("");
+        "S.out.print(n);").to("");
   }
   @Test public void postIncrementInFunctionCall() {
     trimming("f(i++);").to("");
@@ -1530,8 +1526,7 @@ import static org.hamcrest.CoreMatchers.is;
         .to("!a?new S(new Ineger(3)):new S(a,new Integer(4),b)                                                                                                                  ");
   }
   @Test public void pushdownTernaryIntoPrintln() {
-    trimming("    if (s.equals(t))\n" + "      System.out.println(Hey + res);\n" + "    else\n" + "      System.out.println(Ho + x + a);")
-        .to("System.out.println(s.equals(t)?Hey+res:Ho+x+a);");
+    trimming("    if (s.equals(t))\n" + "      S.out.println(Hey + res);\n" + "    else\n" + "      S.out.println(Ho + x + a);").to("S.out.println(s.equals(t)?Hey+res:Ho+x+a);");
   }
   @Test public void pushdownTernaryLongFieldRefernece() {
     trimming("externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action")
@@ -1608,8 +1603,8 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Ignore @Test public void reanmeReturnVariableToDollar01() {
     trimming(
-        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   System.out.println(res.j);   return res; ")
-            .to(" public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   System.out.println($.j);   return $; ");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   S.out.println(res.j);   return res; ")
+            .to(" public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   S.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar02() {
     trimming(
@@ -1626,27 +1621,27 @@ import static org.hamcrest.CoreMatchers.is;
   }
   @Ignore @Test public void reanmeReturnVariableToDollar05() {
     trimming(
-        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println(res.j);   return res; ")
-            .to("  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass($.j);     System.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     System.out.println(res.j);   System.out.println($.j);   return $; ");
+        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     S.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     S.out.println(res.j);   S.out.println(res.j);   return res; ")
+            .to("  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass($.j);     S.out.println(res2.j);     doStuff(res2);        private void doStuff(final BlahClass res) {     S.out.println(res.j);   S.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar06() {
     trimming(
-        "  j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass res = new BlahClass(r.j);     return res.j + 1;   System.out.println(res.j); ")
-            .to("  j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     System.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass $ = new BlahClass(r.j);     return $.j + 1;   System.out.println(res.j); ");
+        "  j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     S.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass res = new BlahClass(r.j);     return res.j + 1;   S.out.println(res.j); ")
+            .to("  j = 2*i;   }      public final int j;    public void yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     final BlahClass res2 = new BlahClass(res.j);     S.out.println(res2.j);     doStuff(res2);        private int doStuff(final BlahClass r) {     final BlahClass $ = new BlahClass(r.j);     return $.j + 1;   S.out.println(res.j); ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar07() {
     trimming(
-        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println(res.j);   return res; ")
-            .to("  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     System.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     System.out.println(res2.j);        private BlahClass res;   System.out.println($.j);   return $; ");
+        "  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     S.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     S.out.println(res2.j);        private BlahClass res;   S.out.println(res.j);   return res; ")
+            .to("  j = 2*i;   }      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   final Runnable r = new Runnable() {        @Override    public void run() {     res = new BlahClass(8);     S.out.println(res.j);     doStuff(res);        private void doStuff(BlahClass res2) {     S.out.println(res2.j);        private BlahClass res;   S.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar08() {
     trimming(
-        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return res; ")
-            .to(" public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   if ($.j == 0)    return null;   System.out.println($.j);   return $; ");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   S.out.println(res.j);   return res; ")
+            .to(" public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass $ = new BlahClass(6);   if ($.j == 0)    return null;   S.out.println($.j);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar09() {
     trimming(
-        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   System.out.println(res.j);   return null;")
+        " public BlahClass(int i) {    j = 2*i;      public final int j;    public BlahClass yada6() {   final BlahClass res = new BlahClass(6);   if (res.j == 0)    return null;   S.out.println(res.j);   return null;")
             .to("");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar10() {
@@ -1721,11 +1716,11 @@ import static org.hamcrest.CoreMatchers.is;
   @Test public void shortestBranchInIf() {
     trimming("   int a=0;\n" + //
         "   if (s.equals(known)){\n" + //
-        "     System.console();\n" + //
+        "     S.console();\n" + //
         "   } else {\n" + //
         "     a=3;\n" + //
         "   }\n" + //
-        "").to("int a=0; if(!s.equals(known))a=3;else System.console();");
+        "").to("int a=0; if(!s.equals(known))a=3;else S.console();");
   }
   @Test public void shortestIfBranchFirst01() {
     trimming(""//
@@ -2131,13 +2126,13 @@ import static org.hamcrest.CoreMatchers.is;
         + "res = s;   " //
         + "if (res.equals(532)==true)    " //
         + "  res = s + 0xABBA;   " //
-        + "System.out.println(res); " //
+        + "S.out.println(res); " //
         + "")
             .to("" //
                 + "String res =s ;" //
                 + "if (res.equals(532))    " //
                 + "  res = s + 0xABBA;   " //
-                + "System.out.println(res); " //
+                + "S.out.println(res); " //
                 + "");
   }
   @Test public void ternarize07a() {
@@ -2146,20 +2141,20 @@ import static org.hamcrest.CoreMatchers.is;
         + "res = s;   " //
         + "if (res==true)    " //
         + "  res = s + 0xABBA;   " //
-        + "System.out.println(res); " //
-        + "").to("String res=s;if(res)res=s+0xABBA;System.out.println(res);");
+        + "S.out.println(res); " //
+        + "").to("String res=s;if(res)res=s+0xABBA;S.out.println(res);");
   }
   @Test public void ternarize07aa() {
-    trimming("String res=s;if(res==true)res=s+0xABBA;System.out.println(res);").to("String res=s==true?s+0xABBA:s;System.out.println(res);");
+    trimming("String res=s;if(res==true)res=s+0xABBA;S.out.println(res);").to("String res=s==true?s+0xABBA:s;S.out.println(res);");
   }
   @Test public void ternarize07b() {
     trimming("" //
         + "String res =s ;" //
         + "if (res.equals(532)==true)    " //
         + "  res = s + 0xABBA;   " //
-        + "System.out.println(res); ")
+        + "S.out.println(res); ")
             .to("" //
-                + "String res=s.equals(532)==true?s+0xABBA:s;System.out.println(res);");
+                + "String res=s.equals(532)==true?s+0xABBA:s;S.out.println(res);");
   }
   @Test public void ternarize09() {
     trimming("if (s.equals(532)) {    return 6;}else {    return 9;}").to("return s.equals(532)?6:9; ");
@@ -2168,10 +2163,10 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("String res = s, foo = bar;   "//
         + "if (res.equals(532)==true)    " //
         + "res = s + 0xABBA;   "//
-        + "System.out.println(res); ").to("String res=s.equals(532)==true?s+0xABBA:s,foo=bar;System.out.println(res);");
+        + "S.out.println(res); ").to("String res=s.equals(532)==true?s+0xABBA:s,foo=bar;S.out.println(res);");
   }
   @Test public void ternarize12() {
-    trimming("String res = s;   if (s.equals(532))    res = res + 0xABBA;   System.out.println(res); ").to("String res=s.equals(532)?s+0xABBA:s;System.out.println(res);");
+    trimming("String res = s;   if (s.equals(532))    res = res + 0xABBA;   S.out.println(res); ").to("String res=s.equals(532)?s+0xABBA:s;S.out.println(res);");
   }
   @Test public void ternarize13() {
     trimming("String res = m, foo;  if (m.equals(f())==true)   foo = M; ").to("String res = m, foo;  if (m.equals(f())) foo=M;");
@@ -2198,8 +2193,8 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("f (m==true);   f(); ").to("f (m); f();");
   }
   @Test public void ternarize14() {
-    trimming("String res=m,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;System.out.println(foo);}")
-        .to("String res=m,foo=GY;if(res.equals(f())){foo=M;int k=8;System.out.println(foo);}");
+    trimming("String res=m,foo=GY;if (res.equals(f())==true){foo = M;int k = 2;k = 8;S.out.println(foo);}f();")
+        .to("String res=m,foo=GY;if(res.equals(f())){foo=M;int k=8;S.out.println(foo);}f();");
   }
   @Test public void ternarize16() {
     trimming("String res = m;  int num1, num2, num3;  if (m.equals(f()))   num2 = 2; ").to("");
@@ -2210,23 +2205,23 @@ import static org.hamcrest.CoreMatchers.is;
         "    n2 = 2;").to("int n1, n2 = d ? 2: 0, n3;");
   }
   @Test public void ternarize21() {
-    trimming("if (s.equals(532)){    System.out.println(gG);    System.out.append(kKz); ").to("");
+    trimming("if (s.equals(532)){    S.out.println(gG);    S.out.append(kKz);} f(); ").to("");
   }
   @Test public void ternarize21a() {
     trimming("   if (s.equals(known)){\n" + //
-        "     System.out.println(gG);\n" + //
+        "     S.out.println(gG);\n" + //
         "   } else {\n" + //
-        "     System.out.append(kKz);\n" + //
+        "     S.out.append(kKz);\n" + //
         "   }").to("");
   }
   @Test public void ternarize22() {
-    trimming("int a=0;   if (s.equals(532)){    System.console();    a=3; ").to("");
+    trimming("int a=0;   if (s.equals(532)){    S.console();    a=3;} f(); ").to("");
   }
   @Test public void ternarize26() {
-    trimming("int a=0;   if (s.equals(532)){    a+=2;   a-=2; ").to("");
+    trimming("int a=0;   if (s.equals(532)){    a+=2;   a-=2; } f(); ").to("");
   }
   @Test public void ternarize29() {
-    trimming("int a=0;   int b=0;   a=5;   if (a==3){    a=4; }").to("");
+    trimming("int a=0;   int b=0;   a=5;   if (a==3){    a=4; } f();").to("");
   }
   @Test public void ternarize33() {
     trimming("int a, b=0;   if (b==3){    a=4; ").to("");
@@ -2235,10 +2230,10 @@ import static org.hamcrest.CoreMatchers.is;
     trimming("int a,b=0,c=0;a=4;if(c==3){b=2;}").to("int a=4,b=0,c=0;if(c==3){b=2;}");
   }
   @Test public void ternarize36() {
-    trimming("int a,b=0,c=0;a=4;if (c==3){  b=2;   a=6; }").to("int a=4,b=0,c=0;if(c==3){b=2;a=6;}");
+    trimming("int a,b=0,c=0;a=4;if (c==3){  b=2;   a=6; } f();").to("int a=4,b=0,c=0;if(c==3){b=2;a=6;} f();");
   }
   @Test public void ternarize38() {
-    trimming("int a, b=0;if (b==3){    a+=2+r();a-=6;}").to("");
+    trimming("int a, b=0;if (b==3){    a+=2+r();a-=6;} f();").to("");
   }
   @Test public void ternarize41() {
     trimming("int a,b,c,d;a = 3;b = 5; d = 7;if (a == 4)while (b == 3) c = a; else while (d == 3)c =a*a; ")
@@ -2272,31 +2267,32 @@ import static org.hamcrest.CoreMatchers.is;
             "     }").to("int a,b=0;if(m.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
   }
   @Test public void ternarize49() {
-    trimming("if (s.equals(532)){ System.out.println(gG); System.out.append(kKz); }").to("");
+    trimming("if (s.equals(532)){ S.out.println(gG); S.out.append(kKz); } f();").to("");
   }
   @Test public void ternarize49a() {
     trimming(""//
         + "    int size = 0;\n"//
         + "   if (m.equals(153)==true)\n"//
         + "     for (int i=0; i < size; i++){\n"//
-        + "       System.out.println(HH);\n"//
+        + "       S.out.println(HH);\n"//
         + "     }\n"//
         + "   else\n"//
         + "     for (int i=0; i < size; i++){\n"//
-        + "       System.out.append('f');\n"//
+        + "       S.out.append('f');\n"//
         + "     }")
             .to(""//
                 + "int size=0;"//
                 + "if(m.equals(153))"//
                 + "for(int i=0;i<size;++i){"//
-                + "  System.out.println(HH);"//
+                + "  S.out.println(HH);"//
                 + "} "//
                 + "else "//
                 + "  for(int i=0;i<size;++i){"//
-                + "    System.out.append('f');" + "  }");
+                + "    S.out.append('f');" + "  }");
   }
   @Test public void ternarize52() {
-    trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {    c = d;c = e;").to("");
+    trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {c = d;c = e;} f();")//
+        .to("");
   }
   @Test public void ternarize53() {
     trimming("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;")
@@ -2309,9 +2305,8 @@ import static org.hamcrest.CoreMatchers.is;
         "  to.put(key, missing(key, a) ? Z2 : get(key, a));").to("to.put(key,key.equals(markColumn)?a.toString():missing(key,a)?Z2:get(key,a));");
   }
   @Test public void ternarize56() {
-    trimming(
-        "if (target == 0) {progressBarCurrent.setString(X); progressBarCurrent.setValue(0); progressBarCurrent.setString(current + \"/\"+ target); progressBarCurrent.setValue(current * 100 / target);")
-            .to("if(target==0){progressBarCurrent.setString(X);progressBarCurrent.setValue(0);progressBarCurrent.setString(current+\"/\"+target);progressBarCurrent.setValue(100*current / target);");
+    trimming("if (target == 0) {p.f(X); p.v(0); p.f(q +  target); p.v(q * 100 / target); } f();") //
+        .to("if(target==0){p.f(X);p.v(0);p.f(q+target);p.v(100*q / target); } f();");
   }
   @Test public void ternarizeIntoSuperMethodInvocation() {
     trimming("a ? super.f(a, b, c) : super.f(a, x, c)").to("super.f(a, a ? b : x, c)");

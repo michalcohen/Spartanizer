@@ -13,9 +13,6 @@ import org.spartan.refactoring.utils.Rewrite;
  * @since 2015-08-26
  */
 public class SuperConstructorInvocationRemover extends Wring<SuperConstructorInvocation> {
-  @Override boolean eligible(@SuppressWarnings("unused") final SuperConstructorInvocation _) {
-    return true;
-  }
   @Override boolean scopeIncludes(final SuperConstructorInvocation i) {
     return i.arguments().isEmpty();
   }

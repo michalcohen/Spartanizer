@@ -25,9 +25,6 @@ public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> {
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Merge conditionals of nested if staement";
   }
-  @Override boolean eligible(@SuppressWarnings("unused") final IfStatement _) {
-    return true;
-  }
   @Override boolean scopeIncludes(final IfStatement s) {
     return make(s) != null;
   }

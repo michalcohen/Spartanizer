@@ -26,8 +26,29 @@ import org.spartan.utils.Wrapper;
  * @since 2015-07-09
  */
 public abstract class Wring<N extends ASTNode> {
+  public static Wrapper<Expression>[] wrap(final Expression[] ts) {
+    @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
+    int i = 0;
+    for (final Expression t : ts)
+      $[i++] = new Wrapper<>(t);
+    return $;
+  }
   @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Expression... es) {
     inlineInto(r, g, n, replacement, wrap(es));
+  }
+  @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
+    for (final Wrapper<Expression> e : es)
+      inlineIntoSingleton(r, g, n, replacement, e);
+  }
+  static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
+    return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);
+  }
+  static Expression[] strip(final Wrapper<Expression>[] ws) {
+    final Expression[] $ = new Expression[ws.length];
+    int i = 0;
+    for (final Wrapper<Expression> w : ws)
+      $[i++] = w.get();
+    return $;
   }
   private static void inlineIntoSingleton(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression> e) {
     final Expression oldExpression = e.get();
@@ -36,20 +57,6 @@ public abstract class Wring<N extends ASTNode> {
     r.replace(oldExpression, newExpression, g);
     for (final Expression use : Search.findUses(n).in(newExpression))
       r.replace(use, new Plant(replacement).into(use.getParent()), g);
-  }
-  static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
-    return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);
-  }
-  @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
-    for (final Wrapper<Expression> e : es)
-      inlineIntoSingleton(r, g, n, replacement, e);
-  }
-  static Expression[] strip(final Wrapper<Expression>[] ws) {
-    final Expression[] $ = new Expression[ws.length];
-    int i = 0;
-    for (final Wrapper<Expression> w : ws)
-      $[i++] = w.get();
-    return $;
   }
   abstract String description(N n);
   /**
@@ -60,15 +67,10 @@ public abstract class Wring<N extends ASTNode> {
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object.
    */
-  abstract boolean eligible(final N n);
-  abstract Rewrite make(N n);
-  public static Wrapper<Expression>[] wrap(final Expression[] ts) {
-    @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
-    int i = 0;
-    for (final Expression t : ts)
-      $[i++] = new Wrapper<>(t);
-    return $;
+  boolean eligible(@SuppressWarnings("unused") final N n) {
+    return true;
   }
+  abstract Rewrite make(N n);
   Rewrite make(final N n, @SuppressWarnings("unused") final ExclusionManager exclude) {
     return make(n);
   }
@@ -96,7 +98,9 @@ public abstract class Wring<N extends ASTNode> {
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object
    */
-  abstract boolean scopeIncludes(N n);
+  boolean scopeIncludes(final N n) {
+    return make(n, null) != null;
+  }
 
   static abstract class AbstractSorting extends ReplaceCurrentNode<InfixExpression> {
     @Override final String description(final InfixExpression e) {
@@ -116,7 +120,7 @@ public abstract class Wring<N extends ASTNode> {
     }
   }
 
-  static abstract class InfixSortingFromSecond extends AbstractSorting {
+  static abstract class InfixSortingOfCDR extends AbstractSorting {
     @Override boolean eligible(final InfixExpression e) {
       final List<Expression> es = Extract.allOperands(e);
       es.remove(0);
@@ -133,9 +137,6 @@ public abstract class Wring<N extends ASTNode> {
   }
 
   static abstract class ReplaceCurrentNode<N extends ASTNode> extends Wring<N> {
-    @Override boolean eligible(@SuppressWarnings("unused") final N _) {
-      return true;
-    }
     @Override final Rewrite make(final N n) {
       return !eligible(n) ? null : new Rewrite(description(n), n) {
         @Override public void go(final ASTRewrite r, final TextEditGroup g) {
@@ -150,9 +151,6 @@ public abstract class Wring<N extends ASTNode> {
   }
 
   static abstract class ReplaceToNextStatement<N extends ASTNode> extends Wring<N> {
-    @Override boolean eligible(@SuppressWarnings("unused") final N _) {
-      return true;
-    }
     abstract ASTRewrite go(ASTRewrite r, N n, Statement nextStatement, TextEditGroup g);
     @Override final Rewrite make(final N n) {
       return make(n, null);
