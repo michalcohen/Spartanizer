@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.wring.LocalNameReplacer.LocalNameReplacerWithValue;
 
 /**
  * A {@link Wring} to convert <code>int a = 2;
@@ -29,13 +30,14 @@ public final class DeclarationInitializerIfAssignment extends Wring.VariableDecl
     if (condition == null)
       return null;
     final Assignment a = Extract.assignment(then(s));
-    final NameInliner i = new NameInliner(n, r, g);
-    if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a))
-        || !i.canInlineInto(initializer, condition, right(a)))
+    if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a)))
+      return null;
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
+    if (!i.canInlineInto(condition, right(a)))
       return null;
     final ConditionalExpression newInitializer = Subject.pair(right(a), initializer).toCondition(condition);
     r.replace(initializer, newInitializer, g);
-    i.inlineInto(initializer, then(newInitializer), newInitializer.getExpression());
+    i.inlineInto(then(newInitializer), newInitializer.getExpression());
     r.remove(s, g);
     return r;
   }

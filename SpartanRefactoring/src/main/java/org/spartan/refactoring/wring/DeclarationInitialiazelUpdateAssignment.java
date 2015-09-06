@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.wring.LocalNameReplacer.LocalNameReplacerWithValue;
 
 /**
  * A {@link Wring} to convert <code>int a;
@@ -31,11 +32,11 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     if (o == ASSIGN)
       return null;
     final InfixExpression alternateInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
-    final NameInliner i = new NameInliner(n, r, g);
-    if (!i.canInlineInto(initializer, alternateInitializer))
+    final LocalNameReplacerWithValue i = new LocalNameReplacer(n, r, g).usingInitializer(initializer);
+    if (!i.canInlineInto(alternateInitializer))
       return null;
     r.replace(initializer, alternateInitializer, g);
-    i.inlineInto(initializer, alternateInitializer);
+    i.inlineInto(alternateInitializer);
     r.remove(nextStatement, g);
     return r;
   }
