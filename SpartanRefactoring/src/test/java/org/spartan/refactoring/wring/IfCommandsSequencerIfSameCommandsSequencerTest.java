@@ -24,7 +24,7 @@ import org.spartan.refactoring.wring.AbstractWringTest.Wringed;
 import org.spartan.utils.Utils;
 
 /**
- * Unit tests for {@link IfCommandsSequencerIfSameCommandsSequencer}.
+ * Unit tests for {@link IfFooSequencerIfFooSameSequencer}.
  *
  * @author Yossi Gil
  * @since 2014-07-13
@@ -32,7 +32,7 @@ import org.spartan.utils.Utils;
 @SuppressWarnings({ "javadoc", "static-method" }) //
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class IfCommandsSequencerIfSameCommandsSequencerTest {
-  static final Wring<IfStatement> WRING = new IfCommandsSequencerIfSameCommandsSequencer();
+  static final Wring<IfStatement> WRING = new IfFooSequencerIfFooSameSequencer();
   @Test public void checkFirstIfStatement1() {
     final String s = "if (a) return b; if (b) return b;";
     final ASTNode n = As.STATEMENTS.ast(s);

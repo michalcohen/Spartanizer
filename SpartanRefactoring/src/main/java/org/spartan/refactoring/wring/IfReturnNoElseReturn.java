@@ -12,20 +12,8 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert <code>if (x) {
- *   ;
- *   f();
- *   return a;
- * } else {
- *   ;
- *   g();
- *   {
- *   }
- * }</code> into <code>if (x) {
- *   f();
- *   return a;
- * }
- * g();</code>
+ * A {@link Wring} to convert <code>if (x) return foo(); return bar();</code>
+ * into <code>return a ? foo (): bar();</code> return a; } g();</code>
  *
  * @author Yossi Gil
  * @since 2015-07-29
@@ -37,8 +25,7 @@ public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfS
     return Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(Extract.expression(then), Extract.expression(elze)).toCondition(s.getExpression())).toReturn(), g);
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    final ReturnStatement then = Extract.returnStatement(then(s));
-    return Wrings.emptyElse(s) && then != null && Extract.nextReturn(s) != null;
+    return Wrings.emptyElse(s) && Extract.returnStatement(then(s)) != null && Extract.nextReturn(s) != null;
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Consolidate into a single 'return'";

@@ -15,18 +15,9 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.*;
 
 /**
- * A {@link Wring} to convert <code>if (a) {
-i++;
-f();
-} else {
-j++;
-f();
-}</code> into <code>if (a) {
-i++;
-} else {
-j++;
-}
-f();</code>
+ * A {@link Wring} to convert
+ * <code>if (X) {bar(); foo();} else {baz(); foo();}</code> into
+ * <code>if (X) bar(); else baz(); foo();</code>
  *
  * @author Yossi Gil
  * @since 2015-09-05

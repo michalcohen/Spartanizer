@@ -15,8 +15,8 @@ import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.refactoring.utils.Subject;
 
 /**
- * A {@link Wring} to convert <code>if (x) if (a) f(); </code> into
- * <code>if (x && a)  f();</code>
+ * A {@link Wring} to convert <code>if (x) if (a) f();</code> into
+ * <code>if (x && a) f();</code>
  *
  * @author Yossi Gil
  * @since 2015-09-01

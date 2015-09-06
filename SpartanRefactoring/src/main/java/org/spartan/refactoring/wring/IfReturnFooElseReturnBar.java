@@ -29,6 +29,6 @@ public final class IfReturnFooElseReturnBar extends Wring.ReplaceCurrentNode<IfS
     return s != null && Extract.returnExpression(then(s)) != null && Extract.returnExpression(elze(s)) != null;
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
-    return "Replace if statement with a single return statement";
+    return "Replace if with a return of a conditional statement";
   }
 }
