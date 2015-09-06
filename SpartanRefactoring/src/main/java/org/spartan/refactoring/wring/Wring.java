@@ -26,37 +26,12 @@ import org.spartan.utils.Wrapper;
  * @since 2015-07-09
  */
 public abstract class Wring<N extends ASTNode> {
-  public static Wrapper<Expression>[] wrap(final Expression[] ts) {
-    @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
-    int i = 0;
-    for (final Expression t : ts)
-      $[i++] = new Wrapper<>(t);
-    return $;
-  }
-  @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Expression... es) {
-    inlineInto(r, g, n, replacement, wrap(es));
-  }
-  @SafeVarargs protected static void inlineInto(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression>... es) {
-    for (final Wrapper<Expression> e : es)
-      inlineIntoSingleton(r, g, n, replacement, e);
-  }
-  static boolean canInlineInto(final SimpleName n, final Expression replacement, final Expression... es) {
-    return !Search.findsDefinitions(n).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(n).in(es).size() <= 1);
-  }
   static Expression[] strip(final Wrapper<Expression>[] ws) {
     final Expression[] $ = new Expression[ws.length];
     int i = 0;
     for (final Wrapper<Expression> w : ws)
       $[i++] = w.get();
     return $;
-  }
-  private static void inlineIntoSingleton(final ASTRewrite r, final TextEditGroup g, final SimpleName n, final Expression replacement, final Wrapper<Expression> e) {
-    final Expression oldExpression = e.get();
-    final Expression newExpression = duplicate(e.get());
-    e.set(newExpression);
-    r.replace(oldExpression, newExpression, g);
-    for (final Expression use : Search.findUses(n).in(newExpression))
-      r.replace(use, new Plant(replacement).into(use.getParent()), g);
   }
   abstract String description(N n);
   /**
@@ -241,5 +216,44 @@ public abstract class Wring<N extends ASTNode> {
         exclude.exclude(f.getParent());
       return $;
     }
+  }
+}
+
+final class NameInliner {
+  public NameInliner(final SimpleName name) {
+    this(name, null, null);
+  }
+  public NameInliner(final SimpleName name, final ASTRewrite rewriter, final TextEditGroup editGroup) {
+    this.name = name;
+    this.rewriter = rewriter;
+    this.editGroup = editGroup;
+  }
+  private final SimpleName name;
+  private final ASTRewrite rewriter;
+  private final TextEditGroup editGroup;
+  @SafeVarargs protected final void inlineInto(final Expression replacement, final Expression... es) {
+    inlineInto(replacement, wrap(es));
+  }
+  boolean canInlineInto(final Expression replacement, final Expression... es) {
+    return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(replacement) || Search.findUses(name).in(es).size() <= 1);
+  }
+  @SafeVarargs protected final void inlineInto(final Expression replacement, final Wrapper<Expression>... es) {
+    for (final Wrapper<Expression> e : es)
+      inlineIntoSingleton(replacement, e);
+  }
+  private void inlineIntoSingleton(final Expression replacement, final Wrapper<Expression> e) {
+    final Expression oldExpression = e.get();
+    final Expression newExpression = duplicate(e.get());
+    e.set(newExpression);
+    rewriter.replace(oldExpression, newExpression, editGroup);
+    for (final Expression use : Search.findUses(name).in(newExpression))
+      rewriter.replace(use, new Plant(replacement).into(use.getParent()), editGroup);
+  }
+  public static Wrapper<Expression>[] wrap(final Expression[] ts) {
+    @SuppressWarnings("unchecked") final Wrapper<Expression>[] $ = new Wrapper[ts.length];
+    int i = 0;
+    for (final Expression t : ts)
+      $[i++] = new Wrapper<>(t);
+    return $;
   }
 }

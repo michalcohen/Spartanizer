@@ -24,9 +24,10 @@ public final class DeclarationInitializerReturnExpression extends Wring.Variable
     if (s == null)
       return null;
     final Expression returnValue = Extract.expression(s);
-    if (returnValue == null || same(n, returnValue) || !canInlineInto(n, initializer, returnValue))
+    final NameInliner i = new NameInliner(n, r, g);
+    if (returnValue == null || same(n, returnValue) || !i.canInlineInto(initializer, returnValue))
       return null;
-    inlineInto(r, g, n, initializer, returnValue);
+    i.inlineInto(initializer, returnValue);
     remove(f, r, g);
     return r;
   }

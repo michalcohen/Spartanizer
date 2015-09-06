@@ -29,12 +29,13 @@ public final class DeclarationInitializerIfAssignment extends Wring.VariableDecl
     if (condition == null)
       return null;
     final Assignment a = Extract.assignment(then(s));
+    final NameInliner i = new NameInliner(n, r, g);
     if (a == null || !same(left(a), n) || a.getOperator() != Assignment.Operator.ASSIGN || doesUseForbiddenSiblings(f, condition, right(a))
-        || !canInlineInto(n, initializer, condition, right(a)))
+        || !i.canInlineInto(initializer, condition, right(a)))
       return null;
     final ConditionalExpression newInitializer = Subject.pair(right(a), initializer).toCondition(condition);
     r.replace(initializer, newInitializer, g);
-    inlineInto(r, g, n, initializer, then(newInitializer), newInitializer.getExpression());
+    i.inlineInto(initializer, then(newInitializer), newInitializer.getExpression());
     r.remove(s, g);
     return r;
   }

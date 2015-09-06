@@ -24,10 +24,13 @@ public final class DeclarationInitialiazerAssignment extends Wring.VariableDecla
     if (a == null || !same(n, left(a)) || a.getOperator() != ASSIGN)
       return null;
     final Expression inlinedInitializer = duplicate(right(a));
-    if (doesUseForbiddenSiblings(f, inlinedInitializer) || !canInlineInto(n, initializer, inlinedInitializer))
+    if (doesUseForbiddenSiblings(f, inlinedInitializer))
+      return null;
+    final NameInliner i = new NameInliner(n, r, g);
+    if (!i.canInlineInto(initializer, inlinedInitializer))
       return null;
     r.replace(initializer, inlinedInitializer, g);
-    inlineInto(r, g, n, initializer, inlinedInitializer);
+    i.inlineInto(initializer, inlinedInitializer);
     r.remove(Extract.statement(a), g);
     return r;
   }

@@ -31,10 +31,11 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     if (o == ASSIGN)
       return null;
     final InfixExpression alternateInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
-    if (!canInlineInto(n, initializer, alternateInitializer))
+    final NameInliner i = new NameInliner(n, r, g);
+    if (!i.canInlineInto(initializer, alternateInitializer))
       return null;
     r.replace(initializer, alternateInitializer, g);
-    inlineInto(r, g, n, initializer, alternateInitializer);
+    i.inlineInto(initializer, alternateInitializer);
     r.remove(nextStatement, g);
     return r;
   }

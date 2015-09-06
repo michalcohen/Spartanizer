@@ -31,10 +31,11 @@ public final class DeclarationInitializerReturnUpdateAssignment extends Wring.Va
     if (o == ASSIGN)
       return null;
     final Expression alternateReturn = assignmentAsExpression(a);
-    if (!canInlineInto(n, initializer, alternateReturn))
+    final NameInliner i = new NameInliner(n, r, g);
+    if (!i.canInlineInto(initializer, alternateReturn))
       return null;
     r.replace(a, alternateReturn, g);
-    inlineInto(r, g, n, initializer, alternateReturn);
+    i.inlineInto(initializer, alternateReturn);
     remove(f, r, g);
     return r;
   }

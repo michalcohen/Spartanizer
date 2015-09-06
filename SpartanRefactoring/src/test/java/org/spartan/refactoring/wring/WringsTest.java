@@ -53,6 +53,6 @@ import org.spartan.refactoring.utils.*;
     assertThat(Search.findsDefinitions(n).in(alternateInitializer), is(false)); // &&
     assertThat(Is.sideEffectFree(initializer), is(false));
     assertThat(Search.findUses(n).in(alternateInitializer).size(), is(2));
-    assertThat(Wring.canInlineInto(n, initializer, alternateInitializer), is(false));
+    assertThat(new NameInliner(n).canInlineInto(n, initializer, alternateInitializer), is(false));
   }
 }
