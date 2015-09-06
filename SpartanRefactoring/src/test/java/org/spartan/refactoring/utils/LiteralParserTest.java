@@ -80,5 +80,6 @@ import org.spartan.refactoring.utils.LiteralParser.Kinds;
   @Test public void doubleBinaryLiterals() {
     assertThat(new LiteralParser("0x1.fffffffffffffP+1023").kind(), is(Kinds.DOUBLE.ordinal()));
     assertThat(new LiteralParser("0x1.0p-1022").kind(), is(Kinds.DOUBLE.ordinal()));
+    assertThat(new LiteralParser("0x0.0000000000001P-1022").kind(), is(Kinds.DOUBLE.ordinal()));
   }
 }
