@@ -926,19 +926,6 @@ import org.spartan.utils.Wrapper;
   @Test public void ifWithCommonNotInBlockNothingLeft() {
     trimming("for (;;) if (a) {i++;j++;} else { i++;j++; }").to("for(;;){i++;j++;}");
   }
-  Object a() {
-    class a {
-      a a;;
-      Object a() {
-        return a;
-      }
-    }
-    final a a = new a();
-    if (a instanceof a)
-      new Object();
-    a();
-    return a;
-  }
   @Ignore @Test public void inline00() {
     trimming("" + //
         "  Object a() { " + //

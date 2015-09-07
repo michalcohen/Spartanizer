@@ -102,11 +102,10 @@ final class UsesCollector extends HidingDepth {
     return declaredBy(f.getName());
   }
   private boolean declaredBy(final SimpleName n) {
-    if (hit(n)) {
-      hide();
-      return true;
-    }
-    return false;
+    if (!hit(n))
+      return false;
+    hide();
+    return true;
   }
   private boolean declaredIn(final VariableDeclarationFragment f) {
     return declaredBy(f.getName());
