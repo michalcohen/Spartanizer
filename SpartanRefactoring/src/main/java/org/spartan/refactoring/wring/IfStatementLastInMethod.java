@@ -19,10 +19,7 @@ public class IfStatementLastInMethod extends Wring<IfStatement> {
     if (Wrings.emptyThen(s) || !Wrings.emptyElse(s) || Extract.statements(then(s)).size() < 2)
       return null;
     final Block b = asBlock(s.getParent());
-    if (b == null)
-      return null;
-    @SuppressWarnings("unchecked") final Object last = last(b.statements());
-    return last != s || !(b.getParent() instanceof MethodDeclaration) ? null : new Rewrite(description(s), s) {
+    return b == null || last(b.statements()) != s || !(b.getParent() instanceof MethodDeclaration) ? null : new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         Wrings.insertAfter(s, Extract.statements(then(s)), r, g);
         final IfStatement newIf = duplicate(s);

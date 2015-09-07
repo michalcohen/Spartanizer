@@ -82,9 +82,7 @@ final class UsesCollector extends HidingDepth {
       this.parent = parent;
     }
     @Override public boolean visit(final FieldDeclaration f) {
-      if (f.getParent() != parent)
-        return false;
-      return !hidden() && !declaredIn(f);
+      return f.getParent() == parent && !hidden() && !declaredIn(f);
     }
   }
   private final List<Expression> result;

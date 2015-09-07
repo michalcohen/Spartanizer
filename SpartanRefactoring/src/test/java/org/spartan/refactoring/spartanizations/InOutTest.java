@@ -51,15 +51,16 @@ public class InOutTest {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(FileTestUtils.makeInFile(from));
     assertEquals(u.toString(), 1, countOpportunities(s, u));
     TESTUtils.assertOneOpportunity(s, As.string(from));
+    final String expected;
+    final Document rewrite;
     if (!from.getName().endsWith(FileTestUtils.testSuffix)) {
-      final String expected = As.string(to);
-      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(from)));
-      assertSimilar(expected, rewrite.get());
+      expected = As.string(to);
+      rewrite = TESTUtils.rewrite(s, u, new Document(As.string(from)));
     } else {
-      final String expected = As.string(FileTestUtils.makeOutFile(to));
-      final Document rewrite = TESTUtils.rewrite(s, u, new Document(As.string(FileTestUtils.makeInFile(from))));
-      assertSimilar(expected, rewrite.get());
+      expected = As.string(FileTestUtils.makeOutFile(to));
+      rewrite = TESTUtils.rewrite(s, u, new Document(As.string(FileTestUtils.makeInFile(from))));
     }
+    assertSimilar(expected, rewrite.get());
   }
   /** An object describing the required transformation */
   @Parameter(0) public Spartanization spartanization;

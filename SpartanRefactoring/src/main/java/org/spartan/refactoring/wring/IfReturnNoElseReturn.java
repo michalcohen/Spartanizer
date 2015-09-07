@@ -20,9 +20,10 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfStatement> {
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
-    final ReturnStatement then = Extract.returnStatement(then(s));
-    final ReturnStatement elze = asReturnStatement(nextStatement);
-    return Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(Extract.expression(then), Extract.expression(elze)).toCondition(s.getExpression())).toReturn(), g);
+    return Wrings.replaceTwoStatements(r, s,
+        Subject.operand(Subject.pair(Extract.expression(Extract.returnStatement(then(s))), Extract.expression(asReturnStatement(nextStatement))).toCondition(s.getExpression()))
+            .toReturn(),
+        g);
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return Wrings.emptyElse(s) && Extract.returnStatement(then(s)) != null && Extract.nextReturn(s) != null;

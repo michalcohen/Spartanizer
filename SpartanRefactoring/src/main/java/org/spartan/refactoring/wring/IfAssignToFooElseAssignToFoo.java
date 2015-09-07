@@ -19,10 +19,7 @@ public final class IfAssignToFooElseAssignToFoo extends Wring.ReplaceCurrentNode
   @Override Statement replacement(final IfStatement s) {
     final Assignment then = Extract.assignment(then(s));
     final Assignment elze = Extract.assignment(elze(s));
-    if (!compatible(then, elze))
-      return null;
-    final ConditionalExpression e = Subject.pair(right(then), right(elze)).toCondition(s.getExpression());
-    return Subject.pair(left(then), e).toStatement(then.getOperator());
+    return !compatible(then, elze) ? null : Subject.pair(left(then), Subject.pair(right(then), right(elze)).toCondition(s.getExpression())).toStatement(then.getOperator());
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && compatible(Extract.assignment(then(s)), Extract.assignment(elze(s)));

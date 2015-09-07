@@ -1168,6 +1168,10 @@ import org.spartan.utils.Wrapper;
     trimming("int f() { int f = 0; for (int i: X) $ += f(i); return f;}")//
         .to("int $(){int $=0;for(int i:X)$+=f(i);return $;}");
   }
+  @Test public void issue51() {
+    trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
+        .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
+  }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");
   }
@@ -1812,6 +1816,28 @@ import org.spartan.utils.Wrapper;
   @Test public void removeSuperWithStatemen() {
     trimming("class T { T() { super(); a++;}").to("class T { T() { ++a;}");
   }
+  @Test public void renameToDollarActual() {
+    trimming(//
+        "        public static DeletePolicy fromInt(int initialSetting) {\n" + //
+            "            for (DeletePolicy policy: values()) {\n" + //
+            "                if (policy.setting == initialSetting) {\n" + //
+            "                    return policy;\n" + //
+            "                }\n" + //
+            "            }\n" + //
+            "            throw new IllegalArgumentException(\"DeletePolicy \" + initialSetting + \" unknown\");\n" + //
+            "        }").to(//
+                "        public static DeletePolicy fromInt(int initialSetting) {\n" + //
+                    "            for (DeletePolicy $: values()) {\n" + //
+                    "                if ($.setting == initialSetting) {\n" + //
+                    "                    return $;\n" + //
+                    "                }\n" + //
+                    "            }\n" + //
+                    "            throw new IllegalArgumentException(\"DeletePolicy \" + initialSetting + \" unknown\");\n" + //
+                    "        }");
+  }
+  @Test public void renameToDollarEnhancedFor() {
+    trimming("int f() { for (a: as) return a; }").to("");
+  }
   @Test public void replaceInitializationInReturn() {
     trimming("int a = 3; return a + 4;").to("return 3 + 4;");
   }
@@ -2084,10 +2110,6 @@ import org.spartan.utils.Wrapper;
   @Test public void simpleBooleanMethod() {
     trimming("boolean f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
         .to("boolean f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
-  }
-  @Test public void simpleMethod() {
-    trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
-        .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
   }
   @Test public void simplifyBlockComplexEmpty0() {
     trimming("{}").to("/* empty */    ");
