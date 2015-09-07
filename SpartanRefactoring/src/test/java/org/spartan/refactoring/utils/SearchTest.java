@@ -6,7 +6,6 @@ import static org.spartan.refactoring.utils.Into.*;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Search.Searcher;
 
@@ -27,7 +26,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
   @Test public void asInstanceof2() {
     assertThat(Search.forUses(n).in(s("b = x instanceof n;")).size(), is(0));
   }
-  @Ignore @Test public void awful() {
+  @Test public void awfulOriginal() {
     assertThat(Search.forUses(n)
         .in(d("Object n() {\n" + //
             "    class n {\n" + //
@@ -42,27 +41,158 @@ import org.eclipse.jdt.core.dom.SimpleName;
             "    n();\n" + //
             "    return n;\n" + //
             "  }"))
-        .size(), is(2));
+        .size(), is(0));
   }
-  @Test public void awful1() {
+  @Test public void awful() {
     assertThat(Search.forUses(n)
         .in(d("Object n() {\n" + //
-            "    final n = null; \n" + //
+            "    class n {\n" + //
+            "      n n;;\n" + //
+            "      Object n() {\n" + //
+            "        return n;\n" + //
+            "      }\n" + //
+            "    }\n" + //
+            "    if (n != n) return n;\n" + //
+            "    final n n = new n();\n" + //
             "    if (n instanceof n)\n" + //
             "      new Object();\n" + //
             "    n();\n" + //
             "    return n;\n" + //
             "  }"))
+        .size(), is(3));
+  }
+  @Test public void awfulWithClassAfter() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    if (n != n) return n;\n" + //
+            "    final n n = new n();\n" + //
+            "    if (n instanceof n)\n" + //
+            "      new Object();\n" + //
+            "    n();\n" + //
+            "    class n {\n" + //
+            "      n n;;\n" + //
+            "      Object n() {\n" + //
+            "        return n;\n" + //
+            "      }\n" + //
+            "    }\n" + //
+            "    return n;\n" + //
+            "  }"))
+        .size(), is(3));
+  }
+  @Test public void awfulWithClassAfterNoRedefinition() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    if (n != n) return n; // 3\n" + //
+            "    if (n instanceof n) // 1\n" + //
+            "      new Object();\n" + //
+            "    n(); // 0\n " + //
+            "    class n {\n" + //
+            "      n n;;\n" + //
+            "      Object n() {\n" + //
+            "        return n;\n" + //
+            "      }\n" + //
+            "    }\n" + //
+            "    return n; // 1\n" + //
+            "  }"))
+        .size(), is(5));
+  }
+  @Test public void awfulClassDestroyingFurtherUses() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    class n {\n" + //
+            "      n n;;\n" + //
+            "    }\n" + //
+            "    return n; // 1\n" + //
+            "  }"))
         .size(), is(1));
   }
+  @Test public void awfulVariantWithClass() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    class n {\n" + //
+            "      n n;;\n" + //
+            "      Object n() {\n" + //
+            "        return n;\n" + //
+            "      }\n" + //
+            "    }\n" + //
+            "    if (n != n) return n;\n" + //
+            "  }"))
+        .size(), is(3));
+  }
+  @Test public void awfulVariantWithoutClass() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    if (n != n) return n;\n" + //
+            "  }"))
+        .size(), is(3));
+  }
+  @Test public void awfulShort() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    if (n != n) return n;\n" + //
+            "  }"))
+        .size(), is(3));
+  }
+  @Test public void awfulShortWithParameter() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n(int n) {\n" + //
+            "    if (n != n) return n;\n" + //
+            "  }"))
+        .size(), is(0));
+  }
+  @Test public void awfulNestedClass() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    class n {\n" + //
+            "      n n;;\n" + //
+            "      Object n() {\n" + //
+            "        return n;\n" + //
+            "      }\n" + //
+            "    }\n" + //
+            "  }"))
+        .size(), is(0));
+  }
+  @Test public void awfulNestedClassVariableAfter() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    class n {\n" + //
+            "      Object n() {\n" + //
+            "        return n;\n" + //
+            "      }\n" + //
+            "      n n;;\n" + //
+            "    }\n" + //
+            "  }"))
+        .size(), is(0));
+  }
+  @Test public void awful1() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    final int n = null; \n" + //
+            "    if (n instanceof n)\n" + //
+            "      new Object();\n" + //
+            "    n();\n" + //
+            "    return n;\n" + //
+            "  }"))
+        .size(), is(0));
+  }
   @Test public void awful2() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    if (n instanceof n)\n" + //
+            "      new Object();\n" + //
+            "    n();\n" + //
+            "    return n;\n" + //
+            "  }"))
+        .size(), is(2));
+  }
+  @Test public void awful3() {
     assertThat(Search.forUses(n)
         .in(d("Object f() {\n" + //
             "    return n;\n" + //
             "  }"))
         .size(), is(1));
   }
-  @Ignore @Test public void awfulA() {
+  @Test public void awfulA() {
     assertThat(Search.forUses(n)
         .in(d("Object n() {\n" + //
             "    class n {\n" + //
@@ -81,7 +211,31 @@ import org.eclipse.jdt.core.dom.SimpleName;
             "      n n;;\n" + //
             "    }\n" + //
             "  }"))
-        .size(), is(2));
+        .size(), is(0));
+  }
+  @Test public void awfulC() {
+    assertThat(Search.forUses(n)
+        .in(d("Object n() {\n" + //
+            "    class n {\n" + //
+            "    }\n" + //
+            "  }"))
+        .size(), is(0));
+  }
+  @Test public void awfulD() {
+    assertThat(Search.forUses(n)
+        .in(d("Object a() {\n" + //
+            "    class n {\n" + //
+            "    }\n" + //
+            "  }"))
+        .size(), is(0));
+  }
+  @Test public void awfulE() {
+    assertThat(Search.forUses(n).in(d("Object n() {\n" + //
+        "  }")).size(), is(0));
+  }
+  @Test public void awfulF() {
+    assertThat(Search.forUses(n).in(d("Object a() {\n" + //
+        "  }")).size(), is(0));
   }
   @Test public void declarationVoidsUse() {
     assertThat(Search.forUses(n).in(s("final A n = n * 2; a = n;")).size(), is(0));
