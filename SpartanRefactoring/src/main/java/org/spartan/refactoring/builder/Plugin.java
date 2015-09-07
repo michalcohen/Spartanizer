@@ -1,5 +1,13 @@
 package org.spartan.refactoring.builder;
 
+import static org.spartan.utils.Utils.append;
+
+import java.util.Arrays;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -8,6 +16,8 @@ import org.osgi.framework.BundleContext;
 /**
  * @author Artium Nihamkin
  * @since 2013/01/01
+ * @author Ofir Elmakias
+ * @since 2015/09/06 (Updated - auto initialization of the plugin)
  */
 public class Plugin extends AbstractUIPlugin {
   private static Plugin plugin;
@@ -19,6 +29,7 @@ public class Plugin extends AbstractUIPlugin {
   }
   @Override public void start(final BundleContext context) throws Exception {
     super.start(context);
+    applyPluginToAllProjects();
   }
   @Override public void stop(final BundleContext context) throws Exception {
     plugin = null;
@@ -37,5 +48,29 @@ public class Plugin extends AbstractUIPlugin {
    */
   public static void log(final Throwable t) {
     getDefault().getLog().log(new Status(IStatus.ERROR, "org.spartan.refactoring", 0, t.getMessage(), t));
+  }
+  /**
+   * Add nature to all opened projects
+   */
+  private static void applyPluginToAllProjects() {
+    final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+    for (final IProject p : projects)
+      try {
+        if (p.isOpen())
+          addNature(p);
+      } catch (final CoreException e) {
+        e.printStackTrace();
+      }
+  }
+  /**
+   * Add nature to one project
+   */
+  private static void addNature(final IProject p) throws CoreException {
+    final IProjectDescription description = p.getDescription();
+    final String[] natures = description.getNatureIds();
+    if (Arrays.asList(natures).contains(Nature.NATURE_ID))
+      return; // Already got the nature
+    description.setNatureIds(append(natures, Nature.NATURE_ID));
+    p.setDescription(description, null);
   }
 }
