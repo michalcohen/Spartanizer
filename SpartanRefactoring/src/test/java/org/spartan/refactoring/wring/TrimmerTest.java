@@ -1166,7 +1166,7 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void issue49() {
     trimming("int f() { int f = 0; for (int i: X) $ += f(i); return f;}")//
-        .to("int $(){int $=0;for(int i:X)$+=f(i);return $;}");
+        .to("int f(){int $=0;for(int i:X)$+=f(i);return $;}");
   }
   @Test public void issue51() {
     trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
@@ -1836,7 +1836,7 @@ import org.spartan.utils.Wrapper;
                     "        }");
   }
   @Test public void renameToDollarEnhancedFor() {
-    trimming("int f() { for (a: as) return a; }").to("");
+    trimming("int f() { for (int a: as) return a; }").to("int f(){for(int $:as)return $;}");
   }
   @Test public void replaceInitializationInReturn() {
     trimming("int a = 3; return a + 4;").to("return 3 + 4;");

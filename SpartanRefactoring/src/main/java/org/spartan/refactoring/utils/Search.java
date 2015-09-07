@@ -23,7 +23,7 @@ public enum Search {
   /** collects semantic (multiple uses for loops) uses of an expression */
   USES_SEMANTIC {
     @Override ASTVisitor[] collectors(final SimpleName e, final List<Expression> into) {
-      return asArray(usesVisitor(into, e));
+      return asArray(new UsesCollector(into, e));
     }
   },
   /** collects lexical (single use for loops) uses of an expression */
@@ -44,7 +44,7 @@ public enum Search {
    */
   BOTH_SEMANTIC {
     @Override ASTVisitor[] collectors(final SimpleName e, final List<Expression> into) {
-      return asArray(usesVisitor(into, e), lexicalUsesCollector(into, e), definitionsCollector(into, e));
+      return asArray(new UsesCollector(into, e), lexicalUsesCollector(into, e), definitionsCollector(into, e));
     }
   },
   /**
@@ -60,12 +60,22 @@ public enum Search {
   public static Checker findsDefinitions(final SimpleName n) {
     return new Checker(n);
   }
-  public static Searcher forUses(final SimpleName n) {
+  public static Searcher forAllOccurencesExcludingDefinitions(final SimpleName n) {
     return new Searcher(n) {
       @Override public List<Expression> in(final ASTNode... ns) {
         final List<Expression> $ = new ArrayList<>();
         for (final ASTNode n : ns)
-          n.accept(usesVisitor($, name));
+          n.accept(new UsesCollectorIgnoreDefinitions($, name));
+        return $;
+      }
+    };
+  }
+  public static Searcher forAllOccurencesOf(final SimpleName n) {
+    return new Searcher(n) {
+      @Override public List<Expression> in(final ASTNode... ns) {
+        final List<Expression> $ = new ArrayList<>();
+        for (final ASTNode n : ns)
+          n.accept(new UsesCollector($, name));
         return $;
       }
     };
@@ -126,9 +136,6 @@ public enum Search {
   }
   static ASTVisitor lexicalUsesCollector(final List<Expression> into, final SimpleName what) {
     return usesCollector(what, into, true);
-  }
-  static ASTVisitor usesVisitor(final List<Expression> into, final SimpleName what) {
-    return new UsesCollector(into, what);
   }
   private static ASTVisitor usesCollector(final SimpleName what, final List<Expression> into, final boolean lexicalOnly) {
     return new ASTVisitor() {

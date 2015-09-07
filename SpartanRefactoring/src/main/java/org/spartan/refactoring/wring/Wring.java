@@ -270,14 +270,14 @@ final class LocalInliner {
       return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(get()) || uses(es).size() <= 1);
     }
     private List<Expression> uses(final Expression... es) {
-      return Search.forUses(name).in(es);
+      return Search.forAllOccurencesOf(name).in(es);
     }
     private void inlineIntoSingleton(final Expression replacement, final Wrapper<Expression> e) {
       final Expression oldExpression = e.get();
       final Expression newExpression = duplicate(e.get());
       e.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
-      for (final Expression use : Search.forUses(name).in(newExpression))
+      for (final Expression use : Search.forAllOccurencesOf(name).in(newExpression))
         rewriter.replace(use, new Plant(replacement).into(use.getParent()), editGroup);
     }
   }
