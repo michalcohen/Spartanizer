@@ -189,7 +189,7 @@
             <command
                   commandId="org.spartan.commands.ToggleCommand"
                   id="org.spartan.menus.toggleCommand"
-                  label="Enable Spartanization Suggestions"
+                  label="Toggle Spartanization Suggestions"
                   mnemonic="S">
                <visibleWhen>
                   <not>
