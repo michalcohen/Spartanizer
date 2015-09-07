@@ -1,6 +1,7 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.wring.Wrings.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -31,15 +32,12 @@ public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> {
       exclude.exclude(d);
     return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        new LocalInliner(n, r, g).byValue($(d)).inlineInto(Search.forAllOccurencesOf(n).in(d).toArray(new Expression[] {}));
+        rename(n, $(), d, r, g);
       }
-      SimpleName $(final MethodDeclaration d) {
+      SimpleName $() {
         return d.getAST().newSimpleName("$");
       }
     };
-  }
-  @Override boolean scopeIncludes(final MethodDeclaration d) {
-    return make(d) != null;
   }
 }
 

@@ -19,10 +19,10 @@ echo "Compressed $S0 bytes into $S1 bytes; ratio = " `echo "scale=3;$S1/$S0"|bc`
 [ ! -e all_sources.jack ] || rm -f all_sources.jack  
 [ ! -e all_sources.jack.gz ] || rm -f all_sources.jack.gz 
 echo "Java files: " `find . -name *.java | wc -l` 
-find . -name *.java | xargs ../../Program/jack >> all_sources.jack 
+find . -name *.java | xargs jack >> all_sources.jack 
 wc all_sources.jack
 gzip --force -k all_sources.jack
-ls -l all_sources.jack all_sources.jack
+ls -l all_sources.jack all_sources.jack.gz
 S0=`du -b "all_sources.jack" | cut -f1`
 S1=`du -b "all_sources.jack.gz" | cut -f1`
 echo $S0 $S1
