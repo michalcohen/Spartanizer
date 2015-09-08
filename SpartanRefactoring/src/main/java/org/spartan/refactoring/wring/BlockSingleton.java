@@ -5,8 +5,7 @@ import static org.spartan.refactoring.utils.Funcs.parent;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.*;
 import org.spartan.refactoring.utils.Is;
 
 /**
@@ -18,7 +17,9 @@ import org.spartan.refactoring.utils.Is;
  */
 public class BlockSingleton extends Wring.ReplaceCurrentNode<Block> {
   @Override Statement replacement(final Block b) {
-    if (!Is.statement(parent(b)))
+    final ASTNode parent = parent(b);
+    final ASTNode n = parent;
+    if (!(n instanceof Statement) || n instanceof TryStatement)
       return null;
     final List<Statement> ss = b.statements();
     if (ss.size() != 1)

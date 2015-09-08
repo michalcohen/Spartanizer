@@ -77,15 +77,6 @@ import org.spartan.utils.Wrapper;
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
-  @Test public void factorOutAnd() {
-    trimming("(a || b) && (a || c)").to("a || b && c");
-  }
-  @Test public void factorOutOr() {
-    trimming("a && b || a && c").to("a && (b || c)");
-  }
-  @Test public void factorOutOr3() {
-    trimming("a && b && x  && f() || a && c && y ").to("a && (b && x && f() || c && y)");
-  }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
     final String expected = "a + 2 < b";
@@ -113,12 +104,6 @@ import org.spartan.utils.Wrapper;
   @Test public void assignmentReturn1() {
     trimming("a = 3; return (a);").to("return a = 3;");
   }
-  @Test public void blockSimplifyVanilla() {
-    trimming("if (a) {f(); }").to("if (a) f();");
-  }
-  @Test public void blockSimplifyVanillaSimplified() {
-    trimming(" {f(); }").to("f();");
-  }
   @Test public void assignmentReturn2() {
     trimming("a += 3; return a;").to("return a += 3;");
   }
@@ -127,6 +112,12 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void assignmentReturniNo() {
     trimming("b = a = 3; return a;").to("");
+  }
+  @Test public void blockSimplifyVanilla() {
+    trimming("if (a) {f(); }").to("if (a) f();");
+  }
+  @Test public void blockSimplifyVanillaSimplified() {
+    trimming(" {f(); }").to("f();");
   }
   @Test public void bugInLastIfInMethod() {
     trimming("" + //
@@ -677,6 +668,20 @@ import org.spartan.utils.Wrapper;
   @Test public void donotSorMixedTypes() {
     trimming("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;").to("");
   }
+  @Test public void dontELiminateCatchBlock() {
+    trimming("try { f(); } catch (Exception e) { } finally {}").to("");
+  }
+  @Test public void dontELiminateSwitch() {
+    trimming("switch (a) { default: }").to("");
+  }
+  @Test public void issue37WithSimplifiedBlock() {
+    trimming("if (a) { {} ; if (b) f(); {} } else { g(); f(); ++i; ++j; }")//
+        .to(" if (a) {  if (b) f(); } else { g(); f(); ++i; ++j; }");
+  }
+  @Test public void dontSimplifyCatchBlock() {
+    trimming("try { {} ; {} } catch (Exception e) {{} ; {}  } finally {{} ; {}}")//
+        .to(" try {}          catch (Exception e) {}          finally {}");
+  }
   @Test public void duplicatePartialIfBranches() {
     trimming("" + //
         "    if (a) {\n" + //
@@ -716,6 +721,15 @@ import org.spartan.utils.Wrapper;
   }
   @Ignore @Test public void extractMethodSplitDifferentStories() {
     trimming("").to("");
+  }
+  @Test public void factorOutAnd() {
+    trimming("(a || b) && (a || c)").to("a || b && c");
+  }
+  @Test public void factorOutOr() {
+    trimming("a && b || a && c").to("a && (b || c)");
+  }
+  @Test public void factorOutOr3() {
+    trimming("a && b && x  && f() || a && c && y ").to("a && (b && x && f() || c && y)");
   }
   @Test public void forLoopBug() {
     trimming("" + //

@@ -5,10 +5,10 @@ import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.*;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
+import org.spartan.refactoring.utils.Subject;
 
 /**
  * A {@link Wring} to convert <code>{;; g(); {}{;{;{;}};} }</code> into
@@ -45,17 +45,18 @@ public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> {
   }
   @Override Statement replacement(final Block b) {
     final List<Statement> ss = Extract.statements(b);
-    if (b == null || identical(ss, b.statements()))
+    if (identical(ss, b.statements()))
       return null;
-    if (!Is.statement(b.getParent()))
+    final ASTNode parent = b.getParent();
+    if (!(parent instanceof Statement) || parent instanceof TryStatement)
       return reorganizeStatement(b);
     switch (ss.size()) {
       case 0:
         return b.getAST().newEmptyStatement();
       case 1:
         final Statement s = ss.get(0);
-        if (Is.blockRequired(s))
-          return null;
+        if (Is.blockEssential(s))
+          return Subject.statement(s).toBlock();
         return duplicate(s);
       default:
         return reorganizeNestedStatement(b);
