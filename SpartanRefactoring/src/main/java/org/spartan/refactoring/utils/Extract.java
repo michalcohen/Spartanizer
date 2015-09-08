@@ -187,6 +187,18 @@ public enum Extract {
     });
     return $.get();
   }
+  public static Type firstType(final Statement s) {
+    final Wrapper<Type> $ = new Wrapper<>();
+    s.accept(new ASTVisitor() {
+      @Override public boolean preVisit2(final ASTNode n) {
+        if (!(n instanceof Type))
+          return true;
+        $.set((Type) n);
+        return false;
+      }
+    });
+    return $.get();
+  }
   /**
    * Return the first {@link VariableDeclarationFragment} encountered in a visit
    * of the tree rooted a the parameter.

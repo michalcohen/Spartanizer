@@ -24,6 +24,7 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
     if (vd == null)
       return null;
     final SimpleName n = vd.getName();
+    final SimpleName shortName = d.getAST().newSimpleName("");
     if (exclude != null)
       exclude.exclude(d);
     return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {

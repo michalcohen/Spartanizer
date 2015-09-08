@@ -18,6 +18,15 @@ import org.spartan.utils.Utils;
  */
 public enum Funcs {
   ;
+  /**
+   * Shorthand for {@link ASTNode#parent()}
+   *
+   * @param a JD
+   * @return the parent of the parameter
+   */
+  public static ASTNode parent(final ASTNode n) {
+    return n.getParent();
+  }
   private static Map<Operator, Operator> conjugate = makeConjeguates();
   /**
    * Convert an {@link Expression} into {@link InfixExpression} whose operator
@@ -50,26 +59,6 @@ public enum Funcs {
    */
   public static Block asBlock(final ASTNode $) {
     return $.getNodeType() != BLOCK ? null : (Block) $;
-  }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link SimpleName}
-   *
-   * @param $ JD
-   * @return the argument, but down-casted to a {@link SimpleName}, or
-   *         <code><b>null</b></code> if no such down-cast is possible..
-   */
-  public static SimpleName asSimpleName(final ASTNode $) {
-    return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName) $;
-  }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link MethodDeclaration}
-   *
-   * @param $ JD
-   * @return the argument, but down-casted to a {@link MethodDeclaration}, or
-   *         <code><b>null</b></code> if no such down-cast is possible..
-   */
-  public static MethodDeclaration asMethodDeclaration(final ASTNode $) {
-    return $.getNodeType() != METHOD_DECLARATION ? null : (MethodDeclaration) $;
   }
   /**
    * Down-cast, if possible, to {@link BooleanLiteral}
@@ -154,14 +143,14 @@ public enum Funcs {
     return !(n instanceof InfixExpression) ? null : (InfixExpression) n;
   }
   /**
-   * Down-cast, if possible, to {@link InfixExpression}
+   * Convert, is possible, an {@link ASTNode} to a {@link MethodDeclaration}
    *
-   * @param n JD
-   * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
+   * @param $ JD
+   * @return the argument, but down-casted to a {@link MethodDeclaration}, or
+   *         <code><b>null</b></code> if no such down-cast is possible..
    */
-  public static PostfixExpression asPostfixExpression(final ASTNode n) {
-    return !(n instanceof PostfixExpression) ? null : (PostfixExpression) n;
+  public static MethodDeclaration asMethodDeclaration(final ASTNode $) {
+    return $.getNodeType() != METHOD_DECLARATION ? null : (MethodDeclaration) $;
   }
   /**
    * Down-cast, if possible, to {@link MethodInvocation}
@@ -185,6 +174,16 @@ public enum Funcs {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
   }
   /**
+   * Down-cast, if possible, to {@link InfixExpression}
+   *
+   * @param n JD
+   * @return the parameter down-casted to the returned type, or
+   *         <code><b>null</b></code> if no such down-casting is possible.
+   */
+  public static PostfixExpression asPostfixExpression(final ASTNode n) {
+    return !(n instanceof PostfixExpression) ? null : (PostfixExpression) n;
+  }
+  /**
    * Down-cast, if possible, to {@link PrefixExpression}
    *
    * @param e JD
@@ -203,6 +202,16 @@ public enum Funcs {
    */
   public static ReturnStatement asReturnStatement(final ASTNode $) {
     return $ == null || $.getNodeType() != RETURN_STATEMENT ? null : (ReturnStatement) $;
+  }
+  /**
+   * Convert, is possible, an {@link ASTNode} to a {@link SimpleName}
+   *
+   * @param $ JD
+   * @return the argument, but down-casted to a {@link SimpleName}, or
+   *         <code><b>null</b></code> if no such down-cast is possible..
+   */
+  public static SimpleName asSimpleName(final ASTNode $) {
+    return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName) $;
   }
   /**
    * Down-cast, if possible, to {@link Statement}
@@ -309,92 +318,6 @@ public enum Funcs {
     return (N) copySubtree(n.getAST(), n);
   }
   /**
-   * Swap the order of the left and right operands to an expression, changing
-   * the operator if necessary.
-   *
-   * @param e JD
-   * @return a newly created expression with its operands thus swapped.
-   * @throws IllegalArgumentException when the parameter has extra operands.
-   * @see InfixExpression#hasExtendedOperands
-   */
-  public static InfixExpression flip(final InfixExpression e) {
-    if (e.hasExtendedOperands())
-      throw new IllegalArgumentException(e + ": flipping undefined for an expression with extra operands ");
-    return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
-  }
-  /**
-   * Shorthand for {@link InfixExpression#getRightOperand()}
-   *
-   * @param e JD
-   * @return the right operand of the parameter
-   */
-  public static Expression right(final InfixExpression e) {
-    return e.getRightOperand();
-  }
-  /**
-   * Shorthand for {@link InfixExpression#getLeftOperand()}
-   *
-   * @param e JD
-   * @return the left operand of the parameter
-   */
-  public static Expression left(final InfixExpression e) {
-    return e.getLeftOperand();
-  }
-  /**
-   * Shorthand for {@link CastExpression#getExpression()}
-   *
-   * @param e JD
-   * @return the right operand of the parameter
-   */
-  public static Expression right(final CastExpression e) {
-    return e.getExpression();
-  }
-  /**
-   * Shorthand for {@link Assignment#getLeftHandSide()}
-   *
-   * @param a JD
-   * @return the left operand of the parameter
-   */
-  public static Expression left(final Assignment a) {
-    return a.getLeftHandSide();
-  }
-  /**
-   * Shorthand for {@link Assignment#getRightHandSide()}
-   *
-   * @param a JD
-   * @return the left operand of the parameter
-   */
-  public static Expression right(final Assignment a) {
-    return a.getRightHandSide();
-  }
-  /**
-   * Shorthand for {@link InstanceofExpression#getLeftOperand()}
-   *
-   * @param e JD
-   * @return the left operand of the parameter
-   */
-  public static Expression left(final InstanceofExpression e) {
-    return e.getLeftOperand();
-  }
-  /**
-   * Shorthand for {@link IfStatement#getThenStatement}
-   *
-   * @param s JD
-   * @return the then statement of the parameter
-   */
-  public static Statement then(final IfStatement s) {
-    return s.getThenStatement();
-  }
-  /**
-   * Shorthand for {@link ConditionalExpression#getThenExpression()}
-   *
-   * @param e JD
-   * @return the then part of the parameter
-   */
-  public static Expression then(final ConditionalExpression e) {
-    return e.getThenExpression();
-  }
-  /**
    * Shorthand for {@link ConditionalExpression#getElseExpression()}
    *
    * @param e JD
@@ -413,6 +336,20 @@ public enum Funcs {
     return s.getElseStatement();
   }
   /**
+   * Swap the order of the left and right operands to an expression, changing
+   * the operator if necessary.
+   *
+   * @param e JD
+   * @return a newly created expression with its operands thus swapped.
+   * @throws IllegalArgumentException when the parameter has extra operands.
+   * @see InfixExpression#hasExtendedOperands
+   */
+  public static InfixExpression flip(final InfixExpression e) {
+    if (e.hasExtendedOperands())
+      throw new IllegalArgumentException(e + ": flipping undefined for an expression with extra operands ");
+    return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
+  }
+  /**
    * Makes an opposite operator from a given one, which keeps its logical
    * operation after the node swapping. e.g. "&" is commutative, therefore no
    * change needed. "<" isn't commutative, but it has its opposite: ">=".
@@ -423,9 +360,6 @@ public enum Funcs {
    */
   public static Operator flip(final Operator o) {
     return !conjugate.containsKey(o) ? o : conjugate.get(o);
-  }
-  private static Expression frugalDuplicate(final Expression e) {
-    return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
   /**
    * @param n the node from which to extract the proper fragment
@@ -521,6 +455,42 @@ public enum Funcs {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
   /**
+   * Shorthand for {@link Assignment#getLeftHandSide()}
+   *
+   * @param a JD
+   * @return the left operand of the parameter
+   */
+  public static Expression left(final Assignment a) {
+    return a.getLeftHandSide();
+  }
+  /**
+   * Shorthand for {@link InfixExpression#getLeftOperand()}
+   *
+   * @param e JD
+   * @return the left operand of the parameter
+   */
+  public static Expression left(final InfixExpression e) {
+    return e.getLeftOperand();
+  }
+  /**
+   * Shorthand for {@link InstanceofExpression#getLeftOperand()}
+   *
+   * @param e JD
+   * @return the left operand of the parameter
+   */
+  public static Expression left(final InstanceofExpression e) {
+    return e.getLeftOperand();
+  }
+  /**
+   * @param e JD
+   * @return the parameter, but logically negated and simplified
+   */
+  public static Expression logicalNot(final Expression e) {
+    final PrefixExpression $ = Subject.operand(e).to(NOT);
+    final Expression $$ = PrefixNotPushdown.simplifyNot($);
+    return $$ == null ? $ : $$;
+  }
+  /**
    * @param e the expression to return in the return statement
    * @return the new return statement
    */
@@ -553,15 +523,6 @@ public enum Funcs {
    */
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
-  }
-  /**
-   * @param e JD
-   * @return the parameter, but logically negated and simplified
-   */
-  public static Expression logicalNot(final Expression e) {
-    final PrefixExpression $ = Subject.operand(e).to(NOT);
-    final Expression $$ = PrefixNotPushdown.simplifyNot($);
-    return $$ == null ? $ : $$;
   }
   /**
    * Retrieve previous item in a list
@@ -611,6 +572,33 @@ public enum Funcs {
     return Utils.removeWhites(n.toString());
   }
   /**
+   * Shorthand for {@link Assignment#getRightHandSide()}
+   *
+   * @param a JD
+   * @return the left operand of the parameter
+   */
+  public static Expression right(final Assignment a) {
+    return a.getRightHandSide();
+  }
+  /**
+   * Shorthand for {@link CastExpression#getExpression()}
+   *
+   * @param e JD
+   * @return the right operand of the parameter
+   */
+  public static Expression right(final CastExpression e) {
+    return e.getExpression();
+  }
+  /**
+   * Shorthand for {@link InfixExpression#getRightOperand()}
+   *
+   * @param e JD
+   * @return the right operand of the parameter
+   */
+  public static Expression right(final InfixExpression e) {
+    return e.getRightOperand();
+  }
+  /**
    * Determine whether two nodes are the same, in the sense that their textual
    * representations is identical.
    * <p>
@@ -642,6 +630,38 @@ public enum Funcs {
         return false;
     return true;
   }
+  public static String shortName(final Type t) {
+    return t instanceof NameQualifiedType ? shortName((NameQualifiedType) t)
+        : t instanceof PrimitiveType ? shortName((PrimitiveType) t)
+            : t instanceof QualifiedType ? shortName((QualifiedType) t)
+                : t instanceof SimpleType ? shortName((SimpleType) t)
+                    : t instanceof WildcardType ? shortName((WildcardType) t)
+                        : t instanceof ArrayType ? shortName((ArrayType) t)
+                            : t instanceof IntersectionType ? shortName((IntersectionType) t) //
+                                : t instanceof ParameterizedType ? shortName((ParameterizedType) t)//
+                                    : !(t instanceof UnionType) ? null : shortName((UnionType) t);
+  }
+  /**
+   * Shorthand for {@link ConditionalExpression#getThenExpression()}
+   *
+   * @param e JD
+   * @return the then part of the parameter
+   */
+  public static Expression then(final ConditionalExpression e) {
+    return e.getThenExpression();
+  }
+  /**
+   * Shorthand for {@link IfStatement#getThenStatement}
+   *
+   * @param s JD
+   * @return the then statement of the parameter
+   */
+  public static Statement then(final IfStatement s) {
+    return s.getThenStatement();
+  }
+  static PrefixExpression asNot(final PrefixExpression e) {
+    return NOT.equals(e.getOperator()) ? e : null;
+  }
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
@@ -657,6 +677,9 @@ public enum Funcs {
       if (Is.booleanLiteral($) && b == asBooleanLiteral($).booleanValue())
         return $;
     return null;
+  }
+  private static Expression frugalDuplicate(final Expression e) {
+    return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
   private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
     for (final VariableDeclarationFragment $ : frags)
@@ -675,7 +698,54 @@ public enum Funcs {
     $.put(LESS_EQUALS, GREATER_EQUALS);
     return $;
   }
-  static PrefixExpression asNot(final PrefixExpression e) {
-    return NOT.equals(e.getOperator()) ? e : null;
+  private static String shortName(final ArrayType t) {
+    return shortName(t.getElementType()) + repeat(t.getDimensions(), 's');
+  }
+  private static String repeat(final int n, final char c) {
+    return new String(new char[n]).replace('\0', c);
+  }
+  private static String shortName(final IntersectionType t) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  private static String shortName(final NameQualifiedType t) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  private static String shortName(final ParameterizedType t) {
+    switch (t.getType().toString()) {
+      case "Collection":
+      case "Iterable":
+      case "List":
+      case "Queue":
+      case "Set":
+        final String $ = shortName(t.typeArguments());
+        if ($ == null)
+          return null;
+        return $ + "s";
+      default:
+        return null;
+    }
+  }
+  private static String shortName(final List<Type> ts) {
+    return ts.size() != 1 ? null : shortName(ts.get(0));
+  }
+  private static String shortName(final PrimitiveType t) {
+    return t.getPrimitiveTypeCode().toString().substring(0, 1);
+  }
+  private static String shortName(final QualifiedType t) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  private static String shortName(final SimpleType t) {
+    return new JavaTypeNameParser(t.getName().toString()).shortName();
+  }
+  private static String shortName(final UnionType t) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  private static String shortName(final WildcardType t) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

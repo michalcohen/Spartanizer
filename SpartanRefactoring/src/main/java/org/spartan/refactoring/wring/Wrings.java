@@ -35,8 +35,7 @@ public enum Wrings {
       }
   }
   static IfStatement blockIfNeeded(final IfStatement s, final ASTRewrite r, final TextEditGroup g) {
-    final IfStatement parent = asIfStatement(s.getParent());
-    if (parent == null || then(parent) != s)
+    if (!Is.blockRequired(s))
       return s;
     final Block b = Subject.statement(s).toBlock();
     r.replace(s, b, g);

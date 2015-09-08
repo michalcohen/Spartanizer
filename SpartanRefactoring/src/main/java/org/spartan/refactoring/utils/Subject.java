@@ -1,8 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.refactoring.utils.Funcs.logicalNot;
-import static org.spartan.refactoring.utils.Funcs.rebase;
+import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

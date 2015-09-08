@@ -77,6 +77,15 @@ import org.spartan.utils.Wrapper;
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
+  @Test public void factorOutAnd() {
+    trimming("(a || b) && (a || c)").to("a || b && c");
+  }
+  @Test public void factorOutOr() {
+    trimming("a && b || a && c").to("a && (b || c)");
+  }
+  @Test public void factorOutOr3() {
+    trimming("a && b && x  && f() || a && c && y ").to("a && (b && x && f() || c && y)");
+  }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
     final String expected = "a + 2 < b";
@@ -103,6 +112,12 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void assignmentReturn1() {
     trimming("a = 3; return (a);").to("return a = 3;");
+  }
+  @Test public void blockSimplifyVanilla() {
+    trimming("if (a) {f(); }").to("if (a) f();");
+  }
+  @Test public void blockSimplifyVanillaSimplified() {
+    trimming(" {f(); }").to("f();");
   }
   @Test public void assignmentReturn2() {
     trimming("a += 3; return a;").to("return a += 3;");
@@ -798,10 +813,12 @@ import org.spartan.utils.Wrapper;
                 "");//
   }
   @Test public void ifDegenerateThenInIf() {
-    trimming("if (a) if (b) {} else f(); x();").to("if (a) { if (!b) f(); } x();");
+    trimming("if (a) if (b) {} else f(); x();")//
+        .to(" if (a) if (!b) f(); x();");
   }
   @Test public void ifEmptyElsewWithinIf() {
-    trimming("if (a) if (b) {;;;f();} else {;}").to("if(a&&b){;;;f();}");
+    trimming("if (a) if (b) {;;;f();} else {;}")//
+        .to("if(a&&b){;;;f();}");
   }
   @Test public void ifEmptyThenThrow() {
     trimming("" //
@@ -1077,7 +1094,7 @@ import org.spartan.utils.Wrapper;
         "    int a = 3;\n" + //
         "    a += 31 * a;").to("int a=3+31*3;");
   }
-  @Test(timeout = 100) public void issue39base() {
+  @Test public void issue39base() {
     trimming("" + //
         "if (name == null) {\n" + //
         "    if (other.name != null)\n" + //
@@ -1200,31 +1217,54 @@ import org.spartan.utils.Wrapper;
     trimming("if (a) if (b) i++; else ; else ; ").to("if (a && b) i++; else ;");
   }
   @Test public void nestedIf3() {
-    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}").to("if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
+    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}")//
+        .to("if(x)if(a&&b)i++;else;else{++y;f();g();z();}");
   }
   @Test public void nestedIf33() {
-    trimming("if(x){if(a&&b)i++;else;}else{++y;f();g();}").to("if(x){if(a&&b)i++;}else{++y;f();g();}");
+    trimming("if(x){if(a&&b)i++;else;}else{++y;f();g();}")//
+        .to(" if(x)if(a&&b)i++;else;else{++y;f();g();}")//
+        .to(" if(x){if(a&&b)i++;}else{++y;f();g();}")//
+        .to(" if(x){if(a&&b)++i;}else{++y;f();g();}")//
+        ;
   }
-  @Test public void nestedIf3a() {
-    trimming("if (x) { if (a && b) i++; } else { y++; f(); g(); }").to("if(x){if(a&&b)++i;}else{++y;f();g();}");
+  @Test public void nestedIf33a() {
+    trimming("if (x) { if (a && b) i++; } else { y++; f(); g(); }")//
+        .to(" if (x) {if(a&&b)++i;} else{++y;f();g();}");
   }
-  @Test public void nestedIf3b() {
-    trimming("if (x) if (a && b) i++; else; else { y++; f(); g(); }").to("if(x){if(a&&b)i++;}else{++y;f();g();}");
+  @Test public void nestedIf33b() {
+    trimming("if (x) if (a && b) i++; else; else { y++; f(); g(); }")//
+        .to("if(x){if(a&&b)i++;}else{++y;f();g();}");
   }
   @Test public void nestedIf3c() {
-    trimming("if (x) if (a && b) i++; else; else { y++; f(); g(); }").to("if(x){if(a&&b)i++;}else{++y;f();g();}");
+    trimming("if (x) if (a && b) i++; else; else { y++; f(); g(); }")//
+        .to(" if(x) {if(a&&b)i++;} else {++y;f();g();}");
   }
   @Test public void nestedIf3d() {
-    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}").to("if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
+    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}")//
+        .to("if(x)if(a&&b)i++;else; else{++y;f();g();z();}") //
+        .to("if(x){if(a&&b)i++;} else{++y;f();g();z();}") //
+        .to("if(x){if(a&&b)++i;} else{++y;f();g();z();}") //
+        ;
   }
   @Test public void nestedIf3e() {
-    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}").to("if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
+    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}")//
+        .to(" if(x)if(a&&b)i++;else;else{++y;f();g();z();}") //
+        .to(" if(x){if(a&&b)i++;}else{++y;f();g();z();}");
   }
   @Test public void nestedIf3f() {
-    trimming("if(x){if(a&&b)i++;else;}else{++y;f();g();}").to("if(x){if(a&&b)i++;}else{++y;f();g();}");
+    trimming("if(x){if(a&&b)i++;else;}else{++y;f();g();}")//
+        .to(" if(x)if(a&&b)i++; else; else{++y;f();g();}") //
+        .to(" if(x){if(a&&b)i++;}else{++y;f();g();}");
+  }
+  @Test public void nestedIf3f1() {
+    trimming(" if(x)if(a&&b)i++; else; else{++y;f();g();}") //
+        .to(" if(x){if(a&&b)i++;}else{++y;f();g();}");
   }
   @Test public void nestedIf3x() {
-    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}").to("if(x){if(a&&b)i++;else;}else{++y;f();g();z();}");
+    trimming("if (x) if (a) if (b) i++; else ; else ; else { y++; f(); g(); z();}")//
+        .to("if(x)if(a&&b)i++;else;else{++y;f();g();z();}") //
+        .to("if(x){if(a&&b)i++;}else{++y;f();g();z();}") //
+        ;
   }
   @Test public void noChange() {
     trimming("12").to("");
@@ -2387,14 +2427,14 @@ import org.spartan.utils.Wrapper;
   @Test public void ternarize26() {
     trimming("int a=0;   if (s.equals(532)){    a+=2;   a-=2; } f(); ").to("");
   }
-  @Test public void ternarize29() {
-    trimming("int a=0;   int b=0;   a=5;   if (a==3){    a=4; } f();").to("");
-  }
   @Test public void ternarize33() {
-    trimming("int a, b=0;   if (b==3){    a=4; ").to("");
+    trimming("int a, b=0;   if (b==3){    a=4; } ")//
+        .to("int a,b=0;if(b==3)a=4;") //
+        .to(null);
   }
   @Test public void ternarize35() {
-    trimming("int a,b=0,c=0;a=4;if(c==3){b=2;}").to("int a=4,b=0,c=0;if(c==3){b=2;}");
+    trimming("int a,b=0,c=0;a=4;if(c==3){b=2;}")//
+        .to("int a=4,b=0,c=0;if(c==3)b=2;");
   }
   @Test public void ternarize36() {
     trimming("int a,b=0,c=0;a=4;if (c==3){  b=2;   a=6; } f();").to("int a=4,b=0,c=0;if(c==3){b=2;a=6;} f();");
@@ -2450,12 +2490,11 @@ import org.spartan.utils.Wrapper;
             .to(""//
                 + "int size=0;"//
                 + "if(m.equals(153))"//
-                + "for(int i=0;i<size;++i){"//
+                + "for(int i=0;i<size;++i)"//
                 + "  S.out.l(HH);"//
-                + "} "//
                 + "else "//
-                + "  for(int i=0;i<size;++i){"//
-                + "    S.out.l('f');" + "  }");
+                + "  for(int i=0;i<size;++i)"//
+                + "    S.out.l('f');");
   }
   @Test public void ternarize52() {
     trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {c = d;c = e;} f();")//

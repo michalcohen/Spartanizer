@@ -40,7 +40,10 @@ public class Toolbox {
   /** The default instance of this class */
   public static final Toolbox instance = new Maker()//
       .add(Assignment.class, new AssignmentAndReturn()) //
-      .add(Block.class, new BlockSimplify()) //
+      .add(Block.class, //
+          new BlockSimplify(), //
+          new BlockSingleton(), //
+          null) //
       .add(PostfixExpression.class, new PostfixToPrefix()) //
       .add(InfixExpression.class, //
           new InfixSortAddition(), //
@@ -52,6 +55,7 @@ public class Toolbox {
           new InfixSortPseudoAddition(), //
           new InfixSortSubstraction(), //
           new InfixSortDivision(), //
+          new InfixConditionalCommon(), //
           null)
       .add(MethodDeclaration.class, new MethodRenameReturnToDollar()) //
       .add(VariableDeclarationFragment.class, //

@@ -49,6 +49,32 @@ public enum Is {
   public static boolean block(final ASTNode n) {
     return is(n, BLOCK);
   }
+  public static boolean blockRequiredInReplacement(final IfStatement old, final IfStatement newIf) {
+    if (newIf == null || old != newIf && elze(old) == null == (elze(newIf) == null))
+      return false;
+    final IfStatement parent = asIfStatement(parent(old));
+    return parent != null && then(parent) == old && (elze(parent) == null || elze(newIf) == null)
+        && (elze(parent) != null || elze(newIf) != null || blockRequiredInReplacement(parent, newIf));
+  }
+  public static boolean blockEssential(final Statement s) {
+    return blockEssential(asIfStatement(s));
+  }
+  static boolean blockEssential(final IfStatement s) {
+    if (s == null)
+      return false;
+    final Block b = asBlock(parent(s));
+    if (b == null)
+      return false;
+    final IfStatement parent = asIfStatement(parent(b));
+    return parent != null && then(parent) == b && (elze(parent) == null || elze(s) == null) && (elze(parent) != null || elze(s) != null || blockRequiredInReplacement(parent, s));
+  }
+  public static boolean blockRequired(final Statement s) {
+    final IfStatement s1 = asIfStatement(s);
+    return blockRequiredInReplacement(s1, s1);
+  }
+  public static boolean blockRequired(final IfStatement s) {
+    return blockRequiredInReplacement(s, s);
+  }
   /**
    * Determine whether a node is a boolean literal
    *
@@ -108,7 +134,18 @@ public enum Is {
    *         {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#CONDITIONAL_OR}
    */
   public static boolean conditionalOr(final InfixExpression e) {
-    return e.getOperator() == CONDITIONAL_OR;
+    return e != null && e.getOperator() == CONDITIONAL_OR;
+  }
+  /**
+   * Check whether an expression is a "conditional or" (||)
+   *
+   * @param e JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
+   *         whose operator is
+   *         {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#CONDITIONAL_OR}
+   */
+  public static boolean conditionalOr(final Expression e) {
+    return conditionalOr(asInfixExpression(e));
   }
   /**
    * Determine whether a node is a "specific", i.e., <code><b>null</b></code> or
@@ -538,6 +575,32 @@ public enum Is {
   public static boolean variableDeclarationStatement(final ASTNode n) {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
+  static boolean notStringDown(final Expression e) {
+    return notStringSelf(e) || notStringDown(asInfixExpression(e));
+  }
+  static boolean notStringDown(final InfixExpression e) {
+    return e != null && (e.getOperator() != PLUS || Are.notString(Extract.allOperands(e)));
+  }
+  static boolean notStringSelf(final Expression e) {
+    return intIsIn(e.getNodeType(), //
+        ARRAY_CREATION, //
+        BOOLEAN_LITERAL, //
+        CHARACTER_LITERAL, //
+        INSTANCEOF_EXPRESSION, //
+        NULL_LITERAL, // null + null is an error, not a string.
+        NUMBER_LITERAL, //
+        PREFIX_EXPRESSION //
+    //
+    );
+  }
+  static boolean sideEffectFreeArrayCreation(final ArrayCreation a) {
+    final ArrayInitializer i = a.getInitializer();
+    return sideEffectsFree(a.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
+  }
+  static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
+    return in(e.getOperator(), PrefixExpression.Operator.PLUS, PrefixExpression.Operator.MINUS, PrefixExpression.Operator.COMPLEMENT, PrefixExpression.Operator.NOT)
+        && sideEffectFree(e.getOperand());
+  }
   private static boolean is(final ASTNode n, final int type) {
     return n != null && type == n.getNodeType();
   }
@@ -581,31 +644,5 @@ public enum Is {
         return false;
     }
     return true;
-  }
-  static boolean notStringDown(final Expression e) {
-    return notStringSelf(e) || notStringDown(asInfixExpression(e));
-  }
-  static boolean notStringDown(final InfixExpression e) {
-    return e != null && (e.getOperator() != PLUS || Are.notString(Extract.allOperands(e)));
-  }
-  static boolean notStringSelf(final Expression e) {
-    return intIsIn(e.getNodeType(), //
-        ARRAY_CREATION, //
-        BOOLEAN_LITERAL, //
-        CHARACTER_LITERAL, //
-        INSTANCEOF_EXPRESSION, //
-        NULL_LITERAL, // null + null is an error, not a string.
-        NUMBER_LITERAL, //
-        PREFIX_EXPRESSION //
-    //
-    );
-  }
-  static boolean sideEffectFreeArrayCreation(final ArrayCreation a) {
-    final ArrayInitializer i = a.getInitializer();
-    return sideEffectsFree(a.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
-  }
-  static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
-    return in(e.getOperator(), PrefixExpression.Operator.PLUS, PrefixExpression.Operator.MINUS, PrefixExpression.Operator.COMPLEMENT, PrefixExpression.Operator.NOT)
-        && sideEffectFree(e.getOperand());
   }
 }

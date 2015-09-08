@@ -53,7 +53,10 @@ public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> {
       case 0:
         return b.getAST().newEmptyStatement();
       case 1:
-        return duplicate(Extract.singleStatement(b));
+        final Statement s = ss.get(0);
+        if (Is.blockRequired(s))
+          return null;
+        return duplicate(s);
       default:
         return reorganizeNestedStatement(b);
     }
