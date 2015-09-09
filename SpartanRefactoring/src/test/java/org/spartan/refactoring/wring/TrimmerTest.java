@@ -98,6 +98,18 @@ import org.spartan.utils.Wrapper;
     trimming("(x >> 18) & MASK_BITS").to("");
     trimming("(x >> 18) & MASK_6BITS").to("");
   }
+  @Test public void issue38() {
+    trimming("    return o == null ? null\n" + //
+        "        : o == CONDITIONAL_AND ? CONDITIONAL_OR \n" + //
+        "            : o == CONDITIONAL_OR ? CONDITIONAL_AND \n" + //
+        "                : null;").to("");
+  }
+  @Test public void issue38Simplfiied() {
+    trimming(//
+        "         o == CONDITIONAL_AND ? CONDITIONAL_OR \n" + //
+            "            : o == CONDITIONAL_OR ? CONDITIONAL_AND \n" + //
+            "                : null").to("");
+  }
   @Test public void assignmentReturn0() {
     trimming("a = 3; return a;").to("return a = 3;");
   }
