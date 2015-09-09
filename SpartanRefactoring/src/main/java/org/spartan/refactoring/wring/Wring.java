@@ -151,7 +151,7 @@ public abstract class Wring<N extends ASTNode> {
                                   : o == REMAINDER_ASSIGN ? REMAINDER
                                       : o == LEFT_SHIFT_ASSIGN ? LEFT_SHIFT //
                                           : o == RIGHT_SHIFT_SIGNED_ASSIGN ? RIGHT_SHIFT_SIGNED //
-                                              : o != RIGHT_SHIFT_UNSIGNED_ASSIGN ? null : RIGHT_SHIFT_UNSIGNED;
+                                              : o == RIGHT_SHIFT_UNSIGNED_ASSIGN ? RIGHT_SHIFT_UNSIGNED : null;
     }
     static Expression assignmentAsExpression(final Assignment a) {
       final Operator o = a.getOperator();

@@ -639,7 +639,7 @@ public enum Funcs {
                         : t instanceof ArrayType ? shortName((ArrayType) t)
                             : t instanceof IntersectionType ? shortName((IntersectionType) t) //
                                 : t instanceof ParameterizedType ? shortName((ParameterizedType) t)//
-                                    : !(t instanceof UnionType) ? null : shortName((UnionType) t);
+                                    : t instanceof UnionType ? shortName((UnionType) t) : null;
   }
   /**
    * Shorthand for {@link ConditionalExpression#getThenExpression()}

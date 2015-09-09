@@ -45,7 +45,7 @@ public class TernaryCollapse extends Wring.ReplaceCurrentNode<ConditionalExpress
     final Expression thenThen = core(then.getThenExpression());
     final Expression thenElse = core(then.getElseExpression());
     return same(thenElse, elze) ? Subject.pair(thenThen, elze).toCondition(Subject.pair(e.getExpression(), then.getExpression()).to(CONDITIONAL_AND))
-        : !same(thenThen, elze) ? null : Subject.pair(thenElse, elze).toCondition(Subject.pair(e.getExpression(), logicalNot(then.getExpression())).to(CONDITIONAL_AND));
+        : same(thenThen, elze) ? Subject.pair(thenElse, elze).toCondition(Subject.pair(e.getExpression(), logicalNot(then.getExpression())).to(CONDITIONAL_AND)) : null;
   }
   @Override Expression replacement(final ConditionalExpression e) {
     return collapse(e);

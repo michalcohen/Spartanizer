@@ -42,7 +42,7 @@ public final class InfixConditionalCommon extends Wring.ReplaceCurrentNode<Infix
   private static Expression chopHead(final InfixExpression e) {
     final List<Expression> es = Extract.allOperands(e);
     es.remove(0);
-    return es.size() >= 2 ? Subject.operands(es).to(e.getOperator()) : duplicate(es.get(0));
+    return es.size() < 2 ? duplicate(es.get(0)) : Subject.operands(es).to(e.getOperator());
   }
   @Override String description(@SuppressWarnings("unused") final InfixExpression _) {
     return "Factor out common logical component of ||";
