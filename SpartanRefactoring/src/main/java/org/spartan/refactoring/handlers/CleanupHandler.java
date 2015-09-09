@@ -5,12 +5,14 @@ import static org.spartan.refactoring.spartanizations.DialogBoxes.announce;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IWorkbench;
@@ -33,9 +35,10 @@ public class CleanupHandler extends BaseHandler {
   }
   static final int MAX_PASSES = 20;
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent e) throws ExecutionException {
-    final StringBuilder message = new StringBuilder("Spartanizing, ");
+    final StringBuilder message = new StringBuilder();
     final ICompilationUnit u = getCompilationUnit();
-    message.append("starting at " + u.getElementName());
+    final IJavaProject javaProject = u.getJavaProject();
+    message.append("starting at " + u.getElementName() + "\n");
     final List<ICompilationUnit> compilationUnits;
     try {
       compilationUnits = Spartanization.getAllProjectCompilationUnits(u, new NullProgressMonitor());
@@ -43,21 +46,24 @@ public class CleanupHandler extends BaseHandler {
       x.printStackTrace();
       return null;
     }
-    message.append(", found " + compilationUnits.size() + " compilation units");
+    message.append("found " + compilationUnits.size() + " compilation units \n");
     final IWorkbench wb = PlatformUI.getWorkbench();
-    final int initialCount = countSuggestios();
-    message.append(", with " + initialCount + initialCount);
+    final int initialCount = countSuggestions(u);
+    message.append("with " + initialCount + " suggestions");
     if (initialCount == 0)
-      return announce(message + "Nothing to do");
-    for (int i = 0, totalSuggestions = initialCount; i < MAX_PASSES; ++i) {
+      return announce("No suggestions for '" + javaProject.getElementName() + "' project\n" + message);
+    for (int i = 0; i < MAX_PASSES; ++i) {
       final IProgressService ps = wb.getProgressService();
+      final AtomicInteger passNum = new AtomicInteger(i + 1);
       try {
         ps.busyCursorWhile(new IRunnableWithProgress() {
           @Override public void run(final IProgressMonitor pm) {
-            pm.beginTask("Spartanizing", compilationUnits.size());
-            for (final ICompilationUnit u : compilationUnits) {
-              applySafeSpartanizationsTo(u);
+            pm.beginTask("Spartanizing project '" + javaProject.getElementName() + "' - " + //
+                "Pass " + passNum.get() + " out of maximum of " + MAX_PASSES, compilationUnits.size());
+            for (final ICompilationUnit cu : compilationUnits) {
+              applySafeSpartanizationsTo(cu);
               pm.worked(1);
+              pm.subTask(cu.getElementName());
             }
             pm.done();
           }
@@ -67,18 +73,24 @@ public class CleanupHandler extends BaseHandler {
       } catch (final InterruptedException x) {
         x.printStackTrace();
       }
-      final int countSuggestios = countSuggestios();
-      totalSuggestions += countSuggestios;
-      if (countSuggestios <= 0)
-        return announce("Completed in " + (1 + i) + " passes. \n" + "Total changes: " + totalSuggestions + " = " + message);
-      message.append(" + " + countSuggestios);
+      final int finalCount = countSuggestions(u);
+      if (finalCount <= 0)
+        return announce("Spartanizing '" + javaProject.getElementName() + "' project \n" + //
+            "Completed in " + (1 + i) + " passes. \n" + //
+            "Total changes: " + (initialCount - finalCount) + "\n" + //
+            "Suggestions before: " + initialCount + "\n" + //
+            "Suggestions after: " + finalCount + "\n" + //
+            message);
     }
     throw new ExecutionException("Too many iterations");
   }
-  private static int countSuggestios() {
+  private static int countSuggestions(final ICompilationUnit u) {
     int $ = 0;
-    for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations)
+    for (final Spartanization s : ApplySpartanizationHandler.safeSpartanizations) {
+      s.setMarker(null);
+      s.setCompilationUnit(u);
       $ += s.countSuggestions();
+    }
     return $;
   }
 }

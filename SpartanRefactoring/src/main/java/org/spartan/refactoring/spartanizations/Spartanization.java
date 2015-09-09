@@ -80,6 +80,7 @@ public abstract class Spartanization extends Refactoring {
   private IMarker marker = null;
   final Collection<TextFileChange> changes = new ArrayList<>();
   private final String name;
+  private int totalChanges;
   /***
    * Instantiates this class, with message identical to name
    *
@@ -90,6 +91,7 @@ public abstract class Spartanization extends Refactoring {
   }
   @Override public RefactoringStatus checkFinalConditions(final IProgressMonitor pm) throws CoreException, OperationCanceledException {
     changes.clear();
+    totalChanges = 0;
     if (marker == null)
       runAsManualCall(pm);
     else {
@@ -113,6 +115,26 @@ public abstract class Spartanization extends Refactoring {
    * @return the total number of suggestions offered by this instance
    */
   public int countSuggestions() {
+    setMarker(null);
+    try {
+      checkFinalConditions(new NullProgressMonitor());
+    } catch (final OperationCanceledException e) {
+      e.printStackTrace();
+    } catch (final CoreException e) {
+      e.printStackTrace();
+    }
+    return totalChanges;
+  }
+  /**
+   * Count the number files that would change after Spartanization.
+   * <p>
+   * This is an slow operation. Do not call light-headedly.
+   *
+   * @return the total number of files with suggestions
+   */
+  public int countFilesChanges() {
+    // TODO not sure if this function is necessary - if it is, it could be
+    // easily optimized when called after countSuggestions()
     setMarker(null);
     try {
       checkFinalConditions(new NullProgressMonitor());
@@ -314,9 +336,11 @@ public abstract class Spartanization extends Refactoring {
     final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
     textChange.setTextType("java");
     final SubProgressMonitor subProgressMonitor = new SubProgressMonitor(m, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-    textChange.setEdit(createRewrite((CompilationUnit) Make.COMPILIATION_UNIT.parser(u).createAST(subProgressMonitor), subProgressMonitor).rewriteAST());
+    final CompilationUnit cu = (CompilationUnit) Make.COMPILIATION_UNIT.parser(u).createAST(subProgressMonitor);
+    textChange.setEdit(createRewrite(cu, subProgressMonitor).rewriteAST());
     if (textChange.getEdit().getLength() != 0)
       changes.add(textChange);
+    totalChanges += findOpportunities(cu).size();
     m.done();
   }
   // TODO: Do not add new public methods without JavaDoc!
@@ -369,8 +393,8 @@ public abstract class Spartanization extends Refactoring {
   }
   private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
     if (!isTextSelected())
-      return getAllProjectCompilationUnits(compilationUnit != null ? compilationUnit : BaseHandler.getCompilationUnit(),
-          new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+      return getAllProjectCompilationUnits(compilationUnit != null ? compilationUnit : BaseHandler.getCompilationUnit(), new SubProgressMonitor(pm, 1,
+          SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     final List<ICompilationUnit> $ = new ArrayList<>();
     $.add(compilationUnit);
     return $;
