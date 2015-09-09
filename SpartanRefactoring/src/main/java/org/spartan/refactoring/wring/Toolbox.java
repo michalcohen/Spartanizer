@@ -82,6 +82,7 @@ public class Toolbox {
           new IfThenFooBarElseFooBaz(), //
           new IfBarFooElseBazFoo(), //
           new IfThrowFooElseThrowBar(), //
+          new IfThrowNoElseThrow(), //
           new IfExpressionStatementElseSimilarExpressionStatement(), //
           new IfThenOrElseIsCommandsFollowedBySequencer(), //
           new IfFooSequencerIfFooSameSequencer(), //

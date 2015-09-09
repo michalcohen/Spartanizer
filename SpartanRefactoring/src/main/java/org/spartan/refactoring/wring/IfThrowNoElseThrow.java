@@ -1,0 +1,39 @@
+package org.spartan.refactoring.wring;
+
+import static org.spartan.refactoring.utils.Funcs.then;
+
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Subject;
+
+/**
+ * A {@link Wring} to convert <code>if (x) throw foo(); throw bar();</code> into
+ * <code>throw a ? foo (): bar();</code>
+ *
+ * @author Yossi Gil
+ * @since 2015-09-09
+ */
+public final class IfThrowNoElseThrow extends Wring.ReplaceToNextStatement<IfStatement> {
+  @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
+    if (!Wrings.emptyElse(s))
+      return null;
+    final Expression e1 = getThrowExpression(then(s));
+    if (e1 == null)
+      return null;
+    final Expression e2 = getThrowExpression(nextStatement);
+    if (e2 == null)
+      return null;
+    return Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(e1, e2).toCondition(s.getExpression())).toThrow(), g);
+  }
+  static Expression getThrowExpression(final Statement s) {
+    final ThrowStatement $ = Extract.throwStatement(s);
+    if ($ == null)
+      return null;
+    return Extract.core($.getExpression());
+  }
+  @Override String description(@SuppressWarnings("unused") final IfStatement _) {
+    return "Consolidate into a single 'trhow  '";
+  }
+}

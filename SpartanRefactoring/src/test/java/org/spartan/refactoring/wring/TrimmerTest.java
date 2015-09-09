@@ -945,6 +945,13 @@ import org.spartan.utils.Wrapper;
   @Test public void ifSequencerThenSequencer8() {
     trimming("if (a) break; else throw e;").to("if (!a) throw e; break;");
   }
+  @Test public void ifThrowNoElseThrow() {
+    trimming("" //
+        + "if (!(e.getCause() instanceof Error))\n" //
+        + "  throw e;\n" //
+        + "throw (Error) e.getCause();")//
+            .to(" throw !(e.getCause()instanceof Error)?e:(Error)e.getCause();");//
+  }
   @Test public void ifWithCommonNotInBlock() {
     trimming("for (;;) if (a) {i++;j++;f();} else { i++;j++; g();}").to("for(;;){i++;j++;if(a)f();else g();}");
   }
