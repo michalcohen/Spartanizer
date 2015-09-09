@@ -18,8 +18,7 @@ import org.spartan.refactoring.utils.Is;
 public class BlockSingleton extends Wring.ReplaceCurrentNode<Block> {
   @Override Statement replacement(final Block b) {
     final ASTNode parent = parent(b);
-    final ASTNode n = parent;
-    if (!(n instanceof Statement) || n instanceof TryStatement)
+    if (!(parent instanceof Statement) || parent instanceof TryStatement || parent instanceof SynchronizedStatement)
       return null;
     final List<Statement> ss = b.statements();
     if (ss.size() != 1)

@@ -52,6 +52,13 @@ import org.spartan.utils.Wrapper;
     assertNotNull($);
     return $.get();
   }
+  @Test public void synchronizedBraces() {
+    trimming("" //
+        + "    synchronized (variables) {\n" //
+        + "      for (final String key : variables.keySet())\n"//
+        + "        $.variables.put(key, variables.get(key));\n" //
+        + "    }").to("");
+  }
   private static String apply(final Wring<? extends ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);

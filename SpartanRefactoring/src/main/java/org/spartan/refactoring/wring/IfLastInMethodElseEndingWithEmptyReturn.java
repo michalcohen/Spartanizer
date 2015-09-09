@@ -18,9 +18,7 @@ public class IfLastInMethodElseEndingWithEmptyReturn extends Wring<IfStatement> 
     if (b == null || !(b.getParent() instanceof MethodDeclaration) || last(b.statements()) != s)
       return null;
     final ReturnStatement deleteMe = asReturnStatement(Extract.lastStatement(elze(s)));
-    if (deleteMe == null || deleteMe.getExpression() != null)
-      return null;
-    return new Rewrite(description(s), s) {
+    return deleteMe == null || deleteMe.getExpression() != null ? null : new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         r.replace(deleteMe, s.getAST().newEmptyStatement(), g);
       }

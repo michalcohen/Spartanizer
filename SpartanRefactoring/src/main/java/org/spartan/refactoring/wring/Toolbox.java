@@ -37,8 +37,11 @@ public class Toolbox {
   <N extends ASTNode> List<Wring<N>> get(final N n) {
     return get(n.getClass());
   }
+  public static Toolbox instance() {
+    return instance;
+  }
   /** The default instance of this class */
-  public static final Toolbox instance = new Maker()//
+  static final Toolbox instance = new Maker()//
       .add(Assignment.class, new AssignmentAndReturn()) //
       .add(Block.class, //
           new BlockSimplify(), //
