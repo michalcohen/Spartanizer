@@ -11,7 +11,7 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Rewrite;
 
-public class IfStatementLastInMethod extends Wring<IfStatement> {
+public class IfLastInMethod extends Wring<IfStatement> {
   @Override String description(final IfStatement n) {
     return "Invert conditional " + n.getExpression() + " for early return";
   }

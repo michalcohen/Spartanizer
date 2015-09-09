@@ -70,7 +70,9 @@ public class Toolbox {
           new DeclarationInitializerReturnUpdateAssignment(), //
           null) //
       .add(IfStatement.class, //
-          new IfStatementLastInMethod(), //
+          new IfLastInMethodThenEndingWithEmptyReturn(), //
+          new IfLastInMethodElseEndingWithEmptyReturn(), //
+          new IfLastInMethod(), //
           new IfReturnFooElseReturnBar(), //
           new IfReturnNoElseReturn(), //
           new IfAssignToFooElseAssignToFoo(), //
@@ -97,7 +99,9 @@ public class Toolbox {
           new TernaryShortestFirst(), //
           new TernaryPushdown(), //
           null) //
-      .add(SuperConstructorInvocation.class, new SuperConstructorInvocationRemover()).seal();
+      .add(SuperConstructorInvocation.class, new SuperConstructorInvocationRemover()) //
+      .add(ReturnStatement.class, new ReturnLastInMethod()) //
+      .seal();
 
   /**
    * A builder for the enclosing class.

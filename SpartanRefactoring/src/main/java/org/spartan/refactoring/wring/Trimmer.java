@@ -79,6 +79,9 @@ public class Trimmer extends Spartanization {
   @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new DispatchingVisitor() {
       @Override <N extends ASTNode> boolean go(final N n) {
+        assert Toolbox.instance != null;
+        if (Toolbox.instance == null)
+          System.exit(1);
         final Wring<N> w = Toolbox.instance.find(n);
         return w == null || w.nonEligible(n) || overrideInto(w.make(n, exclude), $);
       }
@@ -105,6 +108,9 @@ public class Trimmer extends Spartanization {
 
   abstract class DispatchingVisitor extends ASTVisitor {
     final ExclusionManager exclude = makeExcluder();
+    @Override public final boolean visit(final ReturnStatement it) {
+      return cautiousGo(it);
+    }
     @Override public final boolean visit(final MethodDeclaration it) {
       return cautiousGo(it);
     }

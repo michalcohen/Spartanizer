@@ -98,18 +98,6 @@ import org.spartan.utils.Wrapper;
     trimming("(x >> 18) & MASK_BITS").to("");
     trimming("(x >> 18) & MASK_6BITS").to("");
   }
-  @Test public void issue38() {
-    trimming("    return o == null ? null\n" + //
-        "        : o == CONDITIONAL_AND ? CONDITIONAL_OR \n" + //
-        "            : o == CONDITIONAL_OR ? CONDITIONAL_AND \n" + //
-        "                : null;").to("");
-  }
-  @Test public void issue38Simplfiied() {
-    trimming(//
-        "         o == CONDITIONAL_AND ? CONDITIONAL_OR \n" + //
-            "            : o == CONDITIONAL_OR ? CONDITIONAL_AND \n" + //
-            "                : null").to("");
-  }
   @Test public void assignmentReturn0() {
     trimming("a = 3; return a;").to("return a = 3;");
   }
@@ -678,17 +666,13 @@ import org.spartan.utils.Wrapper;
     trimming("!Y ? null :!Z ? null : F").to("Y&&Z?F:null");
   }
   @Test public void donotSorMixedTypes() {
-    trimming("int a,b,c;String t = \"eureka!\";if (2 * 3.1415 * 180 > a || t.concat(\"<!>\") == \"1984\" && t.length() > 3)    return c > 5;").to("");
+    trimming("int a,b,c;String t = zE4;if (2 * 3.1415 * 180 > a || t.concat(sS) ==1922 && t.length() > 3)    return c > 5;").to("");
   }
   @Test public void dontELiminateCatchBlock() {
     trimming("try { f(); } catch (Exception e) { } finally {}").to("");
   }
   @Test public void dontELiminateSwitch() {
     trimming("switch (a) { default: }").to("");
-  }
-  @Test public void issue37WithSimplifiedBlock() {
-    trimming("if (a) { {} ; if (b) f(); {} } else { g(); f(); ++i; ++j; }")//
-        .to(" if (a) {  if (b) f(); } else { g(); f(); ++i; ++j; }");
   }
   @Test public void dontSimplifyCatchBlock() {
     trimming("try { {} ; {} } catch (Exception e) {{} ; {}  } finally {{} ; {}}")//
@@ -931,16 +915,16 @@ import org.spartan.utils.Wrapper;
     trimming("if (a) continue; return;").to("if (!a) return; continue;");
   }
   @Test public void ifSequencerThenSequencer0() {
-    trimming("if (a) return; else break;").to("if (a) return; break;");
+    trimming("if (a) return 4; else break;").to("if (a) return 4; break;");
   }
   @Test public void ifSequencerThenSequencer1() {
-    trimming("if (a) break; else return;").to("if (!a) return; break;");
+    trimming("if (a) break; else return 2;").to("if (!a) return 2; break;");
   }
   @Test public void ifSequencerThenSequencer3() {
-    trimming("if (a) return; else continue;").to("if (a) return; continue;");
+    trimming("if (a) return 10; else continue;").to("if (a) return 10; continue;");
   }
   @Test public void ifSequencerThenSequencer4() {
-    trimming("if (a) continue; else return;").to("if (!a) return; continue;");
+    trimming("if (a) continue; else return 2;").to("if (!a) return 2; continue;");
   }
   @Test public void ifSequencerThenSequencer5() {
     trimming("if (a) throw e; else break;").to("if (a) throw e; break;");
@@ -1120,6 +1104,22 @@ import org.spartan.utils.Wrapper;
         "    int a = 3;\n" + //
         "    a += 31 * a;").to("int a=3+31*3;");
   }
+  @Test public void issue37WithSimplifiedBlock() {
+    trimming("if (a) { {} ; if (b) f(); {} } else { g(); f(); ++i; ++j; }")//
+        .to(" if (a) {  if (b) f(); } else { g(); f(); ++i; ++j; }");
+  }
+  @Test public void issue38() {
+    trimming("    return o == null ? null\n" + //
+        "        : o == CONDITIONAL_AND ? CONDITIONAL_OR \n" + //
+        "            : o == CONDITIONAL_OR ? CONDITIONAL_AND \n" + //
+        "                : null;").to("");
+  }
+  @Test public void issue38Simplfiied() {
+    trimming(//
+        "         o == CONDITIONAL_AND ? CONDITIONAL_OR \n" + //
+            "            : o == CONDITIONAL_OR ? CONDITIONAL_AND \n" + //
+            "                : null").to("");
+  }
   @Test public void issue39base() {
     trimming("" + //
         "if (name == null) {\n" + //
@@ -1214,6 +1214,18 @@ import org.spartan.utils.Wrapper;
   @Test public void issue51() {
     trimming("int f() { int x = 0; for (int i = 0; i < 10; ++i) x += i; return x;}")//
         .to("int f() { int $ = 0; for (int i = 0; i < 10; ++i) $ += i; return $;}");
+  }
+  @Test public void issue52A() {
+    trimming("void m() { return; }").to("void m() {}");
+  }
+  @Test public void issue52A1() {
+    trimming("void m() { return a; }").to("");
+  }
+  @Test public void issue52B1() {
+    trimming("void m() { if (a) { f(); return; }}").to("void m() { if (a) { f(); ; }}");
+  }
+  @Test public void issue52B2() {
+    trimming("void m() { if (a) ++i; else { f(); return; }").to("void m() { if (a) ++i; else { f(); ; }");
   }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");
