@@ -39,8 +39,17 @@ public class IsTest {
   @Test public void isConstantFalse() {
     assertThat(Is.constant(e("a")), is(false));
   }
-  @Test public void isThisTrue() {
-    assertThat(Is.this_(e("this")), is(true));
+  @Test public void isNullFalse1() {
+    assertThat(Is.null_(e("this")), is(false));
+  }
+  @Test public void isNullFalse2() {
+    assertThat(Is.this_(e("this.a")), is(false));
+  }
+  @Test public void isNullTrue() {
+    assertThat(Is.null_(e("null")), is(true));
+  }
+  @Test public void isOneOf() {
+    assertThat(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION), is(true));
   }
   @Test public void isThisFalse1() {
     assertThat(Is.this_(e("null")), is(false));
@@ -48,14 +57,26 @@ public class IsTest {
   @Test public void isThisFalse2() {
     assertThat(Is.this_(e("this.a")), is(false));
   }
-  @Test public void isNullTrue() {
-    assertThat(Is.null_(e("null")), is(true));
+  @Test public void isThisTrue() {
+    assertThat(Is.this_(e("this")), is(true));
   }
-  @Test public void isNullFalse1() {
-    assertThat(Is.null_(e("this")), is(false));
+  @Test public void negative0() {
+    assertThat(Is.negative(e("0")), is(false));
   }
-  @Test public void isNullFalse2() {
-    assertThat(Is.this_(e("this.a")), is(false));
+  @Test public void negative1() {
+    assertThat(Is.negative(e("0")), is(false));
+  }
+  @Test public void negativeMinus1() {
+    assertThat(Is.negative(e("- 1")), is(true));
+  }
+  @Test public void negativeMinus2() {
+    assertThat(Is.negative(e("- 2")), is(true));
+  }
+  @Test public void negativeMinusA() {
+    assertThat(Is.negative(e("- a")), is(true));
+  }
+  @Test public void negativeNull() {
+    assertThat(Is.negative(e("null")), is(false));
   }
   @Test public void nonnAssociative() {
     assertThat(Is.nonAssociative(e("1")), is(false));
@@ -84,9 +105,6 @@ public class IsTest {
   }
   @Test public void sideEffectArray3() {
     assertThat(Is.sideEffectFree(e("new int[] {12,13, i++}")), is(false));
-  }
-  @Test public void isOneOf() {
-    assertThat(Is.oneOf(e("this"), CHARACTER_LITERAL, NUMBER_LITERAL, NULL_LITERAL, THIS_EXPRESSION), is(true));
   }
   @Test public void sideEffectArray4() {
     assertThat(Is.sideEffectFree(e("new int[f()]")), is(false));

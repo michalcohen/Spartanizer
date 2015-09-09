@@ -85,6 +85,12 @@ public enum Is {
   public static boolean booleanLiteral(final ASTNode n) {
     return is(n, BOOLEAN_LITERAL);
   }
+  public static boolean negative(final Expression e) {
+    return e instanceof PrefixExpression && negative((PrefixExpression) e);
+  }
+  public static boolean negative(final PrefixExpression e) {
+    return e.getOperator() == PrefixExpression.Operator.MINUS;
+  }
   /**
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a comparison
