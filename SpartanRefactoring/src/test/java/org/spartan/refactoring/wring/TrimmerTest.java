@@ -1390,10 +1390,10 @@ import org.spartan.utils.Wrapper;
         .to("while (c) b[i] = f;");
   }
   @Test public void issue57a() {
-    trimming("void m(List<Expression>... expressions) { }").to("void m(List<Expression> es) {}");
+    trimming("void m(List<Expression>... expressions) { }").to("void m(List<Expression>... es) {}");
   }
   @Test public void issue57b() {
-    trimming("void m(Expression... expression) { }").to("void m(Expression ... es) {}");
+    trimming("void m(Expression... expression) { }").to("void m(Expression... es) {}");
   }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");

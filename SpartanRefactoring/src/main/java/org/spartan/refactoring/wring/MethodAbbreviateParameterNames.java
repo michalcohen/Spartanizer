@@ -29,7 +29,7 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
     if (vd == null)
       return null;
     for (final SingleVariableDeclaration v : vd) {
-      final JavaTypeNameParser parser = new JavaTypeNameParser(v.getType().toString());
+      final JavaTypeNameParser parser = new JavaTypeNameParser(v.getType().toString(), isCollection(v));
       if (legal(v, d, parser, renameMap.values()))
         renameMap.put(v.getName(), d.getAST().newSimpleName(parser.shortName()));
     }
@@ -66,7 +66,10 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
     return !m.getName().getIdentifier().equalsIgnoreCase(parser.shortName());
   }
   @SuppressWarnings("static-method") private boolean suitable(final SingleVariableDeclaration d) {
-    final JavaTypeNameParser parser = new JavaTypeNameParser(d.getType().toString());
+    final JavaTypeNameParser parser = new JavaTypeNameParser(d.getType().toString(), isCollection(d));
     return parser.isGenericVariation(d.getName().getIdentifier()) && !parser.isShort(d.getName().getIdentifier());
+  }
+  @SuppressWarnings("static-method") private boolean isCollection(final SingleVariableDeclaration d) {
+    return d.isVarargs() || d.getType().isArrayType() || d.getType().isParameterizedType();
   }
 }

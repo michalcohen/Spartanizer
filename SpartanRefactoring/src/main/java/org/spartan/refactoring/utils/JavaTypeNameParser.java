@@ -18,13 +18,17 @@ import java.util.Iterator;
 public class JavaTypeNameParser {
   /** The type name managed by this instance */
   public final String typeName;
+  private final boolean isCollection;
   /**
    * Instantiates this class
    *
    * @param typeName the Java type name to parse
+   * @param isCollection denotes whether the type is a collection or a varargs
+   *          parameter
    */
-  public JavaTypeNameParser(final String typeName) {
+  public JavaTypeNameParser(final String typeName, final boolean isCollection) {
     this.typeName = typeName;
+    this.isCollection = isCollection;
   }
   /**
    * Returns whether a variable name is a generic variable of the type name
@@ -34,7 +38,7 @@ public class JavaTypeNameParser {
    *         false otherwise
    */
   public boolean isGenericVariation(final String variableName) {
-    return typeName.equalsIgnoreCase(variableName) || typeName.toLowerCase().contains(variableName.toLowerCase());
+    return typeName.equalsIgnoreCase(variableName) || lowerCaseContains(typeName, variableName) || lowerCaseContains(typeName, toSingular(variableName));
   }
   /**
    * Returns the calculated short name for the type
@@ -42,11 +46,24 @@ public class JavaTypeNameParser {
    * @return the type's short name
    */
   public String shortName() {
-    return String.valueOf(Character.toLowerCase(lastName().charAt(0)));
+    final String sn = String.valueOf(Character.toLowerCase(lastName().charAt(0)));
+    return sn + (isCollection ? "s" : "");
+  }
+  @SuppressWarnings("static-method") private String toSingular(final String s) {
+    // NOTE: This encompasses 99.9% of the nouns in the English language
+    if (s == null)
+      return null;
+    if (s.endsWith("ies"))
+      return s.substring(0, s.length() - 3) + "y";
+    if (s.endsWith("es"))
+      return s.substring(0, s.length() - 2);
+    if (s.endsWith("s"))
+      return s.substring(0, s.length() - 1);
+    return s;
   }
   /**
    * Shorthand for n.equals(this.shortName())
-   * 
+   *
    * @param n JD
    * @return true if the provided name equals the type's short name
    */
@@ -71,9 +88,8 @@ public class JavaTypeNameParser {
   private boolean isUpper(final int i) {
     return Character.isUpperCase(typeName.charAt(i));
   }
-  // TODO Daniel: Ask Yossi what these two methods are for
-  String[] components() {
-    return new String[] { "" + hashCode(), toString(), getClass().getSimpleName(), getClass().getCanonicalName() };
+  @SuppressWarnings("static-method") private boolean lowerCaseContains(final String string, final String substring) {
+    return string.toLowerCase().contains(substring.toLowerCase());
   }
   Iterable<String> suggestions() {
     return new Iterable<String>() {
@@ -86,7 +102,7 @@ public class JavaTypeNameParser {
             return shortName();
           }
           @Override public void remove() {
-            // TODO Auto-generated method stub
+            // Redundant
           }
         };
       }
