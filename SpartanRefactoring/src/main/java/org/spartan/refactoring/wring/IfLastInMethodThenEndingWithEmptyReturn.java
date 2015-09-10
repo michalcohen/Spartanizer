@@ -12,7 +12,7 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Rewrite;
 
 public class IfLastInMethodThenEndingWithEmptyReturn extends Wring<IfStatement> {
-  @Override String description(final IfStatement n) {
+  @Override String description(final IfStatement s) {
     return "Remove redundant in 'then' branch of last in method if statement ";
   }
   @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {

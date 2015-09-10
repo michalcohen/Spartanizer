@@ -29,10 +29,10 @@ public class Toolbox {
   public <N extends ASTNode> Wring<N> find(final N n) {
     return find(n, get(n));
   }
-  @SuppressWarnings("unchecked") <N extends ASTNode> List<Wring<N>> get(final Class<? extends ASTNode> c) {
-    if (!inner.containsKey(c))
-      inner.put(c, new ArrayList<>());
-    return (List<Wring<N>>) (List<?>) inner.get(c);
+  @SuppressWarnings("unchecked") <N extends ASTNode> List<Wring<N>> get(final Class<? extends ASTNode> n) {
+    if (!inner.containsKey(n))
+      inner.put(n, new ArrayList<>());
+    return (List<Wring<N>>) (List<?>) inner.get(n);
   }
   <N extends ASTNode> List<Wring<N>> get(final N n) {
     return get(n.getClass());

@@ -28,8 +28,8 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
    *         final
    */
-  public static boolean _final(final VariableDeclarationStatement v) {
-    return (Modifier.FINAL & v.getModifiers()) != 0;
+  public static boolean _final(final VariableDeclarationStatement s) {
+    return (Modifier.FINAL & s.getModifiers()) != 0;
   }
   /**
    * @param n the statement or block to check if it is an assignment
@@ -311,8 +311,8 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> the ReturnStatement is of
    *         literal type
    */
-  public static boolean literal(final ReturnStatement r) {
-    return literal(r.getExpression());
+  public static boolean literal(final ReturnStatement s) {
+    return literal(s.getExpression());
   }
   /**
    * Determine whether a node is a {@link MethodDeclaration}
@@ -599,9 +599,9 @@ public enum Is {
     //
     );
   }
-  static boolean sideEffectFreeArrayCreation(final ArrayCreation a) {
-    final ArrayInitializer i = a.getInitializer();
-    return sideEffectsFree(a.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
+  static boolean sideEffectFreeArrayCreation(final ArrayCreation c) {
+    final ArrayInitializer i = c.getInitializer();
+    return sideEffectsFree(c.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
   }
   static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
     return in(e.getOperator(), PrefixExpression.Operator.PLUS, PrefixExpression.Operator.MINUS, PrefixExpression.Operator.COMPLEMENT, PrefixExpression.Operator.NOT)

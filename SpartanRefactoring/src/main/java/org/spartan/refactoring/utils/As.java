@@ -66,17 +66,17 @@ public enum As {
    */
   CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS);
   /**
-   * @param s The node from which to return statement.
+   * @param n The node from which to return statement.
    * @return null if it is not possible to extract the return statement.
    */
-  public static ReturnStatement asReturn(final ASTNode s) {
-    if (s == null)
+  public static ReturnStatement asReturn(final ASTNode n) {
+    if (n == null)
       return null;
-    switch (s.getNodeType()) {
+    switch (n.getNodeType()) {
       case ASTNode.BLOCK:
-        return asReturn((Block) s);
+        return asReturn((Block) n);
       case ASTNode.RETURN_STATEMENT:
-        return (ReturnStatement) s;
+        return (ReturnStatement) n;
       default:
         return null;
     }

@@ -25,8 +25,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final boolean b, final Matcher<? super Boolean> m) {
-    assertThat(Boolean.valueOf(b), m);
+  public static void assertThat(final boolean b, final Matcher<? super Boolean> b) {
+    assertThat(Boolean.valueOf(b), b);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>byte</b></code>
@@ -40,8 +40,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final byte b, final Matcher<? super Byte> m) {
-    assertThat(Byte.valueOf(b), m);
+  public static void assertThat(final byte b, final Matcher<? super Byte> b) {
+    assertThat(Byte.valueOf(b), b);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>char</b></code>
@@ -55,8 +55,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final char c, final Matcher<? super Character> m) {
-    assertThat(Character.valueOf(c), m);
+  public static void assertThat(final char c, final Matcher<? super Character> c) {
+    assertThat(Character.valueOf(c), c);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>double</b></code>
@@ -70,8 +70,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final double d, final Matcher<? super Double> m) {
-    assertThat(Double.valueOf(d), m);
+  public static void assertThat(final double d, final Matcher<? super Double> d) {
+    assertThat(Double.valueOf(d), d);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>float</b></code>
@@ -85,8 +85,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final float f, final Matcher<? super Float> m) {
-    assertThat(Float.valueOf(f), m);
+  public static void assertThat(final float f, final Matcher<? super Float> f) {
+    assertThat(Float.valueOf(f), f);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>int</b></code> of
@@ -100,8 +100,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final int i, final Matcher<? super Integer> m) {
-    assertThat(Integer.valueOf(i), m);
+  public static void assertThat(final int i, final Matcher<? super Integer> i) {
+    assertThat(Integer.valueOf(i), i);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>long</b></code>
@@ -115,8 +115,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final long l, final Matcher<? super Long> m) {
-    assertThat(Long.valueOf(l), m);
+  public static void assertThat(final long l, final Matcher<? super Long> l) {
+    assertThat(Long.valueOf(l), l);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>short</b></code>
@@ -130,8 +130,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(Object, Matcher)
    */
-  public static void assertThat(final short s, final Matcher<? super Short> m) {
-    assertThat(Short.valueOf(s), m);
+  public static void assertThat(final short s, final Matcher<? super Short> s) {
+    assertThat(Short.valueOf(s), s);
   }
   /**
    * A non-auto-boxing version for the primitive type
@@ -147,8 +147,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final boolean b, final Matcher<? super Boolean> m) {
-    assertThat(reason, Boolean.valueOf(b), m);
+  public static void assertThat(final String reason, final boolean b, final Matcher<? super Boolean> b) {
+    assertThat(reason, Boolean.valueOf(b), b);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>byte</b></code>
@@ -164,8 +164,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final byte b, final Matcher<? super Byte> m) {
-    assertThat(reason, Byte.valueOf(b), m);
+  public static void assertThat(final String reason, final byte b, final Matcher<? super Byte> b) {
+    assertThat(reason, Byte.valueOf(b), b);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>char</b></code>
@@ -181,8 +181,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final char c, final Matcher<? super Character> m) {
-    assertThat(reason, Character.valueOf(c), m);
+  public static void assertThat(final String reason, final char c, final Matcher<? super Character> c) {
+    assertThat(reason, Character.valueOf(c), c);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>double</b></code>
@@ -198,8 +198,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final double d, final Matcher<? super Double> m) {
-    assertThat(reason, Double.valueOf(d), m);
+  public static void assertThat(final String reason, final double d, final Matcher<? super Double> d) {
+    assertThat(reason, Double.valueOf(d), d);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>float</b></code>
@@ -215,8 +215,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final float f, final Matcher<? super Float> m) {
-    assertThat(reason, Float.valueOf(f), m);
+  public static void assertThat(final String reason, final float f, final Matcher<? super Float> f) {
+    assertThat(reason, Float.valueOf(f), f);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>int</b></code> of
@@ -232,8 +232,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final int i, final Matcher<? super Integer> m) {
-    assertThat(reason, Integer.valueOf(i), m);
+  public static void assertThat(final String reason, final int i, final Matcher<? super Integer> i) {
+    assertThat(reason, Integer.valueOf(i), i);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>long</b></code>
@@ -249,8 +249,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final long l, final Matcher<? super Long> m) {
-    assertThat(reason, Long.valueOf(l), m);
+  public static void assertThat(final String reason, final long l, final Matcher<? super Long> l) {
+    assertThat(reason, Long.valueOf(l), l);
   }
   /**
    * A non-auto-boxing version for the primitive type <code><b>short</b></code>
@@ -266,8 +266,8 @@ public class MatcherAssert extends org.hamcrest.MatcherAssert {
    * @param m JD
    * @see org.hamcrest.MatcherAssert#assertThat(String, Object, Matcher)
    */
-  public static void assertThat(final String reason, final short s, final Matcher<? super Short> m) {
-    assertThat(reason, Short.valueOf(s), m);
+  public static void assertThat(final String reason, final short s, final Matcher<? super Short> s) {
+    assertThat(reason, Short.valueOf(s), s);
   }
   /**
    * A variant of {@link org.hamcrest.MatcherAssert#assertThat(Object, Matcher)}

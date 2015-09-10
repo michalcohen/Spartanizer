@@ -48,7 +48,7 @@ public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> {
     r.replace(s.getExpression(), e, g);
     r.replace(then, duplicate(then(then)), g);
   }
-  @Override Rewrite make(final IfStatement n) {
-    return make(n, null);
+  @Override Rewrite make(final IfStatement s) {
+    return make(s, null);
   }
 }

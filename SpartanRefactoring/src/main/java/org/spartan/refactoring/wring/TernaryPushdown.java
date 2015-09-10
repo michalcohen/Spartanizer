@@ -23,8 +23,8 @@ final class TernaryPushdown extends Wring.ReplaceCurrentNode<ConditionalExpressi
       }
     return $;
   }
-  @SuppressWarnings("unchecked") private static <T extends Expression> T p(final ASTNode e, final T $) {
-    return !Precedence.Is.legal(Precedence.of(e)) || Precedence.of(e) >= Precedence.of($) ? $ : (T) parenthesize($);
+  @SuppressWarnings("unchecked") private static <T extends Expression> T p(final ASTNode n, final T $) {
+    return !Precedence.Is.legal(Precedence.of(n)) || Precedence.of(n) >= Precedence.of($) ? $ : (T) parenthesize($);
   }
   private static Expression pushdown(final ConditionalExpression e, final ClassInstanceCreation e1, final ClassInstanceCreation e2) {
     if (!same(e1.getType(), e2.getType()) || !same(e1.getExpression(), e2.getExpression()))

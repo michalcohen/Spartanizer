@@ -29,7 +29,7 @@ public class AssignmentAndReturn extends Wring.ReplaceToNextStatement<Assignment
     r.replace(s, Subject.operand(a).toReturn(), g);
     return r;
   }
-  @Override String description(final Assignment n) {
-    return "Inline assignment to " + left(n) + " with its subsequent 'return'";
+  @Override String description(final Assignment a) {
+    return "Inline assignment to " + left(a) + " with its subsequent 'return'";
   }
 }

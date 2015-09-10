@@ -89,8 +89,8 @@ class UsesCollector extends HidingDepth {
   public UsesCollector(final UsesCollector c) {
     this(c.result, c.focus);
   }
-  @Override public boolean preVisit2(final ASTNode node) {
-    return !hidden() && !(node instanceof Type);
+  @Override public boolean preVisit2(final ASTNode n) {
+    return !hidden() && !(n instanceof Type);
   }
   @Override public boolean visit(final CastExpression e) {
     return recurse(right(e));
@@ -101,17 +101,17 @@ class UsesCollector extends HidingDepth {
   @Override public boolean visit(final FieldAccess n) {
     return recurse(n.getExpression());
   }
-  @Override public boolean visit(final MethodDeclaration n) {
-    return !declaredIn(n) && recurse(n.getBody());
+  @Override public boolean visit(final MethodDeclaration d) {
+    return !declaredIn(d) && recurse(d.getBody());
   }
-  @Override public boolean visit(final MethodInvocation n) {
-    ingore(n.getName());
-    recurse(n.getExpression());
-    return recurse(n.arguments());
+  @Override public boolean visit(final MethodInvocation i) {
+    ingore(i.getName());
+    recurse(i.getExpression());
+    return recurse(i.arguments());
   }
-  @Override public boolean visit(final SuperMethodInvocation n) {
-    ingore(n.getName());
-    return recurse(n.arguments());
+  @Override public boolean visit(final SuperMethodInvocation i) {
+    ingore(i.getName());
+    return recurse(i.arguments());
   }
   @Override public boolean visit(final QualifiedName n) {
     return recurse(n.getQualifier());
@@ -127,8 +127,8 @@ class UsesCollector extends HidingDepth {
     if (hit(candidate))
       result.add(candidate);
   }
-  boolean declaredIn(final FieldDeclaration f) {
-    for (final Object o : f.fragments())
+  boolean declaredIn(final FieldDeclaration d) {
+    for (final Object o : d.fragments())
       if (declaredIn((VariableDeclarationFragment) o))
         return true;
     return false;
@@ -156,8 +156,8 @@ class UsesCollector extends HidingDepth {
   }
   private boolean declaredIn(final AbstractTypeDeclaration d) {
     d.accept(new ASTVisitor() {
-      @Override public boolean visit(final FieldDeclaration f) {
-        return !hidden() && !declaredIn(f);
+      @Override public boolean visit(final FieldDeclaration d) {
+        return !hidden() && !declaredIn(d);
       }
     });
     return hidden();
@@ -169,7 +169,7 @@ class UsesCollector extends HidingDepth {
   private boolean declaredIn(final EnhancedForStatement s) {
     return declaredIn(s.getParameter());
   }
-  private boolean declaredIn(final MethodDeclaration n) {
+  private boolean declaredIn(final MethodDeclaration d) {
     for (final Object o : n.parameters())
       if (declaredIn((SingleVariableDeclaration) o))
         return true;
@@ -184,8 +184,8 @@ class UsesCollector extends HidingDepth {
   private void declaresField(final ASTNode n) {
     n.accept(new DeclaredInFields(n));
   }
-  private boolean hit(final SimpleName name) {
-    return same(name, focus);
+  private boolean hit(final SimpleName n) {
+    return same(n, focus);
   }
   /**
    * This is where we ignore all occurrences of {@link SimpleName} which are not
@@ -196,9 +196,9 @@ class UsesCollector extends HidingDepth {
   private void ingore(@SuppressWarnings("unused") final SimpleName _) {
     // We simply ignore the parameter
   }
-  boolean recurse(final ASTNode e) {
-    if (e != null && !hidden())
-      e.accept(clone());
+  boolean recurse(final ASTNode n) {
+    if (n != null && !hidden())
+      n.accept(clone());
     return false;
   }
   @Override protected UsesCollector clone() {
@@ -215,8 +215,8 @@ class UsesCollector extends HidingDepth {
     DeclaredInFields(final ASTNode parent) {
       this.parent = parent;
     }
-    @Override public boolean visit(final FieldDeclaration f) {
-      return f.getParent() == parent && !hidden() && !declaredIn(f);
+    @Override public boolean visit(final FieldDeclaration d) {
+      return d.getParent() == parent && !hidden() && !declaredIn(d);
     }
   }
 }

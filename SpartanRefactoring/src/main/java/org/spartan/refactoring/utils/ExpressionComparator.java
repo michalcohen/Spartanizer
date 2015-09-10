@@ -201,20 +201,20 @@ public enum ExpressionComparator implements Comparator<Expression> {
    * @param es an {@link Expression} list to sort
    * @return True if the list was modified
    */
-  public boolean sort(final List<Expression> es) {
+  public boolean sort(final List<Expression> e) {
     boolean $ = false;
     // Bubble sort
-    for (int i = 0, size = es.size(); i < size; ++i)
+    for (int i = 0, size = e.size(); i < size; ++i)
       for (int j = 0; j < size - 1; ++j) {
-        final Expression e0 = es.get(j);
-        final Expression e1 = es.get(j + 1);
+        final Expression e0 = e.get(j);
+        final Expression e1 = e.get(j + 1);
         if (compare(e0, e1) <= 0)
           continue;
         // Replace locations i,j with e0 and e1
-        es.remove(j);
-        es.remove(j);
-        es.add(j, e0);
-        es.add(j, e1);
+        e.remove(j);
+        e.remove(j);
+        e.add(j, e0);
+        e.add(j, e1);
         $ = true;
       }
     return $;

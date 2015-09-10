@@ -43,7 +43,7 @@ public class Nature implements IProjectNature {
   @Override public IProject getProject() {
     return project;
   }
-  @Override public void setProject(final IProject project) {
-    this.project = project;
+  @Override public void setProject(final IProject p) {
+    this.project = p;
   }
 }

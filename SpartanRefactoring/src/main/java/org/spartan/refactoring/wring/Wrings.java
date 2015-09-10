@@ -159,8 +159,8 @@ public enum Wrings {
   private static int positivePrefixLength(final IfStatement $) {
     return Wrings.length($.getExpression(), then($));
   }
-  private static int sequencerRank(final ASTNode s) {
-    switch (s.getNodeType()) {
+  private static int sequencerRank(final ASTNode n) {
+    switch (n.getNodeType()) {
       default:
         return -1;
       case BREAK_STATEMENT:

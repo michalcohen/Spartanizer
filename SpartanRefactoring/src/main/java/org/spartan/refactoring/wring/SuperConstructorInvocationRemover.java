@@ -16,10 +16,10 @@ public class SuperConstructorInvocationRemover extends Wring<SuperConstructorInv
   @Override boolean scopeIncludes(final SuperConstructorInvocation i) {
     return i.arguments().isEmpty();
   }
-  @Override Rewrite make(final SuperConstructorInvocation n) {
-    return new Rewrite(description(n), n) {
+  @Override Rewrite make(final SuperConstructorInvocation i) {
+    return new Rewrite(description(i), i) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        r.remove(n, g);
+        r.remove(i, g);
       }
     };
   }

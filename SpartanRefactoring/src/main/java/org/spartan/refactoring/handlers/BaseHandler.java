@@ -82,16 +82,16 @@ public abstract class BaseHandler extends AbstractHandler {
   private Void execute(final ISelection s) throws InterruptedException {
     return !(s instanceof ITextSelection) ? null : execute((ITextSelection) s);
   }
-  private Void execute(final ITextSelection textSelect) throws InterruptedException {
-    return execute(new RefactoringWizardOpenOperation(getWizard(textSelect, getCompilationUnit())));
+  private Void execute(final ITextSelection s) throws InterruptedException {
+    return execute(new RefactoringWizardOpenOperation(getWizard(s, getCompilationUnit())));
   }
   private Void execute(final RefactoringWizardOpenOperation wop) throws InterruptedException {
     wop.run(getCurrentWorkbenchWindow().getShell(), getDialogTitle());
     return null;
   }
-  private RefactoringWizard getWizard(final ITextSelection ts, final ICompilationUnit cu) {
+  private RefactoringWizard getWizard(final ITextSelection s, final ICompilationUnit cu) {
     final Spartanization $ = getRefactoring();
-    $.setSelection(ts);
+    $.setSelection(s);
     $.setCompilationUnit(cu);
     return new Wizard($);
   }

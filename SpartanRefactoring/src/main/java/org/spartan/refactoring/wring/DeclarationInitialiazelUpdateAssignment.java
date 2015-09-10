@@ -41,7 +41,7 @@ public final class DeclarationInitialiazelUpdateAssignment extends Wring.Variabl
     r.remove(nextStatement, g);
     return r;
   }
-  @Override String description(final VariableDeclarationFragment n) {
-    return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";
+  @Override String description(final VariableDeclarationFragment f) {
+    return "Consolidate declaration of " + f.getName() + " with its subsequent initialization";
   }
 }

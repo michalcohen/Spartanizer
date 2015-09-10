@@ -47,15 +47,15 @@ public class InlineSingleUse extends Spartanization {
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment n) {
-        if (!inRange(m, n) || !(n.getParent() instanceof VariableDeclarationStatement))
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        if (!inRange(m, f) || !(f.getParent() instanceof VariableDeclarationStatement))
           return true;
-        final SimpleName name = n.getName();
-        final VariableDeclarationStatement parent = (VariableDeclarationStatement) n.getParent();
+        final SimpleName name = f.getName();
+        final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
         final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(parent.getParent());
         if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Search.DEFINITIONS, name, parent.getParent()) == 1)) {
-          r.replace(uses.get(0), n.getInitializer(), null);
-          r.remove(parent.fragments().size() != 1 ? n : parent, null);
+          r.replace(uses.get(0), f.getInitializer(), null);
+          r.remove(parent.fragments().size() != 1 ? f : parent, null);
         }
         return true;
       }
@@ -66,12 +66,12 @@ public class InlineSingleUse extends Spartanization {
       @Override public boolean visit(final VariableDeclarationFragment node) {
         return !(node.getParent() instanceof VariableDeclarationStatement) || go(node, node.getName());
       }
-      private boolean go(final VariableDeclarationFragment v, final SimpleName n) {
-        final VariableDeclarationStatement parent = (VariableDeclarationStatement) v.getParent();
+      private boolean go(final VariableDeclarationFragment f, final SimpleName n) {
+        final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
         if (numOfOccur(Search.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || //
             numOfOccur(Search.DEFINITIONS, n, parent.getParent()) == 1))
-          $.add(new Rewrite("", v) {
-            @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+          $.add(new Rewrite("", f) {
+            @Override public void go(final ASTRewrite r, final TextEditGroup g) {
               // TODO Auto-generated method stub
             }
           });

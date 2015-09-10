@@ -15,11 +15,11 @@ import org.eclipse.jdt.core.dom.*;
   public static Operand operand(final Expression inner) {
     return new Operand(inner);
   }
-  public static Several operands(final Expression... es) {
-    return new Several(Arrays.asList(es));
+  public static Several operands(final Expression... e) {
+    return new Several(Arrays.asList(e));
   }
-  public static Several operands(final List<Expression> es) {
-    return new Several(es);
+  public static Several operands(final List<Expression> e) {
+    return new Several(e);
   }
   public static Pair pair(final Expression left, final Expression right) {
     return new Pair(left, right);

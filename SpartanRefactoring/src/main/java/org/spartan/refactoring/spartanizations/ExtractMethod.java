@@ -31,9 +31,9 @@ public class ExtractMethod extends Spartanization {
     // TODO Ofir: No opportunities for now, if it's 2016 and not added yet,
     // blame
     return new ASTVisitor() {
-      @Override public boolean visit(final MethodDeclaration n) {
-        $.add(new Rewrite("Extract method", n) {
-          @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+      @Override public boolean visit(final MethodDeclaration d) {
+        $.add(new Rewrite("Extract method", d) {
+          @Override public void go(final ASTRewrite r, final TextEditGroup g) {
             // TODO: Missing implementation
           }
         });

@@ -71,7 +71,7 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> {
     }
     return $;
   }
-  @Override Rewrite make(final IfStatement n, final ExclusionManager exclude) {
-    return super.make(n, exclude);
+  @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {
+    return super.make(s, exclude);
   }
 }

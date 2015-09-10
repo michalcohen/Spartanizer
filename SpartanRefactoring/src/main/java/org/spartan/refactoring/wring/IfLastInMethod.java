@@ -12,8 +12,8 @@ import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Rewrite;
 
 public class IfLastInMethod extends Wring<IfStatement> {
-  @Override String description(final IfStatement n) {
-    return "Invert conditional " + n.getExpression() + " for early return";
+  @Override String description(final IfStatement s) {
+    return "Invert conditional " + s.getExpression() + " for early return";
   }
   @Override Rewrite make(final IfStatement s) {
     if (Wrings.emptyThen(s) || !Wrings.emptyElse(s) || Extract.statements(then(s)).size() < 2)

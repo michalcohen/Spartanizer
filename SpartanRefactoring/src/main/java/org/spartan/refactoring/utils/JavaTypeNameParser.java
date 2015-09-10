@@ -50,8 +50,8 @@ public class JavaTypeNameParser {
    * @param n JD
    * @return true if the provided name equals the type's short name
    */
-  public boolean isShort(final String n) {
-    return n.equals(shortName());
+  public boolean isShort(final String s) {
+    return s.equals(shortName());
   }
   String lastName() {
     return typeName.substring(lastNameIndex());

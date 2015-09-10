@@ -34,8 +34,8 @@ public class MethodExplorer {
   public List<SimpleName> localVariables() {
     final List<SimpleName> $ = new ArrayList<>();
     inner.accept(new IgnoreNestedMethods() {
-      @Override public boolean visit(final CatchClause s) {
-        return add(s.getException());
+      @Override public boolean visit(final CatchClause c) {
+        return add(c.getException());
       }
       @Override public boolean visit(final EnhancedForStatement s) {
         return add(s.getParameter());

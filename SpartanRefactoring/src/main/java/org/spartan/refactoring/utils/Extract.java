@@ -137,9 +137,9 @@ public enum Extract {
       return null;
     final Wrapper<IfStatement> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
-      @Override public boolean visit(final IfStatement i) {
+      @Override public boolean visit(final IfStatement s) {
         if ($.get() == null)
-          $.set(i);
+          $.set(s);
         return false;
       }
     });
@@ -156,9 +156,9 @@ public enum Extract {
   public static MethodDeclaration firstMethodDeclaration(final ASTNode n) {
     final Wrapper<MethodDeclaration> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
-      @Override public boolean visit(final MethodDeclaration i) {
+      @Override public boolean visit(final MethodDeclaration d) {
         if ($.get() == null)
-          $.set(i);
+          $.set(d);
         return false;
       }
     });
@@ -212,9 +212,9 @@ public enum Extract {
       return null;
     final Wrapper<VariableDeclarationFragment> $ = new Wrapper<>();
     n.accept(new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment i) {
+      @Override public boolean visit(final VariableDeclarationFragment f) {
         if ($.get() == null)
-          $.set(i);
+          $.set(f);
         return false;
       }
     });

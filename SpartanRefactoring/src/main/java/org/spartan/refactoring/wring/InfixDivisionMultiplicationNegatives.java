@@ -46,9 +46,7 @@ public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpre
       exclude.exclude(e);
     return new Rewrite(description(e), e) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        Expression first = null;
-        if (totalNegation % 2 == 1)
-          first = es.get(0);
+        Expression first = totalNegation % 2 != 1 ? null : es.get(0);
         for (final Expression e : es)
           if (e != first)
             r.replace(e, new Plant(duplicate(peelNegation(e))).into(e.getParent()), g);
@@ -85,11 +83,10 @@ public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpre
     return $;
   }
   private static List<Expression> gather(final Expression e, final List<Expression> $) {
-    if (!(e instanceof InfixExpression)) {
-      $.add(e);
-      return $;
-    }
-    return gather(asInfixExpression(e));
+    if (e instanceof InfixExpression)
+      return gather(asInfixExpression(e));
+    $.add(e);
+    return $;
   }
   @Override String description(final InfixExpression e) {
     return "Use at most one arithmetical negation, for first factor of " + e.getOperator();

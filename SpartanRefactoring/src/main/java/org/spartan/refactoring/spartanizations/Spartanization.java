@@ -298,20 +298,20 @@ public abstract class Spartanization extends Refactoring {
   /**
    * @param compilationUnit the compilationUnit to set
    */
-  public void setCompilationUnit(final ICompilationUnit compilationUnit) {
-    this.compilationUnit = compilationUnit;
+  public void setCompilationUnit(final ICompilationUnit u) {
+    this.compilationUnit = u;
   }
   /**
    * @param marker the marker to set for the refactoring
    */
-  public final void setMarker(final IMarker marker) {
-    this.marker = marker;
+  public final void setMarker(final IMarker m) {
+    this.marker = m;
   }
   /**
    * @param selection the selection to set
    */
-  public void setSelection(final ITextSelection selection) {
-    this.selection = selection;
+  public void setSelection(final ITextSelection s) {
+    this.selection = s;
   }
   @Override public String toString() {
     return name;

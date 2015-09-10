@@ -73,8 +73,8 @@ public abstract class FileTestUtils {
   /**
    * Creates a temporary file - including lazy deletion.
    */
-  static File createTempFile(final StringBuilder b, final TestDirection direction, final File f) {
-    return createTemporaryRandomAccessFile(createTempFile(direction, f), b.toString());
+  static File createTempFile(final StringBuilder b, final TestDirection d, final File f) {
+    return createTemporaryRandomAccessFile(createTempFile(d, f), b.toString());
   }
   static Spartanization makeSpartanizationObject(final File f) {
     return makeSpartanizationObject(f.getName());
@@ -102,16 +102,16 @@ public abstract class FileTestUtils {
       return null;
     }
   }
-  private static File createTempFile(final TestDirection direction, final File f) {
+  private static File createTempFile(final TestDirection d, final File f) {
     try {
-      return File.createTempFile(f.getName().replace(".", ""), direction == TestDirection.In ? ".in" : ".out");
+      return File.createTempFile(f.getName().replace(".", ""), d == TestDirection.In ? ".in" : ".out");
     } catch (final IOException e) {
       return null; // Failed to create temporary file
     }
   }
-  private static File createTemporaryRandomAccessFile(final File $, final String string) {
+  private static File createTemporaryRandomAccessFile(final File $, final String s) {
     try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
-      fh.writeBytes(string);
+      fh.writeBytes(s);
       if ($ != null)
         $.deleteOnExit();
     } catch (final IOException e) {
@@ -124,8 +124,8 @@ public abstract class FileTestUtils {
       $.delete($.indexOf(testKeyword), $.length());
     return $;
   }
-  private static Spartanization error(final String message, final Class<?> c, final Throwable e) {
-    System.err.println(message + " '" + c.getCanonicalName() + "' " + e.getMessage());
+  private static Spartanization error(final String message, final Class<?> c, final Throwable t) {
+    System.err.println(message + " '" + c.getCanonicalName() + "' " + t.getMessage());
     return null;
   }
 

@@ -36,7 +36,7 @@ public class PrefixIncrementDecrementReturn extends Wring.ReplaceToNextStatement
     r.replace(s, Subject.operand(e).toReturn(), g);
     return r;
   }
-  @Override String description(final PrefixExpression n) {
-    return "Consolidate " + n + " with subsequent 'return' of " + n.getOperand();
+  @Override String description(final PrefixExpression e) {
+    return "Consolidate " + e + " with subsequent 'return' of " + e.getOperand();
   }
 }

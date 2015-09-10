@@ -73,7 +73,7 @@ public class SpartanizationPreferencePage extends FieldEditorPreferencePage impl
   /**
    * Initializes the workbench
    */
-  @Override public void init(@SuppressWarnings("unused") final IWorkbench workbench) {
+  @Override public void init(@SuppressWarnings("unused") final IWorkbench w) {
     super.initialize();
   }
 }

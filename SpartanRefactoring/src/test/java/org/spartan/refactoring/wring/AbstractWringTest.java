@@ -158,8 +158,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         this(null);
       }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-      Infix(final Wring<InfixExpression> w) {
-        super(w);
+      Infix(final Wring<InfixExpression> e) {
+        super(e);
       }
       @Test public void correctSimplifieInfix() {
         if (inner == null)
@@ -238,8 +238,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
           this(null);
         }
         /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-        Infix(final Wring<InfixExpression> w) {
-          super(w);
+        Infix(final Wring<InfixExpression> e) {
+          super(e);
         }
         @Test public void inputIsInfixExpression() {
           if (input != null)
@@ -275,8 +275,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
        *
        * @param w JD
        */
-      Conditional(final Wring<ConditionalExpression> w) {
-        super(w);
+      Conditional(final Wring<ConditionalExpression> e) {
+        super(e);
       }
       @Test public void inputIsConditionalExpression() {
         if (input != null)
@@ -332,8 +332,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         this(null);
       }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-      Infix(final Wring<InfixExpression> w) {
-        super(w);
+      Infix(final Wring<InfixExpression> e) {
+        super(e);
       }
       @Test public void flattenIsIdempotentt() {
         if (inner == null)
@@ -584,8 +584,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
        *
        * @param w JD
        */
-      Conditional(final Wring<ConditionalExpression> w) {
-        super(w);
+      Conditional(final Wring<ConditionalExpression> e) {
+        super(e);
       }
       @Test public void inputIsConditionalExpression() {
         if (inner == null)
@@ -605,8 +605,8 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
         this(null);
       }
       /** Instantiates the enclosing class ({@link Infix})@param simplifier */
-      Infix(final Wring<InfixExpression> w) {
-        super(w);
+      Infix(final Wring<InfixExpression> e) {
+        super(e);
       }
       @Test public void flattenIsIdempotentt() {
         if (input == null)

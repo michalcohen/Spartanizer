@@ -31,7 +31,7 @@ public final class DeclarationAssignment extends Wring.VariableDeclarationFragem
     $.setInitializer(duplicate(e));
     return $;
   }
-  @Override String description(final VariableDeclarationFragment n) {
-    return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";
+  @Override String description(final VariableDeclarationFragment f) {
+    return "Consolidate declaration of " + f.getName() + " with its subsequent initialization";
   }
 }

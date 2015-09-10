@@ -130,10 +130,10 @@ public enum Funcs {
             : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
   }
   private static Expression peelNegation(final PrefixExpression $) {
-    return $.getOperator() == PrefixExpression.Operator.MINUS ? peelNegation($.getOperand()) : $;
+    return $.getOperator() != PrefixExpression.Operator.MINUS ? $ : peelNegation($.getOperand());
   }
   private static Expression peelNegation(final NumberLiteral $) {
-    return $.getToken().startsWith("-") ? $.getAST().newNumberLiteral($.getToken().substring(1)) : $;
+    return !$.getToken().startsWith("-") ? $ : $.getAST().newNumberLiteral($.getToken().substring(1));
   }
   /**
    * Down-cast, if possible, to {@link ExpressionStatement}
@@ -213,8 +213,8 @@ public enum Funcs {
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
-  public static PrefixExpression asPrefixExpression(final ASTNode e) {
-    return !(e instanceof PrefixExpression) ? null : (PrefixExpression) e;
+  public static PrefixExpression asPrefixExpression(final ASTNode n) {
+    return !(n instanceof PrefixExpression) ? null : (PrefixExpression) n;
   }
   /**
    * Down-cast, if possible, to {@link ReturnStatement}
@@ -243,8 +243,8 @@ public enum Funcs {
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
-  public static Statement asStatement(final ASTNode e) {
-    return !(e instanceof Statement) ? null : (Statement) e;
+  public static Statement asStatement(final ASTNode n) {
+    return !(n instanceof Statement) ? null : (Statement) n;
   }
   /**
    * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
@@ -265,8 +265,8 @@ public enum Funcs {
       return null;
     final List<ASTNode> $ = new ArrayList<>();
     root.accept(new ASTVisitor() {
-      @Override public void preVisit(final ASTNode node) {
-        $.add(node);
+      @Override public void preVisit(final ASTNode n) {
+        $.add(n);
       }
     });
     $.remove(0);
@@ -426,8 +426,8 @@ public enum Funcs {
    * @param v JD
    * @return true if the variable is declared as final
    */
-  public static boolean isFinal(final VariableDeclarationStatement v) {
-    return (Modifier.FINAL & v.getModifiers()) != 0;
+  public static boolean isFinal(final VariableDeclarationStatement s) {
+    return (Modifier.FINAL & s.getModifiers()) != 0;
   }
   /**
    * @param n JD
@@ -528,10 +528,10 @@ public enum Funcs {
    * @return the new variable declaration fragment or null if one of the given
    *         parameters was null
    */
-  public static VariableDeclarationFragment makeVariableDeclarationFragment(final AST t, final ASTRewrite r, final SimpleName varName, final Expression initalizer) {
-    if (hasNull(t, r, varName, initalizer))
+  public static VariableDeclarationFragment makeVariableDeclarationFragment(final AST a, final ASTRewrite r, final SimpleName varName, final Expression initalizer) {
+    if (hasNull(a, r, varName, initalizer))
       return null;
-    final VariableDeclarationFragment $ = t.newVariableDeclarationFragment();
+    final VariableDeclarationFragment $ = a.newVariableDeclarationFragment();
     $.setInitializer(frugalDuplicate(initalizer));
     $.setName(varName.getParent() == null ? varName : (SimpleName) r.createCopyTarget(varName));
     return $;
@@ -567,8 +567,8 @@ public enum Funcs {
    * @see ASTNode#copySubtree
    * @see ASTRewrite
    */
-  @SuppressWarnings("unchecked") public static <N extends ASTNode> N rebase(final N n, final AST t) {
-    return (N) copySubtree(t, n);
+  @SuppressWarnings("unchecked") public static <N extends ASTNode> N rebase(final N n, final AST a) {
+    return (N) copySubtree(a, n);
   }
   /**
    * Remove all occurrences of a boolean literal from a list of
@@ -695,7 +695,7 @@ public enum Funcs {
         NOT_EQUALS //
     ) ? e : null;
   }
-  private static Expression find(final boolean b, final List<Expression> es) {
+  private static Expression find(final boolean b, final List<Expression> e) {
     for (final Expression $ : es)
       if (Is.booleanLiteral($) && b == asBooleanLiteral($).booleanValue())
         return $;
@@ -704,9 +704,9 @@ public enum Funcs {
   private static Expression frugalDuplicate(final Expression e) {
     return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
-  private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName name) {
+  private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName n) {
     for (final VariableDeclarationFragment $ : frags)
-      if (same(name, $.getName()))
+      if (same(n, $.getName()))
         return $;
     return null;
   }
@@ -724,8 +724,8 @@ public enum Funcs {
   private static String shortName(final ArrayType t) {
     return shortName(t.getElementType()) + repeat(t.getDimensions(), 's');
   }
-  private static String repeat(final int n, final char c) {
-    return new String(new char[n]).replace('\0', c);
+  private static String repeat(final int i, final char c) {
+    return new String(new char[i]).replace('\0', c);
   }
   private static String shortName(final IntersectionType t) {
     // TODO Auto-generated method stub

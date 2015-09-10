@@ -266,13 +266,13 @@ final class LocalInliner {
   final SimpleName name;
   final ASTRewrite rewriter;
   final TextEditGroup editGroup;
-  LocalInliner(final SimpleName name) {
-    this(name, null, null);
+  LocalInliner(final SimpleName n) {
+    this(n, null, null);
   }
-  LocalInliner(final SimpleName name, final ASTRewrite rewriter, final TextEditGroup editGroup) {
-    this.name = name;
+  LocalInliner(final SimpleName n, final ASTRewrite rewriter, final TextEditGroup g) {
+    this.name = n;
     this.rewriter = rewriter;
-    this.editGroup = editGroup;
+    this.editGroup = g;
   }
   LocalInlineWithValue byValue(final Expression replacement) {
     return new LocalInlineWithValue(replacement);
@@ -318,10 +318,10 @@ final class LocalInliner {
     private List<Expression> uses(final ASTNode... es) {
       return Search.forAllOccurencesOf(name).in(es);
     }
-    private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> e) {
-      final ASTNode oldExpression = e.get();
-      final ASTNode newExpression = duplicate(e.get());
-      e.set(newExpression);
+    private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> n) {
+      final ASTNode oldExpression = n.get();
+      final ASTNode newExpression = duplicate(n.get());
+      n.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
       for (final ASTNode use : Search.forAllOccurencesExcludingDefinitions(name).in(newExpression))
         rewriter.replace(use, !(use instanceof Expression) ? replacement : new Plant((Expression) replacement).into(use.getParent()), editGroup);

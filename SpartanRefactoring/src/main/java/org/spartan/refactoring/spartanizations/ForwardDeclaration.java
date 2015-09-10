@@ -45,18 +45,18 @@ public class ForwardDeclaration extends Spartanization {
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit cu, final IMarker m) {
     cu.accept(new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment v) {
-        if (!inRange(m, v))
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        if (!inRange(m, f))
           return true;
-        final ASTNode containingNode = v.getParent().getParent();
+        final ASTNode containingNode = f.getParent().getParent();
         if (!(containingNode instanceof Block))
           return true;
         final Block b = (Block) containingNode;
-        final int firstUseIdx = findFirstUse(b, v.getName());
+        final int firstUseIdx = findFirstUse(b, f.getName());
         if (firstUseIdx < 0)
           return true;
-        final int declaredIdx = b.statements().indexOf(v.getParent());
-        if (nextNodeIsAlreadyFixed(b, v, declaredIdx))
+        final int declaredIdx = b.statements().indexOf(f.getParent());
+        if (nextNodeIsAlreadyFixed(b, f, declaredIdx))
           return true;
         final int i = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
         if (declaredIdx >= i)
@@ -66,9 +66,9 @@ public class ForwardDeclaration extends Spartanization {
         if (((VariableDeclarationStatement) declarationNode).fragments().size() == 1)
           rewrite(i, declarationNode, listRewrite);
         else {
-          final VariableDeclarationFragment copySubtree = duplicate(v);
+          final VariableDeclarationFragment copySubtree = duplicate(f);
           listRewrite.insertAt(b.getAST().newVariableDeclarationStatement(copySubtree), 1 + i, null);
-          r.remove(v, null);
+          r.remove(f, null);
         }
         return true;
       }
@@ -78,37 +78,37 @@ public class ForwardDeclaration extends Spartanization {
       }
     });
   }
-  static boolean nextNodeIsAlreadyFixed(final Block block, final VariableDeclarationFragment n, final int declaredIdx) {
-    final int firstUseIdx = findFirstUse(block, n.getName());
+  static boolean nextNodeIsAlreadyFixed(final Block b, final VariableDeclarationFragment n, final int declaredIdx) {
+    final int firstUseIdx = findFirstUse(b, n.getName());
     if (firstUseIdx < 0)
       return true;
-    final int beginingOfDeclarationsIdx = findBeginingOfDeclarationBlock(block, declaredIdx, firstUseIdx);
-    final ASTNode nextN = (ASTNode) block.statements().get(1 + declaredIdx);
+    final int beginingOfDeclarationsIdx = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
+    final ASTNode nextN = (ASTNode) b.statements().get(1 + declaredIdx);
     final int nextDeclaredIdx = 1 + declaredIdx;
     if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
       final VariableDeclarationStatement nextNVDS = (VariableDeclarationStatement) nextN;
       for (final VariableDeclarationFragment f : (List<VariableDeclarationFragment>) nextNVDS.fragments())
-        if (nextDeclaredIdx + 1 == findFirstUse(block, f.getName()) && nextDeclaredIdx == beginingOfDeclarationsIdx)
+        if (nextDeclaredIdx + 1 == findFirstUse(b, f.getName()) && nextDeclaredIdx == beginingOfDeclarationsIdx)
           return true;
     }
     return false;
   }
   @Override protected ASTVisitor collect(final List<Rewrite> $$) {
     return new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment n) {
-        final ASTNode $ = n.getParent().getParent();
-        return !($ instanceof Block) || moverForward(n, (Block) $);
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        final ASTNode $ = f.getParent().getParent();
+        return !($ instanceof Block) || moverForward(f, (Block) $);
       }
-      private boolean moverForward(final VariableDeclarationFragment n, final Block b) {
-        final int firstUseIdx = findFirstUse(b, n.getName());
+      private boolean moverForward(final VariableDeclarationFragment f, final Block b) {
+        final int firstUseIdx = findFirstUse(b, f.getName());
         if (firstUseIdx < 0)
           return true;
-        final int declaredIdx = b.statements().indexOf(n.getParent());
-        if (nextNodeIsAlreadyFixed(b, n, declaredIdx))
+        final int declaredIdx = b.statements().indexOf(f.getParent());
+        if (nextNodeIsAlreadyFixed(b, f, declaredIdx))
           return true;
         if (declaredIdx < findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx))
-          $$.add(new Rewrite("", n) {
-            @Override public void go(final ASTRewrite r, final TextEditGroup editGroup) {
+          $$.add(new Rewrite("", f) {
+            @Override public void go(final ASTRewrite r, final TextEditGroup g) {
               // TODO Auto-generated method stub
             }
           });
