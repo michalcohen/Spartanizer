@@ -34,9 +34,7 @@ public final class DeclarationInitializerSingleStatementInScope extends Wring.Va
     if (parent == null)
       return null;
     final List<Statement> ss = parent.statements();
-    if (last(ss) != nextStatement)
-      return null;
-    if (penultimate(ss) != s)
+    if (last(ss) != nextStatement || penultimate(ss) != s)
       return null;
     final List<Expression> in = Search.forDefinitions(n).in(nextStatement);
     if (!in.isEmpty())

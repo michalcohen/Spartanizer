@@ -9,7 +9,6 @@ import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.utils.Into.s;
 
-import org.eclipse.jdt.core.dom.Statement;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -46,8 +45,7 @@ public class ExtractStatementTest {
     assertThat(Extract.statements(null), is(notNullValue()));
   }
   @Test public void isNotNullOfValidStatement() {
-    final Statement s = s("{}");
-    assertThat(Extract.statements(s), is(notNullValue()));
+    assertThat(Extract.statements(s("{}")), is(notNullValue()));
   }
   @Test public void manyEmptyStatementInBlockIsEmpty() {
     assertThat(Extract.statements(s("{;};{;;{;;}};")), empty());

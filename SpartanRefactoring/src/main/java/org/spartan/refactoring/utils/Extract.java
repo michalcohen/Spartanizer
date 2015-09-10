@@ -438,8 +438,7 @@ public enum Extract {
     return $;
   }
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
-    final int nodeType = s.getNodeType();
-    switch (nodeType) {
+    switch (s.getNodeType()) {
       case EMPTY_STATEMENT:
         return $;
       case BLOCK:

@@ -23,15 +23,11 @@ public final class IfThrowNoElseThrow extends Wring.ReplaceToNextStatement<IfSta
     if (e1 == null)
       return null;
     final Expression e2 = getThrowExpression(nextStatement);
-    if (e2 == null)
-      return null;
-    return Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(e1, e2).toCondition(s.getExpression())).toThrow(), g);
+    return e2 == null ? null : Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(e1, e2).toCondition(s.getExpression())).toThrow(), g);
   }
   static Expression getThrowExpression(final Statement s) {
     final ThrowStatement $ = Extract.throwStatement(s);
-    if ($ == null)
-      return null;
-    return Extract.core($.getExpression());
+    return $ == null ? null : Extract.core($.getExpression());
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Consolidate into a single 'trhow  '";

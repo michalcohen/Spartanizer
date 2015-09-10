@@ -81,8 +81,7 @@ public class IfEmptyElseTest {
       super(WRING);
     }
     @Test public void isfStatementElseIsEmpty() {
-      final IfStatement i = asMe();
-      assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
+      assertThat(Extract.statements(asMe().getElseStatement()).size(), is(0));
     }
     @Test public void isfStatementElseNotNull() {
       assertNotNull(elze(asMe()));

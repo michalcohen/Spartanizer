@@ -9,9 +9,6 @@ import static org.spartan.refactoring.utils.Into.d;
 import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.s;
 
-import java.util.List;
-
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Search.Searcher;
@@ -356,8 +353,7 @@ import org.spartan.refactoring.utils.Search.Searcher;
   @Test public void vanilla() {
     final Searcher findUses = Search.forAllOccurencesOf(n);
     assertThat(findUses, notNullValue());
-    final List<Expression> in = findUses.in(s("b = n;"));
-    assertThat(in.size(), is(1));
+    assertThat(findUses.in(s("b = n;")).size(), is(1));
   }
   @Test public void vanillaShortVersion() {
     assertThat(Search.forAllOccurencesOf(n).in(s("b = n;")).size(), is(1));

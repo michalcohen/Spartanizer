@@ -46,10 +46,7 @@ public class TernaryShortestFirstTest {
   @Test public void trace1() {
     final ConditionalExpression e = Into.c("a?f(b,c,d):a");
     assertThat(e, notNullValue());
-    final Expression elze = Extract.core(e.getElseExpression());
-    final Expression then = Extract.core(e.getThenExpression());
-    final Expression $ = Subject.pair(elze, then).toCondition(logicalNot(e.getExpression()));
-    assertThat($, iz("!a?a:f(b,c,d)"));
+    assertThat(Subject.pair(Extract.core(e.getElseExpression()), Extract.core(e.getThenExpression())).toCondition(logicalNot(e.getExpression())), iz("!a?a:f(b,c,d)"));
   }
   @Test public void trace2() {
     final ConditionalExpression e = Into.c("!f(o) ? null : x.f(a).to(e.g())");

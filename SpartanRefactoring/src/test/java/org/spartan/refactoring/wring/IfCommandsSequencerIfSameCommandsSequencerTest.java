@@ -158,8 +158,7 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
       assertThat(Extract.nextIfStatement(asMe()), notNullValue());
     }
     @Test public void isfStatementElseIsEmpty() {
-      final IfStatement s = Extract.firstIfStatement(As.STATEMENTS.ast(input));
-      assertThat(Extract.statements(elze(s)).size(), is(0));
+      assertThat(Extract.statements(elze(Extract.firstIfStatement(As.STATEMENTS.ast(input)))).size(), is(0));
     }
     @Test public void isIfStatement() {
       assertThat(input, asMe(), notNullValue());

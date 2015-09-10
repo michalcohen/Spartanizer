@@ -160,8 +160,7 @@ public class IfReturnNoElseReturnTest {
       assertThat(Extract.nextReturn(asMe()), notNullValue());
     }
     @Test public void isfStatementElseIsEmpty() {
-      final IfStatement i = Extract.firstIfStatement(As.STATEMENTS.ast(input));
-      assertThat(Extract.statements(i.getElseStatement()).size(), is(0));
+      assertThat(Extract.statements(Extract.firstIfStatement(As.STATEMENTS.ast(input)).getElseStatement()).size(), is(0));
     }
     @Test public void isIfStatement() {
       assertThat(input, asMe(), notNullValue());

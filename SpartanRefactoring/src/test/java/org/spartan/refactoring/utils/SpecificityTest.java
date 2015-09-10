@@ -6,7 +6,6 @@ import static org.spartan.hamcrest.OrderingComparison.greaterThan;
 import static org.spartan.hamcrest.OrderingComparison.lessThan;
 import static org.spartan.refactoring.utils.Into.e;
 
-import org.eclipse.jdt.core.dom.Expression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -63,9 +62,7 @@ public class SpecificityTest {
     assertThat(Specificity.Level.of(e("0xff")), is(Specificity.Level.of(e("12"))));
   }
   @Test public void hexadecimalConstantIsSame() {
-    final Expression e = e("0xff");
-    final int of = Specificity.Level.of(e);
-    assertThat(of, is(Specificity.Level.of(e("0x7f"))));
+    assertThat(Specificity.Level.of(e("0xff")), is(Specificity.Level.of(e("0x7f"))));
   }
   @Test public void integerConstantGreaterThanBooleanConstant() {
     assertThat(SPECIFICITY.compare(e("12"), e("true")), greaterThan(0));

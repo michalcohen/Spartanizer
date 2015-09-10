@@ -157,8 +157,7 @@ public class DeclarationIfAssginmentTest {
       if (compressSpaces(peeled).equals(compressSpaces(from)))
         assertNotEquals("Wringing of " + from + " amounts to mere reformatting", compressSpaces(peeled), compressSpaces(from));
       assertSimilar(expected, peeled);
-      final String s1 = expected;
-      assertSimilar(Wrap.Statement.on(s1), actual);
+      assertSimilar(Wrap.Statement.on(expected), actual);
     }
   }
 }

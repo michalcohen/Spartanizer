@@ -46,9 +46,7 @@ public class InfixSortAdditionTest {
     assertThat(operands.size(), is(2));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
     assertThat(r, iz("2+a"));
-    final InfixSortAddition inner = new InfixSortAddition();
-    final Expression replacement = inner.replacement(plus);
-    assertThat(replacement, iz("a+2"));
+    assertThat((new InfixSortAddition()).replacement(plus), iz("a+2"));
   }
 
   @RunWith(Parameterized.class) //

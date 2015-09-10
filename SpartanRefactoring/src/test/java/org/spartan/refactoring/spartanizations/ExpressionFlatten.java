@@ -23,76 +23,59 @@ import org.spartan.refactoring.utils.Is;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class ExpressionFlatten {
   @Test public void flattenExists() {
-    final InfixExpression e = i("1+2");
-    flatten(e);
+    flatten(i("1+2"));
   }
   @Test public void flattenIsDistinct() {
     final InfixExpression e = i("1+2");
-    final InfixExpression $ = flatten(e);
-    assertThat($, is(not(e)));
+    assertThat(flatten(e), is(not(e)));
   }
   @Test public void flattenIsNotNull() {
-    final InfixExpression e = i("1+2");
-    final InfixExpression $ = flatten(e);
-    assertThat($, is(not(nullValue())));
+    assertThat(flatten(i("1+2")), is(not(nullValue())));
   }
   @Test public void flattenIsSame() {
     final InfixExpression e = i("1+2");
-    final InfixExpression $ = flatten(e);
-    assertThat($.toString(), is(e.toString()));
+    assertThat(flatten(e).toString(), is(e.toString()));
   }
   @Test public void flattenLeftArgument() {
     assertThat(left(flatten(i("1+2"))).toString(), is("1"));
   }
   @Test public void flattenOfDeepParenthesisIsCorrect() {
-    final InfixExpression e = i("(((1+2)))+(((3 + (4+5))))");
-    assertThat(flatten(e).toString(), is("1 + 2 + 3+ 4+ 5"));
+    assertThat(flatten(i("(((1+2)))+(((3 + (4+5))))")).toString(), is("1 + 2 + 3+ 4+ 5"));
   }
   @Test public void flattenOfDeepParenthesisSize() {
-    final InfixExpression e = i("(1+(2))+(3)");
-    assertThat(flatten(e).extendedOperands().size(), is(1));
+    assertThat(flatten(i("(1+(2))+(3)")).extendedOperands().size(), is(1));
   }
   @Test public void flattenOfDeepParenthesOtherOperatorsisIsCorrect() {
-    final InfixExpression e = i("(((1+2)))+(((3 + (4*5))))");
-    assertThat(flatten(e).toString(), is("1 + 2 + 3+ 4 * 5"));
+    assertThat(flatten(i("(((1+2)))+(((3 + (4*5))))")).toString(), is("1 + 2 + 3+ 4 * 5"));
   }
   @Test public void flattenOfParenthesis() {
-    final InfixExpression e = i("1+2+(3)");
-    assertThat(flatten(e).extendedOperands().size(), is(1));
+    assertThat(flatten(i("1+2+(3)")).extendedOperands().size(), is(1));
   }
   @Test public void flattenOfTrivialDoesNotAddOperands() {
-    final InfixExpression e = i("1+2");
-    assertThat(e.extendedOperands().size(), is(0));
+    assertThat(i("1+2").extendedOperands().size(), is(0));
   }
   @Test public void hasExtendedOperands() {
-    final InfixExpression e = i("1+2");
-    assertThat(e.hasExtendedOperands(), is(false));
+    assertThat(i("1+2").hasExtendedOperands(), is(false));
   }
   @Test public void isNotStringInfixFalse() {
-    final InfixExpression e = i("1+f");
-    assertFalse(Is.notString(e));
+    assertFalse(Is.notString(i("1+f")));
   }
   @Test public void isNotStringInfixPlain() {
     assertFalse(Is.notString(e("1+f")));
   }
   @Test public void leftOperandIsNotString() {
-    final InfixExpression e = i("1+2");
-    assertTrue(Is.notString(left(e)));
+    assertTrue(Is.notString(left(i("1+2"))));
   }
   @Test public void leftOperandIsNumeric() {
-    final InfixExpression e = i("1+2");
-    assertTrue(Is.numericLiteral(left(e)));
+    assertTrue(Is.numericLiteral(left(i("1+2"))));
   }
   @Test public void leftOperandIsOne() {
-    final InfixExpression e = i("1+2");
-    assertThat(left(e).toString(), is("1"));
+    assertThat(left(i("1+2")).toString(), is("1"));
   }
   @Test public void leftOperandNotNull() {
-    final InfixExpression e = i("1+2");
-    assertThat(left(e), not(nullValue()));
+    assertThat(left(i("1+2")), not(nullValue()));
   }
   @Test public void rightOperandNotNull() {
-    final InfixExpression e = i("1+2");
-    assertThat(left(e), not(nullValue()));
+    assertThat(left(i("1+2")), not(nullValue()));
   }
 }

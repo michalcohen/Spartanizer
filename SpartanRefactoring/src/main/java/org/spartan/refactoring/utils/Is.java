@@ -644,11 +644,9 @@ public enum Is {
     return true;
   }
   private static boolean sideEffectsFree(final List<?> os) {
-    for (final Object o : os) {
-      final Expression e = Funcs.asExpression((ASTNode) o);
-      if (o == null || !sideEffectFree(e))
+    for (final Object o : os)
+      if (o == null || !sideEffectFree(Funcs.asExpression((ASTNode) o)))
         return false;
-    }
     return true;
   }
 }

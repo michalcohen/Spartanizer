@@ -32,8 +32,7 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
     assertNotNull(s);
     final IfStatement i = asIfStatement(s);
     assertNotNull(i);
-    final boolean scopeIncludes = WRING.scopeIncludes(i);
-    assertThat(scopeIncludes, is(true));
+    assertThat(WRING.scopeIncludes(i), is(true));
   }
 
   @RunWith(Parameterized.class) //

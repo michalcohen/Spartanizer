@@ -57,9 +57,7 @@ import org.spartan.refactoring.utils.Subject.Pair;
     assertThat(Subject.pair(s, s("f();")).toIf(e("a")), iz("if(a)s(); else f();"));
   }
   @Test public void makeIfStatementOfNestedIf() {
-    final Statement then = s("if (a) return b;");
-    final Statement elze = s("if (c) return d;");
-    assertThat(Subject.pair(then, elze).toIf(e("x")), iz("if(x) {if (a) return b; } else if (c) return d;"));
+    assertThat(Subject.pair(s("if (a) return b;"), s("if (c) return d;")).toIf(e("x")), iz("if(x) {if (a) return b; } else if (c) return d;"));
   }
   @Test public void multiplicationOfAddition() {
     assertThat(Subject.pair(e("a+B"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("(a + B) * (c + d)"));
@@ -127,8 +125,7 @@ import org.spartan.refactoring.utils.Subject.Pair;
     assertThat(operands.size(), is(2));
     final boolean b = ExpressionComparator.ADDITION.sort(operands);
     assertThat(b, is(true));
-    final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
-    assertThat(r, iz("a +2"));
+    assertThat(Subject.operands(operands).to(plus.getOperator()), iz("a +2"));
   }
   @Test public void subjectOperandsDoesNotIntroduceList() {
     final List<Expression> operands = Extract.operands(Funcs.duplicate(i("a*b")));
@@ -139,14 +136,10 @@ import org.spartan.refactoring.utils.Subject.Pair;
     assertThat(refit.toString(), is("a + b"));
   }
   @Test public void subjectOperandsIsCorrect() {
-    final InfixExpression e = i("1+2+3");
-    final List<Expression> operands = Extract.operands(Funcs.duplicate(i("a*b*c")));
-    assertThat(Subject.operands(operands).to(e.getOperator()).toString(), is("a + b + c"));
+    assertThat(Subject.operands(Extract.operands(Funcs.duplicate(i("a*b*c")))).to(i("1+2+3").getOperator()).toString(), is("a + b + c"));
   }
   @Test public void subjectOperandsNotNull() {
-    final InfixExpression e = i("1+2+3");
-    final List<Expression> operands = Extract.operands(Funcs.duplicate(i("a+b+c")));
-    assertThat(Subject.operands(operands).to(e.getOperator()), notNullValue());
+    assertThat(Subject.operands(Extract.operands(Funcs.duplicate(i("a+b+c")))).to(i("1+2+3").getOperator()), notNullValue());
   }
   @Test public void subjectOperandsWithParenthesis() {
     final Expression e = Into.e("(2 + a) * b");
@@ -157,8 +150,7 @@ import org.spartan.refactoring.utils.Subject.Pair;
     assertThat(operands.size(), is(2));
     final boolean b = ExpressionComparator.ADDITION.sort(operands);
     assertThat(b, is(true));
-    final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
-    assertThat(r, iz("a +2"));
+    assertThat(Subject.operands(operands).to(plus.getOperator()), iz("a +2"));
   }
   @Test public void substractionsDoesntAssociate() {
     assertThat(Subject.pair(e("a-B"), e("c-d")).to(InfixExpression.Operator.MINUS), iz("(a - B) - (c - d)"));

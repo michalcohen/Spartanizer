@@ -105,12 +105,7 @@ public class Range {
     return (int) (from + 0.5 * (to + from) * (to + from + 1));
   }
   @Override public boolean equals(final Object o) {
-    boolean $ = false;
-    if (o instanceof Range) {
-      final Range r = (Range) o;
-      $ = from == r.from && to == r.to;
-    }
-    return $;
+    return o instanceof Range && from == ((Range) o).from && to == ((Range) o).to;
   }
   /**
    * Merge with another record

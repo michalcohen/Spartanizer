@@ -8,7 +8,9 @@ import static org.spartan.refactoring.wring.Wrings.insertBefore;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -40,8 +42,7 @@ public final class IfThenFooBarElseFooBaz extends Wring<IfStatement> {
         if (!Is.block(s.getParent())) {
           if (newIf != null)
             commonPrefix.add(newIf);
-          final Block b = Subject.ss(commonPrefix).toBlock();
-          r.replace(s, b, g);
+          r.replace(s, Subject.ss(commonPrefix).toBlock(), g);
         } else {
           final ListRewrite lr = insertBefore(s, commonPrefix, r, g);
           if (newIf != null)

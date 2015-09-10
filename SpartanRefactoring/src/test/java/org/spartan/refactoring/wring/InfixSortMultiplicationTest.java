@@ -65,8 +65,7 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
   @Test public void parseOfToken() {
-    final Expression e = e(" 2  ");
-    assertThat(new LiteralParser(e.toString()).kind(), is(Kinds.INTEGER.ordinal()));
+    assertThat(new LiteralParser(e(" 2  ").toString()).kind(), is(Kinds.INTEGER.ordinal()));
   }
   @Test public void scopeIncludesTrue1() {
     assertTrue(WRING.scopeIncludes(i("2*a")));
@@ -111,16 +110,13 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
       super(WRING);
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void isTimes() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.TIMES);
+      assertTrue(asInfixExpression().getOperator() == Operator.TIMES);
     }
     @Test public void sortTest() {
-      final InfixExpression e = asInfixExpression();
-      assertFalse(COMPARATOR.sort(Extract.operands(flatten(e))));
+      assertFalse(COMPARATOR.sort(Extract.operands(flatten(asInfixExpression()))));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
@@ -129,8 +125,7 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
       assertFalse(COMPARATOR.sort(operands));
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(Extract.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -167,21 +162,15 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
       assertThat(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      final InfixExpression e = asInfixExpression();
-      assertNotNull(e);
+      assertNotNull(asInfixExpression());
     }
     @Test public void isTimes() {
-      final InfixExpression e = asInfixExpression();
-      assertTrue(e.getOperator() == Operator.TIMES);
+      assertTrue(asInfixExpression().getOperator() == Operator.TIMES);
     }
     @Test public void sortTest() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = Extract.operands(flatten(e));
-      final boolean sort = COMPARATOR.sort(operands);
-      assertThat(//
-          "Before: " + Extract.operands(flatten(e)) + "\n" + //
-              "After: " + operands + "\n", //
-          sort, is(true));
+      assertThat("Before: " + Extract.operands(flatten(e)) + "\n" + "After: " + operands + "\n", COMPARATOR.sort(operands), is(true));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
@@ -190,8 +179,7 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
       assertFalse(COMPARATOR.sort(operands));
     }
     @Test public void twoOrMoreArguments() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(Extract.operands(e).size(), greaterThanOrEqualTo(2));
+      assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

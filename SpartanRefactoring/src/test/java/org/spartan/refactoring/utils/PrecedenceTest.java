@@ -9,7 +9,6 @@ import static org.spartan.hamcrest.OrderingComparison.comparesEqualTo;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.utils.Into.*;
 
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.junit.Test;
 
@@ -102,12 +101,10 @@ import org.junit.Test;
     assertThat(Precedence.of(e("a--")), is(1));
   }
   @Test public void preceenceOfNulGreatherl() {
-    final ASTNode n = null;
-    assertThat(Precedence.greater(n, c("a?b:c")), is(true));
+    assertThat(Precedence.greater(null, c("a?b:c")), is(true));
   }
   @Test public void preceenceOfNull() {
-    final ASTNode n = null;
-    assertThat(Precedence.of(n), is(Precedence.UNDEFINED));
+    assertThat(Precedence.of(null), is(Precedence.UNDEFINED));
   }
   @Test public void prefix() {
     assertThat(Precedence.of(e("++a")), is(2));

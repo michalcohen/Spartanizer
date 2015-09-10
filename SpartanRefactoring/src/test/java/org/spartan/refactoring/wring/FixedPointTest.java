@@ -104,7 +104,8 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test public void issue43() {
     assertConvertsTo(
         "" //
-            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
+            + "String t = Z2;  "//
+            + " t = t.f(A).f(b) + t.f(c);   "//
             + "return (t + 3);    ", //
         ""//
             + "return(Z2.f(A).f(b)+Z2.f(c)+3);" //
@@ -141,7 +142,8 @@ import org.spartan.refactoring.spartanizations.Wrap;
             "   for (int i = 0;i < s.length();++i)\n" + //
             "     if (s.charAt(i) == 'a')\n" + //
             "       res += 2;\n" + //
-            "      else " + "       if (s.charAt(i) == 'd')\n" + //
+            "      else " + //
+            "       if (s.charAt(i) == 'd')\n" + //
             "        res -= 1;\n" + //
             "  return res;\n" //
     );
@@ -179,7 +181,8 @@ import org.spartan.refactoring.spartanizations.Wrap;
             + "      int b = 9;\n" //
             + "      b *= b;\n" //
             + "      return b;\n" //
-            + "    }\n" + "    ;", //
+            + "    }\n" //
+            + "    ;", //
         "return 0>0?6:9*9;");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst14() {

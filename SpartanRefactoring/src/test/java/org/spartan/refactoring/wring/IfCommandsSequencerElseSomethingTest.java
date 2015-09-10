@@ -50,8 +50,7 @@ public class IfCommandsSequencerElseSomethingTest {
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) return a = b; else a = c;");
     assertNotNull(s);
-    final IfStatement i = asIfStatement(s);
-    assertNotNull(i);
+    assertNotNull(asIfStatement(s));
   }
   @Test public void checkStepsFull() throws MalformedTreeException, BadLocationException {
     final IfStatement s = (IfStatement) asSingle("if (a) return b; else a();");

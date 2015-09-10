@@ -169,10 +169,9 @@ public abstract class FileTestUtils {
      * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
      * .util.List, java.io.File) */
     @Override public void go(final List<Object[]> $, final File d) {
-      final Spartanization s = makeSpartanizationObject(d);
       for (final File f : d.listFiles())
         if (f.isFile() && f.exists()) {
-          final Object[] c = makeCase(s, d, f, f.getName());
+          final Object[] c = makeCase(makeSpartanizationObject(d), d, f, f.getName());
           if (c != null)
             $.add(c);
         }

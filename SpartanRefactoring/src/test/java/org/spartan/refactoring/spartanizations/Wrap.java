@@ -53,12 +53,9 @@ public enum Wrap {
    *         parsed appropriately.
    */
   public static Wrap find(final String codeFragment) {
-    for (final Wrap $ : new Wrap[] { Statement, Expression, Statement, Method }) {
-      final CompilationUnit u = $.intoCompilationUnit(codeFragment);
-      final String parsedString = u.toString();
-      if ($.contains(parsedString, codeFragment))
+    for (final Wrap $ : new Wrap[] { Statement, Expression, Statement, Method })
+      if ($.contains($.intoCompilationUnit(codeFragment).toString(), codeFragment))
         return $;
-    }
     return null;
   }
   static String essence(final String codeFragment) {

@@ -65,8 +65,7 @@ public class SingletStatementTest {
     final List<Statement> ss = Extract.statements(n);
     assertThat(ss, notNullValue());
     assertThat(ss.size(), is(1));
-    final Statement $ = Extract.singleStatement(n);
-    assertNotNull($);
+    assertNotNull(Extract.singleStatement(n));
   }
   @Test public void peelIPlusPlus() {
     final ASTNode n = As.STATEMENTS.ast("{i++;}");
@@ -74,8 +73,7 @@ public class SingletStatementTest {
     final List<Statement> ss = Extract.statements(n);
     assertThat(ss, notNullValue());
     assertThat(ss.size(), is(1));
-    final Statement $ = Extract.singleStatement(n);
-    assertNotNull($);
+    assertNotNull(Extract.singleStatement(n));
   }
   @Test public void twoFunctionCallsNullValue() {
     assertThat(singleStatement(s("{b(); a();}")), nullValue());

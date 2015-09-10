@@ -13,7 +13,6 @@ import static org.spartan.refactoring.spartanizations.TESTUtils.assertSimilar;
 import static org.spartan.refactoring.utils.Funcs.*;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -30,7 +29,9 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.As;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Subject;
 import org.spartan.utils.Utils;
 
 @SuppressWarnings({ "javadoc" }) //
@@ -99,8 +100,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Test public void hasOpportunity() {
     assertTrue(inner.scopeIncludes(asMe()));
     final CompilationUnit u = asCompilationUnit();
-    final List<Rewrite> findOpportunities = new Trimmer().findOpportunities(u);
-    assertThat(u.toString(), findOpportunities.size(), is(greaterThanOrEqualTo(1)));
+    assertThat(u.toString(), new Trimmer().findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
   }
   @Test public void hasSimplifier() {
     assertThat(asMe().toString(), Toolbox.instance.find(asMe()), is(notNullValue()));
@@ -109,13 +109,10 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertFalse(inner.nonEligible(asMe()));
   }
   @Test public void peelableOutput() {
-    final String s = expected;
-    assertEquals(expected, Wrap.Statement.off(Wrap.Statement.on(s)));
+    assertEquals(expected, Wrap.Statement.off(Wrap.Statement.on(expected)));
   }
   @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
-    final CompilationUnit u = asCompilationUnit();
-    final ASTRewrite r = new Trimmer().createRewrite(u, null);
-    assertNotNull(r);
+    assertNotNull(new Trimmer().createRewrite(asCompilationUnit(), null));
   }
   @Test public void scopeIncludesAsMe() {
     assertThat(asMe().toString(), inner.scopeIncludes(asMe()), is(true));

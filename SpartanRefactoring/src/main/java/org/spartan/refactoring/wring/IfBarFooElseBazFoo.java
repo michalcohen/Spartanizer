@@ -8,7 +8,9 @@ import static org.spartan.refactoring.wring.Wrings.insertAfter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;
@@ -44,8 +46,7 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> {
         } else {
           if (newIf != null)
             commmonSuffix.add(0, newIf);
-          final Block b = Subject.ss(commmonSuffix).toBlock();
-          r.replace(s, b, g);
+          r.replace(s, Subject.ss(commmonSuffix).toBlock(), g);
         }
       }
       private IfStatement replacement() {

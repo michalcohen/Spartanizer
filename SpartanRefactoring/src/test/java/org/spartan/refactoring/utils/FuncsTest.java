@@ -16,7 +16,9 @@ import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.PrefixExpression;
+import org.eclipse.jdt.core.dom.Type;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -64,8 +66,7 @@ public class FuncsTest {
     assertNotNull(asComparison(e));
   }
   @Test public void chainComparison() {
-    final InfixExpression e = i("a == true == b == c");
-    assertEquals("c", right(e).toString());
+    assertEquals("c", right(i("a == true == b == c")).toString());
   }
   @Test public void countNonWhiteCharacters() {
     assertThat(countNonWhites(e("1 + 23     *456 + \n /* aa */ 7890")), is(13));
@@ -89,19 +90,13 @@ public class FuncsTest {
     assertThat(shortName(t("List<Set<Integer>> _;")), equalTo("iss"));
   }
   @Test public void sameOfNullAndSomething() {
-    final ASTNode n1 = null;
-    final ASTNode n2 = e("a");
-    assertFalse(Funcs.same(n1, n2));
+    assertFalse(Funcs.same(null, e("a")));
   }
   @Test public void sameOfNulls() {
-    final ASTNode n1 = null;
-    final ASTNode n2 = null;
-    assertTrue(Funcs.same(n1, n2));
+    assertTrue(Funcs.same(null, null));
   }
   @Test public void sameOfSomethingAndNull() {
-    final ASTNode n1 = e("a");
-    final ASTNode n2 = null;
-    assertFalse(Funcs.same(n1, n2));
+    assertFalse(Funcs.same(e("a"), null));
   }
   @Test public void sameOfTwoExpressionsIdentical() {
     assertTrue(Funcs.same(e("a+b"), e("a+b")));

@@ -12,39 +12,29 @@ import org.junit.Test;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class WrapTest {
   @Test public void dealWithBothKindsOfComment() {
-    final String codeFragment = "" //
-        + "if (b) {\n" //
-        + " /* empty */" //
-        + "; \n" //
-        + "} { // no else \n" //
-        + " throw new Exception();\n" //
-        + "}";
-    similar(codeFragment, "if (b) {;} { throw new Exception(); }");
+    similar(
+        ""//
+            + "if (b) {\n"//
+            + " /* empty */"//
+            + "; \n"//
+            + "} { // no else \n"//
+            + " throw new Exception();\n"//
+            + "}", //
+        "if (b) {;} { throw new Exception(); }");
   }
   @Test public void dealWithComment() {
-    final String codeFragment = "" //
-        + "if (b) {\n" //
-        + " /* empty */" //
-        + "} else {\n" //
-        + " throw new Exception();\n" //
-        + "}";
-    assertThat(Wrap.find(codeFragment), is(Wrap.Statement));
+    assertThat(Wrap.find(""//
+        + "if (b) {\n"//
+        + " /* empty */"//
+        + "} else {\n"//
+        + " throw new Exception();\n"//
+        + "}"), is(Wrap.Statement));
   }
   @Test public void essenceTest() {
-    final String codeFragment = "" //
-        + "if (b) {\n" // Exception
-        + " /* empty */" //
-        + "; \n" //
-        + "} // no else \n" //
-        + " throw new Exception();\n" //
-        + "";
-    final String essence = essence(codeFragment);
-    assertEquals(essence, "if(b){;}throw new Exception();");
+    assertEquals(essence("if (b) {\n /* empty */; \n} // no else \n throw new Exception();\n"), "if(b){;}throw new Exception();");
   }
   @Test public void expression() {
-    final Wrap w = Wrap.Expression;
-    final String codeFragment = "a+b";
-    assertThat(w.off(w.on(codeFragment)), is(codeFragment));
+    assertThat(Wrap.Expression.off(Wrap.Expression.on("a+b")), is("a+b"));
   }
   @Test public void findAddition() {
     assertThat(Wrap.find("a+b"), is(Wrap.Expression));
@@ -74,8 +64,7 @@ import org.junit.Test;
     assertThat(Wrap.find("a(); b();"), is(Wrap.Statement));
   }
   @Test public void intMethod() {
-    final String codeFragment = "int f() { int s = 0; for (int i = 0; i < 10; ++i) s += i; return s;}";
-    assertThat(Wrap.find(codeFragment), is(Wrap.Method));
+    assertThat(Wrap.find("int f() { int s = 0; for (int i = 0; i < 10; ++i) s += i; return s;}"), is(Wrap.Method));
   }
   @Test public void intoCompilationUnit() {
     final Wrap w = Wrap.Expression;
@@ -92,27 +81,16 @@ import org.junit.Test;
     assertThat(w.off(d.get()), containsString(codeFragment));
   }
   @Test public void method() {
-    final Wrap w = Wrap.Method;
-    final String codeFragment = "int f() { return a; }";
-    assertThat(w.off(w.on(codeFragment)), is(codeFragment));
+    assertThat(Wrap.Method.off(Wrap.Method.on("int f() { return a; }")), is("int f() { return a; }"));
   }
   @Test public void offDivision() {
-    final String codeFragment = "a/b";
-    assertEquals(Wrap.Expression.off(Wrap.Expression.on(codeFragment)), codeFragment);
+    assertEquals(Wrap.Expression.off(Wrap.Expression.on("a/b")), "a/b");
   }
   @Test public void removeComments() {
-    final String codeFragment = "" //
-        + "if (b) {\n" //
-        + " /* empty */" //
-        + "} else {\n" //
-        + " throw new Exception();\n" //
-        + "}";
-    similar(Wrap.removeComments(codeFragment), "if (b) {} else { throw new Exception(); }");
+    similar(Wrap.removeComments(("" + "if (b) {\n" + " /* empty */" + "} else {\n" + " throw new Exception();\n" + "}")), "if (b) {} else { throw new Exception(); }");
   }
   @Test public void statement() {
-    final Wrap w = Wrap.Statement;
-    final String codeFragment = "int a;";
-    assertThat(w.off(w.on(codeFragment)), is(codeFragment));
+    assertThat(Wrap.Statement.off(Wrap.Statement.on("int a;")), is("int a;"));
   }
   private void similar(final String s1, final String s2) {
     assertEquals(essence(s1), essence(s2));

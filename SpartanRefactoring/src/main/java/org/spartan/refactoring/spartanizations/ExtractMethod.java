@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring;
-import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.refactoring.utils.UnifiedGroup;
@@ -82,8 +81,7 @@ public class ExtractMethod extends Spartanization {
           tempR.setMethodName("newMethod" /* + rand.nextInt(50) */);
           final NullProgressMonitor pm = new NullProgressMonitor();
           tempR.checkAllConditions(pm);
-          final Change change = tempR.createChange(pm);
-          change.perform(pm);
+          tempR.createChange(pm).perform(pm);
         } catch (final Exception e) {
           e.printStackTrace();
         }

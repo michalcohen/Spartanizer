@@ -737,7 +737,8 @@ import org.spartan.utils.Wrapper;
         "      for (int i = 0;i < s.length();++i)\n" + //
         "       if (s.charAt(i) == 'a')\n" + //
         "          res += 2;\n" + //
-        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "        else "//
+        + "       if (s.charAt(i) == 'd')\n" + //
         "          res -= 1;\n" + //
         "      return res;\n" + //
         " if (b) i = 3;").to("");
@@ -1228,7 +1229,8 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void issue43() {
     trimming("" //
-        + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
+        + "String t = Z2;  "//
+        + " t = t.f(A).f(b) + t.f(c);   "//
         + "return (t + 3);    ")
             .to(""//
                 + "String t = Z2.f(A).f(b) + Z2.f(c);" //
@@ -1621,7 +1623,8 @@ import org.spartan.utils.Wrapper;
         + ": f((ENC_WORD_PREFIX + mimeCharset + Q), text, charset, bytes)\n" //
         + ";")
             .to("" //
-                + "return f(" + "   determineEncoding(bytes)==Encoding.B" //
+                + "return f("//
+                + "   determineEncoding(bytes)==Encoding.B" //
                 + "     ? ENC_WORD_PREFIX+mimeCharset+B" //
                 + "     : ENC_WORD_PREFIX+mimeCharset+Q," //
                 + "text,charset,bytes)" //
@@ -1630,14 +1633,16 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void pushdowConditionalActualExampleSecondtest() {
     trimming("" //
-        + "return f(" + "   determineEncoding(bytes)==Encoding.B" //
+        + "return f("//
+        + "   determineEncoding(bytes)==Encoding.B" //
         + "     ? ENC_WORD_PREFIX+mimeCharset+B" //
         + "     : ENC_WORD_PREFIX+mimeCharset+Q," //
         + "text,charset,bytes)" //
         + ";" //
         + "")
             .to("" //
-                + "return f(" + "  ENC_WORD_PREFIX + mimeCharset + " //
+                + "return f("//
+                + "  ENC_WORD_PREFIX + mimeCharset + " //
                 + " (determineEncoding(bytes)==Encoding.B ?B : Q)," //
                 + "   text,charset,bytes" //
                 + ")" //
@@ -1814,7 +1819,10 @@ import org.spartan.utils.Wrapper;
         .to("!a?new S(new Ineger(3)):new S(a,new Integer(4),b)                                                                                                                  ");
   }
   @Test public void pushdownTernaryIntoPrintln() {
-    trimming("    if (s.equals(t))\n" + "      S.out.println(Hey + res);\n" + "    else\n" + "      S.out.println(Ho + x + a);").to("S.out.println(s.equals(t)?Hey+res:Ho+x+a);");
+    trimming("    if (s.equals(t))\n"//
+        + "      S.out.println(Hey + res);\n"//
+        + "    else\n"//
+        + "      S.out.println(Ho + x + a);").to("S.out.println(s.equals(t)?Hey+res:Ho+x+a);");
   }
   @Test public void pushdownTernaryLongFieldRefernece() {
     trimming("externalImage ? R.string.webview_contextmenu_image_download_action : R.string.webview_contextmenu_image_save_action")
@@ -2076,7 +2084,8 @@ import org.spartan.utils.Wrapper;
                 "      for (int i = 0;i < s.length();++i)\n" + //
                 "       if (s.charAt(i) == 'a')\n" + //
                 "          res += 2;\n" + //
-                "        else " + "       if (s.charAt(i) == 'd')\n" + //
+                "        else " + //
+                "       if (s.charAt(i) == 'd')\n" + //
                 "          res -= 1;\n" + //
                 "      return res;\n");
   }
@@ -2087,18 +2096,21 @@ import org.spartan.utils.Wrapper;
         "      for (int i = 0;i < s.length();++i)\n" + //
         "       if (s.charAt(i) == 'a')\n" + //
         "          res += 2;\n" + //
-        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "        else " + //
+        "       if (s.charAt(i) == 'd')\n" + //
         "          res -= 1;\n" + //
         "      return res;\n" + //
         "    }\n" + //
         "    return 8;" + //
         "").to(
-            " if (s.equals(0xDEAD)) " + "return 8; " + //
+            " if (s.equals(0xDEAD)) "//
+                + "return 8; " + //
                 "      int res = 0;\n" + //
                 "      for (int i = 0;i < s.length();++i)\n" + //
                 "       if (s.charAt(i) == 'a')\n" + //
                 "          res += 2;\n" + //
-                "        else " + "       if (s.charAt(i) == 'd')\n" + //
+                "        else "//
+                + "       if (s.charAt(i) == 'd')\n" + //
                 "          res -= 1;\n" + //
                 "      return res;\n" + //
                 "");
@@ -2109,7 +2121,8 @@ import org.spartan.utils.Wrapper;
         "      for (int i = 0;i < s.length();++i)\n" + //
         "       if (s.charAt(i) == 'a')\n" + //
         "          res += 2;\n" + //
-        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "        else " + //
+        "       if (s.charAt(i) == 'd')\n" + //
         "          res -= 1;\n" + //
         "      return res;\n" + //
         "").to("");
@@ -2120,7 +2133,8 @@ import org.spartan.utils.Wrapper;
         "      for (int i = 0;i < s.length();++i)\n" + //
         "       if (s.charAt(i) == 'a')\n" + //
         "          res += 2;\n" + //
-        "        else " + "       if (s.charAt(i) == 'd')\n" + //
+        "        else " + //
+        "       if (s.charAt(i) == 'd')\n" + //
         "          res -= 1;\n" + //
         "      return res;\n" + //
         ""//
@@ -2128,15 +2142,13 @@ import org.spartan.utils.Wrapper;
     final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(u);
     assertThat(f, notNullValue());
     assertThat(f, iz(" res = 0"));
-    final Statement s = Extract.nextStatement(f);
-    assertThat(s,
-        iz(" for (int i = 0;i < s.length();++i)\n" + //
-            "       if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else " + //
-            "       if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" //
-    ));
+    assertThat(Extract.nextStatement(f),
+        iz(" for (int i = 0;i < s.length();++i)\n"//
+            + "       if (s.charAt(i) == 'a')\n"//
+            + "          res += 2;\n"//
+            + "        else "//
+            + "       if (s.charAt(i) == 'd')\n"//
+            + "          res -= 1;\n"));
   }
   @Test public void shortestIfBranchWithFollowingCommandsSequencer() {
     trimming("" + //
@@ -2425,7 +2437,12 @@ import org.spartan.utils.Wrapper;
         + "res += 9;      ").to("int res=0;res+=s.equals(532)?6:9;");
   }
   @Test public void ternarize05a() {
-    trimming(" int res = 0; " + "if (s.equals(532))    " + "res += 6;   " + "else    " + "res += 9;      " + "return res; ").to("int res=0;res+=s.equals(532)?6:9;return res;");
+    trimming(" int res = 0; "//
+        + "if (s.equals(532))    "//
+        + "res += 6;   "//
+        + "else    "//
+        + "res += 9;      "//
+        + "return res; ").to("int res=0;res+=s.equals(532)?6:9;return res;");
   }
   @Test public void ternarize07() {
     trimming("" //
@@ -2610,16 +2627,14 @@ import org.spartan.utils.Wrapper;
     trimming("a ? b.f():c.f()").to("(a?b:c).f()");
   }
   @Test public void testPeel() {
-    final String example = "on * notion * of * no * nothion != the * plain + kludge";
-    assertEquals(example, Wrap.Expression.off(Wrap.Expression.on(example)));
+    assertEquals("on * notion * of * no * nothion != the * plain + kludge", Wrap.Expression.off(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge")));
   }
   @Test public void twoMultiplication1() {
     trimming("f(a,b,c,d) * f()").to("f() * f(a,b,c,d)");
   }
   @Test public void twoOpportunityExample() {
-    final String example = "on * notion * of * no * nothion != the * plain + kludge";
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on(example));
-    assertThat(countOpportunities(new Trimmer(), u), is(2));
+    assertThat(countOpportunities(new Trimmer(), ((CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge")))),
+        is(2));
   }
   @Test public void useOutcontextToManageStringAmbiguity() {
     trimming("1+2+s<3").to("s+1+2<3");

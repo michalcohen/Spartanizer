@@ -9,106 +9,54 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.junit.Test;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class MethodExplorerTest {
   @Test public void localVariablesCatchExpression() {
-    final MethodDeclaration d = Into.d("" + //
-        "  void f() {\n" + //
-        "    try {\n" + //
-        "      f();\n" + //
-        "    } catch (final Exception|RuntimeException e) {\n" + //
-        "      f();\n" + //
-        "    }\n" + //
-        "  }");
-    assertThat(new MethodExplorer(d).localVariables().size(), is(1));
+    assertThat(new MethodExplorer(
+        Into.d("" + "  void f() {\n" + "    try {\n" + "      f();\n" + "    } catch (final Exception|RuntimeException e) {\n" + "      f();\n" + "    }\n" + "  }"))
+            .localVariables().size(),
+        is(1));
   }
   @Test public void localVariablesExtendedForLoop() {
-    final MethodDeclaration d = Into.d("" + //
-        "  int sum(final int is[]) {\n" + //
-        "    int $ = 0;\n" + //
-        "    for (final int i : is)\n" + //
-        "      $ += i;\n" + //
-        "    return $;\n" + //
-        "  } "); //
-    assertThat(new MethodExplorer(d).localVariables().size(), is(2));
+    assertThat(
+        new MethodExplorer(Into.d("" + "  int sum(final int is[]) {\n" + "    int $ = 0;\n" + "    for (final int i : is)\n" + "      $ += i;\n" + "    return $;\n" + "  } "))
+            .localVariables().size(),
+        is(2));
   }
   @Test public void localVariablesForLoopNoVariable() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "  for (f(); i*j <10; i += j++);  }"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(0));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "  for (f(); i*j <10; i += j++);  }")).localVariables().size(), is(0));
   }
   @Test public void localVariablesForLoopOneVariable() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "  for (int i = 0; i*j <10; i += j++);  }"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(1));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "  for (int i = 0; i*j <10; i += j++);  }")).localVariables().size(), is(1));
   }
   @Test public void localVariablesForLoopTwoVariables() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "  for (int i = 0, j = 2; i*j <10; i += j++);  }"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(2));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "  for (int i = 0, j = 2; i*j <10; i += j++);  }")).localVariables().size(), is(2));
   }
   @Test public void localVariablesMultipleFragments() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "int a,b;\n" + //
-        "  }"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(2));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "int a,b;\n" + "  }")).localVariables().size(), is(2));
   }
   @Test public void localVariablesMultipleNestedFragments() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "int a,b;\n" + //
-        "  {int c, d;}}"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(4));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "int a,b;\n" + "  {int c, d;}}")).localVariables().size(), is(4));
   }
   @Test public void localVariablesNone() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "    return new Object() {\n" + //
-        "      @Override public boolean equals(Object obj) {\n" + //
-        "        return super.equals(obj);\n" + //
-        "      }\n" + //
-        "      @Override public int hashCode() {\n" + //
-        "        return super.hashCode();\n" + //
-        "      }\n" + //
-        "    }.hashCode();\n" + //
-        "  }"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(0));
+    assertThat(
+        new MethodExplorer(Into.d("  int f() {\n" + "    return new Object() {\n" + "      @Override public boolean equals(Object obj) {\n" + "        return super.equals(obj);\n"
+            + "      }\n" + "      @Override public int hashCode() {\n" + "        return super.hashCode();\n" + "      }\n" + "    }.hashCode();\n" + "  }")).localVariables()
+                .size(),
+        is(0));
   }
   @Test public void localVariablesRepeatedNestedFragments() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "int a,b,c,d;\n" + //
-        "  {int i, j;} {int i,j; int k;}"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(9));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "int a,b,c,d;\n" + "  {int i, j;} {int i,j; int k;}")).localVariables().size(), is(9));
   }
   @Test public void localVariablesTryClause() {
-    final MethodDeclaration d = Into.d("" + //
-        "  void f() {\n" + //
-        "    final File f = new File(\"f\");\n" + //
-        "    try (final InputStream s = new FileInputStream(f); final InputStreamReader is = new InputStreamReader(s)) {\n" + //
-        "      f();\n" + //
-        "    } catch (final FileNotFoundException e) {\n" + //
-        "      e.printStackTrace();\n" + //
-        "    } catch (final IOException e) {\n" + //
-        "      e.printStackTrace();\n" + //
-        "    } finally {\n" + //
-        "      f();\n" + //
-        "    }\n" + //
-        "  }\n");
-    assertThat(new MethodExplorer(d).localVariables().size(), is(5));
+    assertThat(new MethodExplorer(Into.d("" + "  void f() {\n" + "    final File f = new File(\"f\");\n"
+        + "    try (final InputStream s = new FileInputStream(f); final InputStreamReader is = new InputStreamReader(s)) {\n" + "      f();\n"
+        + "    } catch (final FileNotFoundException e) {\n" + "      e.printStackTrace();\n" + "    } catch (final IOException e) {\n" + "      e.printStackTrace();\n"
+        + "    } finally {\n" + "      f();\n" + "    }\n" + "  }\n")).localVariables().size(), is(5));
   }
   @Test public void localVariablesVanilla() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "int a;\n" + //
-        "  }"); //
-    final List<SimpleName> a = new MethodExplorer(d).localVariables();
-    assertThat(a.size(), is(1));
+    assertThat(new MethodExplorer(Into.d("  int f() {\n" + "int a;\n" + "  }")).localVariables().size(), is(1));
   }
   @Test public void returnStatementsExists() {
     final MethodDeclaration d = Into.d("int f() { return a; }");
@@ -161,17 +109,10 @@ import org.junit.Test;
     assertThat(a.size(), is(2));
   }
   @Test public void returnStatementsWithNestedEnum() {
-    final MethodDeclaration d = Into.d("  int f() {\n" + //
-        "    return new Object() {\n" + //
-        "      @Override public boolean equals(Object obj) {\n" + //
-        "        return super.equals(obj);\n" + //
-        "      }\n" + //
-        "      @Override public int hashCode() {\n" + //
-        "        return super.hashCode();\n" + //
-        "      }\n" + //
-        "    }.hashCode();\n" + //
-        "  }"); //
-    final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    assertThat(a.size(), is(1));
+    assertThat(
+        new MethodExplorer(Into.d("  int f() {\n" + "    return new Object() {\n" + "      @Override public boolean equals(Object obj) {\n" + "        return super.equals(obj);\n"
+            + "      }\n" + "      @Override public int hashCode() {\n" + "        return super.hashCode();\n" + "      }\n" + "    }.hashCode();\n" + "  }")).returnStatements()
+                .size(),
+        is(1));
   }
 }

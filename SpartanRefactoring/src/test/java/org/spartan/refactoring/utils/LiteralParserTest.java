@@ -40,8 +40,7 @@ import org.spartan.refactoring.utils.LiteralParser.Kinds;
     assertThat(new LiteralParser("2F").kind(), greaterThanOrEqualTo(0));
   }
   @Test public void hasVisibleValue() {
-    final String literal = "2F";
-    assertThat(new LiteralParser(literal).literal, equalToIgnoringWhiteSpace(literal));
+    assertThat(new LiteralParser("2F").literal, equalToIgnoringWhiteSpace("2F"));
   }
   @Test public void kindCharacter() {
     assertThat(new LiteralParser("'l'").kind(), is(Kinds.CHARACTER.ordinal()));

@@ -112,6 +112,17 @@ public enum Funcs {
   public static Expression asExpression(final ASTNode n) {
     return !(n instanceof Expression) ? null : (Expression) n;
   }
+  public static int negationLevel(final Expression e) {
+    return e instanceof PrefixExpression ? negationLevel((PrefixExpression) e)
+        : e instanceof ParenthesizedExpression ? negationLevel(((ParenthesizedExpression) e).getExpression())
+            : e instanceof NumberLiteral ? asBit(((NumberLiteral) e).getToken().startsWith("-")) : 0;
+  }
+  public static int negationLevel(final PrefixExpression e) {
+    return asBit(e.getOperator() == PrefixExpression.Operator.MINUS) + negationLevel(e.getOperand());
+  }
+  private static int asBit(final boolean b) {
+    return b ? 1 : 0;
+  }
   /**
    * Down-cast, if possible, to {@link ExpressionStatement}
    *

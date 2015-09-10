@@ -135,8 +135,7 @@ public enum InfixConditionalOrFalseTest {
       assertNotNull(asInfixExpression());
     }
     @Test public void isANDorOR() {
-      final InfixExpression e = asInfixExpression();
-      assertThat(e.getOperator(), is(CONDITIONAL_OR));
+      assertThat(asInfixExpression().getOperator(), is(CONDITIONAL_OR));
     }
     @Test public void twoOrMoreArguments() {
       assertThat(Extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));

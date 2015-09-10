@@ -184,8 +184,7 @@ public abstract class Wring<N extends ASTNode> {
         return $;
       final VariableDeclarationStatement newParent = duplicate(parent);
       newParent.fragments().remove(parent.fragments().indexOf(f));
-      final int size = size(newParent);
-      return $ - size;
+      return $ - size(newParent);
     }
     static int eliminationSaving(final VariableDeclarationFragment f) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
@@ -209,10 +208,7 @@ public abstract class Wring<N extends ASTNode> {
      */
     static void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-      if (parent.fragments().size() <= 1)
-        r.remove(parent, g);
-      else
-        r.remove(f, g);
+      r.remove(parent.fragments().size() > 1 ? f : parent, g);
     }
     /**
      * Eliminates a {@link VariableDeclarationFragment}, with any other fragment
@@ -328,10 +324,7 @@ final class LocalInliner {
       e.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
       for (final ASTNode use : Search.forAllOccurencesExcludingDefinitions(name).in(newExpression))
-        if (use instanceof Expression)
-          rewriter.replace(use, new Plant((Expression) replacement).into(use.getParent()), editGroup);
-        else
-          rewriter.replace(use, replacement, editGroup);
+        rewriter.replace(use, !(use instanceof Expression) ? replacement : new Plant((Expression) replacement).into(use.getParent()), editGroup);
     }
   }
 }

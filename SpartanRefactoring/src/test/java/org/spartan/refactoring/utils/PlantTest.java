@@ -13,10 +13,7 @@ import org.junit.Test;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class PlantTest {
   @Test public void plantIntoLess() {
-    final Expression e1 = Into.e("a + 2");
-    final Expression e2 = Into.e("b");
-    final Expression e = Subject.pair(e1, e2).to(InfixExpression.Operator.LESS);
-    assertThat(e, iz("a+2<b"));
+    assertThat(Subject.pair(Into.e("a + 2"), Into.e("b")).to(InfixExpression.Operator.LESS), iz("a+2<b"));
   }
   @Test public void plantIntoNull() {
     final String s = "a?b:c";
