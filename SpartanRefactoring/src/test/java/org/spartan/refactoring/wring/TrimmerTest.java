@@ -1655,6 +1655,57 @@ import org.spartan.utils.Wrapper;
   @Test public void overridenDeclaration() {
     trimming("int a = 3; a = f() ? 3 : 4;").to("int a = f() ? 3: 4;");
   }
+  @Test public void paramAbbreviateBasic1() {
+    trimming("void m(XMLDocument xmlDocument) {" + //
+        "xmlDocument.exec(p);}")
+            .to("void m(XMLDocument d) {" + //
+                "d.exec(p);}");
+  }
+  @Test public void paramAbbreviateBasic2() {
+    trimming("int m(StringBuilder builder) {" + //
+        "if(builder.exec())" + //
+        "builder.clear();")
+            .to("int m(StringBuilder b) {" + //
+                "if(b.exec())" + //
+                "b.clear();");
+  }
+  @Test public void paramAbbreviateMultiple() {
+    trimming("void m(StringBuilder stringBuilder, XMLDocument xmlDocument, Dog dog, Dog cat) {" + //
+        "stringBuilder.clear();" + //
+        "xmlDocument.open(stringBuilder.toString());" + //
+        "dog.eat(xmlDocument.asEdible(cat));}")
+            .to("void m(StringBuilder b, XMLDocument d, Dog dog, Dog cat) {" + //
+                "b.clear();" + //
+                "d.open(b.toString());" + //
+                "dog.eat(d.asEdible(cat));}");
+  }
+  @Test public void paramAbbreviateNestedMethod() {
+    trimming("void f(Iterator iterator) {" + //
+        "iterator = new Iterator<Object>() {" + //
+        "int i = 0;" + //
+        "@Override public boolean hasNext() { return false; }" + //
+        "@Override public Object next() { return null; } };")
+            .to("void f(Iterator i) {" + //
+                "i = new Iterator<Object>() {" + //
+                "int i = 0;" + //
+                "@Override public boolean hasNext() { return false; }" + //
+                "@Override public Object next() { return null; } };");
+  }
+  @Test public void paramAbbreviateConflictingWithLocal1() {
+    trimming("void m(String string) {" + //
+        "String s = null;" + //
+        "string.substring(s, 2, 18);").to("");
+  }
+  @Test public void paramAbbreviateConflictingWithLocal2() {
+    trimming("TCPConnection conn(TCPConnection tcpCon) {" + //
+        "UDPConnection c = new UDPConnection(57);" + //
+        "if(tcpCon.isConnected()) " + //
+        "c.disconnect();}").to("");
+  }
+  @Test public void paramAbbreviateConflictingWithMethodName() {
+    trimming("void m(BitmapManipulator bitmapManipulator) {" + //
+        "bitmapManipulator.x().y();").to("");
+  }
   @Test public void parenthesizeOfpushdownTernary() {
     trimming("a ? b+x+e+f:b+y+e+f").to("b+(a ? x : y)+e+f");
   }
@@ -2735,6 +2786,7 @@ import org.spartan.utils.Wrapper;
     trimming("f(a,b,c,d) * f()").to("f() * f(a,b,c,d)");
   }
   @Test public void twoOpportunityExample() {
+    assertThat(countOpportunities(new Trimmer(), (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
     assertThat(countOpportunities(new Trimmer(), (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
   }
   @Test public void useOutcontextToManageStringAmbiguity() {
