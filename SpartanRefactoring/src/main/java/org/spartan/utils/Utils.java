@@ -131,6 +131,14 @@ public enum Utils {
     return ts == null || ts.isEmpty() ? null : ts.get(ts.size() - 1);
   }
   /**
+   * @param ts a list
+   * @return the last item in a list or <code><b>null</b></code> if the
+   *         parameter is <code><b>null</b></code> or empty
+   */
+  public static <T> T penultimate(final List<T> ts) {
+    return ts == null || ts.size() < 2 ? null : ts.get(ts.size() - 2);
+  }
+  /**
    * Convert variadic list of arguments into an array
    *
    * @param os JD _

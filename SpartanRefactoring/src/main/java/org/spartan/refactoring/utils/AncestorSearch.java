@@ -29,7 +29,7 @@ public abstract class AncestorSearch {
    * @return a newly created instance
    * @see ASTNode#getNodeType()
    */
-  public static AncestorSearch forClass(final Class<? extends ASTNode> c) {
+  public static <N extends ASTNode> AncestorSearch forClass(final Class<N> c) {
     return new ByNodeClass(c);
   }
   public static Iterable<ASTNode> ancestors(final ASTNode n) {

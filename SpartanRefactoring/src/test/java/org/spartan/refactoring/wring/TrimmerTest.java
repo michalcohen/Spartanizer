@@ -52,13 +52,6 @@ import org.spartan.utils.Wrapper;
     assertNotNull($);
     return $.get();
   }
-  @Test public void synchronizedBraces() {
-    trimming("" //
-        + "    synchronized (variables) {\n" //
-        + "      for (final String key : variables.keySet())\n"//
-        + "        $.variables.put(key, variables.get(key));\n" //
-        + "    }").to("");
-  }
   private static String apply(final Wring<? extends ASTNode> w, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
@@ -596,7 +589,12 @@ import org.spartan.utils.Wrapper;
                 "    S.out.println(res);");
   }
   @Test public void declarationIfUsesLaterVariable() {
-    trimming("int a=0, b=0;if (b==3)   a=4;").to("");
+    trimming("int a=0, b=0;if (b==3)   a=4;")//
+        .to(" int a=0;if(0==3)a=4;") //
+        .to(" int a=0==3?4:0;");
+  }
+  @Test public void declarationIfUsesLaterVariable1() {
+    trimming("int a=0, b=0;if (b==3)   a=4; f();").to("");
   }
   @Test public void declarationInitializeRightShift() {
     trimming("int a = 3;a>>=2;").to("int a = 3 >> 2;");
@@ -1067,6 +1065,32 @@ import org.spartan.utils.Wrapper;
         "      final A a = new A(\"{\nABRA\n{\nCADABRA\n{\");        assertEquals(5, a.new Context().lineCount());        final PureIterable<Mutant> ms = a.mutantsGenerator();        assertEquals(2, count(ms));        final PureIterator<Mutant> i = ms.iterator();        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\nABRA\n{\nCADABRA\n{\n\", i.next().text);        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\n{\nCADABRA\nCADABRA\n{\n\", i.next().text);        assertFalse(i.hasNext());")
             .to("");
   }
+  @Test public void inlineSingleUseKillingVariable() {
+    trimming("int a,b=2; a = b;").to("int a=2, b=2; ");
+  }
+  @Test public void inlineSingleUseKillingVariables() {
+    trimming("int $, xi=0, xj=0, yi=0, yj=0;  if (xi > xj == yi > yj)    $++;   else    $--;")
+        .to(" int $, xi=0, xj=0, yi=0, yj=0;  if (xi > xj == yi > yj)    ++$;   else    --$;");
+  }
+  @Test public void inlineSingleUseKillingVariablesSimplified() {
+    trimming("int $=1,xi=0,xj=0,yi=0,yj=0;  if (xi > xj == yi > yj)    $++;   else    $--;")//
+        .to(" int $=1,xj=0,yi=0,yj=0;       if(0>xj==yi>yj)$++;else $--;")//
+        .to(" int $=1,yi=0,yj=0;            if(0>0==yi>yj)$++;else $--;") //
+        .to(" int $=1,yj=0;                 if(0>0==0>yj)$++;else $--;") //
+        .to(" int $=1,yj=0;                 if(0>0==yj<0)++$;else--$;") //
+        .to(" int $=1,yj=0;                 if(0>0==yj<0)++$;else--$;") //
+        ;
+  }
+  @Test public void inlineSingleUseVanilla() {
+    trimming("int a = f(); if (a) f();").to("if (f()) f();");
+  }
+  @Test public void inlineSingleUseWithAssignment() {
+    trimming("int a = 2; while (true) if (f()) return a; else a = 2;")//
+        .to("");
+  }
+  @Test public void inlineSingleVariableIntoPlusPlus() {
+    trimming("int $ = 0;  if (a)  ++$;  else --$;").to(" ");
+  }
   @Test public void isGreaterTrue() {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
     assertEquals("f(a,b,c)", right(e).toString());
@@ -1529,7 +1553,7 @@ import org.spartan.utils.Wrapper;
     // We expect to print 2, but ++s will make it print 3
     trimming("int s = 2;" + //
         "int n = s++;" + //
-        "S.out.print(n);").to("");
+        "S.out.print(n);").to("int s=2;S.out.print(s++);");
   }
   @Test public void postIncrementInFunctionCall() {
     trimming("f(i++);").to("");
@@ -2369,6 +2393,13 @@ import org.spartan.utils.Wrapper;
   @Test public void sortTwoOperands4() {
     trimming("2L*1").to("1*2L");
   }
+  @Test public void synchronizedBraces() {
+    trimming("" //
+        + "    synchronized (variables) {\n" //
+        + "      for (final String key : variables.keySet())\n"//
+        + "        $.variables.put(key, variables.get(key));\n" //
+        + "    }").to("");
+  }
   @Test public void ternarize05() {
     trimming(" int res = 0; "//
         + "if (s.equals(532))    "//
@@ -2552,9 +2583,9 @@ import org.spartan.utils.Wrapper;
     trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {c = d;c = e;} f();")//
         .to("");
   }
-  @Test public void ternarize53() {
-    trimming("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    $++;   else    $--;")
-        .to("int $, xi=0, xj=0, yi=0, yj=0;   if (xi > xj == yi > yj)    ++$;   else    --$;");
+  @Test public void ternarize54() {
+    trimming("int $=1, xi=0, xj=0, yi=0, yj=0; if (xi > xj == yi > yj)    ++$;   else    --$;")
+        .to(" int $=1, xi=0, xj=0, yi=0, yj=0; if (xi > xj == yi > yj)    ++$;   else    --$;");
   }
   @Test public void ternarize55() {
     trimming("if (key.equals(markColumn))\n" + //
