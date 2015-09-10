@@ -542,6 +542,18 @@ import org.spartan.utils.Wrapper;
   @Test public void compareWithBoolean9() {
     trimming("true != true").to("false");
   }
+  @Test public void multiplicationWithNegativesVanilla() {
+    trimming("a*-b").to("-a * b");
+  }
+  @Test public void multiplicationWithNegatives() {
+    trimming("a*-b/-c*- - - d / d").to("-a * b/ c * d/d").to("");
+  }
+  @Test public void divisionWithNegatives() {
+    trimming("x/a*-b/-c*- - - d / d").to("-x/a * b/ c * d/d").to("");
+  }
+  @Test public void divisionWithNegativesFinallyAllPositive() {
+    trimming("x/a*-b/-c*- - - d / -d").to("x/a * b/ c * d/d").to("");
+  }
   @Test public void comparison01() {
     trimming("1+2+3<3").to("");
   }

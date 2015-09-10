@@ -101,10 +101,10 @@ import org.junit.Test;
     assertThat(Precedence.of(e("a++")), is(1));
     assertThat(Precedence.of(e("a--")), is(1));
   }
-  @Test public void preceenceOfNulGreatherl() {
+  @Test public void precedenceOfNulGreatherl() {
     assertThat(Precedence.greater(null, c("a?b:c")), is(true));
   }
-  @Test public void preceenceOfNull() {
+  @Test public void precedenceOfNull() {
     assertThat(Precedence.of((Expression) null), is(Precedence.UNDEFINED));
   }
   @Test public void prefix() {

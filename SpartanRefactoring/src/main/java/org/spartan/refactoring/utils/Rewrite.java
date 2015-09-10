@@ -54,7 +54,7 @@ public abstract class Rewrite extends Range {
    * Convert the rewrite into changes on an {@link ASTRewrite}
    *
    * @param r where to place the changes
-   * @param editGroup to be associated with these changes
+   * @param g to be associated with these changes
    */
-  public abstract void go(ASTRewrite r, TextEditGroup editGroup);
+  public abstract void go(ASTRewrite r, TextEditGroup g);
 }

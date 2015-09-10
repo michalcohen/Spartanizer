@@ -117,11 +117,23 @@ public enum Funcs {
         : e instanceof ParenthesizedExpression ? negationLevel(((ParenthesizedExpression) e).getExpression())
             : e instanceof NumberLiteral ? asBit(((NumberLiteral) e).getToken().startsWith("-")) : 0;
   }
-  public static int negationLevel(final PrefixExpression e) {
+  private static int negationLevel(final PrefixExpression e) {
     return asBit(e.getOperator() == PrefixExpression.Operator.MINUS) + negationLevel(e.getOperand());
   }
   private static int asBit(final boolean b) {
     return b ? 1 : 0;
+  }
+  public static Expression peelNegation(final Expression $) {
+    return //
+    $ instanceof PrefixExpression ? peelNegation((PrefixExpression) $) //
+        : $ instanceof ParenthesizedExpression ? peelNegation(((ParenthesizedExpression) $).getExpression()) //
+            : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
+  }
+  private static Expression peelNegation(final PrefixExpression $) {
+    return $.getOperator() == PrefixExpression.Operator.MINUS ? peelNegation($.getOperand()) : $;
+  }
+  private static Expression peelNegation(final NumberLiteral $) {
+    return $.getToken().startsWith("-") ? $.getAST().newNumberLiteral($.getToken().substring(1)) : $;
   }
   /**
    * Down-cast, if possible, to {@link ExpressionStatement}

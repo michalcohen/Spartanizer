@@ -49,6 +49,7 @@ public class Toolbox {
           null) //
       .add(PostfixExpression.class, new PostfixToPrefix()) //
       .add(InfixExpression.class, //
+          new InfixDivisionMultiplicationNegatives(), //
           new InfixSortAddition(), //
           new InfixComparisonBooleanLiteral(), //
           new InfixConditionalAndTrue(), //
