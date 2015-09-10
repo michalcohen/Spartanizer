@@ -40,8 +40,43 @@ import org.spartan.utils.Wrapper;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
+  static class Operand extends Wrapper<String> {
+    public Operand(final String inner) {
+      super(inner);
+    }
+    private void checkExpected(final String expected) {
+      final Wrap w = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final String wrap = w.on(get());
+      final String unpeeled = apply(new Trimmer(), wrap);
+      if (wrap.equals(unpeeled))
+        fail("Nothing done on " + get());
+      final String peeled = w.off(unpeeled);
+      if (peeled.equals(get()))
+        assertNotEquals("No trimming of " + get(), get(), peeled);
+      if (compressSpaces(peeled).equals(compressSpaces(get())))
+        assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
+      assertSimilar(expected, peeled);
+    }
+    private void checkSame() {
+      final Wrap w = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final String wrap = w.on(get());
+      final String unpeeled = apply(new Trimmer(), wrap);
+      if (wrap.equals(unpeeled))
+        return;
+      final String peeled = w.off(unpeeled);
+      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
+        return;
+      assertSimilar(get(), peeled);
+    }
+    public Operand to(final String expected) {
+      if (expected == null || expected.isEmpty())
+        checkSame();
+      else
+        checkExpected(expected);
+      return new Operand(expected);
+    }
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
@@ -70,6 +105,9 @@ import org.spartan.utils.Wrapper;
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
+  }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
   }
   private static Operand trimming(final String from) {
     return new Operand(from);
@@ -1278,6 +1316,70 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void issue52B2() {
     trimming("void m() { if (a) ++i; else { f(); return; }").to("void m() { if (a) ++i; else { f(); ; }");
+  }
+  @Test public void issue53() {
+    trimming("int[] is = f(); for (int i: is) f(i);")//
+        .to("for (int i: f()) f(i);");
+  }
+  @Test public void issue54do() {
+    trimming("int a  = f(); do { b[i] = a; } while (b[i] != a);")//
+        .to("");
+  }
+  @Test public void issue54doNonSideEffect() {
+    trimming("int a  = f; do { b[i] = a; } while (b[i] != a);")//
+        .to("do { b[i] = f; } while (b[i] != f);");
+  }
+  @Test public void issue54forEnhanced() {
+    trimming("int a  = f(); for (int i: a) b[i] = x;")//
+        .to(" for (int i: f()) b[i] = x;\"");
+  }
+  @Test public void issue54forEnhancedNonSideEffectLoopHeader() {
+    trimming("int a  = f; for (int i: a) b[i] = b[i-1];")//
+        .to("for (int i: f) b[i] = b[i-1];");
+  }
+  @Test public void issue54forEnhancedNonSideEffectWitBody() {
+    trimming("int a  = f; for (int i: j) b[i] = a;")//
+        .to("");
+  }
+  @Test public void issue54ForPlain() {
+    trimming("int a  = f(); for (int i = 0; i < 100;  ++i) b[i] = a;")//
+        .to("");
+  }
+  @Test public void issue54ForPlainNonSideEffect() {
+    trimming("int a  = f; for (int i = 0; i < 100;  ++i) b[i] = a;")//
+        .to("for (int i = 0; i < 100;  ++i) b[i] = f;");
+  }
+  @Test public void issue54ForPlainUseInCondition() {
+    trimming("int a  = f(); for (int i = 0; a < 100;  ++i) b[i] = 3;")//
+        .to("");
+  }
+  @Test public void issue54ForPlainUseInConditionNonSideEffect() {
+    trimming("int a  = f; for (int i = 0; a < 100;  ++i) b[i] = 3;")//
+        .to("for (int i = 0; f < 100;  ++i) b[i] = 3;");
+  }
+  @Test public void issue54ForPlainUseInInitializer() {
+    trimming("int a  = f(); for (int i = a; i < 100; i++) b[i] = 3;")//
+        .to(" for (int i = f(); i < 100; i++) b[i] = 3;");
+  }
+  @Test public void issue54ForPlainUseInInitializerNonSideEffect() {
+    trimming("int a  = f; for (int i = a; i < 100; i *= a) b[i] = 3;")//
+        .to(" for (int i = f; i < 100; i *= f) b[i] = 3;");
+  }
+  @Test public void issue54ForPlainUseInUpdaters() {
+    trimming("int a  = f(); for (int i = 0; i < 100; i *= a) b[i] = 3;")//
+        .to("");
+  }
+  @Test public void issue54ForPlainUseInUpdatersNonSideEffect() {
+    trimming("int a  = f; for (int i = 0; i < 100; i *= a) b[i] = 3;")//
+        .to("for (int i = 0; i < 100; i *= f) b[i] = 3;");
+  }
+  @Test public void issue54While() {
+    trimming("int a  = f(); while (c) b[i] = a;")//
+        .to("");
+  }
+  @Test public void issue54WhileNonSideEffect() {
+    trimming("int a  = f; while (c) b[i] = a;")//
+        .to("while (c) b[i] = f;");
   }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");
@@ -2633,8 +2735,7 @@ import org.spartan.utils.Wrapper;
     trimming("f(a,b,c,d) * f()").to("f() * f(a,b,c,d)");
   }
   @Test public void twoOpportunityExample() {
-    assertThat(countOpportunities(new Trimmer(), ((CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge")))),
-        is(2));
+    assertThat(countOpportunities(new Trimmer(), (CompilationUnit) As.COMPILIATION_UNIT.ast(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
   }
   @Test public void useOutcontextToManageStringAmbiguity() {
     trimming("1+2+s<3").to("s+1+2<3");
@@ -2644,44 +2745,5 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
-  }
-
-  static class Operand extends Wrapper<String> {
-    public Operand(final String inner) {
-      super(inner);
-    }
-    public Operand to(final String expected) {
-      if (expected == null || expected.isEmpty())
-        checkSame();
-      else
-        checkExpected(expected);
-      return new Operand(expected);
-    }
-    private void checkExpected(final String expected) {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
-      final String wrap = w.on(get());
-      final String unpeeled = apply(new Trimmer(), wrap);
-      if (wrap.equals(unpeeled))
-        fail("Nothing done on " + get());
-      final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()))
-        assertNotEquals("No trimming of " + get(), get(), peeled);
-      if (compressSpaces(peeled).equals(compressSpaces(get())))
-        assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
-      assertSimilar(expected, peeled);
-    }
-    private void checkSame() {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
-      final String wrap = w.on(get());
-      final String unpeeled = apply(new Trimmer(), wrap);
-      if (wrap.equals(unpeeled))
-        return;
-      final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
-        return;
-      assertSimilar(get(), peeled);
-    }
   }
 }
