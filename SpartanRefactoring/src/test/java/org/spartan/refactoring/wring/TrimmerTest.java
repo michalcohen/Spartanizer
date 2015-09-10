@@ -1078,18 +1078,23 @@ import org.spartan.utils.Wrapper;
         .to(" int $=1,yi=0,yj=0;            if(0>0==yi>yj)$++;else $--;") //
         .to(" int $=1,yj=0;                 if(0>0==0>yj)$++;else $--;") //
         .to(" int $=1,yj=0;                 if(0>0==yj<0)++$;else--$;") //
-        .to(" int $=1,yj=0;                 if(0>0==yj<0)++$;else--$;") //
+        .to(" int $=1;                      if(0>0==0<0)++$;else--$;") //
+        ;
+  }
+  @Test public void inlineSingleUseTrivial() {
+    trimming(" int $=1,yj=0;                 if(0>0==yj<0)++$;else--$;") //
+        .to("  int $=1;                      if(0>0==0<0)++$;else--$;") //
         ;
   }
   @Test public void inlineSingleUseVanilla() {
     trimming("int a = f(); if (a) f();").to("if (f()) f();");
   }
   @Test public void inlineSingleUseWithAssignment() {
-    trimming("int a = 2; while (true) if (f()) return a; else a = 2;")//
+    trimming("int a = 2; while (true) if (f()) f(a); else a = 2;")//
         .to("");
   }
   @Test public void inlineSingleVariableIntoPlusPlus() {
-    trimming("int $ = 0;  if (a)  ++$;  else --$;").to(" ");
+    trimming("int $ = 0;  if (a)  ++$;  else --$;").to("");
   }
   @Test public void isGreaterTrue() {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");

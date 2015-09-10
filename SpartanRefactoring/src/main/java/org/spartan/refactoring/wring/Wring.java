@@ -256,7 +256,7 @@ final class LocalInliner {
         inlineIntoSingleton(get(), e);
     }
     /**
-     * Computes the number of AST nodes in the replaced parameters
+     * Computes the total number of AST nodes in the replaced parameters
      *
      * @param es JD
      * @return A non-negative integer, computed from original size of the
@@ -265,6 +265,18 @@ final class LocalInliner {
      */
     int replacedSize(final ASTNode... es) {
       return size(es) + uses(es).size() * (size(get()) - 1);
+    }
+    /**
+     * Computes the number of AST nodes added as a result of the replacement
+     * operation.
+     *
+     * @param es JD
+     * @return A non-negative integer, computed from the number of occurrences
+     *         of {@link #name} in the operands, and the size of the
+     *         replacement.
+     */
+    int addedSize(final ASTNode... es) {
+      return uses(es).size() * (size(get()) - 1);
     }
     boolean canInlineInto(final ASTNode... es) {
       return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(get()) || uses(es).size() <= 1);

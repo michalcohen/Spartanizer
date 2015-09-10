@@ -44,7 +44,7 @@ public final class DeclarationInitializerSingleStatementInScope extends Wring.Va
       return null;
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
     final Statement newStatement = duplicate(nextStatement);
-    if (i.replacedSize(newStatement) - removeSavings(f) > 0)
+    if (i.addedSize(newStatement) - removeSavings(f) > 0)
       return null;
     r.replace(nextStatement, newStatement, g);
     i.inlineInto(newStatement);
