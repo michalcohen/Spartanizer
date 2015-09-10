@@ -16,7 +16,6 @@ import org.spartan.refactoring.utils.Rewrite;
  * variation. The abbreviated name is the first character in the last word of
  * the variable's name.
  *
- * @author Yossi Gil
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015/08/24
  */
