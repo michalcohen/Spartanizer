@@ -33,6 +33,8 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
       if (legal(v, d, parser, renameMap.values()))
         renameMap.put(v.getName(), d.getAST().newSimpleName(parser.shortName()));
     }
+    if (renameMap.isEmpty())
+      return null;
     if (exclude != null)
       exclude.exclude(d);
     return new Rewrite("Rename parameters in method " + d.getName().toString(), d) {
@@ -49,16 +51,19 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
         $.add(d);
     return $.size() != 0 ? $ : null;
   }
-  @SuppressWarnings("static-method") private boolean legal(final SingleVariableDeclaration d, final MethodDeclaration d, final JavaTypeNameParser p,
+  @SuppressWarnings("static-method") private boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m, final JavaTypeNameParser parser,
       final Collection<SimpleName> newNames) {
-    final MethodExplorer e = new MethodExplorer(d);
+    final MethodExplorer e = new MethodExplorer(m);
     for (final SimpleName n : e.localVariables())
-      if (n.getIdentifier().equals(p.shortName()))
+      if (n.getIdentifier().equals(parser.shortName()))
         return false;
     for (final SimpleName n : newNames)
-      if (n.getIdentifier().equals(p.shortName()))
+      if (n.getIdentifier().equals(parser.shortName()))
         return false;
-    return !d.getName().getIdentifier().equalsIgnoreCase(p.shortName());
+    for (final SingleVariableDeclaration n : (List<SingleVariableDeclaration>) m.parameters())
+      if (n.getName().getIdentifier().equals(parser.shortName()))
+        return false;
+    return !m.getName().getIdentifier().equalsIgnoreCase(parser.shortName());
   }
   @SuppressWarnings("static-method") private boolean suitable(final SingleVariableDeclaration d) {
     final JavaTypeNameParser parser = new JavaTypeNameParser(d.getType().toString());

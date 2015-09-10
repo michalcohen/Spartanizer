@@ -695,7 +695,7 @@ public enum Funcs {
         NOT_EQUALS //
     ) ? e : null;
   }
-  private static Expression find(final boolean b, final List<Expression> e) {
+  private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression $ : es)
       if (Is.booleanLiteral($) && b == asBooleanLiteral($).booleanValue())
         return $;

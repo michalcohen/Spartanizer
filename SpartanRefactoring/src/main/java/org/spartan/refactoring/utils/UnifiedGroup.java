@@ -89,9 +89,12 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
   }
   @SuppressWarnings("boxing") @Override public Iterator<LinkedList<Integer>> iterator() {
     final Iterator<Entry<String, LinkedList<Integer>>> it = names.entrySet().iterator();
-    while (it.hasNext())
+    while (it.hasNext()) {
+      final String name = it.next().getKey();
+      final int first = names.get(name).getFirst().intValue();
       for (final int i : names.get(name))
-        unionFind.union(names.get(it.next().getKey()).getFirst().intValue(), i);
+        unionFind.union(first, i);
+    }
     final ChainedHash<Integer, Integer> hm = new ChainedHash<>();
     for (int i = As.bit(base == Base.OneBased); i < size; ++i)
       hm.chain(unionFind.find(i), i);
@@ -124,16 +127,16 @@ class UnionFind {
     sizeOf[root] += sizeOf[child];
     return parentOf[child] = root;
   }
-  public int find(final int i) {
+  public int find(final int n) {
     final int size = parentOf.length;
-    if (i < 0 || i >= size)
-      throw new IndexOutOfBoundsException("Expected 0 to " + size + " but got " + i);
+    if (n < 0 || n >= size)
+      throw new IndexOutOfBoundsException("Expected 0 to " + size + " but got " + n);
     // get the root
-    int $ = i;
+    int $ = n;
     while ($ != parentOf[$])
       $ = parentOf[$];
     // squeeze the path to the root
-    for (int child = i; child != $; child = parentOf[child])
+    for (int child = n; child != $; child = parentOf[child])
       parentOf[child] = $;
     return $;
   }

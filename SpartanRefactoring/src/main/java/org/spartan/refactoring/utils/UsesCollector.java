@@ -170,7 +170,7 @@ class UsesCollector extends HidingDepth {
     return declaredIn(s.getParameter());
   }
   private boolean declaredIn(final MethodDeclaration d) {
-    for (final Object o : n.parameters())
+    for (final Object o : d.parameters())
       if (declaredIn((SingleVariableDeclaration) o))
         return true;
     return false;

@@ -27,13 +27,13 @@ public class Plugin extends AbstractUIPlugin {
   public Plugin() {
     plugin = this;
   }
-  @Override public void start(final BundleContext c) throws Exception {
-    super.start(c);
+  @Override public void start(final BundleContext context) throws Exception {
+    super.start(context);
     applyPluginToAllProjects();
   }
-  @Override public void stop(final BundleContext c) throws Exception {
+  @Override public void stop(final BundleContext context) throws Exception {
     plugin = null;
-    super.stop(c);
+    super.stop(context);
   }
   /**
    * @return the (single) instance of the plugin
@@ -53,6 +53,7 @@ public class Plugin extends AbstractUIPlugin {
    * Add nature to all opened projects
    */
   private static void applyPluginToAllProjects() {
+    final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
     for (final IProject p : projects)
       try {
         if (p.isOpen())

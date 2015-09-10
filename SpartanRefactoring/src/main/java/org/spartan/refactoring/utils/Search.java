@@ -153,7 +153,7 @@ public enum Search {
         --loopDepth;
       }
       @Override public boolean visit(final AnonymousClassDeclaration d) {
-        for (final VariableDeclarationFragment f : getFieldsOfClass(n))
+        for (final VariableDeclarationFragment f : getFieldsOfClass(d))
           if (f.getName().subtreeMatch(matcher, what))
             return false;
         return true;
@@ -193,7 +193,7 @@ public enum Search {
          * anonymous classes in which the formal parameters hide variables in
          * the enclosing scope. We don't want to collect them as uses of the
          * variable */
-        for (final Object o : n.parameters())
+        for (final Object o : d.parameters())
           if (((SingleVariableDeclaration) o).getName().subtreeMatch(matcher, what))
             return false;
         return true;
@@ -299,7 +299,7 @@ public enum Search {
   public static class Checker {
     private final SimpleName name;
     public Checker(final SimpleName n) {
-      this.name = n;
+      name = n;
     }
     public boolean in(final ASTNode... ns) {
       return !forDefinitions(name).in(ns).isEmpty();
@@ -309,7 +309,7 @@ public enum Search {
   public static class NoChecker {
     private final SimpleName name;
     public NoChecker(final SimpleName n) {
-      this.name = n;
+      name = n;
     }
     public boolean in(final ASTNode... ns) {
       return forDefinitions(name).in(ns).isEmpty();
@@ -353,7 +353,7 @@ public enum Search {
   public abstract static class Searcher {
     protected final SimpleName name;
     public Searcher(final SimpleName n) {
-      this.name = n;
+      name = n;
     }
     public abstract List<Expression> in(final ASTNode... ns);
   }
