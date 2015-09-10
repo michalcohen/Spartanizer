@@ -86,7 +86,7 @@ public enum Is {
     return is(n, BOOLEAN_LITERAL);
   }
   public static boolean negative(final Expression e) {
-    return e instanceof PrefixExpression && negative((PrefixExpression) e);
+    return e.toString().startsWith("-") || e instanceof PrefixExpression && negative((PrefixExpression) e);
   }
   public static boolean negative(final PrefixExpression e) {
     return e.getOperator() == PrefixExpression.Operator.MINUS;

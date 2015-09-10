@@ -1148,13 +1148,47 @@ import org.spartan.utils.Wrapper;
     trimming("a*-b").to("-a * b");
   }
   @Test public void issue06A() {
-    trimming("x/a*-b/-c*- - - d / d").to("-x/a * b/ c * d/d").to("");
+    trimming("x/a*-b/-c*- - - d / d")//
+        .to("-x/a * b/ c * d/d")//
+        .to("");
   }
   @Test public void issue06B() {
-    trimming("x/a*-b/-c*- - - d / -d").to("x/a * b/ c * d/d").to("");
+    trimming("x/a*-b/-c*- - - d / -d")//
+        .to("x/a * b/ c * d/d")//
+        .to("d*x/a*b/c/d");
   }
-  @Test public void issue06C() {
-    trimming("a*-b/-c*- - - d / d").to("-a * b/ c * d/d").to("");
+  @Test public void issue06C1() {
+    trimming("a*-b/-c*- - - d / d").to("-a * b/ c * d/d");
+  }
+  @Test public void issue06C2() {
+    trimming("-a * b/ c * d/d").to("");
+  }
+  @Test public void issue06C3() {
+    trimming("-a * b/ c * d").to("");
+  }
+  @Test public void issue06C4() {
+    trimming("-a * b/ c ").to("");
+  }
+  @Test public void issue06D() {
+    trimming("a*b*c*d*-e").to("-a*b*c*d*e").to("");
+  }
+  @Test public void issue06E() {
+    trimming("-a*b*c*d*f*g*h*i*j*k").to("");
+  }
+  @Test public void issue06F() {
+    trimming("x*a*-b*-c*- - - d * d")//
+        .to("-x*a*b*c*d*d")//
+        .to("");
+  }
+  @Test public void issue06G() {
+    trimming("x*a*-b*-c*- - - d / d")//
+        .to("-x*a*b*c*d/d")//
+        .to("");
+  }
+  @Test public void issue06H() {
+    trimming("x/a*-b/-c*- - - d ")//
+        .to("-x/a * b/ c * d")//
+        ;
   }
   @Test public void issue37Simplified() {
     trimming("" + //

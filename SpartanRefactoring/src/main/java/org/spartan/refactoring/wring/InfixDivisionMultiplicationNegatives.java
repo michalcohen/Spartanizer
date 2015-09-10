@@ -46,12 +46,12 @@ public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpre
       exclude.exclude(e);
     return new Rewrite(description(e), e) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        Expression first = totalNegation % 2 != 1 ? null : es.get(0);
+        final Expression first = totalNegation % 2 != 1 ? null : es.get(0);
         for (final Expression e : es)
-          if (e != first)
+          if (e != first && negationLevel(e) > 0)
             r.replace(e, new Plant(duplicate(peelNegation(e))).into(e.getParent()), g);
         if (first != null)
-          r.replace(first, Subject.operand(peelNegation(first)).to(MINUS), g);
+          r.replace(first, new Plant(Subject.operand(peelNegation(first)).to(MINUS)).into(first.getParent()), g);
       }
     };
   }
@@ -84,7 +84,7 @@ public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpre
   }
   private static List<Expression> gather(final Expression e, final List<Expression> $) {
     if (e instanceof InfixExpression)
-      return gather(asInfixExpression(e));
+      return gather(asInfixExpression(e), $);
     $.add(e);
     return $;
   }
