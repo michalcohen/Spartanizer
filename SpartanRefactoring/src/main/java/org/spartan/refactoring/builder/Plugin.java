@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -52,6 +53,7 @@ public class Plugin extends AbstractUIPlugin {
    * Add nature to all opened projects
    */
   private static void applyPluginToAllProjects() {
+    final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
     for (final IProject p : projects)
       try {
         if (p.isOpen())

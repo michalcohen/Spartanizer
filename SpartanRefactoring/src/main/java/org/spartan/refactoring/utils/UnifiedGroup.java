@@ -89,9 +89,12 @@ public class UnifiedGroup implements Iterable<LinkedList<Integer>> {
   }
   @SuppressWarnings("boxing") @Override public Iterator<LinkedList<Integer>> iterator() {
     final Iterator<Entry<String, LinkedList<Integer>>> it = names.entrySet().iterator();
-    while (it.hasNext())
+    while (it.hasNext()) {
+      final String name = it.next().getKey();
+      final int first = names.get(name).getFirst().intValue();
       for (final int i : names.get(name))
-        unionFind.union(names.get(it.next().getKey()).getFirst().intValue(), i);
+        unionFind.union(first, i);
+    }
     final ChainedHash<Integer, Integer> hm = new ChainedHash<>();
     for (int i = As.bit(base == Base.OneBased); i < size; ++i)
       hm.chain(unionFind.find(i), i);

@@ -10,14 +10,14 @@ import static org.spartan.hamcrest.MatcherAssert.iz;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;
 
-import org.eclipse.jdt.core.dom.PostfixExpression;
-import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.*;
 import org.junit.Test;
 import org.spartan.refactoring.spartanizations.Wrap;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class ExtractTest {
   @Test public void core() {
-    assertThat(Extract.core(null), nullValue());
+    assertThat(Extract.core((Expression) null), nullValue());
+    assertThat(Extract.core((Statement) null), nullValue());
   }
   @Test public void firstMethdoDeclaration() {
     assertThat(Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit("int f() { return a; }")), iz("int f() { return a; }"));

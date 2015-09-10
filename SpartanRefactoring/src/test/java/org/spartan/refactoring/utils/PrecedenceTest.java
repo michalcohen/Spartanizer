@@ -9,6 +9,7 @@ import static org.spartan.hamcrest.OrderingComparison.comparesEqualTo;
 import static org.spartan.hamcrest.OrderingComparison.greaterThanOrEqualTo;
 import static org.spartan.refactoring.utils.Into.*;
 
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.junit.Test;
 
@@ -104,7 +105,7 @@ import org.junit.Test;
     assertThat(Precedence.greater(null, c("a?b:c")), is(true));
   }
   @Test public void preceenceOfNull() {
-    assertThat(Precedence.of(null), is(Precedence.UNDEFINED));
+    assertThat(Precedence.of((Expression) null), is(Precedence.UNDEFINED));
   }
   @Test public void prefix() {
     assertThat(Precedence.of(e("++a")), is(2));

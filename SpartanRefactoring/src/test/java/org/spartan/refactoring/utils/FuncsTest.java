@@ -9,16 +9,12 @@ import static org.mockito.Mockito.mock;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.utils.ExpressionComparator.countNonWhites;
-import static org.spartan.refactoring.utils.Funcs.asComparison;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Funcs.shortName;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Into.e;
 import static org.spartan.refactoring.utils.Into.i;
 import static org.spartan.refactoring.utils.Into.s;
 
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
-import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -93,7 +89,13 @@ public class FuncsTest {
     assertFalse(Funcs.same(null, e("a")));
   }
   @Test public void sameOfNulls() {
-    assertTrue(Funcs.same(null, null));
+    assertTrue(Funcs.same((ASTNode) null, (ASTNode) null));
+  }
+  @Test public void negationOfExpressionNoNegation() {
+    assertThat(negationLevel(e("((((4))))")), is(0));
+  }
+  @Test public void negationOfExpressionManyNegation() {
+    assertThat(negationLevel(e("- - - - (- (-a)")), is(0));
   }
   @Test public void sameOfSomethingAndNull() {
     assertFalse(Funcs.same(e("a"), null));
