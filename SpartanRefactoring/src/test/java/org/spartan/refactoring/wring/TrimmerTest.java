@@ -40,43 +40,8 @@ import org.spartan.utils.Wrapper;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
-  static class Operand extends Wrapper<String> {
-    public Operand(final String inner) {
-      super(inner);
-    }
-    private void checkExpected(final String expected) {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
-      final String wrap = w.on(get());
-      final String unpeeled = apply(new Trimmer(), wrap);
-      if (wrap.equals(unpeeled))
-        fail("Nothing done on " + get());
-      final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()))
-        assertNotEquals("No trimming of " + get(), get(), peeled);
-      if (compressSpaces(peeled).equals(compressSpaces(get())))
-        assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
-      assertSimilar(expected, peeled);
-    }
-    private void checkSame() {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
-      final String wrap = w.on(get());
-      final String unpeeled = apply(new Trimmer(), wrap);
-      if (wrap.equals(unpeeled))
-        return;
-      final String peeled = w.off(unpeeled);
-      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
-        return;
-      assertSimilar(get(), peeled);
-    }
-    public Operand to(final String expected) {
-      if (expected == null || expected.isEmpty())
-        checkSame();
-      else
-        checkExpected(expected);
-      return new Operand(expected);
-    }
+  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
+    return s.findOpportunities(u).size();
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
@@ -105,9 +70,6 @@ import org.spartan.utils.Wrapper;
     if (compressSpaces(peeled).equals(compressSpaces(from)))
       assertNotEquals("Simpification of " + from + " is just reformatting", compressSpaces(peeled), compressSpaces(from));
     assertSimilar(expected, peeled);
-  }
-  public static int countOpportunities(final Spartanization s, final CompilationUnit u) {
-    return s.findOpportunities(u).size();
   }
   private static Operand trimming(final String from) {
     return new Operand(from);
@@ -541,18 +503,6 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void compareWithBoolean9() {
     trimming("true != true").to("false");
-  }
-  @Test public void multiplicationWithNegativesVanilla() {
-    trimming("a*-b").to("-a * b");
-  }
-  @Test public void multiplicationWithNegatives() {
-    trimming("a*-b/-c*- - - d / d").to("-a * b/ c * d/d").to("");
-  }
-  @Test public void divisionWithNegatives() {
-    trimming("x/a*-b/-c*- - - d / d").to("-x/a * b/ c * d/d").to("");
-  }
-  @Test public void divisionWithNegativesFinallyAllPositive() {
-    trimming("x/a*-b/-c*- - - d / -d").to("x/a * b/ c * d/d").to("");
   }
   @Test public void comparison01() {
     trimming("1+2+3<3").to("");
@@ -1194,6 +1144,18 @@ import org.spartan.utils.Wrapper;
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
+  @Test public void issue06() {
+    trimming("a*-b").to("-a * b");
+  }
+  @Test public void issue06A() {
+    trimming("x/a*-b/-c*- - - d / d").to("-x/a * b/ c * d/d").to("");
+  }
+  @Test public void issue06B() {
+    trimming("x/a*-b/-c*- - - d / -d").to("x/a * b/ c * d/d").to("");
+  }
+  @Test public void issue06C() {
+    trimming("a*-b/-c*- - - d / d").to("-a * b/ c * d/d").to("");
+  }
   @Test public void issue37Simplified() {
     trimming("" + //
         "    int a = 3;\n" + //
@@ -1681,6 +1643,21 @@ import org.spartan.utils.Wrapper;
                 "if(b.exec())" + //
                 "b.clear();");
   }
+  @Test public void paramAbbreviateConflictingWithLocal1() {
+    trimming("void m(String string) {" + //
+        "String s = null;" + //
+        "string.substring(s, 2, 18);").to("");
+  }
+  @Test public void paramAbbreviateConflictingWithLocal2() {
+    trimming("TCPConnection conn(TCPConnection tcpCon) {" + //
+        "UDPConnection c = new UDPConnection(57);" + //
+        "if(tcpCon.isConnected()) " + //
+        "c.disconnect();}").to("");
+  }
+  @Test public void paramAbbreviateConflictingWithMethodName() {
+    trimming("void m(BitmapManipulator bitmapManipulator) {" + //
+        "bitmapManipulator.x().y();").to("");
+  }
   @Test public void paramAbbreviateMultiple() {
     trimming("void m(StringBuilder stringBuilder, XMLDocument xmlDocument, Dog dog, Dog cat) {" + //
         "stringBuilder.clear();" + //
@@ -1702,21 +1679,6 @@ import org.spartan.utils.Wrapper;
                 "int i = 0;" + //
                 "@Override public boolean hasNext() { return false; }" + //
                 "@Override public Object next() { return null; } };");
-  }
-  @Test public void paramAbbreviateConflictingWithLocal1() {
-    trimming("void m(String string) {" + //
-        "String s = null;" + //
-        "string.substring(s, 2, 18);").to("");
-  }
-  @Test public void paramAbbreviateConflictingWithLocal2() {
-    trimming("TCPConnection conn(TCPConnection tcpCon) {" + //
-        "UDPConnection c = new UDPConnection(57);" + //
-        "if(tcpCon.isConnected()) " + //
-        "c.disconnect();}").to("");
-  }
-  @Test public void paramAbbreviateConflictingWithMethodName() {
-    trimming("void m(BitmapManipulator bitmapManipulator) {" + //
-        "bitmapManipulator.x().y();").to("");
   }
   @Test public void parenthesizeOfpushdownTernary() {
     trimming("a ? b+x+e+f:b+y+e+f").to("b+(a ? x : y)+e+f");
@@ -2809,5 +2771,43 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
+  }
+  static class Operand extends Wrapper<String> {
+    public Operand(final String inner) {
+      super(inner);
+    }
+    public Operand to(final String expected) {
+      if (expected == null || expected.isEmpty())
+        checkSame();
+      else
+        checkExpected(expected);
+      return new Operand(expected);
+    }
+    private void checkExpected(final String expected) {
+      final Wrap w = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final String wrap = w.on(get());
+      final String unpeeled = apply(new Trimmer(), wrap);
+      if (wrap.equals(unpeeled))
+        fail("Nothing done on " + get());
+      final String peeled = w.off(unpeeled);
+      if (peeled.equals(get()))
+        assertNotEquals("No trimming of " + get(), get(), peeled);
+      if (compressSpaces(peeled).equals(compressSpaces(get())))
+        assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
+      assertSimilar(expected, peeled);
+    }
+    private void checkSame() {
+      final Wrap w = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final String wrap = w.on(get());
+      final String unpeeled = apply(new Trimmer(), wrap);
+      if (wrap.equals(unpeeled))
+        return;
+      final String peeled = w.off(unpeeled);
+      if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
+        return;
+      assertSimilar(get(), peeled);
+    }
   }
 }
