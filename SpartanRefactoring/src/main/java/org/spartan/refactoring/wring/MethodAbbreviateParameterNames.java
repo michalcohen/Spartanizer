@@ -2,49 +2,69 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.wring.Wrings.rename;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.JavaTypeNameParser;
+import org.spartan.refactoring.utils.MethodExplorer;
 import org.spartan.refactoring.utils.Rewrite;
 
 /**
- * @author Artium Nihamkin (original)
- * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * @author Yossi Gil (v3)
- * @since 2013/01/01
+ * A {@link Wring} that abbreviates the names of variables that have a generic
+ * variation. The abbreviated name is the first character in the last word of
+ * the variable's name.
+ *
+ * @author Yossi Gil
+ * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
+ * @since 2015/08/24
  */
 public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
   @Override String description(final MethodDeclaration d) {
     return d.getName().toString();
   }
   @Override Rewrite make(final MethodDeclaration d, final ExclusionManager exclude) {
-    final SingleVariableDeclaration vd = find(d.parameters());
+    final List<SingleVariableDeclaration> vd = find(d.parameters());
+    final Map<SimpleName, SimpleName> renameMap = new HashMap<>();
     if (vd == null)
       return null;
-    final SimpleName n = vd.getName();
-    d.getAST().newSimpleName("");
+    for (final SingleVariableDeclaration v : vd) {
+      final JavaTypeNameParser parser = new JavaTypeNameParser(v.getType().toString());
+      if (legal(v, d, parser, renameMap.values()))
+        renameMap.put(v.getName(), d.getAST().newSimpleName(parser.shortName()));
+    }
     if (exclude != null)
       exclude.exclude(d);
-    return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
+    return new Rewrite("Rename parameters in method " + d.getName().toString(), d) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-        rename(n, n, d, r, g);
+        for (final SimpleName key : renameMap.keySet())
+          rename(key, renameMap.get(key), d, r, g);
       }
     };
   }
-  private SingleVariableDeclaration find(final List<SingleVariableDeclaration> ds) {
-    for (final SingleVariableDeclaration $ : ds)
-      if (suitable($))
-        return $;
-    return null;
+  private List<SingleVariableDeclaration> find(final List<SingleVariableDeclaration> ds) {
+    final List<SingleVariableDeclaration> $ = new ArrayList<>();
+    for (final SingleVariableDeclaration d : ds)
+      if (suitable(d))
+        $.add(d);
+    return $.size() == 0 ? null : $;
   }
-  private boolean suitable(final SingleVariableDeclaration d) {
-    d.getType();
-    d.getName();
-    // TODO Auto-generated method stub
-    return false;
+  @SuppressWarnings("static-method") private boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m, final JavaTypeNameParser parser,
+      final Collection<SimpleName> newNames) {
+    final MethodExplorer e = new MethodExplorer(m);
+    for (final SimpleName n : e.localVariables())
+      if (n.getIdentifier().equals(parser.shortName()))
+        return false;
+    for (final SimpleName n : newNames)
+      if (n.getIdentifier().equals(parser.shortName()))
+        return false;
+    return !m.getName().getIdentifier().equalsIgnoreCase(parser.shortName());
+  }
+  @SuppressWarnings("static-method") private boolean suitable(final SingleVariableDeclaration d) {
+    final Type t = d.getType();
+    final SimpleName n = d.getName();
+    final JavaTypeNameParser parser = new JavaTypeNameParser(t.toString());
+    return parser.isGenericVariation(n.getIdentifier());
   }
 }
