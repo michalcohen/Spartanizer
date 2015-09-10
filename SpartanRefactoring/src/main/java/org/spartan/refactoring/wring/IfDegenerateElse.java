@@ -1,6 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.refactoring.utils.Funcs.elze;
+import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;

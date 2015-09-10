@@ -26,20 +26,17 @@ public class IfEmptyThenEmptyElseTest {
   @Test public void eligible() {
     assertTrue(WRING.eligible(IF));
   }
-  @Test public void scopeIncludes() {
-    assertTrue(WRING.scopeIncludes(IF));
-  }
-  @Test public void inputType() {
-    org.hamcrest.MatcherAssert.assertThat(INPUT, instanceOf(Block.class));
-  }
-  @Test public void extractFirstIf() {
-    assertNotNull(IF);
+  @Test public void emptyElse() {
+    assertTrue(Wrings.emptyElse(IF));
   }
   @Test public void emptyThen() {
     assertTrue(Wrings.emptyThen(IF));
   }
-  @Test public void emptyElse() {
-    assertTrue(Wrings.emptyElse(IF));
+  @Test public void extractFirstIf() {
+    assertNotNull(IF);
+  }
+  @Test public void inputType() {
+    org.hamcrest.MatcherAssert.assertThat(INPUT, instanceOf(Block.class));
   }
   @Test public void runGo() throws IllegalArgumentException, MalformedTreeException, BadLocationException {
     final String input = Wrap.Statement.on(INPUT + "");
@@ -55,5 +52,8 @@ public class IfEmptyThenEmptyElseTest {
     assertThat(e.getChildren().length, greaterThan(0));
     e.apply(d);
     assertNull(d.get(), Extract.firstIfStatement(As.COMPILIATION_UNIT.ast(d.get())));
+  }
+  @Test public void scopeIncludes() {
+    assertTrue(WRING.scopeIncludes(IF));
   }
 }

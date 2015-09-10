@@ -45,29 +45,35 @@ public enum Wrap {
           ""), //
   //
   ;
+  /**
+   * Finds the most appropriate Wrap for a given code fragment
+   *
+   * @param codeFragment JD
+   * @return the most appropriate Wrap, or null, if the parameter could not be
+   *         parsed appropriately.
+   */
+  public static Wrap find(final String codeFragment) {
+    for (final Wrap $ : new Wrap[] { Statement, Expression, Statement, Method }) {
+      final CompilationUnit u = $.intoCompilationUnit(codeFragment);
+      final String parsedString = u.toString();
+      if ($.contains(parsedString, codeFragment))
+        return $;
+    }
+    return null;
+  }
+  static String essence(final String codeFragment) {
+    return compressSpaces(removeComments(codeFragment));
+  }
+  static String removeComments(final String codeFragment) {
+    return codeFragment//
+        .replaceAll("//.*?\n", "\n")//
+        .replaceAll("/\\*(?=(?:(?!\\*/)[\\s\\S])*?)(?:(?!\\*/)[\\s\\S])*\\*/", "");
+  }
   private final String before;
   private final String after;
   Wrap(final String before, final String after) {
     this.before = before;
     this.after = after;
-  }
-  /**
-   * Place a wrap around a phrase
-   *
-   * @param codeFragment some program phrase
-   * @return the wrapped phrase
-   */
-  public final String on(final String codeFragment) {
-    return before + codeFragment + after;
-  }
-  /**
-   * Remove a wrap from around a phrase
-   *
-   * @param codeFragment a wrapped program phrase
-   * @return the unwrapped phrase
-   */
-  public final String off(final String codeFragment) {
-    return removeSuffix(removePrefix(codeFragment, before), after);
   }
   /**
    * Wrap a given code fragment, and then parse it, converting it into a
@@ -91,30 +97,24 @@ public enum Wrap {
     return new Document(on(codeFragment));
   }
   /**
-   * Finds the most appropriate Wrap for a given code fragment
+   * Remove a wrap from around a phrase
    *
-   * @param codeFragment JD
-   * @return the most appropriate Wrap, or null, if the parameter could not be
-   *         parsed appropriately.
+   * @param codeFragment a wrapped program phrase
+   * @return the unwrapped phrase
    */
-  public static Wrap find(final String codeFragment) {
-    for (final Wrap $ : new Wrap[] { Statement, Expression, Statement, Method }) {
-      final CompilationUnit u = $.intoCompilationUnit(codeFragment);
-      final String parsedString = u.toString();
-      if ($.contains(parsedString, codeFragment))
-        return $;
-    }
-    return null;
+  public final String off(final String codeFragment) {
+    return removeSuffix(removePrefix(codeFragment, before), after);
+  }
+  /**
+   * Place a wrap around a phrase
+   *
+   * @param codeFragment some program phrase
+   * @return the wrapped phrase
+   */
+  public final String on(final String codeFragment) {
+    return before + codeFragment + after;
   }
   private boolean contains(final String wrap, final String inner) {
     return essence(off(wrap)).contains(essence(inner));
-  }
-  static String essence(final String codeFragment) {
-    return compressSpaces(removeComments(codeFragment));
-  }
-  static String removeComments(final String codeFragment) {
-    return codeFragment//
-        .replaceAll("//.*?\n", "\n")//
-        .replaceAll("/\\*(?=(?:(?!\\*/)[\\s\\S])*?)(?:(?!\\*/)[\\s\\S])*\\*/", "");
   }
 }

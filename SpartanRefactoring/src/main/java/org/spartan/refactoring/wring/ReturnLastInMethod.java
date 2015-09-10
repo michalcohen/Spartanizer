@@ -1,9 +1,11 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.utils.Utils.last;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Rewrite;

@@ -4,10 +4,12 @@ import static org.spartan.refactoring.wring.Wrings.rename;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Artium Nihamkin (original)
@@ -24,7 +26,7 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
     if (vd == null)
       return null;
     final SimpleName n = vd.getName();
-    final SimpleName shortName = d.getAST().newSimpleName("");
+    d.getAST().newSimpleName("");
     if (exclude != null)
       exclude.exclude(d);
     return new Rewrite("Rename variable " + n + " to $ (main variable returned by " + description(d) + ")", d) {
@@ -40,8 +42,8 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
     return null;
   }
   private boolean suitable(final SingleVariableDeclaration d) {
-    final Type t = d.getType();
-    final SimpleName n = d.getName();
+    d.getType();
+    d.getName();
     // TODO Auto-generated method stub
     return false;
   }

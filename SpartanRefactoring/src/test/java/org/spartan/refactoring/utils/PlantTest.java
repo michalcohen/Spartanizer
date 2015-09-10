@@ -12,6 +12,12 @@ import org.eclipse.jdt.core.dom.InfixExpression;
 import org.junit.Test;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class PlantTest {
+  @Test public void plantIntoLess() {
+    final Expression e1 = Into.e("a + 2");
+    final Expression e2 = Into.e("b");
+    final Expression e = Subject.pair(e1, e2).to(InfixExpression.Operator.LESS);
+    assertThat(e, iz("a+2<b"));
+  }
   @Test public void plantIntoNull() {
     final String s = "a?b:c";
     final Expression e = e(s);
@@ -20,22 +26,16 @@ import org.junit.Test;
     assertThat(e1, notNullValue());
     assertThat(e1, iz(s));
   }
-  @Test public void plus() {
-    final Expression e = Into.e("a + 2 < b");
-    final Expression plus = Extract.firstPlus(e);
-    assertThat(plus.toString(), Is.notString(plus), is(true));
-    assertThat(e.toString(), Is.notString(plus), is(true));
-  }
-  @Test public void plantIntoLess() {
-    final Expression e1 = Into.e("a + 2");
-    final Expression e2 = Into.e("b");
-    final Expression e = Subject.pair(e1, e2).to(InfixExpression.Operator.LESS);
-    assertThat(e, iz("a+2<b"));
-  }
   @Test public void plantIntoReturn() {
     final Expression e = Into.e("2");
     final Plant plant = new Plant(e);
     plant.into(e.getAST().newReturnStatement());
     assertThat(plant.into(e.getAST().newReturnStatement()), iz("2"));
+  }
+  @Test public void plus() {
+    final Expression e = Into.e("a + 2 < b");
+    final Expression plus = Extract.firstPlus(e);
+    assertThat(plus.toString(), Is.notString(plus), is(true));
+    assertThat(e.toString(), Is.notString(plus), is(true));
   }
 }

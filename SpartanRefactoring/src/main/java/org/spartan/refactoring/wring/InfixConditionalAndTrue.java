@@ -2,7 +2,9 @@ package org.spartan.refactoring.wring;
 
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.spartan.refactoring.utils.*;
+import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Have;
+import org.spartan.refactoring.utils.Is;
 
 /**
  * A {@link Wring} to covert <code>b && true</code> to <code>b</code>

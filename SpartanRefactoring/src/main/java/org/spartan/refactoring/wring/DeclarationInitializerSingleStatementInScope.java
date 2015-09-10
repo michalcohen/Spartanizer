@@ -2,7 +2,8 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.last;
+import static org.spartan.utils.Utils.penultimate;
 
 import java.util.List;
 
@@ -37,14 +38,17 @@ public final class DeclarationInitializerSingleStatementInScope extends Wring.Va
       return null;
     if (penultimate(ss) != s)
       return null;
-    if (Search.findsDefinitions(n).in(nextStatement))
+    final List<Expression> in = Search.forDefinitions(n).in(nextStatement);
+    if (!in.isEmpty())
       return null;
     final List<Expression> uses = Search.forAllOccurencesOf(f.getName()).in(nextStatement);
-    if (uses.size() > 1 && Is.sideEffectFree(initializer))
+    if (uses.size() > 1 && !Is.sideEffectFree(initializer))
       return null;
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
     final Statement newStatement = duplicate(nextStatement);
-    if (i.addedSize(newStatement) - removeSavings(f) > 0)
+    final int addedSize = i.addedSize(newStatement);
+    final int removalSaving = removalSaving(f);
+    if (addedSize - removalSaving > 0)
       return null;
     r.replace(nextStatement, newStatement, g);
     i.inlineInto(newStatement);
@@ -52,6 +56,6 @@ public final class DeclarationInitializerSingleStatementInScope extends Wring.Va
     return r;
   }
   @Override String description(final VariableDeclarationFragment f) {
-    return "Eliminate temporary " + f.getName() + " and inline its value into the expression of the subsequent return statement";
+    return "Inline local " + f.getName() + " into subsequent statement";
   }
 }

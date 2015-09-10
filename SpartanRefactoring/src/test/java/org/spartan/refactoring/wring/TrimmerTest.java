@@ -320,16 +320,16 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void canonicalFragementExamplesWithExraFragments() {
     trimming("int a,b; a = 3;").to("int a = 3, b;");
-    trimming("int a,b=2; a = b;").to("");
-    trimming("int a = 2,b=1; if (b) a = 3; ").to("");
+    trimming("int a,b=2; a = b;").to("int a;a=2;").to("int a=2;");
+    trimming("int a = 2,b=1; if (b) a = 3; ").to("int a=2;if(1)a=3;").to("int a=1?3:2;");
     trimming("int a = 2; a += 3; ").to("int a = 2 + 3;");
     trimming("int a = 2; a += b; ").to("int a = 2 + b;");
     trimming("int a = 2, b; a += b; ").to("");
-    trimming("int a = 2, b=1; a += b; ").to("");
+    trimming("int a = 2, b=1; a += b; ").to("int a=2;a+=1;").to("int a=2+1;");
     trimming("int a = 2; a = 3 * a; ").to("int a = 3 * 2;");
     trimming("int a = 2; a = 3 * a * b; ").to("int a = 3 * 2 * b;");
     trimming("int a = 2, b; a = 3 * a * b; ").to("");
-    trimming("int a = 2, b = 1; a = 3 * a * b; ").to("");
+    trimming("int a = 2, b = 1; a = 3 * a * b; ").to("int a=2;a=3*a*1;").to("int a=3*2*1;").to("int a=1*2*3;");
     trimming("int a = 2; return 3 * a * a; ").to("return 3 * 2 * 2;");
     trimming("int a = 2; return 3 * a * b; ").to("return 3 * 2 * b;");
     trimming("int b=5,a = 2,c; return 3 * a * b * c; ").to("int a = 2; return 3 * a * 5 * c;");
@@ -671,7 +671,7 @@ import org.spartan.utils.Wrapper;
     trimming("!Y ? null :!Z ? null : F").to("Y&&Z?F:null");
   }
   @Test public void donotSorMixedTypes() {
-    trimming("int a,b,c;String t = zE4;if (2 * 3.1415 * 180 > a || t.concat(sS) ==1922 && t.length() > 3)    return c > 5;").to("");
+    trimming("if (2 * 3.1415 * 180 > a || t.concat(sS) ==1922 && t.length() > 3)    return c > 5;").to("");
   }
   @Test public void dontELiminateCatchBlock() {
     trimming("try { f(); } catch (Exception e) { } finally {}").to("");
@@ -1020,6 +1020,9 @@ import org.spartan.utils.Wrapper;
   @Test public void inlineInitializersSecondStep() {
     trimming("int a = 2; return 3*a*4;").to("return 3 * 2 * 4;");
   }
+  @Test public void inlineIntoNextStatementWithSideEffects() {
+    trimming("int a = f(); if (a) g(a); else h(u(a));").to("");
+  }
   @Ignore @Test public void inlineSingleUse01() {
     trimming("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ")
         .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (yada3(0))); ");
@@ -1066,19 +1069,18 @@ import org.spartan.utils.Wrapper;
             .to("");
   }
   @Test public void inlineSingleUseKillingVariable() {
-    trimming("int a,b=2; a = b;").to("int a=2, b=2; ");
+    trimming("int a,b=2; a = b;").to("int a;a=2;");
   }
   @Test public void inlineSingleUseKillingVariables() {
-    trimming("int $, xi=0, xj=0, yi=0, yj=0;  if (xi > xj == yi > yj)    $++;   else    $--;")
-        .to(" int $, xi=0, xj=0, yi=0, yj=0;  if (xi > xj == yi > yj)    ++$;   else    --$;");
+    trimming("int $, xi=0, xj=0, yi=0, yj=0;  if (xi > xj == yi > yj)    $++;   else    $--;").to(" int $, xj=0, yi=0, yj=0;        if (0>xj==yi>yj)$++;else $--;");
   }
   @Test public void inlineSingleUseKillingVariablesSimplified() {
     trimming("int $=1,xi=0,xj=0,yi=0,yj=0;  if (xi > xj == yi > yj)    $++;   else    $--;")//
         .to(" int $=1,xj=0,yi=0,yj=0;       if(0>xj==yi>yj)$++;else $--;")//
         .to(" int $=1,yi=0,yj=0;            if(0>0==yi>yj)$++;else $--;") //
         .to(" int $=1,yj=0;                 if(0>0==0>yj)$++;else $--;") //
-        .to(" int $=1,yj=0;                 if(0>0==yj<0)++$;else--$;") //
-        .to(" int $=1;                      if(0>0==0<0)++$;else--$;") //
+        .to(" int $=1;                      if(0>0==0>0)$++;else $--;") //
+        .to(" int $=1;                      if(0>0==0>0)++$;else--$;") //
         ;
   }
   @Test public void inlineSingleUseTrivial() {
@@ -1095,6 +1097,11 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void inlineSingleVariableIntoPlusPlus() {
     trimming("int $ = 0;  if (a)  ++$;  else --$;").to("");
+  }
+  @Test public void inliningWithVariableAssignedTo() {
+    trimming("int a=3,b=5;if(a==4)if(b==3)b=2;else{b=a;b=3;}else if(b==3)b=2;else{b=a*a;b=3;}") //
+        .to("int b=5;if(3==4)if(b==3)b=2;else{b=3;b=3;}else if(b==3)b=2;else{b=3*3;b=3;}") //
+        ;
   }
   @Test public void isGreaterTrue() {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
@@ -1287,6 +1294,11 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void longerChainParenthesisComparison() {
     trimming("(a == b == c == d == e) == d").to("");
+  }
+  @Test public void massiveInlining() {
+    trimming("int a,b,c;String t = zE4;if (2 * 3.1415 * 180 > a || t.concat(sS) ==1922 && t.length() > 3)    return c > 5;")//
+        .to("int a,b,c;if(2*3.1415*180>a||zE4.concat(sS)==1922&&zE4.length()>3)return c>5;") //
+        .to("");
   }
   @Test public void methodWithLastIf() {
     trimming("int f() { if (a) { f(); g(); h();}").to("int f() { if (!a) return;  f(); g(); h();");
@@ -2464,10 +2476,13 @@ import org.spartan.utils.Wrapper;
     trimming("String res = s;   if (s.equals(532))    res = res + 0xABBA;   S.out.println(res); ").to("String res=s.equals(532)?s+0xABBA:s;S.out.println(res);");
   }
   @Test public void ternarize13() {
-    trimming("String res = m, foo;  if (m.equals(f())==true)   foo = M; ").to("String res = m, foo;  if (m.equals(f())) foo=M;");
+    trimming("String res = m, foo;  if (m.equals(f())==true)   foo = M; ")//
+        .to("String foo;if(m.equals(f())==true)foo=M;")//
+        .to("String foo;if(m.equals(f()))foo=M;");
   }
   @Test public void ternarize13Simplified() {
-    trimming("String r = m, foo;  if (m.equals(f())==true)   foo = M; ").to("String r = m, foo;  if (m.equals(f())) foo=M;");
+    trimming("String r = m, f;  if (m.e(f()))   f = M; ")//
+        .to("String f;if(m.e(f()))f=M;");
   }
   @Test public void ternarize13SimplifiedMore() {
     trimming("if (m.equals(f())==true)   foo = M; ").to("if (m.equals(f())) foo=M;");
@@ -2499,6 +2514,10 @@ import org.spartan.utils.Wrapper;
         "  if (d)\n" + //
         "    n2 = 2;").to("int n1, n2 = d ? 2: 0, n3;");
   }
+  public void ternarize18() {
+    trimming("final String res=s;System.out.println(s.equals(res)?tH3+res:h2A+res+0);")//
+        .to("System.out.println(s.equals(s)?tH3+res:h2A+s+0);");
+  }
   @Test public void ternarize21() {
     trimming("if (s.equals(532)){    S.out.println(gG);    S.out.l(kKz);} f(); ").to("");
   }
@@ -2517,7 +2536,8 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void ternarize33() {
     trimming("int a, b=0;   if (b==3){    a=4; } ")//
-        .to("int a,b=0;if(b==3)a=4;") //
+        .to("int a;if(0==3){a=4;}") //
+        .to("int a;if(0==3)a=4;") //
         .to(null);
   }
   @Test public void ternarize35() {
@@ -2538,7 +2558,8 @@ import org.spartan.utils.Wrapper;
     trimming(" int a, b; a = 3;b = 5; if (a == 4) if (b == 3) b = 2; else{b = a; b=3;}  else if (b == 3) b = 2; else{ b = a*a;         b=3; }")//
         .to("int a=3,b;b=5;if(a==4)if(b==3)b=2;else{b=a;b=3;}else if(b==3)b=2;else{b=a*a;b=3;}") //
         .to("int a=3,b=5;if(a==4)if(b==3)b=2;else{b=a;b=3;}else if(b==3)b=2;else{b=a*a;b=3;}") //
-        .to("") //
+        .to("int b=5;if(3==4)if(b==3)b=2;else{b=3;b=3;}else if(b==3)b=2;else{b=3*3;b=3;}") //
+        .to("")//
         ;
   }
   @Test public void ternarize45() {
@@ -2559,38 +2580,18 @@ import org.spartan.utils.Wrapper;
             "       return 2;\n" + //
             "     } else {\n" + //
             "       a=7;\n" + //
-            "     }").to("int a,b=0;if(m.equals(NG)!=true)if(b==3){return 2;}else{a=7;}else if(b==3){return 3;}else{a+=7;}");
+            "     }").to("int a;if(m.equals(NG)==true)if(0==3){return 3;}else{a+=7;}else if(0==3){return 2;}else{a=7;}");
   }
   @Test public void ternarize49() {
     trimming("if (s.equals(532)){ S.out.println(gG); S.out.l(kKz); } f();").to("");
-  }
-  @Test public void ternarize49a() {
-    trimming(""//
-        + "    int size = 0;\n"//
-        + "   if (m.equals(153)==true)\n"//
-        + "     for (int i=0; i < size; i++){\n"//
-        + "       S.out.l(HH);\n"//
-        + "     }\n"//
-        + "   else\n"//
-        + "     for (int i=0; i < size; i++){\n"//
-        + "       S.out.l('f');\n"//
-        + "     }")
-            .to(""//
-                + "int size=0;"//
-                + "if(m.equals(153))"//
-                + "for(int i=0;i<size;++i)"//
-                + "  S.out.l(HH);"//
-                + "else "//
-                + "  for(int i=0;i<size;++i)"//
-                + "    S.out.l('f');");
   }
   @Test public void ternarize52() {
     trimming("int a=0,b = 0,c,d = 0,e = 0;if (a < b) {c = d;c = e;} f();")//
         .to("");
   }
   @Test public void ternarize54() {
-    trimming("int $=1, xi=0, xj=0, yi=0, yj=0; if (xi > xj == yi > yj)    ++$;   else    --$;")
-        .to(" int $=1, xi=0, xj=0, yi=0, yj=0; if (xi > xj == yi > yj)    ++$;   else    --$;");
+    trimming("int $=1,xi=0,xj=0,yi=0,yj=0; if(xi > xj == yi > yj)++$;else--$;")//
+        .to(" int $=1,xj=0,yi=0,yj=0;      if(0>xj==yi>yj)++$;else--$;");
   }
   @Test public void ternarize55() {
     trimming("if (key.equals(markColumn))\n" + //

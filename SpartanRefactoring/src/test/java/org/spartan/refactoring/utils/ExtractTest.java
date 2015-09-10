@@ -19,16 +19,21 @@ import org.spartan.refactoring.spartanizations.Wrap;
     final Statement s = null;
     assertThat(Extract.core(s), nullValue());
   }
-  @Test public void plus() {
-    final Expression e = Into.e("a + 2 < b");
-    final Expression plus = Extract.firstPlus(e);
-    assertThat(plus, iz("a+2"));
+  @Test public void firstMethdoDeclaration() {
+    final String input = "int f() { return a; }";
+    final MethodDeclaration d = Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(input));
+    assertThat(d, iz(input));
   }
   @Test public void operandsCount() {
     assertThat(Extract.operands(i("a+b+c+(d+e)+f")).size(), is(5));
   }
   @Test public void operandsOfNullIsNull() {
     assertThat(Extract.operands(null), is(nullValue()));
+  }
+  @Test public void plus() {
+    final Expression e = Into.e("a + 2 < b");
+    final Expression plus = Extract.firstPlus(e);
+    assertThat(plus, iz("a+2"));
   }
   @Test public void prefixToPostfixDecrement() {
     final String from = "for (int i = 0; i < 100;  i--)  i--;";
@@ -38,10 +43,5 @@ import org.spartan.refactoring.spartanizations.Wrap;
     final PostfixExpression e = Extract.findFirstPostfix(s);
     assertNotNull(e);
     assertThat(e.toString(), is("i--"));
-  }
-  @Test public void firstMethdoDeclaration() {
-    final String input = "int f() { return a; }";
-    final MethodDeclaration d = Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(input));
-    assertThat(d, iz(input));
   }
 }

@@ -47,16 +47,6 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
   public InfixSortMultiplicationTest() {
     super(WRING);
   }
-  @Test public void parseOfToken() {
-    final Expression e = e(" 2  ");
-    assertThat(new LiteralParser(e.toString()).kind(), is(Kinds.INTEGER.ordinal()));
-  }
-  @Test public void scopeIncludesTrue1() {
-    assertTrue(WRING.scopeIncludes(i("2*a")));
-  }
-  @Test public void scopeIncludesTrue2() {
-    assertTrue(WRING.scopeIncludes(i("a*2")));
-  }
   @Test public void legibleOnShorterChainParenthesisComparisonLast() {
     assertLegible("z * 2 * a * b * c * d * e * f * g * h");
   }
@@ -73,6 +63,16 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
+  }
+  @Test public void parseOfToken() {
+    final Expression e = e(" 2  ");
+    assertThat(new LiteralParser(e.toString()).kind(), is(Kinds.INTEGER.ordinal()));
+  }
+  @Test public void scopeIncludesTrue1() {
+    assertTrue(WRING.scopeIncludes(i("2*a")));
+  }
+  @Test public void scopeIncludesTrue2() {
+    assertTrue(WRING.scopeIncludes(i("a*2")));
   }
 
   @RunWith(Parameterized.class) //

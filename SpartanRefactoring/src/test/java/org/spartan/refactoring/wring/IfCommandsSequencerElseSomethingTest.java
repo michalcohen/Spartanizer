@@ -53,15 +53,33 @@ public class IfCommandsSequencerElseSomethingTest {
     final IfStatement i = asIfStatement(s);
     assertNotNull(i);
   }
-  @Test public void checkStepsWRING() throws MalformedTreeException {
+  @Test public void checkStepsFull() throws MalformedTreeException, BadLocationException {
     final IfStatement s = (IfStatement) asSingle("if (a) return b; else a();");
     assertThat(WRING.scopeIncludes(s), is(true));
     assertThat(WRING.eligible(s), is(true));
     final Rewrite m = WRING.make(s);
     assertThat(m, notNullValue());
-    final ASTRewrite r = ASTRewrite.create(s.getAST());
-    m.go(r, null);
-    assertThat(r.toString(), allOf(startsWith("Events:"), containsString("[replaced:"), containsString("]")));
+    final Wring<IfStatement> w = Toolbox.instance.find(s);
+    assertThat(w, notNullValue());
+    assertThat(w, instanceOf(WRING.getClass()));
+    final String wrap = Wrap.Statement.on(s.toString());
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
+    assertNotNull(u);
+    final Document d = new Document(wrap);
+    assertNotNull(d);
+    final Trimmer t = new Trimmer();
+    final ASTRewrite r = t.createRewrite(u, null);
+    final TextEdit x = r.rewriteAST(d, null);
+    x.apply(d);
+    final String unpeeled = d.get();
+    if (wrap.equals(unpeeled))
+      fail("Nothing done on " + s);
+    final String peeled = Wrap.Statement.off(unpeeled);
+    if (peeled.equals(s))
+      assertNotEquals("No similification of " + s, s, peeled);
+    if (compressSpaces(peeled).equals(compressSpaces(s.toString())))
+      assertNotEquals("Simpification of " + s + " is just reformatting", compressSpaces(peeled), compressSpaces(s.toString()));
+    assertSimilar(" if(a)return b;a(); ", peeled);
   }
   @Test public void checkStepsTrimmer() throws MalformedTreeException, BadLocationException {
     final String input = "if (a) return b; else a();";
@@ -96,33 +114,15 @@ public class IfCommandsSequencerElseSomethingTest {
       assertNotEquals("Simpification of " + s + " is just reformatting", compressSpaces(peeled), compressSpaces(s.toString()));
     assertSimilar(" if (a) return b; a(); ", peeled);
   }
-  @Test public void checkStepsFull() throws MalformedTreeException, BadLocationException {
+  @Test public void checkStepsWRING() throws MalformedTreeException {
     final IfStatement s = (IfStatement) asSingle("if (a) return b; else a();");
     assertThat(WRING.scopeIncludes(s), is(true));
     assertThat(WRING.eligible(s), is(true));
     final Rewrite m = WRING.make(s);
     assertThat(m, notNullValue());
-    final Wring<IfStatement> w = Toolbox.instance.find(s);
-    assertThat(w, notNullValue());
-    assertThat(w, instanceOf(WRING.getClass()));
-    final String wrap = Wrap.Statement.on(s.toString());
-    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(wrap);
-    assertNotNull(u);
-    final Document d = new Document(wrap);
-    assertNotNull(d);
-    final Trimmer t = new Trimmer();
-    final ASTRewrite r = t.createRewrite(u, null);
-    final TextEdit x = r.rewriteAST(d, null);
-    x.apply(d);
-    final String unpeeled = d.get();
-    if (wrap.equals(unpeeled))
-      fail("Nothing done on " + s);
-    final String peeled = Wrap.Statement.off(unpeeled);
-    if (peeled.equals(s))
-      assertNotEquals("No similification of " + s, s, peeled);
-    if (compressSpaces(peeled).equals(compressSpaces(s.toString())))
-      assertNotEquals("Simpification of " + s + " is just reformatting", compressSpaces(peeled), compressSpaces(s.toString()));
-    assertSimilar(" if(a)return b;a(); ", peeled);
+    final ASTRewrite r = ASTRewrite.create(s.getAST());
+    m.go(r, null);
+    assertThat(r.toString(), allOf(startsWith("Events:"), containsString("[replaced:"), containsString("]")));
   }
 
   @RunWith(Parameterized.class) //

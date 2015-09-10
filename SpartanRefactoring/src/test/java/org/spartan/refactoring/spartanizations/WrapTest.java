@@ -41,10 +41,6 @@ import org.junit.Test;
     final String essence = essence(codeFragment);
     assertEquals(essence, "if(b){;}throw new Exception();");
   }
-  @Test public void offDivision() {
-    final String codeFragment = "a/b";
-    assertEquals(Wrap.Expression.off(Wrap.Expression.on(codeFragment)), codeFragment);
-  }
   @Test public void expression() {
     final Wrap w = Wrap.Expression;
     final String codeFragment = "a+b";
@@ -100,6 +96,10 @@ import org.junit.Test;
     final String codeFragment = "int f() { return a; }";
     assertThat(w.off(w.on(codeFragment)), is(codeFragment));
   }
+  @Test public void offDivision() {
+    final String codeFragment = "a/b";
+    assertEquals(Wrap.Expression.off(Wrap.Expression.on(codeFragment)), codeFragment);
+  }
   @Test public void removeComments() {
     final String codeFragment = "" //
         + "if (b) {\n" //
@@ -109,12 +109,12 @@ import org.junit.Test;
         + "}";
     similar(Wrap.removeComments(codeFragment), "if (b) {} else { throw new Exception(); }");
   }
-  private void similar(final String s1, final String s2) {
-    assertEquals(essence(s1), essence(s2));
-  }
   @Test public void statement() {
     final Wrap w = Wrap.Statement;
     final String codeFragment = "int a;";
     assertThat(w.off(w.on(codeFragment)), is(codeFragment));
+  }
+  private void similar(final String s1, final String s2) {
+    assertEquals(essence(s1), essence(s2));
   }
 }

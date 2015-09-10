@@ -6,6 +6,7 @@ import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.wring.Wrings.size;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,17 +177,54 @@ public abstract class Wring<N extends ASTNode> {
       }
       return $;
     }
-    static int removeSavings(final VariableDeclarationFragment f) {
+    static int removalSaving(final VariableDeclarationFragment f) {
+      final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+      final int $ = size(parent);
+      if (parent.fragments().size() <= 1)
+        return $;
+      final VariableDeclarationStatement newParent = duplicate(parent);
+      newParent.fragments().remove(parent.fragments().indexOf(f));
+      final int size = size(newParent);
+      return $ - size;
+    }
+    static int eliminationSaving(final VariableDeclarationFragment f) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
       final List<VariableDeclarationFragment> live = live(f, parent.fragments());
+      final int $ = size(parent);
       if (live.isEmpty())
-        return size(parent);
+        return $;
       final VariableDeclarationStatement newParent = duplicate(parent);
       newParent.fragments().clear();
       newParent.fragments().addAll(live);
-      return size(parent) + size(newParent);
+      return $ - size(newParent);
     }
+    /**
+     * Removes a {@link VariableDeclarationFragment}, leaving intact any other
+     * fragment fragments in the containing {@link VariabelDeclarationStatement}
+     * . Still, if the containing node left empty, it is removed as well.
+     *
+     * @param f
+     * @param r
+     * @param g
+     */
     static void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
+      final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+      if (parent.fragments().size() <= 1)
+        r.remove(parent, g);
+      else
+        r.remove(f, g);
+    }
+    /**
+     * Eliminates a {@link VariableDeclarationFragment}, with any other fragment
+     * fragments which are not live in the containing
+     * {@link VariabelDeclarationStatement}. If no fragments are left, then this
+     * containing node is eliminated as well.
+     *
+     * @param f
+     * @param r
+     * @param g
+     */
+    static void eliminate(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
       final List<VariableDeclarationFragment> live = live(f, parent.fragments());
       if (live.isEmpty()) {

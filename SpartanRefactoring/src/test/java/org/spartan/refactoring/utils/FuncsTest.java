@@ -1,20 +1,22 @@
 package org.spartan.refactoring.utils;
 
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.spartan.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.refactoring.utils.ExpressionComparator.countNonWhites;
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asComparison;
+import static org.spartan.refactoring.utils.Funcs.right;
+import static org.spartan.refactoring.utils.Funcs.shortName;
 import static org.spartan.refactoring.utils.Into.e;
-import static org.spartan.refactoring.utils.Into.*;
+import static org.spartan.refactoring.utils.Into.i;
+import static org.spartan.refactoring.utils.Into.s;
 
 import org.eclipse.jdt.core.dom.*;
-import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -28,6 +30,9 @@ import org.junit.runners.MethodSorters;
  */
 @SuppressWarnings({ "static-method", "javadoc" }) @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class FuncsTest {
+  @Test public void arrayOfInts() {
+    assertThat(shortName(t("int[][] _;")), equalTo("iss"));
+  }
   @Test public void asComparisonPrefixlExpression() {
     final PrefixExpression p = mock(PrefixExpression.class);
     doReturn(PrefixExpression.Operator.NOT).when(p).getOperator();
@@ -80,6 +85,9 @@ public class FuncsTest {
   @Test public void isDeMorganOR() {
     assertTrue(Is.deMorgan(CONDITIONAL_OR));
   }
+  @Test public void listOfInts() {
+    assertThat(shortName(t("List<Set<Integer>> _;")), equalTo("iss"));
+  }
   @Test public void sameOfNullAndSomething() {
     final ASTNode n1 = null;
     final ASTNode n2 = e("a");
@@ -103,12 +111,6 @@ public class FuncsTest {
   }
   @Test public void shortNameASTRewriter() {
     assertThat(shortName(t("ASTRewriter _;")), equalTo("r"));
-  }
-  @Test public void arrayOfInts() {
-    assertThat(shortName(t("int[][] _;")), equalTo("iss"));
-  }
-  @Test public void listOfInts() {
-    assertThat(shortName(t("List<Set<Integer>> _;")), equalTo("iss"));
   }
   @Test public void shortNameDouble() {
     assertThat(shortName(t("double _;")), equalTo("d"));

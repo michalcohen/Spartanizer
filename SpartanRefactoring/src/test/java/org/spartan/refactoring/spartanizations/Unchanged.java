@@ -35,12 +35,12 @@ public class Unchanged {
   @Parameters(name = "{index}: {0} {1}") //
   public static Collection<Object[]> cases() {
     return new FileTestUtils.Files() {
-      private boolean dotOutExists(final File d, final String name) {
-        return new File(d, name.replaceAll("\\.in$", ".out")).exists();
-      }
       @Override Object[] makeCase(final Spartanization s, final File d, final File f, final String name) {
         return name.endsWith(testSuffix) && As.stringBuilder(f).indexOf(testKeyword) == -1 ? objects(s, name, makeInFile(f))
             : name.endsWith(".in") && !dotOutExists(d, name) ? objects(name.replaceAll("\\.in$", ""), s, f) : null;
+      }
+      private boolean dotOutExists(final File d, final String name) {
+        return new File(d, name.replaceAll("\\.in$", ".out")).exists();
       }
     }.go();
   }

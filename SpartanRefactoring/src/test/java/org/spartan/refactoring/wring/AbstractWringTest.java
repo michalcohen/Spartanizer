@@ -208,9 +208,6 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       Declaration(final Wring<VariableDeclarationFragment> inner) {
         super(inner);
       }
-      @Override protected VariableDeclarationFragment asMe() {
-        return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
-      }
       @Test public void asMeNotNull() {
         if (inner != null)
           assertThat(asMe(), notNullValue());
@@ -218,6 +215,9 @@ public class AbstractWringTest<N extends ASTNode> extends AbstractTestBase {
       @Test public void scopeDoesNotInclude() {
         if (inner != null)
           assertThat(inner.scopeIncludes(asMe()), is(false));
+      }
+      @Override protected VariableDeclarationFragment asMe() {
+        return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
       }
     }
 

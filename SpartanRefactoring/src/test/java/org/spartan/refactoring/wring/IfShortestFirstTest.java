@@ -29,6 +29,7 @@ import org.spartan.utils.Utils;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 @SuppressWarnings({ "static-method", "javadoc" }) public class IfShortestFirstTest {
+  static final Wring<IfStatement> WRING = new IfShortestFirst();
   @Test public void statmentCount() {
     final CompilationUnit u = Wrap.Statement.intoCompilationUnit("" + //
         "if (name == null) {\n" + //
@@ -43,7 +44,6 @@ import org.spartan.utils.Utils;
     assertThat(Extract.statements(then(s)).size(), is(1));
     assertThat(Extract.statements(elze(s)).size(), is(1));
   }
-  static final Wring<IfStatement> WRING = new IfShortestFirst();
 
   @RunWith(Parameterized.class) //
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {

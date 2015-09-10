@@ -27,16 +27,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
   private static void assertSimplifiesTo(final String from, final String expected) {
     assertWrappedTranslation(from, expected, Wrap.Expression);
   }
-  @Test public void issue43() {
-    assertConvertsTo(
-        "" //
-            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
-            + "return (t + 3);    ", //
-        ""//
-            + "return(Z2.f(A).f(b)+Z2.f(c)+3);" //
-            + "" //
-    );
-  }
   private static void assertWrappedTranslation(final String from, final String expected, final Wrap w) {
     final String wrap = w.on(from);
     assertEquals(from, w.off(wrap));
@@ -52,43 +42,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void chainComparison() {
     assertSimplifiesTo("a == true == b == c", "a == b == c");
-  }
-  @Test(timeout = 2000) public void multipleInline() {
-    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "return 2*3*4*5;");
-  }
-  @Test public void ternarize07a() {
-    assertConvertsTo("" //
-        + "String res;" //
-        + "res = s;   " //
-        + "if (res==true)    " //
-        + "  res = s + 0xABBA;   " //
-        + "System.out.println(res); " //
-        + "" //
-        , "String res=!s?s:s+0xABBA;System.out.println(res);" //
-    );
-  }
-  @Test(timeout = 2000) public void desiredSimplificationOfExample() {
-    assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
-  }
-  @Test(timeout = 2000) public void eliminateRedundantIf1() {
-    assertConvertsTo("{if (a) ; }", "");
-  }
-  @Test(timeout = 2000) public void eliminateRedundantIf2() {
-    assertConvertsTo("{if (a) ; else {;}}", "");
-  }
-  @Test(timeout = 2000) public void eliminateRedundantIf3() {
-    assertConvertsTo("{if (a) {;} else {;;}}", "");
-  }
-  @Test(timeout = 2000) public void eliminateRedundantIf4() {
-    assertConvertsTo("{if (a) {;}} ", "");
-  }
-  @Test(timeout = 2000) public void inlineInitializers() {
-    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 2 * 3 * b;");
-  }
-  @Test(timeout = 2000) public void multipleIfDeclarationAssignment() {
-    assertConvertsTo(//
-        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else b = a;else if (b == 3) b = 2;else b = a*a;", //
-        "int a =3, b=a==4?5==3?2:a:5==3?2:a*a;");
   }
   @Test public void commonPrefixIfBranchesInBlock() {
     assertConvertsTo(
@@ -112,6 +65,24 @@ import org.spartan.refactoring.spartanizations.Wrap;
             "      --i;" //
     );
   }
+  @Test(timeout = 2000) public void desiredSimplificationOfExample() {
+    assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
+  }
+  @Test(timeout = 2000) public void eliminateRedundantIf1() {
+    assertConvertsTo("{if (a) ; }", "");
+  }
+  @Test(timeout = 2000) public void eliminateRedundantIf2() {
+    assertConvertsTo("{if (a) ; else {;}}", "");
+  }
+  @Test(timeout = 2000) public void eliminateRedundantIf3() {
+    assertConvertsTo("{if (a) {;} else {;;}}", "");
+  }
+  @Test(timeout = 2000) public void eliminateRedundantIf4() {
+    assertConvertsTo("{if (a) {;}} ", "");
+  }
+  @Test(timeout = 2000) public void inlineInitializers() {
+    assertConvertsTo("int b,a = 2; return 3 * a * b; ", "return 2 * 3 * b;");
+  }
   @Test(timeout = 2000) public void issue37() {
     assertConvertsTo(
         "" + //
@@ -129,6 +100,24 @@ import org.spartan.refactoring.spartanizations.Wrap;
             "    return a;\n" + //
             "", //
         "return 3 * 31;");
+  }
+  @Test public void issue43() {
+    assertConvertsTo(
+        "" //
+            + "String t = Z2;  " + " t = t.f(A).f(b) + t.f(c);   "//
+            + "return (t + 3);    ", //
+        ""//
+            + "return(Z2.f(A).f(b)+Z2.f(c)+3);" //
+            + "" //
+    );
+  }
+  @Test(timeout = 2000) public void multipleIfDeclarationAssignment() {
+    assertConvertsTo(//
+        "int a, b;a = 3;b = 5;if (a == 4)  if (b == 3) b = 2;else b = a;else if (b == 3) b = 2;else b = a*a;", //
+        "int b=3==4?5==3?2:3:5==3?2:3*3;");
+  }
+  @Test(timeout = 2000) public void multipleInline() {
+    assertConvertsTo("int b=5,a = 2,c=4; return 3 * a * b * c; ", "return 2*3*4*5;");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst02() {
     assertConvertsTo(
@@ -231,12 +220,12 @@ import org.spartan.refactoring.spartanizations.Wrap;
   }
   @Test(timeout = 2000) public void ternarize01() {
     assertConvertsTo(//
-        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;else    res = SPAM;System.out.println(res);",
-        "String res=!s.equals(532)?SPAM:s+0xABBA;System.out.println(res);");
+        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;else    res = SPAM;System.out.println(res);", "System.out.println((!s.equals(532)?SPAM:s+0xABBA));");
   }
   @Test(timeout = 2000) public void ternarize02() {
     assertConvertsTo(//
-        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", "String res=!s.equals(532)?s:s+0xABBA;System.out.println(res);");
+        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", //
+        "System.out.println((!s.equals(532)?s:s+0xABBA));");
   }
   @Test(timeout = 2000) public void ternarize03() {
     assertConvertsTo(//
@@ -250,11 +239,21 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void ternarize06() {
     assertConvertsTo(//
         "String res;res = s;if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", //
-        "String res=!s.equals(532)?s:s+0xABBA;System.out.println(res);");
+        "System.out.println((!s.equals(532)?s:s+0xABBA));");
+  }
+  @Test public void ternarize07a() {
+    assertConvertsTo("" //
+        + "String res;" //
+        + "res = s;   " //
+        + "if (res==true)    " //
+        + "  res = s + 0xABBA;   " //
+        + "System.out.println(res); " //
+        + "" //
+        , "System.out.println((!s?s:s+0xABBA));" //
+    );
   }
   @Test(timeout = 2000) public void ternarize11() {
-    assertConvertsTo("String res = s, foo = \"bar\";if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);",
-        "String res=!s.equals(532)?s:s+0xABBA,foo=\"bar\";System.out.println(res);");
+    assertConvertsTo("String res = s, foo = \"bar\";if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", "System.out.println((!s.equals(532)?s:s+0xABBA));");
   }
   @Test(timeout = 2000) public void ternarize15() {
     assertConvertsTo("  String res = mode, foo = \"Not in test mode\";int k;k = 1984;if (mode.equals(f())==true)    foo = test-bob;foo = \"sponge-bob\";",
@@ -272,18 +271,18 @@ import org.spartan.refactoring.spartanizations.Wrap;
         "    else if (b == 3)\n" + //
         "      b = r();\n" + //
         "    else\n" + //
-        "      b = a;", "int a=3,b=5!=3?a:r();");
+        "      b = a;", "int b=5!=3?3:r();");
   }
   @Test(timeout = 2000) public void ternarize18() {
     assertConvertsTo(//
-        "    final String s;\n" + //
+        "    final String s = X;\n" + //
             "    final String res = s;\n" + //
             "    final int a = 0;\n" + //
             "    if (s.equals(res))\n" + //
-            "      System.out.println(\"hey\" + res);\n" + //
+            "      System.out.println(tH3 + res);\n" + //
             "    else\n" + //
-            "      System.out.println(\"ho\" + res + a);",
-        "final String s;final String res=s;final int a=0;System.out.println(s.equals(res)?\"hey\"+res:\"ho\"+res+a);");
+            "      System.out.println(h2A+ res + a + s);",
+        "System.out.println(X.equals(X)?tH3+X:h2A+X+0+X);");
   }
   @Test(timeout = 2000) public void ternarize23() {
     assertConvertsTo(//
@@ -298,7 +297,28 @@ import org.spartan.refactoring.spartanizations.Wrap;
   @Test(timeout = 2000) public void ternarize40() {
     assertConvertsTo(//
         "int a, b, c;a = 3;b = 5;if (a == 4)     while (b == 3)     c = a;else    while (b == 3)     c = a*a;", //
-        "int a=3,b=5,c;if(a==4)while(b==3)c=a;else while(b==3)c=a*a;");
+        "int c;if(3==4)while(5==3)c=3;else while(5==3)c=3*3;");
+  }
+  @Test public void ternarize49a() {
+    assertConvertsTo(
+        ""//
+            + "    int size = 17;\n"//
+            + "   if (m.equals(153)==true)\n"//
+            + "     for (int i=0; i < size; i++){\n"//
+            + "       S.out.l(HH);\n"//
+            + "     }\n"//
+            + "   else\n"//
+            + "     for (int i=0; i < size; i++){\n"//
+            + "       S.out.l('f');\n"//
+            + "     }",
+        "" //
+            + "if(m.equals(153))"//
+            + "for(int i=0;i<17;++i)"//
+            + "  S.out.l(HH);"//
+            + "else "//
+            + "  for(int i=0;i<17;++i) "//
+            + "    S.out.l('f');"//
+    );
   }
   @Test(timeout = 2000) public void ternarize54() {
     assertConvertsTo(//

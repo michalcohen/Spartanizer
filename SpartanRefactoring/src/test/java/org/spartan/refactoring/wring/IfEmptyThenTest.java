@@ -20,16 +20,16 @@ public class IfEmptyThenTest {
   @Test public void eligible() {
     assertTrue(WRING.eligible(IF));
   }
-  @Test public void scopeIncludes() {
-    assertTrue(WRING.scopeIncludes(IF));
-  }
-  @Test public void inputType() {
-    assertThat(INPUT, instanceOf(Block.class));
+  @Test public void emptyThen() {
+    assertTrue(Wrings.emptyThen(IF));
   }
   @Test public void extractFirstIf() {
     assertNotNull(IF);
   }
-  @Test public void emptyThen() {
-    assertTrue(Wrings.emptyThen(IF));
+  @Test public void inputType() {
+    assertThat(INPUT, instanceOf(Block.class));
+  }
+  @Test public void scopeIncludes() {
+    assertTrue(WRING.scopeIncludes(IF));
   }
 }

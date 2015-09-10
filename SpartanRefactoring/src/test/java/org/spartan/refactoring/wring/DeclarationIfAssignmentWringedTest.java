@@ -72,6 +72,11 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   DeclarationIfAssignmentWringedTest(final Wring<VariableDeclarationFragment> inner) {
     super(inner);
   }
+  @Test public void checkIf() {
+    final IfStatement s = findIf();
+    assertThat(s, notNullValue());
+    assertThat(Wrings.emptyElse(s), is(true));
+  }
   @Test public void correctSimplifier() {
     assertThat(asMe().toString(), Toolbox.instance.find(asMe()), instanceOf(inner.getClass()));
   }
@@ -83,14 +88,6 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final TextEdit e = r.rewriteAST(d, null);
     assertThat(e, notNullValue());
     assertThat(e.apply(d), is(notNullValue()));
-  }
-  @Test public void checkIf() {
-    final IfStatement s = findIf();
-    assertThat(s, notNullValue());
-    assertThat(Wrings.emptyElse(s), is(true));
-  }
-  private IfStatement findIf() {
-    return Extract.firstIfStatement(As.STATEMENTS.ast(input));
   }
   @Test public void eligible() {
     final VariableDeclarationFragment s = asMe();
@@ -160,5 +157,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   }
   @Override protected VariableDeclarationFragment asMe() {
     return Extract.firstVariableDeclarationFragment(As.STATEMENTS.ast(input));
+  }
+  private IfStatement findIf() {
+    return Extract.firstIfStatement(As.STATEMENTS.ast(input));
   }
 }

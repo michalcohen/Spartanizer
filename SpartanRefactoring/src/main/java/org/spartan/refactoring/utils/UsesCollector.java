@@ -146,7 +146,7 @@ class UsesCollector extends HidingDepth {
   }
   private boolean declaredBy(final SimpleName n) {
     if (n == focus) { // Ignore declaration we search for
-        result.add(n);
+      result.add(n);
       return false;
     }
     if (!hit(n))

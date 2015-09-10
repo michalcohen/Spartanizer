@@ -1,10 +1,10 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.wring.Wrings.*;
 import static org.eclipse.jdt.core.dom.Assignment.Operator.ASSIGN;
 import static org.spartan.refactoring.utils.Funcs.left;
 import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.wring.Wrings.size;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
@@ -24,23 +24,23 @@ import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 public final class DeclarationInitialiazelUpdateAssignment extends Wring.VariableDeclarationFragementAndStatement {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
       final TextEditGroup g) {
-        if (initializer == null)
-          return null;
-        final Assignment a = Extract.assignment(nextStatement);
-        if (a == null || !same(n, left(a)) || doesUseForbiddenSiblings(f, right(a)))
-          return null;
-        final Operator o = a.getOperator();
-        if (o == ASSIGN)
-          return null;
-        final InfixExpression newInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
-        final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
-        if (!i.canInlineInto(newInitializer) || i.replacedSize(newInitializer) - size(nextStatement, initializer) > 0)
-          return null;
-        r.replace(initializer, newInitializer, g);
-        i.inlineInto(newInitializer);
-        r.remove(nextStatement, g);
-        return r;
-      }
+    if (initializer == null)
+      return null;
+    final Assignment a = Extract.assignment(nextStatement);
+    if (a == null || !same(n, left(a)) || doesUseForbiddenSiblings(f, right(a)))
+      return null;
+    final Operator o = a.getOperator();
+    if (o == ASSIGN)
+      return null;
+    final InfixExpression newInitializer = Subject.pair(left(a), right(a)).to(asInfix(o));
+    final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
+    if (!i.canInlineInto(newInitializer) || i.replacedSize(newInitializer) - size(nextStatement, initializer) > 0)
+      return null;
+    r.replace(initializer, newInitializer, g);
+    i.inlineInto(newInitializer);
+    r.remove(nextStatement, g);
+    return r;
+  }
   @Override String description(final VariableDeclarationFragment n) {
     return "Consolidate declaration of " + n.getName() + " with its subsequent initialization";
   }

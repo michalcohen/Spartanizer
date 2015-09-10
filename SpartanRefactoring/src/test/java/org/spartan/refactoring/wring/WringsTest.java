@@ -15,18 +15,6 @@ import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class WringsTest {
-  @Test public void mixedLiteralKindEmptyList() {
-    assertThat(mixedLiteralKind(es()), is(false));
-  }
-  @Test public void mixedLiteralKindSingletonList() {
-    assertThat(mixedLiteralKind(es("1")), is(false));
-  }
-  @Test public void mixedLiteralKindnPairList() {
-    assertThat(mixedLiteralKind(es("1", "1.0")), is(false));
-  }
-  @Test public void mixedLiteralKindnTripleList() {
-    assertThat(mixedLiteralKind(es("1", "1.0", "a")), is(true));
-  }
   @Test public void inlineExpressionWithSideEffect() {
     final Expression e = Into.e("f()");
     assertThat(Is.sideEffectFree(e), is(false));
@@ -54,5 +42,17 @@ import org.spartan.refactoring.utils.*;
     assertThat(Is.sideEffectFree(initializer), is(false));
     assertThat(Search.forAllOccurencesOf(n).in(alternateInitializer).size(), is(2));
     assertThat(new LocalInliner(n).byValue(initializer).canInlineInto(alternateInitializer), is(false));
+  }
+  @Test public void mixedLiteralKindEmptyList() {
+    assertThat(mixedLiteralKind(es()), is(false));
+  }
+  @Test public void mixedLiteralKindnPairList() {
+    assertThat(mixedLiteralKind(es("1", "1.0")), is(false));
+  }
+  @Test public void mixedLiteralKindnTripleList() {
+    assertThat(mixedLiteralKind(es("1", "1.0", "a")), is(true));
+  }
+  @Test public void mixedLiteralKindSingletonList() {
+    assertThat(mixedLiteralKind(es("1")), is(false));
   }
 }

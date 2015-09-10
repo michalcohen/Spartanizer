@@ -32,6 +32,17 @@ import org.spartan.utils.Utils;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
 public class TernaryShortestFirstTest {
   static final Wring<ConditionalExpression> WRING = new TernaryShortestFirst();
+  @Test public void cyclicBug() {
+    final ConditionalExpression e = Into.c("length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $");
+    assertThat(e, notNullValue());
+    final Expression elze = Extract.core(e.getElseExpression());
+    final Expression then = Extract.core(e.getThenExpression());
+    final Expression $ = Subject.pair(elze, then).toCondition(logicalNot(e.getExpression()));
+    assertFalse(then.toString(), Is.conditional(then));
+    assertFalse(elze.toString(), Is.conditional(elze));
+    assertThat($.toString().length(), greaterThan(0));
+    assertThat($, iz("length(not(notConditional)) + length(then) >= length(notConditional) + length(elze) ? $ : null"));
+  }
   @Test public void trace1() {
     final ConditionalExpression e = Into.c("a?f(b,c,d):a");
     assertThat(e, notNullValue());
@@ -50,17 +61,6 @@ public class TernaryShortestFirstTest {
     assertFalse(elze.toString(), Is.conditional(elze));
     assertThat($.toString().length(), greaterThan(0));
     assertThat($, iz("f(o) ? x.f(a).to(e.g()) : null"));
-  }
-  @Test public void cyclicBug() {
-    final ConditionalExpression e = Into.c("length(not(notConditional)) + length(then) < length(notConditional) + length(elze) ? null : $");
-    assertThat(e, notNullValue());
-    final Expression elze = Extract.core(e.getElseExpression());
-    final Expression then = Extract.core(e.getThenExpression());
-    final Expression $ = Subject.pair(elze, then).toCondition(logicalNot(e.getExpression()));
-    assertFalse(then.toString(), Is.conditional(then));
-    assertFalse(elze.toString(), Is.conditional(elze));
-    assertThat($.toString().length(), greaterThan(0));
-    assertThat($, iz("length(not(notConditional)) + length(then) >= length(notConditional) + length(elze) ? $ : null"));
   }
 
   @RunWith(Parameterized.class) //

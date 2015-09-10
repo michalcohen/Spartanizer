@@ -56,6 +56,37 @@ public abstract class FileTestUtils {
     return null;
   }
   /**
+   * Makes an Input file out of a Test file
+   */
+  protected static File makeInFile(final File f) {
+    return createTempFile(deleteTestKeyword(As.stringBuilder(f)), TestDirection.In, f);
+  }
+  /**
+   * Makes an Output file out of a Test file
+   */
+  protected static File makeOutFile(final File f) {
+    final StringBuilder $ = As.stringBuilder(f);
+    if ($.indexOf(testKeyword) > 0)
+      $.delete(0, $.indexOf(testKeyword) + testKeyword.length() + ($.indexOf("\r\n") > 0 ? 2 : 1));
+    return createTempFile($, TestDirection.Out, f);
+  }
+  /**
+   * Creates a temporary file - including lazy deletion.
+   */
+  static File createTempFile(final StringBuilder b, final TestDirection direction, final File f) {
+    return createTemporaryRandomAccessFile(createTempFile(direction, f), b.toString());
+  }
+  static Spartanization makeSpartanizationObject(final File f) {
+    return makeSpartanizationObject(f.getName());
+  }
+  static Spartanization makeSpartanizationObject(final String folderForClass) {
+    final Class<?> c = asClass(folderForClass);
+    assertNotNull(c);
+    final Object $ = getInstance(c);
+    assertNotNull($);
+    return (Spartanization) $;
+  }
+  /**
    * Convert a canonical name of a class into a {@link Class} object, if
    * possible, otherwise generate an assertion failure
    *
@@ -96,37 +127,6 @@ public abstract class FileTestUtils {
   private static Spartanization error(final String message, final Class<?> c, final Throwable e) {
     System.err.println(message + " '" + c.getCanonicalName() + "' " + e.getMessage());
     return null;
-  }
-  /**
-   * Makes an Input file out of a Test file
-   */
-  protected static File makeInFile(final File f) {
-    return createTempFile(deleteTestKeyword(As.stringBuilder(f)), TestDirection.In, f);
-  }
-  /**
-   * Makes an Output file out of a Test file
-   */
-  protected static File makeOutFile(final File f) {
-    final StringBuilder $ = As.stringBuilder(f);
-    if ($.indexOf(testKeyword) > 0)
-      $.delete(0, $.indexOf(testKeyword) + testKeyword.length() + ($.indexOf("\r\n") > 0 ? 2 : 1));
-    return createTempFile($, TestDirection.Out, f);
-  }
-  /**
-   * Creates a temporary file - including lazy deletion.
-   */
-  static File createTempFile(final StringBuilder b, final TestDirection direction, final File f) {
-    return createTemporaryRandomAccessFile(createTempFile(direction, f), b.toString());
-  }
-  static Spartanization makeSpartanizationObject(final File f) {
-    return makeSpartanizationObject(f.getName());
-  }
-  static Spartanization makeSpartanizationObject(final String folderForClass) {
-    final Class<?> c = asClass(folderForClass);
-    assertNotNull(c);
-    final Object $ = getInstance(c);
-    assertNotNull($);
-    return (Spartanization) $;
   }
 
   /**

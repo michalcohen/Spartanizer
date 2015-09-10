@@ -40,17 +40,14 @@ public class OccurrencesTest {
     assertThat(s, iz("if (a + b) a=3;"));
     assertThat(e, iz("a + b"));
   }
+  @Test public void exploreLeftOfE() {
+    assertThat(left(e), iz("a"));
+  }
   @Test public void lexicalUsesCollector() {
     final List<Expression> into = new ArrayList<>();
     final ASTVisitor collector = Search.lexicalUsesCollector(into, a);
     a.accept(collector);
     assertThat(into.size(), is(1));
-  }
-  @Test public void occurencesAinE() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
-  }
-  @Test public void occurencesAinLeftOfE() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(left(e)).size(), is(1));
   }
   @Test public void occurencesAinAL() {
     assertThat(Search.BOTH_SEMANTIC.of(a).in(a).size(), is(1));
@@ -58,25 +55,28 @@ public class OccurrencesTest {
   @Test public void occurencesAinAsame() {
     assertThat(same(a, a), is(true));
   }
+  @Test public void occurencesAinE() {
+    assertThat(Search.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
+  }
+  @Test public void occurencesAinLeftOfE() {
+    assertThat(Search.BOTH_SEMANTIC.of(a).in(left(e)).size(), is(1));
+  }
   @Test public void occurencesAinLeftOfEsame() {
     assertThat(same(left(e), a), is(true));
   }
-  @Test public void exploreLeftOfE() {
-    assertThat(left(e), iz("a"));
+  @Test public void occurencesAinRightOfE() {
+    assertThat(Search.BOTH_SEMANTIC.of(a).in(right(e)).size(), is(0));
+  }
+  @Test public void occurencesBinE() {
+    assertThat(Search.BOTH_SEMANTIC.of(b).in(e).size(), is(1));
+  }
+  @Test public void occurencesBinRightOfE() {
+    assertThat(Search.BOTH_SEMANTIC.of(b).in(right(e)).size(), is(1));
   }
   @Test public void sameAandLeftOfE() {
     assertThat(same(a, left(e)), is(true));
   }
   @Test public void sameTypeAandLeftOfE() {
     assertThat(a, instanceOf(left(e).getClass()));
-  }
-  @Test public void occurencesAinRightOfE() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(right(e)).size(), is(0));
-  }
-  @Test public void occurencesBinRightOfE() {
-    assertThat(Search.BOTH_SEMANTIC.of(b).in(right(e)).size(), is(1));
-  }
-  @Test public void occurencesBinE() {
-    assertThat(Search.BOTH_SEMANTIC.of(b).in(e).size(), is(1));
   }
 }

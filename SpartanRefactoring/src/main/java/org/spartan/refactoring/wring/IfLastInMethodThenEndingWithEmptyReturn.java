@@ -1,6 +1,8 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.Funcs.*;
+import static org.spartan.refactoring.utils.Funcs.asBlock;
+import static org.spartan.refactoring.utils.Funcs.asReturnStatement;
+import static org.spartan.refactoring.utils.Funcs.then;
 import static org.spartan.utils.Utils.last;
 
 import org.eclipse.jdt.core.dom.*;

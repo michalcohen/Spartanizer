@@ -393,8 +393,8 @@ public abstract class Spartanization extends Refactoring {
   }
   private List<ICompilationUnit> getUnits(final IProgressMonitor pm) throws JavaModelException {
     if (!isTextSelected())
-      return getAllProjectCompilationUnits(compilationUnit != null ? compilationUnit : BaseHandler.getCompilationUnit(), new SubProgressMonitor(pm, 1,
-          SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+      return getAllProjectCompilationUnits(compilationUnit != null ? compilationUnit : BaseHandler.getCompilationUnit(),
+          new SubProgressMonitor(pm, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
     final List<ICompilationUnit> $ = new ArrayList<>();
     $.add(compilationUnit);
     return $;

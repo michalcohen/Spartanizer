@@ -1,7 +1,7 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.same;
-import static org.spartan.refactoring.wring.Wrings.*;
+import static org.spartan.refactoring.wring.Wrings.rename;
 
 import java.util.Iterator;
 import java.util.List;

@@ -68,16 +68,16 @@ public class ExpressionFlatten {
     final InfixExpression e = i("1+2");
     assertThat(e.hasExtendedOperands(), is(false));
   }
-  @Test public void leftOperandIsNotString() {
-    final InfixExpression e = i("1+2");
-    assertTrue(Is.notString(left(e)));
-  }
   @Test public void isNotStringInfixFalse() {
     final InfixExpression e = i("1+f");
     assertFalse(Is.notString(e));
   }
   @Test public void isNotStringInfixPlain() {
     assertFalse(Is.notString(e("1+f")));
+  }
+  @Test public void leftOperandIsNotString() {
+    final InfixExpression e = i("1+2");
+    assertTrue(Is.notString(left(e)));
   }
   @Test public void leftOperandIsNumeric() {
     final InfixExpression e = i("1+2");

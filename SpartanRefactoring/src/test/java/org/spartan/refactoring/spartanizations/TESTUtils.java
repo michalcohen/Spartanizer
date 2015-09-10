@@ -66,7 +66,7 @@ import org.spartan.refactoring.wring.Trimmer;
     try {
       s.createRewrite(u, null).rewriteAST($, null).apply($);
       return $;
-    } catch (MalformedTreeException | IllegalArgumentException | BadLocationException e) {
+    } catch (MalformedTreeException | BadLocationException e) {
       throw new AssertionError(e);
     }
   }

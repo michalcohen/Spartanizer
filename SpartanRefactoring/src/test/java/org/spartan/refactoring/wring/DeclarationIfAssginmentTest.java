@@ -88,6 +88,30 @@ public class DeclarationIfAssginmentTest {
     assertThat(of.existIn(s.getExpression(), right(a)), is(true));
   }
 
+  @RunWith(Parameterized.class) //
+  public static class OutOfScope extends AbstractWringTest.OutOfScope.Declaration {
+    static String[][] cases = Utils.asArray(//
+        new String[] { "Vanilla", "int a; a =3;", }, //
+        new String[] { "Not empty else", "int a; if (x) a = 3; else a++;", }, //
+        new String[] { "Not plain assignment", "int a = 2; if (b) a +=a+2;", }, //
+        new String[] { "Uses later variable", "int a = 2,b = true; if (b) a =3;", }, //
+        null);
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION) //
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
+    }
+  }
+
   @SuppressWarnings({ "javadoc" }) //
   @FixMethodOrder(MethodSorters.NAME_ASCENDING) //
   public class Wringed extends AbstractWringTest<VariableDeclarationFragment> {
@@ -135,30 +159,6 @@ public class DeclarationIfAssginmentTest {
       assertSimilar(expected, peeled);
       final String s1 = expected;
       assertSimilar(Wrap.Statement.on(s1), actual);
-    }
-  }
-
-  @RunWith(Parameterized.class) //
-  public static class OutOfScope extends AbstractWringTest.OutOfScope.Declaration {
-    static String[][] cases = Utils.asArray(//
-        new String[] { "Vanilla", "int a; a =3;", }, //
-        new String[] { "Not empty else", "int a; if (x) a = 3; else a++;", }, //
-        new String[] { "Not plain assignment", "int a = 2; if (b) a +=a+2;", }, //
-        new String[] { "Uses later variable", "int a = 2,b = true; if (b) a =3;", }, //
-        null);
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION) //
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
     }
   }
 }

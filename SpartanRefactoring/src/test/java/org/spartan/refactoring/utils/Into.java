@@ -21,6 +21,16 @@ import org.spartan.refactoring.spartanizations.Wrap;
 public enum Into {
   ;
   /**
+   * Convert a given {@link String} into an {@link Assignment}, or fail the
+   * current test, if such a conversion is not possible
+   *
+   * @param expression a {@link String} that represents a Java statement
+   * @return an {@link Statement} data structure representing the parameter.
+   */
+  public static Assignment a(final String expression) {
+    return (Assignment) e(expression);
+  }
+  /**
    * Convert a given {@link String} into an {@link ConditionalExpression}, or
    * fail the current test, if such a conversion is not possible
    *
@@ -35,6 +45,21 @@ public enum Into {
     return (ConditionalExpression) $;
   }
   /**
+   * Convert a given {@link String} into an {@link MethodDeclaration} by
+   * appropriately wrapping it with text to make it a reasonably looking
+   * {@link CompilationUnit}, parsing it, and then extracting the first method
+   * in it. possible
+   *
+   * @param methodDelclaration a {@link String} that represents a Java method
+   *          declaration
+   * @return an {@link MethodDeclaration} data structure representing the
+   *         parameter.
+   */
+  public static MethodDeclaration d(final String methodDelclaration) {
+    assertThat(methodDelclaration, notNullValue());
+    return Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(methodDelclaration));
+  }
+  /**
    * Convert a given {@link String} into an {@link Expression}, or fail the
    * current test, if such a conversion is not possible
    *
@@ -43,6 +68,12 @@ public enum Into {
    */
   public static Expression e(final String expression) {
     return (Expression) As.EXPRESSION.ast(expression);
+  }
+  public static List<Expression> es(final String... expressions) {
+    final List<Expression> $ = new ArrayList<>();
+    for (final String expression : expressions)
+      $.add(e(expression));
+    return $;
   }
   /**
    * Convert a given {@link String} into an {@link InfixExpression}, or fail the
@@ -79,36 +110,5 @@ public enum Into {
     assertThat(statement, n, notNullValue());
     assertThat(statement, n, instanceOf(Statement.class));
     return (Statement) n;
-  }
-  /**
-   * Convert a given {@link String} into an {@link Assignment}, or fail the
-   * current test, if such a conversion is not possible
-   *
-   * @param expression a {@link String} that represents a Java statement
-   * @return an {@link Statement} data structure representing the parameter.
-   */
-  public static Assignment a(final String expression) {
-    return (Assignment) e(expression);
-  }
-  /**
-   * Convert a given {@link String} into an {@link MethodDeclaration} by
-   * appropriately wrapping it with text to make it a reasonably looking
-   * {@link CompilationUnit}, parsing it, and then extracting the first method
-   * in it. possible
-   *
-   * @param methodDelclaration a {@link String} that represents a Java method
-   *          declaration
-   * @return an {@link MethodDeclaration} data structure representing the
-   *         parameter.
-   */
-  public static MethodDeclaration d(final String methodDelclaration) {
-    assertThat(methodDelclaration, notNullValue());
-    return Extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(methodDelclaration));
-  }
-  public static List<Expression> es(final String... expressions) {
-    final List<Expression> $ = new ArrayList<>();
-    for (final String expression : expressions)
-      $.add(e(expression));
-    return $;
   }
 }

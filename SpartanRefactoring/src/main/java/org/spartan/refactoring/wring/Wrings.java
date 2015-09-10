@@ -1,7 +1,7 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.utils.ExpressionComparator.*;
 import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.spartan.refactoring.utils.ExpressionComparator.nodesCount;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.utils.Restructure.duplicateInto;
 import static org.spartan.utils.Utils.last;

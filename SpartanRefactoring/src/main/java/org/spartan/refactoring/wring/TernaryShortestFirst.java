@@ -1,7 +1,7 @@
 package org.spartan.refactoring.wring;
 
+import static org.spartan.refactoring.utils.Extract.core;
 import static org.spartan.refactoring.utils.Funcs.asConditionalExpression;
-import static org.spartan.refactoring.utils.Extract.*;
 import static org.spartan.refactoring.utils.Funcs.logicalNot;
 
 import org.eclipse.jdt.core.dom.*;
