@@ -1355,6 +1355,12 @@ import org.spartan.utils.Wrapper;
     trimming("int a  = f; while (c) b[i] = a;")//
         .to("while (c) b[i] = f;");
   }
+  @Test public void issue57a() {
+    trimming("void m(List<Expression>... expressions) { }").to("void m(List<Expression> es) {}");
+  }
+  @Test public void issue57b() {
+    trimming("void m(Expression... expression) { }").to("void m(Expression ... es) {}");
+  }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");
   }
@@ -1643,16 +1649,33 @@ import org.spartan.utils.Wrapper;
                 "if(b.exec())" + //
                 "b.clear();");
   }
+  @Test public void paramAbbreviateCollision() {
+    trimming("void m(Expression exp, Expression expresssion) { }").to("void m(Expression e, Expression expresssion) { }");
+  }
   @Test public void paramAbbreviateConflictingWithLocal1() {
     trimming("void m(String string) {" + //
         "String s = null;" + //
-        "string.substring(s, 2, 18);").to("");
+        "string.substring(s, 2, 18);}").to("void m(String string){string.substring(null,2,18);}");
+  }
+  @Test public void paramAbbreviateConflictingWithLocal1Simplified() {
+    trimming("void m(String string) {" + //
+        "String s = X;" + //
+        "string.substring(s, 2, 18);}").to("void m(String string){string.substring(X,2,18);}");
+  }
+  @Test public void paramAbbreviateConflictingWithLocal1SimplifiedFurther() {
+    trimming("void m(String string) {" + //
+        "String s = X;" + //
+        "string.f(s);}").to("void m(String string){string.f(X);}");
   }
   @Test public void paramAbbreviateConflictingWithLocal2() {
     trimming("TCPConnection conn(TCPConnection tcpCon) {" + //
-        "UDPConnection c = new UDPConnection(57);" + //
-        "if(tcpCon.isConnected()) " + //
-        "c.disconnect();}").to("");
+        " UDPConnection c = new UDPConnection(57);" + //
+        " if(tcpCon.isConnected()) " + //
+        "   c.disconnect();}")
+            .to("TCPConnection conn(TCPConnection tcpCon){" //
+                + " if(tcpCon.isConnected())" //
+                + "   (new UDPConnection(57)).disconnect();"//
+                + "}");
   }
   @Test public void paramAbbreviateConflictingWithMethodName() {
     trimming("void m(BitmapManipulator bitmapManipulator) {" + //
@@ -2772,6 +2795,7 @@ import org.spartan.utils.Wrapper;
   @Test public void xorSortClassConstantsAtEnd() {
     trimming("f(a,b,c,d) ^ BOB").to("");
   }
+
   static class Operand extends Wrapper<String> {
     public Operand(final String inner) {
       super(inner);

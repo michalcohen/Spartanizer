@@ -95,7 +95,7 @@ public class FuncsTest {
     assertThat(negationLevel(e("((((4))))")), is(0));
   }
   @Test public void negationOfExpressionManyNegation() {
-    assertThat(negationLevel(e("- - - - (- (-a)")), is(0));
+    assertThat(negationLevel(e("- - - - (- (-a))")), is(6));
   }
   @Test public void sameOfSomethingAndNull() {
     assertFalse(Funcs.same(e("a"), null));
