@@ -44,6 +44,15 @@ public class JavaTypeNameParser {
   public String shortName() {
     return String.valueOf(Character.toLowerCase(lastName().charAt(0)));
   }
+  /**
+   * Shorthand for n.equals(this.shortName())
+   * 
+   * @param n JD
+   * @return true if the provided name equals the type's short name
+   */
+  public boolean isShort(final String n) {
+    return n.equals(shortName());
+  }
   String lastName() {
     return typeName.substring(lastNameIndex());
   }
