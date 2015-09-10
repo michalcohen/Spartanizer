@@ -33,6 +33,8 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
       if (legal(v, d, parser, renameMap.values()))
         renameMap.put(v.getName(), d.getAST().newSimpleName(parser.shortName()));
     }
+    if (renameMap.isEmpty())
+      return null;
     if (exclude != null)
       exclude.exclude(d);
     return new Rewrite("Rename parameters in method " + d.getName().toString(), d) {
@@ -57,6 +59,9 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
         return false;
     for (final SimpleName n : newNames)
       if (n.getIdentifier().equals(parser.shortName()))
+        return false;
+    for (final SingleVariableDeclaration n : (List<SingleVariableDeclaration>) m.parameters())
+      if (n.getName().getIdentifier().equals(parser.shortName()))
         return false;
     return !m.getName().getIdentifier().equalsIgnoreCase(parser.shortName());
   }
