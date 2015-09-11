@@ -1,6 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import org.spartan.refactoring.utils.Is;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -12,6 +11,7 @@ import org.eclipse.jdt.core.dom.Statement;
 import org.junit.Test;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Into;
+import org.spartan.refactoring.utils.Is;
 
 @SuppressWarnings({ "javadoc", "static-method" }) //
 public class IfEmptyThenTest {

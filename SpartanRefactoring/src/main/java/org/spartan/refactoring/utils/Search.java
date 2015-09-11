@@ -326,7 +326,7 @@ public enum Search {
    * for the search, will carry out the search for the captured value in its
    * location parameter.
    *
-   * @see Search#of(Expression)
+   * @see Search#of
    * @author Yossi Gil <yossi.gil @ gmail.com>
    * @since 2013/14/07
    */

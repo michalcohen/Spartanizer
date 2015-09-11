@@ -1,6 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import org.spartan.refactoring.utils.Is;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.wring.Wrings.size;
 
@@ -9,6 +8,7 @@ import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Subject;
 import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 

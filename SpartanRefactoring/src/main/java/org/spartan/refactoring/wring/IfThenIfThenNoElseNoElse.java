@@ -1,6 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import org.spartan.refactoring.utils.Is;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
@@ -10,9 +9,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.utils.*;
 
 /**
  * A {@link Wring} to convert <code>if (x) if (a) f();</code> into

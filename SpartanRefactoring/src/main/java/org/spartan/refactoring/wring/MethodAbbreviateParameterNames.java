@@ -67,7 +67,7 @@ public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> {
         return false;
     return !m.getName().getIdentifier().equalsIgnoreCase(parser.shortName());
   }
-  @SuppressWarnings("static-method") private boolean suitable(final SingleVariableDeclaration d) {
+  private boolean suitable(final SingleVariableDeclaration d) {
     final JavaTypeNameParser parser = new JavaTypeNameParser(d.getType().toString(), isCollection(d));
     return parser.isGenericVariation(d.getName().getIdentifier()) && !parser.isShort(d.getName().getIdentifier());
   }

@@ -99,6 +99,8 @@ public enum Precedence {
    * @return the precedence of the parameter
    */
   public static int of(final Expression e) {
+    if (e == null)
+      return UNDEFINED;
     switch (e.getNodeType()) {
       case INFIX_EXPRESSION:
         return of((InfixExpression) e);

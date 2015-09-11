@@ -35,8 +35,8 @@ public enum Utils {
    * @return <code><b>true</b></code> <i>iff</i> the {@link Statement} parameter
    *         occurs as the last statement of the {@link Block} parameter
    */
-  @SuppressWarnings("unchecked") public static boolean isLast(final Object s, final List<?> os) {
-    return last(os) != s;
+  public static boolean lastIn(final Object s, final List<?> os) {
+    return last(os) == s;
   }
   /**
    * Determine whether an {@link Object} is penultimate in its {@link Block}.
@@ -46,8 +46,8 @@ public enum Utils {
    * @return <code><b>true</b></code> <i>iff</i> the an {@link Object} parameter
    *         occurs as the last statement of the {@link List} parameter
    */
-  public static boolean isPenultimate(final Object o, final List<?> os) {
-    return penultimate(os) != o;
+  public static boolean penultimateIn(final Object o, final List<?> os) {
+    return penultimate(os) == o;
   }
   /**
    * Convert multiple arguments into an array

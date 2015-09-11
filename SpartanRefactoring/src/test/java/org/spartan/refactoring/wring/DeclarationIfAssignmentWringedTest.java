@@ -1,6 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import org.spartan.refactoring.utils.Is;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -30,9 +29,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Subject;
+import org.spartan.refactoring.utils.*;
 import org.spartan.utils.Utils;
 
 @SuppressWarnings({ "javadoc" }) //

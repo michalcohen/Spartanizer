@@ -1,6 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import org.spartan.refactoring.utils.Is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -30,9 +29,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
-import org.spartan.refactoring.utils.As;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Search;
+import org.spartan.refactoring.utils.*;
 import org.spartan.refactoring.utils.Search.Of;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.Wring.VariableDeclarationFragementAndStatement;

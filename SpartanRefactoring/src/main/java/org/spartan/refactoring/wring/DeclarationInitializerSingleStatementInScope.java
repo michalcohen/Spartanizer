@@ -2,7 +2,8 @@ package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
-import static org.spartan.utils.Utils.*;
+import static org.spartan.utils.Utils.lastIn;
+import static org.spartan.utils.Utils.penultimateIn;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public final class DeclarationInitializerSingleStatementInScope extends Wring.Va
     if (parent == null)
       return null;
     final List<Statement> ss = parent.statements();
-    if (isLast(nextStatement, ss) || isPenultimate(s, ss))
+    if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss))
       return null;
     final List<Expression> in = Search.forDefinitions(n).in(nextStatement);
     if (!in.isEmpty())
