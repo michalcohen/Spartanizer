@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -76,7 +77,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Test public void checkIf() {
     final IfStatement s = findIf();
     assertThat(s, notNullValue());
-    assertThat(Wrings.emptyElse(s), is(true));
+    assertThat(Is.vacuousElse(s), is(true));
   }
   @Test public void correctSimplifier() {
     assertThat(asMe().toString(), Toolbox.instance.find(asMe()), instanceOf(inner.getClass()));

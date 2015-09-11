@@ -18,15 +18,6 @@ import org.spartan.utils.Utils;
  */
 public enum Funcs {
   ;
-  /**
-   * Shorthand for {@link ASTNode#parent()}
-   *
-   * @param a JD
-   * @return the parent of the parameter
-   */
-  public static ASTNode parent(final ASTNode n) {
-    return n.getParent();
-  }
   private static Map<Operator, Operator> conjugate = makeConjeguates();
   /**
    * Convert an {@link Expression} into {@link InfixExpression} whose operator
@@ -111,29 +102,6 @@ public enum Funcs {
    */
   public static Expression asExpression(final ASTNode n) {
     return !(n instanceof Expression) ? null : (Expression) n;
-  }
-  public static int negationLevel(final Expression e) {
-    return e instanceof PrefixExpression ? negationLevel((PrefixExpression) e)
-        : e instanceof ParenthesizedExpression ? negationLevel(((ParenthesizedExpression) e).getExpression())
-            : e instanceof NumberLiteral ? asBit(((NumberLiteral) e).getToken().startsWith("-")) : 0;
-  }
-  private static int negationLevel(final PrefixExpression e) {
-    return asBit(e.getOperator() == PrefixExpression.Operator.MINUS) + negationLevel(e.getOperand());
-  }
-  private static int asBit(final boolean b) {
-    return b ? 1 : 0;
-  }
-  public static Expression peelNegation(final Expression $) {
-    return //
-    $ instanceof PrefixExpression ? peelNegation((PrefixExpression) $) //
-        : $ instanceof ParenthesizedExpression ? peelNegation(((ParenthesizedExpression) $).getExpression()) //
-            : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
-  }
-  private static Expression peelNegation(final PrefixExpression $) {
-    return $.getOperator() != PrefixExpression.Operator.MINUS ? $ : peelNegation($.getOperand());
-  }
-  private static Expression peelNegation(final NumberLiteral $) {
-    return !$.getToken().startsWith("-") ? $ : $.getAST().newNumberLiteral($.getToken().substring(1));
   }
   /**
    * Down-cast, if possible, to {@link ExpressionStatement}
@@ -423,7 +391,7 @@ public enum Funcs {
   /**
    * Determine whether a variable declaration is final or not
    *
-   * @param v JD
+   * @param s JD
    * @return true if the variable is declared as final
    */
   public static boolean isFinal(final VariableDeclarationStatement s) {
@@ -536,6 +504,11 @@ public enum Funcs {
     $.setName(varName.getParent() == null ? varName : (SimpleName) r.createCopyTarget(varName));
     return $;
   }
+  public static int negationLevel(final Expression e) {
+    return e instanceof PrefixExpression ? negationLevel((PrefixExpression) e)
+        : e instanceof ParenthesizedExpression ? negationLevel(((ParenthesizedExpression) e).getExpression())
+            : e instanceof NumberLiteral ? asBit(((NumberLiteral) e).getToken().startsWith("-")) : 0;
+  }
   /**
    * Retrieve next item in a list
    *
@@ -546,6 +519,21 @@ public enum Funcs {
    */
   public static <T> T next(final int i, final List<T> ts) {
     return !inRange(i + 1, ts) ? last(ts) : ts.get(i + 1);
+  }
+  /**
+   * Shorthand for {@link ASTNode#getParent()}
+   *
+   * @param a JD
+   * @return the parent of the parameter
+   */
+  public static ASTNode parent(final ASTNode n) {
+    return n.getParent();
+  }
+  public static Expression peelNegation(final Expression $) {
+    return //
+    $ instanceof PrefixExpression ? peelNegation((PrefixExpression) $) //
+        : $ instanceof ParenthesizedExpression ? peelNegation(((ParenthesizedExpression) $).getExpression()) //
+            : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
   }
   /**
    * Retrieve previous item in a list
@@ -685,6 +673,9 @@ public enum Funcs {
   static PrefixExpression asNot(final PrefixExpression e) {
     return NOT.equals(e.getOperator()) ? e : null;
   }
+  private static int asBit(final boolean b) {
+    return b ? 1 : 0;
+  }
   private static InfixExpression asComparison(final InfixExpression e) {
     return in(e.getOperator(), //
         GREATER, //
@@ -721,15 +712,27 @@ public enum Funcs {
     $.put(LESS_EQUALS, GREATER_EQUALS);
     return $;
   }
-  private static String shortName(final ArrayType t) {
-    return shortName(t.getElementType()) + repeat(t.getDimensions(), 's');
+  private static int negationLevel(final PrefixExpression e) {
+    return asBit(e.getOperator() == PrefixExpression.Operator.MINUS) + negationLevel(e.getOperand());
+  }
+  private static Expression peelNegation(final NumberLiteral $) {
+    return !$.getToken().startsWith("-") ? $ : $.getAST().newNumberLiteral($.getToken().substring(1));
+  }
+  private static Expression peelNegation(final PrefixExpression $) {
+    return $.getOperator() != PrefixExpression.Operator.MINUS ? $ : peelNegation($.getOperand());
   }
   private static String repeat(final int i, final char c) {
     return new String(new char[i]).replace('\0', c);
   }
+  private static String shortName(final ArrayType t) {
+    return shortName(t.getElementType()) + repeat(t.getDimensions(), 's');
+  }
   private static String shortName(final IntersectionType t) {
     // TODO Auto-generated method stub
     return null;
+  }
+  private static String shortName(final List<Type> ts) {
+    return ts.size() != 1 ? null : shortName(ts.get(0));
   }
   private static String shortName(final NameQualifiedType t) {
     // TODO Auto-generated method stub
@@ -749,9 +752,6 @@ public enum Funcs {
       default:
         return null;
     }
-  }
-  private static String shortName(final List<Type> ts) {
-    return ts.size() != 1 ? null : shortName(ts.get(0));
   }
   private static String shortName(final PrimitiveType t) {
     return t.getPrimitiveTypeCode().toString().substring(0, 1);

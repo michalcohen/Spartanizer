@@ -32,6 +32,6 @@ public final class IfDegenerateElse extends Wring.ReplaceCurrentNode<IfStatement
     return "Remove vacuous 'else' branch";
   }
   static boolean degenerateElse(final IfStatement s) {
-    return elze(s) != null && Wrings.emptyElse(s);
+    return elze(s) != null && Is.vacuousElse(s);
   }
 }

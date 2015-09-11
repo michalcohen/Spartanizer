@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.refactoring.wring.Wrings.size;
 
@@ -24,7 +25,7 @@ public final class DeclarationInitializerIfAssignment extends Wring.VariableDecl
     if (initializer == null)
       return null;
     final IfStatement s = asIfStatement(nextStatement);
-    if (s == null || !Wrings.emptyElse(s))
+    if (s == null || !Is.vacuousElse(s))
       return null;
     s.setElseStatement(null);
     final Expression condition = s.getExpression();

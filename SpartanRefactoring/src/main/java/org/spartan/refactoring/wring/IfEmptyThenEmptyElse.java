@@ -1,11 +1,9 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.refactoring.wring.Wrings.emptyElse;
-import static org.spartan.refactoring.wring.Wrings.emptyThen;
-
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Rewrite;
 
 /**
@@ -25,7 +23,7 @@ public final class IfEmptyThenEmptyElse extends Wring<IfStatement> {
     };
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return s != null && emptyThen(s) && emptyElse(s);
+    return s != null && Is.vacuousThen(s) && Is.vacuousElse(s);
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Remove 'if' statement with vacous 'then' and 'else' parts";

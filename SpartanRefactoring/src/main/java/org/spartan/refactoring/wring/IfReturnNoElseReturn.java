@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.*;
@@ -17,7 +18,7 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfStatement> {
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
-    if (!Wrings.emptyElse(s))
+    if (!Is.vacuousElse(s))
       return null;
     final ReturnStatement r1 = Extract.returnStatement(then(s));
     if (r1 == null)
@@ -32,7 +33,7 @@ public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfS
     return e2 == null ? null : Wrings.replaceTwoStatements(r, s, Subject.operand(Subject.pair(e1, e2).toCondition(s.getExpression())).toReturn(), g);
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return Wrings.emptyElse(s) && Extract.returnStatement(then(s)) != null && Extract.nextReturn(s) != null;
+    return Is.vacuousElse(s) && Extract.returnStatement(then(s)) != null && Extract.nextReturn(s) != null;
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Consolidate into a single 'return'";

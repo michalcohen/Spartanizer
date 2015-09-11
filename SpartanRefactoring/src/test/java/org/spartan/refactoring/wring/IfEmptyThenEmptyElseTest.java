@@ -27,10 +27,10 @@ public class IfEmptyThenEmptyElseTest {
     assertTrue(WRING.eligible(IF));
   }
   @Test public void emptyElse() {
-    assertTrue(Wrings.emptyElse(IF));
+    assertTrue(Is.vacuousElse(IF));
   }
   @Test public void emptyThen() {
-    assertTrue(Wrings.emptyThen(IF));
+    assertTrue(Is.vacuousThen(IF));
   }
   @Test public void extractFirstIf() {
     assertNotNull(IF);

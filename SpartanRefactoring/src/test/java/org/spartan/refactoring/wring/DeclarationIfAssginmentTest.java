@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -66,7 +67,7 @@ public class DeclarationIfAssginmentTest {
     assertThat(s, is(Extract.firstIfStatement(u)));
     assertNotNull(s);
     assertThat(s, iz("if (a + b) a=3;"));
-    assertTrue(Wrings.emptyElse(s));
+    assertTrue(Is.vacuousElse(s));
     final Assignment a = Extract.assignment(then(s));
     assertNotNull(a);
     assertTrue(same(left(a), f.getName()));

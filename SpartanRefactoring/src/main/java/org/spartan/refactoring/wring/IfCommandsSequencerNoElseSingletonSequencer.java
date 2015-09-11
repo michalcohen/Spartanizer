@@ -40,7 +40,7 @@ public final class IfCommandsSequencerNoElseSingletonSequencer extends Wring.Rep
     return "Invert conditional and use next statement)";
   }
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
-    if (!emptyElse(s) || !Is.sequencer(nextStatement) || !endsWithSequencer(then(s)))
+    if (!Is.vacuousElse(s) || !Is.sequencer(nextStatement) || !endsWithSequencer(then(s)))
       return null;
     final IfStatement asVirtualIf = Subject.pair(then(s), nextStatement).toIf(s.getExpression());
     if (same(then(asVirtualIf), elze(asVirtualIf))) {

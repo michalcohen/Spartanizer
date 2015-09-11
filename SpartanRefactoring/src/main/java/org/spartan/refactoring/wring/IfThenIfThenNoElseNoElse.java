@@ -1,10 +1,10 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.CONDITIONAL_AND;
 import static org.spartan.refactoring.utils.Funcs.asIfStatement;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.refactoring.utils.Funcs.then;
-import static org.spartan.refactoring.wring.Wrings.emptyElse;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -29,10 +29,10 @@ public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> {
     return make(s) != null;
   }
   @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {
-    if (!emptyElse(s))
+    if (!Is.vacuousElse(s))
       return null;
     final IfStatement then = asIfStatement(Extract.singleThen(s));
-    if (then == null || !emptyElse(then))
+    if (then == null || !Is.vacuousElse(then))
       return null;
     if (exclude != null)
       exclude.exclude(then);

@@ -1,8 +1,6 @@
 package org.spartan.refactoring.wring;
 
 import static org.spartan.refactoring.utils.Funcs.elze;
-import static org.spartan.refactoring.wring.Wrings.emptyElse;
-import static org.spartan.refactoring.wring.Wrings.emptyThen;
 
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.Statement;
@@ -22,7 +20,7 @@ public final class IfEmptyThen extends Wring.ReplaceCurrentNode<IfStatement> {
     return !Is.blockRequiredInReplacement(s, $) ? $ : Subject.statement($).toBlock();
   }
   @Override boolean scopeIncludes(final IfStatement s) {
-    return s != null && emptyThen(s) && !emptyElse(s);
+    return s != null && Is.vacuousThen(s) && !Is.vacuousElse(s);
   }
   @Override String description(@SuppressWarnings("unused") final IfStatement _) {
     return "Invert conditional and remove vacuous 'then' branch";

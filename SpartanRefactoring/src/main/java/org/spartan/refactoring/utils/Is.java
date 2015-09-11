@@ -24,7 +24,7 @@ public enum Is {
   /**
    * Determine whether a variable declaration is final or not
    *
-   * @param v some declaration
+   * @param s some declaration
    * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
    *         final
    */
@@ -196,6 +196,16 @@ public enum Is {
     return in(o, CONDITIONAL_AND, CONDITIONAL_OR);
   }
   /**
+   * Determine whether the 'else' part of an {@link IfStatement} is vacuous.
+   *
+   * @param s JD
+   * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
+   *         statements in the 'else' part of the parameter
+   */
+  public static boolean vacuousElse(final IfStatement s) {
+    return vacuous(elze(s));
+  }
+  /**
    * Determine whether a statement is an {@link EmptyStatement} or has nothing
    * but empty statements in it.
    *
@@ -203,7 +213,18 @@ public enum Is {
    * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
    *         statements in the parameter
    */
-  public static boolean empty(final Statement s) {
+  public static boolean vacuousThen(final IfStatement s) {
+    return vacuous(then(s));
+  }
+  /**
+   * Determine whether a given {@link Statement} is an {@link EmptyStatement} or
+   * has nothing but empty statements in it.
+   *
+   * @param s JD
+   * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
+   *         statements in the parameter
+   */
+  public static boolean vacuous(final Statement s) {
     return Extract.statements(s).size() == 0;
   }
   /**

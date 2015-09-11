@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.spartan.refactoring.utils.Funcs.then;
 
 import org.eclipse.jdt.core.dom.*;
@@ -17,7 +18,7 @@ import org.spartan.refactoring.utils.Subject;
  */
 public final class IfThrowNoElseThrow extends Wring.ReplaceToNextStatement<IfStatement> {
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
-    if (!Wrings.emptyElse(s))
+    if (!Is.vacuousElse(s))
       return null;
     final Expression e1 = getThrowExpression(then(s));
     if (e1 == null)

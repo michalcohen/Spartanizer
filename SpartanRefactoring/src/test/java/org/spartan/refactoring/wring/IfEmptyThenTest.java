@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import org.spartan.refactoring.utils.Is;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -21,7 +22,7 @@ public class IfEmptyThenTest {
     assertTrue(WRING.eligible(IF));
   }
   @Test public void emptyThen() {
-    assertTrue(Wrings.emptyThen(IF));
+    assertTrue(Is.vacuousThen(IF));
   }
   @Test public void extractFirstIf() {
     assertNotNull(IF);
