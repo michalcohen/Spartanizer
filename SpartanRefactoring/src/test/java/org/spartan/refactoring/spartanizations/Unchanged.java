@@ -78,7 +78,7 @@ public class Unchanged {
     final ASTNode n = As.COMPILIATION_UNIT.ast(input);
     assertNotNull(n);
     assertThat(n, is(instanceOf(CompilationUnit.class)));
-    assertEquals(0, spartanization.findOpportunities(((CompilationUnit) n)).size());
+    assertEquals(0, spartanization.findOpportunities((CompilationUnit) n).size());
   }
   private String input() {
     return As.string(input);

@@ -270,9 +270,9 @@ final class LocalInliner {
     this(n, null, null);
   }
   LocalInliner(final SimpleName n, final ASTRewrite rewriter, final TextEditGroup g) {
-    this.name = n;
+    name = n;
     this.rewriter = rewriter;
-    this.editGroup = g;
+    editGroup = g;
   }
   LocalInlineWithValue byValue(final Expression replacement) {
     return new LocalInlineWithValue(replacement);

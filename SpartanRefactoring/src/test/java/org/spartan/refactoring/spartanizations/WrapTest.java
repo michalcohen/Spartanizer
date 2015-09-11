@@ -87,7 +87,7 @@ import org.junit.Test;
     assertEquals(Wrap.Expression.off(Wrap.Expression.on("a/b")), "a/b");
   }
   @Test public void removeComments() {
-    similar(Wrap.removeComments(("" + "if (b) {\n" + " /* empty */" + "} else {\n" + " throw new Exception();\n" + "}")), "if (b) {} else { throw new Exception(); }");
+    similar(Wrap.removeComments("" + "if (b) {\n" + " /* empty */" + "} else {\n" + " throw new Exception();\n" + "}"), "if (b) {} else { throw new Exception(); }");
   }
   @Test public void statement() {
     assertThat(Wrap.Statement.off(Wrap.Statement.on("int a;")), is("int a;"));
