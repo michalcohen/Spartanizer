@@ -52,16 +52,16 @@ import org.spartan.utils.Wrapper;
     assertNotNull($);
     return $.get();
   }
-  private static String apply(final Wring<? extends ASTNode> n, final String from) {
+  private static String apply(final Wring<? extends ASTNode> ns, final String from) {
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(from);
     assertNotNull(u);
     final Document d = new Document(from);
     assertNotNull(d);
-    return TESTUtils.rewrite(new AsSpartanization(n, "Tested Refactoring"), u, d).get();
+    return TESTUtils.rewrite(new AsSpartanization(ns, "Tested Refactoring"), u, d).get();
   }
-  private static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> n, final Wrap wrapper) {
+  private static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> ns, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
-    final String unpeeled = apply(n, wrap);
+    final String unpeeled = apply(ns, wrap);
     if (wrap.equals(unpeeled))
       fail("Nothing done on " + from);
     final String peeled = wrapper.off(unpeeled);

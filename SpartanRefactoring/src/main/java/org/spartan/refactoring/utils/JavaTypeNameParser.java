@@ -44,20 +44,11 @@ public class JavaTypeNameParser {
    * @return the type's short name
    */
   public String shortName() {
-    final String sn = String.valueOf(Character.toLowerCase(lastName().charAt(0)));
-    return sn + (isCollection ? "s" : "");
+    return String.valueOf(Character.toLowerCase(lastName().charAt(0))) + (isCollection ? "s" : "");
   }
   @SuppressWarnings("static-method") private String toSingular(final String s) {
-    // NOTE: This encompasses 99.9% of the nouns in the English language
-    if (s == null)
-      return null;
-    if (s.endsWith("ies"))
-      return s.substring(0, s.length() - 3) + "y";
-    if (s.endsWith("es"))
-      return s.substring(0, s.length() - 2);
-    if (s.endsWith("s"))
-      return s.substring(0, s.length() - 1);
-    return s;
+    return s == null ? null
+        : s.endsWith("ies") ? s.substring(0, s.length() - 3) + "y" : s.endsWith("es") ? s.substring(0, s.length() - 2) : s.endsWith("s") ? s.substring(0, s.length() - 1) : s;
   }
   /**
    * Shorthand for n.equals(this.shortName())

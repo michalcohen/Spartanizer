@@ -256,10 +256,10 @@ public abstract class Wring<N extends ASTNode> {
 }
 
 final class LocalInliner {
-  static Wrapper<ASTNode>[] wrap(final ASTNode[] ts) {
-    @SuppressWarnings("unchecked") final Wrapper<ASTNode>[] $ = new Wrapper[ts.length];
+  static Wrapper<ASTNode>[] wrap(final ASTNode[] ns) {
+    @SuppressWarnings("unchecked") final Wrapper<ASTNode>[] $ = new Wrapper[ns.length];
     int i = 0;
-    for (final ASTNode t : ts)
+    for (final ASTNode t : ns)
       $[i++] = new Wrapper<>(t);
     return $;
   }
@@ -282,11 +282,11 @@ final class LocalInliner {
     LocalInlineWithValue(final Expression replacement) {
       super(Extract.core(replacement));
     }
-    @SafeVarargs protected final void inlineInto(final ASTNode... es) {
-      inlineInto(wrap(es));
+    @SafeVarargs protected final void inlineInto(final ASTNode... ns) {
+      inlineInto(wrap(ns));
     }
-    @SafeVarargs private final void inlineInto(final Wrapper<ASTNode>... es) {
-      for (final Wrapper<ASTNode> e : es)
+    @SafeVarargs private final void inlineInto(final Wrapper<ASTNode>... ns) {
+      for (final Wrapper<ASTNode> e : ns)
         inlineIntoSingleton(get(), e);
     }
     /**
@@ -297,8 +297,8 @@ final class LocalInliner {
      *         parameters, the number of occurrences of {@link #name} in the
      *         operands, and the size of the replacement.
      */
-    int replacedSize(final ASTNode... es) {
-      return size(es) + uses(es).size() * (size(get()) - 1);
+    int replacedSize(final ASTNode... ns) {
+      return size(ns) + uses(ns).size() * (size(get()) - 1);
     }
     /**
      * Computes the number of AST nodes added as a result of the replacement
@@ -309,19 +309,19 @@ final class LocalInliner {
      *         of {@link #name} in the operands, and the size of the
      *         replacement.
      */
-    int addedSize(final ASTNode... es) {
-      return uses(es).size() * (size(get()) - 1);
+    int addedSize(final ASTNode... ns) {
+      return uses(ns).size() * (size(get()) - 1);
     }
-    boolean canInlineInto(final ASTNode... es) {
-      return !Search.findsDefinitions(name).in(es) && (Is.sideEffectFree(get()) || uses(es).size() <= 1);
+    boolean canInlineInto(final ASTNode... ns) {
+      return !Search.findsDefinitions(name).in(ns) && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
     }
-    private List<Expression> uses(final ASTNode... es) {
-      return Search.forAllOccurencesOf(name).in(es);
+    private List<Expression> uses(final ASTNode... ns) {
+      return Search.forAllOccurencesOf(name).in(ns);
     }
-    private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> n) {
-      final ASTNode oldExpression = n.get();
-      final ASTNode newExpression = duplicate(n.get());
-      n.set(newExpression);
+    private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> ns) {
+      final ASTNode oldExpression = ns.get();
+      final ASTNode newExpression = duplicate(ns.get());
+      ns.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
       for (final ASTNode use : Search.forAllOccurencesExcludingDefinitions(name).in(newExpression))
         rewriter.replace(use, !(use instanceof Expression) ? replacement : new Plant((Expression) replacement).into(use.getParent()), editGroup);

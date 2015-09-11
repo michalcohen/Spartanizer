@@ -208,13 +208,8 @@ public enum ExpressionComparator implements Comparator<Expression> {
       for (int j = 0; j < size - 1; ++j) {
         final Expression e0 = es.get(j);
         final Expression e1 = es.get(j + 1);
-        if (Is.negative(e0))
+        if (Is.negative(e0) || Is.negative(e1) || compare(e0, e1) <= 0)
           continue;
-        if (Is.negative(e1))
-          continue;
-        if (compare(e0, e1) <= 0)
-          continue;
-        // Replace locations i,j with e0 and e1
         es.remove(j);
         es.remove(j);
         es.add(j, e0);

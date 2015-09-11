@@ -99,9 +99,9 @@ class Aggressive extends AbstractRenamePolicy {
         return false;
     return true;
   }
-  private static int score(final SimpleName n, final List<ReturnStatement> rs) {
+  private static int score(final SimpleName n, final List<ReturnStatement> ss) {
     int $ = 0;
-    for (final ReturnStatement r : rs)
+    for (final ReturnStatement r : ss)
       $ += Search.BOTH_LEXICAL.of(n).in(r).size();
     return $;
   }

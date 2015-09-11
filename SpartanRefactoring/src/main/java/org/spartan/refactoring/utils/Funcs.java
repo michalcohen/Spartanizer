@@ -309,10 +309,10 @@ public enum Funcs {
    * @param op A unknown number of assignments operators
    * @return true if all the operator are the same or false otherwise
    */
-  public static boolean compatibleOps(final Assignment.Operator cmpTo, final Assignment.Operator... op) {
-    if (hasNull(cmpTo, op))
+  public static boolean compatibleOps(final Assignment.Operator cmpTo, final Assignment.Operator... os) {
+    if (hasNull(cmpTo, os))
       return false;
-    for (final Assignment.Operator o : op)
+    for (final Assignment.Operator o : os)
       if (o == null || o != cmpTo)
         return false;
     return true;
@@ -704,8 +704,8 @@ public enum Funcs {
   private static Expression frugalDuplicate(final Expression e) {
     return e.getParent() == null ? e : (Expression) copySubtree(e.getAST(), e);
   }
-  private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> frags, final SimpleName n) {
-    for (final VariableDeclarationFragment $ : frags)
+  private static VariableDeclarationFragment getVarDeclFrag(final List<VariableDeclarationFragment> fs, final SimpleName n) {
+    for (final VariableDeclarationFragment $ : fs)
       if (same(n, $.getName()))
         return $;
     return null;
