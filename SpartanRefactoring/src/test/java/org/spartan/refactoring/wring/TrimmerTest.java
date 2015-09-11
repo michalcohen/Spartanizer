@@ -1329,23 +1329,27 @@ import org.spartan.utils.Wrapper;
     trimming("int[] is = f(); for (int i: is) f(i);")//
         .to("for (int i: f()) f(i);");
   }
-  @Test public void issue54do() {
-    trimming("int a  = f(); do { b[i] = a; } while (b[i] != a);")//
-        .to("");
-  }
-  @Test public void issue54doNonSideEffect() {
+  @Test public void issue54DoNonSideEffect() {
     trimming("int a  = f; do { b[i] = a; } while (b[i] != a);")//
         .to("do { b[i] = f; } while (b[i] != f);");
   }
-  @Test public void issue54forEnhanced() {
-    trimming("int a  = f(); for (int i: a) b[i] = x;")//
-        .to(" for (int i: f()) b[i] = x;\"");
+  @Test public void issue54DoWithBlock() {
+    trimming("int a  = f(); do { b[i] = a; i++; } while (b[i] != a);")//
+        .to("");
   }
-  @Test public void issue54forEnhancedNonSideEffectLoopHeader() {
+  @Test public void issue54doWithoutBlock() {
+    trimming("int a  = f(); do b[i] = a; while (b[i] != a);")//
+        .to("");
+  }
+  @Test public void issue54ForEnhanced() {
+    trimming("int a  = f(); for (int i: a) b[i] = x;")//
+        .to(" for (int i: f()) b[i] = x;");
+  }
+  @Test public void issue54ForEnhancedNonSideEffectLoopHeader() {
     trimming("int a  = f; for (int i: a) b[i] = b[i-1];")//
         .to("for (int i: f) b[i] = b[i-1];");
   }
-  @Test public void issue54forEnhancedNonSideEffectWitBody() {
+  @Test public void issue54ForEnhancedNonSideEffectWitBody() {
     trimming("int a  = f; for (int i: j) b[i] = a;")//
         .to("");
   }
