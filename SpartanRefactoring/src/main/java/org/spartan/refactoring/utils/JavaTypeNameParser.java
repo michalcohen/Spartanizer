@@ -1,7 +1,5 @@
 package org.spartan.refactoring.utils;
 
-import java.util.Iterator;
-
 /**
  * A utility parser that resolves a variable's short name, and determines
  * whether a pre-existing name is a generic variation of the type's name. <br>
@@ -64,7 +62,7 @@ public class JavaTypeNameParser {
   /**
    * Shorthand for n.equals(this.shortName())
    *
-   * @param n JD
+   * @param s JD
    * @return true if the provided name equals the type's short name
    */
   public boolean isShort(final String s) {
@@ -90,22 +88,5 @@ public class JavaTypeNameParser {
   }
   @SuppressWarnings("static-method") private boolean lowerCaseContains(final String string, final String substring) {
     return string.toLowerCase().contains(substring.toLowerCase());
-  }
-  Iterable<String> suggestions() {
-    return new Iterable<String>() {
-      @Override public Iterator<String> iterator() {
-        return new Iterator<String>() {
-          @Override public boolean hasNext() {
-            return true;
-          }
-          @Override public String next() {
-            return shortName();
-          }
-          @Override public void remove() {
-            // Redundant
-          }
-        };
-      }
-    };
   }
 }
