@@ -121,17 +121,17 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void bugInLastIfInMethod() {
     trimming("" + //
-        "        @Override public void messageFinished(final LocalMessage message, final int number, final int ofTotal) {\n" + //
-        "          if (!isMessageSuppressed(message)) {\n" + //
+        "        @Override public void messageFinished(final LocalMessage myMessage, final int number, final int ofTotal) {\n" + //
+        "          if (!isMessageSuppressed(myMessage)) {\n" + //
         "            final List<LocalMessage> messages = new ArrayList<LocalMessage>();\n" + //
-        "            messages.add(message);\n" + //
-        "            stats.unreadMessageCount += message.isSet(Flag.SEEN) ? 0 : 1;\n" + //
-        "            stats.flaggedMessageCount += message.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
+        "            messages.add(myMessage);\n" + //
+        "            stats.unreadMessageCount += myMessage.isSet(Flag.SEEN) ? 0 : 1;\n" + //
+        "            stats.flaggedMessageCount += myMessage.isSet(Flag.FLAGGED) ? 1 : 0;\n" + //
         "            if (listener != null)\n" + //
         "              listener.listLocalMessagesAddMessages(account, null, messages);\n" + //
         "          }\n" + //
         "        }").to(
-            "@Override public void messageFinished(final LocalMessage message,final int number,final int ofTotal){if(isMessageSuppressed(message))return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(message);stats.unreadMessageCount+=message.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=message.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
+            "@Override public void messageFinished(final LocalMessage myMessage,final int number,final int ofTotal){if(isMessageSuppressed(myMessage))return;final List<LocalMessage>messages=new ArrayList<LocalMessage>();messages.add(myMessage);stats.unreadMessageCount+=myMessage.isSet(Flag.SEEN)?0:1;stats.flaggedMessageCount+=myMessage.isSet(Flag.FLAGGED)?1:0;if(listener!=null)listener.listLocalMessagesAddMessages(account,null,messages);}");
   }
   @Test public void bugInLastIfInMethod1() {
     trimming("" + //
@@ -1021,6 +1021,10 @@ import org.spartan.utils.Wrapper;
   @Test public void inlineInitializersSecondStep() {
     trimming("int a = 2; return 3*a*4;").to("return 3 * 2 * 4;");
   }
+  @Test public void inlineIntoLastStatementDoWhile() {
+    trimming("int a  = f(); do { b[i] = 2; i++; } while (b[i] != a);")//
+        .to("");
+  }
   @Test public void inlineIntoNextStatementWithSideEffects() {
     trimming("int a = f(); if (a) g(a); else h(u(a));").to("");
   }
@@ -1328,6 +1332,10 @@ import org.spartan.utils.Wrapper;
   @Test public void issue53() {
     trimming("int[] is = f(); for (int i: is) f(i);")//
         .to("for (int i: f()) f(i);");
+  }
+  @Test public void issue54DoNonSideEffectEmptyBody() {
+    trimming("int a = f(); do ; while (a != 1);")//
+        .to("");
   }
   @Test public void issue54DoNonSideEffect() {
     trimming("int a  = f; do { b[i] = a; } while (b[i] != a);")//
