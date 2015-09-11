@@ -1148,6 +1148,27 @@ import org.spartan.utils.Wrapper;
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
   }
+  @Test public void issue59a() {
+    trimming("X f(List<List<Expression>> expressions){}").to("X f(List<List<Expression>> ess){}");
+  }
+  @Test public void issue59b() {
+    trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
+  }
+  @Test public void issue59c() {
+    trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
+  }
+  @Test public void issue59d() {
+    trimming("X f(List<Expression>... expressions){}").to("X f(List<Expression>... ess){}");
+  }
+  @Test public void issue59e() {
+    trimming("X f(Expression[] ... expressions){}").to("X f(List<Expression>... ess){}");
+  }
+  @Test public void issue59f() {
+    trimming("X f(Expression[][] ... expressions){}").to("X f(List<Expression>... esss){}");
+  }
+  @Test public void issue59g() {
+    trimming("X f(List<Expression[][]> ... expressions){}").to("X f(List<Expression>... essss){}");
+  }
   @Test public void issue06() {
     trimming("a*-b").to("-a * b");
   }
