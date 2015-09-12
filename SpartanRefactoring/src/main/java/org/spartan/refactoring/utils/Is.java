@@ -494,6 +494,8 @@ public enum Is {
       case CONDITIONAL_EXPRESSION:
         final ConditionalExpression ce = (ConditionalExpression) e;
         return sideEffectsFree(ce.getExpression(), ce.getThenExpression(), ce.getElseExpression());
+      case ARRAY_INITIALIZER:
+        return sideEffectsFree(((ArrayInitializer) e).expressions());
       default:
         System.err.println("Missing handler for class: " + e.getClass().getSimpleName());
         return false;
