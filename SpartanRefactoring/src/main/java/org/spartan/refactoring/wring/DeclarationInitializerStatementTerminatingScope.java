@@ -3,6 +3,7 @@ package org.spartan.refactoring.wring;
 import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
+import static org.spartan.utils.Utils.intIsIn;
 import static org.spartan.utils.Utils.lastIn;
 import static org.spartan.utils.Utils.penultimateIn;
 
@@ -43,6 +44,9 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
         if (forbidden(use, nextStatement))
           return null;
     }
+    for (final SimpleName use : uses)
+      if (never(use, nextStatement))
+        return null;
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
     final Statement newStatement = duplicate(nextStatement);
     final int addedSize = i.addedSize(newStatement);
@@ -54,6 +58,12 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
     remove(f, r, g);
     return r;
   }
+  private static boolean never(final SimpleName n, final Statement s) {
+    for (final ASTNode ancestor : AncestorSearch.until(s).ancestors(n))
+      if (intIsIn(ancestor.getNodeType(), TRY_STATEMENT, SYNCHRONIZED_STATEMENT))
+        return true;
+    return false;
+  }
   private static boolean forbidden(final SimpleName n, final Statement s) {
     ASTNode child = null;
     for (final ASTNode ancestor : AncestorSearch.until(s).ancestors(n)) {
@@ -62,9 +72,7 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
         case DO_STATEMENT:
           return true;
         case FOR_STATEMENT:
-          final ForStatement f = (ForStatement) ancestor;
-          final List initializers = f.initializers();
-          if (initializers.indexOf(child) != -1)
+          if (((ForStatement) ancestor).initializers().indexOf(child) != -1)
             break;
           return true;
         case ENHANCED_FOR_STATEMENT:

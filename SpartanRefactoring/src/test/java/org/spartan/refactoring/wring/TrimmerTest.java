@@ -1329,6 +1329,22 @@ import org.spartan.utils.Wrapper;
     trimming("int[] is = f(); for (int i: is) f(i);")//
         .to("for (int i: f()) f(i);");
   }
+  @Test public void noinliningIntoTryStatement() {
+    trimming("int a  = f(); try { int b = a; } catch (Exception E) {}")//
+        .to("");
+  }
+  @Test public void noinliningIntoTryStatementEvenWithoutSideEffect() {
+    trimming("int a  = f; try { int b = a; } catch (Exception E) {}")//
+        .to("");
+  }
+  @Test public void noinliningIntoSynchronizedStatement() {
+    trimming("int a  = f(); synchronized(this) { int b = a; }")//
+        .to("");
+  }
+  @Test public void noinliningIntoSynchronizedStatementEvenWithoutSideEffect() {
+    trimming("int a  = f; synchronized(this) { int b = a; }")//
+        .to("");
+  }
   @Test public void issue54DoNonSideEffect() {
     trimming("int a  = f; do { b[i] = a; } while (b[i] != a);")//
         .to("do { b[i] = f; } while (b[i] != f);");
