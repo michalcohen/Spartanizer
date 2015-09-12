@@ -55,6 +55,16 @@ public enum Collect {
     }
   };
   static final ASTMatcher matcher = new ASTMatcher();
+  public static Searcher definitionsOf(final SimpleName n) {
+    return new Searcher(n) {
+      @Override public List<SimpleName> in(final ASTNode... ns) {
+        final List<SimpleName> $ = new ArrayList<>();
+        for (final ASTNode n : ns)
+          n.accept(definitionsCollector($, name));
+        return $;
+      }
+    };
+  }
   public static Checker findsDefinitions(final SimpleName n) {
     return new Checker(n);
   }
@@ -68,7 +78,10 @@ public enum Collect {
       }
     };
   }
-  public static Searcher forAllOccurencesOf(final SimpleName n) {
+  public static NoChecker noDefinitions(final SimpleName n) {
+    return new NoChecker(n);
+  }
+  public static Searcher usesOf(final SimpleName n) {
     return new Searcher(n) {
       @Override public List<SimpleName> in(final ASTNode... ns) {
         final List<SimpleName> $ = new ArrayList<>();
@@ -78,8 +91,15 @@ public enum Collect {
       }
     };
   }
-  public static NoChecker noDefinitions(final SimpleName n) {
-    return new NoChecker(n);
+  public static Searcher usesInIterations(final SimpleName n) {
+    return new Searcher(n) {
+      @Override public List<SimpleName> in(final ASTNode... ns) {
+        final List<SimpleName> $ = new ArrayList<>();
+        for (final ASTNode n : ns)
+          n.accept(new UsesCollector($, name));
+        return $;
+      }
+    };
   }
   static ASTVisitor definitionsCollector(final List<SimpleName> into, final Expression e) {
     return new MethodExplorer.IgnoreNestedMethods() {
@@ -105,33 +125,23 @@ public enum Collect {
         addFragments(s.fragments());
         return true;
       }
-      boolean consider(final Expression e) {
-        return add(asSimpleName(e));
-      }
       boolean add(final SimpleName candidate) {
         if (same(candidate, e))
           into.add(candidate);
         return true;
+      }
+      boolean consider(final Expression e) {
+        return add(asSimpleName(e));
+      }
+      private void addFragments(final List<VariableDeclarationFragment> fs) {
+        for (final VariableDeclarationFragment f : fs)
+          add(f.getName());
       }
       private boolean consider(final List<VariableDeclarationExpression> initializers) {
         for (final Object o : initializers)
           if (o instanceof VariableDeclarationExpression)
             addFragments(((VariableDeclarationExpression) o).fragments());
         return true;
-      }
-      private void addFragments(final List<VariableDeclarationFragment> fs) {
-        for (final VariableDeclarationFragment f : fs)
-          add(f.getName());
-      }
-    };
-  }
-  public static Searcher forDefinitions(final SimpleName n) {
-    return new Searcher(n) {
-      @Override public List<SimpleName> in(final ASTNode... ns) {
-        final List<SimpleName> $ = new ArrayList<>();
-        for (final ASTNode n : ns)
-          n.accept(definitionsCollector($, name));
-        return $;
       }
     };
   }
@@ -306,7 +316,7 @@ public enum Collect {
       name = n;
     }
     public boolean in(final ASTNode... ns) {
-      return !forDefinitions(name).in(ns).isEmpty();
+      return !definitionsOf(name).in(ns).isEmpty();
     }
   }
 
@@ -316,7 +326,7 @@ public enum Collect {
       name = n;
     }
     public boolean in(final ASTNode... ns) {
-      return forDefinitions(name).in(ns).isEmpty();
+      return definitionsOf(name).in(ns).isEmpty();
     }
   }
 

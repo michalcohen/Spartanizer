@@ -31,7 +31,7 @@ import org.spartan.refactoring.utils.*;
     final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(m);
     assertNotNull(f);
     final SimpleName b = f.getName();
-    assertThat(Collect.forAllOccurencesOf(b).in(m).size(), is(2));
+    assertThat(Collect.usesOf(b).in(m).size(), is(2));
     final ASTRewrite r = ASTRewrite.create(b.getAST());
     Wrings.rename(b, b.getAST().newSimpleName("c"), m, r, null);
     final TextEdit e = r.rewriteAST(d, null);
@@ -50,7 +50,7 @@ import org.spartan.refactoring.utils.*;
     assertNotNull(p);
     final SimpleName a = p.getName();
     assertThat(a, iz("a"));
-    assertThat(Collect.forAllOccurencesOf(a).in(m).size(), is(2));
+    assertThat(Collect.usesOf(a).in(m).size(), is(2));
   }
   @Test public void renameInEnhancedFor() throws IllegalArgumentException, MalformedTreeException, BadLocationException {
     final String input = "int f() { for (int a: as) return a; }";
@@ -96,7 +96,7 @@ import org.spartan.refactoring.utils.*;
     assertThat(alternateInitializer, iz("a + 2 * a"));
     assertThat(Collect.findsDefinitions(n).in(alternateInitializer), is(false)); // &&
     assertThat(Is.sideEffectFree(initializer), is(false));
-    assertThat(Collect.forAllOccurencesOf(n).in(alternateInitializer).size(), is(2));
+    assertThat(Collect.usesOf(n).in(alternateInitializer).size(), is(2));
     assertThat(new LocalInliner(n).byValue(initializer).canInlineInto(alternateInitializer), is(false));
   }
   @Test public void mixedLiteralKindEmptyList() {

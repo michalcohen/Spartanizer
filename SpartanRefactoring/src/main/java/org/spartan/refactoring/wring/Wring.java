@@ -316,7 +316,7 @@ final class LocalInliner {
       return !Collect.findsDefinitions(name).in(ns) && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
     }
     private List<SimpleName> uses(final ASTNode... ns) {
-      return Collect.forAllOccurencesOf(name).in(ns);
+      return Collect.usesOf(name).in(ns);
     }
     private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> ns) {
       final ASTNode oldExpression = ns.get();

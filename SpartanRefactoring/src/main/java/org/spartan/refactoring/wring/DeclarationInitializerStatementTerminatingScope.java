@@ -36,11 +36,13 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
     final List<Statement> ss = parent.statements();
     if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss))
       return null;
-    final List<SimpleName> in = Collect.forDefinitions(n).in(nextStatement);
+    final List<SimpleName> in = Collect.definitionsOf(n).in(nextStatement);
     if (!in.isEmpty())
       return null;
-    final List<SimpleName> uses = Collect.forAllOccurencesOf(f.getName()).in(nextStatement);
+    final List<SimpleName> uses = Collect.usesOf(f.getName()).in(nextStatement);
     if (uses.size() > 1 && !Is.sideEffectFree(initializer))
+      return null;
+    if (!Collect.usesInIterations(n).in(nextStatement).isEmpty())
       return null;
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
     final Statement newStatement = duplicate(nextStatement);

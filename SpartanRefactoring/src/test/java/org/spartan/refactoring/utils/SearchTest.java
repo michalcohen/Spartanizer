@@ -227,7 +227,7 @@ import org.spartan.refactoring.utils.Collect.Searcher;
     assertNotNull(f);
     final SimpleName b = f.getName();
     assertThat(b, iz("{ int b = 3; do ; while(b != 0); }"));
-    assertThat(Collect.forAllOccurencesOf(b).in(d).size(), is(2));
+    assertThat(Collect.usesOf(b).in(d).size(), is(2));
   }
   @SuppressWarnings("static-method") @Test public void delarationAndDoLoopInMethodWithoutTheDo() {
     final String input = "void f() { int b = 3;   }";
@@ -237,7 +237,7 @@ import org.spartan.refactoring.utils.Collect.Searcher;
     assertNotNull(f);
     final SimpleName b = f.getName();
     assertThat(b, iz("b"));
-    assertThat(Collect.forAllOccurencesOf(b).in(d).size(), is(1));
+    assertThat(Collect.usesOf(b).in(d).size(), is(1));
   }
   @Test public void doLoopEmptyBody() {
     assertThat(nCount(" do {  } while (b[i] != n);"), is(1));
@@ -285,7 +285,7 @@ import org.spartan.refactoring.utils.Collect.Searcher;
     final EnhancedForStatement s2 = (EnhancedForStatement) b.statements().get(0);
     final SimpleName a = s2.getParameter().getName();
     assertThat(a, iz("a"));
-    assertThat(Collect.forAllOccurencesOf(a).in(s).size(), is(2));
+    assertThat(Collect.usesOf(a).in(s).size(), is(2));
   }
   @SuppressWarnings("static-method") @Test public void forEnhancedAsParemeterInMethod() {
     final MethodDeclaration d = d("int f() { for (int a: as) return a;}");
@@ -293,7 +293,7 @@ import org.spartan.refactoring.utils.Collect.Searcher;
     final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
     final SimpleName a = s.getParameter().getName();
     assertThat(a, iz("a"));
-    assertThat(Collect.forAllOccurencesOf(a).in(d).size(), is(2));
+    assertThat(Collect.usesOf(a).in(d).size(), is(2));
   }
   @Test public void forEnhancedLoop() {
     assertThat(nCount("for (int n:ns) a= n;"), is(0));
@@ -385,6 +385,6 @@ import org.spartan.refactoring.utils.Collect.Searcher;
     return searcher().in(s(statement)).size();
   }
   private Searcher searcher() {
-    return Collect.forAllOccurencesOf(n);
+    return Collect.usesOf(n);
   }
 }
