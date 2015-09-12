@@ -1,7 +1,5 @@
 package org.spartan.refactoring.wring;
 
-import static org.spartan.utils.Utils.removeDuplicates;
-
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -14,7 +12,6 @@ import org.eclipse.text.edits.TextEdit;
 import org.spartan.refactoring.spartanizations.Spartanization;
 import org.spartan.refactoring.utils.As;
 import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.utils.Range;
 
 /**
  * @author Yossi Gil
@@ -43,29 +40,7 @@ public class Trimmer extends Spartanization {
         return $.get();
     }
   }
-  /**
-   * Tries to union the given range with one of the elements inside the given
-   * list.
-   *
-   * @param rs The list of ranges to union with
-   * @param rNew The new range to union
-   * @return True - if the list updated and the new range consumed False - the
-   *         list remained intact
-   * @see areOverlapped
-   * @see mergerangeList
-   */
-  protected static boolean unionRangeWithList(final List<Range> rs, final Range rNew) {
-    boolean $ = false;
-    for (final Range r : rs)
-      if (r.overlapping(rNew)) {
-        rs.add(r.merge(rNew));
-        $ = true;
-        break;
-      }
-    removeDuplicates(rs);
-    return $;
-  }
-  static boolean overrideInto(final Rewrite r, final List<Rewrite> rs) {
+  static boolean prune(final Rewrite r, final List<Rewrite> rs) {
     if (r != null) {
       r.pruneIncluders(rs);
       rs.add(r);
@@ -80,7 +55,7 @@ public class Trimmer extends Spartanization {
     return new DispatchingVisitor() {
       @Override <N extends ASTNode> boolean go(final N n) {
         final Wring<N> w = Toolbox.instance().find(n);
-        return w == null || w.nonEligible(n) || overrideInto(w.make(n, exclude), $);
+        return w == null || w.nonEligible(n) || prune(w.make(n, exclude), $);
       }
     };
   }
@@ -105,12 +80,6 @@ public class Trimmer extends Spartanization {
 
   abstract class DispatchingVisitor extends ASTVisitor {
     final ExclusionManager exclude = makeExcluder();
-    @Override public final boolean visit(final ReturnStatement it) {
-      return cautiousGo(it);
-    }
-    @Override public final boolean visit(final MethodDeclaration it) {
-      return cautiousGo(it);
-    }
     @Override public final boolean visit(final Assignment it) {
       return cautiousGo(it);
     }
@@ -126,10 +95,16 @@ public class Trimmer extends Spartanization {
     @Override public final boolean visit(final InfixExpression it) {
       return cautiousGo(it);
     }
+    @Override public final boolean visit(final MethodDeclaration it) {
+      return cautiousGo(it);
+    }
     @Override public final boolean visit(final PostfixExpression it) {
       return cautiousGo(it);
     }
     @Override public final boolean visit(final PrefixExpression it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final ReturnStatement it) {
       return cautiousGo(it);
     }
     @Override public final boolean visit(final SuperConstructorInvocation it) {
@@ -138,9 +113,9 @@ public class Trimmer extends Spartanization {
     @Override public final boolean visit(final VariableDeclarationFragment it) {
       return cautiousGo(it);
     }
+    abstract <N extends ASTNode> boolean go(final N n);
     private boolean cautiousGo(final ASTNode n) {
       return !exclude.isExcluded(n) && go(n);
     }
-    abstract <N extends ASTNode> boolean go(final N n);
   }
 }

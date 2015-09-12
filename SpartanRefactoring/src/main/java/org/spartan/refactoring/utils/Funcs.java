@@ -177,7 +177,7 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link PrefixExpression}
    *
-   * @param e JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
@@ -207,7 +207,7 @@ public enum Funcs {
   /**
    * Down-cast, if possible, to {@link Statement}
    *
-   * @param e JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible.
    */
@@ -523,7 +523,7 @@ public enum Funcs {
   /**
    * Shorthand for {@link ASTNode#getParent()}
    *
-   * @param a JD
+   * @param n JD
    * @return the parent of the parameter
    */
   public static ASTNode parent(final ASTNode n) {
@@ -550,7 +550,7 @@ public enum Funcs {
    * Make a duplicate, suitable for tree rewrite, of the parameter
    *
    * @param n JD
-   * @param t JD
+   * @param a JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
    * @see ASTRewrite

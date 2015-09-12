@@ -161,12 +161,11 @@ public enum Collect {
         ++loopDepth;
         return collect(s.getExpression());
       }
-      @Override public boolean visit(final EnhancedForStatement s) {
+      @Override public boolean visit(@SuppressWarnings("unused") final EnhancedForStatement _) {
         ++loopDepth;
         return true;
       }
       @Override public boolean visit(final FieldAccess n) {
-        System.err.println("NAme = " + n);
         collect(n.getExpression());
         return false;
       }
@@ -244,7 +243,7 @@ public enum Collect {
   /**
    * Creates a function object for searching for a given value.
    *
-   * @param e what to search for
+   * @param n what to search for
    * @return a function object to be used for searching for the parameter in a
    *         given location
    */

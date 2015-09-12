@@ -328,9 +328,8 @@ public enum Is {
     );
   }
   /**
-   * @param r Return Statement node
-   * @return <code><b>true</b></code> <i>iff</i> the ReturnStatement is of
-   *         literal type
+   * @param s JD
+   * @return <code><b>true</b></code> <i>iff</i> the parameter return a literal
    */
   public static boolean literal(final ReturnStatement s) {
     return literal(s.getExpression());

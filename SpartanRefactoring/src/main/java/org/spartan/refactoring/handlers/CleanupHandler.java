@@ -60,10 +60,10 @@ public class CleanupHandler extends BaseHandler {
           @Override public void run(final IProgressMonitor pm) {
             pm.beginTask("Spartanizing project '" + javaProject.getElementName() + "' - " + //
                 "Pass " + passNum.get() + " out of maximum of " + MAX_PASSES, compilationUnits.size());
-            for (final ICompilationUnit cu : compilationUnits) {
-              applySafeSpartanizationsTo(cu);
+            for (final ICompilationUnit u : compilationUnits) {
+              applySafeSpartanizationsTo(u);
               pm.worked(1);
-              pm.subTask(cu.getElementName());
+              pm.subTask(u.getElementName());
             }
             pm.done();
           }

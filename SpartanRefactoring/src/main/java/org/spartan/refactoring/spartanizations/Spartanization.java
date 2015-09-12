@@ -296,19 +296,19 @@ public abstract class Spartanization extends Refactoring {
     return innerRunAsMarkerFix(pm, m, false);
   }
   /**
-   * @param compilationUnit the compilationUnit to set
+   * @param u the compilationUnit to set
    */
   public void setCompilationUnit(final ICompilationUnit u) {
     compilationUnit = u;
   }
   /**
-   * @param marker the marker to set for the refactoring
+   * @param m the marker to set for the refactoring
    */
   public final void setMarker(final IMarker m) {
     marker = m;
   }
   /**
-   * @param selection the selection to set
+   * @param s the selection to set
    */
   public void setSelection(final ITextSelection s) {
     selection = s;

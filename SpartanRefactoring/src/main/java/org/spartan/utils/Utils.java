@@ -3,7 +3,6 @@ package org.spartan.utils;
 import java.util.*;
 
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.Statement;
 
 /**
  * An empty <code><b>enum</b></code> with a variety of <code>public
@@ -31,12 +30,12 @@ public enum Utils {
    * Determine whether an {@link Object} is the last in a {@link List}.
    *
    * @param s JD
-   * @param b JD
-   * @return <code><b>true</b></code> <i>iff</i> the {@link Statement} parameter
-   *         occurs as the last statement of the {@link Block} parameter
+   * @param os JD
+   * @return <code><b>true</b></code> <i>iff</i> the {@link Object} parameter is
+   *         the same as the last element of the {@link List} parameter
    */
-  public static boolean lastIn(final Object s, final List<?> os) {
-    return last(os) == s;
+  public static boolean lastIn(final Object o, final List<?> os) {
+    return last(os) == o;
   }
   /**
    * Determine whether an {@link Object} is penultimate in its {@link Block}.
@@ -44,7 +43,7 @@ public enum Utils {
    * @param o JD
    * @param os JD
    * @return <code><b>true</b></code> <i>iff</i> the an {@link Object} parameter
-   *         occurs as the last statement of the {@link List} parameter
+   *         occurs as the penultimate element of the {@link List} parameter
    */
   public static boolean penultimateIn(final Object o, final List<?> os) {
     return penultimate(os) == o;
