@@ -234,23 +234,6 @@ import org.spartan.refactoring.utils.Search.Searcher;
   @Test public void doLoopVanilla() {
     assertThat(nCount(" do { b[i] = 2; i++; } while (b[i] != n);"), is(1));
   }
-  @SuppressWarnings("static-method") @Test public void enhancedForAsParemeter() {
-    final Statement s = s("for (int a: as) return a; ");
-    final Block b = (Block) s;
-    final EnhancedForStatement s2 = (EnhancedForStatement) b.statements().get(0);
-    final SimpleName a = s2.getParameter().getName();
-    assertThat(Search.forAllOccurencesOf(a).in(s).size(), is(1));
-  }
-  @SuppressWarnings("static-method") @Test public void enhancedForAsParemeterInMethod() {
-    final MethodDeclaration d = d("int f() { for (int a: as) return a;}");
-    final Block b = d.getBody();
-    final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
-    final SimpleName a = s.getParameter().getName();
-    assertThat(Search.forAllOccurencesOf(a).in(d).size(), is(1));
-  }
-  @Test public void enhancedForLoop() {
-    assertThat(nCount("for (int n:ns) a= n;"), is(0));
-  }
   @Test public void fieldAccess1() {
     assertThat(nCount("x = n.a;"), is(1));
   }
@@ -281,6 +264,23 @@ import org.spartan.refactoring.utils.Search.Searcher;
     assertThat(nCount("" + //
         "    S.out.println(n.j);\n" + //
         ""), is(1));
+  }
+  @SuppressWarnings("static-method") @Test public void forEnhancedAsParemeter() {
+    final Statement s = s("for (int a: as) return a; ");
+    final Block b = (Block) s;
+    final EnhancedForStatement s2 = (EnhancedForStatement) b.statements().get(0);
+    final SimpleName a = s2.getParameter().getName();
+    assertThat(Search.forAllOccurencesOf(a).in(s).size(), is(1));
+  }
+  @SuppressWarnings("static-method") @Test public void forEnhancedAsParemeterInMethod() {
+    final MethodDeclaration d = d("int f() { for (int a: as) return a;}");
+    final Block b = d.getBody();
+    final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
+    final SimpleName a = s.getParameter().getName();
+    assertThat(Search.forAllOccurencesOf(a).in(d).size(), is(1));
+  }
+  @Test public void forEnhancedLoop() {
+    assertThat(nCount("for (int n:ns) a= n;"), is(0));
   }
   @Test public void forLoop() {
     assertThat(nCount("for (int a = n; a < n; a++);"), is(2));
