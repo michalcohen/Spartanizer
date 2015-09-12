@@ -192,6 +192,9 @@ import org.spartan.refactoring.utils.Search.Searcher;
         "    return n; // 1\n" + //
         "  }")).size(), is(5));
   }
+  @Test public void classInMethod() {
+    assertThat(searcher().in(d("void f() {class n {}}")).size(), is(0));
+  }
   @Test public void constructorCall() {
     assertThat(searcher().in(e("new n(this)\n")).size(), is(0));
   }
@@ -224,6 +227,15 @@ import org.spartan.refactoring.utils.Search.Searcher;
     assertNotNull(f);
     final SimpleName b = f.getName();
     assertThat(Search.forAllOccurencesOf(b).in(d).size(), is(2));
+  }
+  @SuppressWarnings("static-method") @Test public void delarationAndDoLoopInMethodWithoutTheDo() {
+    final String input = "void f() { int b = 3;   }";
+    final MethodDeclaration d = d(input);
+    assertThat(d, iz(input));
+    final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(d);
+    assertNotNull(f);
+    final SimpleName b = f.getName();
+    assertThat(Search.forAllOccurencesOf(b).in(d).size(), is(1));
   }
   @Test public void doLoopEmptyBody() {
     assertThat(nCount(" do {  } while (b[i] != n);"), is(1));
@@ -270,14 +282,14 @@ import org.spartan.refactoring.utils.Search.Searcher;
     final Block b = (Block) s;
     final EnhancedForStatement s2 = (EnhancedForStatement) b.statements().get(0);
     final SimpleName a = s2.getParameter().getName();
-    assertThat(Search.forAllOccurencesOf(a).in(s).size(), is(1));
+    assertThat(Search.forAllOccurencesOf(a).in(s).size(), is(2));
   }
   @SuppressWarnings("static-method") @Test public void forEnhancedAsParemeterInMethod() {
     final MethodDeclaration d = d("int f() { for (int a: as) return a;}");
     final Block b = d.getBody();
     final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
     final SimpleName a = s.getParameter().getName();
-    assertThat(Search.forAllOccurencesOf(a).in(d).size(), is(1));
+    assertThat(Search.forAllOccurencesOf(a).in(d).size(), is(2));
   }
   @Test public void forEnhancedLoop() {
     assertThat(nCount("for (int n:ns) a= n;"), is(0));
@@ -313,16 +325,16 @@ import org.spartan.refactoring.utils.Search.Searcher;
     assertThat(nCount("int a = 2; for (int a = 1; a < 2; a++) { a=2; } a = n;"), is(1));
   }
   @Test public void forLoopEnhanced0() {
-    assertThat(nCount("for (a: n) return n;"), is(2));
+    assertThat(nCount("for (int a: n) return n;"), is(2));
   }
   @Test public void forLoopEnhanced1() {
-    assertThat(nCount("for (a: x) return n;"), is(1));
+    assertThat(nCount("for (int a: x) return n;"), is(1));
   }
   @Test public void forLoopEnhanced2() {
-    assertThat(nCount("for (a: n) return 1;"), is(1));
+    assertThat(nCount("for (int a: n) return 1;"), is(1));
   }
   @Test public void forLoopEnhanced3() {
-    final String statement = "for (a: as) {++n;}";
+    final String statement = "for (int a: as) {++n;}";
     assertThat(nCount(statement), is(1));
   }
   @Test public void function() {

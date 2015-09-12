@@ -8,6 +8,25 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 
+abstract class HidingDepth extends ScopeManager {
+  private int depth = 0;
+  private int hideDepth = Integer.MAX_VALUE;
+  boolean hidden() {
+    return depth >= hideDepth;
+  }
+  void hide() {
+    hideDepth = depth;
+  }
+  @Override void pop() {
+    if (--depth < hideDepth)
+      hideDepth = Integer.MAX_VALUE;
+  }
+  @Override final boolean push() {
+    ++depth;
+    return !hidden();
+  }
+}
+
 abstract class ScopeManager extends ASTVisitor {
   @Override public final void endVisit(@SuppressWarnings("unused") final AnnotationTypeDeclaration _) {
     pop();
@@ -60,25 +79,6 @@ abstract class ScopeManager extends ASTVisitor {
   abstract boolean push();
 }
 
-abstract class HidingDepth extends ScopeManager {
-  private int depth = 0;
-  private int hideDepth = Integer.MAX_VALUE;
-  boolean hidden() {
-    return depth >= hideDepth;
-  }
-  void hide() {
-    hideDepth = depth;
-  }
-  @Override void pop() {
-    if (--depth < hideDepth)
-      hideDepth = Integer.MAX_VALUE;
-  }
-  @Override final boolean push() {
-    ++depth;
-    return !hidden();
-  }
-}
-
 class UsesCollector extends HidingDepth {
   private final List<Expression> result;
   private final SimpleName focus;
@@ -95,9 +95,6 @@ class UsesCollector extends HidingDepth {
   @Override public boolean visit(final CastExpression e) {
     return recurse(right(e));
   }
-  @Override public boolean go(final EnhancedForStatement s) {
-    return !declaredIn(s) && (recurse(s.getExpression()) || recurse(s.getBody()));
-  }
   @Override public boolean visit(final FieldAccess n) {
     return recurse(n.getExpression());
   }
@@ -109,10 +106,6 @@ class UsesCollector extends HidingDepth {
     recurse(i.getExpression());
     return recurse(i.arguments());
   }
-  @Override public boolean visit(final SuperMethodInvocation i) {
-    ingore(i.getName());
-    return recurse(i.arguments());
-  }
   @Override public boolean visit(final QualifiedName n) {
     return recurse(n.getQualifier());
   }
@@ -120,8 +113,15 @@ class UsesCollector extends HidingDepth {
     consider(n);
     return false;
   }
+  @Override public boolean visit(final SuperMethodInvocation i) {
+    ingore(i.getName());
+    return recurse(i.arguments());
+  }
   @Override public boolean visit(final VariableDeclarationFragment f) {
     return !declaredIn(f) && recurse(f.getInitializer());
+  }
+  @Override protected UsesCollector clone() {
+    return new UsesCollector(result, focus);
   }
   void consider(final SimpleName candidate) {
     if (hit(candidate))
@@ -144,8 +144,22 @@ class UsesCollector extends HidingDepth {
   @Override boolean go(final AnonymousClassDeclaration d) {
     return !declaredIn(d) && recurse(d.bodyDeclarations());
   }
+  @Override boolean go(final EnhancedForStatement s) {
+    final SimpleName name = s.getParameter().getName();
+    if (name == focus)
+      return true;
+    if (!declaredBy(name))
+      return true;
+    recurse(s.getExpression());
+    return recurse(s.getBody());
+  }
+  boolean recurse(final ASTNode n) {
+    if (n != null && !hidden())
+      n.accept(clone());
+    return false;
+  }
   private boolean declaredBy(final SimpleName n) {
-    if (n == focus) { // Ignore declaration we search for
+    if (n == focus) {
       result.add(n);
       return false;
     }
@@ -196,14 +210,6 @@ class UsesCollector extends HidingDepth {
   private void ingore(@SuppressWarnings("unused") final SimpleName _) {
     // We simply ignore the parameter
   }
-  boolean recurse(final ASTNode n) {
-    if (n != null && !hidden())
-      n.accept(clone());
-    return false;
-  }
-  @Override protected UsesCollector clone() {
-    return new UsesCollector(result, focus);
-  }
   private boolean recurse(final List<ASTNode> ns) {
     for (final ASTNode n : ns)
       recurse(n);
@@ -222,14 +228,14 @@ class UsesCollector extends HidingDepth {
 }
 
 class UsesCollectorIgnoreDefinitions extends UsesCollector {
-  UsesCollectorIgnoreDefinitions(final List<Expression> result, final SimpleName focus) {
-    super(result, focus);
-  }
   public UsesCollectorIgnoreDefinitions(final UsesCollector c) {
     super(c);
   }
-  @Override protected UsesCollectorIgnoreDefinitions clone() {
-    return new UsesCollectorIgnoreDefinitions(this);
+  UsesCollectorIgnoreDefinitions(final List<Expression> result, final SimpleName focus) {
+    super(result, focus);
+  }
+  @Override public boolean visit(final Assignment a) {
+    return recurse(right(a));
   }
   @Override public boolean visit(@SuppressWarnings("unused") final PostfixExpression _) {
     return false;
@@ -237,7 +243,7 @@ class UsesCollectorIgnoreDefinitions extends UsesCollector {
   @Override public boolean visit(final PrefixExpression it) {
     return !in(it.getOperator(), PrefixExpression.Operator.INCREMENT, PrefixExpression.Operator.DECREMENT);
   }
-  @Override public boolean visit(final Assignment a) {
-    return recurse(right(a));
+  @Override protected UsesCollectorIgnoreDefinitions clone() {
+    return new UsesCollectorIgnoreDefinitions(this);
   }
 }
