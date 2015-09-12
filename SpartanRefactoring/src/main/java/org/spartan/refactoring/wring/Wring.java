@@ -313,7 +313,7 @@ final class LocalInliner {
       return uses(ns).size() * (size(get()) - 1);
     }
     boolean canInlineInto(final ASTNode... ns) {
-      return !Collect.findsDefinitions(name).in(ns) && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
+      return Collect.definitionsOf(name).in(ns).isEmpty() && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
     }
     private List<SimpleName> uses(final ASTNode... ns) {
       return Collect.usesOf(name).in(ns);

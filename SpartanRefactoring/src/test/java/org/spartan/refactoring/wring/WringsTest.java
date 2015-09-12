@@ -94,7 +94,6 @@ import org.spartan.refactoring.utils.*;
     assertThat(o, iz("+="));
     final InfixExpression alternateInitializer = Subject.pair(left(a), right(a)).to(Wring.VariableDeclarationFragementAndStatement.asInfix(o));
     assertThat(alternateInitializer, iz("a + 2 * a"));
-    assertThat(Collect.findsDefinitions(n).in(alternateInitializer), is(false)); // &&
     assertThat(Is.sideEffectFree(initializer), is(false));
     assertThat(Collect.usesOf(n).in(alternateInitializer).size(), is(2));
     assertThat(new LocalInliner(n).byValue(initializer).canInlineInto(alternateInitializer), is(false));

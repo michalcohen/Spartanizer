@@ -24,12 +24,6 @@ public enum Collect {
       return asArray(new UsesCollector(into, n));
     }
   },
-  /** collects lexical (single use for loops) uses of an expression */
-  USES_LEXICAL {
-    @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
-      return asArray(lexicalUsesCollector(into, n));
-    }
-  },
   /** collects assignments of an expression */
   DEFINITIONS {
     @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
@@ -65,9 +59,6 @@ public enum Collect {
       }
     };
   }
-  public static Checker findsDefinitions(final SimpleName n) {
-    return new Checker(n);
-  }
   public static Searcher forAllOccurencesExcludingDefinitions(final SimpleName n) {
     return new Searcher(n) {
       @Override public List<SimpleName> in(final ASTNode... ns) {
@@ -77,9 +68,6 @@ public enum Collect {
         return $;
       }
     };
-  }
-  public static NoChecker noDefinitions(final SimpleName n) {
-    return new NoChecker(n);
   }
   public static Searcher usesOf(final SimpleName n) {
     return new Searcher(n) {
@@ -94,10 +82,7 @@ public enum Collect {
   public static Searcher usesInIterations(final SimpleName n) {
     return new Searcher(n) {
       @Override public List<SimpleName> in(final ASTNode... ns) {
-        final List<SimpleName> $ = new ArrayList<>();
-        for (final ASTNode n : ns)
-          n.accept(new UsesCollector($, name));
-        return $;
+        return new ArrayList<SimpleName>();
       }
     };
   }
@@ -310,26 +295,6 @@ public enum Collect {
   }
   abstract ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into);
 
-  public static class Checker {
-    private final SimpleName name;
-    public Checker(final SimpleName n) {
-      name = n;
-    }
-    public boolean in(final ASTNode... ns) {
-      return !definitionsOf(name).in(ns).isEmpty();
-    }
-  }
-
-  public static class NoChecker {
-    private final SimpleName name;
-    public NoChecker(final SimpleName n) {
-      name = n;
-    }
-    public boolean in(final ASTNode... ns) {
-      return definitionsOf(name).in(ns).isEmpty();
-    }
-  }
-
   /**
    * An auxiliary class which makes it possible to use an easy invocation
    * sequence for the various offerings of the containing class. This class
@@ -366,7 +331,7 @@ public enum Collect {
 
   public abstract static class Searcher {
     protected final SimpleName name;
-    public Searcher(final SimpleName n) {
+    Searcher(final SimpleName n) {
       name = n;
     }
     public abstract List<SimpleName> in(final ASTNode... ns);

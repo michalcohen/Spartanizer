@@ -8,25 +8,6 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.*;
 
-abstract class HidingDepth extends ScopeManager {
-  private int depth = 0;
-  private int hideDepth = Integer.MAX_VALUE;
-  boolean hidden() {
-    return depth >= hideDepth;
-  }
-  void hide() {
-    hideDepth = depth;
-  }
-  @Override void pop() {
-    if (--depth < hideDepth)
-      hideDepth = Integer.MAX_VALUE;
-  }
-  @Override final boolean push() {
-    ++depth;
-    return !hidden();
-  }
-}
-
 abstract class ScopeManager extends ASTVisitor {
   @Override public final void endVisit(@SuppressWarnings("unused") final AnnotationTypeDeclaration _) {
     pop();
@@ -77,6 +58,25 @@ abstract class ScopeManager extends ASTVisitor {
   abstract boolean go(final EnhancedForStatement s);
   abstract void pop();
   abstract boolean push();
+}
+
+abstract class HidingDepth extends ScopeManager {
+  private int depth = 0;
+  private int hideDepth = Integer.MAX_VALUE;
+  boolean hidden() {
+    return depth >= hideDepth;
+  }
+  void hide() {
+    hideDepth = depth;
+  }
+  @Override void pop() {
+    if (--depth < hideDepth)
+      hideDepth = Integer.MAX_VALUE;
+  }
+  @Override final boolean push() {
+    ++depth;
+    return !hidden();
+  }
 }
 
 class UsesCollector extends HidingDepth {

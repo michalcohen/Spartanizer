@@ -50,10 +50,10 @@ public class InlineSingleUse extends Spartanization {
       @Override public boolean visit(final VariableDeclarationFragment f) {
         if (!inRange(m, f) || !(f.getParent() instanceof VariableDeclarationStatement))
           return true;
-        final SimpleName name = f.getName();
+        final SimpleName n = f.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-        final List<SimpleName> uses = Collect.USES_SEMANTIC.of(name).in(parent.getParent());
-        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Collect.DEFINITIONS, name, parent.getParent()) == 1)) {
+        final List<SimpleName> uses = Collect.usesOf(n).in(parent.getParent());
+        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Collect.DEFINITIONS, n, parent.getParent()) == 1)) {
           r.replace(uses.get(0), f.getInitializer(), null);
           r.remove(parent.fragments().size() != 1 ? f : parent, null);
         }
@@ -64,13 +64,13 @@ public class InlineSingleUse extends Spartanization {
   @Override protected ASTVisitor collect(final List<Rewrite> $) {
     return new ASTVisitor() {
       @Override public boolean visit(final VariableDeclarationFragment node) {
-        return !(node.getParent() instanceof VariableDeclarationStatement) || go(node, node.getName());
-      }
-      private boolean go(final VariableDeclarationFragment f, final SimpleName n) {
-        final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+        if (!(node.getParent() instanceof VariableDeclarationStatement))
+          return false;
+        final SimpleName n = node.getName();
+        final VariableDeclarationStatement parent = (VariableDeclarationStatement) node.getParent();
         if (numOfOccur(Collect.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || //
             numOfOccur(Collect.DEFINITIONS, n, parent.getParent()) == 1))
-          $.add(new Rewrite("", f) {
+          $.add(new Rewrite("", node) {
             @Override public void go(final ASTRewrite r, final TextEditGroup g) {
               // TODO Auto-generated method stub
             }
