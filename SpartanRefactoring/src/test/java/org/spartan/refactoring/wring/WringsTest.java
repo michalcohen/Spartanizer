@@ -36,8 +36,7 @@ import org.spartan.refactoring.utils.*;
     Wrings.rename(b, b.getAST().newSimpleName("c"), m, r, null);
     final TextEdit e = r.rewriteAST(d, null);
     e.apply(d);
-    final String output = Wrap.Method.off(d.get());
-    assertThat(output, iz("void f() { int c = 3; do ; while(c != 0); }"));
+    assertThat(Wrap.Method.off(d.get()), iz("void f() { int c = 3; do ; while(c != 0); }"));
   }
   @Test public void countInEnhancedFor() throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
     final String input = "int f() { for (int a: as) return a; }";
@@ -49,8 +48,9 @@ import org.spartan.refactoring.utils.*;
     final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
     final SingleVariableDeclaration p = s.getParameter();
     assertNotNull(p);
-    final SimpleName n = p.getName();
-    assertThat(Search.forAllOccurencesOf(n).in(m).size(), is(2));
+    final SimpleName a = p.getName();
+    assertThat(a, iz("a"));
+    assertThat(Search.forAllOccurencesOf(a).in(m).size(), is(2));
   }
   @Test public void renameInEnhancedFor() throws IllegalArgumentException, MalformedTreeException, BadLocationException {
     final String input = "int f() { for (int a: as) return a; }";
@@ -68,6 +68,7 @@ import org.spartan.refactoring.utils.*;
     final TextEdit e = r.rewriteAST(d, null);
     e.apply(d);
     final String output = Wrap.Method.off(d.get());
+    assertNotNull(output);
     assertThat(output, iz(" int f() {for(int $:as)return $;}"));
   }
   @Test public void inlineExpressionWithSideEffect() {

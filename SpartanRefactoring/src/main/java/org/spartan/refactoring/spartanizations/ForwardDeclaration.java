@@ -85,12 +85,10 @@ public class ForwardDeclaration extends Spartanization {
     final int beginingOfDeclarationsIdx = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
     final ASTNode nextN = (ASTNode) b.statements().get(1 + declaredIdx);
     final int nextDeclaredIdx = 1 + declaredIdx;
-    if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT) {
-      final VariableDeclarationStatement nextNVDS = (VariableDeclarationStatement) nextN;
-      for (final VariableDeclarationFragment f : (List<VariableDeclarationFragment>) nextNVDS.fragments())
+    if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT)
+      for (final VariableDeclarationFragment f : (List<VariableDeclarationFragment>) ((VariableDeclarationStatement) nextN).fragments())
         if (nextDeclaredIdx + 1 == findFirstUse(b, f.getName()) && nextDeclaredIdx == beginingOfDeclarationsIdx)
           return true;
-    }
     return false;
   }
   @Override protected ASTVisitor collect(final List<Rewrite> $$) {

@@ -146,9 +146,7 @@ class UsesCollector extends HidingDepth {
   }
   @Override boolean go(final EnhancedForStatement s) {
     final SimpleName name = s.getParameter().getName();
-    if (name == focus)
-      return true;
-    if (!declaredBy(name))
+    if (name == focus || !declaredBy(name))
       return true;
     recurse(s.getExpression());
     return recurse(s.getBody());
