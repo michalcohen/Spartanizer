@@ -80,9 +80,9 @@ abstract class ScopeManager extends ASTVisitor {
 }
 
 class UsesCollector extends HidingDepth {
-  private final List<Expression> result;
+  private final List<SimpleName> result;
   private final SimpleName focus;
-  UsesCollector(final List<Expression> result, final SimpleName focus) {
+  UsesCollector(final List<SimpleName> result, final SimpleName focus) {
     this.result = result;
     this.focus = focus;
   }
@@ -178,9 +178,6 @@ class UsesCollector extends HidingDepth {
     declaresField(d);
     return hidden();
   }
-  private boolean declaredIn(final EnhancedForStatement s) {
-    return declaredIn(s.getParameter());
-  }
   private boolean declaredIn(final MethodDeclaration d) {
     for (final Object o : d.parameters())
       if (declaredIn((SingleVariableDeclaration) o))
@@ -229,7 +226,7 @@ class UsesCollectorIgnoreDefinitions extends UsesCollector {
   public UsesCollectorIgnoreDefinitions(final UsesCollector c) {
     super(c);
   }
-  UsesCollectorIgnoreDefinitions(final List<Expression> result, final SimpleName focus) {
+  UsesCollectorIgnoreDefinitions(final List<SimpleName> result, final SimpleName focus) {
     super(result, focus);
   }
   @Override public boolean visit(final Assignment a) {

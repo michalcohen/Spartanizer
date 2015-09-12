@@ -79,7 +79,7 @@ public class DeclarationIfAssginmentTest {
     final Expression e = s.getExpression();
     assertNotNull(e);
     assertThat(e, iz("a + b"));
-    final List<Expression> in = of.in(e);
+    final List<SimpleName> in = of.in(e);
     assertThat(in.size(), is(1));
     assertThat(!in.isEmpty(), is(true));
     assertThat(Search.BOTH_SEMANTIC.of(f).existIn(s.getExpression(), right(a)), is(true));

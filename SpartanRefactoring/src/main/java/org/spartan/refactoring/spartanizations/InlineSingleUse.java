@@ -52,7 +52,7 @@ public class InlineSingleUse extends Spartanization {
           return true;
         final SimpleName name = f.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-        final List<Expression> uses = Search.USES_SEMANTIC.of(name).in(parent.getParent());
+        final List<SimpleName> uses = Search.USES_SEMANTIC.of(name).in(parent.getParent());
         if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Search.DEFINITIONS, name, parent.getParent()) == 1)) {
           r.replace(uses.get(0), f.getInitializer(), null);
           r.remove(parent.fragments().size() != 1 ? f : parent, null);

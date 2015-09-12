@@ -315,7 +315,7 @@ final class LocalInliner {
     boolean canInlineInto(final ASTNode... ns) {
       return !Search.findsDefinitions(name).in(ns) && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
     }
-    private List<Expression> uses(final ASTNode... ns) {
+    private List<SimpleName> uses(final ASTNode... ns) {
       return Search.forAllOccurencesOf(name).in(ns);
     }
     private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> ns) {

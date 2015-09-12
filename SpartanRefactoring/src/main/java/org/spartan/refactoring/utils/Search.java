@@ -1,8 +1,6 @@
 package org.spartan.refactoring.utils;
 
-import static org.spartan.refactoring.utils.Funcs.left;
-import static org.spartan.refactoring.utils.Funcs.right;
-import static org.spartan.refactoring.utils.Funcs.same;
+import static org.spartan.refactoring.utils.Funcs.*;
 import static org.spartan.utils.Utils.asArray;
 import static org.spartan.utils.Utils.in;
 
@@ -22,19 +20,19 @@ import org.spartan.utils.Utils;
 public enum Search {
   /** collects semantic (multiple uses for loops) uses of an expression */
   USES_SEMANTIC {
-    @Override ASTVisitor[] collectors(final SimpleName n, final List<Expression> into) {
+    @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return asArray(new UsesCollector(into, n));
     }
   },
   /** collects lexical (single use for loops) uses of an expression */
   USES_LEXICAL {
-    @Override ASTVisitor[] collectors(final SimpleName n, final List<Expression> into) {
+    @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return asArray(lexicalUsesCollector(into, n));
     }
   },
   /** collects assignments of an expression */
   DEFINITIONS {
-    @Override ASTVisitor[] collectors(final SimpleName n, final List<Expression> into) {
+    @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return asArray(definitionsCollector(into, n));
     }
   },
@@ -43,7 +41,7 @@ public enum Search {
    * expression
    */
   BOTH_SEMANTIC {
-    @Override ASTVisitor[] collectors(final SimpleName n, final List<Expression> into) {
+    @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return asArray(new UsesCollector(into, n), lexicalUsesCollector(into, n), definitionsCollector(into, n));
     }
   },
@@ -52,7 +50,7 @@ public enum Search {
    * expression
    */
   BOTH_LEXICAL {
-    @Override ASTVisitor[] collectors(final SimpleName n, final List<Expression> into) {
+    @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return asArray(lexicalUsesCollector(into, n), definitionsCollector(into, n));
     }
   };
@@ -62,8 +60,8 @@ public enum Search {
   }
   public static Searcher forAllOccurencesExcludingDefinitions(final SimpleName n) {
     return new Searcher(n) {
-      @Override public List<Expression> in(final ASTNode... ns) {
-        final List<Expression> $ = new ArrayList<>();
+      @Override public List<SimpleName> in(final ASTNode... ns) {
+        final List<SimpleName> $ = new ArrayList<>();
         for (final ASTNode n : ns)
           n.accept(new UsesCollectorIgnoreDefinitions($, name));
         return $;
@@ -72,8 +70,8 @@ public enum Search {
   }
   public static Searcher forAllOccurencesOf(final SimpleName n) {
     return new Searcher(n) {
-      @Override public List<Expression> in(final ASTNode... ns) {
-        final List<Expression> $ = new ArrayList<>();
+      @Override public List<SimpleName> in(final ASTNode... ns) {
+        final List<SimpleName> $ = new ArrayList<>();
         for (final ASTNode n : ns)
           n.accept(new UsesCollector($, name));
         return $;
@@ -83,22 +81,22 @@ public enum Search {
   public static NoChecker noDefinitions(final SimpleName n) {
     return new NoChecker(n);
   }
-  static ASTVisitor definitionsCollector(final List<Expression> into, final Expression e) {
+  static ASTVisitor definitionsCollector(final List<SimpleName> into, final Expression e) {
     return new MethodExplorer.IgnoreNestedMethods() {
       @Override public boolean visit(final Assignment a) {
-        return add(left(a));
+        return consider(left(a));
       }
       @Override public boolean visit(final ForStatement s) {
-        return add(s.initializers());
+        return consider(s.initializers());
       }
       @Override public boolean visit(final PostfixExpression it) {
-        return !in(it.getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT) || add(it.getOperand());
+        return !in(it.getOperator(), PostfixExpression.Operator.INCREMENT, PostfixExpression.Operator.DECREMENT) || consider(it.getOperand());
       }
       @Override public boolean visit(final PrefixExpression it) {
-        return add(it.getOperand());
+        return consider(it.getOperand());
       }
       @Override public boolean visit(final TryStatement s) {
-        return add(s.resources());
+        return consider(s.resources());
       }
       @Override public boolean visit(final VariableDeclarationFragment f) {
         return add(f.getName());
@@ -107,12 +105,15 @@ public enum Search {
         addFragments(s.fragments());
         return true;
       }
-      boolean add(final Expression candidate) {
+      boolean consider(final Expression e) {
+        return add(asSimpleName(e));
+      }
+      boolean add(final SimpleName candidate) {
         if (same(candidate, e))
           into.add(candidate);
         return true;
       }
-      private boolean add(final List<VariableDeclarationExpression> initializers) {
+      private boolean consider(final List<VariableDeclarationExpression> initializers) {
         for (final Object o : initializers)
           if (o instanceof VariableDeclarationExpression)
             addFragments(((VariableDeclarationExpression) o).fragments());
@@ -126,18 +127,18 @@ public enum Search {
   }
   public static Searcher forDefinitions(final SimpleName n) {
     return new Searcher(n) {
-      @Override public List<Expression> in(final ASTNode... ns) {
-        final List<Expression> $ = new ArrayList<>();
+      @Override public List<SimpleName> in(final ASTNode... ns) {
+        final List<SimpleName> $ = new ArrayList<>();
         for (final ASTNode n : ns)
           n.accept(definitionsCollector($, name));
         return $;
       }
     };
   }
-  static ASTVisitor lexicalUsesCollector(final List<Expression> into, final SimpleName what) {
+  static ASTVisitor lexicalUsesCollector(final List<SimpleName> into, final SimpleName what) {
     return usesCollector(what, into, true);
   }
-  private static ASTVisitor usesCollector(final SimpleName what, final List<Expression> into, final boolean lexicalOnly) {
+  private static ASTVisitor usesCollector(final SimpleName what, final List<SimpleName> into, final boolean lexicalOnly) {
     return new ASTVisitor() {
       private int loopDepth = 0;
       @Override public void endVisit(@SuppressWarnings("unused") final DoStatement _) {
@@ -204,8 +205,7 @@ public enum Search {
         return false;
       }
       @Override public boolean visit(final QualifiedName n) {
-        System.err.println("NAme = " + n);
-        collectExpression(what, n.getName());
+        collectExpression(n.getName());
         return false;
       }
       @Override public boolean visit(final SimpleName n) {
@@ -215,18 +215,22 @@ public enum Search {
         ++loopDepth;
         return true;
       }
-      void collectExpression(final Expression e, final Expression candidate) {
-        if (candidate == null || e.getNodeType() != candidate.getNodeType() || !candidate.subtreeMatch(matcher, e))
+      void collectExpression(final Expression e) {
+        if (e instanceof SimpleName)
+          collectExpression((SimpleName) e);
+      }
+      void collectExpression(final SimpleName e) {
+        if (!same(what, e))
           return;
-        into.add(candidate);
+        into.add(e);
         if (repeated())
-          into.add(candidate);
+          into.add(e);
       }
       private boolean add(final Object o) {
         return collect((Expression) o);
       }
       private boolean collect(final Expression e) {
-        collectExpression(what, e);
+        collectExpression(e);
         return true;
       }
       private boolean collect(@SuppressWarnings("rawtypes") final List os) {
@@ -258,7 +262,7 @@ public enum Search {
    */
   public Of of(final SimpleName n) {
     return new Of() {
-      @Override public List<Expression> in(final ASTNode... ns) {
+      @Override public List<SimpleName> in(final ASTNode... ns) {
         return collect(n, ns);
       }
     };
@@ -281,8 +285,8 @@ public enum Search {
    * @param ns the n in which to counted
    * @return the list of uses
    */
-  final List<Expression> collect(final SimpleName what, final ASTNode... ns) {
-    final List<Expression> $ = new ArrayList<>();
+  final List<SimpleName> collect(final SimpleName what, final ASTNode... ns) {
+    final List<SimpleName> $ = new ArrayList<>();
     for (final ASTNode n : ns)
       for (final ASTVisitor v : collectors(what, $))
         n.accept(v);
@@ -294,7 +298,7 @@ public enum Search {
     });
     return $;
   }
-  abstract ASTVisitor[] collectors(final SimpleName n, final List<Expression> into);
+  abstract ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into);
 
   public static class Checker {
     private final SimpleName name;
@@ -347,7 +351,7 @@ public enum Search {
      * @param ns where to search
      * @return a list of occurrences of the captured value in the parameter.
      */
-    public abstract List<Expression> in(ASTNode... ns);
+    public abstract List<SimpleName> in(ASTNode... ns);
   }
 
   public abstract static class Searcher {
@@ -355,6 +359,6 @@ public enum Search {
     public Searcher(final SimpleName n) {
       name = n;
     }
-    public abstract List<Expression> in(final ASTNode... ns);
+    public abstract List<SimpleName> in(final ASTNode... ns);
   }
 }

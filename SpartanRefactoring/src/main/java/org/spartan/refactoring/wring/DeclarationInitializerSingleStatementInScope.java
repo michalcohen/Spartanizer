@@ -17,7 +17,7 @@ import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 
 /**
  * A {@link Wring} to convert <code>int a = 3;
- * return a;</code> into <code>return a;</code>
+ * b = a;</code> into <code>b = a</code>
  *
  * @author Yossi Gil
  * @since 2015-08-07
@@ -36,10 +36,10 @@ public final class DeclarationInitializerSingleStatementInScope extends Wring.Va
     final List<Statement> ss = parent.statements();
     if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss))
       return null;
-    final List<Expression> in = Search.forDefinitions(n).in(nextStatement);
+    final List<SimpleName> in = Search.forDefinitions(n).in(nextStatement);
     if (!in.isEmpty())
       return null;
-    final List<Expression> uses = Search.forAllOccurencesOf(f.getName()).in(nextStatement);
+    final List<SimpleName> uses = Search.forAllOccurencesOf(f.getName()).in(nextStatement);
     if (uses.size() > 1 && !Is.sideEffectFree(initializer))
       return null;
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);

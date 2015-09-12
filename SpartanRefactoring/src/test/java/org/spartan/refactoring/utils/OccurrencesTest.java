@@ -44,7 +44,7 @@ public class OccurrencesTest {
     assertThat(left(e), iz("a"));
   }
   @Test public void lexicalUsesCollector() {
-    final List<Expression> into = new ArrayList<>();
+    final List<SimpleName> into = new ArrayList<>();
     final ASTVisitor collector = Search.lexicalUsesCollector(into, a);
     a.accept(collector);
     assertThat(into.size(), is(1));
