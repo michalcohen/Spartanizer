@@ -96,7 +96,7 @@ class UsesCollector extends HidingDepth {
     return recurse(right(e));
   }
   @Override public boolean go(final EnhancedForStatement s) {
-    return !declaredIn(s) && recurse(s.getExpression()) && recurse(s.getBody());
+    return !declaredIn(s) && (recurse(s.getExpression()) || recurse(s.getBody()));
   }
   @Override public boolean visit(final FieldAccess n) {
     return recurse(n.getExpression());
