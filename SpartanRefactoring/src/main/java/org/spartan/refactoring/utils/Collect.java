@@ -17,7 +17,7 @@ import org.spartan.utils.Utils;
  * @author Yossi Gil <yossi.gil @ gmail.com> (major refactoring 2013/07/10)
  * @since 2013/07/01
  */
-public enum Search {
+public enum Collect {
   /** collects semantic (multiple uses for loops) uses of an expression */
   USES_SEMANTIC {
     @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
@@ -330,7 +330,7 @@ public enum Search {
    * for the search, will carry out the search for the captured value in its
    * location parameter.
    *
-   * @see Search#of
+   * @see Collect#of
    * @author Yossi Gil <yossi.gil @ gmail.com>
    * @since 2013/14/07
    */

@@ -102,7 +102,7 @@ class Aggressive extends AbstractRenamePolicy {
   private static int score(final SimpleName n, final List<ReturnStatement> ss) {
     int $ = 0;
     for (final ReturnStatement r : ss)
-      $ += Search.BOTH_LEXICAL.of(n).in(r).size();
+      $ += Collect.BOTH_LEXICAL.of(n).in(r).size();
     return $;
   }
   @Override SimpleName innerSelectReturnVariable() {

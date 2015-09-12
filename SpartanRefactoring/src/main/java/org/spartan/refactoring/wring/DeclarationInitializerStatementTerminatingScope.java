@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Extract;
 import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Search;
+import org.spartan.refactoring.utils.Collect;
 import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 
 /**
@@ -36,10 +36,10 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
     final List<Statement> ss = parent.statements();
     if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss))
       return null;
-    final List<SimpleName> in = Search.forDefinitions(n).in(nextStatement);
+    final List<SimpleName> in = Collect.forDefinitions(n).in(nextStatement);
     if (!in.isEmpty())
       return null;
-    final List<SimpleName> uses = Search.forAllOccurencesOf(f.getName()).in(nextStatement);
+    final List<SimpleName> uses = Collect.forAllOccurencesOf(f.getName()).in(nextStatement);
     if (uses.size() > 1 && !Is.sideEffectFree(initializer))
       return null;
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);

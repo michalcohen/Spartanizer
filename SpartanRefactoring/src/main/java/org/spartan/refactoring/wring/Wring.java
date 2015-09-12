@@ -160,7 +160,7 @@ public abstract class Wring<N extends ASTNode> {
     }
     static boolean doesUseForbiddenSiblings(final VariableDeclarationFragment f, final ASTNode... ns) {
       for (final VariableDeclarationFragment b : forbiddenSiblings(f))
-        if (Search.BOTH_SEMANTIC.of(b).existIn(ns))
+        if (Collect.BOTH_SEMANTIC.of(b).existIn(ns))
           return true;
       return false;
     }
@@ -313,17 +313,17 @@ final class LocalInliner {
       return uses(ns).size() * (size(get()) - 1);
     }
     boolean canInlineInto(final ASTNode... ns) {
-      return !Search.findsDefinitions(name).in(ns) && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
+      return !Collect.findsDefinitions(name).in(ns) && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
     }
     private List<SimpleName> uses(final ASTNode... ns) {
-      return Search.forAllOccurencesOf(name).in(ns);
+      return Collect.forAllOccurencesOf(name).in(ns);
     }
     private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> ns) {
       final ASTNode oldExpression = ns.get();
       final ASTNode newExpression = duplicate(ns.get());
       ns.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
-      for (final ASTNode use : Search.forAllOccurencesExcludingDefinitions(name).in(newExpression))
+      for (final ASTNode use : Collect.forAllOccurencesExcludingDefinitions(name).in(newExpression))
         rewriter.replace(use, !(use instanceof Expression) ? replacement : new Plant((Expression) replacement).into(use.getParent()), editGroup);
     }
   }

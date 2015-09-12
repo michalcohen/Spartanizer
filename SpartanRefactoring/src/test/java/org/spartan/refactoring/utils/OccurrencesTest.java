@@ -45,33 +45,33 @@ public class OccurrencesTest {
   }
   @Test public void lexicalUsesCollector() {
     final List<SimpleName> into = new ArrayList<>();
-    final ASTVisitor collector = Search.lexicalUsesCollector(into, a);
+    final ASTVisitor collector = Collect.lexicalUsesCollector(into, a);
     a.accept(collector);
     assertThat(into.size(), is(1));
   }
   @Test public void occurencesAinAL() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(a).size(), is(1));
+    assertThat(Collect.BOTH_SEMANTIC.of(a).in(a).size(), is(1));
   }
   @Test public void occurencesAinAsame() {
     assertThat(same(a, a), is(true));
   }
   @Test public void occurencesAinE() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
+    assertThat(Collect.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
   }
   @Test public void occurencesAinLeftOfE() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(left(e)).size(), is(1));
+    assertThat(Collect.BOTH_SEMANTIC.of(a).in(left(e)).size(), is(1));
   }
   @Test public void occurencesAinLeftOfEsame() {
     assertThat(same(left(e), a), is(true));
   }
   @Test public void occurencesAinRightOfE() {
-    assertThat(Search.BOTH_SEMANTIC.of(a).in(right(e)).size(), is(0));
+    assertThat(Collect.BOTH_SEMANTIC.of(a).in(right(e)).size(), is(0));
   }
   @Test public void occurencesBinE() {
-    assertThat(Search.BOTH_SEMANTIC.of(b).in(e).size(), is(1));
+    assertThat(Collect.BOTH_SEMANTIC.of(b).in(e).size(), is(1));
   }
   @Test public void occurencesBinRightOfE() {
-    assertThat(Search.BOTH_SEMANTIC.of(b).in(right(e)).size(), is(1));
+    assertThat(Collect.BOTH_SEMANTIC.of(b).in(right(e)).size(), is(1));
   }
   @Test public void sameAandLeftOfE() {
     assertThat(same(a, left(e)), is(true));

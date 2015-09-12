@@ -13,7 +13,7 @@ import static org.spartan.refactoring.utils.Into.s;
 
 import org.eclipse.jdt.core.dom.*;
 import org.junit.Test;
-import org.spartan.refactoring.utils.Search.Searcher;
+import org.spartan.refactoring.utils.Collect.Searcher;
 
 @SuppressWarnings({ "javadoc" }) public class SearchTest {
   private final SimpleName n = asSimpleName(e("n"));
@@ -227,7 +227,7 @@ import org.spartan.refactoring.utils.Search.Searcher;
     assertNotNull(f);
     final SimpleName b = f.getName();
     assertThat(b, iz("{ int b = 3; do ; while(b != 0); }"));
-    assertThat(Search.forAllOccurencesOf(b).in(d).size(), is(2));
+    assertThat(Collect.forAllOccurencesOf(b).in(d).size(), is(2));
   }
   @SuppressWarnings("static-method") @Test public void delarationAndDoLoopInMethodWithoutTheDo() {
     final String input = "void f() { int b = 3;   }";
@@ -237,7 +237,7 @@ import org.spartan.refactoring.utils.Search.Searcher;
     assertNotNull(f);
     final SimpleName b = f.getName();
     assertThat(b, iz("b"));
-    assertThat(Search.forAllOccurencesOf(b).in(d).size(), is(1));
+    assertThat(Collect.forAllOccurencesOf(b).in(d).size(), is(1));
   }
   @Test public void doLoopEmptyBody() {
     assertThat(nCount(" do {  } while (b[i] != n);"), is(1));
@@ -285,7 +285,7 @@ import org.spartan.refactoring.utils.Search.Searcher;
     final EnhancedForStatement s2 = (EnhancedForStatement) b.statements().get(0);
     final SimpleName a = s2.getParameter().getName();
     assertThat(a, iz("a"));
-    assertThat(Search.forAllOccurencesOf(a).in(s).size(), is(2));
+    assertThat(Collect.forAllOccurencesOf(a).in(s).size(), is(2));
   }
   @SuppressWarnings("static-method") @Test public void forEnhancedAsParemeterInMethod() {
     final MethodDeclaration d = d("int f() { for (int a: as) return a;}");
@@ -293,7 +293,7 @@ import org.spartan.refactoring.utils.Search.Searcher;
     final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
     final SimpleName a = s.getParameter().getName();
     assertThat(a, iz("a"));
-    assertThat(Search.forAllOccurencesOf(a).in(d).size(), is(2));
+    assertThat(Collect.forAllOccurencesOf(a).in(d).size(), is(2));
   }
   @Test public void forEnhancedLoop() {
     assertThat(nCount("for (int n:ns) a= n;"), is(0));
@@ -350,16 +350,16 @@ import org.spartan.refactoring.utils.Search.Searcher;
     assertThat(nCount("b = x instanceof n;"), is(0));
   }
   @Test public void minusMinus() {
-    assertThat(Search.forAllOccurencesExcludingDefinitions(n).in(s("n--;")).size(), is(0));
+    assertThat(Collect.forAllOccurencesExcludingDefinitions(n).in(s("n--;")).size(), is(0));
   }
   @Test public void minusMinusPre() {
-    assertThat(Search.forAllOccurencesExcludingDefinitions(n).in(s("--n;")).size(), is(0));
+    assertThat(Collect.forAllOccurencesExcludingDefinitions(n).in(s("--n;")).size(), is(0));
   }
   @Test public void plusPlus() {
-    assertThat(Search.forAllOccurencesExcludingDefinitions(n).in(s("n++;")).size(), is(0));
+    assertThat(Collect.forAllOccurencesExcludingDefinitions(n).in(s("n++;")).size(), is(0));
   }
   @Test public void plusPlusPre() {
-    assertThat(Search.forAllOccurencesExcludingDefinitions(n).in(s("++n;")).size(), is(0));
+    assertThat(Collect.forAllOccurencesExcludingDefinitions(n).in(s("++n;")).size(), is(0));
   }
   @Test public void superMethodInocation() {
     assertThat(searcher().in(e("super.n(this)\n")).size(), is(0));
@@ -385,6 +385,6 @@ import org.spartan.refactoring.utils.Search.Searcher;
     return searcher().in(s(statement)).size();
   }
   private Searcher searcher() {
-    return Search.forAllOccurencesOf(n);
+    return Collect.forAllOccurencesOf(n);
   }
 }

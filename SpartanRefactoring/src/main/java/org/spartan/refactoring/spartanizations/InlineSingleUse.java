@@ -8,7 +8,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Search;
+import org.spartan.refactoring.utils.Collect;
 
 /**
  * @author Artium Nihamkin (original)
@@ -52,8 +52,8 @@ public class InlineSingleUse extends Spartanization {
           return true;
         final SimpleName name = f.getName();
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-        final List<SimpleName> uses = Search.USES_SEMANTIC.of(name).in(parent.getParent());
-        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Search.DEFINITIONS, name, parent.getParent()) == 1)) {
+        final List<SimpleName> uses = Collect.USES_SEMANTIC.of(name).in(parent.getParent());
+        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Collect.DEFINITIONS, name, parent.getParent()) == 1)) {
           r.replace(uses.get(0), f.getInitializer(), null);
           r.remove(parent.fragments().size() != 1 ? f : parent, null);
         }
@@ -68,8 +68,8 @@ public class InlineSingleUse extends Spartanization {
       }
       private boolean go(final VariableDeclarationFragment f, final SimpleName n) {
         final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-        if (numOfOccur(Search.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || //
-            numOfOccur(Search.DEFINITIONS, n, parent.getParent()) == 1))
+        if (numOfOccur(Collect.USES_SEMANTIC, n, parent.getParent()) == 1 && (Is._final(parent) || //
+            numOfOccur(Collect.DEFINITIONS, n, parent.getParent()) == 1))
           $.add(new Rewrite("", f) {
             @Override public void go(final ASTRewrite r, final TextEditGroup g) {
               // TODO Auto-generated method stub
@@ -79,7 +79,7 @@ public class InlineSingleUse extends Spartanization {
       }
     };
   }
-  static int numOfOccur(final Search typeOfOccur, final SimpleName of, final ASTNode in) {
+  static int numOfOccur(final Collect typeOfOccur, final SimpleName of, final ASTNode in) {
     return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
   }
 }

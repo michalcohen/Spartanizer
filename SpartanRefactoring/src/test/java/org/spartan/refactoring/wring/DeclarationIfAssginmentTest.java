@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.spartan.refactoring.spartanizations.TESTUtils;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
-import org.spartan.refactoring.utils.Search.Of;
+import org.spartan.refactoring.utils.Collect.Of;
 import org.spartan.refactoring.wring.AbstractWringTest.OutOfScope;
 import org.spartan.refactoring.wring.Wring.VariableDeclarationFragementAndStatement;
 import org.spartan.utils.Utils;
@@ -74,7 +74,7 @@ public class DeclarationIfAssginmentTest {
     assertThat(x.size(), is(1));
     final VariableDeclarationFragment b = x.get(0);
     assertThat(b.toString(), is("b"));
-    final Of of = Search.BOTH_SEMANTIC.of(b);
+    final Of of = Collect.BOTH_SEMANTIC.of(b);
     assertNotNull(of);
     final Expression e = s.getExpression();
     assertNotNull(e);
@@ -82,7 +82,7 @@ public class DeclarationIfAssginmentTest {
     final List<SimpleName> in = of.in(e);
     assertThat(in.size(), is(1));
     assertThat(!in.isEmpty(), is(true));
-    assertThat(Search.BOTH_SEMANTIC.of(f).existIn(s.getExpression(), right(a)), is(true));
+    assertThat(Collect.BOTH_SEMANTIC.of(f).existIn(s.getExpression(), right(a)), is(true));
     assertThat(of.existIn(s.getExpression(), right(a)), is(true));
   }
 
