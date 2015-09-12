@@ -72,7 +72,7 @@ public class Toolbox {
           new DeclarationInitializerReturnExpression(), //
           new DeclarationInitializerReturnAssignment(), //
           new DeclarationInitializerReturnUpdateAssignment(), //
-          new DeclarationInitializerSingleStatementInScope(), //
+          new DeclarationInitializerStatementTerminatingScope(), //
           null) //
       .add(IfStatement.class, //
           new IfLastInMethodThenEndingWithEmptyReturn(), //
