@@ -667,7 +667,7 @@ import org.spartan.utils.Wrapper;
   @Test public void delcartionIfAssignmentNotPlain() {
     trimming("int a=0;   if (y) a+=3; ").to("int a = y ? 0 + 3 : 0;");
   }
-  @Ignore @Test public void doNotIntroduceDoubleNegation() {
+  @Test public void doNotIntroduceDoubleNegation() {
     trimming("!Y ? null :!Z ? null : F").to("Y&&Z?F:null");
   }
   @Test public void donotSorMixedTypes() {
@@ -720,9 +720,6 @@ import org.spartan.utils.Wrapper;
   @Test public void emptyThen2() {
     trimming("if (b) {;;} else {x() ;}").to("if (!b) x();");
   }
-  @Ignore @Test public void extractMethodSplitDifferentStories() {
-    trimming("").to("");
-  }
   @Test public void factorOutAnd() {
     trimming("(a || b) && (a || c)").to("a || b && c");
   }
@@ -752,22 +749,21 @@ import org.spartan.utils.Wrapper;
         .to(" /*    * This is a comment    */      int h = 7;   int j = 2;   int i = 6;   int k = i+2;   S.out.println(i-j+k); ");
   }
   @Ignore @Test public void forwardDeclaration3() {
-    trimming("/*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   yada3(i);   yada3(i+m); ")
-        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   yada3(i);   yada3(i+m); ");
+    trimming("/*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m);   y(i);   y(i+m); ")
+        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m);   int i = 6;   y(i);   y(i+m); ");
   }
   @Ignore @Test public void forwardDeclaration4() {
     trimming(
-        " /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ")
-            .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m);   int i = 6;   final BlahClass bc = new BlahClass(i);   yada3(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ");
+        " /*    * This is a comment    */      int i = 6;   int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m);   final BlahClass bc = new BlahClass(i);   y(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ")
+            .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m);   int i = 6;   final BlahClass bc = new BlahClass(i);   y(i+m+bc.j);    private static class BlahClass {   public BlahClass(int i) {    j = 2*i;      public final int j; ");
   }
   @Ignore @Test public void forwardDeclaration5() {
-    trimming("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ")
-        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int i = yada3(0);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
+    trimming("/*    * This is a comment    */      int i = y(0);   int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m + i);   y(i+m); ")
+        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int i = y(0);   int m = k + j -19;   y(m*2 - k/m + i);   y(i+m); ");
   }
   @Ignore @Test public void forwardDeclaration6() {
-    trimming(
-        " /*    * This is a comment    */      int i = yada3(0);   int h = 8;   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ")
-            .to(" /*    * This is a comment    */      int h = 8;   int i = yada3(0);   int j = 3;   int k = j+2 + yada3(i);   int m = k + j -19;   yada3(m*2 - k/m + i);   yada3(i+m); ");
+    trimming(" /*    * This is a comment    */      int i = y(0);   int h = 8;   int j = 3;   int k = j+2 + y(i);   int m = k + j -19;   y(m*2 - k/m + i);   y(i+m); ")
+        .to(" /*    * This is a comment    */      int h = 8;   int i = y(0);   int j = 3;   int k = j+2 + y(i);   int m = k + j -19;   y(m*2 - k/m + i);   y(i+m); ");
   }
   @Ignore @Test public void forwardDeclaration7() {
     trimming(
@@ -985,6 +981,8 @@ import org.spartan.utils.Wrapper;
         "").to(//
             "  Object a() { " + //
                 "    class a {\n" + //
+                "      Object a() {\n" + //
+                "        return a;\n" + ///
                 "    }\n" + //
                 "    final Object a = new Object();\n" + //
                 "    if (a instanceof a)\n" + //
@@ -1021,32 +1019,27 @@ import org.spartan.utils.Wrapper;
   @Test public void inlineInitializersSecondStep() {
     trimming("int a = 2; return 3*a*4;").to("return 3 * 2 * 4;");
   }
-  @Test public void inlineIntoLastStatementDoWhile() {
-    trimming("int a  = f(); do { b[i] = 2; i++; } while (b[i] != a);")//
-        .to("");
-  }
   @Test public void inlineIntoNextStatementWithSideEffects() {
     trimming("int a = f(); if (a) g(a); else h(u(a));").to("");
   }
   @Ignore @Test public void inlineSingleUse01() {
-    trimming("/*    * This is a comment    */      int i = yada3(0);   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ")
-        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (yada3(0))); ");
+    trimming("/*    * This is a comment    */      int i = y(0);   int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m + i); ")
+        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m + (y(0))); ");
   }
   @Ignore @Test public void inlineSingleUse02() {
-    trimming("/*    * This is a comment    */      int i = 5,j=3;   int k = j+2;   int m = k + j -19 +i;   yada3(k); ")
-        .to(" /*    * This is a comment    */      int j=3;   int k = j+2;   int m = k + j -19 +(5);   yada3(k); ");
+    trimming("/*    * This is a comment    */      int i = 5,j=3;   int k = j+2;   int m = k + j -19 +i;   y(k); ")
+        .to(" /*    * This is a comment    */      int j=3;   int k = j+2;   int m = k + j -19 +(5);   y(k); ");
   }
   @Ignore @Test public void inlineSingleUse03() {
-    trimming("/*    * This is a comment    */      int i = 5;   int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + i); ")
-        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   yada3(m*2 - k/m + (5)); ");
+    trimming("/*    * This is a comment    */      int i = 5;   int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m + i); ")
+        .to(" /*    * This is a comment    */      int j = 3;   int k = j+2;   int m = k + j -19;   y(m*2 - k/m + (5)); ");
   }
   @Ignore @Test public void inlineSingleUse04() {
-    trimming("int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ")
-        .to(" final BlahClass b = new BlahClass((6));   int y = 2+b.j;   yada3(y-b.j);   yada3(y*2); ");
+    trimming("int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   y(y-b.j);   y(y*2); ")
+        .to(" final BlahClass b = new BlahClass((6));   int y = 2+b.j;   y(y-b.j);   y(y*2); ");
   }
   @Ignore @Test public void inlineSingleUse05() {
-    trimming("int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   yada3(y+x);   yada3(y*x); ")
-        .to(" int x = 6;   int y = 2+(new BlahClass(x)).j;   yada3(y+x);   yada3(y*x); ");
+    trimming("int x = 6;   final BlahClass b = new BlahClass(x);   int y = 2+b.j;   y(y+x);   y(y*x); ").to(" int x = 6;   int y = 2+(new BlahClass(x)).j;   y(y+x);   y(y*x); ");
   }
   @Ignore @Test public void inlineSingleUse06() {
     trimming(
@@ -1147,27 +1140,6 @@ import org.spartan.utils.Wrapper;
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
     assertNotNull(replacement);
     assertEquals("f(a,b,c) * f(a,b,c,d)", replacement.toString());
-  }
-  @Test public void issue59a() {
-    trimming("X f(List<List<Expression>> expressions){}").to("X f(List<List<Expression>> ess){}");
-  }
-  @Test public void issue59b() {
-    trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
-  }
-  @Test public void issue59c() {
-    trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
-  }
-  @Test public void issue59d() {
-    trimming("X f(List<Expression>... expressions){}").to("X f(List<Expression>... ess){}");
-  }
-  @Test public void issue59e() {
-    trimming("X f(Expression[] ... expressions){}").to("X f(List<Expression>... ess){}");
-  }
-  @Test public void issue59f() {
-    trimming("X f(Expression[][] ... expressions){}").to("X f(List<Expression>... esss){}");
-  }
-  @Test public void issue59g() {
-    trimming("X f(List<Expression[][]> ... expressions){}").to("X f(List<Expression>... essss){}");
   }
   @Test public void issue06() {
     trimming("a*-b").to("-a * b");
@@ -1354,13 +1326,17 @@ import org.spartan.utils.Wrapper;
     trimming("int[] is = f(); for (int i: is) f(i);")//
         .to("for (int i: f()) f(i);");
   }
+  @Test public void issue54DoNonSideEffect() {
+    trimming("int a  = f; do { b[i] = a; } while (b[i] != a);")//
+        .to("do { b[i] = f; } while (b[i] != f);");
+  }
   @Test public void issue54DoNonSideEffectEmptyBody() {
     trimming("int a = f(); do ; while (a != 1);")//
         .to("");
   }
-  @Test public void issue54DoNonSideEffect() {
-    trimming("int a  = f; do { b[i] = a; } while (b[i] != a);")//
-        .to("do { b[i] = f; } while (b[i] != f);");
+  @Test public void issue54DoWhile() {
+    trimming("int a  = f(); do { b[i] = 2; i++; } while (b[i] != a);")//
+        .to("");
   }
   @Test public void issue54DoWithBlock() {
     trimming("int a  = f(); do { b[i] = a; i++; } while (b[i] != a);")//
@@ -1427,6 +1403,27 @@ import org.spartan.utils.Wrapper;
   }
   @Test public void issue57b() {
     trimming("void m(Expression... expression) { }").to("void m(Expression... es) {}");
+  }
+  @Test public void issue59a() {
+    trimming("X f(List<List<Expression>> expressions){}").to("X f(List<List<Expression>> ess){}");
+  }
+  @Test public void issue59b() {
+    trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
+  }
+  @Test public void issue59c() {
+    trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
+  }
+  @Test public void issue59d() {
+    trimming("X f(List<Expression>... expressions){}").to("X f(List<Expression>... ess){}");
+  }
+  @Test public void issue59e() {
+    trimming("X f(Expression[] ... expressions){}").to("X f(List<Expression>... ess){}");
+  }
+  @Test public void issue59f() {
+    trimming("X f(Expression[][] ... expressions){}").to("X f(List<Expression>... esss){}");
+  }
+  @Test public void issue59g() {
+    trimming("X f(List<Expression[][]> ... expressions){}").to("X f(List<Expression>... essss){}");
   }
   @Test public void linearTransformation() {
     trimming("plain * the + kludge").to("the*plain+kludge");
@@ -2121,16 +2118,16 @@ import org.spartan.utils.Wrapper;
   }
   @Ignore @Test public void reanmeReturnVariableToDollar02() {
     trimming(
-        " int res = blah.length();   if (blah.contains(0xDEAD))    return res * 2;   if (res % 2 ==0)    return ++res;   if (blah.startsWith(\"y\")) {    return yada3(res);   int x = res + 6;   if (x>1)    return res + x;   res -= 1;   return res; ")
-            .to(" int $ = blah.length();   if (blah.contains(0xDEAD))    return $ * 2;   if ($ % 2 ==0)    return ++$;   if (blah.startsWith(\"y\")) {    return yada3($);   int x = $ + 6;   if (x>1)    return $ + x;   $ -= 1;   return $; ");
+        " int res = blah.length();   if (blah.contains(0xDEAD))    return res * 2;   if (res % 2 ==0)    return ++res;   if (blah.startsWith(\"y\")) {    return y(res);   int x = res + 6;   if (x>1)    return res + x;   res -= 1;   return res; ")
+            .to(" int $ = blah.length();   if (blah.contains(0xDEAD))    return $ * 2;   if ($ % 2 ==0)    return ++$;   if (blah.startsWith(\"y\")) {    return y($);   int x = $ + 6;   if (x>1)    return $ + x;   $ -= 1;   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar03() {
     trimming(
-        " public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int x = blah.length()/2;   if (x==3)    return x;   x = yada3(res.j - x);   return x; ")
-            .to(" public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = yada3(res.j - $);   return $; ");
+        " public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int x = blah.length()/2;   if (x==3)    return x;   x = y(res.j - x);   return x; ")
+            .to(" public BlahClass(int i) {    j = 2*i;      public final int j;   public int yada7(final String blah) {   final BlahClass res = new BlahClass(blah.length());   if (blah.contains(0xDEAD))    return res.j;   int $ = blah.length()/2;   if ($==3)    return $;   $ = y(res.j - $);   return $; ");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar04() {
-    trimming("int res = 0;   String $ = blah + known;   yada3(res + $.length());   return res + $.length();").to("");
+    trimming("int res = 0;   String $ = blah + known;   y(res + $.length());   return res + $.length();").to("");
   }
   @Ignore @Test public void reanmeReturnVariableToDollar05() {
     trimming(
@@ -2194,7 +2191,8 @@ import org.spartan.utils.Wrapper;
                     "        }");
   }
   @Test public void renameToDollarEnhancedFor() {
-    trimming("int f() { for (int a: as) return a; }").to("int f(){for(int $:as)return $;}");
+    trimming("int f() { for (int a: as) return a; }")//
+        .to(" int f() {for(int $:as)return $;}");
   }
   @Test public void replaceInitializationInReturn() {
     trimming("int a = 3; return a + 4;").to("return 3 + 4;");

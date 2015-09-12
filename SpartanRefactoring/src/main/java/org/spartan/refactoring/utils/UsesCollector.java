@@ -86,7 +86,7 @@ class UsesCollector extends HidingDepth {
     this.result = result;
     this.focus = focus;
   }
-  public UsesCollector(final UsesCollector c) {
+  UsesCollector(final UsesCollector c) {
     this(c.result, c.focus);
   }
   @Override public boolean preVisit2(final ASTNode n) {

@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.junit.Assert.assertNotNull;
 import static org.spartan.hamcrest.CoreMatchers.is;
 import static org.spartan.hamcrest.MatcherAssert.assertThat;
 import static org.spartan.hamcrest.MatcherAssert.iz;
@@ -8,13 +9,67 @@ import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.es;
 import static org.spartan.refactoring.wring.Wrings.mixedLiteralKind;
 
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 import org.junit.Test;
 import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class WringsTest {
+  @Test public void renameIntoDoWhile() throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+    final String input = "void f() { int b = 3; do ; while(b != 0); }";
+    final Document d = Wrap.Method.intoDocument(input);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
+    final MethodDeclaration m = Extract.firstMethodDeclaration(u);
+    assertThat(m, iz(input));
+    final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(m);
+    assertNotNull(f);
+    final SimpleName b = f.getName();
+    assertThat(Search.forAllOccurencesOf(b).in(m).size(), is(2));
+    final ASTRewrite r = ASTRewrite.create(b.getAST());
+    Wrings.rename(b, b.getAST().newSimpleName("c"), m, r, null);
+    final TextEdit e = r.rewriteAST(d, null);
+    e.apply(d);
+    final String output = Wrap.Method.off(d.get());
+    assertThat(output, iz("void f() { int c = 3; do ; while(c != 0); }"));
+  }
+  @Test public void countInEnhancedFor() throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+    final String input = "int f() { for (int a: as) return a; }";
+    final Document d = Wrap.Method.intoDocument(input);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
+    final MethodDeclaration m = Extract.firstMethodDeclaration(u);
+    assertThat(m, iz(input));
+    final Block b = m.getBody();
+    final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
+    final SingleVariableDeclaration p = s.getParameter();
+    assertNotNull(p);
+    final SimpleName n = p.getName();
+    assertThat(Search.forAllOccurencesOf(n).in(m).size(), is(2));
+  }
+  @Test public void renameInEnhancedFor() throws IllegalArgumentException, MalformedTreeException, BadLocationException {
+    final String input = "int f() { for (int a: as) return a; }";
+    final Document d = Wrap.Method.intoDocument(input);
+    final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
+    final MethodDeclaration m = Extract.firstMethodDeclaration(u);
+    assertThat(m, iz(input));
+    final Block b = m.getBody();
+    final EnhancedForStatement s = (EnhancedForStatement) b.statements().get(0);
+    final SingleVariableDeclaration p = s.getParameter();
+    assertNotNull(p);
+    final SimpleName n = p.getName();
+    final ASTRewrite r = ASTRewrite.create(b.getAST());
+    Wrings.rename(n, n.getAST().newSimpleName("$"), m, r, null);
+    final TextEdit e = r.rewriteAST(d, null);
+    e.apply(d);
+    final String output = Wrap.Method.off(d.get());
+    assertThat(output, iz(" int f() {for(int $:as)return $;}"));
+  }
   @Test public void inlineExpressionWithSideEffect() {
     final Expression e = Into.e("f()");
     assertThat(Is.sideEffectFree(e), is(false));
