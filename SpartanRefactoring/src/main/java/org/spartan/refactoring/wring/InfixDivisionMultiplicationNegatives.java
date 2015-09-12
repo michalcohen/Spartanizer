@@ -27,6 +27,42 @@ import org.spartan.refactoring.utils.Subject;
  * @since 2015-09-05
  */
 public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpression> {
+  private static int countNegations(final List<Expression> es) {
+    int $ = 0;
+    for (final Expression e : es)
+      $ += negationLevel(e);
+    return $;
+  }
+  private static List<Expression> gather(final Expression e, final List<Expression> $) {
+    if (e instanceof InfixExpression)
+      return gather(asInfixExpression(e), $);
+    $.add(e);
+    return $;
+  }
+  private static List<Expression> gather(final InfixExpression e) {
+    return gather(e, new ArrayList<Expression>());
+  }
+  private static List<Expression> gather(final InfixExpression e, final List<Expression> $) {
+    if (e == null)
+      return $;
+    if (!in(e.getOperator(), TIMES, DIVIDE)) {
+      $.add(e);
+      return $;
+    }
+    gather(core(left(e)), $);
+    gather(core(right(e)), $);
+    if (e.hasExtendedOperands())
+      gather(e.extendedOperands(), $);
+    return $;
+  }
+  private static List<Expression> gather(final List<Expression> es, final List<Expression> $) {
+    for (final Expression e : es)
+      gather(e, $);
+    return $;
+  }
+  @Override String description(final InfixExpression e) {
+    return "Use at most one arithmetical negation, for first factor of " + e.getOperator();
+  }
   @Override Rewrite make(final InfixExpression e, final ExclusionManager exclude) {
     final List<Expression> es = gather(e);
     if (es.size() < 2)
@@ -53,41 +89,5 @@ public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpre
           r.replace(first, new Plant(Subject.operand(peelNegation(first)).to(MINUS)).into(first.getParent()), g);
       }
     };
-  }
-  private static int countNegations(final List<Expression> es) {
-    int $ = 0;
-    for (final Expression e : es)
-      $ += negationLevel(e);
-    return $;
-  }
-  private static List<Expression> gather(final InfixExpression e) {
-    return gather(e, new ArrayList<Expression>());
-  }
-  private static List<Expression> gather(final InfixExpression e, final List<Expression> $) {
-    if (e == null)
-      return $;
-    if (!in(e.getOperator(), TIMES, DIVIDE)) {
-      $.add(e);
-      return $;
-    }
-    gather(core(left(e)), $);
-    gather(core(right(e)), $);
-    if (e.hasExtendedOperands())
-      gather(e.extendedOperands(), $);
-    return $;
-  }
-  private static List<Expression> gather(final List<Expression> es, final List<Expression> $) {
-    for (final Expression e : es)
-      gather(e, $);
-    return $;
-  }
-  private static List<Expression> gather(final Expression e, final List<Expression> $) {
-    if (e instanceof InfixExpression)
-      return gather(asInfixExpression(e), $);
-    $.add(e);
-    return $;
-  }
-  @Override String description(final InfixExpression e) {
-    return "Use at most one arithmetical negation, for first factor of " + e.getOperator();
   }
 }

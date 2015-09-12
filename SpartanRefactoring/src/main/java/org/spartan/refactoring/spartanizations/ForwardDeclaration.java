@@ -9,8 +9,8 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Rewrite;
 import org.spartan.refactoring.utils.Collect;
+import org.spartan.refactoring.utils.Rewrite;
 
 /**
  * @author Artium Nihamkin (original)

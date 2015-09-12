@@ -74,6 +74,9 @@ import org.spartan.utils.Wrapper;
   private static Operand trimming(final String from) {
     return new Operand(from);
   }
+  private static <N extends ASTNode> OperandToWring<N> included(final String from, final Class<N> clazz) {
+    return new OperandToWring<>(from, clazz);
+  }
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
@@ -1335,11 +1338,11 @@ import org.spartan.utils.Wrapper;
         .to("");
   }
   @Test public void issue54DoWhile() {
-    trimming("int a  = f(); do { b[i] = 2; i++; } while (b[i] != a);")//
+    trimming("int a  = f(); do { b[i] = 2; ++i; } while (b[i] != a);")//
         .to("");
   }
   @Test public void issue54DoWithBlock() {
-    trimming("int a  = f(); do { b[i] = a; i++; } while (b[i] != a);")//
+    trimming("int a  = f(); do { b[i] = a;  ++i; } while (b[i] != a);")//
         .to("");
   }
   @Test public void issue54doWithoutBlock() {
@@ -1354,9 +1357,9 @@ import org.spartan.utils.Wrapper;
     trimming("int a  = f; for (int i: a) b[i] = b[i-1];")//
         .to("for (int i: f) b[i] = b[i-1];");
   }
-  @Test public void issue54ForEnhancedNonSideEffectWitBody() {
+  @Test public void issue54ForEnhancedNonSideEffectWithBody() {
     trimming("int a  = f; for (int i: j) b[i] = a;")//
-        .to("");
+        .to(" for(int i:j)b[i]=f; ");
   }
   @Test public void issue54ForPlain() {
     trimming("int a  = f(); for (int i = 0; i < 100;  ++i) b[i] = a;")//
@@ -1393,6 +1396,10 @@ import org.spartan.utils.Wrapper;
   @Test public void issue54While() {
     trimming("int a  = f(); while (c) b[i] = a;")//
         .to("");
+  }
+  @Test public void issue54WhileScopeDoesNotInclude() {
+    included("int a  = f(); while (c) b[i] = a;", VariableDeclarationFragment.class)//
+        .notIn(new DeclarationInitializerStatementTerminatingScope());
   }
   @Test public void issue54WhileNonSideEffect() {
     trimming("int a  = f; while (c) b[i] = a;")//
@@ -2873,8 +2880,7 @@ import org.spartan.utils.Wrapper;
       return new Operand(expected);
     }
     private void checkExpected(final String expected) {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final Wrap w = findWrap();
       final String wrap = w.on(get());
       final String unpeeled = apply(new Trimmer(), wrap);
       if (wrap.equals(unpeeled))
@@ -2886,9 +2892,13 @@ import org.spartan.utils.Wrapper;
         assertNotEquals("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), compressSpaces(get()));
       assertSimilar(expected, peeled);
     }
+    Wrap findWrap() {
+      final Wrap $ = Wrap.find(get());
+      assertThat("Cannot quite parse '" + get() + "'; did you forget a semicolon?", $, notNullValue());
+      return $;
+    }
     private void checkSame() {
-      final Wrap w = Wrap.find(get());
-      assertThat("Cannot quite parse '" + get() + "'", w, notNullValue());
+      final Wrap w = findWrap();
       final String wrap = w.on(get());
       final String unpeeled = apply(new Trimmer(), wrap);
       if (wrap.equals(unpeeled))
@@ -2897,6 +2907,46 @@ import org.spartan.utils.Wrapper;
       if (peeled.equals(get()) || compressSpaces(peeled).equals(compressSpaces(get())))
         return;
       assertSimilar(get(), peeled);
+    }
+  }
+
+  static class OperandToWring<N extends ASTNode> extends Operand {
+    final Class<N> clazz;
+    public OperandToWring(final String from, final Class<N> clazz) {
+      super(from);
+      this.clazz = clazz;
+    }
+    public OperandToWring<N> in(final Wring<N> w) {
+      final N n = findNode(w);
+      assertThat(w.scopeIncludes(n), is(true));
+      return this;
+    }
+    public OperandToWring<N> notIn(final Wring<N> w) {
+      final N n = findNode(w);
+      assertThat(w.scopeIncludes(n), is(false));
+      return this;
+    }
+    private N findNode(final Wring<N> w) {
+      assertThat(w, notNullValue());
+      final Wrap wrap = findWrap();
+      assertThat(wrap, notNullValue());
+      final CompilationUnit u = wrap.intoCompilationUnit(get());
+      assertThat(u, notNullValue());
+      final N $ = firstInstance(u);
+      assertThat($, notNullValue());
+      return $;
+    }
+    private N firstInstance(final ASTNode n) {
+      final Wrapper<N> $ = new Wrapper<>();
+      n.accept(new ASTVisitor() {
+        @Override public boolean preVisit2(@SuppressWarnings("hiding") final ASTNode n) {
+          if (!clazz.isAssignableFrom(n.getClass()))
+            return true;
+          $.set((N) n);
+          return false;
+        }
+      });
+      return $.get();
     }
   }
 }

@@ -79,13 +79,6 @@ public enum Collect {
       }
     };
   }
-  public static Searcher usesInIterations(final SimpleName n) {
-    return new Searcher(n) {
-      @Override public List<SimpleName> in(final ASTNode... ns) {
-        return new ArrayList<SimpleName>();
-      }
-    };
-  }
   static ASTVisitor definitionsCollector(final List<SimpleName> into, final Expression e) {
     return new MethodExplorer.IgnoreNestedMethods() {
       @Override public boolean visit(final Assignment a) {

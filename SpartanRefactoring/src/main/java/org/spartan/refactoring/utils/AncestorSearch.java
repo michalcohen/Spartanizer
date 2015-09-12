@@ -3,6 +3,7 @@ package org.spartan.refactoring.utils;
 import java.util.Iterator;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.SimpleName;
 
 /**
  * A class to search in the ancestry line of a given node.
@@ -83,6 +84,36 @@ public abstract class AncestorSearch {
           if (type == $.getNodeType())
             return $;
       return null;
+    }
+  }
+  public static Until until(final ASTNode n) {
+    return new Until(n);
+  }
+
+  public static class Until {
+    final ASTNode until;
+    Until(final ASTNode until) {
+      this.until = until;
+    }
+    public Iterable<ASTNode> ancestors(final SimpleName n) {
+      return new Iterable<ASTNode>() {
+        @Override public Iterator<ASTNode> iterator() {
+          return new Iterator<ASTNode>() {
+            ASTNode next = n;
+            @Override public boolean hasNext() {
+              return next != null;
+            }
+            @Override public ASTNode next() {
+              final ASTNode $ = next;
+              next = next == until ? null : next.getParent();
+              return $;
+            }
+            @Override public void remove() {
+              throw new UnsupportedOperationException();
+            }
+          };
+        }
+      };
     }
   }
 }

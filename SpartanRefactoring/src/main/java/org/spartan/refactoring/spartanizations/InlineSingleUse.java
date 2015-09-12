@@ -6,9 +6,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
+import org.spartan.refactoring.utils.Collect;
 import org.spartan.refactoring.utils.Is;
 import org.spartan.refactoring.utils.Rewrite;
-import org.spartan.refactoring.utils.Collect;
 
 /**
  * @author Artium Nihamkin (original)

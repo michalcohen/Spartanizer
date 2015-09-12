@@ -1,5 +1,6 @@
 package org.spartan.refactoring.wring;
 
+import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.spartan.refactoring.utils.Funcs.asBlock;
 import static org.spartan.refactoring.utils.Funcs.duplicate;
 import static org.spartan.utils.Utils.lastIn;
@@ -10,9 +11,7 @@ import java.util.List;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.text.edits.TextEditGroup;
-import org.spartan.refactoring.utils.Extract;
-import org.spartan.refactoring.utils.Is;
-import org.spartan.refactoring.utils.Collect;
+import org.spartan.refactoring.utils.*;
 import org.spartan.refactoring.wring.LocalInliner.LocalInlineWithValue;
 
 /**
@@ -34,16 +33,16 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
     if (parent == null)
       return null;
     final List<Statement> ss = parent.statements();
-    if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss))
-      return null;
-    final List<SimpleName> in = Collect.definitionsOf(n).in(nextStatement);
-    if (!in.isEmpty())
+    if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss) || !Collect.definitionsOf(n).in(nextStatement).isEmpty())
       return null;
     final List<SimpleName> uses = Collect.usesOf(f.getName()).in(nextStatement);
-    if (uses.size() > 1 && !Is.sideEffectFree(initializer))
-      return null;
-    if (!Collect.usesInIterations(n).in(nextStatement).isEmpty())
-      return null;
+    if (!Is.sideEffectFree(initializer)) {
+      if (uses.size() > 1)
+        return null;
+      for (final SimpleName use : uses)
+        if (forbidden(use, nextStatement))
+          return null;
+    }
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
     final Statement newStatement = duplicate(nextStatement);
     final int addedSize = i.addedSize(newStatement);
@@ -54,6 +53,30 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
     i.inlineInto(newStatement);
     remove(f, r, g);
     return r;
+  }
+  private static boolean forbidden(final SimpleName n, final Statement s) {
+    ASTNode child = null;
+    for (final ASTNode ancestor : AncestorSearch.until(s).ancestors(n)) {
+      switch (ancestor.getNodeType()) {
+        case WHILE_STATEMENT:
+        case DO_STATEMENT:
+          return true;
+        case FOR_STATEMENT:
+          final ForStatement f = (ForStatement) ancestor;
+          final List initializers = f.initializers();
+          if (initializers.indexOf(child) != -1)
+            break;
+          return true;
+        case ENHANCED_FOR_STATEMENT:
+          if (((EnhancedForStatement) ancestor).getExpression() != child)
+            return true;
+          break;
+        default:
+          break;
+      }
+      child = ancestor;
+    }
+    return false;
   }
   @Override String description(final VariableDeclarationFragment f) {
     return "Inline local " + f.getName() + " into subsequent statement";

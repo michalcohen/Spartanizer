@@ -9,7 +9,6 @@ import static org.spartan.refactoring.utils.Funcs.right;
 import static org.spartan.refactoring.utils.Into.es;
 import static org.spartan.refactoring.wring.Wrings.mixedLiteralKind;
 
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -22,7 +21,7 @@ import org.spartan.refactoring.spartanizations.Wrap;
 import org.spartan.refactoring.utils.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class WringsTest {
-  @Test public void renameIntoDoWhile() throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+  @Test public void renameIntoDoWhile() throws IllegalArgumentException, MalformedTreeException, BadLocationException {
     final String input = "void f() { int b = 3; do ; while(b != 0); }";
     final Document d = Wrap.Method.intoDocument(input);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);
@@ -38,7 +37,7 @@ import org.spartan.refactoring.utils.*;
     e.apply(d);
     assertThat(Wrap.Method.off(d.get()), iz("void f() { int c = 3; do ; while(c != 0); }"));
   }
-  @Test public void countInEnhancedFor() throws JavaModelException, IllegalArgumentException, MalformedTreeException, BadLocationException {
+  @Test public void countInEnhancedFor() throws IllegalArgumentException, MalformedTreeException {
     final String input = "int f() { for (int a: as) return a; }";
     final Document d = Wrap.Method.intoDocument(input);
     final CompilationUnit u = (CompilationUnit) As.COMPILIATION_UNIT.ast(d);

@@ -274,7 +274,7 @@ public enum Funcs {
   }
   /**
    * @param cmpTo the assignment operator to compare all to
-   * @param op A unknown number of assignments operators
+   * @param os A unknown number of assignments operators
    * @return true if all the operator are the same or false otherwise
    */
   public static boolean compatibleOps(final Assignment.Operator cmpTo, final Assignment.Operator... os) {

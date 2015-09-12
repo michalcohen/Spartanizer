@@ -226,7 +226,7 @@ import org.spartan.refactoring.utils.Collect.Searcher;
     final VariableDeclarationFragment f = Extract.firstVariableDeclarationFragment(d);
     assertNotNull(f);
     final SimpleName b = f.getName();
-    assertThat(b, iz("{ int b = 3; do ; while(b != 0); }"));
+    assertThat(b, iz("b"));
     assertThat(Collect.usesOf(b).in(d).size(), is(2));
   }
   @SuppressWarnings("static-method") @Test public void delarationAndDoLoopInMethodWithoutTheDo() {
