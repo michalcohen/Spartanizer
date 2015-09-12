@@ -1411,25 +1411,25 @@ import org.spartan.utils.Wrapper;
   @Test public void issue57b() {
     trimming("void m(Expression... expression) { }").to("void m(Expression... es) {}");
   }
-  @Test public void issue59a() {
+  @Test public void issue58a() {
     trimming("X f(List<List<Expression>> expressions){}").to("X f(List<List<Expression>> ess){}");
   }
-  @Test public void issue59b() {
+  @Test public void issue58b() {
     trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
   }
-  @Test public void issue59c() {
+  @Test public void issue58c() {
     trimming("X f(List<Expression>[] expressions){}").to("X f(List<Expression>[] ess){}");
   }
-  @Test public void issue59d() {
+  @Test public void issue58d() {
     trimming("X f(List<Expression>... expressions){}").to("X f(List<Expression>... ess){}");
   }
-  @Test public void issue59e() {
+  @Test public void issue58e() {
     trimming("X f(Expression[] ... expressions){}").to("X f(List<Expression>... ess){}");
   }
-  @Test public void issue59f() {
+  @Test public void issue58f() {
     trimming("X f(Expression[][] ... expressions){}").to("X f(List<Expression>... esss){}");
   }
-  @Test public void issue59g() {
+  @Test public void issue58g() {
     trimming("X f(List<Expression[][]> ... expressions){}").to("X f(List<Expression>... essss){}");
   }
   @Test public void linearTransformation() {
