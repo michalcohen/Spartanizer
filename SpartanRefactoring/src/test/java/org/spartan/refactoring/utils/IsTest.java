@@ -129,8 +129,11 @@ public class IsTest {
   @Test public void sideEffectFreeCasetFalsee() {
     assertThat(Is.sideEffectFree(e("(A) f()")), is(false));
   }
-  @Test public void sideEffectFreeCasetTrue() {
+  @Test public void sideEffectFreeCastTrue() {
     assertThat(Is.sideEffectFree(e("(A) b")), is(true));
+  }
+  @Test public void sideEffectFreeNull() {
+    assertThat(Is.sideEffectFree(e("null")), is(true));
   }
   @Test public void sideEffectFreeExists() {
     Is.sideEffectFree(e("null"));

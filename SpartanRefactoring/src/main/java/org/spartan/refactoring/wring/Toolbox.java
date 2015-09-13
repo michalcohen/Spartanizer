@@ -42,7 +42,10 @@ public class Toolbox {
   }
   /** The default instance of this class */
   static final Toolbox instance = new Maker()//
-      .add(Assignment.class, new AssignmentAndReturn()) //
+      .add(Assignment.class, //
+          new AssignmentAndAssignment(), //
+          new AssignmentAndReturn(), //
+          null) //
       .add(Block.class, //
           new BlockSimplify(), //
           new BlockSingleton(), //

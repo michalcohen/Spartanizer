@@ -80,6 +80,18 @@ import org.spartan.utils.Wrapper;
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
+  @Test public void assignmentAssignmentVanillaScopeIncludes() {
+    included("a = null; b = null;", Assignment.class).in(new AssignmentAndAssignment());
+  }
+  @Test public void assignmentAssignmentVanilla() {
+    trimming("a = null; b= null;").to("b = a = null;");
+  }
+  @Test public void assignmentAssignmentVanilla0() {
+    trimming("a = 0; b = 0;").to("b = a = 0;");
+  }
+  @Test public void assignmentAssignmentSideEffect() {
+    trimming("a = f(); b= f();").to("");
+  }
   @Test public void actualExampleForSortAdditionInContext() {
     final String from = "2 + a < b";
     final String expected = "a + 2 < b";
@@ -2933,13 +2945,11 @@ import org.spartan.utils.Wrapper;
       this.clazz = clazz;
     }
     public OperandToWring<N> in(final Wring<N> w) {
-      final N n = findNode(w);
-      assertThat(w.scopeIncludes(n), is(true));
+      assertThat(w.scopeIncludes(findNode(w)), is(true));
       return this;
     }
     public OperandToWring<N> notIn(final Wring<N> w) {
-      final N n = findNode(w);
-      assertThat(w.scopeIncludes(n), is(false));
+      assertThat(w.scopeIncludes(findNode(w)), is(false));
       return this;
     }
     private N findNode(final Wring<N> w) {
