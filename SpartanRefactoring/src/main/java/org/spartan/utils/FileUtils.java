@@ -38,24 +38,22 @@ public class FileUtils {
   /**
    * Returns the contents of a source file
    *
-   * @param path The source file's path
+   * @param fileName The source file's path
    * @return the source file's contents, or an empty string in case of an error
+   * @throws IOException in case of error
    */
-  public static String readSourceFromFile(final String path) {
-    try {
-      return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-    } catch (final IOException e) {
-      return "";
-    }
+  public static String readFromFile(final String fileName) throws IOException {
+    return new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
   }
-  @SuppressWarnings("javadoc") public static void writeSourceToFile(final String path, final String source) {
-    try {
-      final PrintWriter p = new PrintWriter(path);
-      p.write(source);
+  /**
+   * @param fileName where to write
+   * @param text what to write
+   * @throws FileNotFoundException in case the file could not be found
+   */
+  public static void writeToFile(final String fileName, final String text) throws FileNotFoundException {
+    try (final PrintWriter p = new PrintWriter(fileName)) {
+      p.write(text);
       p.flush();
-      p.close();
-    } catch (final FileNotFoundException e) {
-      e.printStackTrace();
     }
   }
   private static void iterateFiles(final File dir, final List<String> files) {
