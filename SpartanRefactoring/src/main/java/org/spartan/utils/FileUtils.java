@@ -46,8 +46,8 @@ public class FileUtils {
   public static String readFromFile(final String fileName) throws IOException {
     return read(Paths.get(fileName));
   }
-  private static String read(final Path path) throws IOException {
-    return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+  private static String read(final Path p) throws IOException {
+    return new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
   }
   /**
    * Converts the entire contents of a file into a {@link String}
