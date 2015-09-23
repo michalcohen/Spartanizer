@@ -3,6 +3,7 @@ package org.spartan.utils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,27 @@ public class FileUtils {
    * @throws IOException in case of error
    */
   public static String readFromFile(final String fileName) throws IOException {
-    return new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
+    return read(Paths.get(fileName));
+  }
+  private static String read(final Path path) throws IOException {
+    return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+  }
+  /**
+   * Converts the entire contents of a file into a {@link String}
+   *
+   * @param f JD
+   * @return a string representing the contents of a file.
+   * @throws IOException in case of error
+   */
+  public static String read(final File f) throws IOException {
+    final String ls = System.getProperty("line.separator");
+    final StringBuilder $ = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+      String line;
+      while ((line = reader.readLine()) != null)
+        $.append(line).append(ls);
+    }
+    return $.toString();
   }
   /**
    * @param fileName where to write
