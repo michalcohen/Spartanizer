@@ -4,7 +4,12 @@ import static il.org.spartan.azzert.*;
 import il.org.spartan.refactoring.preferences.*;
 import il.org.spartan.refactoring.utils.*;
 
+<<<<<<< HEAD
 import java.util.*;
+=======
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
 
 import org.eclipse.jdt.core.dom.*;
 
@@ -15,9 +20,42 @@ import org.eclipse.jdt.core.dom.*;
  * @author Yossi Gil
  * @since 2015-07-29
  */
+<<<<<<< HEAD
 public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> implements Kind.REMOVE_REDUNDANT_PUNCTUATION {
   static Statement reorganizeNestedStatement(final Statement s, final Scalpel scalpel) {
     final List<Statement> ss = extract.statements(s);
+=======
+public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> {
+  @SuppressWarnings("unchecked")
+  public static boolean safeBlockSimplification(List<Statement> ss) {
+    List<String> l = new ArrayList<>();
+    for (Statement s : ss)
+      if (s instanceof VariableDeclarationStatement) {
+        for (VariableDeclarationFragment f : (List<VariableDeclarationFragment>) ((VariableDeclarationStatement) s)
+            .fragments())
+          if (checkExistOrAdd(f.getName(), l))
+            return false;
+      } else if (s instanceof ForStatement) {
+        for (VariableDeclarationFragment f : (List<VariableDeclarationFragment>) ((ForStatement) s).initializers())
+          if (checkExistOrAdd(f.getName(), l))
+            return false;
+      } else if (s instanceof TryStatement) {
+        for (VariableDeclarationExpression e : (List<VariableDeclarationExpression>) ((TryStatement) s).resources()) {
+          for (VariableDeclarationFragment f : (List<VariableDeclarationFragment>) ((VariableDeclarationExpression) e)
+              .fragments())
+            if (checkExistOrAdd(f.getName(), l))
+              return false;
+        }
+        for (CatchClause c : (List<CatchClause>) ((TryStatement) s).catchClauses()) {
+            if (checkExistOrAdd(((CatchClause) c).getException().getName(), l))
+              return false;
+        }
+      }
+    return true;
+  }
+  static Statement reorganizeNestedStatement(final Statement s) {
+    final List<Statement> ss = Extract.statements(s);
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
     switch (ss.size()) {
       case 0:
         return s.getAST().newEmptyStatement();
@@ -47,8 +85,13 @@ public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> implements Ki
     return $;
   }
   @Override Statement replacement(final Block b) {
+<<<<<<< HEAD
     final List<Statement> ss = extract.statements(b);
     if (identical(ss, expose.statements(b)))
+=======
+    final List<Statement> ss = Extract.statements(b);
+    if (identical(ss, b.statements()) || !safeBlockSimplification(ss))
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
       return null;
     final ASTNode parent = b.getParent();
     if (!(parent instanceof Statement) || parent instanceof TryStatement)
@@ -71,4 +114,17 @@ public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> implements Ki
   @Override String description(@SuppressWarnings("unused") final Block __) {
     return "Simplify block";
   }
+<<<<<<< HEAD
+=======
+  @Override WringGroup wringGroup() {
+	return WringGroup.REMOVE_REDUNDANT_PUNCTUATION;
+  }
+  private static boolean checkExistOrAdd(SimpleName n, List<String> l) {
+    String s = n.getIdentifier();
+    if (l.contains(s))
+      return true;
+    l.add(s);
+    return false;
+  }
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
 }

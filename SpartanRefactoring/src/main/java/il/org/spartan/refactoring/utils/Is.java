@@ -88,6 +88,7 @@ public enum Is {
     return blockRequiredInReplacement(s1, s1);
   }
   public static boolean blockRequiredInReplacement(final IfStatement old, final IfStatement newIf) {
+    System.out.println("OK");
     if (newIf == null || old != newIf && elze(old) == null == (elze(newIf) == null))
       return false;
     final IfStatement parent = asIfStatement(parent(old));
@@ -703,4 +704,84 @@ public enum Is {
   public static boolean variableDeclarationStatement(final ASTNode n) {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
+<<<<<<< HEAD
+=======
+  static boolean blockEssential(final IfStatement s) {
+    if (s == null)
+      return false;
+    final Block b = asBlock(parent(s));
+    if (b == null)
+      return false;
+    final IfStatement parent = asIfStatement(parent(b));
+    return parent != null && (elze(parent) == null || recursiveElze(s) == null) && (elze(parent) != null || recursiveElze(s) != null || blockRequiredInReplacement(parent, s));
+  }
+  static boolean notStringDown(final Expression e) {
+    return notStringSelf(e) || notStringDown(asInfixExpression(e));
+  }
+  static boolean notStringDown(final InfixExpression e) {
+    return e != null && (e.getOperator() != PLUS || Are.notString(Extract.allOperands(e)));
+  }
+  static boolean notStringSelf(final Expression e) {
+    return intIsIn(e.getNodeType(), //
+        ARRAY_CREATION, //
+        BOOLEAN_LITERAL, //
+        CHARACTER_LITERAL, //
+        INSTANCEOF_EXPRESSION, //
+        NULL_LITERAL, // null + null is an error, not a string.
+        NUMBER_LITERAL, //
+        PREFIX_EXPRESSION //
+    //
+    );
+  }
+  static boolean sideEffectFreeArrayCreation(final ArrayCreation c) {
+    final ArrayInitializer i = c.getInitializer();
+    return sideEffectsFree(c.dimensions()) && (i == null || sideEffectsFree(i.expressions()));
+  }
+  static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
+    return in(e.getOperator(), PrefixExpression.Operator.PLUS, PrefixExpression.Operator.MINUS, PrefixExpression.Operator.COMPLEMENT, PrefixExpression.Operator.NOT)
+        && sideEffectFree(e.getOperand());
+  }
+  private static boolean is(final ASTNode n, final int type) {
+    return n != null && type == n.getNodeType();
+  }
+  private static boolean isOneOf(final int i, final int... is) {
+    for (final int j : is)
+      if (i == j)
+        return true;
+    return false;
+  }
+  private static boolean nonAssociative(final InfixExpression e) {
+    return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);
+  }
+  private static boolean notStringUp(final Expression e) {
+    for (ASTNode context = e.getParent(); context != null; context = context.getParent())
+      switch (context.getNodeType()) {
+        case INFIX_EXPRESSION:
+          if (asInfixExpression(context).getOperator().equals(PLUS))
+            continue;
+          return true;
+        case ARRAY_ACCESS:
+        case PREFIX_EXPRESSION:
+        case POSTFIX_EXPRESSION:
+          return true;
+        case PARENTHESIZED_EXPRESSION:
+          continue;
+        default:
+          return false;
+      }
+    return false;
+  }
+  private static boolean sideEffectsFree(final Expression... es) {
+    for (final Expression e : es)
+      if (!sideEffectFree(e))
+        return false;
+    return true;
+  }
+  private static boolean sideEffectsFree(final List<?> os) {
+    for (final Object o : os)
+      if (o == null || !sideEffectFree(Funcs.asExpression((ASTNode) o)))
+        return false;
+    return true;
+  }
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
 }

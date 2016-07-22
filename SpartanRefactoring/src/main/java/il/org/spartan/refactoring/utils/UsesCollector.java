@@ -231,6 +231,28 @@ class UsesCollector extends HidingDepth {
   }
 }
 
+class UnsafeUsesCollector extends UsesCollector {
+
+  UnsafeUsesCollector(List<SimpleName> result, SimpleName focus) {
+    super(result, focus);
+  }
+  
+  @Override void consider(final SimpleName n) {
+    ASTNode p = n.getParent();
+    while (p != null) {
+      if (unsafe(p)) {
+        super.consider(n);
+        return;
+      }
+      p = p.getParent();
+    }
+  }
+  
+  private boolean unsafe(ASTNode n) {
+    return n instanceof ClassInstanceCreation;
+  }
+}
+
 class UsesCollectorIgnoreDefinitions extends UsesCollector {
   UsesCollectorIgnoreDefinitions(final List<SimpleName> result, final SimpleName focus) {
     super(result, focus);

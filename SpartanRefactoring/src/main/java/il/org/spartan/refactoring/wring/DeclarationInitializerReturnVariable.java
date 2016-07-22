@@ -16,11 +16,18 @@ import org.eclipse.text.edits.*;
  * @author Yossi Gil
  * @since 2015-08-07
  */
+<<<<<<< HEAD
 public final class DeclarationInitializerReturnVariable extends Wring.VariableDeclarationFragementAndStatement implements
     Kind.InlineVariable {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n,
       final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
     if (initializer == null || hasAnnotation(f))
+=======
+public final class DeclarationInitializerReturnVariable extends Wring.VariableDeclarationFragementAndStatement {
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
+      final TextEditGroup g) {
+    if (initializer == null || hasAnnotation(f) || initializer instanceof ArrayInitializer)
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
       return null;
     final ReturnStatement s = asReturnStatement(nextStatement);
     if (s == null)

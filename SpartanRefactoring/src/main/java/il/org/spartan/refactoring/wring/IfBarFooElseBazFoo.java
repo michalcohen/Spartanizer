@@ -5,7 +5,18 @@ import static il.org.spartan.refactoring.wring.Wrings.*;
 import il.org.spartan.refactoring.preferences.*;
 import il.org.spartan.refactoring.utils.*;
 
+<<<<<<< HEAD
 import java.util.*;
+=======
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
+import org.eclipse.text.edits.TextEditGroup;
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
@@ -30,6 +41,12 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> implements Kind
     if (elze.isEmpty())
       return null;
     final List<Statement> commmonSuffix = commmonSuffix(then, elze);
+    for (Statement st : commmonSuffix) {
+      DefinitionsCollector c = new DefinitionsCollector(then);
+      st.accept(c);
+      if (c.notAllDefined())
+        return null;
+    }
     return then.isEmpty() && elze.isEmpty() || commmonSuffix.isEmpty() ? null : new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         final IfStatement newIf = replacement();
@@ -68,4 +85,26 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> implements Kind
   @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {
     return super.make(s, exclude);
   }
+<<<<<<< HEAD
+=======
+  @Override WringGroup wringGroup() {
+	return WringGroup.CONSOLIDATE_ASSIGNMENTS_STATEMENTS;
+  }
+  private class DefinitionsCollector extends ASTVisitor {
+    private boolean notAllDefined;
+    private final Statement[] l;
+    public DefinitionsCollector(List<Statement> l) {
+      notAllDefined = false;
+      this.l = l.toArray(new Statement[l.size()]);
+    }
+    @Override public boolean visit(SimpleName n) {
+      if (!Collect.declarationsOf(n).in(l).isEmpty())
+        notAllDefined = true;
+      return false;
+    }
+    public boolean notAllDefined() {
+      return notAllDefined;
+    }
+  }
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
 }

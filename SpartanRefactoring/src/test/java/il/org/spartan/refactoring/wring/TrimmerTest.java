@@ -24,6 +24,7 @@ import org.junit.runners.*;
  * @author Yossi Gil
  * @since 2014-07-10
  */
+<<<<<<< HEAD
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 @SuppressWarnings({ "static-method", "javadoc" })//
 public class TrimmerTest {
@@ -35,6 +36,183 @@ public class TrimmerTest {
   @Test public void testCommentsPreservation2() {
     trimming("s.equals(/* c */\"s\")").preservesComment();
   }
+=======
+@FixMethodOrder(MethodSorters.NAME_ASCENDING) //
+@SuppressWarnings({ "static-method", "javadoc" }) public class TrimmerTest {
+  /**
+   * START OF STABLING TESTS
+   */
+  @Test public void inlineIntoInstanceCreation() {
+    TrimmerTestsUtils.trimming("" //
+        + "public Statement methodBlock(FrameworkMethod m) {\n" //
+        + "  final Statement statement = methodBlock(m);\n" //
+        + "  return new Statement() {\n" //
+        + "     public void evaluate() throws Throwable {\n" //
+        + "       try {\n" //
+        + "         statement.evaluate();\n" //
+        + "         handleDataPointSuccess();\n" //
+        + "       } catch (AssumptionViolatedException e) {\n" //
+        + "         handleAssumptionViolation(e);\n" //
+        + "       } catch (Throwable e) {\n" //
+        + "         reportParameterizedError(e, complete.getArgumentStrings(nullsOk()));\n" //
+        + "       }\n" //
+        + "     }\n" //
+        + "   };\n" //
+        + "}").to("");
+  }
+  @Test public void inlineArrayInitialization1() {
+    TrimmerTestsUtils.trimming("" //
+        + "public void multiDimensionalIntArraysAreEqual() {\n" //
+        + "  int[][] int1 = {{1, 2, 3}, {4, 5, 6}};\n" //
+        + "  int[][] int2 = {{1, 2, 3}, {4, 5, 6}};\n" //
+        + "  assertArrayEquals(int1, int2);\n" //
+        + "}").to("");
+  }
+  @Test public void inlineArrayInitialization2() {
+    TrimmerTestsUtils.trimming("" //
+        + "public double[] solve() {\n" //
+        + "  final SimpleRegression regress = new SimpleRegression(true);\n" //
+        + "  for (double[] d : points)\n" //
+        + "    regress.addData(d[0], d[1]);\n" //
+        + "  final double[] $ = { regress.getSlope(), regress.getIntercept() };\n" //
+        + "  return $;\n" //
+        + "}").to("");
+  }
+  @Test public void IfBarFooElseBazFooExtractUndefinedSuffix() {
+    TrimmerTestsUtils.trimming("" //
+        + "public static void f() {\n" //
+        + "  if (true) {\n" //
+        + "    int i = 0;\n" //
+        + "    System.out.println(i + 0);\n" //
+        + "    ++i;\n" //
+        + "  } else {\n" //
+        + "    int i = 1;\n" //
+        + "    System.out.println(i + 1);\n" //
+        + "    ++i;\n" //
+        + "  }\n" //
+        + "}").to("");
+  }
+  @Test public void IfBarFooElseBazFooExtractDefinedSuffix() {
+    TrimmerTestsUtils.trimming("" //
+        + "public static void f() {\n" //
+        + "  int i = 0;\n" //
+        + "  if (true) {\n" //
+        + "    i += 1;\n" //
+        + "    System.out.println('!');\n" //
+        + "    System.out.println('!');\n" //
+        + "    ++i;\n" //
+        + "  } else {\n" //
+        + "    i += 2;\n" //
+        + "    System.out.println('@');\n" //
+        + "    System.out.println('@');\n" //
+        + "    ++i;\n" //
+        + "  }\n" //
+        + "}").to("" //
+            + "public static void f() {\n" //
+            + "  int i = 0;\n" //
+            + "  if (true) {\n" //
+            + "    i += 1;\n" //
+            + "    System.out.println('!');\n" //
+            + "    System.out.println('!');\n" //
+            + "  } else {\n" //
+            + "    i += 2;\n" //
+            + "    System.out.println('@');\n" //
+            + "    System.out.println('@');\n" //
+            + "  }\n" //
+            + "  ++i;" //
+            + "}");
+  }
+  @Test public void unsafeBlockSimlify() {
+    TrimmerTestsUtils.trimming("" //
+    + "public void testParseInteger() {\n" //
+    + "  String source = \"10\";\n" //
+    + "  {\n" //
+    + "    BigFraction c = properFormat.parse(source);\n" //
+    + "    Assert.assertNotNull(c);\n" //
+    + "    Assert.assertEquals(BigInteger.TEN, c.getNumerator());\n" //
+    + "    Assert.assertEquals(BigInteger.ONE, c.getDenominator());\n" //
+    + "  }\n" //
+    + "  {\n" //
+    + "    BigFraction c = improperFormat.parse(source);\n" //
+    + "    Assert.assertNotNull(c);\n" //
+    + "    Assert.assertEquals(BigInteger.TEN, c.getNumerator());\n" //
+    + "    Assert.assertEquals(BigInteger.ONE, c.getDenominator());\n" //
+    + "  }\n" //
+    + "}").to("");
+  }
+  /**
+   * Not passing because no resolved binding in tests
+   */
+  @Test public void sameAssignmentDifferentTypes() {
+    TrimmerTestsUtils.trimming("" //
+        + "public void f() {\n" //
+        + "  double x;\n" //
+        + "  int y;\n" //
+        + "  x = 0;\n" //
+        + "  y = 0;\n" //
+        + "}").to("");
+  }
+  @Test public void redundantButNecessaryBrackets1() {
+    TrimmerTestsUtils.trimming("" //
+      + "if (windowSize != INFINITE_WINDOW) {\n" //
+      + "  if (getN() == windowSize)\n" //
+      + "    eDA.addElementRolling(v);\n" //
+      + "  else if (getN() < windowSize)\n" //
+      + "    eDA.addElement(v);\n" //
+      + "} else {\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  eDA.addElement(v);\n" //
+      + "}").to("");
+  }
+  @Test public void redundantButNecessaryBrackets2() {
+    TrimmerTestsUtils.trimming("" //
+      + "if (windowSize != INFINITE_WINDOW) {\n" //
+      + "  if (getN() == windowSize)\n" //
+      + "    eDA.addElementRolling(v);\n" //
+      + "} else {\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  System.out.println('!');\n" //
+      + "  eDA.addElement(v);\n" //
+      + "}").to("");
+  }
+  @Test public void redundantButNecessaryBrackets3() {
+    TrimmerTestsUtils.trimming("" //
+    + "if (b1)\n" //
+    + "  if (b2)\n" //
+    + "    print1('!');\n" //
+    + "  else {\n" //
+    + "    if (b3)\n" //
+    + "      print3('#');\n" //
+    + "  }\n" //
+    + "else {\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "  print4('$');\n" //
+    + "}").to("");
+  }
+  /**
+   * END OF STABLING TESTS
+   */
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }

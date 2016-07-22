@@ -28,8 +28,12 @@ public final class DeclarationInitializerReturnExpression extends Wring.Variable
       return null;
     final Expression newReturnValue = extract.expression(s);
     final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
+<<<<<<< HEAD
     if (newReturnValue == null || same(n, newReturnValue) || !i.canInlineInto(newReturnValue)
         || i.replacedSize(newReturnValue) - eliminationSaving(f) - size(newReturnValue) > 0)
+=======
+    if (newReturnValue == null || same(n, newReturnValue) || !i.canSafelyInlineInto(newReturnValue) || i.replacedSize(newReturnValue) - eliminationSaving(f) - size(newReturnValue) > 0)
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
       return null;
     r.replace(s.getExpression(), newReturnValue, g);
     i.inlineInto(newReturnValue);

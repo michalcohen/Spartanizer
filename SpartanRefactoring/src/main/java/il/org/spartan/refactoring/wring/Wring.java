@@ -434,17 +434,28 @@ final class LocalInliner {
     boolean canInlineInto(final ASTNode... ns) {
       return Collect.definitionsOf(name).in(ns).isEmpty() && (Is.sideEffectFree(get()) || uses(ns).size() <= 1);
     }
+    boolean canSafelyInlineInto(final ASTNode... ns) {
+      return canInlineInto(ns) && unsafeUses(ns).isEmpty();
+    }
     private List<SimpleName> uses(final ASTNode... ns) {
       return Collect.usesOf(name).in(ns);
+    }
+    private List<SimpleName> unsafeUses(final ASTNode... ns) {
+      return Collect.unsafeUsesOf(name).in(ns);
     }
     private void inlineIntoSingleton(final ASTNode replacement, final Wrapper<ASTNode> ns) {
       final ASTNode oldExpression = ns.get();
       final ASTNode newExpression = duplicate(ns.get());
       ns.set(newExpression);
       rewriter.replace(oldExpression, newExpression, editGroup);
+<<<<<<< HEAD
       for (final ASTNode use : Collect.forAllOccurencesExcludingDefinitions(name).in(newExpression))
         rewriter.replace(use,
             !(use instanceof Expression) ? replacement : new Plant((Expression) replacement).into(use.getParent()), editGroup);
+=======
+      for (final ASTNode use : Collect.usesOf(name).in(newExpression))
+        rewriter.replace(use, !(use instanceof Expression) ? replacement : new Plant((Expression) replacement).into(use.getParent()), editGroup);
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
     }
   }
 }

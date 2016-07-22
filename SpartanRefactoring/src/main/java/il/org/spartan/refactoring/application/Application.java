@@ -70,19 +70,19 @@ import org.eclipse.jdt.core.dom.*;
    * @throws JavaModelException
    */
   private FileStats a(final File f, ICompilationUnit u) throws IOException, FileNotFoundException, JavaModelException {
-    final FileStats s = new FileStats(f);
+    final FileStats $ = new FileStats(f);
     for (int i = 0; i < optRounds; ++i) {
       final int n = CleanupHandler.countSuggestions(u);
       if (n == 0)
         break;
-      s.addRoundStat(n);
+      $.addRoundStat(n);
       ApplySpartanizationHandler.execute(u);
     }
     FileUtils.writeToFile(determineOutputFilename(f.getAbsolutePath()), u.getSource());
     if (optVerbose)
       System.out.println("Spartanized file " + f.getAbsolutePath());
-    s.countLinesAfter();
-    return s;
+    $.countLinesAfter();
+    return $;
   }
   @Override public void stop() {
     // Unused

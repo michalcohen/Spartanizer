@@ -20,6 +20,7 @@ import org.eclipse.text.edits.*;
  * @author Yossi Gil
  * @since 2015-08-07
  */
+<<<<<<< HEAD
 public final class DeclarationInitializerStatementTerminatingScope extends Wring.VariableDeclarationFragementAndStatement implements
     Kind.ConsolidateStatements {
   @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n,
@@ -29,6 +30,17 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
         || Modifier.isFinal(((VariableDeclarationStatement) f.getParent()).getModifiers()))
       return null;
     final Statement s = extract.statement(f);
+=======
+public final class DeclarationInitializerStatementTerminatingScope extends Wring.VariableDeclarationFragementAndStatement {
+  @SuppressWarnings("unchecked") @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
+      final TextEditGroup g) {
+    if (initializer == null || hasAnnotation(f) || initializer instanceof ArrayInitializer || initializer instanceof ConditionalExpression)
+      return null;
+    for (IExtendedModifier m : (List<IExtendedModifier>) ((VariableDeclarationStatement) f.getParent()).modifiers())
+      if (m.isModifier() && ((Modifier) m).isFinal())
+        return null;
+    final Statement s = Extract.statement(f);
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
     if (s == null)
       return null;
     final Block parent = asBlock(s.getParent());

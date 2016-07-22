@@ -26,8 +26,13 @@ public class AssignmentAndAssignment extends Wring.ReplaceToNextStatement<Assign
     final Expression right = getRight(a);
     if (right == null || right.getNodeType() == NULL_LITERAL)
       return null;
+<<<<<<< HEAD
     final Assignment a1 = extract.assignment(nextStatement);
     if (a1 == null)
+=======
+    final Assignment a1 = Extract.assignment(nextStatement);
+    if (a1 == null || !typeSafe(a, a1))
+>>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
       return null;
     final Expression right1 = getRight(a1);
     if (right1 == null || !same(right, right1) || !Is.deterministic(right))
@@ -54,5 +59,11 @@ public class AssignmentAndAssignment extends Wring.ReplaceToNextStatement<Assign
   }
   @Override String description(final Assignment a) {
     return "Consolidate two assignment to '" + left(a) + "'";
+  }
+  private boolean typeSafe(Assignment a1, Assignment a2) {
+    if (!a1.getAST().hasResolvedBindings())
+      return !(Extract.core(getRight(a1)) instanceof NumberLiteral);
+    ITypeBinding b = left(a1).resolveTypeBinding();
+    return b != null && b.equals(left(a2).resolveTypeBinding());
   }
 }
