@@ -82,11 +82,13 @@ public class SwitchSimplify extends ReplaceCurrentNode<SwitchStatement> implemen
     cases: for (final SwitchCase s : bs.keySet()) {
       for (final List<SwitchCase> cl : $)
         if (same(bs.get(s), bs.get(cl.get(0)))) {
-          if (s.isDefault()) {
+          if (!s.isDefault()) {
+            if (!cl.get(0).isDefault())
+              cl.add(s);
+          } else {
             cl.clear();
             cl.add(s);
-          } else if (!cl.get(0).isDefault())
-            cl.add(s);
+          }
           continue cases;
         }
       final List<SwitchCase> cl = new ArrayList<>();

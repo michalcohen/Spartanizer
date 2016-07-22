@@ -53,13 +53,11 @@ public class Trimmer extends Spartanization {
    * @DisableSpartan
    */
   @Override protected ASTVisitor collect(final List<Rewrite> $, final CompilationUnit u) {
-    final Disable disable = Source.getDisable(u);
-    final Toolbox toolbox = Toolbox.generate(u);
     return new DispatchingVisitor() {
       @Override <N extends ASTNode> boolean go(final N n) {
-        if (disable.check(n))
+        if (Source.getDisable(u).check(n))
           return false;
-        final Wring<N> w = toolbox.find(n);
+        final Wring<N> w = Toolbox.generate(u).find(n);
         return w == null || w.nonEligible(n) || prune(w.createScalpel(null, null).make(n, exclude), $);
       }
     };

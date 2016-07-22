@@ -122,10 +122,10 @@ public enum Is {
       if (e == null)
         continue;
       switch (e.getNodeType()) {
-        case CONDITIONAL_EXPRESSION:
-          return true;
         default:
           break;
+        case CONDITIONAL_EXPRESSION:
+          return true;
         case PARENTHESIZED_EXPRESSION:
           return conditional(extract.core(e));
       }
@@ -412,12 +412,12 @@ public enum Is {
         case PREFIX_EXPRESSION:
         case POSTFIX_EXPRESSION:
           return true;
+        case PARENTHESIZED_EXPRESSION:
+          continue;
         case INFIX_EXPRESSION:
           if (asInfixExpression(context).getOperator().equals(PLUS))
             continue;
           return true;
-        case PARENTHESIZED_EXPRESSION:
-          continue;
       }
     return false;
   }
