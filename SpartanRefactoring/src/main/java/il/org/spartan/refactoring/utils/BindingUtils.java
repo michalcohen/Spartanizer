@@ -1,7 +1,5 @@
 package il.org.spartan.refactoring.utils;
 
-import static il.org.spartan.idiomatic.*;
-
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.internal.corext.dom.*;
 
@@ -64,7 +62,11 @@ import org.eclipse.jdt.internal.corext.dom.*;
     if (b == null)
       return null;
     final IMethodBinding $ = Bindings.findMethodInHierarchy(b, mn, bs);
+<<<<<<< f227932298295c56ccb39757ff5835341986042a
     return take($).when(isVisible($, n, u));
+=======
+    return isVisible($, n, u) ? $ : null;
+>>>>>>> fix class path and warning
   }
   /**
    * Checks if expression is simple.
