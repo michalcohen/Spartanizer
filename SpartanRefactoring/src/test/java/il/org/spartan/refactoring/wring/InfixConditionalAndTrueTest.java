@@ -127,16 +127,16 @@ public enum InfixConditionalAndTrueTest {
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
+      azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-     azzert.that(asInfixExpression(), notNullValue());
+      azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void isANDorOR() {
-     azzert.that(asInfixExpression().getOperator(), is(CONDITIONAL_AND));
+      azzert.that(asInfixExpression().getOperator(), is(CONDITIONAL_AND));
     }
     @Test public void twoOrMoreArguments() {
-     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

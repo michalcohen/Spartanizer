@@ -3,7 +3,6 @@ package il.org.spartan.refactoring.wring;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
-
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -27,15 +26,15 @@ public class IfAssignToFooElseAssignToFooTest {
   static final Wring<IfStatement> WRING = new IfAssignToFooElseAssignToFoo();
 
   @Test public void checkSteps() {
-   azzert.that(asSingle("if (a) a = b; else a = c;"), notNullValue());
+    azzert.that(asSingle("if (a) a = b; else a = c;"), notNullValue());
     final IfStatement s = asIfStatement(asSingle("if (a) a = b; else a = c;"));
-   azzert.that(s, notNullValue());
+    azzert.that(s, notNullValue());
     final Assignment then = extract.assignment(then(s));
-    assertNotNull(then(s).toString(), then);
+    azzert.notNull("" + then(s), then);
     final Assignment elze = extract.assignment(elze(s));
-   azzert.that(elze, notNullValue());
-   azzert.that(compatible(then, elze), is(true));
-   azzert.that(WRING.scopeIncludes(s), is(true));
+    azzert.that(elze, notNullValue());
+    azzert.that(compatible(then, elze), is(true));
+    azzert.that(WRING.scopeIncludes(s), is(true));
   }
 
   @RunWith(Parameterized.class)//

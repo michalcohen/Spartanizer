@@ -28,20 +28,20 @@ public class IfReturnNoElseReturnTest {
   @Test public void checkFirstIfStatement1() {
     final String s = "if (a) return b; return a();";
     final IfStatement i = extract.firstIfStatement(ast.STATEMENTS.from(s));
-   azzert.that(i, notNullValue());
-   azzert.that(i.toString(), WRING.scopeIncludes(i), is(true));
+    azzert.that(i, notNullValue());
+    azzert.that(i.toString(), WRING.scopeIncludes(i), is(true));
   }
   @Test public void checkFirstIfStatement2() {
     final String s = "if (a) return b; else return a();";
     final IfStatement i = extract.firstIfStatement(ast.STATEMENTS.from(s));
-   azzert.that(i, notNullValue());
-   azzert.that(i.toString(), WRING.scopeIncludes(i), is(false));
+    azzert.that(i, notNullValue());
+    azzert.that(i.toString(), WRING.scopeIncludes(i), is(false));
   }
   @Test public void checkFirstIfStatement3() {
     final String s = "if (a) a= b; else a=c;";
     final IfStatement i = extract.firstIfStatement(ast.STATEMENTS.from(s));
-   azzert.that(i, notNullValue());
-   azzert.that(i.toString(), WRING.scopeIncludes(i), is(false));
+    azzert.that(i, notNullValue());
+    azzert.that(i.toString(), WRING.scopeIncludes(i), is(false));
   }
 
   @RunWith(Parameterized.class)//

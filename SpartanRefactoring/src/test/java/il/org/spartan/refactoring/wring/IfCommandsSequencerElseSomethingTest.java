@@ -5,7 +5,6 @@ import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.*;
-
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -34,23 +33,23 @@ public class IfCommandsSequencerElseSomethingTest {
 
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) return a = b; else a = c;");
-   azzert.that(s, notNullValue());
-   azzert.that(asIfStatement(s), notNullValue());
+    azzert.that(s, notNullValue());
+    azzert.that(asIfStatement(s), notNullValue());
   }
   @Test public void checkStepsFull() throws MalformedTreeException, BadLocationException {
     final IfStatement s = (IfStatement) asSingle("if (a) return b; else a();");
-   azzert.that(WRING.scopeIncludes(s), is(true));
-   azzert.that(WRING.eligible(s), is(true));
+    azzert.that(WRING.scopeIncludes(s), is(true));
+    azzert.that(WRING.eligible(s), is(true));
     final Rewrite m = WRING.make(s);
-   azzert.that(m, notNullValue());
+    azzert.that(m, notNullValue());
     final Wring<IfStatement> w = Toolbox.instance.find(s);
-   azzert.that(w, notNullValue());
-   azzert.that(w, instanceOf(WRING.getClass()));
+    azzert.that(w, notNullValue());
+    azzert.that(w, instanceOf(WRING.getClass()));
     final String wrap = Wrap.Statement.on(s.toString());
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(wrap);
-   azzert.that(u, notNullValue());
+    azzert.that(u, notNullValue());
     final Document d = new Document(wrap);
-   azzert.that(d, notNullValue());
+    azzert.that(d, notNullValue());
     final Trimmer t = new Trimmer();
     final ASTRewrite r = t.createRewrite(u, null);
     final TextEdit x = r.rewriteAST(d, null);
@@ -66,23 +65,23 @@ public class IfCommandsSequencerElseSomethingTest {
     final String input = "if (a) return b; else a();";
     final String wrap = Wrap.Statement.on(input);
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(wrap);
-   azzert.that(u, notNullValue());
+    azzert.that(u, notNullValue());
     final IfStatement s = extract.firstIfStatement(u);
-   azzert.that(s, notNullValue());
-   azzert.that(s.toString(), equalToIgnoringWhiteSpace(input));
+    azzert.that(s, notNullValue());
+    azzert.that(s.toString(), equalToIgnoringWhiteSpace(input));
     final Wring<IfStatement> w = Toolbox.instance.find(s);
-   azzert.that(w, notNullValue());
-   azzert.that(w.scopeIncludes(s), is(true));
-   azzert.that(w.eligible(s), is(true));
-   azzert.that(w, instanceOf(WRING.getClass()));
+    azzert.that(w, notNullValue());
+    azzert.that(w.scopeIncludes(s), is(true));
+    azzert.that(w.eligible(s), is(true));
+    azzert.that(w, instanceOf(WRING.getClass()));
     final Rewrite m = w.make(s);
-   azzert.that(m, notNullValue());
+    azzert.that(m, notNullValue());
     final ASTRewrite r = ASTRewrite.create(s.getAST());
     m.go(r, null);
-   azzert.that(r.toString(), allOf(startsWith("Events:"), containsString("[replaced:"), containsString("]")));
+    azzert.that(r.toString(), allOf(startsWith("Events:"), containsString("[replaced:"), containsString("]")));
     final Document d = new Document(wrap);
-   azzert.that(d, notNullValue());
-   azzert.that(d.get(), equalToIgnoringWhiteSpace(wrap.toString()));
+    azzert.that(d, notNullValue());
+    azzert.that(d.get(), equalToIgnoringWhiteSpace(wrap.toString()));
     final TextEdit x = r.rewriteAST(d, null);
     x.apply(d);
     final String unpeeled = d.get();
@@ -94,13 +93,13 @@ public class IfCommandsSequencerElseSomethingTest {
   }
   @Test public void checkStepsWRING() throws MalformedTreeException {
     final IfStatement s = (IfStatement) asSingle("if (a) return b; else a();");
-   azzert.that(WRING.scopeIncludes(s), is(true));
-   azzert.that(WRING.eligible(s), is(true));
+    azzert.that(WRING.scopeIncludes(s), is(true));
+    azzert.that(WRING.eligible(s), is(true));
     final Rewrite m = WRING.make(s);
-   azzert.that(m, notNullValue());
+    azzert.that(m, notNullValue());
     final ASTRewrite r = ASTRewrite.create(s.getAST());
     m.go(r, null);
-   azzert.that(r.toString(), allOf(startsWith("Events:"), containsString("[replaced:"), containsString("]")));
+    azzert.that(r.toString(), allOf(startsWith("Events:"), containsString("[replaced:"), containsString("]")));
   }
 
   @RunWith(Parameterized.class)//

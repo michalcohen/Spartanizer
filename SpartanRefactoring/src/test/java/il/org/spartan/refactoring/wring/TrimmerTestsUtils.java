@@ -3,7 +3,6 @@ package il.org.spartan.refactoring.wring;
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
-
 import il.org.spartan.*;
 import il.org.spartan.misc.*;
 import il.org.spartan.refactoring.preferences.*;
@@ -23,18 +22,18 @@ public class TrimmerTestsUtils {
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(from);
-   azzert.that(u, notNullValue());
+    azzert.that(u, notNullValue());
     final Document d = new Document(from);
-   azzert.that(d, notNullValue());
+    azzert.that(d, notNullValue());
     final Document $ = TESTUtils.rewrite(t, u, d);
-   azzert.that($, notNullValue());
+    azzert.that($, notNullValue());
     return $.get();
   }
   static String apply(final Wring<? extends ASTNode> ns, final String from) {
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(from);
-   azzert.that(u, notNullValue());
+    azzert.that(u, notNullValue());
     final Document d = new Document(from);
-   azzert.that(d, notNullValue());
+    azzert.that(d, notNullValue());
     return TESTUtils.rewrite(new AsSpartanization(ns, "Tested Refactoring"), u, d).get();
   }
   static String applyCompilationUnit(final Trimmer t, final String from) {
@@ -45,11 +44,11 @@ public class TrimmerTestsUtils {
     p.setSource(from.toCharArray());
     p.setResolveBindings(PluginPreferencesResources.getResolveBindingEnabled());
     final CompilationUnit u = (CompilationUnit) p.createAST(null);
-   azzert.that(u, notNullValue());
+    azzert.that(u, notNullValue());
     final Document d = new Document(from);
-   azzert.that(d, notNullValue());
+    azzert.that(d, notNullValue());
     final Document $ = TESTUtils.rewrite(t, u, d);
-   azzert.that($, notNullValue());
+    azzert.that($, notNullValue());
     return $.get();
   }
   static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> ns, final Wrap wrapper) {
@@ -158,22 +157,22 @@ public class TrimmerTestsUtils {
     }
     public OperandToWring<N> in(final Wring<N> w) {
       final N findNode = findNode(w);
-     azzert.that(w.createScalpel(null, null).scopeIncludes(findNode), is(true));
+      azzert.that(w.createScalpel(null, null).scopeIncludes(findNode), is(true));
       return this;
     }
     public OperandToWring<N> notIn(final Wring<N> w) {
-     azzert.that(w.createScalpel(null, null).scopeIncludes(findNode(w)), is(false));
+      azzert.that(w.createScalpel(null, null).scopeIncludes(findNode(w)), is(false));
       return this;
     }
     private N findNode(final Wring<N> w) {
-     azzert.that(w, notNullValue());
+      azzert.that(w, notNullValue());
       final Wrap wrap = findWrap();
-     azzert.that(wrap, notNullValue());
+      azzert.that(wrap, notNullValue());
       final CompilationUnit u = wrap.intoCompilationUnit(get());
-     azzert.that(u, notNullValue());
+      azzert.that(u, notNullValue());
       final @Nullable N $ = firstInstance(u);
       assert $ != null;
-     azzert.that($, notNullValue());
+      azzert.that($, notNullValue());
       return $;
     }
     private @Nullable N firstInstance(final CompilationUnit u) {

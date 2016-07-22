@@ -25,10 +25,10 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
 
   @Test public void checkSteps() {
     final Statement s = asSingle("if (a) f(b); else f(c);");
-   azzert.that(s, notNullValue());
+    azzert.that(s, notNullValue());
     final IfStatement i = asIfStatement(s);
-   azzert.that(i, notNullValue());
-   azzert.that(WRING.scopeIncludes(i), is(true));
+    azzert.that(i, notNullValue());
+    azzert.that(WRING.scopeIncludes(i), is(true));
   }
 
   @RunWith(Parameterized.class)//

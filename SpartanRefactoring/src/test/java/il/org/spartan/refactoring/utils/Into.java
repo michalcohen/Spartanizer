@@ -56,7 +56,7 @@ public enum Into {
    *         parameter.
    */
   public static MethodDeclaration d(final String methodDelclaration) {
-   azzert.that(methodDelclaration, notNullValue());
+    azzert.that(methodDelclaration, notNullValue());
     return extract.firstMethodDeclaration(Wrap.Method.intoCompilationUnit(methodDelclaration));
   }
   /**
@@ -119,7 +119,7 @@ public enum Into {
    * @return an {@link Statement} data structure representing the parameter.
    */
   public static Statement s(final String statement) {
-   azzert.that(statement, notNullValue());
+    azzert.that(statement, notNullValue());
     final ASTNode n = ast.STATEMENTS.from(statement);
     azzert.that(statement, n, notNullValue());
     azzert.that(statement, n, instanceOf(Statement.class));

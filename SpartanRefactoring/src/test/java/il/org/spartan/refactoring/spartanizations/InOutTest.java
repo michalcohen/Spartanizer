@@ -1,9 +1,5 @@
 package il.org.spartan.refactoring.spartanizations;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.azzert.*;
-import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
-
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 import il.org.spartan.refactoring.wring.*;
@@ -18,6 +14,10 @@ import org.junit.runner.*;
 import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import static il.org.spartan.Utils.*;
+import static il.org.spartan.azzert.*;
+import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 
 /**
  * Run tests in which a specific transformation is not supposed to change the
@@ -68,7 +68,7 @@ public class InOutTest {
    * instance
    */
   @Test public void go() {
-    assertNotNull(spartanization);
+    azzert.notNull(spartanization);
     go(spartanization, input, output);
   }
 

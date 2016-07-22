@@ -2,7 +2,6 @@ package il.org.spartan.refactoring.spartanizations;
 
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
-
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -47,7 +46,7 @@ public class Unchanged {
    * opportunities is zero, the input does not change.
    */
   @Test public void checkNoChange() {
-    assertNotNull("Cannot instantiate Spartanization object", spartanization);
+    azzert.notNull("Cannot instantiate Spartanization object", spartanization);
     if (input.getName().indexOf(FileTestUtils.testSuffix) <= 0)
       azzert.that(TESTUtils.rewrite(spartanization, (CompilationUnit) ast.COMPILIATION_UNIT.from(input), new Document(input())).get(), is(input()));
     else
@@ -59,7 +58,7 @@ public class Unchanged {
    * instance, and check that no opportunities are found.
    */
   @Test public void checkNoOpportunities() {
-    assertNotNull("Cannot instantiate spartanization object", spartanization);
+    azzert.notNull("Cannot instantiate spartanization object", spartanization);
     final ASTNode n = ast.COMPILIATION_UNIT.from(input);
     azzert.that(n, notNullValue());
     azzert.that(n, is(instanceOf(CompilationUnit.class)));

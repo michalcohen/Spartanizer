@@ -162,7 +162,7 @@ public enum Precedence {
           "*=", "/=", "%=", // assignment, multiplicative
           "&=", "^=", "|=", // assignment, bitwise
           "<<=", ">>=", ">>>="// assignment, shift
-          );
+      );
   final static int UNDEFINED = -1;
 
   /**

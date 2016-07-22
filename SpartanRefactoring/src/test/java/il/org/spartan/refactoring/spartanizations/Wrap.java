@@ -42,7 +42,8 @@ public enum Wrap {
   /**
    * Finds the most appropriate Wrap for a given code fragment
    *
-   * @param codeFragment JD
+   * @param codeFragment
+   *          JD
    * @return the most appropriate Wrap, or null, if the parameter could not be
    *         parsed appropriately.
    */
@@ -72,7 +73,8 @@ public enum Wrap {
    * Wrap a given code fragment, and then parse it, converting it into a
    * {@link CompilationUnit}.
    *
-   * @param codeFragment JD
+   * @param codeFragment
+   *          JD
    * @return a newly created {@link CompilationUnit} representing the parsed AST
    *         of the wrapped parameter.
    */
@@ -82,7 +84,8 @@ public enum Wrap {
   /**
    * Wrap a given code fragment, and converts it into a {@link Document}
    *
-   * @param codeFragment JD
+   * @param codeFragment
+   *          JD
    * @return a newly created {@link CompilationUnit} representing the parsed AST
    *         of the wrapped parameter.
    */
@@ -92,7 +95,8 @@ public enum Wrap {
   /**
    * Remove a wrap from around a phrase
    *
-   * @param codeFragment a wrapped program phrase
+   * @param codeFragment
+   *          a wrapped program phrase
    * @return the unwrapped phrase
    */
   public final String off(final String codeFragment) {
@@ -101,7 +105,8 @@ public enum Wrap {
   /**
    * Place a wrap around a phrase
    *
-   * @param codeFragment some program phrase
+   * @param codeFragment
+   *          some program phrase
    * @return the wrapped phrase
    */
   public final String on(final String codeFragment) {

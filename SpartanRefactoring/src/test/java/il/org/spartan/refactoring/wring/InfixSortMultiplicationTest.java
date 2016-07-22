@@ -40,27 +40,27 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
   }
   @Test public void oneMultiplication0() {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
-   azzert.that(right(e).toString(), is("f(a,b,c)"));
+    azzert.that(right(e).toString(), is("f(a,b,c)"));
     assert inner != null;
-   azzert.that(inner.scopeIncludes(e), is(true));
-   azzert.that(inner.eligible(e), is(true));
+    azzert.that(inner.scopeIncludes(e), is(true));
+    azzert.that(inner.eligible(e), is(true));
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
-   azzert.that(s, instanceOf(InfixSortMultiplication.class));
-   azzert.that(s, notNullValue());
-   azzert.that(s.scopeIncludes(e), is(true));
-   azzert.that(s.eligible(e), is(true));
+    azzert.that(s, instanceOf(InfixSortMultiplication.class));
+    azzert.that(s, notNullValue());
+    azzert.that(s.scopeIncludes(e), is(true));
+    azzert.that(s.eligible(e), is(true));
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
-   azzert.that(replacement, notNullValue());
-   azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d)"));
+    azzert.that(replacement, notNullValue());
+    azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d)"));
   }
   @Test public void parseOfToken() {
-   azzert.that(new LiteralParser(e(" 2  ").toString()).type(), is(Types.INTEGER.ordinal()));
+    azzert.that(new LiteralParser(e(" 2  ").toString()).type(), is(Types.INTEGER.ordinal()));
   }
   @Test public void scopeIncludesTrue1() {
-   azzert.that(WRING.scopeIncludes(i("2*a")), is(true));
+    azzert.that(WRING.scopeIncludes(i("2*a")), is(true));
   }
   @Test public void scopeIncludesTrue2() {
-   azzert.that(WRING.scopeIncludes(i("a*2")), is(true));
+    azzert.that(WRING.scopeIncludes(i("a*2")), is(true));
   }
 
   @RunWith(Parameterized.class)//
@@ -96,22 +96,22 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
       super(WRING);
     }
     @Override @Test public void inputIsInfixExpression() {
-     azzert.that(asInfixExpression(), notNullValue());
+      azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void isTimes() {
-     azzert.that(asInfixExpression().getOperator() == Operator.TIMES, is(true));
+      azzert.that(asInfixExpression().getOperator() == Operator.TIMES, is(true));
     }
     @Test public void sortTest() {
-     azzert.that(COMPARATOR.sort(extract.operands(flatten(asInfixExpression()))), is(false));
+      azzert.that(COMPARATOR.sort(extract.operands(flatten(asInfixExpression()))), is(false));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = extract.operands(flatten(e));
-     azzert.that(COMPARATOR.sort(operands), is(false));
-     azzert.that(COMPARATOR.sort(operands), is(false));
+      azzert.that(COMPARATOR.sort(operands), is(false));
+      azzert.that(COMPARATOR.sort(operands), is(false));
     }
     @Test public void twoOrMoreArguments() {
-     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -147,27 +147,27 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
+      azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-     azzert.that(asInfixExpression(), notNullValue());
+      azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void isTimes() {
-     azzert.that(asInfixExpression().getOperator() == Operator.TIMES, is(true));
+      azzert.that(asInfixExpression().getOperator() == Operator.TIMES, is(true));
     }
     @Test public void sortTest() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = extract.operands(flatten(e));
-     azzert.that("Before: " + extract.operands(flatten(e)) + "\n" + "After: " + operands + "\n", COMPARATOR.sort(operands), is(true));
+      azzert.that("Before: " + extract.operands(flatten(e)) + "\n" + "After: " + operands + "\n", COMPARATOR.sort(operands), is(true));
     }
     @Test public void sortTwice() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = extract.operands(flatten(e));
-     azzert.that(COMPARATOR.sort(operands), is(true));
-     azzert.that(COMPARATOR.sort(operands), is(false));
+      azzert.that(COMPARATOR.sort(operands), is(true));
+      azzert.that(COMPARATOR.sort(operands), is(false));
     }
     @Test public void twoOrMoreArguments() {
-     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+      azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

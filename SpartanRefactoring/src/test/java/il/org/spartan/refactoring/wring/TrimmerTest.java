@@ -1,13 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.azzert.*;
-import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
-import static il.org.spartan.refactoring.utils.ExpressionComparator.*;
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static il.org.spartan.refactoring.utils.Into.*;
-import static il.org.spartan.refactoring.wring.TrimmerTestsUtils.*;
-
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -16,6 +8,15 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.junit.*;
 import org.junit.runners.*;
+
+import static il.org.spartan.Utils.*;
+import static il.org.spartan.azzert.*;
+import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static il.org.spartan.refactoring.utils.ExpressionComparator.*;
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.utils.Into.*;
+import static il.org.spartan.refactoring.wring.TrimmerTestsUtils.*;
+import static org.junit.Assert.*;
 
 /**
  * * Unit tests for the nesting class Unit test for the containing class. Note
@@ -39,7 +40,7 @@ public class TrimmerTest {
     final String expected = "a + 2 < b";
     final Wrap w = Wrap.Expression;
     final String wrap = w.on(from);
-   azzert.that(w.off(wrap), is(from));
+    azzert.that(w.off(wrap), is(from));
     final Trimmer t = new Trimmer();
     final String unpeeled = TrimmerTestsUtils.apply(t, wrap);
     azzert.that("Nothing done on " + from, wrap, not(unpeeled));
@@ -378,7 +379,7 @@ public class TrimmerTest {
   }
   @Test public void chainComparison() {
     final InfixExpression e = i("a == true == b == c");
-   azzert.that(right(e).toString(), iz("c"));
+    azzert.that(right(e).toString(), iz("c"));
     trimming("a == true == b == c").to("a == b == c");
   }
   @Test public void chainCOmparisonTrueLast() {
@@ -399,8 +400,8 @@ public class TrimmerTest {
   @Test public void comaprisonWithSpecific0Legibiliy00() {
     final InfixExpression e = i("this != a");
     assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
-   azzert.that(Is.booleanLiteral(right(e)), is(false));
-   azzert.that(Is.booleanLiteral(left(e)), is(false));
+    azzert.that(Is.booleanLiteral(right(e)), is(false));
+    azzert.that(Is.booleanLiteral(left(e)), is(false));
     assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
   }
   @Test public void comaprisonWithSpecific1() {
@@ -1289,12 +1290,12 @@ public class TrimmerTest {
   }
   @Test public void isGreaterTrue() {
     final InfixExpression e = i("f(a,b,c,d,e) * f(a,b,c)");
-   azzert.that(right(e).toString(), is("f(a,b,c)"));
-   azzert.that(left(e).toString(), is("f(a,b,c,d,e)"));
+    azzert.that(right(e).toString(), is("f(a,b,c)"));
+    azzert.that(left(e).toString(), is("f(a,b,c,d,e)"));
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
-   azzert.that(s, instanceOf(InfixSortMultiplication.class));
-   azzert.that(s, notNullValue());
-   azzert.that(s.scopeIncludes(e), is(true));
+    azzert.that(s, instanceOf(InfixSortMultiplication.class));
+    azzert.that(s, notNullValue());
+    azzert.that(s.scopeIncludes(e), is(true));
     final Expression e1 = left(e);
     final Expression e2 = right(e);
     assertFalse(has.nulls(e1, e2));
@@ -1304,28 +1305,28 @@ public class TrimmerTest {
     assertTrue(ExpressionComparator.longerFirst(e));
     assertTrue(s.eligible(e));
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
-   azzert.that(replacement, notNullValue());
-   azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d,e)"));
+    azzert.that(replacement, notNullValue());
+    azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d,e)"));
   }
   @Test public void isGreaterTrueButAlmostNot() {
     final InfixExpression e = i("f(a,b,c,d) * f(a,b,c)");
-   azzert.that(right(e).toString(), is("f(a,b,c)"));
-   azzert.that(left(e).toString(), is("f(a,b,c,d)"));
+    azzert.that(right(e).toString(), is("f(a,b,c)"));
+    azzert.that(left(e).toString(), is("f(a,b,c,d)"));
     final Wring<InfixExpression> s = Toolbox.instance.find(e);
-   azzert.that(s, instanceOf(InfixSortMultiplication.class));
-   azzert.that(s, notNullValue());
-   azzert.that(s.scopeIncludes(e), is(true));
+    azzert.that(s, instanceOf(InfixSortMultiplication.class));
+    azzert.that(s, notNullValue());
+    azzert.that(s.scopeIncludes(e), is(true));
     final Expression e1 = left(e);
     final Expression e2 = right(e);
-   azzert.that(has.nulls(e1, e2), is(false));
+    azzert.that(has.nulls(e1, e2), is(false));
     final boolean tokenWiseGreater = nodesCount(e1) > nodesCount(e2) + NODES_THRESHOLD;
-   azzert.that(tokenWiseGreater, is(false));
-   azzert.that(ExpressionComparator.moreArguments(e1, e2), is(true));
-   azzert.that(ExpressionComparator.longerFirst(e), is(true));
-   azzert.that(s.eligible(e), is(true));
+    azzert.that(tokenWiseGreater, is(false));
+    azzert.that(ExpressionComparator.moreArguments(e1, e2), is(true));
+    azzert.that(ExpressionComparator.longerFirst(e), is(true));
+    azzert.that(s.eligible(e), is(true));
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
-   azzert.that(replacement, notNullValue());
-   azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d)"));
+    azzert.that(replacement, notNullValue());
+    azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d)"));
   }
   @Test public void issue06() {
     trimming("a*-b").to("-a * b");
@@ -2073,19 +2074,19 @@ public class TrimmerTest {
   @Test public void prefixToPostfixDecrement() {
     final String from = "for (int i = 0; i < 100;  i--)  i--;";
     final Statement s = s(from);
-   azzert.that(s, iz("{" + from + "}"));
-   azzert.that(s, notNullValue());
+    azzert.that(s, iz("{" + from + "}"));
+    azzert.that(s, notNullValue());
     final PostfixExpression e = extract.findFirstPostfix(s);
-   azzert.that(e, notNullValue());
-   azzert.that(e, iz("i--"));
+    azzert.that(e, notNullValue());
+    azzert.that(e, iz("i--"));
     final ASTNode parent = e.getParent();
-   azzert.that(parent, notNullValue());
-   azzert.that(parent, iz(from));
-   azzert.that(parent, is(not(instanceOf(Expression.class))));
-   azzert.that(new PostfixToPrefix().scopeIncludes(e), is(true));
-   azzert.that(new PostfixToPrefix().eligible(e), is(true));
+    azzert.that(parent, notNullValue());
+    azzert.that(parent, iz(from));
+    azzert.that(parent, is(not(instanceOf(Expression.class))));
+    azzert.that(new PostfixToPrefix().scopeIncludes(e), is(true));
+    azzert.that(new PostfixToPrefix().eligible(e), is(true));
     final Expression r = new PostfixToPrefix().replacement(e);
-   azzert.that(r, iz("--i"));
+    azzert.that(r, iz("--i"));
     trimming(from).to("for(int i=0;i<100;--i)--i;");
   }
   @Test public void prefixToPostfixIncreement() {
@@ -2558,15 +2559,15 @@ public class TrimmerTest {
   @Test public void rightSimplificatioForNulNNVariableReplacement() {
     final InfixExpression e = i("null != a");
     final Wring<InfixExpression> w = Toolbox.instance.find(e);
-   azzert.that(w, notNullValue());
-   azzert.that(w.scopeIncludes(e), is(true));
-   azzert.that(w.eligible(e), is(true));
+    azzert.that(w, notNullValue());
+    azzert.that(w.scopeIncludes(e), is(true));
+    azzert.that(w.eligible(e), is(true));
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) w).replacement(e);
-   azzert.that(replacement, notNullValue());
-   azzert.that(replacement.toString(), is("a != null"));
+    azzert.that(replacement, notNullValue());
+    azzert.that(replacement.toString(), is("a != null"));
   }
   @Test public void rightSipmlificatioForNulNNVariable() {
-   azzert.that(Toolbox.instance.find(i("null != a")), instanceOf(InfixComparisonSpecific.class));
+    azzert.that(Toolbox.instance.find(i("null != a")), instanceOf(InfixComparisonSpecific.class));
   }
   /**
    * Not passing because no resolved binding in tests
@@ -2736,9 +2737,9 @@ public class TrimmerTest {
         ""//
     );
     final VariableDeclarationFragment f = extract.firstVariableDeclarationFragment(u);
-   azzert.that(f, notNullValue());
-   azzert.that(f, iz(" res = 0"));
-   azzert.that(extract.nextStatement(f), iz(" for (int i = 0;i < s.length();++i)\n"//
+    azzert.that(f, notNullValue());
+    azzert.that(f, iz(" res = 0"));
+    azzert.that(extract.nextStatement(f), iz(" for (int i = 0;i < s.length();++i)\n"//
         + "       if (s.charAt(i) == 'a')\n"//
         + "          res += 2;\n"//
         + "        else "//
@@ -3589,14 +3590,16 @@ public class TrimmerTest {
     trimming("s.equals(/* c */\"s\")").preservesComment();
   }
   @Test public void testPeel() {
-   azzert.that(Wrap.Expression.off(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge")), is("on * notion * of * no * nothion != the * plain + kludge"));
+    azzert.that(Wrap.Expression.off(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge")), is("on * notion * of * no * nothion != the * plain + kludge"));
   }
   @Test public void twoMultiplication1() {
     trimming("f(a,b,c,d) * f()").to("f() * f(a,b,c,d)");
   }
   @Test public void twoOpportunityExample() {
-   azzert.that(TrimmerTestsUtils.countOpportunities(new Trimmer(), (CompilationUnit) ast.COMPILIATION_UNIT.from(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
-   azzert.that(TrimmerTestsUtils.countOpportunities(new Trimmer(), (CompilationUnit) ast.COMPILIATION_UNIT.from(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
+    azzert
+        .that(TrimmerTestsUtils.countOpportunities(new Trimmer(), (CompilationUnit) ast.COMPILIATION_UNIT.from(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
+    azzert
+        .that(TrimmerTestsUtils.countOpportunities(new Trimmer(), (CompilationUnit) ast.COMPILIATION_UNIT.from(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(2));
   }
   @Test public void unsafeBlockSimlify() {
     TrimmerTestsUtils.trimming("" //

@@ -29,20 +29,20 @@ public class PrefixNotPushdownTest {
 
   @Test public void notOfFalse() {
     final PrefixExpression e = p("!false");
-   azzert.that(e, is(notNullValue()));
-   azzert.that(WRING.scopeIncludes(e), is(true));
-   azzert.that(WRING.eligible(e), is(true));
-   azzert.that(asNot(e), is(notNullValue()));
+    azzert.that(e, is(notNullValue()));
+    azzert.that(WRING.scopeIncludes(e), is(true));
+    azzert.that(WRING.eligible(e), is(true));
+    azzert.that(asNot(e), is(notNullValue()));
     final Expression inner = core(e.getOperand());
-   azzert.that(inner, is(notNullValue()));
-   azzert.that(inner.toString(), is("false"));
-   azzert.that(Is.booleanLiteral(inner), is(true));
-   azzert.that(PrefixNotPushdown.perhapsNotOfLiteral(inner), is(notNullValue()));
-   azzert.that(PrefixNotPushdown.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
-   azzert.that(PrefixNotPushdown.perhapsNotOfLiteral(inner), is(notNullValue()));
-   azzert.that(PrefixNotPushdown.pushdownNot(inner), is(notNullValue()));
-   azzert.that(PrefixNotPushdown.pushdownNot(asNot(e)), is(notNullValue()));
-   azzert.that(WRING.replacement(e), is(notNullValue()));
+    azzert.that(inner, is(notNullValue()));
+    azzert.that(inner.toString(), is("false"));
+    azzert.that(Is.booleanLiteral(inner), is(true));
+    azzert.that(PrefixNotPushdown.perhapsNotOfLiteral(inner), is(notNullValue()));
+    azzert.that(PrefixNotPushdown.notOfLiteral(asBooleanLiteral(inner)), is(notNullValue()));
+    azzert.that(PrefixNotPushdown.perhapsNotOfLiteral(inner), is(notNullValue()));
+    azzert.that(PrefixNotPushdown.pushdownNot(inner), is(notNullValue()));
+    azzert.that(PrefixNotPushdown.pushdownNot(asNot(e)), is(notNullValue()));
+    azzert.that(WRING.replacement(e), is(notNullValue()));
   }
 
   @RunWith(Parameterized.class)//
@@ -119,7 +119,7 @@ public class PrefixNotPushdownTest {
       super(WRING);
     }
     @Test public void inputIsPrefixExpression() {
-     azzert.that(asPrefixExpression(), notNullValue());
+      azzert.that(asPrefixExpression(), notNullValue());
     }
   }
 }

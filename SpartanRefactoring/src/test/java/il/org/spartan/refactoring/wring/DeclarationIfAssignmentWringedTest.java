@@ -4,7 +4,7 @@ import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
-
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -62,8 +62,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   }
   @Test public void checkIf() {
     final IfStatement s = findIf();
-   azzert.that(s, notNullValue());
-   azzert.that(Is.vacuousElse(s), is(true));
+    azzert.that(s, notNullValue());
+    azzert.that(Is.vacuousElse(s), is(true));
   }
   @Test public void correctSimplifier() {
     @Nullable final VariableDeclarationFragment asMe = asMe();
@@ -76,8 +76,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final CompilationUnit u = asCompilationUnit();
     final ASTRewrite r = new Trimmer().createRewrite(u, null);
     final TextEdit e = r.rewriteAST(d, null);
-   azzert.that(e, notNullValue());
-   azzert.that(e.apply(d), is(notNullValue()));
+    azzert.that(e, notNullValue());
+    azzert.that(e.apply(d), is(notNullValue()));
   }
   @Test public void eligible() {
     final VariableDeclarationFragment s = asMe();
@@ -86,12 +86,12 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertTrue(s.toString(), inner.eligible(s));
   }
   @Test public void findsSimplifier() {
-   azzert.that(Toolbox.instance.find(asMe()), notNullValue());
+    azzert.that(Toolbox.instance.find(asMe()), notNullValue());
   }
   @Test public void hasOpportunity() {
-   azzert.that(inner.scopeIncludes(asMe()), is(true));
+    azzert.that(inner.scopeIncludes(asMe()), is(true));
     final CompilationUnit u = asCompilationUnit();
-   azzert.that(u.toString(), new Trimmer().findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
+    azzert.that(u.toString(), new Trimmer().findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
   }
   @Test public void hasSimplifier() {
     @Nullable final VariableDeclarationFragment asMe = asMe();
@@ -99,18 +99,18 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     azzert.that(asMe.toString(), Toolbox.instance.find(asMe), is(notNullValue()));
   }
   @Test public void noneligible() {
-   azzert.that(inner.nonEligible(asMe()), is(false));
+    azzert.that(inner.nonEligible(asMe()), is(false));
   }
   @Test public void peelableOutput() {
-   azzert.that(Wrap.Statement.off(Wrap.Statement.on(expected)), is(expected));
+    azzert.that(Wrap.Statement.off(Wrap.Statement.on(expected)), is(expected));
   }
   @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
-   azzert.that(new Trimmer().createRewrite(asCompilationUnit(), null), notNullValue());
+    azzert.that(new Trimmer().createRewrite(asCompilationUnit(), null), notNullValue());
   }
   @Test public void scopeIncludesAsMe() {
     @Nullable final VariableDeclarationFragment asMe = asMe();
     assert asMe != null;
-   azzert.that(asMe.toString(), inner.scopeIncludes(asMe()), is(true));
+    azzert.that(asMe.toString(), inner.scopeIncludes(asMe()), is(true));
   }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
     if (inner == null)
@@ -133,11 +133,11 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final Expression initializer = f.getInitializer();
     azzert.that(f.toString(), initializer, notNullValue());
     final IfStatement s = extract.nextIfStatement(f);
-   azzert.that(s, notNullValue());
-   azzert.that(extract.statements(elze(s)).size(), is(0));
+    azzert.that(s, notNullValue());
+    azzert.that(extract.statements(elze(s)).size(), is(0));
     final Assignment a = extract.assignment(then(s));
-   azzert.that(a, notNullValue());
-   azzert.that(same(left(a), f.getName()), is(true));
+    azzert.that(a, notNullValue());
+    azzert.that(same(left(a), f.getName()), is(true));
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
   }

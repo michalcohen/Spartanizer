@@ -35,8 +35,8 @@ import org.junit.runners.Parameterized.Parameters;
         + ""//
         );
     final IfStatement s = extract.firstIfStatement(u);
-   azzert.that(extract.statements(then(s)).size(), is(1));
-   azzert.that(extract.statements(elze(s)).size(), is(1));
+    azzert.that(extract.statements(then(s)).size(), is(1));
+    azzert.that(extract.statements(elze(s)).size(), is(1));
   }
 
   @RunWith(Parameterized.class)//

@@ -80,20 +80,20 @@ public class IfEmptyElseTest {
     @Test public void isfStatementElseIsEmpty() {
       @Nullable final IfStatement asMe = asMe();
       assert asMe != null;
-     azzert.that(extract.statements(asMe.getElseStatement()).size(), is(0));
+      azzert.that(extract.statements(asMe.getElseStatement()).size(), is(0));
     }
     @Test public void isfStatementElseNotNull() {
-     azzert.that(elze(asMe()), notNullValue());
+      azzert.that(elze(asMe()), notNullValue());
     }
     @Test public void isIfStatement() {
-     azzert.that(asMe(), notNullValue());
+      azzert.that(asMe(), notNullValue());
     }
     @Test public void myScopeIncludes() {
       final IfStatement s = asMe();
-     azzert.that(s, notNullValue());
-     azzert.that(elze(s), notNullValue());
-     azzert.that(extract.statements(elze(s)), notNullValue());
-     azzert.that(extract.statements(elze(s)).size(), is(0));
+      azzert.that(s, notNullValue());
+      azzert.that(elze(s), notNullValue());
+      azzert.that(extract.statements(elze(s)), notNullValue());
+      azzert.that(extract.statements(elze(s)).size(), is(0));
     }
   }
 }

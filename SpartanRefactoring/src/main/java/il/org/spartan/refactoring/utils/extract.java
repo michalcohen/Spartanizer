@@ -238,10 +238,10 @@ public enum extract {
     });
     return $.get();
   }
-  @SuppressWarnings("unchecked") public static List<VariableDeclarationFragment> fragments(VariableDeclarationExpression e) {
+  @SuppressWarnings("unchecked") public static List<VariableDeclarationFragment> fragments(final VariableDeclarationExpression e) {
     return e.fragments();
   }
-  @SuppressWarnings("unchecked") public static List<VariableDeclarationFragment> fragments(VariableDeclarationStatement s) {
+  @SuppressWarnings("unchecked") public static List<VariableDeclarationFragment> fragments(final VariableDeclarationStatement s) {
     return s.fragments();
   }
   /**
@@ -255,7 +255,7 @@ public enum extract {
   public static IfStatement ifStatement(final ASTNode n) {
     return asIfStatement(extract.singleStatement(n));
   }
-  @SuppressWarnings("unchecked") public static List<VariableDeclarationExpression> initializers(ForStatement s) {
+  @SuppressWarnings("unchecked") public static List<VariableDeclarationExpression> initializers(final ForStatement s) {
     return s.initializers();
   }
   /**
@@ -292,7 +292,7 @@ public enum extract {
   public static MethodInvocation methodInvocation(final ASTNode n) {
     return asMethodInvocation(extract.expressionStatement(n).getExpression());
   }
-  public static List<IExtendedModifier> modifers(VariableDeclarationFragment f) {
+  public static List<IExtendedModifier> modifers(final VariableDeclarationFragment f) {
     return modifiers((VariableDeclarationStatement) f.getParent());
   }
   /**
@@ -455,7 +455,7 @@ public enum extract {
     final List<Statement> $ = new ArrayList<>();
     return n == null || !(n instanceof Statement) ? $ : extract.statementsInto((Statement) n, $);
   }
-  @SuppressWarnings("unchecked") public static List<TagElement> tags(Javadoc j) {
+  @SuppressWarnings("unchecked") public static List<TagElement> tags(final Javadoc j) {
     return j.tags();
   }
   /**
@@ -493,7 +493,7 @@ public enum extract {
   private static Expression expression(final ReturnStatement $) {
     return $ == null ? null : $.getExpression();
   }
-  private static <T> T last(List<T> ts) {
+  private static <T> T last(final List<T> ts) {
     if (ts == null)
       return null;
     T $ = null;
@@ -501,7 +501,7 @@ public enum extract {
       $ = t;
     return $;
   }
-  @SuppressWarnings("unchecked") private static List<IExtendedModifier> modifiers(VariableDeclarationStatement s) {
+  @SuppressWarnings("unchecked") private static List<IExtendedModifier> modifiers(final VariableDeclarationStatement s) {
     return s.modifiers();
   }
   private static Statement next(final Statement s, final List<Statement> ss) {
