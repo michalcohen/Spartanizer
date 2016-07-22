@@ -4,6 +4,7 @@ import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -102,7 +103,7 @@ public class DeclarationIfAssginmentTest {
   @SuppressWarnings({ "javadoc" })//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public class Wringed extends AbstractWringTest<VariableDeclarationFragment> {
-    @SuppressWarnings("null") public Wringed() {
+    public Wringed() {
       super(WRING);
     }
     @Test public void newlineBug() throws MalformedTreeException, BadLocationException {
