@@ -1,15 +1,7 @@
 package il.org.spartan.refactoring.utils;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.idiomatic.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import il.org.spartan.*;
-
-import java.util.*;
-
-import org.eclipse.jdt.core.dom.*;
 
 /**
  * An empty <code><b>enum</b></code> for fluent programming. The name should say
@@ -42,8 +34,8 @@ public enum extract {
    * @param e
    * @return
    */
-  private static Expression expression(final ExpressionStatement e) {
-    return e == null ? null : e.getExpression();
+  private static Expression expression(final ExpressionStatement s) {
+    return s == null ? null : s.getExpression();
   }
   /**
    * Find the "core" of a given {@link Expression}, by peeling of any

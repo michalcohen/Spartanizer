@@ -1,16 +1,8 @@
 package il.org.spartan.refactoring.handlers;
 
-import static il.org.spartan.idiomatic.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.wring.*;
 import il.org.spartan.utils.*;
-
-import org.eclipse.core.commands.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
 
 /**
  * A handler for {@link Spartanizations} This handler executes all safe
@@ -47,13 +39,10 @@ public class ApplySpartanizationHandler extends BaseHandler {
     for (final Spartanization s : inner)
       try {
         s.setCompilationUnit(cu);
-<<<<<<< 049864d4443e66ee6432bec43c316ecf795415f7
         s.setSelection(t.getLength() > 0 && !t.isEmpty() ? t : null);
-        for (int i = 0; i < max_spartanization_repetitions; ++i)
-=======
-        s.setSelection(take(t).unless(t.isEmpty()));
+        for (final int i = 0; i < max_spartanization_repetitions; ++i)
+          s.setSelection(take(t).unless(t.isEmpty()));
         for (int i = 0; i < MAX_SPARTANIZATION_REPETITIONS; ++i)
->>>>>>> Convert while's to if's omitting some old stuff by Ophir
           if (!s.performRule(cu, new NullProgressMonitor()))
             break;
       } catch (final CoreException x) {
