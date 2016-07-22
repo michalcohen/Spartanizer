@@ -31,12 +31,9 @@ public class Disable {
    * @return true iff spartanization is disabled for n
    */
   public boolean check(final ASTNode n) {
-    ASTNode p = n;
-    while (p != null) {
+    for (ASTNode p = n; p != null; p = p.getParent())
       if (dns.contains(p))
         return true;
-      p = p.getParent();
-    }
     return false;
   }
 

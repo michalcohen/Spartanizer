@@ -22,10 +22,10 @@ import org.eclipse.jdt.internal.corext.dom.*;
    * @return the type in which n is placed, or null if there is none
    */
   public static ITypeBinding getClass(final ASTNode n) {
-    ASTNode p = n;
-    while (p != null && !(p instanceof TypeDeclaration))
-      p = p.getParent();
-    return p == null ? null : ((TypeDeclaration) p).resolveBinding();
+    for (ASTNode $ = n; $ != null; $ = $.getParent())
+      if ($ instanceof TypeDeclaration)
+        return ((TypeDeclaration) $).resolveBinding();
+    return null;
   }
   /**
    * Determines whether an invocation of a method is legal in a specific

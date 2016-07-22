@@ -63,11 +63,10 @@ import java.util.regex.*;
    * @return an abbreviation of the type name
    */
   public String abbreviate() {
-    String a = "";
-    final Matcher m = Pattern.compile("[A-Z]").matcher(typeName);
-    while (m.find())
-      a += m.group();
-    return a.toLowerCase();
+    final StringBuilder $ = new StringBuilder();
+    for (final Matcher m = Pattern.compile("[A-Z]").matcher(typeName); m.find();)
+      $.append(m.group());
+    return $.toString().toLowerCase();
   }
   private String toSingular(final String s) {
     return s == null ? null : s.endsWith("ies") ? s.substring(0, s.length() - 3) + "y" : s.endsWith("es") ? s.substring(0,
