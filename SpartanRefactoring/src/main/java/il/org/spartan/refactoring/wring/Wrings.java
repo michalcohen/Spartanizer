@@ -21,13 +21,24 @@ import org.eclipse.text.edits.*;
  */
 public enum Wrings {
   ;
-  static void rename(final SimpleName oldName, final SimpleName newName, final MethodDeclaration d, final ASTRewrite r,
-      final TextEditGroup g) {
-    new LocalInliner(oldName, r, g).byValue(newName)//
-        .inlineInto(Collect.usesOf(oldName).in(d).toArray(new Expression[] {}));
+  private static int positivePrefixLength(final IfStatement $) {
+    return Wrings.length($.getExpression(), then($));
   }
-  static void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute,
-      final Statement by1, final List<Statement> by2) {
+  private static int sequencerRank(final ASTNode n) {
+    switch (n.getNodeType()) {
+      default:
+        return -1;
+      case BREAK_STATEMENT:
+        return 0;
+      case CONTINUE_STATEMENT:
+        return 1;
+      case RETURN_STATEMENT:
+        return 2;
+      case THROW_STATEMENT:
+        return 3;
+    }
+  }
+  static void addAllReplacing(final List<Statement> to, final List<Statement> from, final Statement substitute, final Statement by1, final List<Statement> by2) {
     for (final Statement s : from)
       if (s != substitute)
         duplicateInto(s, to);
@@ -79,12 +90,6 @@ public enum Wrings {
       $ += n.toString().length();
     return $;
   }
-  static int size(final ASTNode... ns) {
-    int $ = 0;
-    for (final ASTNode n : ns)
-      $ += nodesCount(n);
-    return $;
-  }
   static IfStatement makeShorterIf(final IfStatement s) {
     final List<Statement> then = extract.statements(then(s));
     final List<Statement> elze = extract.statements(elze(s));
@@ -113,6 +118,10 @@ public enum Wrings {
       }
     return false;
   }
+  static void rename(final SimpleName oldName, final SimpleName newName, final MethodDeclaration d, final ASTRewrite r, final TextEditGroup g) {
+    new LocalInliner(oldName, r, g).byValue(newName)//
+    .inlineInto(Collect.usesOf(oldName).in(d).toArray(new Expression[] {}));
+  }
   static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by, final TextEditGroup g) {
     final Block parent = asBlock(what.getParent());
     final List<Statement> siblings = extract.statements(parent);
@@ -129,6 +138,12 @@ public enum Wrings {
     final int rankThen = sequencerRank(extract.lastStatement(then(s)));
     final int rankElse = sequencerRank(extract.lastStatement(elze(s)));
     return rankElse > rankThen || rankThen == rankElse && !Wrings.thenIsShorter(s);
+  }
+  static int size(final ASTNode... ns) {
+    int $ = 0;
+    for (final ASTNode n : ns)
+      $ += nodesCount(n);
+    return $;
   }
   static boolean thenIsShorter(final IfStatement s) {
     final Statement then = then(s);
@@ -151,22 +166,5 @@ public enum Wrings {
     assert n1 == n2;
     final IfStatement $ = invert(s);
     return positivePrefixLength($) >= positivePrefixLength(invert($));
-  }
-  private static int positivePrefixLength(final IfStatement $) {
-    return Wrings.length($.getExpression(), then($));
-  }
-  private static int sequencerRank(final ASTNode n) {
-    switch (n.getNodeType()) {
-      default:
-        return -1;
-      case BREAK_STATEMENT:
-        return 0;
-      case CONTINUE_STATEMENT:
-        return 1;
-      case RETURN_STATEMENT:
-        return 2;
-      case THROW_STATEMENT:
-        return 3;
-    }
   }
 }

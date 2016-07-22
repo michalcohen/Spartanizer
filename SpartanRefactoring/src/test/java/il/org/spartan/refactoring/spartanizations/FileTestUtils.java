@@ -16,24 +16,11 @@ import java.util.*;
  */
 public abstract class FileTestUtils {
   /**
-   * A String determines whereas we are at the IN or OUT side of the test See
-   * TestCases test files for reference.
-   */
-  final static String testKeyword = "<Test Result>";
-  /**
-   * Suffix for test files.
-   */
-  protected final static String testSuffix = ".test";
-  /**
-   * Folder in which all test cases are found
-   */
-  public static final File location = new File("src/test/resources");
-
-  /**
    * Instantiates a {@link Class} object if possible, otherwise generate an
    * assertion failure
    *
-   * @param c an arbitrary class object
+   * @param c
+   *          an arbitrary class object
    * @return an instance of the parameter
    */
   public static Object getInstance(final Class<?> c) {
@@ -48,6 +35,49 @@ public abstract class FileTestUtils {
     } catch (final IllegalAccessException e) {
       error("Missing public constructor (probably) in class", c, e);
     }
+    return null;
+  }
+  /**
+   * Convert a canonical name of a class into a {@link Class} object, if
+   * possible, otherwise generate an assertion failure
+   *
+   * @param name
+   *          the canonical name of some class
+   * @return the object representing this class
+   * @since 2014/05/23
+   */
+  private static Class<?> asClass(final String name) {
+    try {
+      return Class.forName(name);
+    } catch (final ClassNotFoundException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  private static File createTempFile(final TestDirection d, final File f) {
+    try {
+      return File.createTempFile(f.getName().replace(".", ""), d == TestDirection.In ? ".in" : ".out");
+    } catch (final IOException e) {
+      return null; // Failed to create temporary file
+    }
+  }
+  private static File createTemporaryRandomAccessFile(final File $, final String s) {
+    try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
+      fh.writeBytes(s);
+      if ($ != null)
+        $.deleteOnExit();
+    } catch (final IOException e) {
+      e.printStackTrace(); // Probably permissions problem
+    }
+    return $;
+  }
+  private static StringBuilder deleteTestKeyword(final StringBuilder $) {
+    if ($.indexOf(testKeyword) > 0)
+      $.delete($.indexOf(testKeyword), $.length());
+    return $;
+  }
+  private static Spartanization error(final String message, final Class<?> c, final Throwable t) {
+    System.err.println(message + " '" + c.getCanonicalName() + "' " + t.getMessage());
     return null;
   }
   /**
@@ -86,48 +116,20 @@ public abstract class FileTestUtils {
     that($, notNullValue());
     return (Spartanization) $;
   }
+
   /**
-   * Convert a canonical name of a class into a {@link Class} object, if
-   * possible, otherwise generate an assertion failure
-   *
-   * @param name the canonical name of some class
-   * @return the object representing this class
-   * @since 2014/05/23
+   * Folder in which all test cases are found
    */
-  private static Class<?> asClass(final String name) {
-    try {
-      return Class.forName(name);
-    } catch (final ClassNotFoundException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
-  private static File createTempFile(final TestDirection d, final File f) {
-    try {
-      return File.createTempFile(f.getName().replace(".", ""), d == TestDirection.In ? ".in" : ".out");
-    } catch (final IOException e) {
-      return null; // Failed to create temporary file
-    }
-  }
-  private static File createTemporaryRandomAccessFile(final File $, final String s) {
-    try (final RandomAccessFile fh = new RandomAccessFile($, "rw")) {
-      fh.writeBytes(s);
-      if ($ != null)
-        $.deleteOnExit();
-    } catch (final IOException e) {
-      e.printStackTrace(); // Probably permissions problem
-    }
-    return $;
-  }
-  private static StringBuilder deleteTestKeyword(final StringBuilder $) {
-    if ($.indexOf(testKeyword) > 0)
-      $.delete($.indexOf(testKeyword), $.length());
-    return $;
-  }
-  private static Spartanization error(final String message, final Class<?> c, final Throwable t) {
-    System.err.println(message + " '" + c.getCanonicalName() + "' " + t.getMessage());
-    return null;
-  }
+  public static final File location = new File("src/test/resources");
+  /**
+   * Suffix for test files.
+   */
+  protected final static String testSuffix = ".test";
+  /**
+   * A String determines whereas we are at the IN or OUT side of the test See
+   * TestCases test files for reference.
+   */
+  final static String testKeyword = "<Test Result>";
 
   /**
    ** An abstract class to be extended and implemented by client, while
@@ -164,7 +166,7 @@ public abstract class FileTestUtils {
    */
   public static abstract class Files extends FileTestUtils.Traverse {
     /* (non-Javadoc)
-     * 
+     *
      * @see
      * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
      * .util.List, java.io.File) */
@@ -264,8 +266,10 @@ public abstract class FileTestUtils {
     /**
      * Collect test cases from each file in {@link #location}
      *
-     * @param $ where to save the collected test cases
-     * @param f an entry in {@link #location}
+     * @param $
+     *          where to save the collected test cases
+     * @param f
+     *          an entry in {@link #location}
      */
     public abstract void go(List<Object[]> $, final File f);
   }

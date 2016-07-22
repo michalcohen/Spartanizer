@@ -15,16 +15,14 @@ import org.eclipse.text.edits.*;
  *
  * @author Ori Roth
  * @since 2016/05/08
- * @param <N> either SingleVariableDeclaration or VariableDeclarationFragment
+ * @param <N>
+ *          either SingleVariableDeclaration or VariableDeclarationFragment
  */
 public abstract class VariableChangeName<N extends VariableDeclaration> extends MultipleReplaceCurrentNode<N> {
   final static Class<?>[] _cs = { MethodDeclaration.class, TypeDeclaration.class };
   final static List<Class<?>> cs = Arrays.asList(_cs);
 
-  abstract boolean change(N n);
-  abstract SimpleName replacement(N n);
-  @Override public ASTRewrite go(final ASTRewrite r, final N n, @SuppressWarnings("unused") final TextEditGroup __,
-      final List<ASTNode> bss, final List<ASTNode> crs) {
+  @Override public ASTRewrite go(final ASTRewrite r, final N n, @SuppressWarnings("unused") final TextEditGroup __, final List<ASTNode> bss, final List<ASTNode> crs) {
     if (!change(n))
       return null;
     ASTNode p = n;
@@ -34,4 +32,6 @@ public abstract class VariableChangeName<N extends VariableDeclaration> extends 
     crs.add(replacement(n));
     return r;
   }
+  abstract boolean change(N n);
+  abstract SimpleName replacement(N n);
 }

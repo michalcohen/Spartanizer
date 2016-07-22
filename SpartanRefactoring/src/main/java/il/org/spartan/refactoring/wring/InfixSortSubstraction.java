@@ -18,10 +18,10 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-07-17
  */
 public final class InfixSortSubstraction extends Wring.InfixSortingOfCDR implements Kind.ReorganizeExpression {
-  @Override boolean sort(final List<Expression> es) {
-    return ExpressionComparator.ADDITION.sort(es);
-  }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), MINUS);
+  }
+  @Override boolean sort(final List<Expression> es) {
+    return ExpressionComparator.ADDITION.sort(es);
   }
 }

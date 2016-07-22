@@ -5,6 +5,7 @@ import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.*;
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -104,6 +105,17 @@ public class IfCommandsSequencerElseSomethingTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
         new String[] { "Simple if return", "if (a) return b; else return c;" }, //
@@ -116,6 +128,15 @@ public class IfCommandsSequencerElseSomethingTest {
         new String[] { "Simple if plus assign", "if (a) a *= b; else a *= c;" }, //
         null);
 
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
+    }
+  }
+
+  @RunWith(Parameterized.class)//
+  @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
+  public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     /**
      * Generate test cases for this parameterized class.
      *
@@ -126,32 +147,22 @@ public class IfCommandsSequencerElseSomethingTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
-  }
 
-  @RunWith(Parameterized.class)//
-  @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
-  public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = as.array(//
         new String[] { "Vanilla: sequencer in then", "if (a) return b; else a();", "if(a)return b;a();" }, //
         new String[] { "Vanilla: sequencer in else", "if (a) return b; else a();", "if(a)return b;a();" }, //
         new String[] { "Plant two statements", "if (a) return b; else a(); f();", "if(a)return b;a(); f();" }, //
         null, //
-        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
-            "if (x) {;f();;;return a;;;}\n g();" }, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();" }, //
         null, //
-        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}",
-            "  if(x){;f();;;return a;;;} g();" }, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();" }, //
         new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "" + //
             " if (x) {\n" + //
             "   f();\n" + //
             "   return a;\n" + //
             " }\n" + //
             " g();\n" + //
-            "" }, //
+        "" }, //
         null, //
         new String[] { "Complex with many junk statements", "" + //
             " if (x) {\n" + //
@@ -165,24 +176,14 @@ public class IfCommandsSequencerElseSomethingTest {
             "   }\n" + //
             " }\n" + //
             "", "" + //
-            " if (x) {\n" + //
-            "   f();\n" + //
-            "   return a;\n" + //
-            " }\n" + //
-            " g();\n" + //
-            "" }, //
+                " if (x) {\n" + //
+                "   f();\n" + //
+                "   return a;\n" + //
+                " }\n" + //
+                " g();\n" + //
+        "" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

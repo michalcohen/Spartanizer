@@ -3,6 +3,7 @@ package il.org.spartan.refactoring.spartanizations;
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.junit.Assert.*;
 import il.org.spartan.refactoring.utils.*;
 import il.org.spartan.refactoring.wring.*;
 
@@ -61,16 +62,6 @@ public class InOutTest {
     }
     assertSimilar(expected, rewrite.get());
   }
-
-  /** An object describing the required transformation */
-  @Parameter(0) public Spartanization spartanization;
-  /** The name of the specific test for this transformation */
-  @Parameter(1) public String name;
-  /** Where the input text can be found */
-  @Parameter(2) public File input;
-  /** Where the expected output can be found */
-  @Parameter(3) public File output;
-
   /**
    * Runs a parameterized test case, based on the instance variables of this
    * instance
@@ -79,4 +70,13 @@ public class InOutTest {
     assertNotNull(spartanization);
     go(spartanization, input, output);
   }
+
+  /** Where the input text can be found */
+  @Parameter(2) public File input;
+  /** The name of the specific test for this transformation */
+  @Parameter(1) public String name;
+  /** Where the expected output can be found */
+  @Parameter(3) public File output;
+  /** An object describing the required transformation */
+  @Parameter(0) public Spartanization spartanization;
 }

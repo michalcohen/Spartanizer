@@ -16,6 +16,9 @@ import org.eclipse.text.edits.*;
  * @since 2015-07-29
  */
 public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfStatement> implements Kind.Ternarize {
+  @Override String description(final IfStatement s) {
+    return "Consolidate if(" + s.getExpression() + ") ... into a single 'return'";
+  }
   @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, final TextEditGroup g) {
     if (!Is.vacuousElse(s))
       return null;
@@ -38,8 +41,5 @@ public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfS
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return Is.vacuousElse(s) && extract.returnStatement(then(s)) != null && extract.nextReturn(s) != null;
-  }
-  @Override String description(final IfStatement s) {
-    return "Consolidate if(" + s.getExpression() + ") ... into a single 'return'";
   }
 }

@@ -14,11 +14,8 @@ import org.eclipse.jdt.core.dom.PostfixExpression.Operator;
  * @since 2015-7-17
  */
 public final class PostfixToPrefix extends Wring.ReplaceCurrentNode<PostfixExpression> implements Kind.ReorganizeExpression {
-  @Override boolean scopeIncludes(@SuppressWarnings("unused") final PostfixExpression __) {
-    return true;
-  }
-  @Override PrefixExpression replacement(final PostfixExpression e) {
-    return Subject.operand(e.getOperand()).to(pre2post(e.getOperator()));
+  private static String description(final Operator o) {
+    return o == PostfixExpression.Operator.DECREMENT ? "decrement" : "increment";
   }
   private static PrefixExpression.Operator pre2post(final PostfixExpression.Operator o) {
     return o == PostfixExpression.Operator.DECREMENT ? PrefixExpression.Operator.DECREMENT : PrefixExpression.Operator.INCREMENT;
@@ -32,7 +29,10 @@ public final class PostfixToPrefix extends Wring.ReplaceCurrentNode<PostfixExpre
   @Override String description(final PostfixExpression e) {
     return "Convert post-" + description(e.getOperator()) + " of " + e.getOperand() + " to pre-" + description(e.getOperator());
   }
-  private static String description(final Operator o) {
-    return o == PostfixExpression.Operator.DECREMENT ? "decrement" : "increment";
+  @Override PrefixExpression replacement(final PostfixExpression e) {
+    return Subject.operand(e.getOperand()).to(pre2post(e.getOperator()));
+  }
+  @Override boolean scopeIncludes(@SuppressWarnings("unused") final PostfixExpression __) {
+    return true;
   }
 }

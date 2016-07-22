@@ -1,6 +1,7 @@
 package il.org.spartan.refactoring.utils;
 
 import static il.org.spartan.azzert.*;
+import static org.junit.Assert.*;
 import il.org.spartan.refactoring.spartanizations.*;
 
 import java.util.*;
@@ -21,7 +22,8 @@ public enum Into {
    * Convert a given {@link String} into an {@link Assignment}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param expression a {@link String} that represents a Java statement
+   * @param expression
+   *          a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter.
    */
   public static Assignment a(final String expression) {
@@ -31,8 +33,9 @@ public enum Into {
    * Convert a given {@link String} into an {@link ConditionalExpression}, or
    * fail the current test, if such a conversion is not possible
    *
-   * @param conditionalExpression a {@link String} that represents a
-   *          "conditional" (also known as "ternary") expression.
+   * @param conditionalExpression
+   *          a {@link String} that represents a "conditional" (also known as
+   *          "ternary") expression.
    * @return an {@link Statement} data structure representing the parameter.
    */
   public static ConditionalExpression c(final String conditionalExpression) {
@@ -47,8 +50,8 @@ public enum Into {
    * {@link CompilationUnit}, parsing it, and then extracting the first method
    * in it. possible
    *
-   * @param methodDelclaration a {@link String} that represents a Java method
-   *          declaration
+   * @param methodDelclaration
+   *          a {@link String} that represents a Java method declaration
    * @return an {@link MethodDeclaration} data structure representing the
    *         parameter.
    */
@@ -60,7 +63,8 @@ public enum Into {
    * Convert a given {@link String} into an {@link Expression}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param expression a {@link String} that represents a Java expression
+   * @param expression
+   *          a {@link String} that represents a Java expression
    * @return an {@link Expression} data structure representing the parameter.
    */
   public static Expression e(final String expression) {
@@ -71,8 +75,8 @@ public enum Into {
    * {@link Expression}, or fail the current test, if such a conversion is not
    * possible
    *
-   * @param expressions an array of {@link String}s, each representing a Java
-   *          expression
+   * @param expressions
+   *          an array of {@link String}s, each representing a Java expression
    * @return a {@link List} of {@link Expression} data structures, each
    *         representing an element of the input.
    */
@@ -86,7 +90,8 @@ public enum Into {
    * Convert a given {@link String} into an {@link InfixExpression}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param expression a {@link String} that represents a Java expression
+   * @param expression
+   *          a {@link String} that represents a Java expression
    * @return an {@link InfixExpression} data structure representing the
    *         parameter.
    */
@@ -97,7 +102,8 @@ public enum Into {
    * Convert a given {@link String} into an {@link PrefixExpression}, or fail
    * the current test, if such a conversion is not possible
    *
-   * @param expression a {@link String} that represents a Java expression
+   * @param expression
+   *          a {@link String} that represents a Java expression
    * @return a {@link PrefixExpression} data structure representing the
    *         parameter.
    */
@@ -108,7 +114,8 @@ public enum Into {
    * Convert a given {@link String} into an {@link Statement}, or fail the
    * current test, if such a conversion is not possible
    *
-   * @param statement a {@link String} that represents a Java statement
+   * @param statement
+   *          a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter.
    */
   public static Statement s(final String statement) {

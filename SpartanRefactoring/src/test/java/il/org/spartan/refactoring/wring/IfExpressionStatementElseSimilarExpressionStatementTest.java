@@ -33,6 +33,17 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
         new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
@@ -46,16 +57,6 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
         new String[] { "Simple if plus assign", "if (a) a *= b; else a *= c;", }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -65,14 +66,6 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
-    private static String[][] cases = as.array(//
-        new String[] { "Vanilla", "if (a) f(b); else f(c);", "f(a ? b: c);" }, //
-        new String[] { "Method call", "if (a) x.f(b); else x.f(c);", "x.f(a ? b: c);" }, //
-        new String[] { "Distinct receiver", "if (a) y.f(b); else x.f(b);", "(a ?y :x).f(b);" }, //
-        new String[] { "Distinct receiver no arguments", "if (a) y.f(); else x.f();", "(a ?y :x).f();" }, //
-        new String[] { "Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f(a,b,c);" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -83,6 +76,15 @@ public class IfExpressionStatementElseSimilarExpressionStatementTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(//
+        new String[] { "Vanilla", "if (a) f(b); else f(c);", "f(a ? b: c);" }, //
+        new String[] { "Method call", "if (a) x.f(b); else x.f(c);", "x.f(a ? b: c);" }, //
+        new String[] { "Distinct receiver", "if (a) y.f(b); else x.f(b);", "(a ?y :x).f(b);" }, //
+        new String[] { "Distinct receiver no arguments", "if (a) y.f(); else x.f();", "(a ?y :x).f();" }, //
+        new String[] { "Distinct receiver two arguments", "if (a) y.f(a,b,c); else x.f(a,b,c);", "(a ?y :x).f(a,b,c);" }, //
+        null);
+
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

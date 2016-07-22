@@ -4,6 +4,7 @@ import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -54,6 +55,26 @@ public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixEx
 
   @RunWith(Parameterized.class)//
   public static class WringedInput extends AbstractWringTest.WringedExpression.Infix {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+    static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
+      try {
+        s.createRewrite(u, null).rewriteAST(d, null).apply(d);
+        return d;
+      } catch (MalformedTreeException | IllegalArgumentException | BadLocationException e) {
+        e.printStackTrace();
+        return null;
+      }
+    }
+
     static String[][] cases = as.array(//
         new String[] { "", "a == b == c == true", "a == b == c" }, //
         new String[] { "", "a == true", "a" }, //
@@ -78,25 +99,6 @@ public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixEx
         new String[] { "", "true != true", "false" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
-    static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
-      try {
-        s.createRewrite(u, null).rewriteAST(d, null).apply(d);
-        return d;
-      } catch (MalformedTreeException | IllegalArgumentException | BadLocationException e) {
-        e.printStackTrace();
-        return null;
-      }
-    }
     public WringedInput() {
       super(WRING);
     }

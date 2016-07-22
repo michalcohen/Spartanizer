@@ -15,31 +15,39 @@ import org.eclipse.jdt.annotation.*;
  * @since 2013/07/01
  */
 public class Spartanizations {
-  static Spartanization[] all = { //
-  new Trimmer(), //
-  // new ForwardDeclaration(), //
-  // new InlineSingleUse(), //
-  };
-  private static final Map<String, Spartanization> map = new HashMap<String, Spartanization>() {
-    private static final long serialVersionUID = -8921699276699040030L;
-    {
-      for (final Spartanization s : all)
-        put(s.getClass().getSimpleName(), s);
-    }
-  };
-  private final Spartanization value;
-
-  private Spartanizations(final Spartanization value) {
-    this.value = value;
-  }
   /**
-   * @return Spartanization class rule instance
+   * @return all the registered spartanization refactoring objects
    */
-  public Spartanization value() {
-    return value;
+  public static Iterable<Spartanization> all() {
+    return map.values();
   }
   /**
-   * @param c Spartanization rule
+   * @return Iteration over all Spartanization class instances
+   */
+  public static Iterable<Spartanization> allAvailableSpartanizations() {
+    return () -> new Iterator<Spartanization>() {
+      @Override public boolean hasNext() {
+        return next < all.length;
+      }
+      @Override public Spartanization next() {
+        return all[next++];
+      }
+      @Override public final void remove() {
+        throw new IllegalArgumentException();
+      }
+
+      int next = 0;
+    };
+  }
+  /**
+   * @return all the registered spartanization refactoring objects names
+   */
+  public static Set<String> allRulesNames() {
+    return map.keySet();
+  }
+  /**
+   * @param c
+   *          Spartanization rule
    * @return Spartanization class rule instance
    */
   @SuppressWarnings("unchecked")//
@@ -50,22 +58,13 @@ public class Spartanizations {
     return null;
   }
   /**
-   * @return Iteration over all Spartanization class instances
+   * @param name
+   *          the name of the spartanization
+   * @return an instance of the spartanization
    */
-  public static Iterable<Spartanization> allAvailableSpartanizations() {
-    return () -> new Iterator<Spartanization>() {
-      int next = 0;
-
-      @Override public boolean hasNext() {
-        return next < all.length;
-      }
-      @Override public Spartanization next() {
-        return all[next++];
-      }
-      @Override public final void remove() {
-        throw new IllegalArgumentException();
-      }
-    };
+  public static Spartanization get(final String name) {
+    assert name != null;
+    return map.get(name);
   }
   /**
    * Resets the enumeration with the current values from the preferences file.
@@ -77,24 +76,29 @@ public class Spartanizations {
     for (final Spartanization s : all)
       map.put(s.getClass().getSimpleName(), s);
   }
-  /**
-   * @param name the name of the spartanization
-   * @return an instance of the spartanization
-   */
-  public static Spartanization get(final String name) {
-    assert name != null;
-    return map.get(name);
+
+  private static final Map<String, Spartanization> map = new HashMap<String, Spartanization>() {
+    private static final long serialVersionUID = -8921699276699040030L;
+    {
+      for (final Spartanization s : all)
+        put(s.getClass().getSimpleName(), s);
+    }
+  };
+  static Spartanization[] all = { //
+    new Trimmer(), //
+    // new ForwardDeclaration(), //
+    // new InlineSingleUse(), //
+  };
+
+  private Spartanizations(final Spartanization value) {
+    this.value = value;
   }
   /**
-   * @return all the registered spartanization refactoring objects
+   * @return Spartanization class rule instance
    */
-  public static Iterable<Spartanization> all() {
-    return map.values();
+  public Spartanization value() {
+    return value;
   }
-  /**
-   * @return all the registered spartanization refactoring objects names
-   */
-  public static Set<String> allRulesNames() {
-    return map.keySet();
-  }
+
+  private final Spartanization value;
 }

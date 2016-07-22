@@ -1,8 +1,8 @@
 package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.Utils.*;
-import static il.org.spartan.refactoring.utils.extract.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.utils.extract.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.org.spartan.refactoring.preferences.*;
 import il.org.spartan.refactoring.utils.*;
@@ -73,8 +73,7 @@ public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpre
           if (e != first && negationLevel(e) > 0)
             r.replace(e, new Plant(duplicate(peelNegation(e))).into(e.getParent()), g);
         if (first != null)
-          r.replace(first,
-              new Plant(Subject.operand(peelNegation(first)).to(PrefixExpression.Operator.MINUS)).into(first.getParent()), g);
+          r.replace(first, new Plant(Subject.operand(peelNegation(first)).to(PrefixExpression.Operator.MINUS)).into(first.getParent()), g);
       }
     };
   }

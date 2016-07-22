@@ -13,10 +13,6 @@ import java.util.*;
  * @since 2015-09-23
  */
 public class LongestCommonSubsequence {
-  private final char[] as;
-  private final char[] bs;
-  private final int[][] length;
-
   public LongestCommonSubsequence(final String a, final String b) {
     as = compressSpaces(a).toCharArray();
     bs = compressSpaces(b).toCharArray();
@@ -55,4 +51,8 @@ public class LongestCommonSubsequence {
   private int threeWayDynamicProgramingStep(final int i, final int j) {
     return max(length(i - 1, j), length(i, j - 1), length(i - 1, j - 1) + ast.bit(as[i] == bs[j]));
   }
+
+  private final char[] as;
+  private final char[] bs;
+  private final int[][] length;
 }

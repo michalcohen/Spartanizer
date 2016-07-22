@@ -9,8 +9,6 @@ import org.eclipse.jdt.core.dom.*;
 import org.junit.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class SearchTest {
-  private final SimpleName n = asSimpleName(e("n"));
-
   @Test public void awful() {
     that(searcher().in(d("Object n() {\n" + //
         "    class n {\n" + //
@@ -381,4 +379,6 @@ import org.junit.*;
   private Collector searcher() {
     return Collect.usesOf(n);
   }
+
+  private final SimpleName n = asSimpleName(e("n"));
 }

@@ -17,9 +17,6 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-07-17
  */
 public final class InfixSortAddition extends Wring.InfixSorting implements Kind.ReorganizeExpression {
-  @Override boolean sort(final List<Expression> es) {
-    return ExpressionComparator.ADDITION.sort(es);
-  }
   @Override boolean eligible(final InfixExpression e) {
     return Is.notString(e) && super.eligible(e);
   }
@@ -31,5 +28,8 @@ public final class InfixSortAddition extends Wring.InfixSorting implements Kind.
   }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return e.getOperator() == PLUS;
+  }
+  @Override boolean sort(final List<Expression> es) {
+    return ExpressionComparator.ADDITION.sort(es);
   }
 }

@@ -19,14 +19,13 @@ public class AbstractTestBase {
     }
     return $;
   }
-
-  /** The name of the specific test for this transformation */
-  @Parameter(0) public String name;
-  /** Where the input text can be found */
-  @Parameter(1) public String input;
-
   @Test public void peelableinput() {
     if (input != null)
       that(Wrap.Statement.off(Wrap.Statement.on(input)), is(input));
   }
+
+  /** Where the input text can be found */
+  @Parameter(1) public String input;
+  /** The name of the specific test for this transformation */
+  @Parameter(0) public String name;
 }

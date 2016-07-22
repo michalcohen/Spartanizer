@@ -14,6 +14,9 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-07-29
  */
 public final class IfThrowFooElseThrowBar extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.Ternarize {
+  @Override String description(final IfStatement s) {
+    return "Consolidate if(" + s.getExpression() + ") ... into a 'throw' statement of a conditional expression";
+  }
   @Override Statement replacement(final IfStatement s) {
     final Expression condition = s.getExpression();
     final Expression then = extract.throwExpression(then(s));
@@ -22,8 +25,5 @@ public final class IfThrowFooElseThrowBar extends Wring.ReplaceCurrentNode<IfSta
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && extract.throwExpression(then(s)) != null && extract.throwExpression(elze(s)) != null;
-  }
-  @Override String description(final IfStatement s) {
-    return "Consolidate if(" + s.getExpression() + ") ... into a 'throw' statement of a conditional expression";
   }
 }

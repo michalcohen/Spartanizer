@@ -35,6 +35,18 @@ public class IsTest {
   @Test public void canMakeExpression() {
     e("2+2");
   }
+  @Test public void deterministicArray1() {
+    that(Is.deterministic(e("new a[3]")), is(false));
+  }
+  @Test public void deterministicArray2() {
+    that(Is.deterministic(e("new int[] {12,13}")), is(false));
+  }
+  @Test public void deterministicArray3() {
+    that(Is.deterministic(e("new int[] {12,13, i++}")), is(false));
+  }
+  @Test public void deterministicArray4() {
+    that(Is.deterministic(e("new int[f()]")), is(false));
+  }
   @Test public void isConstantFalse() {
     that(Is.constant(e("a")), is(false));
   }
@@ -96,18 +108,6 @@ public class IsTest {
   @Test public void numericLiteralTrue() {
     that(Is.numericLiteral(e("1")), is(true));
   }
-  @Test public void deterministicArray1() {
-    that(Is.deterministic(e("new a[3]")), is(false));
-  }
-  @Test public void deterministicArray2() {
-    that(Is.deterministic(e("new int[] {12,13}")), is(false));
-  }
-  @Test public void deterministicArray3() {
-    that(Is.deterministic(e("new int[] {12,13, i++}")), is(false));
-  }
-  @Test public void deterministicArray4() {
-    that(Is.deterministic(e("new int[f()]")), is(false));
-  }
   @Test public void sideEffectArray1() {
     that(Is.sideEffectFree(e("new a[3]")), is(true));
   }
@@ -143,9 +143,6 @@ public class IsTest {
   @Test public void sideEffectFreeCastTrue() {
     that(Is.sideEffectFree(e("(A) b")), is(true));
   }
-  @Test public void sideEffectFreeNull() {
-    that(Is.sideEffectFree(e("null")), is(true));
-  }
   @Test public void sideEffectFreeExists() {
     Is.sideEffectFree(e("null"));
   }
@@ -175,6 +172,9 @@ public class IsTest {
   }
   @Test public void sideEffectFreeMinusMinusPre() {
     that(Is.sideEffectFree(e("--a")), is(false));
+  }
+  @Test public void sideEffectFreeNull() {
+    that(Is.sideEffectFree(e("null")), is(true));
   }
   @Test public void sideEffectFreeOfAssignment() {
     that(Is.sideEffectFree(e("a=b")), is(false));

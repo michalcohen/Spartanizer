@@ -19,7 +19,8 @@ public class Trimmer extends Spartanization {
   /**
    * Apply trimming repeatedly, until no more changes
    *
-   * @param from what to process
+   * @param from
+   *          what to process
    * @return the trimmed text
    */
   public static String fixedPoint(final String from) {
@@ -88,17 +89,21 @@ public class Trimmer extends Spartanization {
     return new ExclusionManager();
   }
 
-  abstract class DispatchingVisitor extends ASTVisitor {
-    final ExclusionManager exclude = makeExcluder();
+  abstract class DispatchingPostVisitor extends ASTVisitor {
+    @Override public void postVisit(final ASTNode n) {
+      postGo(n);
+    }
+    abstract <N extends ASTNode> void postGo(final N n);
 
+    final ExclusionManager exclude = makeExcluder();
+  }
+
+  abstract class DispatchingVisitor extends ASTVisitor {
     @Override public final boolean visit(final Assignment it) {
       return cautiousGo(it);
     }
     @Override public final boolean visit(final Block it) {
       return cautiousGo(it);
-    }
-    @Override public final boolean visit(final SingleVariableDeclaration d) {
-      return cautiousGo(d);
     }
     @Override public final boolean visit(final ClassInstanceCreation c) {
       return cautiousGo(c);
@@ -121,6 +126,9 @@ public class Trimmer extends Spartanization {
     @Override public final boolean visit(final MethodInvocation it) {
       return cautiousGo(it);
     }
+    @Override public final boolean visit(final NormalAnnotation it) {
+      return cautiousGo(it);
+    }
     @Override public final boolean visit(final PostfixExpression it) {
       return cautiousGo(it);
     }
@@ -130,33 +138,26 @@ public class Trimmer extends Spartanization {
     @Override public final boolean visit(final ReturnStatement it) {
       return cautiousGo(it);
     }
-    @Override public final boolean visit(final NormalAnnotation it) {
-      return cautiousGo(it);
+    @Override public final boolean visit(final SingleVariableDeclaration d) {
+      return cautiousGo(d);
     }
     @Override public final boolean visit(final SuperConstructorInvocation it) {
-      return cautiousGo(it);
-    }
-    @Override public final boolean visit(final VariableDeclarationFragment it) {
-      return cautiousGo(it);
-    }
-    @Override public final boolean visit(final TypeDeclaration it) {
       return cautiousGo(it);
     }
     @Override public final boolean visit(final SwitchStatement s) {
       return cautiousGo(s);
     }
-    abstract <N extends ASTNode> boolean go(final N n);
+    @Override public final boolean visit(final TypeDeclaration it) {
+      return cautiousGo(it);
+    }
+    @Override public final boolean visit(final VariableDeclarationFragment it) {
+      return cautiousGo(it);
+    }
     private boolean cautiousGo(final ASTNode n) {
       return !exclude.isExcluded(n) && go(n);
     }
-  }
+    abstract <N extends ASTNode> boolean go(final N n);
 
-  abstract class DispatchingPostVisitor extends ASTVisitor {
     final ExclusionManager exclude = makeExcluder();
-
-    @Override public void postVisit(final ASTNode n) {
-      postGo(n);
-    }
-    abstract <N extends ASTNode> void postGo(final N n);
   }
 }

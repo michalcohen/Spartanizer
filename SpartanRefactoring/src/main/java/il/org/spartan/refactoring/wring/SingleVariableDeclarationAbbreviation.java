@@ -15,14 +15,39 @@ import org.eclipse.text.edits.*;
  * A {@link Wring} that abbreviates the name of a method parameter that is a
  * viable candidate for abbreviation (meaning that its name is suitable for
  * renaming, and isn't the desired name). The abbreviated name is the first
- * character in the last word of the variable's name.
- * <p>
- * This wring is applied to all methods in the code, excluding constructors.
+ * character in the last word of the variable's name. <p> This wring is applied
+ * to all methods in the code, excluding constructors.
  *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015/09/24
  */
 public class SingleVariableDeclarationAbbreviation extends Wring<SingleVariableDeclaration> implements Kind.RENAME_PARAMETERS {
+  private static boolean isShort(final SingleVariableDeclaration d) {
+    final String n = Funcs.shortName(d.getType());
+    return n != null && (n + pluralVariadic(d)).equals(d.getName().getIdentifier());
+  }
+  private static boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m) {
+    if (Funcs.shortName(d.getType()) == null)
+      return false;
+    final MethodExplorer e = new MethodExplorer(m);
+    for (final SimpleName n : e.localVariables())
+      if (n.getIdentifier().equals(Funcs.shortName(d.getType())))
+        return false;
+    @SuppressWarnings("unchecked") final List<SingleVariableDeclaration> ds = m.parameters();
+    return legal(d, m, ds);
+  }
+  private static boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m, final List<SingleVariableDeclaration> ds) {
+    for (final SingleVariableDeclaration n : ds)
+      if (n.getName().getIdentifier().equals(Funcs.shortName(d.getType())))
+        return false;
+    return !m.getName().getIdentifier().equalsIgnoreCase(Funcs.shortName(d.getType()));
+  }
+  private static String pluralVariadic(final SingleVariableDeclaration d) {
+    return d.isVarargs() ? "s" : "";
+  }
+  private static boolean suitable(final SingleVariableDeclaration d) {
+    return new JavaTypeNameParser(d.getType().toString()).isGenericVariation(d.getName().getIdentifier()) && !isShort(d);
+  }
   @Override String description(final SingleVariableDeclaration d) {
     return d.getName().toString();
   }
@@ -40,8 +65,7 @@ public class SingleVariableDeclarationAbbreviation extends Wring<SingleVariableD
     final MethodRenameUnusedVariableToUnderscore.IsUsed v = new MethodRenameUnusedVariableToUnderscore.IsUsed(newName);
     if (m.getBody() != null)
       m.getBody().accept(v);
-    return v.conclusion() ? null : new Rewrite("Rename parameter " + oldName + " to " + newName + " in method "
-        + m.getName().getIdentifier(), d) {
+    return v.conclusion() ? null : new Rewrite("Rename parameter " + oldName + " to " + newName + " in method " + m.getName().getIdentifier(), d) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         rename(oldName, newSimpleName(d, newName), m, r, g);
         final Javadoc j = m.getJavadoc();
@@ -61,32 +85,5 @@ public class SingleVariableDeclarationAbbreviation extends Wring<SingleVariableD
         }
       }
     };
-  }
-  private static boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m) {
-    if (Funcs.shortName(d.getType()) == null)
-      return false;
-    final MethodExplorer e = new MethodExplorer(m);
-    for (final SimpleName n : e.localVariables())
-      if (n.getIdentifier().equals(Funcs.shortName(d.getType())))
-        return false;
-    @SuppressWarnings("unchecked") final List<SingleVariableDeclaration> ds = m.parameters();
-    return legal(d, m, ds);
-  }
-  private static boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m,
-      final List<SingleVariableDeclaration> ds) {
-    for (final SingleVariableDeclaration n : ds)
-      if (n.getName().getIdentifier().equals(Funcs.shortName(d.getType())))
-        return false;
-    return !m.getName().getIdentifier().equalsIgnoreCase(Funcs.shortName(d.getType()));
-  }
-  private static boolean suitable(final SingleVariableDeclaration d) {
-    return new JavaTypeNameParser(d.getType().toString()).isGenericVariation(d.getName().getIdentifier()) && !isShort(d);
-  }
-  private static boolean isShort(final SingleVariableDeclaration d) {
-    final String n = Funcs.shortName(d.getType());
-    return n != null && (n + pluralVariadic(d)).equals(d.getName().getIdentifier());
-  }
-  private static String pluralVariadic(final SingleVariableDeclaration d) {
-    return d.isVarargs() ? "s" : "";
   }
 }

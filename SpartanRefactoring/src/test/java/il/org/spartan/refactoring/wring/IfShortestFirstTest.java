@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized.Parameters;
         "    return false;\n" + //
         "return true;" //
         + ""//
-    );
+        );
     final IfStatement s = extract.firstIfStatement(u);
     that(extract.statements(then(s)).size(), is(1));
     that(extract.statements(elze(s)).size(), is(1));
@@ -41,6 +41,17 @@ import org.junit.runners.Parameterized.Parameters;
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         new String[] { "Return only on one side", "if (a) return b; else c;" }, //
         new String[] { "Simple if return", "if (a) return b; else return c;" }, //
@@ -52,16 +63,6 @@ import org.junit.runners.Parameterized.Parameters;
         }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -71,22 +72,33 @@ import org.junit.runners.Parameterized.Parameters;
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = "Test #{index}. ({0}) ")//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     private static String[][] cases = as.array(//
         new String[] { "Vanilla", "if (a) a(x,y,z,w); else b();", "if (!a) b(); else a(x,y,z,w);" }, //
         new String[] { //
-        "Two statemens are greater than one", //
+            "Two statemens are greater than one", //
             "if (a) {i++;j++;} else b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf);", //
-            "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} " }, //
+        "if (!a) b(asdf,as,as,asdf,adfasd,adadfadf,asfasdfasdf); else {i++;j++;} " }, //
         new String[] { //
-        "If bug simplified", //
+            "If bug simplified", //
             "" + //
-                "    if (x) {\n" + //
-                "      if (z)\n" + //
-                "        return null;\n" + //
-                "      c = f().charAt(3);\n" + //
-                "    } else if (y)\n" + //
-                "      return;\n" + //
-                "", "" + //
+            "    if (x) {\n" + //
+            "      if (z)\n" + //
+            "        return null;\n" + //
+            "      c = f().charAt(3);\n" + //
+            "    } else if (y)\n" + //
+            "      return;\n" + //
+            "", "" + //
                 "    if (!x) {\n" + //
                 "      if (y)\n" + //
                 "        return;\n" + //
@@ -98,16 +110,6 @@ import org.junit.runners.Parameterized.Parameters;
                 ""//
         }, null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = "Test #{index}. ({0}) ")//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

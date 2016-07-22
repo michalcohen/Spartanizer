@@ -17,15 +17,6 @@ import org.junit.runners.*;
 @SuppressWarnings({ "javadoc" })//
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class OccurrencesTest {
-  private final String from = "int a = 2,b; if (a+b) a =3;";
-  private final String wrap = Wrap.Statement.on(from);
-  private final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(wrap);
-  private final SimpleName a = extract.firstVariableDeclarationFragment(u).getName();
-  private final VariableDeclarationStatement ab = (VariableDeclarationStatement) a.getParent().getParent();
-  private final SimpleName b = ((VariableDeclarationFragment) ab.fragments().get(1)).getName();
-  private final IfStatement s = extract.nextIfStatement(a);
-  private final InfixExpression e = (InfixExpression) s.getExpression();
-
   @Test public void correctSettings() {
     that(ab, iz("int a=2,b;"));
     that(b.toString(), is("b"));
@@ -72,4 +63,13 @@ public class OccurrencesTest {
   @Test public void sameTypeAandLeftOfE() {
     that(a, instanceOf(left(e).getClass()));
   }
+
+  private final String from = "int a = 2,b; if (a+b) a =3;";
+  private final String wrap = Wrap.Statement.on(from);
+  private final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(wrap);
+  private final SimpleName a = extract.firstVariableDeclarationFragment(u).getName();
+  private final VariableDeclarationStatement ab = (VariableDeclarationStatement) a.getParent().getParent();
+  private final SimpleName b = ((VariableDeclarationFragment) ab.fragments().get(1)).getName();
+  private final IfStatement s = extract.nextIfStatement(a);
+  private final InfixExpression e = (InfixExpression) s.getExpression();
 }

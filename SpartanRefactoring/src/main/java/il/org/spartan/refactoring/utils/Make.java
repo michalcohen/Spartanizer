@@ -16,18 +16,19 @@ import org.eclipse.jface.text.*;
  * @since 2015-07-16
  */
 public enum Make {
+  /** Strategy for conversion into a class body */
+  CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS), //
   /** Strategy for conversion into a compilation unit */
   COMPILIATION_UNIT(ASTParser.K_COMPILATION_UNIT), //
   /** Strategy for conversion into an expression */
   EXPRESSION(ASTParser.K_EXPRESSION), //
   /** Strategy for conversion into an sequence of statements */
-  STATEMENTS(ASTParser.K_STATEMENTS), //
-  /** Strategy for conversion into a class body */
-  CLASS_BODY_DECLARATIONS(ASTParser.K_CLASS_BODY_DECLARATIONS); //
+  STATEMENTS(ASTParser.K_STATEMENTS); //
   /**
    * Converts the {@link ast} value to its corresponding {@link Make} enum value
    *
-   * @param a The {@link ast} type
+   * @param a
+   *          The {@link ast} type
    * @return the corresponding {@link Make} value to the argument
    */
   public static Make of(final ast a) {
@@ -44,16 +45,14 @@ public enum Make {
         return null;
     }
   }
-
-  private final int kind;
-
   private Make(final int kind) {
     this.kind = kind;
   }
   /**
    * Creates a no-binding parser for a given text
    *
-   * @param text what to parse
+   * @param text
+   *          what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser parser(final char[] text) {
@@ -64,7 +63,8 @@ public enum Make {
   /**
    * Creates a parser for a given {@link Document}
    *
-   * @param d JD
+   * @param d
+   *          JD
    * @return the created parser
    */
   public ASTParser parser(final Document d) {
@@ -75,7 +75,8 @@ public enum Make {
   /**
    * Creates a no-binding parser for a given compilation unit
    *
-   * @param u what to parse
+   * @param u
+   *          what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser parser(final ICompilationUnit u) {
@@ -86,7 +87,8 @@ public enum Make {
   /**
    * Creates a parser for a given {@link IFile}
    *
-   * @param f JD
+   * @param f
+   *          JD
    * @return the created parser
    */
   public ASTParser parser(final IFile f) {
@@ -95,7 +97,8 @@ public enum Make {
   /**
    * Creates a parser for a given marked text.
    *
-   * @param m JD
+   * @param m
+   *          JD
    * @return the created parser
    */
   public ASTParser parser(final IMarker m) {
@@ -104,7 +107,8 @@ public enum Make {
   /**
    * Creates a no-binding parser for a given text
    *
-   * @param text what to parse
+   * @param text
+   *          what to parse
    * @return a newly created parser for the parameter
    */
   public ASTParser parser(final String text) {
@@ -116,4 +120,6 @@ public enum Make {
     $.setResolveBindings(PluginPreferencesResources.getResolveBindingEnabled());
     return $;
   }
+
+  private final int kind;
 }

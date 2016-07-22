@@ -40,25 +40,12 @@ import org.eclipse.text.edits.*;
 // * @since 2013/01/01
 // */
 public class InlineSingleUse extends Spartanization {
+  static int numOfOccur(final Collect typeOfOccur, final SimpleName of, final ASTNode in) {
+    return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
+  }
   /** Instantiates this class */
   public InlineSingleUse() {
     super("Inline Single Use");
-  }
-  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
-    u.accept(new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment f) {
-        if (!inRange(m, f) || !(f.getParent() instanceof VariableDeclarationStatement))
-          return true;
-        final SimpleName n = f.getName();
-        final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
-        final List<SimpleName> uses = Collect.usesOf(n).in(parent.getParent());
-        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Collect.DEFINITIONS, n, parent.getParent()) == 1)) {
-          r.replace(uses.get(0), f.getInitializer(), null);
-          r.remove(parent.fragments().size() != 1 ? f : parent, null);
-        }
-        return true;
-      }
-    });
   }
   @SuppressWarnings("unused") @Override protected ASTVisitor collect(final List<Rewrite> $, final CompilationUnit u) {
     return new ASTVisitor() {
@@ -78,7 +65,20 @@ public class InlineSingleUse extends Spartanization {
       }
     };
   }
-  static int numOfOccur(final Collect typeOfOccur, final SimpleName of, final ASTNode in) {
-    return typeOfOccur == null || of == null || in == null ? -1 : typeOfOccur.of(of).in(in).size();
+  @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
+    u.accept(new ASTVisitor() {
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        if (!inRange(m, f) || !(f.getParent() instanceof VariableDeclarationStatement))
+          return true;
+        final SimpleName n = f.getName();
+        final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
+        final List<SimpleName> uses = Collect.usesOf(n).in(parent.getParent());
+        if (uses.size() == 1 && (Is._final(parent) || numOfOccur(Collect.DEFINITIONS, n, parent.getParent()) == 1)) {
+          r.replace(uses.get(0), f.getInitializer(), null);
+          r.remove(parent.fragments().size() != 1 ? f : parent, null);
+        }
+        return true;
+      }
+    });
   }
 }

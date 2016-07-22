@@ -26,9 +26,9 @@ public final class ReturnLastInMethod extends Wring<ReturnStatement> implements 
     final Block b = asBlock(s.getParent());
     return b == null || !lastIn(s, b.statements()) || !(b.getParent() instanceof MethodDeclaration) ? null //
         : new Rewrite(description(s), s) {
-          @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-            r.remove(s, g);
-          }
-        };
+      @Override public void go(final ASTRewrite r, final TextEditGroup g) {
+        r.remove(s, g);
+      }
+    };
   }
 }

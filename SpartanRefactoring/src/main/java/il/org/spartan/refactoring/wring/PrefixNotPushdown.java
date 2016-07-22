@@ -1,8 +1,8 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.refactoring.utils.extract.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
+import static il.org.spartan.refactoring.utils.extract.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.org.spartan.refactoring.preferences.*;
 import il.org.spartan.refactoring.utils.*;
@@ -21,22 +21,23 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
  */
 public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpression> implements Kind.ReorganizeExpression {
   /**
-   * @param o JD
+   * @param o
+   *          JD
    * @return the operator that produces the logical negation of the parameter
    */
   public static Operator conjugate(final Operator o) {
     return o == null ? null : o.equals(CONDITIONAL_AND) ? CONDITIONAL_OR //
         : o.equals(CONDITIONAL_OR) ? CONDITIONAL_AND //
-            : o.equals(EQUALS) ? NOT_EQUALS : o.equals(NOT_EQUALS) ? EQUALS : o.equals(LESS_EQUALS) ? GREATER
-                : o.equals(GREATER) ? LESS_EQUALS //
-                    : o.equals(GREATER_EQUALS) ? LESS //
-                        : o.equals(LESS) ? GREATER_EQUALS : null;
+            : o.equals(EQUALS) ? NOT_EQUALS : o.equals(NOT_EQUALS) ? EQUALS : o.equals(LESS_EQUALS) ? GREATER : o.equals(GREATER) ? LESS_EQUALS //
+                : o.equals(GREATER_EQUALS) ? LESS //
+                    : o.equals(LESS) ? GREATER_EQUALS : null;
   }
   /**
    * A utility function, which tries to simplify a boolean expression, whose top
    * most parameter is logical negation.
    *
-   * @param e JD
+   * @param e
+   *          JD
    * @return the simplified parameter
    */
   public static Expression simplifyNot(final PrefixExpression e) {
@@ -57,11 +58,6 @@ public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpr
   private static boolean hasOpportunity(final PrefixExpression e) {
     return e != null && hasOpportunity(core(e.getOperand()));
   }
-  static Expression notOfLiteral(final BooleanLiteral l) {
-    final BooleanLiteral $ = duplicate(l);
-    $.setBooleanValue(!l.booleanValue());
-    return $;
-  }
   private static Expression perhapsComparison(final Expression inner) {
     return perhapsComparison(asComparison(inner));
   }
@@ -80,6 +76,18 @@ public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpr
   private static Expression perhapsDoubleNegation(final PrefixExpression e) {
     return e == null ? null : tryToSimplify(core(e.getOperand()));
   }
+  private static Expression pushdownNot(final PrefixExpression e) {
+    return e == null ? null : pushdownNot(core(e.getOperand()));
+  }
+  private static Expression tryToSimplify(final Expression e) {
+    final Expression $ = pushdownNot(asNot(e));
+    return $ != null ? $ : e;
+  }
+  static Expression notOfLiteral(final BooleanLiteral l) {
+    final BooleanLiteral $ = duplicate(l);
+    $.setBooleanValue(!l.booleanValue());
+    return $;
+  }
   static Expression perhapsNotOfLiteral(final Expression e) {
     return !Is.booleanLiteral(e) ? null : notOfLiteral(asBooleanLiteral(e));
   }
@@ -89,22 +97,15 @@ public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpr
         || ($ = perhapsDoubleNegation(e)) != null//
         || ($ = perhapsDeMorgan(e)) != null//
         || ($ = perhapsComparison(e)) != null //
-    ? $ : null;
-  }
-  private static Expression pushdownNot(final PrefixExpression e) {
-    return e == null ? null : pushdownNot(core(e.getOperand()));
-  }
-  private static Expression tryToSimplify(final Expression e) {
-    final Expression $ = pushdownNot(asNot(e));
-    return $ != null ? $ : e;
+        ? $ : null;
   }
   @Override public boolean scopeIncludes(final PrefixExpression e) {
     return e != null && asNot(e) != null && hasOpportunity(asNot(e));
   }
-  @Override Expression replacement(final PrefixExpression e) {
-    return simplifyNot(e);
-  }
   @Override String description(@SuppressWarnings("unused") final PrefixExpression __) {
     return "Pushdown logical negation ('!')";
+  }
+  @Override Expression replacement(final PrefixExpression e) {
+    return simplifyNot(e);
   }
 }

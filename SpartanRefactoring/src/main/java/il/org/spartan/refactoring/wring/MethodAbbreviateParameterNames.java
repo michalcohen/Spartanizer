@@ -23,9 +23,41 @@ import org.eclipse.text.edits.*;
 /* TODO This is a previous version of the MethodParameterAbbreviate wring that
  * replaces all parameter names in a method at once. If it is found to be
  * useless in the near future, delete this class. Otherwise, remove the
- * 
+ *
  * @Deprecated annotation */
 @Deprecated public class MethodAbbreviateParameterNames extends Wring<MethodDeclaration> implements Kind.RENAME_PARAMETERS {
+  private static List<SingleVariableDeclaration> find(final List<SingleVariableDeclaration> ds) {
+    final List<SingleVariableDeclaration> $ = new ArrayList<>();
+    for (final SingleVariableDeclaration d : ds)
+      if (suitable(d))
+        $.add(d);
+    return unless($.isEmpty()).eval($);
+  }
+  private static boolean isShort(final SingleVariableDeclaration d) {
+    final String n = Funcs.shortName(d.getType());
+    return n != null && (n + pluralVariadic(d)).equals(d.getName().getIdentifier());
+  }
+  private static boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m, final Collection<SimpleName> newNames) {
+    if (Funcs.shortName(d.getType()) == null)
+      return false;
+    final MethodExplorer e = new MethodExplorer(m);
+    for (final SimpleName n : e.localVariables())
+      if (n.getIdentifier().equals(Funcs.shortName(d.getType())))
+        return false;
+    for (final SimpleName n : newNames)
+      if (n.getIdentifier().equals(Funcs.shortName(d.getType())))
+        return false;
+    for (final SingleVariableDeclaration n : expose.parameters(m))
+      if (n.getName().getIdentifier().equals(Funcs.shortName(d.getType())))
+        return false;
+    return !m.getName().getIdentifier().equalsIgnoreCase(Funcs.shortName(d.getType()));
+  }
+  static private String pluralVariadic(final SingleVariableDeclaration d) {
+    return d.isVarargs() ? "s" : "";
+  }
+  private static boolean suitable(final SingleVariableDeclaration d) {
+    return new JavaTypeNameParser(d.getType().toString()).isGenericVariation(d.getName().getIdentifier()) && !isShort(d);
+  }
   @Override String description(final MethodDeclaration d) {
     return d.getName().toString();
   }
@@ -49,37 +81,5 @@ import org.eclipse.text.edits.*;
           rename(key, renameMap.get(key), d, r, g);
       }
     };
-  }
-  private static List<SingleVariableDeclaration> find(final List<SingleVariableDeclaration> ds) {
-    final List<SingleVariableDeclaration> $ = new ArrayList<>();
-    for (final SingleVariableDeclaration d : ds)
-      if (suitable(d))
-        $.add(d);
-    return unless($.isEmpty()).eval($);
-  }
-  private static boolean legal(final SingleVariableDeclaration d, final MethodDeclaration m, final Collection<SimpleName> newNames) {
-    if (Funcs.shortName(d.getType()) == null)
-      return false;
-    final MethodExplorer e = new MethodExplorer(m);
-    for (final SimpleName n : e.localVariables())
-      if (n.getIdentifier().equals(Funcs.shortName(d.getType())))
-        return false;
-    for (final SimpleName n : newNames)
-      if (n.getIdentifier().equals(Funcs.shortName(d.getType())))
-        return false;
-    for (final SingleVariableDeclaration n : expose.parameters(m))
-      if (n.getName().getIdentifier().equals(Funcs.shortName(d.getType())))
-        return false;
-    return !m.getName().getIdentifier().equalsIgnoreCase(Funcs.shortName(d.getType()));
-  }
-  private static boolean suitable(final SingleVariableDeclaration d) {
-    return new JavaTypeNameParser(d.getType().toString()).isGenericVariation(d.getName().getIdentifier()) && !isShort(d);
-  }
-  private static boolean isShort(final SingleVariableDeclaration d) {
-    final String n = Funcs.shortName(d.getType());
-    return n != null && (n + pluralVariadic(d)).equals(d.getName().getIdentifier());
-  }
-  static private String pluralVariadic(final SingleVariableDeclaration d) {
-    return d.isVarargs() ? "s" : "";
   }
 }

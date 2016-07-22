@@ -13,10 +13,10 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-08-15
  */
 public final class IfShortestFirst extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.ReorganizeExpression {
-  @Override Statement replacement(final IfStatement s) {
-    return Wrings.thenIsShorter(s) ? null : invert(s);
-  }
   @Override String description(final IfStatement s) {
     return "Invert logical conditiona and swap branches of if(" + s.getExpression() + ") ... to make the shortest branch first";
+  }
+  @Override Statement replacement(final IfStatement s) {
+    return Wrings.thenIsShorter(s) ? null : invert(s);
   }
 }

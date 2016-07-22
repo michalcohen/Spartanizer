@@ -2,6 +2,7 @@ package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -48,6 +49,17 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         new String[] { "Another distinct assignment", "if (a) a /= b; else a %= c;" }, //
         new String[] { "Literal vs. Literal", "if (a) return b; else c;" }, //
@@ -93,6 +105,15 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
             "" }, //
         null);
 
+    /** Instantiates the enclosing class ({@link OutOfScope}) */
+    public OutOfScope() {
+      super(WRING);
+    }
+  }
+
+  @RunWith(Parameterized.class)//
+  @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
+  public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     /**
      * Generate test cases for this parameterized class.
      *
@@ -103,17 +124,9 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
-    /** Instantiates the enclosing class ({@link OutOfScope}) */
-    public OutOfScope() {
-      super(WRING);
-    }
-  }
 
-  @RunWith(Parameterized.class)//
-  @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
-  public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
     private static String[][] cases = new String[][] { //
-        new String[] { "Return expression", "if (a) return a; if (b) return a;", "if (a || b) return a;" }, //
+    new String[] { "Return expression", "if (a) return a; if (b) return a;", "if (a || b) return a;" }, //
         new String[] { "Return empty", "if (a) return; if (b) return;", "if (a || b) return;" }, //
         new String[] { "Break expression", "if (a) break a; if (b) break a;", "if (a || b) break a;" }, //
         new String[] { "Break empty", "if (a) break; if (b) break;", "if (a || b) break;" }, //
@@ -124,21 +137,10 @@ public class IfCommandsSequencerIfSameCommandsSequencerTest {
         new String[] { "Parenthesis where necesary", "if (a=b) return a; if (b=a) return a;", "if ((a=b) || (b =a)) return a;" }, //
         new String[] { "No parenthesis for == ", "if (a==b) return a; if (b==a) return a;", "if (a==b || b ==a) return a;" }, //
         new String[] { "No parenthesis for  && and ||", "if (a&&b) return a; if (b||a) return a;", "if (a&&b || b ||a) return a;" }, //
-        new String[] { "No parenthesis for OR", "if (a||b||c) return a; if (a||b||c||d) return a;",
-            "if (a||b||c||a||b||c||d) return a;" }, //
+        new String[] { "No parenthesis for OR", "if (a||b||c) return a; if (a||b||c||d) return a;", "if (a||b||c||a||b||c||d) return a;" }, //
         new String[] { "Two statements", "if (a) { f(); return a; } if (b) {f(); return a;}", "if (a || b) {f(); return a;}" }, //
         null };
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

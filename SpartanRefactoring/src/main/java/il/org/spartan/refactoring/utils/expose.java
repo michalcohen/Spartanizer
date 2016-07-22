@@ -15,20 +15,10 @@ import org.eclipse.jdt.core.dom.*;
 public enum expose {
   ;
   /**
-   * Expose the list of parameters in a {@link MethodDeclaration}
-   *
-   * @param ¢ JD
-   *
-   * @return result of method {@link MethodDeclaration#parameters} downcasted to
-   *         its correct type
-   */
-  @SuppressWarnings("unchecked") public static List<SingleVariableDeclaration> parameters(final MethodDeclaration ¢) {
-    return ¢.parameters();
-  }
-  /**
    * Expose the list of arguments in a {@link ClassInstanceCreation}
    *
-   * @param c JD
+   * @param c
+   *          JD
    * @return a reference to the list of arguments in the argument
    */
   public static List<Expression> arguments(final ClassInstanceCreation c) {
@@ -37,7 +27,8 @@ public enum expose {
   /**
    * Expose the list of arguments in a {@link MethodInvocation}
    *
-   * @param i JD
+   * @param i
+   *          JD
    * @return a reference to the list of arguments in the argument
    */
   public static List<Expression> arguments(final MethodInvocation i) {
@@ -46,7 +37,8 @@ public enum expose {
   /**
    * Expose the list of arguments in a {@link SuperMethodInvocation}
    *
-   * @param i JD
+   * @param i
+   *          JD
    * @return a reference to the list of arguments in the argument
    */
   public static List<Expression> arguments(final SuperMethodInvocation i) {
@@ -55,7 +47,8 @@ public enum expose {
   /**
    * Expose the list of extended operands in an {@link InfixExpression}
    *
-   * @param e JD
+   * @param e
+   *          JD
    * @return a reference to the list of extended operands contained in the
    *         parameter
    */
@@ -66,7 +59,8 @@ public enum expose {
   /**
    * Expose the list of fragments in a {@link FieldDeclaration}
    *
-   * @param d JD
+   * @param d
+   *          JD
    * @return a reference to the list of fragments in the argument
    */
   public static List<VariableDeclarationFragment> fragments(final FieldDeclaration d) {
@@ -75,7 +69,8 @@ public enum expose {
   /**
    * Expose the list of fragments in a {@link VariableDeclarationExpression}
    *
-   * @param e JD
+   * @param e
+   *          JD
    * @return a reference to the list of fragments in the argument
    */
   public static List<VariableDeclarationFragment> fragments(final VariableDeclarationExpression e) {
@@ -84,16 +79,40 @@ public enum expose {
   /**
    * Expose the list of fragments in a {@link VariableDeclarationStatement}
    *
-   * @param s JD
+   * @param s
+   *          JD
    * @return a reference to the list of fragments in the argument
    */
   public static List<VariableDeclarationFragment> fragments(final VariableDeclarationStatement s) {
     return ast.fragments(s.fragments());
   }
   /**
+   * Expose the list of parameters in a {@link MethodDeclaration}
+   *
+   * @param ¢
+   *          JD
+   *
+   * @return result of method {@link MethodDeclaration#parameters} downcasted to
+   *         its correct type
+   */
+  @SuppressWarnings("unchecked") public static List<SingleVariableDeclaration> parameters(final MethodDeclaration ¢) {
+    return ¢.parameters();
+  }
+  /**
+   * Expose the list of statements contained in a {@link Block}
+   *
+   * @param b
+   *          JD
+   * @return a reference to the list of statements contained in the argument
+   */
+  public static List<Statement> statements(final Block b) {
+    return ast.statements(b.statements());
+  }
+  /**
    * Expose the list of initializers contained in a {@link ForStatement}
    *
-   * @param s JD
+   * @param s
+   *          JD
    * @return a reference to the list of initializers contained in the argument
    */
   @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> initializers(final ForStatement s) {
@@ -102,19 +121,11 @@ public enum expose {
   /**
    * Expose the list of resources contained in a {@link TryStatement}
    *
-   * @param s JD
+   * @param s
+   *          JD
    * @return a reference to the list of resources contained in the argument
    */
   @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> resources(final TryStatement s) {
     return s.resources();
-  }
-  /**
-   * Expose the list of statements contained in a {@link Block}
-   *
-   * @param b JD
-   * @return a reference to the list of statements contained in the argument
-   */
-  public static List<Statement> statements(final Block b) {
-    return ast.statements(b.statements());
   }
 }

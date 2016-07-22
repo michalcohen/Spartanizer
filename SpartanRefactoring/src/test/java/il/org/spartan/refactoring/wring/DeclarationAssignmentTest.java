@@ -29,11 +29,6 @@ public class DeclarationAssignmentTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
-    static String[][] cases = as.array(//
-        new String[] { "Wrong assignnet", "int a = 0; if (x)  a+= 5" }, //
-        new String[] { "Wrong assignnet", "int a = 0; if (a)  a= 5;" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -44,6 +39,12 @@ public class DeclarationAssignmentTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Wrong assignnet", "int a = 0; if (x)  a+= 5" }, //
+        new String[] { "Wrong assignnet", "int a = 0; if (a)  a= 5;" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -53,10 +54,6 @@ public class DeclarationAssignmentTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.Wringed.WringedVariableDeclarationFragmentAndSurrounding {
-    private static String[][] cases = as.array(//
-        new String[] { "Vanilla", "int a; a =3;", "int a=3;" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -67,6 +64,11 @@ public class DeclarationAssignmentTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(//
+        new String[] { "Vanilla", "int a; a =3;", "int a=3;" }, //
+        null);
+
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

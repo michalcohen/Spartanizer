@@ -9,9 +9,12 @@ import il.org.spartan.refactoring.utils.Subject.Pair;
 import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 import org.junit.*;
 
 @SuppressWarnings({ "javadoc", "static-method" }) public class SubjectTest {
+  private static final Operator PLUS = InfixExpression.Operator.PLUS;
+
   @Test public void assignment() {
     that(Subject.pair(e("a"), e("b")).to(Assignment.Operator.ASSIGN), iz("a=b"));
     that(Subject.pair(e("a"), e("b")).to(Assignment.Operator.PLUS_ASSIGN), iz("a+=b"));
@@ -31,10 +34,10 @@ import org.junit.*;
     that(Subject.pair(e("a*B"), e("c*d")).to(InfixExpression.Operator.DIVIDE), iz("(a * B) / (c * d)"));
   }
   @Test public void extractcoreLeft() {
-    that(Subject.pair(e("((a-B))"), e("c-d")).to(InfixExpression.Operator.PLUS), iz("a - B + c - d"));
+    that(Subject.pair(e("((a-B))"), e("c-d")).to(PLUS), iz("a - B + c - d"));
   }
   @Test public void extractcoreRight() {
-    that(Subject.pair(e("a-B"), e("(c-d)")).to(InfixExpression.Operator.PLUS), iz("a - B + c - d"));
+    that(Subject.pair(e("a-B"), e("(c-d)")).to(PLUS), iz("a - B + c - d"));
   }
   @Test public void makeIfNotStatement() {
     final Statement s = s("s();");
@@ -47,8 +50,7 @@ import org.junit.*;
     that(Subject.pair(s, s("f();")).toIf(e("a")), iz("if(a)s(); else f();"));
   }
   @Test public void makeIfStatementOfNestedIf() {
-    that(Subject.pair(s("if (a) return b;"), s("if (c) return d;")).toIf(e("x")),
-        iz("if(x) {if (a) return b; } else if (c) return d;"));
+    that(Subject.pair(s("if (a) return b;"), s("if (c) return d;")).toIf(e("x")), iz("if(x) {if (a) return b; } else if (c) return d;"));
   }
   @Test public void multiplicationOfAddition() {
     that(Subject.pair(e("a+B"), e("c+d")).to(InfixExpression.Operator.TIMES), iz("(a + B) * (c + d)"));
@@ -60,7 +62,7 @@ import org.junit.*;
     that(Subject.operand(e("((a))")).to(PrefixExpression.Operator.NOT), iz("!a"));
   }
   @Test public void operandsNoParenthesisRest() {
-    that(Subject.operands(e("((a))"), e("b+c"), e("c+d")).to(InfixExpression.Operator.PLUS), iz("a+b+c+c+d"));
+    that(Subject.operands(e("((a))"), e("b+c"), e("c+d")).to(PLUS), iz("a+b+c+c+d"));
   }
   @Test public void operandsParenthesisLeft() {
     that(Subject.operands(e("((a+b))"), e("b"), e("c")).to(InfixExpression.Operator.TIMES), iz("(a+b)*b*c"));
@@ -72,7 +74,7 @@ import org.junit.*;
     that(Subject.operands(e("((a))"), e("b+c"), e("c")).to(InfixExpression.Operator.TIMES), iz("a*(b+c)*c"));
   }
   @Test public void operandsVanilla() {
-    that(Subject.operands(e("((a))"), e("b"), e("c")).to(InfixExpression.Operator.PLUS), iz("a+b+c"));
+    that(Subject.operands(e("((a))"), e("b"), e("c")).to(PLUS), iz("a+b+c"));
   }
   @Test public void postfix() {
     that(Subject.operand(e("a")).to(PostfixExpression.Operator.INCREMENT), iz("a++"));

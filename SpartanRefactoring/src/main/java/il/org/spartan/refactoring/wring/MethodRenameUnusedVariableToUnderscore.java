@@ -14,46 +14,7 @@ import org.eclipse.jdt.core.dom.*;
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
  * @since 2016-05-08
  */
-@SuppressWarnings("javadoc") public class MethodRenameUnusedVariableToUnderscore extends
-    ReplaceCurrentNodeExclude<SingleVariableDeclaration> implements Kind.RENAME_PARAMETERS {
-  // true iff renaming annotated variables only
-  final static boolean BY_ANNOTATION = true;
-
-  public static class IsUsed extends ASTVisitor {
-    boolean c = true;
-    String n;
-
-    public IsUsed(final SimpleName sn) {
-      n = sn.getIdentifier();
-    }
-    public IsUsed(final String sn) {
-      n = sn;
-    }
-    public boolean conclusion() {
-      return !c;
-    }
-    @Override public boolean visit(final SimpleName sn) {
-      if (n.equals(sn.getIdentifier()))
-        c = false;
-      return c;
-    }
-    @Override public final boolean visit(@SuppressWarnings("unused") final AnnotationTypeDeclaration __) {
-      return false;
-    }
-    @Override public final boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration __) {
-      return false;
-    }
-    @Override public final boolean visit(@SuppressWarnings("unused") final EnumDeclaration __) {
-      return false;
-    }
-    @Override public final boolean visit(@SuppressWarnings("unused") final TypeDeclaration __) {
-      return false;
-    }
-    @Override public boolean preVisit2(@SuppressWarnings("unused") final ASTNode __) {
-      return c;
-    }
-  }
-
+@SuppressWarnings("javadoc") public class MethodRenameUnusedVariableToUnderscore extends ReplaceCurrentNodeExclude<SingleVariableDeclaration> implements Kind.RENAME_PARAMETERS {
   public static boolean isUsed(final MethodDeclaration d, final SimpleName n) {
     final IsUsed u = new IsUsed(n);
     d.getBody().accept(u);
@@ -70,6 +31,16 @@ import org.eclipse.jdt.core.dom.*;
         break;
       }
     return false;
+  }
+  private static final String unusedVariableName() {
+    return "__";
+  }
+
+  // true iff renaming annotated variables only
+  final static boolean BY_ANNOTATION = true;
+
+  @Override String description(final SingleVariableDeclaration d) {
+    return "Change name of unused variable " + d.getName().getIdentifier() + " to __";
   }
   @SuppressWarnings("unchecked") @Override ASTNode replacement(final SingleVariableDeclaration n, final ExclusionManager m) {
     final ASTNode p = n.getParent();
@@ -93,10 +64,39 @@ import org.eclipse.jdt.core.dom.*;
     scalpel.duplicateInto(n.modifiers(), $.modifiers());
     return $;
   }
-  private static final String unusedVariableName() {
-    return "__";
-  }
-  @Override String description(final SingleVariableDeclaration d) {
-    return "Change name of unused variable " + d.getName().getIdentifier() + " to __";
+
+  public static class IsUsed extends ASTVisitor {
+    public IsUsed(final SimpleName sn) {
+      n = sn.getIdentifier();
+    }
+    public IsUsed(final String sn) {
+      n = sn;
+    }
+    public boolean conclusion() {
+      return !c;
+    }
+    @Override public boolean preVisit2(@SuppressWarnings("unused") final ASTNode __) {
+      return c;
+    }
+    @Override public final boolean visit(@SuppressWarnings("unused") final AnnotationTypeDeclaration __) {
+      return false;
+    }
+    @Override public final boolean visit(@SuppressWarnings("unused") final AnonymousClassDeclaration __) {
+      return false;
+    }
+    @Override public final boolean visit(@SuppressWarnings("unused") final EnumDeclaration __) {
+      return false;
+    }
+    @Override public boolean visit(final SimpleName sn) {
+      if (n.equals(sn.getIdentifier()))
+        c = false;
+      return c;
+    }
+    @Override public final boolean visit(@SuppressWarnings("unused") final TypeDeclaration __) {
+      return false;
+    }
+
+    boolean c = true;
+    String n;
   }
 }

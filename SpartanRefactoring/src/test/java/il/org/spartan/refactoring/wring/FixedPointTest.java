@@ -3,6 +3,7 @@ package il.org.spartan.refactoring.wring;
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static org.junit.Assert.*;
 import il.org.spartan.refactoring.spartanizations.*;
 
 import org.junit.*;
@@ -49,13 +50,13 @@ import org.junit.runners.*;
         "      --i;\n" + //
         "    }" + //
         "}", "" + // //
-        "   f();\n" + //
-        "   g();\n" + //
-        "    if (a) \n" + //
-        "      ++i;\n" + //
-        "    else \n" + //
-        "      --i;" //
-    );
+            "   f();\n" + //
+            "   g();\n" + //
+            "    if (a) \n" + //
+            "      ++i;\n" + //
+            "    else \n" + //
+            "      --i;" //
+        );
   }
   @Test(timeout = 2000) public void desiredSimplificationOfExample() {
     assertSimplifiesTo("on * notion * of * no * nothion < the * plain + kludge", "no*of*on*notion*nothion<kludge+the*plain");
@@ -97,9 +98,9 @@ import org.junit.runners.*;
         + " t = t.f(A).f(b) + t.f(c);   "//
         + "return (t + 3);    ", //
         ""//
-            + "return(Z2.f(A).f(b)+Z2.f(c)+3);" //
-            + "" //
-    );
+        + "return(Z2.f(A).f(b)+Z2.f(c)+3);" //
+        + "" //
+        );
   }
   @Test(timeout = 2000) public void multipleIfDeclarationAssignment() {
     assertConvertsTo(//
@@ -133,7 +134,7 @@ import org.junit.runners.*;
         "       if (s.charAt(i) == 'd')\n" + //
         "        res -= 1;\n" + //
         "  return res;\n" //
-    );
+        );
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst03a() {
     assertConvertsTo("  if ('a' == s.charAt(i))\n" + //
@@ -142,17 +143,16 @@ import org.junit.runners.*;
         "          res -= 1;\n" + //
         "", //
         "  if (s.charAt(i) == 'a')\n" + //
-            "          res += 2;\n" + //
-            "        else if (s.charAt(i) == 'd')\n" + //
-            "          res -= 1;\n" + //
-            "");
+        "          res += 2;\n" + //
+        "        else if (s.charAt(i) == 'd')\n" + //
+        "          res -= 1;\n" + //
+        "");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst09() {
     assertSimplifiesTo("s.equals(532) ? 9 * yada3(s.length()) : 6 ", "!s.equals(532)?6:9*yada3(s.length())");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst11() {
-    assertSimplifiesTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ",
-        "b==null||b.getNodeType()!=ASTNode.BLOCK?b:getBlockSingleStmnt((Block)b)");
+    assertSimplifiesTo("b != null && b.getNodeType() == ASTNode.BLOCK ? getBlockSingleStmnt((Block) b) : b ", "b==null||b.getNodeType()!=ASTNode.BLOCK?b:getBlockSingleStmnt((Block)b)");
   }
   @Test(timeout = 2000) public void shortestIfBranchFirst12() {
     assertConvertsTo("if (FF() && TT()){    foo1();foo2();}else shorterFoo();", //
@@ -195,9 +195,8 @@ import org.junit.runners.*;
   }
   @Test(timeout = 2000) public void shortestOperand08() {
     assertConvertsTo(
-        //
-        "if (bob.father.age > 42 && bob.mother.father.age > bob.age ) return true; else return false;",
-        "return bob.father.age>42&&bob.mother.father.age>bob.age;");
+    //
+        "if (bob.father.age > 42 && bob.mother.father.age > bob.age ) return true; else return false;", "return bob.father.age>42&&bob.mother.father.age>bob.age;");
   }
   @Test(timeout = 2000) public void shortestOperand26() {
     assertConvertsTo("return f(a,b,c,d) | f() | 0;} ", "return f()|f(a,b,c,d)|0;}");
@@ -210,9 +209,8 @@ import org.junit.runners.*;
   }
   @Test(timeout = 2000) public void ternarize01() {
     assertConvertsTo(
-        //
-        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;else    res = SPAM;System.out.println(res);",
-        "System.out.println((!s.equals(532)?SPAM:s+0xABBA));");
+    //
+        "String res = s;if (s.equals(532)==true)    res = s + 0xABBA;else    res = SPAM;System.out.println(res);", "System.out.println((!s.equals(532)?SPAM:s+0xABBA));");
   }
   @Test(timeout = 2000) public void ternarize02() {
     assertConvertsTo(//
@@ -225,9 +223,7 @@ import org.junit.runners.*;
         " return s.equals(532) ? 6 : 9; ");
   }
   @Test(timeout = 2000) public void ternarize04() {
-    assertConvertsTo(
-        "  int res = 0;if (s.equals(532))    res += 6;else    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;",
-        "return 0+(s.equals(532)?6:9);");
+    assertConvertsTo("  int res = 0;if (s.equals(532))    res += 6;else    res += 9;/*if (s.equals(532))    res += 6;else    res += 9;*/   return res;", "return 0+(s.equals(532)?6:9);");
   }
   @Test(timeout = 2000) public void ternarize06() {
     assertConvertsTo(//
@@ -242,16 +238,14 @@ import org.junit.runners.*;
         + "  res = s + 0xABBA;   " //
         + "System.out.println(res); " //
         + "" //
-    , "System.out.println((!s?s:s+0xABBA));" //
-    );
+        , "System.out.println((!s?s:s+0xABBA));" //
+        );
   }
   @Test(timeout = 2000) public void ternarize11() {
-    assertConvertsTo("String res = s, foo = \"bar\";if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);",
-        "System.out.println((!s.equals(532)?s:s+0xABBA));");
+    assertConvertsTo("String res = s, foo = \"bar\";if (s.equals(532)==true)    res = s + 0xABBA;System.out.println(res);", "System.out.println((!s.equals(532)?s:s+0xABBA));");
   }
   @Test(timeout = 2000) public void ternarize15() {
-    assertConvertsTo(
-        "  String res = mode, foo = \"Not in test mode\";int k;k = 1984;if (mode.equals(f())==true)    foo = test-bob;foo = \"sponge-bob\";",
+    assertConvertsTo("  String res = mode, foo = \"Not in test mode\";int k;k = 1984;if (mode.equals(f())==true)    foo = test-bob;foo = \"sponge-bob\";",
         "String res=mode,foo=\"Not in test mode\";int k=1984;if(mode.equals(f()))foo=test-bob;foo=\"sponge-bob\";");
   }
   @Test(timeout = 2000) public void ternarize17() {
@@ -271,12 +265,12 @@ import org.junit.runners.*;
   @Test(timeout = 2000) public void ternarize18() {
     assertSimplifiesTo(//
         "    final String s = X;\n" + //
-            "    final String res = s;\n" + //
-            "    final int a = 0;\n" + //
-            "    if (s.equals(res))\n" + //
-            "      System.out.println(tH3 + res);\n" + //
-            "    else\n" + //
-            "      System.out.println(h2A+ res + a + s);", //
+        "    final String res = s;\n" + //
+        "    final int a = 0;\n" + //
+        "    if (s.equals(res))\n" + //
+        "      System.out.println(tH3 + res);\n" + //
+        "    else\n" + //
+        "      System.out.println(h2A+ res + a + s);", //
         "System.out.println(X.equals(X)?tH3+X:h2A+X+0+X);");
   }
   @Test(timeout = 2000) public void ternarize23() {
@@ -311,15 +305,15 @@ import org.junit.runners.*;
         + "else "//
         + "  for(int i=0;i<17;++i) "//
         + "    S.out.l('f');"//
-    );
+        );
   }
   @Test(timeout = 2000) public void ternarize54() {
     assertConvertsTo(//
         "if (s == null)\n" + // /
-            "  return Z2;\n" + //
-            "if (!s.contains(delimiter()))\n" + //
-            "  return s;\n" + //
-            "return s.replaceAll(delimiter(), ABC + delimiter());", //
+        "  return Z2;\n" + //
+        "if (!s.contains(delimiter()))\n" + //
+        "  return s;\n" + //
+        "return s.replaceAll(delimiter(), ABC + delimiter());", //
         "return s==null?Z2:!s.contains(delimiter())?s:s.replaceAll(delimiter(),ABC+delimiter());");
   }
 }

@@ -14,32 +14,12 @@ import org.eclipse.text.edits.*;
  * @since 2015-08-28
  */
 public abstract class Rewrite extends Range {
-  /** A textual description of the action to be performed **/
-  public final String description;
-  /** The line number of the first character to be rewritten **/
-  public int lineNumber = -1;
-
-  /**
-   * Instantiates this class
-   *
-   * @param description a textual description of the changes described by this
-   *          instance
-   * @param n the node on which change is to be carried out
-   * @param ns additional nodes, defining the scope of this action.
-   */
-  public Rewrite(final String description, final ASTNode n, final ASTNode... ns) {
-    this(description, range(n, ns));
-    lineNumber = ((CompilationUnit) AncestorSearch.forClass(CompilationUnit.class).from(n)).getLineNumber(from);
-  }
-  Rewrite(final String description, final Range other) {
-    super(other);
-    this.description = description;
-  }
   /**
    * A factory function that converts a sequence of ASTNodes into a
    * {@link Range}
    *
-   * @param n arbitrary
+   * @param n
+   *          arbitrary
    * @param ns
    */
   static Range range(final ASTNode n, final ASTNode... ns) {
@@ -56,10 +36,35 @@ public abstract class Rewrite extends Range {
     return new Range(from, from + n.getLength());
   }
   /**
+   * Instantiates this class
+   *
+   * @param description
+   *          a textual description of the changes described by this instance
+   * @param n
+   *          the node on which change is to be carried out
+   * @param ns
+   *          additional nodes, defining the scope of this action.
+   */
+  public Rewrite(final String description, final ASTNode n, final ASTNode... ns) {
+    this(description, range(n, ns));
+    lineNumber = ((CompilationUnit) AncestorSearch.forClass(CompilationUnit.class).from(n)).getLineNumber(from);
+  }
+  Rewrite(final String description, final Range other) {
+    super(other);
+    this.description = description;
+  }
+  /**
    * Convert the rewrite into changes on an {@link ASTRewrite}
    *
-   * @param r where to place the changes
-   * @param g to be associated with these changes
+   * @param r
+   *          where to place the changes
+   * @param g
+   *          to be associated with these changes
    */
   public abstract void go(ASTRewrite r, TextEditGroup g);
+
+  /** A textual description of the action to be performed **/
+  public final String description;
+  /** The line number of the first character to be rewritten **/
+  public int lineNumber = -1;
 }

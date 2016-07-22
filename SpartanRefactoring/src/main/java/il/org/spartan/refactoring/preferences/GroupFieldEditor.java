@@ -12,17 +12,12 @@ import org.eclipse.swt.widgets.*;
 /**
  * A {@link FieldEditor} designed to store multiple controls within a group
  * panel widget, to be used in conjunction with an
- * {@link FieldEditorPreferencePage} instance.
- * <p>
- * <b>To use</b>
- * <ol>
- * <li>Create a new {@link GroupFieldEditor} object.
- * <li>Add {@link FieldEditor} objects using the
- * {@link GroupFieldEditor#add(FieldEditor)} method. Each {@link FieldEditor}
- * should be initialized to have the return value of
- * {@link GroupFieldEditor#getFieldEditor()} as its parent.
- * <li>Add the {@link GroupFieldEditor} to the parent as usual
- * </ol>
+ * {@link FieldEditorPreferencePage} instance. <p> <b>To use</b> <ol> <li>Create
+ * a new {@link GroupFieldEditor} object. <li>Add {@link FieldEditor} objects
+ * using the {@link GroupFieldEditor#add(FieldEditor)} method. Each
+ * {@link FieldEditor} should be initialized to have the return value of
+ * {@link GroupFieldEditor#getFieldEditor()} as its parent. <li>Add the
+ * {@link GroupFieldEditor} to the parent as usual </ol>
  *
  * @author alf (original)
  * @author Daniel Mittelman (fixed and revised)
@@ -30,25 +25,34 @@ import org.eclipse.swt.widgets.*;
  *
  */
 public class GroupFieldEditor extends FieldEditor {
-  private int numColumns = 0;
-  private final List<FieldEditor> members = new ArrayList<>();
-  private final Group group;
-  private final Composite parent;
-  private boolean initialized = false;
   private static final int GROUP_PADDING = 8;
 
   /**
    * Create a group of {@link FieldEditor} objects
    *
-   * @param title (optional) the text that will appear in the top label. For no
+   * @param title
+   *          (optional) the text that will appear in the top label. For no
    *          label, pass {@code null}
-   * @param parent the widget's parent, usually
+   * @param parent
+   *          the widget's parent, usually
    *          {@link FieldEditorPreferencePage#getFieldEditorParent()}
    */
   public GroupFieldEditor(final String title, final Composite parent) {
     this.parent = parent;
     group = new Group(parent, SWT.SHADOW_OUT);
     group.setText(title);
+  }
+  /**
+   * Adds a new {@link FieldEditor} object to the group. Controls must be added
+   * before the group is drawn to the parent.
+   *
+   * @param e
+   *          JD
+   */
+  public void add(final FieldEditor e) {
+    if (initialized)
+      throw new RuntimeException("The GroupFieldEditor has already been drawn, new fields cannot be added at this time");
+    members.add(e);
   }
   /**
    * Returns the parent for all the FieldEditors inside of this group. In this
@@ -59,16 +63,9 @@ public class GroupFieldEditor extends FieldEditor {
   public Composite getFieldEditor() {
     return group;
   }
-  /**
-   * Adds a new {@link FieldEditor} object to the group. Controls must be added
-   * before the group is drawn to the parent.
-   *
-   * @param e JD
-   */
-  public void add(final FieldEditor e) {
-    if (initialized)
-      throw new RuntimeException("The GroupFieldEditor has already been drawn, new fields cannot be added at this time");
-    members.add(e);
+  /* (non-Javadoc) Method declared on FieldEditor. */
+  @Override public int getNumberOfControls() {
+    return members.size();
   }
   /**
    * Initializes using the currently added field editors.
@@ -78,6 +75,34 @@ public class GroupFieldEditor extends FieldEditor {
       return;
     doFillIntoGrid(getFieldEditor(), numColumns);
     initialized = true;
+  }
+  @Override public boolean isValid() {
+    for (final FieldEditor editor : members)
+      if (!editor.isValid())
+        return false;
+    return true;
+  }
+  /* @see FieldEditor.setEnabled */
+  @Override public void setEnabled(final boolean enabled, final Composite parentParam) {
+    for (final FieldEditor editor : members)
+      editor.setEnabled(enabled, parentParam);
+  }
+  /* (non-Javadoc) Method declared on FieldEditor. */
+  @Override public void setFocus() {
+    if (members != null && !members.isEmpty())
+      members.iterator().next().setFocus();
+  }
+  @Override public void setPage(final DialogPage p) {
+    for (final FieldEditor editor : members)
+      editor.setPage(p);
+  }
+  @Override public void setPreferenceStore(final IPreferenceStore s) {
+    super.setPreferenceStore(s);
+    for (final FieldEditor editor : members)
+      editor.setPreferenceStore(s);
+  }
+  @Override public void store() {
+    doStore();
   }
   /* (non-Javadoc) Method declared on FieldEditor. */
   @Override protected void adjustForNumColumns(@SuppressWarnings("hiding") final int numColumns) {
@@ -121,36 +146,10 @@ public class GroupFieldEditor extends FieldEditor {
     for (final FieldEditor editor : members)
       editor.store();
   }
-  @Override public void store() {
-    doStore();
-  }
-  /* (non-Javadoc) Method declared on FieldEditor. */
-  @Override public int getNumberOfControls() {
-    return members.size();
-  }
-  /* (non-Javadoc) Method declared on FieldEditor. */
-  @Override public void setFocus() {
-    if (members != null && !members.isEmpty())
-      members.iterator().next().setFocus();
-  }
-  /* @see FieldEditor.setEnabled */
-  @Override public void setEnabled(final boolean enabled, final Composite parentParam) {
-    for (final FieldEditor editor : members)
-      editor.setEnabled(enabled, parentParam);
-  }
-  @Override public void setPreferenceStore(final IPreferenceStore s) {
-    super.setPreferenceStore(s);
-    for (final FieldEditor editor : members)
-      editor.setPreferenceStore(s);
-  }
-  @Override public void setPage(final DialogPage p) {
-    for (final FieldEditor editor : members)
-      editor.setPage(p);
-  }
-  @Override public boolean isValid() {
-    for (final FieldEditor editor : members)
-      if (!editor.isValid())
-        return false;
-    return true;
-  }
+
+  private final Group group;
+  private boolean initialized = false;
+  private final List<FieldEditor> members = new ArrayList<>();
+  private int numColumns = 0;
+  private final Composite parent;
 }

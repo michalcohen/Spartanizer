@@ -1,6 +1,7 @@
 package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.azzert.*;
+import static org.junit.Assert.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -12,9 +13,9 @@ import org.junit.*;
 
 @SuppressWarnings({ "javadoc", "static-method" })//
 public class IfEmptyThenEmptyElseTest {
-  private static final IfEmptyThenEmptyElse WRING = new IfEmptyThenEmptyElse();
   private static final Statement INPUT = Into.s("{if (b) ; else ;}");
   private static final IfStatement IF = extract.firstIfStatement(INPUT);
+  private static final IfEmptyThenEmptyElse WRING = new IfEmptyThenEmptyElse();
 
   @Test public void eligible() {
     that(WRING.eligible(IF), is(true));

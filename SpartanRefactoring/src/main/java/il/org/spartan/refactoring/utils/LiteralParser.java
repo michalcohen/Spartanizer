@@ -8,12 +8,11 @@ package il.org.spartan.refactoring.utils;
  * @since 2015-08-30
  */
 public class LiteralParser {
-  final String literal;
-
   /**
    * Instantiates this class.
    *
-   * @param literal JD
+   * @param literal
+   *          JD
    */
   public LiteralParser(final String literal) {
     this.literal = literal;
@@ -46,6 +45,8 @@ public class LiteralParser {
     }
   }
 
+  final String literal;
+
   /**
    * An <code><b>enum</b></code> to give symbolic names to the literal types.
    *
@@ -54,15 +55,15 @@ public class LiteralParser {
    * @see LiteralParser#type
    */
   public enum Types {
+    /** <code>char</code> */
+    CHARACTER, //
+    /** <code>double</code> */
+    DOUBLE, //
+    /** <code>float</code> */
+    FLOAT, //
     /** <code>int</code> */
     INTEGER, //
     /** <code>long</code> */
-    LONG, //
-    /** <code>char</code> */
-    CHARACTER, //
-    /** <code>float</code> */
-    FLOAT, //
-    /** <code>double</code> */
-    DOUBLE;
+    LONG;
   }
 }

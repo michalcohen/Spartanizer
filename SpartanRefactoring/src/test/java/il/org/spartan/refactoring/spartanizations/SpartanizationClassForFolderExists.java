@@ -32,17 +32,16 @@ public class SpartanizationClassForFolderExists extends FileTestUtils {
       }
     }.go();
   }
-
-  /**
-   * A name of a folder whose name should represent a {@link Spartanization}
-   * class
-   */
-  @Parameter(0) public String folderForClass;
-
   /**
    * Tests that {@link #folderForClass} is a valid class name
    */
   @Test public void validClassName() {
     makeSpartanizationObject(folderForClass);
   }
+
+  /**
+   * A name of a folder whose name should represent a {@link Spartanization}
+   * class
+   */
+  @Parameter(0) public String folderForClass;
 }

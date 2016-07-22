@@ -20,26 +20,81 @@ import org.eclipse.text.edits.*;
  * @since 2013/01/01 TODO: There <b>must</b> be an option to disable this
  *        warning in selected places. Consider this example:
  *
- *        <pre>
- * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
- *   final T t = ts[i];
- *   ts[i] = ts[j];
- *   ts[j] = t;
- * }
- * </pre>
+ *        <pre> public static &lt;T&gt; void swap(final T[] ts, final int i,
+ *        final int j) { final T t = ts[i]; ts[i] = ts[j]; ts[j] = t; } </pre>
  *
  *        Require comment
  *
- *        <pre>
- *  public static &lt;T&gt; void swap(final T[] ts, final int i,
+ *        <pre> public static &lt;T&gt; void swap(final T[] ts, final int i,
  *        final int j) { final T t = ts[i]; // Don't move! ts[i] = ts[j]; ts[j]
- *        = t; }
- * </pre>
+ *        = t; } </pre>
  */
 public class ForwardDeclaration extends Spartanization {
+  static int findBeginingOfDeclarationBlock(final Block b, final int declaredIdx, final int firstUseIdx) {
+    int $ = firstUseIdx - 1;
+    for (int i = firstUseIdx - 1; i > declaredIdx; --i) {
+      final List<Statement> ss = expose.statements(b);
+      if (!(ss.get(i) instanceof VariableDeclarationStatement))
+        break;
+      final VariableDeclarationStatement declarations = (VariableDeclarationStatement) ss.get(i);
+      boolean foundUsedVariable = false;
+      for (final Object item : declarations.fragments())
+        if (firstUseIdx == findFirstUse(b, ((VariableDeclarationFragment) item).getName())) {
+          $ = i - 1;
+          foundUsedVariable = true;
+        }
+      if (!foundUsedVariable)
+        break;
+    }
+    return $;
+  }
+  static int findFirstUse(final Block b, final SimpleName n) {
+    final ASTNode whereDeclared = n.getParent().getParent();
+    final List<Statement> ss = expose.statements(b);
+    for (int $ = 1 + ss.indexOf(whereDeclared); $ < ss.size(); ++$)
+      if (Collect.BOTH_LEXICAL.of(n).in((ASTNode) ss.get($)).size() > 0)
+        return $; // first use!
+    return -1; // that means unused
+  }
+  static boolean nextNodeIsAlreadyFixed(final Block b, final VariableDeclarationFragment n, final int declaredIdx) {
+    final int firstUseIdx = findFirstUse(b, n.getName());
+    if (firstUseIdx < 0)
+      return true;
+    final int begin = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
+    final ASTNode nextN = (ASTNode) b.statements().get(1 + declaredIdx);
+    final int nextDeclaredIdx = 1 + declaredIdx;
+    if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT)
+      for (final VariableDeclarationFragment f : expose.fragments((VariableDeclarationStatement) nextN))
+        if (nextDeclaredIdx + 1 == findFirstUse(b, f.getName()) && nextDeclaredIdx == begin)
+          return true;
+    return false;
+  }
   /** Instantiates this class */
   public ForwardDeclaration() {
     super("Forward declaration");
+  }
+  @SuppressWarnings("unused") @Override protected ASTVisitor collect(final List<Rewrite> $$, final CompilationUnit u) {
+    return new ASTVisitor() {
+      @Override public boolean visit(final VariableDeclarationFragment f) {
+        final ASTNode $ = f.getParent().getParent();
+        return !($ instanceof Block) || moverForward(f, (Block) $);
+      }
+      private boolean moverForward(final VariableDeclarationFragment f, final Block b) {
+        final int firstUseIdx = findFirstUse(b, f.getName());
+        if (firstUseIdx < 0)
+          return true;
+        final int declaredIdx = b.statements().indexOf(f.getParent());
+        if (nextNodeIsAlreadyFixed(b, f, declaredIdx))
+          return true;
+        if (declaredIdx < findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx))
+          $$.add(new Rewrite("", f) {
+            @Override public void go(final ASTRewrite r, final TextEditGroup g) {
+              // TODO Auto-generated method stub
+            }
+          });
+        return true;
+      }
+    };
   }
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     u.accept(new ASTVisitor() {
@@ -75,67 +130,5 @@ public class ForwardDeclaration extends Spartanization {
         r.insertAt(duplicate(n), 1 + begin, null);
       }
     });
-  }
-  static boolean nextNodeIsAlreadyFixed(final Block b, final VariableDeclarationFragment n, final int declaredIdx) {
-    final int firstUseIdx = findFirstUse(b, n.getName());
-    if (firstUseIdx < 0)
-      return true;
-    final int begin = findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx);
-    final ASTNode nextN = (ASTNode) b.statements().get(1 + declaredIdx);
-    final int nextDeclaredIdx = 1 + declaredIdx;
-    if (nextN.getNodeType() == ASTNode.VARIABLE_DECLARATION_STATEMENT)
-      for (final VariableDeclarationFragment f : expose.fragments((VariableDeclarationStatement) nextN))
-        if (nextDeclaredIdx + 1 == findFirstUse(b, f.getName()) && nextDeclaredIdx == begin)
-          return true;
-    return false;
-  }
-  @SuppressWarnings("unused") @Override protected ASTVisitor collect(final List<Rewrite> $$, final CompilationUnit u) {
-    return new ASTVisitor() {
-      @Override public boolean visit(final VariableDeclarationFragment f) {
-        final ASTNode $ = f.getParent().getParent();
-        return !($ instanceof Block) || moverForward(f, (Block) $);
-      }
-      private boolean moverForward(final VariableDeclarationFragment f, final Block b) {
-        final int firstUseIdx = findFirstUse(b, f.getName());
-        if (firstUseIdx < 0)
-          return true;
-        final int declaredIdx = b.statements().indexOf(f.getParent());
-        if (nextNodeIsAlreadyFixed(b, f, declaredIdx))
-          return true;
-        if (declaredIdx < findBeginingOfDeclarationBlock(b, declaredIdx, firstUseIdx))
-          $$.add(new Rewrite("", f) {
-            @Override public void go(final ASTRewrite r, final TextEditGroup g) {
-              // TODO Auto-generated method stub
-            }
-          });
-        return true;
-      }
-    };
-  }
-  static int findFirstUse(final Block b, final SimpleName n) {
-    final ASTNode whereDeclared = n.getParent().getParent();
-    final List<Statement> ss = expose.statements(b);
-    for (int $ = 1 + ss.indexOf(whereDeclared); $ < ss.size(); ++$)
-      if (Collect.BOTH_LEXICAL.of(n).in((ASTNode) ss.get($)).size() > 0)
-        return $; // first use!
-    return -1; // that means unused
-  }
-  static int findBeginingOfDeclarationBlock(final Block b, final int declaredIdx, final int firstUseIdx) {
-    int $ = firstUseIdx - 1;
-    for (int i = firstUseIdx - 1; i > declaredIdx; --i) {
-      final List<Statement> ss = expose.statements(b);
-      if (!(ss.get(i) instanceof VariableDeclarationStatement))
-        break;
-      final VariableDeclarationStatement declarations = (VariableDeclarationStatement) ss.get(i);
-      boolean foundUsedVariable = false;
-      for (final Object item : declarations.fragments())
-        if (firstUseIdx == findFirstUse(b, ((VariableDeclarationFragment) item).getName())) {
-          $ = i - 1;
-          foundUsedVariable = true;
-        }
-      if (!foundUsedVariable)
-        break;
-    }
-    return $;
   }
 }

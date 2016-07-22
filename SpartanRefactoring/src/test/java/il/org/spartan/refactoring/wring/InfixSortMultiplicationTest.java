@@ -29,8 +29,8 @@ import org.junit.runners.Parameterized.Parameters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 @SuppressWarnings({ "javadoc", "static-method" })//
 public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpression> {
-  static final InfixSortMultiplication WRING = new InfixSortMultiplication();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.MULTIPLICATION;
+  static final InfixSortMultiplication WRING = new InfixSortMultiplication();
 
   public InfixSortMultiplicationTest() {
     super(WRING);
@@ -65,13 +65,6 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
 
   @RunWith(Parameterized.class)//
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
-    static String[][] cases = as.array(//
-        new String[] { "Plain product of two, sorted", "2*a" }, //
-        new String[] { "Plain product of two, no order", "a*b" }, //
-        new String[] { "Plain product of three, sorted", "2*a*b" }, //
-        new String[] { "Plain product of four, sorted", "2*a*b*c" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -90,6 +83,14 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
         throw new RuntimeException(e);
       }
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Plain product of two, sorted", "2*a" }, //
+        new String[] { "Plain product of two, no order", "a*b" }, //
+        new String[] { "Plain product of three, sorted", "2*a*b" }, //
+        new String[] { "Plain product of four, sorted", "2*a*b*c" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
       super(WRING);
@@ -117,16 +118,6 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
-    private static String[][] cases = as.array(//
-        new String[] { "Constant first", "a*2", "2*a" }, //
-        new String[] { "Constant first two arguments", "a*2*b", "2*a*b" }, //
-        new String[] { "Function with fewer arguments first", "f(a,b,c)*f(a,b)*f(a)", "f(a)*f(a,b)*f(a,b,c)" }, //
-        new String[] { "Literals of distinct length", "123*12*1", "1*12*123" }, //
-        new String[] { "Sort expressions by size", "1*f(a,b,c,d) * 2*f(a,b) * 3*f()", "1*2*3*f()*f(a,b)*f(a,b,c,d)" }, //
-        new String[] { "Long alphabetical sorting", "f(t)*g(h1,h2)*y*a*2*b*x", "2*a*b*x*y*f(t)*g(h1,h2)" }, //
-        new String[] { "Plain alphabetical sorting", "f(y)*f(x)", "f(x)*f(y)" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -137,6 +128,17 @@ public class InfixSortMultiplicationTest extends AbstractWringTest<InfixExpressi
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(//
+        new String[] { "Constant first", "a*2", "2*a" }, //
+        new String[] { "Constant first two arguments", "a*2*b", "2*a*b" }, //
+        new String[] { "Function with fewer arguments first", "f(a,b,c)*f(a,b)*f(a)", "f(a)*f(a,b)*f(a,b,c)" }, //
+        new String[] { "Literals of distinct length", "123*12*1", "1*12*123" }, //
+        new String[] { "Sort expressions by size", "1*f(a,b,c,d) * 2*f(a,b) * 3*f()", "1*2*3*f()*f(a,b)*f(a,b,c,d)" }, //
+        new String[] { "Long alphabetical sorting", "f(t)*g(h1,h2)*y*a*2*b*x", "2*a*b*x*y*f(t)*g(h1,h2)" }, //
+        new String[] { "Plain alphabetical sorting", "f(y)*f(x)", "f(x)*f(y)" }, //
+        null);
+
     /**
      * Instantiates the enclosing class ({@link WringedExpression})
      */

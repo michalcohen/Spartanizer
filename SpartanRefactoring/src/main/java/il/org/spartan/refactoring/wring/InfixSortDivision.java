@@ -17,10 +17,10 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-09-05
  */
 public final class InfixSortDivision extends Wring.InfixSortingOfCDR implements Kind.ReorganizeExpression {
-  @Override boolean sort(final List<Expression> es) {
-    return ExpressionComparator.MULTIPLICATION.sort(es);
-  }
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), DIVIDE);
+  }
+  @Override boolean sort(final List<Expression> es) {
+    return ExpressionComparator.MULTIPLICATION.sort(es);
   }
 }

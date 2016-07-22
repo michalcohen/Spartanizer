@@ -2,6 +2,7 @@ package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -23,14 +24,14 @@ import org.junit.runners.Parameterized.Parameters;
 @SuppressWarnings({ "javadoc", "static-method" })//
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class InfixSortAdditionTest {
-  static final Wring<InfixExpression> WRING = new InfixSortAddition();
   static final ExpressionComparator COMPARATOR = ExpressionComparator.ADDITION;
+  static final Wring<InfixExpression> WRING = new InfixSortAddition();
 
   @Test public void subjectOperandsWithParenthesis() {
     final Expression e = Into.e("(2 + a) * b");
-    Assert.assertThat(Is.notString(e), is(true));
+    assertTrue(Is.notString(e));
     final InfixExpression plus = extract.firstPlus(e);
-    Assert.assertThat(Is.notString(plus), is(true));
+    assertTrue(Is.notString(plus));
     final List<Expression> operands = extract.operands(flatten(plus));
     that(operands.size(), is(2));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
@@ -40,15 +41,6 @@ public class InfixSortAdditionTest {
 
   @RunWith(Parameterized.class)//
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
-    static String[][] cases = as.array(//
-        new String[] { "Add 1", "2*a+1" }, //
-        new String[] { "Add '1'", "2*a+'1'" }, //
-        new String[] { "Add '\\0'", "3*a+'\\0'" }, //
-        new String[] { "Plain addition", "5*a+b*c" }, //
-        new String[] { "Plain addition plus constant", "5*a+b*c+12" }, //
-        new String[] { "Literal addition", "2+3" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -59,12 +51,22 @@ public class InfixSortAdditionTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Add 1", "2*a+1" }, //
+        new String[] { "Add '1'", "2*a+'1'" }, //
+        new String[] { "Add '\\0'", "3*a+'\\0'" }, //
+        new String[] { "Plain addition", "5*a+b*c" }, //
+        new String[] { "Plain addition plus constant", "5*a+b*c+12" }, //
+        new String[] { "Literal addition", "2+3" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      Assert.assertThat(are.notString(extract.operands(asInfixExpression())), is(true));
+      assertTrue(are.notString(extract.operands(asInfixExpression())));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
@@ -74,7 +76,7 @@ public class InfixSortAdditionTest {
       that(asInfixExpression(), notNullValue());
     }
     @Test public void isPlus() {
-      Assert.assertThat(asInfixExpression().getOperator() == Operator.PLUS, is(true));
+      azzert.that(asInfixExpression().getOperator(), is(Operator.PLUS));
     }
     @Test public void sortTest() {
       that(COMPARATOR.sort(extract.operands(flatten(asInfixExpression()))), is(false));
@@ -92,6 +94,17 @@ public class InfixSortAdditionTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     private static String[][] cases = as.array(//
         new String[] { "Add 1 to 2*3", "1+2*3", "2*3+1" }, //
         new String[] { "Add '1' to a*b", "'1'+a*b", "a*b+'1'" }, //
@@ -106,23 +119,13 @@ public class InfixSortAdditionTest {
         null);
 
     /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
-    /**
      * Instantiates the enclosing class ({@link WringedExpression})
      */
     public Wringed() {
       super(WRING);
     }
     @Test public void allNotStringArgument() {
-      Assert.assertThat(are.notString(extract.operands(asInfixExpression())), is(true));
+      assertTrue(are.notString(extract.operands(asInfixExpression())));
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
@@ -132,7 +135,7 @@ public class InfixSortAdditionTest {
       that(asInfixExpression(), notNullValue());
     }
     @Test public void isPlus() {
-      Assert.assertThat(asInfixExpression().getOperator() == Operator.PLUS, is(true));
+      azzert.that(asInfixExpression().getOperator(), is(Operator.PLUS));
     }
     @Test public void notString() {
       for (final Expression e : extract.operands(flatten(asInfixExpression())))
@@ -144,7 +147,7 @@ public class InfixSortAdditionTest {
       that(operands.size(), greaterThanOrEqualTo(2));
       that(//
           "Before: " + extract.operands(flatten(e)) + "\n" + //
-              "After: " + operands + "\n", //
+          "After: " + operands + "\n", //
           COMPARATOR.sort(operands), is(true));
     }
     @Test public void sortTwice() {

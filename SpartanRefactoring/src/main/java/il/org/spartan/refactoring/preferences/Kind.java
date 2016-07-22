@@ -3,17 +3,14 @@ package il.org.spartan.refactoring.preferences;
 import il.org.spartan.refactoring.preferences.PluginPreferencesResources.WringGroup;
 
 public interface Kind {
-  public interface RENAME_RETURN_VARIABLE extends Kind {
-    @Override default WringGroup kind() {
-      return WringGroup.RENAME_RETURN_VARIABLE;
-    }
-  }
-
-  interface SWITCH_IF_CONVERTION extends Kind {
-    @Override default WringGroup kind() {
-      return WringGroup.SWITCH_IF_CONVERTION;
-    }
-  }
+  /**
+   * Returns the preference group to which the wring belongs to. This method
+   * should be overridden for each wring and should return one of the values of
+   * {@link WringGroup}
+   *
+   * @return the preference group this wring belongs to
+   */
+  abstract WringGroup kind();
 
   interface ConsolidateStatements extends Kind {
     @Override default WringGroup kind() {
@@ -51,6 +48,12 @@ public interface Kind {
     }
   }
 
+  public interface RENAME_RETURN_VARIABLE extends Kind {
+    @Override default WringGroup kind() {
+      return WringGroup.RENAME_RETURN_VARIABLE;
+    }
+  }
+
   interface ReorganizeExpression extends Kind {
     @Override default WringGroup kind() {
       return WringGroup.REORDER_EXPRESSIONS;
@@ -75,18 +78,15 @@ public interface Kind {
     }
   }
 
+  interface SWITCH_IF_CONVERTION extends Kind {
+    @Override default WringGroup kind() {
+      return WringGroup.SWITCH_IF_CONVERTION;
+    }
+  }
+
   interface Ternarize extends Kind {
     @Override default WringGroup kind() {
       return WringGroup.Ternarize;
     }
   }
-
-  /**
-   * Returns the preference group to which the wring belongs to. This method
-   * should be overridden for each wring and should return one of the values of
-   * {@link WringGroup}
-   *
-   * @return the preference group this wring belongs to
-   */
-  abstract WringGroup kind();
 }

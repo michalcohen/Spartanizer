@@ -1,6 +1,6 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.azzert.*;
+import static org.junit.Assert.*;
 import il.org.spartan.*;
 
 import java.util.*;
@@ -24,6 +24,17 @@ public class TernaryEliminateTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         new String[] { "No boolean", "a?b:c" }, //
         new String[] { "F X", "a ? false : c" }, //
@@ -42,16 +53,6 @@ public class TernaryEliminateTest {
         new String[] { "a method call", "a ? y.f(b) :y.f(c)" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -61,14 +62,6 @@ public class TernaryEliminateTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Conditional {
-    private static String[][] cases = as.array(//
-        new String[] { "identical method call", "a ? y.f(b) :y.f(b)", "y.f(b)" }, //
-        new String[] { "identical function call", "a ? f(b) :f(b)", "f(b)" }, //
-        new String[] { "identical assignment", "a ? (b=c) :(b=c)", "b = c" }, //
-        new String[] { "identical increment", "a ? b++ :b++", "b++" }, //
-        new String[] { "identical addition", "a ? b+d :b+ d", "b+d" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -79,6 +72,15 @@ public class TernaryEliminateTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(//
+        new String[] { "identical method call", "a ? y.f(b) :y.f(b)", "y.f(b)" }, //
+        new String[] { "identical function call", "a ? f(b) :f(b)", "f(b)" }, //
+        new String[] { "identical assignment", "a ? (b=c) :(b=c)", "b = c" }, //
+        new String[] { "identical increment", "a ? b++ :b++", "b++" }, //
+        new String[] { "identical addition", "a ? b+d :b+ d", "b+d" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);

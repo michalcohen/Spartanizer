@@ -17,13 +17,13 @@ import org.eclipse.jdt.core.dom.rewrite.*;
  * @since 2015/07/25
  */
 public class AsSpartanization extends Spartanization {
-  final Wring<ASTNode> inner;
-
   /**
    * Instantiates this class
    *
-   * @param inner The wring we wish to convert
-   * @param name The title of the refactoring
+   * @param inner
+   *          The wring we wish to convert
+   * @param name
+   *          The title of the refactoring
    */
   @SuppressWarnings("unchecked") public AsSpartanization(final Wring<? extends ASTNode> inner, final String name) {
     super(name);
@@ -86,4 +86,6 @@ public class AsSpartanization extends Spartanization {
       }
     });
   }
+
+  final Wring<ASTNode> inner;
 }

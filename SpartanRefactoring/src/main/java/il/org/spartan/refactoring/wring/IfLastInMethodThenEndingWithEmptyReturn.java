@@ -20,8 +20,7 @@ import org.eclipse.text.edits.*;
  */
 public class IfLastInMethodThenEndingWithEmptyReturn extends Wring<IfStatement> implements Kind.Simplify {
   @Override String description(final IfStatement s) {
-    return "Remove redundant return statement in 'then' branch of if(" + s.getExpression()
-        + ") ... statement that terminates this method";
+    return "Remove redundant return statement in 'then' branch of if(" + s.getExpression() + ") ... statement that terminates this method";
   }
   @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {
     final Block b = asBlock(s.getParent());

@@ -24,13 +24,6 @@ public enum BlockSimplifyTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<Block> {
-    static String[][] cases = as.array(//
-        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
-        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
-        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
-        new String[] { "Simple block", "{a(); b(); c();}" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -41,6 +34,14 @@ public enum BlockSimplifyTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
+        new String[] { "Simple block", "{a(); b(); c();}" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -50,6 +51,17 @@ public enum BlockSimplifyTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedBlock {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     private static String[][] cases = as.array(//
         // Literal
         new String[] { "Empty", "{;;}", "" }, //
@@ -60,16 +72,6 @@ public enum BlockSimplifyTest {
         new String[] { "Three statements ", "{i++;{{;;return b; }}j++;}", " i++;return b;j++;" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

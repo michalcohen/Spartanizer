@@ -14,69 +14,13 @@ import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
 /**
- * A {@link Wring} to convert <code>int a = 3;
- * b = a;</code> into <code>b = a</code>
+ * A {@link Wring} to convert <code>int a = 3; b = a;</code> into <code>b =
+ * a</code>
  *
  * @author Yossi Gil
  * @since 2015-08-07
  */
-<<<<<<< HEAD
-public final class DeclarationInitializerStatementTerminatingScope extends Wring.VariableDeclarationFragementAndStatement implements
-    Kind.ConsolidateStatements {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n,
-      final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
-    // TODO Ori: allow final consolidation
-    if (initializer == null || hasAnnotation(f) || initializer instanceof ArrayInitializer
-        || Modifier.isFinal(((VariableDeclarationStatement) f.getParent()).getModifiers()))
-      return null;
-    final Statement s = extract.statement(f);
-=======
-public final class DeclarationInitializerStatementTerminatingScope extends Wring.VariableDeclarationFragementAndStatement {
-  @SuppressWarnings("unchecked") @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement,
-      final TextEditGroup g) {
-    if (initializer == null || hasAnnotation(f) || initializer instanceof ArrayInitializer || initializer instanceof ConditionalExpression)
-      return null;
-    for (IExtendedModifier m : (List<IExtendedModifier>) ((VariableDeclarationStatement) f.getParent()).modifiers())
-      if (m.isModifier() && ((Modifier) m).isFinal())
-        return null;
-    final Statement s = Extract.statement(f);
->>>>>>> 30a65bd02c737642fc7ca540229ce59683abc546
-    if (s == null)
-      return null;
-    final Block parent = asBlock(s.getParent());
-    if (parent == null)
-      return null;
-    final List<Statement> ss = expose.statements(parent);
-    if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss) || !Collect.definitionsOf(n).in(nextStatement).isEmpty())
-      return null;
-    final List<SimpleName> uses = Collect.usesOf(f.getName()).in(nextStatement);
-    if (!Is.sideEffectFree(initializer)) {
-      if (uses.size() > 1)
-        return null;
-      for (final SimpleName use : uses)
-        if (forbidden(use, nextStatement))
-          return null;
-    }
-    for (final SimpleName use : uses)
-      if (never(use, nextStatement))
-        return null;
-    final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(initializer);
-    final Statement newStatement = duplicate(nextStatement);
-    final int addedSize = i.addedSize(newStatement);
-    final int removalSaving = removalSaving(f);
-    if (addedSize - removalSaving > 0)
-      return null;
-    r.replace(nextStatement, newStatement, g);
-    i.inlineInto(newStatement);
-    remove(f, r, g);
-    return r;
-  }
-  private static boolean never(final SimpleName n, final Statement s) {
-    for (final ASTNode ancestor : AncestorSearch.until(s).ancestors(n))
-      if (intIsIn(ancestor.getNodeType(), TRY_STATEMENT, SYNCHRONIZED_STATEMENT))
-        return true;
-    return false;
-  }
+public final class DeclarationInitializerStatementTerminatingScope extends Wring.VariableDeclarationFragementAndStatement implements Kind.ConsolidateStatements {
   @SuppressWarnings("incomplete-switch") private static boolean forbidden(final SimpleName n, final Statement s) {
     ASTNode child = null;
     for (final ASTNode ancestor : AncestorSearch.until(s).ancestors(n)) {
@@ -97,7 +41,52 @@ public final class DeclarationInitializerStatementTerminatingScope extends Wring
     }
     return false;
   }
+  private static boolean never(final SimpleName n, final Statement s) {
+    for (final ASTNode ancestor : AncestorSearch.until(s).ancestors(n))
+      if (intIsIn(ancestor.getNodeType(), TRY_STATEMENT, SYNCHRONIZED_STATEMENT))
+        return true;
+    return false;
+  }
   @Override String description(final VariableDeclarationFragment f) {
     return "Inline local " + f.getName() + " into subsequent statement";
+  }
+  // TODO Ori: allow final consolidation
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression e, final Statement nextStatement, final TextEditGroup g) {
+    if (e == null || hasAnnotation(f) || e instanceof ArrayInitializer || Modifier.isFinal(((VariableDeclarationStatement) f.getParent()).getModifiers()) || e instanceof ArrayInitializer
+        || e instanceof ConditionalExpression)
+      return null;
+    final Statement s = extract.statement(f);
+    if (s == null)
+      return null;
+    for (final IExtendedModifier m : extract.modifers(f))
+      if (m.isModifier() && ((Modifier) m).isFinal())
+        return null;
+    final Block b = asBlock(s.getParent());
+    if (b == null)
+      return null;
+    final List<Statement> ss = expose.statements(b);
+    if (!lastIn(nextStatement, ss) || !penultimateIn(s, ss) || !Collect.definitionsOf(n).in(nextStatement).isEmpty())
+      return null;
+    final List<SimpleName> uses = Collect.usesOf(f.getName()).in(nextStatement);
+    if (!Is.sideEffectFree(e)) {
+      if (uses.size() > 1)
+        return null;
+      for (final SimpleName use : uses)
+        if (forbidden(use, nextStatement))
+          return null;
+    }
+    for (final SimpleName use : uses)
+      if (never(use, nextStatement))
+        return null;
+    final LocalInlineWithValue i = new LocalInliner(n, r, g).byValue(e);
+    final Statement newStatement = duplicate(nextStatement);
+    final int addedSize = i.addedSize(newStatement);
+    final int removalSaving = removalSaving(f);
+    if (addedSize - removalSaving > 0)
+      return null;
+    r.replace(nextStatement, newStatement, g);
+    i.inlineInto(newStatement);
+    remove(f, r, g);
+    return r;
   }
 }

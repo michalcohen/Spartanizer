@@ -49,22 +49,14 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     assertSimilar("a >= null", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("a >= null"))));
   }
   @Test public void comparisonWithSpecificNoChangeWithLongEpxressions() {
-    assertSimilar("very(complicate,func,-ction,call) != this",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) != this"))));
-    assertSimilar("very(complicate,func,-ction,call) != null",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) != null"))));
-    assertSimilar("very(complicate,func,-ction,call) == this",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) == this"))));
-    assertSimilar("very(complicate,func,-ction,call) == null",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) == null"))));
-    assertSimilar("very(complicate,func,-ction,call) <= this",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) <= this"))));
-    assertSimilar("very(complicate,func,-ction,call) <= null",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) <= null"))));
-    assertSimilar("very(complicate,func,-ction,call) >= this",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) >= this"))));
-    assertSimilar("very(complicate,func,-ction,call) >= null",
-        Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) >= null"))));
+    assertSimilar("very(complicate,func,-ction,call) != this", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) != this"))));
+    assertSimilar("very(complicate,func,-ction,call) != null", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) != null"))));
+    assertSimilar("very(complicate,func,-ction,call) == this", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) == this"))));
+    assertSimilar("very(complicate,func,-ction,call) == null", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) == null"))));
+    assertSimilar("very(complicate,func,-ction,call) <= this", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) <= this"))));
+    assertSimilar("very(complicate,func,-ction,call) <= null", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) <= null"))));
+    assertSimilar("very(complicate,func,-ction,call) >= this", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) >= this"))));
+    assertSimilar("very(complicate,func,-ction,call) >= null", Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on("very(complicate,func,-ction,call) >= null"))));
   }
   @Test public void comparisonWithSpecificWithinScope() {
     azzert.that(Is.constant(left(i("this != a"))), is(true));
@@ -136,6 +128,17 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
 
   @RunWith(Parameterized.class)//
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         // Literal
         new String[] { "LT/literal", "a<2" }, //
@@ -169,16 +172,6 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
         new String[] { "Correct order", "1 + 2 < 3 " }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public Noneligible() {
       super(WRING);
@@ -197,11 +190,6 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
-    static String[][] cases = as.array(//
-        new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
-        new String[] { "Literal vs. Literal", "1 < 102333" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -212,6 +200,12 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Expression vs. Expression", " 6 - 7 < 2 + 1   " }, //
+        new String[] { "Literal vs. Literal", "1 < 102333" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -221,6 +215,17 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     private static String[][] cases = as.array(//
         // Literal
         new String[] { "LT/literal", "2<a", "a>2" }, //
@@ -256,16 +261,6 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
         new String[] { "Negative number", "-1 == a", "a == -1" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /**
      * Instantiates the enclosing class ({@link WringedExpression})
      */

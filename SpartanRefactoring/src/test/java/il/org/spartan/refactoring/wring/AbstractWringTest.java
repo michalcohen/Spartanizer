@@ -6,6 +6,7 @@ import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Into.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
+import static org.junit.Assert.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -24,15 +25,14 @@ import org.junit.runners.Parameterized.Parameter;
  */
 @SuppressWarnings({ "javadoc", "unchecked" })//
 public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTestBase {
-  protected final Wring<N> inner;
-
   public AbstractWringTest() {
     this(null);
   }
   /**
    * Instantiates the enclosing class ({@link AbstractWringTest})
    *
-   * @param inner JD
+   * @param inner
+   *          JD
    */
   AbstractWringTest(final @Nullable Wring<N> inner) {
     this.inner = inner;
@@ -91,6 +91,8 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     assertWithinScope(Funcs.asExpression(n));
   }
 
+  protected final Wring<N> inner;
+
   /**
    * @author Yossi Gil
    * @since 2015-07-18
@@ -105,7 +107,8 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     /**
      * Instantiates the enclosing class ({@link Noneligible})
      *
-     * @param inner JD
+     * @param inner
+     *          JD
      */
     Noneligible(final Wring<N> inner) {
       super(inner);
@@ -249,8 +252,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
   public static class Wringed<N extends ASTNode> extends InScope<N> {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
-    /** What should the output be */
-    @Parameter(2) public String expected;
 
     /** Default constructor to make Junit happy */
     public Wringed() {
@@ -263,6 +264,9 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       return new Document(Wrap.Expression.on(input));
     }
 
+    /** What should the output be */
+    @Parameter(2) public String expected;
+
     public static class Conditional extends WringedExpression<ConditionalExpression> {
       /** Default constructor to make Junit happy */
       public Conditional() {
@@ -271,7 +275,8 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       /**
        * Instantiates the enclosing class ({@link Conditional})
        *
-       * @param w JD
+       * @param w
+       *          JD
        */
       Conditional(final Wring<ConditionalExpression> e) {
         super(e);
@@ -360,8 +365,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
   public static class WringedBlock extends WringedStatement<Block> {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
-    /** What should the output be */
-    @Parameter(2) public String expected;
 
     public WringedBlock() {
       super(null);
@@ -442,6 +445,9 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       that($, notNullValue());
       return $;
     }
+
+    /** What should the output be */
+    @Parameter(2) public String expected;
   }
 
   /**
@@ -451,8 +457,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
   public static class WringedExpression<E extends Expression> extends InScope<E> {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
-    /** What should the output be */
-    @Parameter(2) public String expected;
 
     public WringedExpression() {
       this(null);
@@ -557,6 +561,9 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       return $;
     }
 
+    /** What should the output be */
+    @Parameter(2) public String expected;
+
     public static class Conditional extends WringedExpression<ConditionalExpression> {
       public Conditional() {
         this(null);
@@ -564,7 +571,8 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       /**
        * Instantiates the enclosing class ({@link Infix})
        *
-       * @param w JD
+       * @param w
+       *          JD
        */
       Conditional(final Wring<ConditionalExpression> e) {
         super(e);
@@ -612,8 +620,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
   public static class WringedIfStatement extends WringedStatement<IfStatement> {
     /** Description of a test case for {@link Parameter} annotation */
     protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
-    /** What should the output be */
-    @Parameter(2) public String expected;
 
     public WringedIfStatement() {
       this(null);
@@ -684,7 +690,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         return;
       @Nullable final IfStatement me = asMe();
       if (me != null)
-        that(me.toString(), inner.scopeIncludes(me), CoreMatchers.is(true));
+        assertTrue(me.toString(), inner.scopeIncludes(me));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       if (inner == null)
@@ -705,6 +711,9 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       that($, notNullValue());
       return asIfStatement($);
     }
+
+    /** What should the output be */
+    @Parameter(2) public String expected;
   }
 
   public static class WringedStatement<N extends Statement> extends InScope<N> {
@@ -847,8 +856,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
    * @since 2015-07-18
    */
   static class InScope<N extends ASTNode> extends AbstractWringTest<N> {
-    protected final Trimmer wringer = new Trimmer();
-
     public InScope() {
       this(null);
     }
@@ -867,14 +874,13 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       return null;
     }
 
+    protected final Trimmer wringer = new Trimmer();
+
     /**
      * @author Yossi Gil
      * @since 2015-07-15
      */
     static abstract class WringedInput<N extends ASTNode> extends AbstractWringTest<N> {
-      /** How should a test case like this be described? */
-      protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
-
       static Document rewrite(final Spartanization s, final CompilationUnit u, final Document d) {
         try {
           s.createRewrite(u, null).rewriteAST(d, null).apply(d);
@@ -885,14 +891,14 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         }
       }
 
-      /** Where the expected output can be found? */
-      @Parameter(2) public String output;
-      protected final Trimmer trimmer = new Trimmer();
+      /** How should a test case like this be described? */
+      protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
 
       /**
        * Instantiates the enclosing class ({@link WringedExpression})
        *
-       * @param w JD
+       * @param w
+       *          JD
        */
       WringedInput(final Wring<N> w) {
         super(w);
@@ -936,12 +942,16 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         final String peeled = Wrap.Expression.off(excpected.get());
         if (output.equals(peeled))
           return;
-        that("Nothing done on " + input, not((Object) input.equals(peeled)));
+        assertFalse("Nothing done on " + input, !input.equals(peeled));
         that("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), not(compressSpaces(input)));
         assertSimilar(output, peeled);
         assertSimilar(Wrap.Expression.on(output), excpected);
       }
       protected abstract Document asDocument();
+
+      /** Where the expected output can be found? */
+      @Parameter(2) public String output;
+      protected final Trimmer trimmer = new Trimmer();
     }
   }
 }

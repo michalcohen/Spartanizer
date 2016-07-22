@@ -21,13 +21,37 @@ import org.eclipse.ui.progress.*;
  * @since 2015/08/01
  */
 public class CleanupHandler extends BaseHandler {
-  /** Instantiates this class */
-  public CleanupHandler() {
-    super(null);
+  /**
+   * Returns the number of Spartanizaion suggestions for this compilation unit
+   *
+   * @param u
+   *          JD
+   * @return the number of suggestions available for the compilation unit
+   */
+  public static int countSuggestions(final ICompilationUnit u) {
+    int $ = 0;
+    for (final Spartanization s : ApplySpartanizationHandler.inner) {
+      s.setMarker(null);
+      s.setCompilationUnit(u);
+      $ += s.countSuggestions();
+    }
+    return $;
+  }
+  private static List<ICompilationUnit> getAllCompilationUnits(final ICompilationUnit u) {
+    try {
+      return Spartanization.getCompilationUnits(u, new NullProgressMonitor());
+    } catch (final JavaModelException x) {
+      x.printStackTrace();
+      return null;
+    }
   }
 
   static final int MAX_PASSES = 20;
 
+  /** Instantiates this class */
+  public CleanupHandler() {
+    super(null);
+  }
   @Override public Void execute(@SuppressWarnings("unused") final ExecutionEvent __) throws ExecutionException {
     final StringBuilder message = new StringBuilder();
     final ICompilationUnit currentCompilationUnit = currentCompilationUnit();
@@ -70,28 +94,5 @@ public class CleanupHandler extends BaseHandler {
             message);
     }
     throw new ExecutionException("Too many iterations");
-  }
-  private static List<ICompilationUnit> getAllCompilationUnits(final ICompilationUnit u) {
-    try {
-      return Spartanization.getCompilationUnits(u, new NullProgressMonitor());
-    } catch (final JavaModelException x) {
-      x.printStackTrace();
-      return null;
-    }
-  }
-  /**
-   * Returns the number of Spartanizaion suggestions for this compilation unit
-   *
-   * @param u JD
-   * @return the number of suggestions available for the compilation unit
-   */
-  public static int countSuggestions(final ICompilationUnit u) {
-    int $ = 0;
-    for (final Spartanization s : ApplySpartanizationHandler.inner) {
-      s.setMarker(null);
-      s.setCompilationUnit(u);
-      $ += s.countSuggestions();
-    }
-    return $;
   }
 }

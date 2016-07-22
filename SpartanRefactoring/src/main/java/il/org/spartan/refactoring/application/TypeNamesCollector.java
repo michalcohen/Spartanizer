@@ -10,26 +10,10 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 
 public class TypeNamesCollector {
-  private static Set<String> basket = new TreeSet<>();
-
   public static void main(final String[] where) {
     collect(where.length != 0 ? where : new String[] { "." });
     for (final String s : basket)
       System.out.println(s + " --> " + Funcs.shortName(s));
-  }
-  private static void collect(final String[] where) {
-    for (final File f : new FilesGenerator(".java").from(where))
-      collect(f);
-  }
-  private static void collect(final File f) {
-    try {
-      collect(FileUtils.read(f));
-    } catch (final IOException e) {
-      System.err.println(e.getMessage());
-    }
-  }
-  private static void collect(final String javaCode) {
-    collect((CompilationUnit) ast.COMPILIATION_UNIT.from(javaCode));
   }
   private static void collect(final CompilationUnit u) {
     u.accept(new ASTVisitor() {
@@ -44,4 +28,20 @@ public class TypeNamesCollector {
       }
     });
   }
+  private static void collect(final File f) {
+    try {
+      collect(FileUtils.read(f));
+    } catch (final IOException e) {
+      System.err.println(e.getMessage());
+    }
+  }
+  private static void collect(final String javaCode) {
+    collect((CompilationUnit) ast.COMPILIATION_UNIT.from(javaCode));
+  }
+  private static void collect(final String[] where) {
+    for (final File f : new FilesGenerator(".java").from(where))
+      collect(f);
+  }
+
+  private static Set<String> basket = new TreeSet<>();
 }

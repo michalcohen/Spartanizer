@@ -62,11 +62,6 @@ abstract class AbstractRenamePolicy {
     }
     return $;
   }
-
-  final MethodDeclaration inner;
-  final List<SimpleName> localVariables;
-  final List<ReturnStatement> returnStatements;
-
   public AbstractRenamePolicy(final MethodDeclaration inner) {
     final MethodExplorer explorer = new MethodExplorer(this.inner = inner);
     localVariables = explorer.localVariables();
@@ -74,15 +69,15 @@ abstract class AbstractRenamePolicy {
   }
   abstract SimpleName innerSelectReturnVariable();
   final SimpleName selectReturnVariable() {
-    return returnStatements == null || localVariables == null || localVariables.isEmpty() || hasDollar(localVariables) ? null
-        : innerSelectReturnVariable();
+    return returnStatements == null || localVariables == null || localVariables.isEmpty() || hasDollar(localVariables) ? null : innerSelectReturnVariable();
   }
+
+  final MethodDeclaration inner;
+  final List<SimpleName> localVariables;
+  final List<ReturnStatement> returnStatements;
 }
 
 class Aggressive extends AbstractRenamePolicy {
-  public Aggressive(final MethodDeclaration inner) {
-    super(inner);
-  }
   private static SimpleName bestCandidate(final List<SimpleName> ns, final List<ReturnStatement> ss) {
     final int bestScore = bestScore(ns, ss);
     if (bestScore > 0)
@@ -109,6 +104,9 @@ class Aggressive extends AbstractRenamePolicy {
       $ += Collect.BOTH_LEXICAL.of(n).in(r).size();
     return $;
   }
+  public Aggressive(final MethodDeclaration inner) {
+    super(inner);
+  }
   @Override SimpleName innerSelectReturnVariable() {
     return bestCandidate(localVariables, returnStatements);
   }
@@ -118,16 +116,16 @@ class Conservative extends AbstractRenamePolicy {
   public Conservative(final MethodDeclaration inner) {
     super(inner);
   }
-  @Override SimpleName innerSelectReturnVariable() {
-    for (final Iterator<SimpleName> i = localVariables.iterator(); i.hasNext();)
-      if (unused(i.next()))
-        i.remove();
-    return localVariables.size() != 1 ? null : localVariables.get(0);
-  }
   private boolean unused(final SimpleName n) {
     for (final ReturnStatement s : returnStatements)
       if (same(n, s.getExpression()))
         return false;
     return true;
+  }
+  @Override SimpleName innerSelectReturnVariable() {
+    for (final Iterator<SimpleName> i = localVariables.iterator(); i.hasNext();)
+      if (unused(i.next()))
+        i.remove();
+    return localVariables.size() != 1 ? null : localVariables.get(0);
   }
 }

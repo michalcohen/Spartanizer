@@ -15,6 +15,9 @@ import org.eclipse.text.edits.*;
  * @since 2015-08-26
  */
 public final class IfEmptyThenEmptyElse extends Wring<IfStatement> implements Kind.Simplify {
+  @Override String description(final IfStatement s) {
+    return "Remove if(" + s.getExpression() + ") with vacous 'then' and 'else' parts";
+  }
   @Override final Rewrite make(final IfStatement s) {
     return new Rewrite(description(s), s) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
@@ -25,8 +28,5 @@ public final class IfEmptyThenEmptyElse extends Wring<IfStatement> implements Ki
   }
   @Override boolean scopeIncludes(final IfStatement s) {
     return s != null && Is.vacuousThen(s) && Is.vacuousElse(s);
-  }
-  @Override String description(final IfStatement s) {
-    return "Remove if(" + s.getExpression() + ") with vacous 'then' and 'else' parts";
   }
 }

@@ -1,9 +1,9 @@
 package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.azzert.*;
-import static il.org.spartan.refactoring.utils.extract.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Into.*;
+import static il.org.spartan.refactoring.utils.extract.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -47,12 +47,6 @@ public class PrefixNotPushdownTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<PrefixExpression> {
-    static String[][] cases = as.array(//
-        new String[] { "Simple not", "!a" }, //
-        new String[] { "Simple not of function", "!f(a)" }, //
-        new String[] { "Actual example", "!inRange(m, e)" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -63,6 +57,13 @@ public class PrefixNotPushdownTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Simple not", "!a" }, //
+        new String[] { "Simple not of function", "!f(a)" }, //
+        new String[] { "Actual example", "!inRange(m, e)" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -72,6 +73,17 @@ public class PrefixNotPushdownTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression<PrefixExpression> {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     private static String[][] cases = as.array(//
         new String[] { "2 level not of false", "!!false", "false" }, //
         new String[] { "2 level not of true", "!!true", "true" }, //
@@ -100,16 +112,6 @@ public class PrefixNotPushdownTest {
         new String[] { "Nested not", "!(!(a || b))", "a||b" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /**
      * Instantiates the enclosing class ({@link WringedExpression})
      */

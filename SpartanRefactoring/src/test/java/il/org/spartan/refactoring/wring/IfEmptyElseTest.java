@@ -27,13 +27,6 @@ public class IfEmptyElseTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
-    static String[][] cases = as.array(//
-        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
-        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
-        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
-        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -44,6 +37,14 @@ public class IfEmptyElseTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
+        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -53,12 +54,6 @@ public class IfEmptyElseTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
-    private static String[][] cases = as.array(//
-        new String[] { "Vanilla {}", "if (a) f(); else {}", "if (a) f();" }, //
-        new String[] { "Vanilla ; ", "if (a) f(); else ;", "if (a) f();" }, //
-        new String[] { "Vanilla {;{;;};} ", "if (a) f(); else {;{;{};};{;{}}}", "if (a) f();" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -69,6 +64,13 @@ public class IfEmptyElseTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(//
+        new String[] { "Vanilla {}", "if (a) f(); else {}", "if (a) f();" }, //
+        new String[] { "Vanilla ; ", "if (a) f(); else ;", "if (a) f();" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) f(); else {;{;{};};{;{}}}", "if (a) f();" }, //
+        null);
+
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

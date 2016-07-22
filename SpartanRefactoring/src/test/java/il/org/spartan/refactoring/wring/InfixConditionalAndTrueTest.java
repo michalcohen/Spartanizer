@@ -28,6 +28,17 @@ public enum InfixConditionalAndTrueTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion.Infix {
+    /**
+     * Generate test cases for this parameterized class.
+     *
+     * @return a collection of cases, where each case is an array of three
+     *         objects, the test case name, the input, and the file.
+     */
+    @Parameters(name = DESCRIPTION)//
+    public static Collection<Object[]> cases() {
+      return collect(cases);
+    }
+
     static String[][] cases = as.array(//
         new String[] { "F || F", "false ||false" }, //
         new String[] { "3 OR TRUE", "true || true || true" }, //
@@ -70,20 +81,9 @@ public enum InfixConditionalAndTrueTest {
         new String[] { "AND of 5 without boolean", "false && a && b && c && d" }, //
         new String[] { "AND of 6 without boolean", "a && b && c && false && d && e" }, //
         new String[] { "AND of 7 without boolean with parenthesis", "(a && b) && (c && (d && (e && false)))" }, //
-        new String[] { "AND of 7 without boolean and multiple false value",
-            "(a && (b && false)) && (c && (d && (e && (false && false))))" }, //
+        new String[] { "AND of 7 without boolean and multiple false value", "(a && (b && false)) && (c && (d && (e && (false && false))))" }, //
         null);
 
-    /**
-     * Generate test cases for this parameterized class.
-     *
-     * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
-    @Parameters(name = DESCRIPTION)//
-    public static Collection<Object[]> cases() {
-      return collect(cases);
-    }
     /** Instantiates the enclosing class ({@link Noneligible}) */
     public OutOfScope() {
       super(WRING);
@@ -93,26 +93,6 @@ public enum InfixConditionalAndTrueTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
-    static String[][] cases = as.array(//
-        new String[] { "Many parenthesis", "a && (((true)))  && b", "a && b" }, //
-        new String[] { "true && true", "true && true", "true" }, //
-        new String[] { "AND of 3 with true", "true && x && true && a && b", "x && a && b" }, //
-        new String[] { "AND of 4 with true", "x && true && a && b && c", "x && a && b && c" }, //
-        new String[] { "AND of 5 with true", "x && a && b && c && true && true && true && d", "x && a && b && c && d" }, //
-        new String[] { "AND of 6 with true", "x && a && true && b && c && d && e", "x && a && b && c && d && e" }, //
-        new String[] { "AND of 6 with true with parenthesis", "x && (true && (a && b && true)) && (c && (d && e))",
-            "x && a && b && c && d && e" }, //
-        new String[] { "AND with true", "true && b && a", "b && a" }, //
-        new String[] { "AND of 3 with true", "a && b && true", "a && b" }, //
-        new String[] { "AND of 4 with true", "a && b && c && true", "a && b && c" }, //
-        new String[] { "AND of 5 with true", "true && a && b && c && d", "a && b && c && d" }, //
-        new String[] { "AND of 6 with true", "a && b && c && true && d && e", "a && b && c && d && e" }, //
-        new String[] { "AND of 7 with true with parenthesis", "true && (a && b) && (c && (d && (e && true)))",
-            "a && b && c && d && e" }, //
-        new String[] { "AND of 7 with multiple true value", "(a && (b && true)) && (c && (d && (e && (true && true))))",
-            "a&&b&&c&&d&&e" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -123,6 +103,24 @@ public enum InfixConditionalAndTrueTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Many parenthesis", "a && (((true)))  && b", "a && b" }, //
+        new String[] { "true && true", "true && true", "true" }, //
+        new String[] { "AND of 3 with true", "true && x && true && a && b", "x && a && b" }, //
+        new String[] { "AND of 4 with true", "x && true && a && b && c", "x && a && b && c" }, //
+        new String[] { "AND of 5 with true", "x && a && b && c && true && true && true && d", "x && a && b && c && d" }, //
+        new String[] { "AND of 6 with true", "x && a && true && b && c && d && e", "x && a && b && c && d && e" }, //
+        new String[] { "AND of 6 with true with parenthesis", "x && (true && (a && b && true)) && (c && (d && e))", "x && a && b && c && d && e" }, //
+        new String[] { "AND with true", "true && b && a", "b && a" }, //
+        new String[] { "AND of 3 with true", "a && b && true", "a && b" }, //
+        new String[] { "AND of 4 with true", "a && b && c && true", "a && b && c" }, //
+        new String[] { "AND of 5 with true", "true && a && b && c && d", "a && b && c && d" }, //
+        new String[] { "AND of 6 with true", "a && b && c && true && d && e", "a && b && c && d && e" }, //
+        new String[] { "AND of 7 with true with parenthesis", "true && (a && b) && (c && (d && (e && true)))", "a && b && c && d && e" }, //
+        new String[] { "AND of 7 with multiple true value", "(a && (b && true)) && (c && (d && (e && (true && true))))", "a&&b&&c&&d&&e" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);

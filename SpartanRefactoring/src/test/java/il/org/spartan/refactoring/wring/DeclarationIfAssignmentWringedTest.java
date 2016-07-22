@@ -26,20 +26,6 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)//
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<VariableDeclarationFragment> {
-  final static DeclarationInitializerIfAssignment WRING = new DeclarationInitializerIfAssignment();
-  /** Description of a test case for {@link Parameter} annotation */
-  protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
-  private static String[][] cases = as.array(//
-      new String[] { "Vanilla with newline", "int a = 2; \n if (b) a =3;", "int a= b?3:2;" }, //
-      new String[] { "Empty else", "int a=2; if (x) a = 3; else ;", " int a = x ? 3 : 2;" }, //
-      new String[] { "Vanilla", "int a = 2; if (b) a =3;", "int a= b?3:2;" }, //
-      new String[] { "Empty nested else", "int a=2; if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
-      new String[] { "Two fragments", //
-          "int n2 = 0, n3;" + //
-              "  if (d)\n" + //
-              "    n2 = 2;", //
-          "int n2 = d ? 2 : 0, n3;" }, null);
-
   /**
    * Generate test cases for this parameterized class.
    *
@@ -53,8 +39,19 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     return collect(cases);
   }
 
-  /** What should the output be */
-  @Parameter(2) public String expected;
+  private static String[][] cases = as.array(//
+      new String[] { "Vanilla with newline", "int a = 2; \n if (b) a =3;", "int a= b?3:2;" }, //
+      new String[] { "Empty else", "int a=2; if (x) a = 3; else ;", " int a = x ? 3 : 2;" }, //
+      new String[] { "Vanilla", "int a = 2; if (b) a =3;", "int a= b?3:2;" }, //
+      new String[] { "Empty nested else", "int a=2; if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
+      new String[] { "Two fragments", //
+          "int n2 = 0, n3;" + //
+          "  if (d)\n" + //
+          "    n2 = 2;", //
+      "int n2 = d ? 2 : 0, n3;" }, null);
+  /** Description of a test case for {@link Parameter} annotation */
+  protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
+  final static DeclarationInitializerIfAssignment WRING = new DeclarationInitializerIfAssignment();
 
   /** Instantiates the enclosing class ({@link Wringed}) */
   public DeclarationIfAssignmentWringedTest() {
@@ -144,6 +141,9 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
   }
+  private IfStatement findIf() {
+    return extract.firstIfStatement(ast.STATEMENTS.from(input));
+  }
   @Override protected CompilationUnit asCompilationUnit() {
     final CompilationUnit $ = (CompilationUnit) ast.COMPILIATION_UNIT.from(Wrap.Statement.on(input));
     assertNotNull($);
@@ -152,7 +152,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   @Override protected VariableDeclarationFragment asMe() {
     return extract.firstVariableDeclarationFragment(ast.STATEMENTS.from(input));
   }
-  private IfStatement findIf() {
-    return extract.firstIfStatement(ast.STATEMENTS.from(input));
-  }
+
+  /** What should the output be */
+  @Parameter(2) public String expected;
 }

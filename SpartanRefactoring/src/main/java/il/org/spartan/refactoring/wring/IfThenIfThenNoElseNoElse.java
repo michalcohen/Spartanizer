@@ -17,11 +17,17 @@ import org.eclipse.text.edits.*;
  * @since 2015-09-01
  */
 public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> implements Kind.ConsolidateStatements {
+  static void collapse(final IfStatement s, final ASTRewrite r, final TextEditGroup g) {
+    final IfStatement then = asIfStatement(extract.singleThen(s));
+    final InfixExpression e = Subject.pair(s.getExpression(), then.getExpression()).to(CONDITIONAL_AND);
+    r.replace(s.getExpression(), e, g);
+    r.replace(then, duplicate(then(then)), g);
+  }
   @Override String description(final IfStatement s) {
     return "Merge conditionals of if(" + s.getExpression() + ") ... with its nested if";
   }
-  @Override boolean scopeIncludes(final IfStatement s) {
-    return make(s) != null;
+  @Override Rewrite make(final IfStatement s) {
+    return make(s, null);
   }
   @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {
     if (!Is.vacuousElse(s))
@@ -37,13 +43,7 @@ public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> implement
       }
     };
   }
-  static void collapse(final IfStatement s, final ASTRewrite r, final TextEditGroup g) {
-    final IfStatement then = asIfStatement(extract.singleThen(s));
-    final InfixExpression e = Subject.pair(s.getExpression(), then.getExpression()).to(CONDITIONAL_AND);
-    r.replace(s.getExpression(), e, g);
-    r.replace(then, duplicate(then(then)), g);
-  }
-  @Override Rewrite make(final IfStatement s) {
-    return make(s, null);
+  @Override boolean scopeIncludes(final IfStatement s) {
+    return make(s) != null;
   }
 }

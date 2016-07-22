@@ -16,23 +16,9 @@ import org.eclipse.text.edits.*;
  * @since 2016-04-17
  */
 public class Source {
-  private static Map<String, String> sm = new HashMap<>();
   /**
-   * Path for java programs without file
-   */
-  public static final IPath NONE_PATH = new Path("");
-
-  /**
-   * @param p file path
-   * @param s file source
-   */
-  public synchronized static void set(final IPath p, final String s) {
-    if (p == null || s == null)
-      return;
-    sm.put(p.toString(), s);
-  }
-  /**
-   * @param u compilation unit
+   * @param u
+   *          compilation unit
    * @return disabler, able of determining whether an {@link ASTNode} is
    *         spartanization disabled
    */
@@ -40,13 +26,27 @@ public class Source {
     return new Disable(u);
   }
   /**
-   * @param u compilation unit
-   * @param r rewriter
-   * @param g text edit group
+   * @param u
+   *          compilation unit
+   * @param r
+   *          rewriter
+   * @param g
+   *          text edit group
    * @return scalpel for replacement operation
    */
   public static Scalpel getScalpel(final CompilationUnit u, final ASTRewrite r, final TextEditGroup g) {
     return new Scalpel(u, get(u), r, g);
+  }
+  /**
+   * @param p
+   *          file path
+   * @param s
+   *          file source
+   */
+  public synchronized static void set(final IPath p, final String s) {
+    if (p == null || s == null)
+      return;
+    sm.put(p.toString(), s);
   }
   private static String get(final CompilationUnit u) {
     if (u == null)
@@ -54,4 +54,10 @@ public class Source {
     final IJavaElement je = u.getJavaElement();
     return sm.get((je == null ? NONE_PATH : je.getPath()).toString());
   }
+
+  /**
+   * Path for java programs without file
+   */
+  public static final IPath NONE_PATH = new Path("");
+  private static Map<String, String> sm = new HashMap<>();
 }

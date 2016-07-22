@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2016/05/13
  */
 public class Disable {
-  final Set<ASTNode> dns;
   /**
    * Disable spartanization identifier, used by the programmer to indicate a
    * method/class/code line not to be spartanized
@@ -27,7 +26,8 @@ public class Disable {
     u.accept(new BodyDeclarationVisitor(dns));
   }
   /**
-   * @param n node
+   * @param n
+   *          node
    * @return true iff spartanization is disabled for n
    */
   public boolean check(final ASTNode n) {
@@ -37,25 +37,22 @@ public class Disable {
     return false;
   }
 
-  private static class BodyDeclarationVisitor extends ASTVisitor {
-    Set<ASTNode> dns;
+  final Set<ASTNode> dns;
 
+  private static class BodyDeclarationVisitor extends ASTVisitor {
     BodyDeclarationVisitor(final Set<ASTNode> dns) {
       this.dns = dns;
     }
     @Override public boolean visit(final AnnotationTypeDeclaration d) {
       return go(d);
     }
-    @Override public boolean visit(final EnumDeclaration d) {
-      return go(d);
-    }
-    @Override public boolean visit(final TypeDeclaration d) {
-      return go(d);
-    }
     @Override public boolean visit(final AnnotationTypeMemberDeclaration d) {
       return go(d);
     }
     @Override public boolean visit(final EnumConstantDeclaration d) {
+      return go(d);
+    }
+    @Override public boolean visit(final EnumDeclaration d) {
       return go(d);
     }
     @Override public boolean visit(final FieldDeclaration d) {
@@ -67,6 +64,9 @@ public class Disable {
     @Override public boolean visit(final MethodDeclaration d) {
       return go(d);
     }
+    @Override public boolean visit(final TypeDeclaration d) {
+      return go(d);
+    }
     private boolean go(final BodyDeclaration d) {
       final Javadoc j = d.getJavadoc();
       if (j == null || !j.toString().contains(dsi))
@@ -74,5 +74,7 @@ public class Disable {
       dns.add(d);
       return false;
     }
+
+    Set<ASTNode> dns;
   }
 }

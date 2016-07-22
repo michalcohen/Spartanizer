@@ -23,20 +23,17 @@ import org.eclipse.jdt.core.dom.*;
   public static StatementPair pair(final Statement s1, final Statement s2) {
     return new StatementPair(s1, s2);
   }
-  public static SeveralStatements statement(final Statement s) {
-    return statements(s);
-  }
   public static SeveralStatements ss(final List<Statement> ss) {
     return new SeveralStatements(ss);
+  }
+  public static SeveralStatements statement(final Statement s) {
+    return statements(s);
   }
   public static SeveralStatements statements(final Statement... ss) {
     return ss(Arrays.asList(ss));
   }
 
   public static class Claimer {
-    protected final AST ast;
-    protected boolean accessible = true;
-
     public Claimer(final ASTNode n) {
       ast = n == null ? null : n.getAST();
     }
@@ -47,11 +44,12 @@ import org.eclipse.jdt.core.dom.*;
       final Statement core = extract.core(s);
       return core == null ? null : rebase(duplicate(core), ast);
     }
+
+    protected boolean accessible = true;
+    protected final AST ast;
   }
 
   public static class Operand extends Claimer {
-    private final Expression inner;
-
     Operand(final Expression inner) {
       super(inner);
       this.inner = claim(inner);
@@ -91,11 +89,11 @@ import org.eclipse.jdt.core.dom.*;
       $.setExpression(inner);
       return $;
     }
+
+    private final Expression inner;
   }
 
   public static class Pair extends Claimer {
-    final Expression left, right;
-
     Pair(final Expression left, final Expression right) {
       super(left);
       this.left = claim(left);
@@ -125,11 +123,11 @@ import org.eclipse.jdt.core.dom.*;
     public Statement toStatement(final Assignment.Operator o) {
       return Subject.operand(to(o)).toStatement();
     }
+
+    final Expression left, right;
   }
 
   public static class Several extends Claimer {
-    private final List<Expression> operands;
-
     public Several(final List<Expression> operands) {
       super(operands.get(0));
       this.operands = new ArrayList<>();
@@ -143,11 +141,11 @@ import org.eclipse.jdt.core.dom.*;
         expose.extendedOperands($).add(new Plant(operands.get(i)).into($));
       return $;
     }
+
+    private final List<Expression> operands;
   }
 
   public static class SeveralStatements extends Claimer {
-    private final List<Statement> inner;
-
     public SeveralStatements(final List<Statement> inner) {
       super(inner.isEmpty() ? null : inner.get(0));
       this.inner = new ArrayList<>();
@@ -164,6 +162,9 @@ import org.eclipse.jdt.core.dom.*;
         Scalpel.mark($);
       return $;
     }
+    public Statement toOneStatementOrNull() {
+      return inner.isEmpty() ? null : toOptionalBlock();
+    }
     public Statement toOptionalBlock() {
       switch (inner.size()) {
         case 0:
@@ -174,15 +175,11 @@ import org.eclipse.jdt.core.dom.*;
           return toBlock();
       }
     }
-    public Statement toOneStatementOrNull() {
-      return inner.isEmpty() ? null : toOptionalBlock();
-    }
+
+    private final List<Statement> inner;
   }
 
   public static class StatementPair extends Claimer {
-    private final Statement elze;
-    private final Statement then;
-
     StatementPair(final Statement then, final Statement elze) {
       super(then);
       this.then = claim(then);
@@ -200,5 +197,8 @@ import org.eclipse.jdt.core.dom.*;
     public IfStatement toNot(final Expression condition) {
       return toIf(logicalNot(condition));
     }
+
+    private final Statement elze;
+    private final Statement then;
   }
 }

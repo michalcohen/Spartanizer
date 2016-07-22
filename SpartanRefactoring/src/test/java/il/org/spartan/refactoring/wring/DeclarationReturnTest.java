@@ -31,14 +31,6 @@ public class DeclarationReturnTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<VariableDeclarationFragment> {
-    static String[][] cases = as.array(//
-        new String[] { "Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();" }, //
-        new String[] { "Vanilla", "int a; a =3;", }, //
-        new String[] { "Vanilla", "int a; if (x) b = 3; else ;", }, //
-        new String[] { "Vanilla", "int a = 2; if (b) a =3;", }, //
-        new String[] { "Vanilla", "int a = 3, b; return;", }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -49,6 +41,15 @@ public class DeclarationReturnTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Simple if return TWO STATEMENTS", "if (a) return b; else a(); f();" }, //
+        new String[] { "Vanilla", "int a; a =3;", }, //
+        new String[] { "Vanilla", "int a; if (x) b = 3; else ;", }, //
+        new String[] { "Vanilla", "int a = 2; if (b) a =3;", }, //
+        new String[] { "Vanilla", "int a = 3, b; return;", }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -58,18 +59,6 @@ public class DeclarationReturnTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.Wringed.WringedVariableDeclarationFragmentAndSurrounding {
-    private static String[][] cases = as
-        .array(
-            //
-            new String[] { "Vanilla", "int a = 3; return a;", "return 3;" }, //
-            new String[] { "Vanilla", "int a = 3, b; return a;", "return 3;" }, //
-            new String[] { "Actual", "ColorChip $ " + "= messageRead ? "//
-                + "   !messageFlagged ? mReadColorChip : mFlaggedReadColorChip: " //
-                + "    !messageFlagged ? mUnreadColorChip : mFlaggedUnreadColorChip; " //
-                + "   return $;", //
-                "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" },
-            null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -80,6 +69,17 @@ public class DeclarationReturnTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(
+    //
+        new String[] { "Vanilla", "int a = 3; return a;", "return 3;" }, //
+        new String[] { "Vanilla", "int a = 3, b; return a;", "return 3;" }, //
+        new String[] { "Actual", "ColorChip $ " + "= messageRead ? "//
+            + "   !messageFlagged ? mReadColorChip : mFlaggedReadColorChip: " //
+            + "    !messageFlagged ? mUnreadColorChip : mFlaggedUnreadColorChip; " //
+            + "   return $;", //
+            "return messageRead?!messageFlagged?mReadColorChip:mFlaggedReadColorChip:!messageFlagged?mUnreadColorChip:mFlaggedUnreadColorChip;" }, null);
+
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

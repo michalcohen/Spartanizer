@@ -24,13 +24,6 @@ public enum IfThrowFooElseThrowBarTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
-    static String[][] cases = as.array(//
-        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
-        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
-        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
-        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -41,6 +34,14 @@ public enum IfThrowFooElseThrowBarTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    static String[][] cases = as.array(//
+        new String[] { "Return only on one side", "if (a) return b; else c;" }, //
+        new String[] { "Simple if return", "if (a) return b; else return c;" }, //
+        new String[] { "Simply nested if return", "{if (a)  return b; else return c;}" }, //
+        new String[] { "Nested if return", "if (a) {;{{;;return b; }}} else {{{;return c;};;};}" }, //
+        null);
+
     /** Instantiates the enclosing class ({@link OutOfScope}) */
     public OutOfScope() {
       super(WRING);
@@ -50,13 +51,6 @@ public enum IfThrowFooElseThrowBarTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedIfStatement {
-    private static String[][] cases = as.array(//
-        // Literal
-        new String[] { "Simple if throw", "if (a) throw b; else throw c;", "throw a ? b : c;" }, //
-        new String[] { "Simply nested if throw", "{if (a)  throw b; else throw c;}", "if(a)throw b;else throw c;" }, //
-        new String[] { "Nested if throw", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}", "throw a ? b : c;" }, //
-        null);
-
     /**
      * Generate test cases for this parameterized class.
      *
@@ -67,6 +61,14 @@ public enum IfThrowFooElseThrowBarTest {
     public static Collection<Object[]> cases() {
       return collect(cases);
     }
+
+    private static String[][] cases = as.array(//
+        // Literal
+        new String[] { "Simple if throw", "if (a) throw b; else throw c;", "throw a ? b : c;" }, //
+        new String[] { "Simply nested if throw", "{if (a)  throw b; else throw c;}", "if(a)throw b;else throw c;" }, //
+        new String[] { "Nested if throw", "if (a) {;{{;;throw b; }}} else {{{;throw c;};;};}", "throw a ? b : c;" }, //
+        null);
+
     /**
      * Instantiates the enclosing class ({@link Wringed})
      */

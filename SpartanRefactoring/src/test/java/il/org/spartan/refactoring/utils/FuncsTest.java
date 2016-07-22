@@ -5,6 +5,7 @@ import static il.org.spartan.refactoring.utils.ExpressionComparator.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Into.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.eclipse.jdt.core.dom.*;
@@ -77,23 +78,23 @@ public class FuncsTest {
   @Test public void listOfInts() {
     that(shortName(t("List<Set<Integer>> _;")), equalTo("iss"));
   }
-  @Test public void sameOfNullAndSomething() {
-    that(Funcs.same(null, e("a")), is(false));
-  }
-  @Test public void sameOfNulls() {
-    that(Funcs.same((ASTNode) null, (ASTNode) null), is(true));
-  }
   @Test public void negation0Trivial() {
     that(negationLevel(e("a")), is(0));
   }
   @Test public void negation1Trivial() {
     that(negationLevel(e("-a")), is(1));
   }
+  @Test public void negationOfExpressionManyNegation() {
+    that(negationLevel(e("- - - - (- (-a))")), is(6));
+  }
   @Test public void negationOfExpressionNoNegation() {
     that(negationLevel(e("((((4))))")), is(0));
   }
-  @Test public void negationOfExpressionManyNegation() {
-    that(negationLevel(e("- - - - (- (-a))")), is(6));
+  @Test public void sameOfNullAndSomething() {
+    that(Funcs.same(null, e("a")), is(false));
+  }
+  @Test public void sameOfNulls() {
+    that(Funcs.same((ASTNode) null, (ASTNode) null), is(true));
   }
   @Test public void sameOfSomethingAndNull() {
     that(Funcs.same(e("a"), null), is(false));

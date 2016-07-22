@@ -7,23 +7,17 @@ import java.util.*;
 
 /**
  * Provides, employing fluent API, a {@link Iterable} interface for iteration
- * over files in the file system.
- * <p>
- * Typical uses are<code>
- * 
- * <pre>
- *   <b>for</b> ({@link File} f: <b>new</b> {@link FilesGenerator}(".java").from("."))
- *     System.out.println(f);
- * </pre>
- * 
+ * over files in the file system. <p> Typical uses are<code>
+ *
+ * <pre> <b>for</b> ({@link File} f: <b>new</b> {@link FilesGenerator}
+ * (".java").from(".")) System.out.println(f); </pre>
+ *
  * to recursively iterate over all files whose extension is ".java" in the
  * current directory, or
- * 
- * <pre>
- *   <b>for</b> ({@link File} f: <b>new</b> {@link FilesGenerator}().from("/bin", "/home"))
- *     System.out.println(f);
- * </pre>
- * 
+ *
+ * <pre> <b>for</b> ({@link File} f: <b>new</b> {@link FilesGenerator}
+ * ().from("/bin", "/home")) System.out.println(f); </pre>
+ *
  * to recursively iterate (over all files in the <code>/bin</code> and
  * <code>/home</code> directories.
  *
@@ -31,38 +25,51 @@ import java.util.*;
  * @since 2015-09-23.
  */
 public class FilesGenerator {
-  public static class az {
-    @SafeVarargs public static <T> Iterable<T> iterable(final T... ts) {
-      return () -> new Iterator<T>() {
-        private int next = 0;
-
-        @Override public boolean hasNext() {
-          return next < ts.length;
-        }
-        @Override public T next() {
-          return ts[next++];
-        }
-        @Override public void remove() {
-          throw new UnsupportedOperationException("Cannot remove an element of an array.");
-        }
-      };
-    }
-  }
-
   public static void main(final String[] args) {
     for (final File f : new FilesGenerator(".java").from("."))
       System.out.println(f);
   }
+  private static Iterable<File> asFiles(final Iterable<String> fileNames) {
+    final List<File> $ = new ArrayList<>();
+    for (final String fileName : fileNames)
+      $.add(new File(fileName));
+    return $;
+  }
+  /**
+   * @param directory
+   *          should be a directory, but we still need to account for weird
+   *          creatures such as "System Volume Information"
+   */
+  static Iterator<File> directoryIterator(final File directory) {
+    if (directory == null || !directory.isDirectory() || directory.list() == null)
+      return null;
+    final Iterator<String> generator = as.iterable(directory.list()).iterator();
+    return new Iterator<File>() {
+      @Override public boolean hasNext() {
+        for (;;) {
+          if (!generator.hasNext())
+            return false;
+          final String name = generator.next();
+          if (name == null)
+            continue;
+          next = new File(directory, name);
+          return true;
+        }
+      }
+      @Override public File next() {
+        return next;
+      }
 
-  /** Which extensions we search for */
-  final Iterable<String> extensions;
-
+      private File next;
+    };
+  }
   /**
    * Instantiates this class. This instantiation makes the first step in the
    * call chain that makes the fluent API. The second (and last) such step is
    * provided by function {@link #from(String...)}.
    *
-   * @param extensions an array of non-<code><b>null</b></code> {@link String}s
+   * @param extensions
+   *          an array of non-<code><b>null</b></code> {@link String}s
    *          specifying the allowed extensions for files that the iterator
    *          should yield, e.g., ".java", ".class", ".doc", etc. If this
    *          parameter is <code><b>null</b></code>, or of length 0, or contains
@@ -74,18 +81,9 @@ public class FilesGenerator {
     this.extensions = az.iterable(extensions);
   }
   /**
-   * @param from an array of names of directories from which the traversal
-   *          should begin
-   * @return an instance of an internal (yet <code><b>public</b></code>)
-   *         <code><b>class</b></code> which <code><b>implements</b></code> the
-   *         {@link Iterable} <code><b>interface</b></code>
-   */
-  public From from(final String... from) {
-    return from(az.iterable(from));
-  }
-  /**
-   * @param from an array of names of directories from which the traversal
-   *          should begin
+   * @param from
+   *          an array of names of directories from which the traversal should
+   *          begin
    * @return an instance of an internal (yet <code><b>public</b></code>)
    *         <code><b>class</b></code> which <code><b>implements</b></code> the
    *         {@link Iterable} <code><b>interface</b></code>
@@ -93,11 +91,37 @@ public class FilesGenerator {
   public From from(final Iterable<String> from) {
     return new From(asFiles(from));
   }
-  private static Iterable<File> asFiles(final Iterable<String> fileNames) {
-    final List<File> $ = new ArrayList<>();
-    for (final String fileName : fileNames)
-      $.add(new File(fileName));
-    return $;
+  /**
+   * @param from
+   *          an array of names of directories from which the traversal should
+   *          begin
+   * @return an instance of an internal (yet <code><b>public</b></code>)
+   *         <code><b>class</b></code> which <code><b>implements</b></code> the
+   *         {@link Iterable} <code><b>interface</b></code>
+   */
+  public From from(final String... from) {
+    return from(az.iterable(from));
+  }
+
+  /** Which extensions we search for */
+  final Iterable<String> extensions;
+
+  public static class az {
+    @SafeVarargs public static <T> Iterable<T> iterable(final T... ts) {
+      return () -> new Iterator<T>() {
+        @Override public boolean hasNext() {
+          return next < ts.length;
+        }
+        @Override public T next() {
+          return ts[next++];
+        }
+        @Override public void remove() {
+          throw new UnsupportedOperationException("Cannot remove an element of an array.");
+        }
+
+        private int next = 0;
+      };
+    }
   }
 
   /**
@@ -109,8 +133,6 @@ public class FilesGenerator {
    * @since 2015-09-23.
    */
   public class From implements Iterable<File> {
-    final Iterable<File> from;
-
     From(final Iterable<File> from) {
       this.from = from;
     }
@@ -118,10 +140,9 @@ public class FilesGenerator {
       return new FilesIterator(from.iterator());
     }
 
-    private class FilesIterator implements Iterator<File> {
-      private File next = null;
-      private final Stack<Iterator<File>> stack = new Stack<>();
+    final Iterable<File> from;
 
+    private class FilesIterator implements Iterator<File> {
       public FilesIterator(final Iterator<File> i) {
         stack.push(i);
       }
@@ -143,46 +164,21 @@ public class FilesGenerator {
             return true;
         }
       }
-      private boolean ofInterest() {
-        for (final String extension : extensions)
-          if (next.getName().endsWith(extension))
-            return true;
-        return false;
-      }
       @Override public File next() {
         return next;
       }
       @Override public void remove() {
         throw new UnsupportedOperationException();
       }
+      private boolean ofInterest() {
+        for (final String extension : extensions)
+          if (next.getName().endsWith(extension))
+            return true;
+        return false;
+      }
+
+      private File next = null;
+      private final Stack<Iterator<File>> stack = new Stack<>();
     }
-  }
-
-  /**
-   * @param directory should be a directory, but we still need to account for
-   *          weird creatures such as "System Volume Information"
-   */
-  static Iterator<File> directoryIterator(final File directory) {
-    if (directory == null || !directory.isDirectory() || directory.list() == null)
-      return null;
-    final Iterator<String> generator = as.iterable(directory.list()).iterator();
-    return new Iterator<File>() {
-      private File next;
-
-      @Override public boolean hasNext() {
-        for (;;) {
-          if (!generator.hasNext())
-            return false;
-          final String name = generator.next();
-          if (name == null)
-            continue;
-          next = new File(directory, name);
-          return true;
-        }
-      }
-      @Override public File next() {
-        return next;
-      }
-    };
   }
 }

@@ -12,11 +12,9 @@ import org.eclipse.core.runtime.*;
 public class Nature implements IProjectNature {
   /** ID of this project nature */
   public static final String NATURE_ID = "org.spartan.refactoring.NatureID";
-  /** The project to which we relate */
-  private IProject project;
 
   /* (non-Javadoc)
-   * 
+   *
    * @see org.eclipse.core.resources.IProjectNature#configure() */
   @Override public void configure() throws CoreException {
     final IProjectDescription d = project.getDescription();
@@ -30,7 +28,7 @@ public class Nature implements IProjectNature {
     project.setDescription(d, null);
   }
   /* (non-Javadoc)
-   * 
+   *
    * @see org.eclipse.core.resources.IProjectNature#deconfigure() */
   @Override public void deconfigure() throws CoreException {
     final IProjectDescription description = getProject().getDescription();
@@ -48,4 +46,7 @@ public class Nature implements IProjectNature {
   @Override public void setProject(final IProject p) {
     project = p;
   }
+
+  /** The project to which we relate */
+  private IProject project;
 }

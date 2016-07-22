@@ -19,8 +19,7 @@ import org.eclipse.text.edits.*;
  * @author Yossi Gil
  * @since 2015-07-29
  */
-public final class IfFooSequencerIfFooSameSequencer extends Wring.ReplaceToNextStatement<IfStatement> implements
-    Kind.ConsolidateStatements {
+public final class IfFooSequencerIfFooSameSequencer extends Wring.ReplaceToNextStatement<IfStatement> implements Kind.ConsolidateStatements {
   private static IfStatement makeIfWithoutElse(final Statement s, final InfixExpression condition) {
     final IfStatement $ = condition.getAST().newIfStatement();
     $.setExpression(condition);
@@ -28,8 +27,10 @@ public final class IfFooSequencerIfFooSameSequencer extends Wring.ReplaceToNextS
     $.setElseStatement(null);
     return $;
   }
-  @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement,
-      @SuppressWarnings("unused") final TextEditGroup __) {
+  @Override String description(final IfStatement s) {
+    return "Consolidate if(" + s.getExpression() + ") ... with the next if' statements whose body is identical";
+  }
+  @Override ASTRewrite go(final ASTRewrite r, final IfStatement s, final Statement nextStatement, @SuppressWarnings("unused") final TextEditGroup __) {
     if (!Is.vacuousElse(s))
       return null;
     final IfStatement s2 = asIfStatement(nextStatement);
@@ -39,11 +40,7 @@ public final class IfFooSequencerIfFooSameSequencer extends Wring.ReplaceToNextS
     final List<Statement> ss1 = extract.statements(then);
     if (!same(ss1, extract.statements(then(s2))) || !Is.sequencer(last(ss1)))
       return null;
-    scalpel.replaceWith(makeIfWithoutElse(BlockSimplify.reorganizeNestedStatement(then, scalpel),
-        Subject.pair(s.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
+    scalpel.replaceWith(makeIfWithoutElse(BlockSimplify.reorganizeNestedStatement(then, scalpel), Subject.pair(s.getExpression(), s2.getExpression()).to(CONDITIONAL_OR)));
     return r;
-  }
-  @Override String description(final IfStatement s) {
-    return "Consolidate if(" + s.getExpression() + ") ... with the next if' statements whose body is identical";
   }
 }

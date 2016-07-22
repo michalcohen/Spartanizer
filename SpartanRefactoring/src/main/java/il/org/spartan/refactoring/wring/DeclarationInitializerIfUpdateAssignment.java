@@ -12,17 +12,17 @@ import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
 /**
- * A {@link Wring} to convert <code>int a = 2;
- * if (b)
- *   a = 3;</code> into <code>int a = b ? 3 : 2;</code>
+ * A {@link Wring} to convert <code>int a = 2; if (b) a = 3;</code> into
+ * <code>int a = b ? 3 : 2;</code>
  *
  * @author Yossi Gil
  * @since 2015-08-07
  */
-public final class DeclarationInitializerIfUpdateAssignment extends Wring.VariableDeclarationFragementAndStatement implements
-    Kind.Ternarize {
-  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n,
-      final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
+public final class DeclarationInitializerIfUpdateAssignment extends Wring.VariableDeclarationFragementAndStatement implements Kind.Ternarize {
+  @Override public String description(final VariableDeclarationFragment f) {
+    return "Consolidate initialization of " + f.getName() + " with the subsequent conditional assignment to it";
+  }
+  @Override ASTRewrite go(final ASTRewrite r, final VariableDeclarationFragment f, final SimpleName n, final Expression initializer, final Statement nextStatement, final TextEditGroup g) {
     if (initializer == null)
       return null;
     final IfStatement s = asIfStatement(nextStatement);
@@ -44,8 +44,5 @@ public final class DeclarationInitializerIfUpdateAssignment extends Wring.Variab
     i.inlineInto(then(newInitializer), newInitializer.getExpression());
     r.remove(nextStatement, g);
     return r;
-  }
-  @Override public String description(final VariableDeclarationFragment f) {
-    return "Consolidate initialization of " + f.getName() + " with the subsequent conditional assignment to it";
   }
 }

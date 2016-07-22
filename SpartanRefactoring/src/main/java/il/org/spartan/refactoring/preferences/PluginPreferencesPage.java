@@ -7,10 +7,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.*;
 
-@SuppressWarnings("javadoc") public class PluginPreferencesPage extends FieldEditorPreferencePage implements
-    IWorkbenchPreferencePage {
-  private final SpartanPropertyListener listener;
-
+@SuppressWarnings("javadoc") public class PluginPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
   @SuppressWarnings("synthetic-access") public PluginPreferencesPage() {
     super(GRID);
     listener = new SpartanPropertyListener();
@@ -24,13 +21,13 @@ import org.eclipse.ui.*;
         PluginPreferencesResources.PLUGIN_STARTUP_BEHAVIOR_TEXT, //
         PluginPreferencesResources.PLUGIN_STARTUP_BEHAVIOR_OPTIONS, //
         getFieldEditorParent()) //
-    );
+        );
     // Add the enabled for new projects checkbox
     addField(new BooleanFieldEditor( //
         PluginPreferencesResources.NEW_PROJECTS_ENABLE_BY_DEFAULT_ID, //
         PluginPreferencesResources.NEW_PROJECTS_ENABLE_BY_DEFAULT_TEXT, //
         getFieldEditorParent()) //
-    );
+        );
     // Add the "resolve bindings" checkbox
     final BooleanFieldEditor bindingsCheckbox = new BooleanFieldEditor( //
         PluginPreferencesResources.ENABLE_BINDING_RESOLUTION_ID, //
@@ -40,8 +37,7 @@ import org.eclipse.ui.*;
     // Create and fill the "enabled spartanizations" group box
     final GroupFieldEditor gr = new GroupFieldEditor("Enabled spartanizations", getFieldEditorParent());
     for (final WringGroup wring : WringGroup.values())
-      gr.add(new ComboFieldEditor(wring.getId(), wring.getLabel(), PluginPreferencesResources.WRING_COMBO_OPTIONS, gr
-          .getFieldEditor()));
+      gr.add(new ComboFieldEditor(wring.getId(), wring.getLabel(), PluginPreferencesResources.WRING_COMBO_OPTIONS, gr.getFieldEditor()));
     addField(gr);
     gr.init();
   }
@@ -50,6 +46,8 @@ import org.eclipse.ui.*;
     setDescription(PluginPreferencesResources.PAGE_DESCRIPTION);
     Plugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener);
   }
+
+  private final SpartanPropertyListener listener;
 
   /**
    * An event handler used to re-initialize the Trimmer spartanization once a

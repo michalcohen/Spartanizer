@@ -11,23 +11,21 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-08-29
  */
 public class MethodExplorer {
-  final MethodDeclaration inner;
-
   /**
    * Instantiate this class
    *
-   * @param inner JD
+   * @param inner
+   *          JD
    */
   public MethodExplorer(final MethodDeclaration inner) {
     this.inner = inner;
   }
   /**
    * Computes the list of all local variable declarations found in a method.
-   * {@link MethodDeclaration}.
-   * <p>
-   * This method correctly ignores declarations made within nested types. It
-   * also correctly adds variables declared within plain and extended for loops,
-   * just as local variables defined within a try and catch clauses.
+   * {@link MethodDeclaration}. <p> This method correctly ignores declarations
+   * made within nested types. It also correctly adds variables declared within
+   * plain and extended for loops, just as local variables defined within a try
+   * and catch clauses.
    *
    * @return a list of {@link SimpleName} from the given method.
    */
@@ -69,9 +67,8 @@ public class MethodExplorer {
   }
   /**
    * Computes the list of all return statements found in a
-   * {@link MethodDeclaration}.
-   * <p>
-   * This method correctly ignores return statements found within nested types.
+   * {@link MethodDeclaration}. <p> This method correctly ignores return
+   * statements found within nested types.
    *
    * @return a list of {@link ReturnStatement} from the given method.
    */
@@ -85,6 +82,8 @@ public class MethodExplorer {
     });
     return $;
   }
+
+  final MethodDeclaration inner;
 
   public abstract static class IgnoreNestedMethods extends ASTVisitor {
     @Override public final boolean visit(@SuppressWarnings("unused") final AnnotationTypeDeclaration __) {
