@@ -2,7 +2,7 @@ package il.org.spartan.refactoring.spartanizations;
 
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
-import static org.junit.Assert.*;
+
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -51,7 +51,7 @@ public class Unchanged {
     if (input.getName().indexOf(FileTestUtils.testSuffix) <= 0)
       azzert.that(TESTUtils.rewrite(spartanization, (CompilationUnit) ast.COMPILIATION_UNIT.from(input), new Document(input())).get(), is(input()));
     else
-      assertThat("", TESTUtils.rewrite(spartanization, (CompilationUnit) ast.COMPILIATION_UNIT.from(input), new Document(ast.string(FileTestUtils.makeInFile(input)))).get(),
+      azzert.that("", TESTUtils.rewrite(spartanization, (CompilationUnit) ast.COMPILIATION_UNIT.from(input), new Document(ast.string(FileTestUtils.makeInFile(input)))).get(),
           is(ast.string(FileTestUtils.makeInFile(input))));
   }
   /**

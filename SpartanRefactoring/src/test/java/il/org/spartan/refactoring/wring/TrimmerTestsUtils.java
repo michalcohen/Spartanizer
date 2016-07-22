@@ -3,7 +3,7 @@ package il.org.spartan.refactoring.wring;
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
-import static org.junit.Assert.*;
+
 import il.org.spartan.*;
 import il.org.spartan.misc.*;
 import il.org.spartan.refactoring.preferences.*;
@@ -23,18 +23,18 @@ public class TrimmerTestsUtils {
   }
   static String apply(final Trimmer t, final String from) {
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(from);
-    that(u, notNullValue());
+   azzert.that(u, notNullValue());
     final Document d = new Document(from);
-    that(d, notNullValue());
+   azzert.that(d, notNullValue());
     final Document $ = TESTUtils.rewrite(t, u, d);
-    that($, notNullValue());
+   azzert.that($, notNullValue());
     return $.get();
   }
   static String apply(final Wring<? extends ASTNode> ns, final String from) {
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(from);
-    that(u, notNullValue());
+   azzert.that(u, notNullValue());
     final Document d = new Document(from);
-    that(d, notNullValue());
+   azzert.that(d, notNullValue());
     return TESTUtils.rewrite(new AsSpartanization(ns, "Tested Refactoring"), u, d).get();
   }
   static String applyCompilationUnit(final Trimmer t, final String from) {
@@ -45,20 +45,20 @@ public class TrimmerTestsUtils {
     p.setSource(from.toCharArray());
     p.setResolveBindings(PluginPreferencesResources.getResolveBindingEnabled());
     final CompilationUnit u = (CompilationUnit) p.createAST(null);
-    that(u, notNullValue());
+   azzert.that(u, notNullValue());
     final Document d = new Document(from);
-    that(d, notNullValue());
+   azzert.that(d, notNullValue());
     final Document $ = TESTUtils.rewrite(t, u, d);
-    that($, notNullValue());
+   azzert.that($, notNullValue());
     return $.get();
   }
   static void assertSimplifiesTo(final String from, final String expected, final Wring<? extends ASTNode> ns, final Wrap wrapper) {
     final String wrap = wrapper.on(from);
     final String unpeeled = apply(ns, wrap);
-    assertThat("Nothing done on " + from, from, not(unpeeled));
+    azzert.that("Nothing done on " + from, from, not(unpeeled));
     final String peeled = wrapper.off(unpeeled);
-    assertThat("No similification of " + from, from, not(peeled));
-    assertThat("Simpification of " + from + " is just reformatting", compressSpaces(peeled), not(compressSpaces(from)));
+    azzert.that("No similification of " + from, from, not(peeled));
+    azzert.that("Simpification of " + from + " is just reformatting", compressSpaces(peeled), not(compressSpaces(from)));
     assertSimilar(expected, peeled);
   }
   static <N extends ASTNode> OperandToWring<N> included(final String from, final Class<N> clazz) {
@@ -85,10 +85,10 @@ public class TrimmerTestsUtils {
       final Set<String> csb = getComments(wrap);
       Source.set(Source.NONE_PATH, wrap);
       final String unpeeled = TrimmerTestsUtils.apply(new Trimmer(), wrap);
-      assertThat("Nothing done on " + get(), wrap, not(unpeeled));
+      azzert.that("Nothing done on " + get(), wrap, not(unpeeled));
       final String peeled = w.off(unpeeled);
-      assertThat("No trimming of " + get(), get(), not(peeled));
-      assertThat("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
+      azzert.that("No trimming of " + get(), get(), not(peeled));
+      azzert.that("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
       final Set<String> csa = getComments(unpeeled);
       for (final String c : csb)
         assertTrue("Comment " + c + " not preserved", csa.contains(c));
@@ -112,10 +112,10 @@ public class TrimmerTestsUtils {
       final Wrap w = findWrap();
       final String wrap = w.on(get());
       final String unpeeled = TrimmerTestsUtils.apply(new Trimmer(), wrap);
-      assertThat("Nothing done on " + get(), wrap, not(unpeeled));
+      azzert.that("Nothing done on " + get(), wrap, not(unpeeled));
       final String peeled = w.off(unpeeled);
-      assertThat("No trimming of " + get(), get(), not(peeled));
-      assertThat("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
+      azzert.that("No trimming of " + get(), get(), not(peeled));
+      azzert.that("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
       assertSimilar(expected, peeled);
     }
     private void checkExpectedCompilationUnit(final String expected) {
@@ -123,10 +123,10 @@ public class TrimmerTestsUtils {
       final Wrap w = Wrap.ComplilationUnit;
       wrap = w.on(get());
       final String unpeeled = TrimmerTestsUtils.applyCompilationUnit(new Trimmer(), wrap);
-      assertThat("Nothing done on " + get(), wrap, not(unpeeled));
+      azzert.that("Nothing done on " + get(), wrap, not(unpeeled));
       final String peeled = w.off(unpeeled);
-      assertThat("No trimming of " + get(), get(), not(peeled));
-      assertThat("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
+      azzert.that("No trimming of " + get(), get(), not(peeled));
+      azzert.that("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
       assertSimilar(expected, peeled);
     }
     private void checkSame() {
@@ -142,7 +142,7 @@ public class TrimmerTestsUtils {
     }
     Wrap findWrap() {
       final Wrap $ = Wrap.find(get());
-      assertThat("Cannot parse '" + get() + "'; did you forget a semicolon?", $, notNullValue());
+      azzert.that("Cannot parse '" + get() + "'; did you forget a semicolon?", $, notNullValue());
       return $;
     }
 
@@ -158,22 +158,22 @@ public class TrimmerTestsUtils {
     }
     public OperandToWring<N> in(final Wring<N> w) {
       final N findNode = findNode(w);
-      that(w.createScalpel(null, null).scopeIncludes(findNode), is(true));
+     azzert.that(w.createScalpel(null, null).scopeIncludes(findNode), is(true));
       return this;
     }
     public OperandToWring<N> notIn(final Wring<N> w) {
-      that(w.createScalpel(null, null).scopeIncludes(findNode(w)), is(false));
+     azzert.that(w.createScalpel(null, null).scopeIncludes(findNode(w)), is(false));
       return this;
     }
     private N findNode(final Wring<N> w) {
-      that(w, notNullValue());
+     azzert.that(w, notNullValue());
       final Wrap wrap = findWrap();
-      that(wrap, notNullValue());
+     azzert.that(wrap, notNullValue());
       final CompilationUnit u = wrap.intoCompilationUnit(get());
-      that(u, notNullValue());
+     azzert.that(u, notNullValue());
       final @Nullable N $ = firstInstance(u);
       assert $ != null;
-      that($, notNullValue());
+     azzert.that($, notNullValue());
       return $;
     }
     private @Nullable N firstInstance(final CompilationUnit u) {

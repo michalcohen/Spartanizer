@@ -2,6 +2,7 @@ package il.org.spartan.refactoring.utils;
 
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
+import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 
 import java.util.*;
@@ -18,50 +19,50 @@ import org.junit.runners.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class OccurrencesTest {
   @Test public void correctSettings() {
-    that(ab, iz("int a=2,b;"));
-    that(b.toString(), is("b"));
-    that(s, is(extract.firstIfStatement(u)));
-    that(s, iz("if (a + b) a=3;"));
-    that(e, iz("a + b"));
+    azzert.that(ab, iz("int a=2,b;"));
+    azzert.that(b.toString(), is("b"));
+    azzert.that(s, is(extract.firstIfStatement(u)));
+    azzert.that(s, iz("if (a + b) a=3;"));
+    azzert.that(e, iz("a + b"));
   }
   @Test public void exploreLeftOfE() {
-    that(left(e), iz("a"));
+    azzert.that(left(e), iz("a"));
   }
   @Test public void lexicalUsesCollector() {
     final List<SimpleName> into = new ArrayList<>();
     final ASTVisitor collector = Collect.lexicalUsesCollector(into, a);
     a.accept(collector);
-    that(into.size(), is(1));
+    azzert.that(into.size(), is(1));
   }
   @Test public void occurencesAinAL() {
-    that(Collect.BOTH_SEMANTIC.of(a).in(a).size(), is(1));
+    azzert.that(Collect.BOTH_SEMANTIC.of(a).in(a).size(), is(1));
   }
   @Test public void occurencesAinAsame() {
-    that(same(a, a), is(true));
+    azzert.that(same(a, a), is(true));
   }
   @Test public void occurencesAinE() {
-    that(Collect.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
+    azzert.that(Collect.BOTH_SEMANTIC.of(a).in(e).size(), is(1));
   }
   @Test public void occurencesAinLeftOfE() {
-    that(Collect.BOTH_SEMANTIC.of(a).in(left(e)).size(), is(1));
+    azzert.that(Collect.BOTH_SEMANTIC.of(a).in(left(e)).size(), is(1));
   }
   @Test public void occurencesAinLeftOfEsame() {
-    that(same(left(e), a), is(true));
+    azzert.that(same(left(e), a), is(true));
   }
   @Test public void occurencesAinRightOfE() {
-    that(Collect.BOTH_SEMANTIC.of(a).in(right(e)).size(), is(0));
+    azzert.that(Collect.BOTH_SEMANTIC.of(a).in(right(e)).size(), is(0));
   }
   @Test public void occurencesBinE() {
-    that(Collect.BOTH_SEMANTIC.of(b).in(e).size(), is(1));
+    azzert.that(Collect.BOTH_SEMANTIC.of(b).in(e).size(), is(1));
   }
   @Test public void occurencesBinRightOfE() {
-    that(Collect.BOTH_SEMANTIC.of(b).in(right(e)).size(), is(1));
+    azzert.that(Collect.BOTH_SEMANTIC.of(b).in(right(e)).size(), is(1));
   }
   @Test public void sameAandLeftOfE() {
-    that(same(a, left(e)), is(true));
+    azzert.that(same(a, left(e)), is(true));
   }
   @Test public void sameTypeAandLeftOfE() {
-    that(a, instanceOf(left(e).getClass()));
+    azzert.that(a, instanceOf(left(e).getClass()));
   }
 
   private final String from = "int a = 2,b; if (a+b) a =3;";

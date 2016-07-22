@@ -1,6 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static org.junit.Assert.*;
 import il.org.spartan.*;
 
 import java.util.*;
@@ -86,7 +85,7 @@ public class TernaryEliminateTest {
       super(WRING);
     }
     @Test public void inputIsConditionalfixExpression() {
-      assertNotNull(asConditionalExpression());
+      azzert.notNull(asConditionalExpression());
     }
   }
 }

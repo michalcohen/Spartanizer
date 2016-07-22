@@ -455,6 +455,9 @@ public enum extract {
     final List<Statement> $ = new ArrayList<>();
     return n == null || !(n instanceof Statement) ? $ : extract.statementsInto((Statement) n, $);
   }
+  @SuppressWarnings("unchecked") public static List<TagElement> tags(Javadoc j) {
+    return j.tags();
+  }
   /**
    * @param n
    *          a node to extract an expression from
@@ -512,7 +515,6 @@ public enum extract {
       extract.statementsInto((Statement) statement, $);
     return $;
   }
-
   private static List<Statement> statementsInto(final Statement s, final List<Statement> $) {
     switch (s.getNodeType()) {
       case EMPTY_STATEMENT:

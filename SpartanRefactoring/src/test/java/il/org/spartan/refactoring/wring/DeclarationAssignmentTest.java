@@ -24,7 +24,7 @@ public class DeclarationAssignmentTest {
 
   @Test public void placeHolder() {
     // Place holder for future tests
-    that(WRING, notNullValue());
+   azzert.that(WRING, notNullValue());
   }
 
   @RunWith(Parameterized.class)//

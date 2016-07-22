@@ -2,7 +2,6 @@ package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
-import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -29,20 +28,20 @@ public class IfReturnNoElseReturnTest {
   @Test public void checkFirstIfStatement1() {
     final String s = "if (a) return b; return a();";
     final IfStatement i = extract.firstIfStatement(ast.STATEMENTS.from(s));
-    that(i, notNullValue());
-    that(i.toString(), WRING.scopeIncludes(i), is(true));
+   azzert.that(i, notNullValue());
+   azzert.that(i.toString(), WRING.scopeIncludes(i), is(true));
   }
   @Test public void checkFirstIfStatement2() {
     final String s = "if (a) return b; else return a();";
     final IfStatement i = extract.firstIfStatement(ast.STATEMENTS.from(s));
-    that(i, notNullValue());
-    that(i.toString(), WRING.scopeIncludes(i), is(false));
+   azzert.that(i, notNullValue());
+   azzert.that(i.toString(), WRING.scopeIncludes(i), is(false));
   }
   @Test public void checkFirstIfStatement3() {
     final String s = "if (a) a= b; else a=c;";
     final IfStatement i = extract.firstIfStatement(ast.STATEMENTS.from(s));
-    that(i, notNullValue());
-    that(i.toString(), WRING.scopeIncludes(i), is(false));
+   azzert.that(i, notNullValue());
+   azzert.that(i.toString(), WRING.scopeIncludes(i), is(false));
   }
 
   @RunWith(Parameterized.class)//
@@ -106,38 +105,38 @@ public class IfReturnNoElseReturnTest {
 
     private static String[][] cases = new String[][] { //
     new String[] { "Vanilla {}", "if (a) return b; return a();", "return a ? b: a();" }, //
-      new String[] { "Vanilla ; ", "if (a) return b; return a(); b(); c();", "return a ? b: a(); b(); c();" }, //
-      new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}} return c;", "return a?b:c;" }, //
-      null, //
-      new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();" }, //
-      null, //
-      new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();" }, //
-      new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "" + //
-          " if (x) {\n" + //
-          "   f();\n" + //
-          "   return a;\n" + //
-          " }\n" + //
-          " g();\n" + //
-      "" }, null, //
-      new String[] { "Complex with many junk statements", "" + //
-          " if (x) {\n" + //
-          "   ;\n" + //
-          "   f();\n" + //
-          "   return a;\n" + //
-          " } else {\n" + //
-          "   ;\n" + //
-          "   g();\n" + //
-          "   {\n" + //
-          "   }\n" + //
-          " }\n" + //
-          "", "" + //
-              " if (x) {\n" + //
-              "   f();\n" + //
-              "   return a;\n" + //
-              " }\n" + //
-              " g();\n" + //
-      "" }, //
-      null };
+        new String[] { "Vanilla ; ", "if (a) return b; return a(); b(); c();", "return a ? b: a(); b(); c();" }, //
+        new String[] { "Vanilla {;{;;};} ", "if (a) return b; else {;{;{};};{;{}}} return c;", "return a?b:c;" }, //
+        null, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "if (x) {;f();;;return a;;;}\n g();" }, //
+        null, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "  if(x){;f();;;return a;;;} g();" }, //
+        new String[] { "Compressed complex", " if (x) {;f();;;return a;;;} else {;g();{;;{}}{}}", "" + //
+            " if (x) {\n" + //
+            "   f();\n" + //
+            "   return a;\n" + //
+            " }\n" + //
+            " g();\n" + //
+            "" }, null, //
+        new String[] { "Complex with many junk statements", "" + //
+            " if (x) {\n" + //
+            "   ;\n" + //
+            "   f();\n" + //
+            "   return a;\n" + //
+            " } else {\n" + //
+            "   ;\n" + //
+            "   g();\n" + //
+            "   {\n" + //
+            "   }\n" + //
+            " }\n" + //
+            "", "" + //
+            " if (x) {\n" + //
+            "   f();\n" + //
+            "   return a;\n" + //
+            " }\n" + //
+            " g();\n" + //
+            "" }, //
+        null };
 
     /**
      * Instantiates the enclosing class ({@link Wringed})
@@ -146,28 +145,28 @@ public class IfReturnNoElseReturnTest {
       super(WRING);
     }
     @Test public void asMeNotNull() {
-      that(asMe(), notNullValue());
+      azzert.that(asMe(), notNullValue());
     }
     @Test public void followedByReturn() {
-      that(extract.nextReturn(asMe()), notNullValue());
+      azzert.that(extract.nextReturn(asMe()), notNullValue());
     }
     @Test public void isfStatementElseIsEmpty() {
-      that(extract.statements(extract.firstIfStatement(ast.STATEMENTS.from(input)).getElseStatement()).size(), is(0));
+      azzert.that(extract.statements(extract.firstIfStatement(ast.STATEMENTS.from(input)).getElseStatement()).size(), is(0));
     }
     @Test public void isIfStatement() {
-      assertThat(input, asMe(), notNullValue());
+      azzert.that(input, asMe(), notNullValue());
     }
     @Test public void myScopeIncludes() {
       final IfStatement s = asMe();
-      that(s, notNullValue());
-      that(extract.statements(elze(s)), notNullValue());
-      that(extract.statements(elze(s)).size(), is(0));
+      azzert.that(s, notNullValue());
+      azzert.that(extract.statements(elze(s)), notNullValue());
+      azzert.that(extract.statements(elze(s)).size(), is(0));
     }
     @Test public void noElse() {
-      that(extract.statements(elze(asMe())).size(), is(0));
+      azzert.that(extract.statements(elze(asMe())).size(), is(0));
     }
     @Test public void thenIsSingleReturn() {
-      that(extract.returnStatement(then(asMe())), notNullValue());
+      azzert.that(extract.returnStatement(then(asMe())), notNullValue());
     }
   }
 }

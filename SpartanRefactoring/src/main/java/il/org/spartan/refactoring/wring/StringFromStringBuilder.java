@@ -58,7 +58,7 @@ public class StringFromStringBuilder extends Wring.ReplaceCurrentNode<MethodInvo
    *          an Expression
    * @return true iff e is a String
    */
-  private boolean isString(final Expression e) {
+  private static boolean isString(final Expression e) {
     return e instanceof StringLiteral;
   }
   @Override String description(@SuppressWarnings("unused") final MethodInvocation __) {

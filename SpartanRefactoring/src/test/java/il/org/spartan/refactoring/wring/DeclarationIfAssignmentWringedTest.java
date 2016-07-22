@@ -4,7 +4,7 @@ import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
-import static org.junit.Assert.*;
+
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -62,13 +62,13 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   }
   @Test public void checkIf() {
     final IfStatement s = findIf();
-    that(s, notNullValue());
-    that(Is.vacuousElse(s), is(true));
+   azzert.that(s, notNullValue());
+   azzert.that(Is.vacuousElse(s), is(true));
   }
   @Test public void correctSimplifier() {
     @Nullable final VariableDeclarationFragment asMe = asMe();
     assert asMe != null;
-    assertThat(asMe.toString(), Toolbox.instance.find(asMe()), instanceOf(inner.getClass()));
+    azzert.that(asMe.toString(), Toolbox.instance.find(asMe()), instanceOf(inner.getClass()));
   }
   @Test public void createRewrite() throws MalformedTreeException, IllegalArgumentException, BadLocationException {
     final String s = input;
@@ -76,8 +76,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final CompilationUnit u = asCompilationUnit();
     final ASTRewrite r = new Trimmer().createRewrite(u, null);
     final TextEdit e = r.rewriteAST(d, null);
-    that(e, notNullValue());
-    that(e.apply(d), is(notNullValue()));
+   azzert.that(e, notNullValue());
+   azzert.that(e.apply(d), is(notNullValue()));
   }
   @Test public void eligible() {
     final VariableDeclarationFragment s = asMe();
@@ -86,31 +86,31 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assertTrue(s.toString(), inner.eligible(s));
   }
   @Test public void findsSimplifier() {
-    that(Toolbox.instance.find(asMe()), notNullValue());
+   azzert.that(Toolbox.instance.find(asMe()), notNullValue());
   }
   @Test public void hasOpportunity() {
-    that(inner.scopeIncludes(asMe()), is(true));
+   azzert.that(inner.scopeIncludes(asMe()), is(true));
     final CompilationUnit u = asCompilationUnit();
-    that(u.toString(), new Trimmer().findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
+   azzert.that(u.toString(), new Trimmer().findOpportunities(u).size(), is(greaterThanOrEqualTo(1)));
   }
   @Test public void hasSimplifier() {
     @Nullable final VariableDeclarationFragment asMe = asMe();
     assert asMe != null;
-    assertThat(asMe.toString(), Toolbox.instance.find(asMe), is(notNullValue()));
+    azzert.that(asMe.toString(), Toolbox.instance.find(asMe), is(notNullValue()));
   }
   @Test public void noneligible() {
-    that(inner.nonEligible(asMe()), is(false));
+   azzert.that(inner.nonEligible(asMe()), is(false));
   }
   @Test public void peelableOutput() {
-    that(Wrap.Statement.off(Wrap.Statement.on(expected)), is(expected));
+   azzert.that(Wrap.Statement.off(Wrap.Statement.on(expected)), is(expected));
   }
   @Test public void rewriteNotEmpty() throws MalformedTreeException, IllegalArgumentException {
-    that(new Trimmer().createRewrite(asCompilationUnit(), null), notNullValue());
+   azzert.that(new Trimmer().createRewrite(asCompilationUnit(), null), notNullValue());
   }
   @Test public void scopeIncludesAsMe() {
     @Nullable final VariableDeclarationFragment asMe = asMe();
     assert asMe != null;
-    that(asMe.toString(), inner.scopeIncludes(asMe()), is(true));
+   azzert.that(asMe.toString(), inner.scopeIncludes(asMe()), is(true));
   }
   @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
     if (inner == null)
@@ -121,8 +121,8 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final String peeled = Wrap.Statement.off(actual.get());
     if (expected.equals(peeled))
       return;
-    assertThat("Nothing done on " + input, input, not(peeled));
-    assertThat("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), not(compressSpaces(input)));
+    azzert.that("Nothing done on " + input, input, not(peeled));
+    azzert.that("Wringing of " + input + " amounts to mere reformatting", compressSpaces(peeled), not(compressSpaces(input)));
     assertSimilar(expected, peeled);
     assertSimilar(Wrap.Statement.on(expected), actual);
   }
@@ -131,13 +131,13 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     assert f != null;
     final ASTRewrite r = ASTRewrite.create(f.getAST());
     final Expression initializer = f.getInitializer();
-    assertThat(f.toString(), initializer, notNullValue());
+    azzert.that(f.toString(), initializer, notNullValue());
     final IfStatement s = extract.nextIfStatement(f);
-    that(s, notNullValue());
-    that(extract.statements(elze(s)).size(), is(0));
+   azzert.that(s, notNullValue());
+   azzert.that(extract.statements(elze(s)).size(), is(0));
     final Assignment a = extract.assignment(then(s));
-    that(a, notNullValue());
-    that(same(left(a), f.getName()), is(true));
+   azzert.that(a, notNullValue());
+   azzert.that(same(left(a), f.getName()), is(true));
     r.replace(initializer, Subject.pair(right(a), initializer).toCondition(s.getExpression()), null);
     r.remove(s, null);
   }

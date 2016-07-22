@@ -61,7 +61,7 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
   @Test public void comparisonWithSpecificWithinScope() {
     azzert.that(Is.constant(left(i("this != a"))), is(true));
     final ASTNode n = ast.EXPRESSION.from("a != this");
-    that(n, notNullValue());
+   azzert.that(n, notNullValue());
     assertWithinScope(Funcs.asExpression(n));
     correctScopeExpression(n);
   }
@@ -76,33 +76,33 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     assertWithinScope("this != a");
   }
   @Test public void scopeIncludesFalse1() {
-    that(WRING.scopeIncludes(i("13455643294 * 22")), is(false));
+   azzert.that(WRING.scopeIncludes(i("13455643294 * 22")), is(false));
   }
   @Test public void scopeIncludesFalse1expanded() {
     final InfixExpression e = i("13455643294 * 22");
     azzert.that(!e.hasExtendedOperands(), is(true));
-    that(Is.comparison(e), is(false));
+   azzert.that(Is.comparison(e), is(false));
   }
   @Test public void scopeIncludesFalse2() {
-    that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")), is(false));
+   azzert.that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")), is(false));
   }
   @Test public void scopeIncludesFalse3() {
-    that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")), is(false));
+   azzert.that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")), is(false));
   }
   @Test public void scopeIncludesFalse4() {
-    that(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")), is(false));
+   azzert.that(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")), is(false));
   }
   @Test public void scopeIncludesFalse6() {
     azzert.that(WRING.scopeIncludes(i("1 < 102333")), is(true));
   }
   @Test public void scopeIncludesFalse7() {
-    that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")), is(false));
+   azzert.that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1 || 6 - 7 < 2 + 1")), is(false));
   }
   @Test public void scopeIncludesFalse8() {
-    that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")), is(false));
+   azzert.that(WRING.scopeIncludes(i("1 + 2 < 3 & 7 + 4 > 2 + 1")), is(false));
   }
   @Test public void scopeIncludesFalse9() {
-    that(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")), is(false));
+   azzert.that(WRING.scopeIncludes(i(" 6 - 7 < 2 + 1   ")), is(false));
   }
   @Test public void scopeIncludesTrue1() {
     azzert.that(WRING.scopeIncludes(i("a == this")), is(true));
@@ -178,13 +178,13 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-      that(flatten(flatten).toString(), is(flatten.toString()));
+     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      that(asInfixExpression(), notNullValue());
+     azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void twoOrMoreArguments() {
-      that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -269,27 +269,27 @@ public class InfixComparisonSpecificTest extends AbstractWringTest<InfixExpressi
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-      that(flatten(flatten).toString(), is(flatten.toString()));
+     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Test public void flipIsNotNull() {
-      that(flip(asInfixExpression()), notNullValue());
+     azzert.that(flip(asInfixExpression()), notNullValue());
     }
     @Override @Test public void inputIsInfixExpression() {
-      that(asInfixExpression(), notNullValue());
+     azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void sortTwiceADDITION() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = extract.operands(flatten(e));
       ExpressionComparator.ADDITION.sort(operands);
-      that(ExpressionComparator.ADDITION.sort(operands), is(false));
+     azzert.that(ExpressionComparator.ADDITION.sort(operands), is(false));
     }
     @Test public void sortTwiceMULTIPLICATION() {
       final List<Expression> operands = extract.operands(flatten(asInfixExpression()));
       ExpressionComparator.MULTIPLICATION.sort(operands);
-      that(ExpressionComparator.MULTIPLICATION.sort(operands), is(false));
+     azzert.that(ExpressionComparator.MULTIPLICATION.sort(operands), is(false));
     }
     @Test public void twoOrMoreArguments() {
-      that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

@@ -4,7 +4,7 @@ import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
-import static org.junit.Assert.*;
+
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -38,18 +38,18 @@ public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixEx
     final String s = " (2) == true";
     final String wrap = Wrap.Expression.on(s);
     final CompilationUnit u = (CompilationUnit) ast.COMPILIATION_UNIT.from(wrap);
-    that(u, notNullValue());
+   azzert.that(u, notNullValue());
     final Document d = new Document(wrap);
-    that(d, notNullValue());
+   azzert.that(d, notNullValue());
     final Trimmer t = new Trimmer();
     final ASTRewrite r = t.createRewrite(u, null);
     final TextEdit x = r.rewriteAST(d, null);
     x.apply(d);
     final String unpeeled = d.get();
-    assertThat("Nothing done on " + s, wrap, not(unpeeled));
+    azzert.that("Nothing done on " + s, wrap, not(unpeeled));
     final String peeled = Wrap.Expression.off(unpeeled);
-    assertThat("No similification of " + s, s, not(peeled));
-    assertThat("Simpification of " + s + " is just reformatting", compressSpaces(peeled), not(compressSpaces(s)));
+    azzert.that("No similification of " + s, s, not(peeled));
+    azzert.that("Simpification of " + s + " is just reformatting", compressSpaces(peeled), not(compressSpaces(s)));
     assertSimilar(" 2 ", peeled);
   }
 
@@ -104,18 +104,18 @@ public class InfixComparisonBooleanLiteralTest extends AbstractWringTest<InfixEx
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-      that(flatten(flatten).toString(), is(flatten.toString()));
+     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      that(asInfixExpression(), notNullValue());
+     azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void sortTwice() {
       final List<Expression> operands = extract.operands(flatten(asInfixExpression()));
       ExpressionComparator.ADDITION.sort(operands);
-      that(ExpressionComparator.ADDITION.sort(operands), is(false));
+     azzert.that(ExpressionComparator.ADDITION.sort(operands), is(false));
     }
     @Test public void twoOrMoreArguments() {
-      that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

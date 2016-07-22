@@ -1,6 +1,7 @@
 package il.org.spartan.refactoring.utils;
 
 import static il.org.spartan.azzert.*;
+import il.org.spartan.*;
 
 import java.util.*;
 
@@ -9,55 +10,55 @@ import org.junit.*;
 
 @SuppressWarnings({ "static-method", "javadoc" }) public class MethodExplorerTest {
   @Test public void localVariablesCatchExpression() {
-    that(new MethodExplorer(Into.d("" + "  void f() {\n" + "    try {\n" + "      f();\n" + "    } catch (final Exception|RuntimeException e) {\n" + "      f();\n" + "    }\n" + "  }"))
+    azzert.that(new MethodExplorer(Into.d("" + "  void f() {\n" + "    try {\n" + "      f();\n" + "    } catch (final Exception|RuntimeException e) {\n" + "      f();\n" + "    }\n" + "  }"))
         .localVariables().size(), is(1));
   }
   @Test public void localVariablesExtendedForLoop() {
-    that(new MethodExplorer(Into.d("" + "  int sum(final int is[]) {\n" + "    int $ = 0;\n" + "    for (final int i : is)\n" + "      $ += i;\n" + "    return $;\n" + "  } ")).localVariables()
-        .size(), is(2));
+    azzert.that(new MethodExplorer(Into.d("" + "  int sum(final int is[]) {\n" + "    int $ = 0;\n" + "    for (final int i : is)\n" + "      $ += i;\n" + "    return $;\n" + "  } "))
+        .localVariables().size(), is(2));
   }
   @Test public void localVariablesForLoopNoVariable() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "  for (f(); i*j <10; i += j++);  }")).localVariables().size(), is(0));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "  for (f(); i*j <10; i += j++);  }")).localVariables().size(), is(0));
   }
   @Test public void localVariablesForLoopOneVariable() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "  for (int i = 0; i*j <10; i += j++);  }")).localVariables().size(), is(1));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "  for (int i = 0; i*j <10; i += j++);  }")).localVariables().size(), is(1));
   }
   @Test public void localVariablesForLoopTwoVariables() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "  for (int i = 0, j = 2; i*j <10; i += j++);  }")).localVariables().size(), is(2));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "  for (int i = 0, j = 2; i*j <10; i += j++);  }")).localVariables().size(), is(2));
   }
   @Test public void localVariablesMultipleFragments() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "int a,b;\n" + "  }")).localVariables().size(), is(2));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "int a,b;\n" + "  }")).localVariables().size(), is(2));
   }
   @Test public void localVariablesMultipleNestedFragments() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "int a,b;\n" + "  {int c, d;}}")).localVariables().size(), is(4));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "int a,b;\n" + "  {int c, d;}}")).localVariables().size(), is(4));
   }
   @Test public void localVariablesNone() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "    return new Object() {\n" + "      @Override public boolean equals(Object obj) {\n" + "        return super.equals(obj);\n" + "      }\n"
-        + "      @Override public int hashCode() {\n" + "        return super.hashCode();\n" + "      }\n" + "    }.hashCode();\n" + "  }")).localVariables().size(), is(0));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "    return new Object() {\n" + "      @Override public boolean equals(Object obj) {\n" + "        return super.equals(obj);\n"
+        + "      }\n" + "      @Override public int hashCode() {\n" + "        return super.hashCode();\n" + "      }\n" + "    }.hashCode();\n" + "  }")).localVariables().size(), is(0));
   }
   @Test public void localVariablesRepeatedNestedFragments() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "int a,b,c,d;\n" + "  {int i, j;} {int i,j; int k;}")).localVariables().size(), is(9));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "int a,b,c,d;\n" + "  {int i, j;} {int i,j; int k;}")).localVariables().size(), is(9));
   }
   @Test public void localVariablesTryClause() {
-    that(new MethodExplorer(Into.d("" + "  void f() {\n" + "    final File f = new File(\"f\");\n"
+    azzert.that(new MethodExplorer(Into.d("" + "  void f() {\n" + "    final File f = new File(\"f\");\n"
         + "    try (final InputStream s = new FileInputStream(f); final InputStreamReader is = new InputStreamReader(s)) {\n" + "      f();\n" + "    } catch (final FileNotFoundException e) {\n"
         + "      e.printStackTrace();\n" + "    } catch (final IOException e) {\n" + "      e.printStackTrace();\n" + "    } finally {\n" + "      f();\n" + "    }\n" + "  }\n")).localVariables()
         .size(), is(5));
   }
   @Test public void localVariablesVanilla() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "int a;\n" + "  }")).localVariables().size(), is(1));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "int a;\n" + "  }")).localVariables().size(), is(1));
   }
   @Test public void returnStatementsExists() {
     final MethodDeclaration d = Into.d("int f() { return a; }");
     final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    that(a, notNullValue());
-    that(a.size(), is(1));
+    azzert.that(a, notNullValue());
+    azzert.that(a.size(), is(1));
   }
   @Test public void returnStatementsExistsNestedType() {
     final MethodDeclaration d = Into.d("int f() { class B {}; return a; }");
     final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    that(a, notNullValue());
-    that(a.size(), is(1));
+    azzert.that(a, notNullValue());
+    azzert.that(a.size(), is(1));
   }
   @Test public void returnStatementsExistsNestedTypeAnnotation() {
     final MethodDeclaration d = Into.d("  boolean f() {\n" + //
@@ -67,14 +68,14 @@ import org.junit.*;
         "    return new B().g();\n" + //
         "  }"); //
     final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    that(a, notNullValue());
-    that(a.size(), is(2));
+    azzert.that(a, notNullValue());
+    azzert.that(a.size(), is(2));
   }
   @Test public void returnStatementsExistsNestedTypeWithReturn() {
     final MethodDeclaration d = Into.d("int f() { class B {int g() { return c; } }; return a; }");
     final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    that(a, notNullValue());
-    that(a.size(), is(1));
+    azzert.that(a, notNullValue());
+    azzert.that(a.size(), is(1));
   }
   @Test public void returnStatementsExistsNestedTypeWithReturn1() {
     final MethodDeclaration d = Into.d("  boolean f() {\n" + //
@@ -88,17 +89,17 @@ import org.junit.*;
         "    return new B().g();\n" + //
         "  }"); //
     final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    that(a, notNullValue());
-    that(a.size(), is(2));
+    azzert.that(a, notNullValue());
+    azzert.that(a.size(), is(2));
   }
   @Test public void returnStatementsTwoReturns() {
     final MethodDeclaration d = Into.d("int f() { if (b) ; else return c; return a; }");
     final List<ReturnStatement> a = new MethodExplorer(d).returnStatements();
-    that(a, notNullValue());
-    that(a.size(), is(2));
+    azzert.that(a, notNullValue());
+    azzert.that(a.size(), is(2));
   }
   @Test public void returnStatementsWithNestedEnum() {
-    that(new MethodExplorer(Into.d("  int f() {\n" + "    return new Object() {\n" + "      @Override public boolean equals(Object obj) {\n" + "        return super.equals(obj);\n" + "      }\n"
-        + "      @Override public int hashCode() {\n" + "        return super.hashCode();\n" + "      }\n" + "    }.hashCode();\n" + "  }")).returnStatements().size(), is(1));
+    azzert.that(new MethodExplorer(Into.d("  int f() {\n" + "    return new Object() {\n" + "      @Override public boolean equals(Object obj) {\n" + "        return super.equals(obj);\n"
+        + "      }\n" + "      @Override public int hashCode() {\n" + "        return super.hashCode();\n" + "      }\n" + "    }.hashCode();\n" + "  }")).returnStatements().size(), is(1));
   }
 }

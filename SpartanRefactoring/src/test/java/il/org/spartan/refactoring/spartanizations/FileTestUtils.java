@@ -1,6 +1,7 @@
 package il.org.spartan.refactoring.spartanizations;
 
 import static il.org.spartan.azzert.*;
+import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
 import java.io.*;
@@ -111,9 +112,9 @@ public abstract class FileTestUtils {
   }
   static Spartanization makeSpartanizationObject(final String folderForClass) {
     final Class<?> c = asClass(folderForClass);
-    that(c, notNullValue());
+    azzert.that(c, notNullValue());
     final Object $ = getInstance(c);
-    that($, notNullValue());
+    azzert.that($, notNullValue());
     return (Spartanization) $;
   }
 
@@ -166,7 +167,7 @@ public abstract class FileTestUtils {
    */
   public static abstract class Files extends FileTestUtils.Traverse {
     /* (non-Javadoc)
-     *
+     * 
      * @see
      * il.ac.technion.cs.ssdl.spartan.refactoring.TestSuite.Traverse#go(java
      * .util.List, java.io.File) */
@@ -254,11 +255,11 @@ public abstract class FileTestUtils {
      * @return a collection of all test cases generated in the traversal
      */
     public final Collection<Object[]> go() {
-      that(location, notNullValue());
-      that(location.listFiles(), notNullValue());
+      azzert.that(location, notNullValue());
+      azzert.that(location.listFiles(), notNullValue());
       final List<Object[]> $ = new ArrayList<>();
       for (final File f : location.listFiles()) {
-        that(f, notNullValue());
+        azzert.that(f, notNullValue());
         go($, f);
       }
       return $;

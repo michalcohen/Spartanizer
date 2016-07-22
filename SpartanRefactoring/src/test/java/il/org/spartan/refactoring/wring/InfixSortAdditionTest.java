@@ -2,7 +2,7 @@ package il.org.spartan.refactoring.wring;
 
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
-import static org.junit.Assert.*;
+
 import il.org.spartan.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -33,10 +33,10 @@ public class InfixSortAdditionTest {
     final InfixExpression plus = extract.firstPlus(e);
     assertTrue(Is.notString(plus));
     final List<Expression> operands = extract.operands(flatten(plus));
-    that(operands.size(), is(2));
+   azzert.that(operands.size(), is(2));
     final InfixExpression r = Subject.operands(operands).to(plus.getOperator());
-    that(r, iz("2+a"));
-    that(new InfixSortAddition().replacement(plus), iz("a+2"));
+   azzert.that(r, iz("2+a"));
+   azzert.that(new InfixSortAddition().replacement(plus), iz("a+2"));
   }
 
   @RunWith(Parameterized.class)//
@@ -70,24 +70,24 @@ public class InfixSortAdditionTest {
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-      that(flatten(flatten).toString(), is(flatten.toString()));
+     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      that(asInfixExpression(), notNullValue());
+     azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void isPlus() {
       azzert.that(asInfixExpression().getOperator(), is(Operator.PLUS));
     }
     @Test public void sortTest() {
-      that(COMPARATOR.sort(extract.operands(flatten(asInfixExpression()))), is(false));
+     azzert.that(COMPARATOR.sort(extract.operands(flatten(asInfixExpression()))), is(false));
     }
     @Test public void sortTwice() {
       final List<Expression> operands = extract.operands(flatten(asInfixExpression()));
-      that(COMPARATOR.sort(operands), is(false));
-      that(COMPARATOR.sort(operands), is(false));
+     azzert.that(COMPARATOR.sort(operands), is(false));
+     azzert.that(COMPARATOR.sort(operands), is(false));
     }
     @Test public void twoOrMoreArguments() {
-      that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 
@@ -129,23 +129,23 @@ public class InfixSortAdditionTest {
     }
     @Override @Test public void flattenIsIdempotentt() {
       final InfixExpression flatten = flatten(asInfixExpression());
-      that(flatten(flatten).toString(), is(flatten.toString()));
+     azzert.that(flatten(flatten).toString(), is(flatten.toString()));
     }
     @Override @Test public void inputIsInfixExpression() {
-      that(asInfixExpression(), notNullValue());
+     azzert.that(asInfixExpression(), notNullValue());
     }
     @Test public void isPlus() {
       azzert.that(asInfixExpression().getOperator(), is(Operator.PLUS));
     }
     @Test public void notString() {
       for (final Expression e : extract.operands(flatten(asInfixExpression())))
-        that(e.toString(), Is.notString(e), is(true));
+       azzert.that(e.toString(), Is.notString(e), is(true));
     }
     @Test public void sortTest() {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = extract.operands(flatten(e));
-      that(operands.size(), greaterThanOrEqualTo(2));
-      that(//
+     azzert.that(operands.size(), greaterThanOrEqualTo(2));
+     azzert.that(//
           "Before: " + extract.operands(flatten(e)) + "\n" + //
           "After: " + operands + "\n", //
           COMPARATOR.sort(operands), is(true));
@@ -154,10 +154,10 @@ public class InfixSortAdditionTest {
       final InfixExpression e = asInfixExpression();
       final List<Expression> operands = extract.operands(flatten(e));
       assertTrue(e.toString(), COMPARATOR.sort(operands));
-      that(e.toString(), COMPARATOR.sort(operands), is(false));
+     azzert.that(e.toString(), COMPARATOR.sort(operands), is(false));
     }
     @Test public void twoOrMoreArguments() {
-      that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
+     azzert.that(extract.operands(asInfixExpression()).size(), greaterThanOrEqualTo(2));
     }
   }
 }

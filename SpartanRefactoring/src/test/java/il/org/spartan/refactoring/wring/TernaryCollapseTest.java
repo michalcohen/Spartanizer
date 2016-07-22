@@ -4,7 +4,7 @@ import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Into.*;
 import static il.org.spartan.refactoring.utils.extract.*;
-import static org.junit.Assert.*;
+
 import il.org.spartan.*;
 
 import java.util.*;
@@ -28,15 +28,15 @@ public class TernaryCollapseTest {
 
   @Test public void steps() {
     final ConditionalExpression e = c("a ? b ? x : z :z");
-    that(e, notNullValue());
+   azzert.that(e, notNullValue());
     final ConditionalExpression then = asConditionalExpression(core(e.getThenExpression()));
-    that(then, notNullValue());
+   azzert.that(then, notNullValue());
     final Expression elze = core(e.getElseExpression());
-    that(elze, notNullValue());
+   azzert.that(elze, notNullValue());
     final Expression thenThen = core(then.getThenExpression());
-    that(thenThen, notNullValue());
+   azzert.that(thenThen, notNullValue());
     final Expression thenElse = core(then.getElseExpression());
-    that(thenElse, notNullValue());
+   azzert.that(thenElse, notNullValue());
     assertTrue(same(thenElse, elze));
   }
 

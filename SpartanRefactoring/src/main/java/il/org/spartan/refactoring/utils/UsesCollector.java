@@ -83,7 +83,7 @@ class UnsafeUsesCollector extends UsesCollector {
   UnsafeUsesCollector(final List<SimpleName> result, final SimpleName focus) {
     super(result, focus);
   }
-  private boolean unsafe(final ASTNode n) {
+  private static boolean unsafe(final ASTNode n) {
     return n instanceof ClassInstanceCreation;
   }
   @Override void consider(final SimpleName n) {
