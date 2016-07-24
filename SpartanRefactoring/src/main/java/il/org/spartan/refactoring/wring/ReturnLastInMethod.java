@@ -11,7 +11,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} that removes empty return statements, provided that they are
  * last in method.
- *
  * @author Yossi Gil
  * @since 2015-7-17 */
 public final class ReturnLastInMethod extends Wring<ReturnStatement> implements Kind.Simplify {

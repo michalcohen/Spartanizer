@@ -10,10 +10,8 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/** A wring to remove ineffective cases from a switch statement.
- *
- * TODO Ori: add care of sequencers in switch statements (??)
- *
+/** A wring to remove ineffective cases from a switch statement. TODO Ori: add
+ * care of sequencers in switch statements (??)
  * @author Ori Roth
  * @since 2016/05/11 */
 public class SwitchSimplify extends ReplaceCurrentNode<SwitchStatement> implements Kind.SWITCH_IF_CONVERTION {

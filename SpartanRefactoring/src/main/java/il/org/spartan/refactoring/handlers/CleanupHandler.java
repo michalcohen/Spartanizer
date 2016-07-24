@@ -15,12 +15,10 @@ import org.eclipse.ui.progress.*;
 
 /** A handler for {@link Spartanizations}. This handler executes all safe
  * Spartanizations on all java files in the current project.
- *
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code>
  * @since 2015/08/01 */
 public class CleanupHandler extends BaseHandler {
   /** Returns the number of Spartanizaion suggestions for this compilation unit
-   *
    * @param u JD
    * @return the number of suggestions available for the compilation unit */
   public static int countSuggestions(final ICompilationUnit u) {

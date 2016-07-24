@@ -13,7 +13,6 @@ import org.junit.*;
 import org.junit.runners.*;
 
 /** A test suite for class {@link Funcs}
- *
  * @author Yossi Gil
  * @since 2015-07-18
  * @see Funcs */

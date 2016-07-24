@@ -15,9 +15,7 @@ import org.eclipse.jdt.core.dom.*;
  * <pre> Boolean b = Boolean.TRUE </pre>
  * 
  * <code>
- *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- *
  * @since 2016-04-04 */
 public class BooleanConstants extends Wring.ReplaceCurrentNode<MethodInvocation> implements Kind.ConsolidateStatements {
   @Override String description(@SuppressWarnings("unused") final MethodInvocation __) {

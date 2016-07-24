@@ -4,7 +4,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A utility class designed to help generate the environment of a method (i.e
  * the identifiers that are in scope and not hidden)
- *
  * @author Yossi Gil
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015-08-25 */

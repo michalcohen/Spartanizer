@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
  * </pre>
  *
  * TODO Ori: add binding if needed
- *
  * @author Ori Roth
  * @since 2016/05/11 */
 @Deprecated public class IfToSwitch extends ReplaceCurrentNode<IfStatement> implements Kind.SWITCH_IF_CONVERTION {

@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.dom.*;
  * if c is false than: <code>(a && b) || (!a && false) == (!a && c)</code> if c
  * is true than <code>(a && b) || (!a && true) == (a && b) || (!a) == !a ||
  * b</code> keywords <code><b>this</b></code> or <code><b>null</b></code>.
- *
  * @author Yossi Gil
  * @since 2015-07-20 */
 public final class TernaryBooleanLiteral extends Wring.ReplaceCurrentNode<ConditionalExpression> implements Kind.Ternarize {

@@ -3,7 +3,6 @@ package il.org.spartan.refactoring.spartanizations;
 import javax.swing.*;
 
 /** A class to manage dialog boxes and other GUI elements.
- *
  * @author Yossi Gil
  * @since 2015-08-27 */
 public class DialogBoxes {

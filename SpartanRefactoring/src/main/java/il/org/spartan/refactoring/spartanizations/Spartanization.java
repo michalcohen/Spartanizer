@@ -21,7 +21,6 @@ import static il.org.spartan.refactoring.spartanizations.DialogBoxes.*;
 
 /** the base class for all Spartanization Refactoring classes, contains common
  * functionality
- *
  * @author Artium Nihamkin (original)
  * @author Boris van Sosin <boris.van.sosin [at] gmail.com>} (v2)
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
@@ -79,7 +78,6 @@ public abstract class Spartanization extends Refactoring {
     }
   }
   /*** Instantiates this class, with message identical to name
-   *
    * @param name a short name of this instance */
   protected Spartanization(final String name) {
     this.name = name;
@@ -105,7 +103,6 @@ public abstract class Spartanization extends Refactoring {
   /** Count the number files that would change after Spartanization.
    * <p>
    * This is an slow operation. Do not call light-headedly.
-   *
    * @return the total number of files with suggestions */
   public int countFilesChanges() {
     // TODO not sure if this function is necessary - if it is, it could be
@@ -123,7 +120,6 @@ public abstract class Spartanization extends Refactoring {
   /** Count the number of suggestions offered by this instance.
    * <p>
    * This is an slow operation. Do not call light-headedly.
-   *
    * @return the total number of suggestions offered by this instance */
   public int countSuggestions() {
     setMarker(null);
@@ -140,7 +136,6 @@ public abstract class Spartanization extends Refactoring {
     return new CompositeChange(getName(), changes.toArray(new Change[changes.size()]));
   }
   /** creates an ASTRewrite which contains the changes
-   *
    * @param u the Compilation Unit (outermost ASTNode in the Java Grammar)
    * @param pm a progress monitor in which the progress of the refactoring is
    *          displayed
@@ -150,7 +145,6 @@ public abstract class Spartanization extends Refactoring {
   }
   /** Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
    * spartanization suggestions
-   *
    * @param u what to check
    * @return a collection of {@link Rewrite} objects each containing a
    *         spartanization opportunity */
@@ -171,7 +165,6 @@ public abstract class Spartanization extends Refactoring {
    * @return a quickfix which automatically performs the spartanization */
   public IMarkerResolution getFix(final String s) {
     /** a quickfix which automatically performs the spartanization
-     *
      * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
      * @since 2013/07/01 */
     return new IMarkerResolution() {
@@ -196,7 +189,6 @@ public abstract class Spartanization extends Refactoring {
   public IMarkerResolution getFixWithPreview(final String s) {
     return new IMarkerResolution() {
       /** a quickfix which opens a refactoring wizard with the spartanization
-       *
        * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
        *         (v2) */
       @Override public String getLabel() {
@@ -220,7 +212,6 @@ public abstract class Spartanization extends Refactoring {
     return selection;
   }
   /** .
-   *
    * @return True if there are Spartanizations which can be performed on the
    *         compilation unit. */
   public boolean haveSuggestions() {
@@ -235,7 +226,6 @@ public abstract class Spartanization extends Refactoring {
     return m != null ? !isNodeOutsideMarker(n, m) : !isTextSelected() || !isNodeOutsideSelection(n);
   }
   /** Performs the current Spartanization on the provided compilation unit
-   *
    * @param cu the compilation to Spartanize
    * @param pm progress monitor for long operations (could be
    *          {@link NullProgressMonitor} for light operations)
@@ -290,7 +280,6 @@ public abstract class Spartanization extends Refactoring {
   }
   /** creates an ASTRewrite, under the context of a text marker, which contains
    * the changes
-   *
    * @param pm a progress monitor in which to display the progress of the
    *          refactoring
    * @param m the marker
@@ -326,7 +315,6 @@ public abstract class Spartanization extends Refactoring {
   protected abstract ASTVisitor collect(final List<Rewrite> $, CompilationUnit u);
   protected abstract void fillRewrite(ASTRewrite r, CompilationUnit u, IMarker m);
   /** Determines if the node is outside of the selected text.
-   *
    * @return true if the node is not inside selection. If there is no selection
    *         at all will return false. */
   protected boolean isNodeOutsideSelection(final ASTNode n) {
@@ -363,7 +351,6 @@ public abstract class Spartanization extends Refactoring {
   }
   /** Creates a change from each compilation unit and stores it in the changes
    * array
-   *
    * @throws IllegalArgumentException
    * @throws CoreException */
   protected void scanCompilationUnits(final List<ICompilationUnit> cus, final IProgressMonitor pm) throws IllegalArgumentException, CoreException {

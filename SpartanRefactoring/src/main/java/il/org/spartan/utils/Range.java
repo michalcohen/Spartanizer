@@ -10,12 +10,10 @@ import java.util.*;
  * <pre>
  * {@link #from}, {@link #from}+1, ..., {@link #to}-1
  * </pre>
- *
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @since 2012 */
 public class Range {
   /** Instantiates from beginning and end locations
-   *
    * @param from JD
    * @param to JD */
   public Range(final int from, final int to) {
@@ -23,7 +21,6 @@ public class Range {
     this.to = to;
   }
   /** Instantiates using values found in another intance
-   *
    * @param other other */
   public Range(final Range other) {
     this(other.from, other.to);
@@ -32,7 +29,6 @@ public class Range {
     return o instanceof Range && from == ((Range) o).from && to == ((Range) o).to;
   }
   /** Find an including range
-   *
    * @param rs some arbitrary {@link Range} objects
    * @return the first {@link Range} object in the parameters that contains this
    *         instance, or <code><b>null</b></code> if not such value can be
@@ -54,14 +50,12 @@ public class Range {
     return from >= r.from && to <= r.to;
   }
   /** Merge with another record
-   *
    * @param r JD
    * @return A newly created range representing the merge. */
   public Range merge(final Range r) {
     return new Range(Math.min(from, r.from), Math.max(to, r.to));
   }
   /** Determine whether overlaps in any part another range
-   *
    * @param r arbitrary
    * @return <code><b>true</b></code> <i>iff</i> <code><b>this</b></code>
    *         overlaps the parameter. */
@@ -69,7 +63,6 @@ public class Range {
     return from >= r.from || to <= r.to;
   }
   /** Prune all ranges in a given list that include this object.
-   *
    * @param rs JD */
   public void pruneIncluders(final List<? extends Range> rs) {
     for (;;) {
@@ -80,7 +73,6 @@ public class Range {
     }
   }
   /** The number of integers in the range
-   *
    * @return a non-negative integer, computed as {@link #to} -{@link #from} */
   public int size() {
     return to - from;

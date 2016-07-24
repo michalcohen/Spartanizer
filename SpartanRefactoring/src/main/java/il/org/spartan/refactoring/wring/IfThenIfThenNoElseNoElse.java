@@ -11,7 +11,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>if (x) if (a) f();</code> into <code>if (x
  * && a) f();</code>
- *
  * @author Yossi Gil
  * @since 2015-09-01 */
 public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> implements Kind.ConsolidateStatements {

@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} that eliminates redundant comparison with the two boolean
  * literals: <code><b>true</b></code> and <code><b>false</b></code>.
- *
  * @author Yossi Gil
  * @since 2015-07-17 */
 public final class InfixComparisonBooleanLiteral extends Wring.ReplaceCurrentNode<InfixExpression> implements Kind.Simplify {

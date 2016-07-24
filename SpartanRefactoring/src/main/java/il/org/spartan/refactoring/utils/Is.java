@@ -15,13 +15,11 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 /** An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
  * like a sentence phrase.
- *
  * @author Yossi Gil
  * @since 2015-07-16 */
 public enum Is {
   ;
   /** Determine whether a variable declaration is final or not
-   *
    * @param s some declaration
    * @return <code><b>true</b></code> <i>iff</i> the variable is declared as
    *         final */
@@ -35,7 +33,6 @@ public enum Is {
     return is(n, ASSIGNMENT);
   }
   /** Determine whether a node is a {@link Block}
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement */
@@ -50,7 +47,6 @@ public enum Is {
    * <b>if</b> </i> f(); } // <i> cannot remove</i> <b>else</b> // <i> if block
    * removed, will attach to inner <b>if</b> </i> g();
    * </pre>
-   *
    * @param s JD
    * @return n <code><b>true</b></code> <i>iff</i> the parameter is an <b>if</b>
    *         statement which must be contained in a block to prevent an
@@ -73,7 +69,6 @@ public enum Is {
     return parent != null && then(parent) == old && (elze(parent) == null || elze(newIf) == null) && (elze(parent) != null || elze(newIf) != null || blockRequiredInReplacement(parent, newIf));
   }
   /** Determine whether a node is a boolean literal
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a boolean
    *         literal */
@@ -105,7 +100,6 @@ public enum Is {
     return false;
   }
   /** Check whether an expression is a "conditional and" (&&)
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
    *         whose operator is
@@ -114,7 +108,6 @@ public enum Is {
     return e.getOperator() == CONDITIONAL_AND;
   }
   /** Check whether an expression is a "conditional or" (||)
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
    *         whose operator is
@@ -123,7 +116,6 @@ public enum Is {
     return conditionalOr(asInfixExpression(e));
   }
   /** Check whether an expression is a "conditional or" (||)
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
    *         whose operator is
@@ -133,7 +125,6 @@ public enum Is {
   }
   /** Determine whether a node is a "specific", i.e., <code><b>null</b></code> or
    * <code><b>this</b></code> or literal.
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a "specific" */
   public static boolean constant(final Expression e) {
@@ -151,7 +142,6 @@ public enum Is {
   }
   /** Check whether the operator of an expression is susceptible for applying one
    * of the two de Morgan laws.
-   *
    * @param e InfixExpression
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an operator on
    *         which the de Morgan laws apply. */
@@ -160,7 +150,6 @@ public enum Is {
   }
   /** Check whether an operator is susceptible for applying one of the two de
    * Morgan laws.
-   *
    * @param o JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an operator on
    *         which the de Morgan laws apply. */
@@ -180,7 +169,6 @@ public enum Is {
     return $.get().booleanValue();
   }
   /** Determine whether a node is an {@link EmptyStatement}
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an
    *         {@link EmptyStatement} */
@@ -188,7 +176,6 @@ public enum Is {
     return is(n, EMPTY_STATEMENT);
   }
   /** Determine whether a node is an "expression statement"
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an
    *         {@link ExpressionStatement} statement */
@@ -196,7 +183,6 @@ public enum Is {
     return n != null && n instanceof Expression;
   }
   /** Determine whether a node is an "expression statement"
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an
    *         {@link ExpressionStatement} statement */
@@ -244,7 +230,6 @@ public enum Is {
     }
   }
   /** Determine whether an item is the last one in a list
-   *
    * @param t a list item
    * @param ts a list
    * @return <code><b>true</b></code> <i>iff</i> the item is found in the list
@@ -269,7 +254,6 @@ public enum Is {
     return literal(s.getExpression());
   }
   /** Determine whether a node is a {@link MethodDeclaration}
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a method
    *         invocation. */
@@ -277,7 +261,6 @@ public enum Is {
     return is(n, METHOD_DECLARATION);
   }
   /** Determine whether a node is a {@link MethodInvocation}
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a method
    *         invocation. */
@@ -292,7 +275,6 @@ public enum Is {
   }
   /** Determine whether a node is an infix expression whose operator is
    * non-associative.
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a node which
    *         is an infix expression whose operator is */
@@ -308,7 +290,6 @@ public enum Is {
     return notStringSelf(e) || notStringUp(e) || notStringDown(asInfixExpression(e));
   }
   /** Determine whether a node is the <code><b>null</b></code> keyword
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i>is thee <code><b>null</b></code>
    *         literal */
@@ -317,7 +298,6 @@ public enum Is {
   }
   /** Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement */
@@ -325,7 +305,6 @@ public enum Is {
     return Is.oneOf(e, CHARACTER_LITERAL, NUMBER_LITERAL);
   }
   /** Determine whether the type of an {@link ASTNode} node is one of given list
-   *
    * @param n a node
    * @param types a list of types
    * @return <code><b>true</b></code> <i>iff</i> function #ASTNode.getNodeType
@@ -345,7 +324,6 @@ public enum Is {
     return is(n, PREFIX_EXPRESSION);
   }
   /** Determine whether a node is a return statement
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a return
    *         statement. */
@@ -355,7 +333,6 @@ public enum Is {
   /** Determine whether a node is a "sequencer", i.e., <code><b>return</b></code>
    * , <code><b>break</b></code>, <code><b>continue</b></code> or
    * <code><b>throw</b></code>
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a sequencer */
   public static boolean sequencer(final ASTNode n) {
@@ -363,7 +340,6 @@ public enum Is {
   }
   /** Determine whether the evaluation of an expression is guaranteed to be free
    * of any side effects.
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is an expression
    *         whose computation is guaranteed to be free of any side effects. */
@@ -418,7 +394,6 @@ public enum Is {
   }
   /** Determine whether an {@link Expression} is so basic that it never needs to
    * be placed in parenthesis.
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is so basic that
    *         it never needs to be placed in parenthesis. */
@@ -443,14 +418,12 @@ public enum Is {
         null);
   }
   /** Determine whether a node is a simple name
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a simple name */
   public static boolean simpleName(final ASTNode n) {
     return is(n, SIMPLE_NAME);
   }
   /** Determine whether a node is a singleton statement, i.e., not a block.
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a singleton
    *         statement. */
@@ -459,14 +432,12 @@ public enum Is {
   }
   /** Determine whether the "then" branch of an {@link Statement} is a single
    * statement.
-   *
    * @param s JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement */
   public static boolean singletonThen(final IfStatement s) {
     return Is.singletonStatement(then(s));
   }
   /** Determine whether a node is a {@link Statement}
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a statement */
   public static boolean statement(final ASTNode n) {
@@ -479,7 +450,6 @@ public enum Is {
     return n != null && n.getNodeType() == STRING_LITERAL;
   }
   /** Determine whether a node is the <code><b>this</b></code> keyword
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> is the <code><b>this</b></code>
    *         keyword */
@@ -488,7 +458,6 @@ public enum Is {
   }
   /** Determine whether a node is <code><b>this</b></code> or
    * <code><b>null</b></code>
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a block
    *         statement */
@@ -497,7 +466,6 @@ public enum Is {
   }
   /** Determine whether a given {@link Statement} is an {@link EmptyStatement} or
    * has nothing but empty statements in it.
-   *
    * @param s JD
    * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
    *         statements in the parameter */
@@ -505,7 +473,6 @@ public enum Is {
     return extract.statements(s).isEmpty();
   }
   /** Determine whether the 'else' part of an {@link IfStatement} is vacuous.
-   *
    * @param s JD
    * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
    *         statements in the 'else' part of the parameter */
@@ -514,7 +481,6 @@ public enum Is {
   }
   /** Determine whether a statement is an {@link EmptyStatement} or has nothing
    * but empty statements in it.
-   *
    * @param s JD
    * @return <code><b>true</b></code> <i>iff</i> there are no non-empty
    *         statements in the parameter */
@@ -522,7 +488,6 @@ public enum Is {
     return vacuous(then(s));
   }
   /** Determine whether a node is a {@link VariableDeclarationStatement}
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter is a variable
    *         declaration statement. */

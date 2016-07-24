@@ -5,12 +5,10 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 
 /** A class to search in the ancestry line of a given node.
- *
  * @author Yossi Gil
  * @since 2015-08-22 */
 public abstract class AncestorSearch {
   /** Factory method, returning an instance which can search by a node class
-   *
    * @param c JD
    * @return a newly created instance
    * @see ASTNode#getNodeType() */
@@ -19,7 +17,6 @@ public abstract class AncestorSearch {
   }
   /** Factory method, returning an instance which can search by the integer
    * present on a node.
-   *
    * @param type JD
    * @return a newly created instance
    * @see ASTNode#getNodeType() */
@@ -31,7 +28,6 @@ public abstract class AncestorSearch {
    * <pre>
    * AncestorSearch.until(thisNode).ancestors(current)
    * </pre>
-   *
    * @param n JD
    * @return a new instance of class {@link until} created from this the
    *         parameter */
@@ -43,7 +39,6 @@ public abstract class AncestorSearch {
   public abstract ASTNode from(final ASTNode n);
 
   /** An auxiliary class for fluent API
-   *
    * @author Yossi Gil
    * @since 2015-08-22 */
   public static class until {

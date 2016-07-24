@@ -12,14 +12,12 @@ import org.eclipse.jdt.core.dom.*;
  * (myName).append("'s grade is ").append(100).toString();</pre></code> can be
  * replaced with <code><pre>String s = myName + "'s grade is " +
  * 100;</pre></code>
- *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
  * @since 2016-04-11 */
 public class StringFromStringBuilder extends Wring.ReplaceCurrentNode<MethodInvocation> implements Kind.REPLACE_CLASS_INSTANCE_CREATION {
   private static InfixExpression.Operator PLUS = InfixExpression.Operator.PLUS;
 
   /** Adds parenthesis to expression if needed.
-   *
    * @param e an Expression
    * @return e itself if no parenthesis needed, otherwise a
    *         ParenthesisExpression containing e */
@@ -32,7 +30,6 @@ public class StringFromStringBuilder extends Wring.ReplaceCurrentNode<MethodInvo
     return $;
   }
   /** Checks if an expression need parenthesis in order to interpreted correctly
-   *
    * @param e an Expression
    * @return whether or not this expression need parenthesis when put together
    *         with other expressions in infix expression. There could be non

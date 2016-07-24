@@ -10,7 +10,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>if (x) throw foo(); throw bar();</code> into
  * <code>throw a ? foo (): bar();</code>
- *
  * @author Yossi Gil
  * @since 2015-09-09 */
 public final class IfThrowNoElseThrow extends Wring.ReplaceToNextStatement<IfStatement> implements Kind.Ternarize {

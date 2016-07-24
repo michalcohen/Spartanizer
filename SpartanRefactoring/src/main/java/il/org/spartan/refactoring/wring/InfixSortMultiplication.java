@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} that sorts the arguments of a {@link Operator#TIMES}
  * expression.
- *
  * @author Yossi Gil
  * @since 2015-07-17 */
 public final class InfixSortMultiplication extends Wring.InfixSorting implements Kind.ReorganizeExpression {

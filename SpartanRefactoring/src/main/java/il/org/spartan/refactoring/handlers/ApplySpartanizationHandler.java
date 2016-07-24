@@ -14,7 +14,6 @@ import org.eclipse.ui.*;
 /** A handler for {@link Spartanizations} This handler executes all safe
  * spartanizations on all Java files in the current project, while exposing
  * static methods to spartanize only specific compulation units.
- *
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code>
  * @since 2015/08/01 */
 public class ApplySpartanizationHandler extends BaseHandler {

@@ -7,7 +7,6 @@ import il.org.spartan.refactoring.utils.*;
 import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} to eliminate a ternary in which both branches are identical
- *
  * @author Yossi Gil
  * @since 2015-07-17 */
 public final class TernaryEliminate extends Wring.ReplaceCurrentNode<ConditionalExpression> implements Kind.Simplify {

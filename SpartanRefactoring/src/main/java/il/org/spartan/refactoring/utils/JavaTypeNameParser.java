@@ -17,14 +17,10 @@ import java.util.regex.*;
  * <pre>
  * public void execute(HTTPSecureConnection c) {...}
  * </pre>
- *
- *
- *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015-08-25 */
 @SuppressWarnings("static-method") public class JavaTypeNameParser {
   /** Instantiates this class
-   *
    * @param typeName the Java type name to parse */
   public JavaTypeNameParser(final String typeName) {
     this.typeName = typeName;
@@ -41,7 +37,6 @@ import java.util.regex.*;
    * the variable name is equal to the type name, either one of them is
    * contained within the other, or it is an abbreviation of the type name (For
    * example: <code>sb</code> is a generic variation of {@link StringBuilder})
-   *
    * @param variableName the name of the variable
    * @return true if the variable name is a generic variation of the type name,
    *         false otherwise */
@@ -49,14 +44,12 @@ import java.util.regex.*;
     return typeName.equalsIgnoreCase(variableName) || lowerCaseContains(typeName, variableName) || lowerCaseContains(typeName, toSingular(variableName)) || variableName.equals(abbreviate());
   }
   /** Shorthand for n.equals(this.shortName())
-   *
    * @param s JD
    * @return true if the provided name equals the type's short name */
   public boolean isShort(final String s) {
     return s.equals(shortName());
   }
   /** Returns the calculated short name for the type
-   *
    * @return the type's short name */
   public String shortName() {
     return String.valueOf(Character.toLowerCase(lastName().charAt(0)));

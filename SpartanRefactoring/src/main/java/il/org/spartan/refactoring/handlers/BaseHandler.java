@@ -30,13 +30,11 @@ public abstract class BaseHandler extends AbstractHandler {
     return null;
   }
   /** Retrieves the current {@link ICompilationUnit}
-   *
    * @return the current {@link ICompilationUnit} */
   public static ICompilationUnit currentCompilationUnit() {
     return getCompilationUnit(getCurrentWorkbenchWindow().getActivePage().getActiveEditor());
   }
   /** Retrieves the current {@link IWorkbenchWindow}
-   *
    * @return the current {@link IWorkbenchWindow} */
   public static IWorkbenchWindow getCurrentWorkbenchWindow() {
     return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -48,7 +46,6 @@ public abstract class BaseHandler extends AbstractHandler {
     return r == null ? null : JavaCore.createCompilationUnitFrom((IFile) r);
   }
   /** Instantiates this class
-   *
    * @param inner JD */
   protected BaseHandler(final Spartanization inner) {
     this.inner = inner;

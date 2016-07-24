@@ -29,7 +29,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     this(null);
   }
   /** Instantiates the enclosing class ({@link AbstractWringTest})
-   *
    * @param inner JD */
   AbstractWringTest(final @Nullable Wring<N> inner) {
     this.inner = inner;
@@ -100,7 +99,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       this(null);
     }
     /** Instantiates the enclosing class ({@link Noneligible})
-     *
      * @param inner JD */
     Noneligible(final Wring<N> inner) {
       super(inner);
@@ -263,7 +261,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         this(null);
       }
       /** Instantiates the enclosing class ({@link Conditional})
-       *
        * @param w JD */
       Conditional(final Wring<ConditionalExpression> e) {
         super(e);
@@ -283,7 +280,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         this(null);
       }
       /** Instantiates the enclosing class ({@link IfStatementAndSurrounding})
-       *
        * @param inner */
       IfStatementAndSurrounding(final Wring<IfStatement> inner) {
         super(inner);
@@ -353,7 +349,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       super(null);
     }
     /** Instantiates the enclosing class ({@link WringedBlock})
-     *
      * @param inner */
     WringedBlock(final Wring<Block> inner) {
       super(inner);
@@ -546,7 +541,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         this(null);
       }
       /** Instantiates the enclosing class ({@link Infix})
-       *
        * @param w JD */
       Conditional(final Wring<ConditionalExpression> e) {
         super(e);
@@ -599,7 +593,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       this(null);
     }
     /** Instantiates the enclosing class ({@link WringedInput})
-     *
      * @param inner */
     WringedIfStatement(final Wring<IfStatement> inner) {
       super(inner);
@@ -811,7 +804,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       return $;
     }
     /** Instantiates the enclosing class ({@link WringedInput})
-     *
      * @param inner */
     @Override protected final Document asDocument() {
       return new Document(Wrap.Statement.on(input));
@@ -861,7 +853,6 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
       protected static final String DESCRIPTION = "{index}: \"{1}\" => \"{2}\" ({0})";
 
       /** Instantiates the enclosing class ({@link WringedExpression})
-       *
        * @param w JD */
       WringedInput(final Wring<N> w) {
         super(w);

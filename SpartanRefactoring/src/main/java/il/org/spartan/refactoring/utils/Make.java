@@ -10,7 +10,6 @@ import org.eclipse.jface.text.*;
 /** An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
  * like a sentence phrase.
- *
  * @author Yossi Gil
  * @since 2015-07-16 */
 public enum Make {
@@ -23,7 +22,6 @@ public enum Make {
   /** Strategy for conversion into an sequence of statements */
   STATEMENTS(ASTParser.K_STATEMENTS); //
   /** Converts the {@link ast} value to its corresponding {@link Make} enum value
-   *
    * @param a The {@link ast} type
    * @return the corresponding {@link Make} value to the argument */
   public static Make of(final ast a) {
@@ -44,7 +42,6 @@ public enum Make {
     this.kind = kind;
   }
   /** Creates a no-binding parser for a given text
-   *
    * @param text what to parse
    * @return a newly created parser for the parameter */
   public ASTParser parser(final char[] text) {
@@ -53,7 +50,6 @@ public enum Make {
     return $;
   }
   /** Creates a parser for a given {@link Document}
-   *
    * @param d JD
    * @return the created parser */
   public ASTParser parser(final Document d) {
@@ -62,7 +58,6 @@ public enum Make {
     return $;
   }
   /** Creates a no-binding parser for a given compilation unit
-   *
    * @param u what to parse
    * @return a newly created parser for the parameter */
   public ASTParser parser(final ICompilationUnit u) {
@@ -71,21 +66,18 @@ public enum Make {
     return $;
   }
   /** Creates a parser for a given {@link IFile}
-   *
    * @param f JD
    * @return the created parser */
   public ASTParser parser(final IFile f) {
     return parser(JavaCore.createCompilationUnitFrom(f));
   }
   /** Creates a parser for a given marked text.
-   *
    * @param m JD
    * @return the created parser */
   public ASTParser parser(final IMarker m) {
     return parser(ast.iCompilationUnit(m));
   }
   /** Creates a no-binding parser for a given text
-   *
    * @param text what to parse
    * @return a newly created parser for the parameter */
   public ASTParser parser(final String text) {

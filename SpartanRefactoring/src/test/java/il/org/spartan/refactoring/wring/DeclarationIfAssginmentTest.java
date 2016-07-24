@@ -74,7 +74,6 @@ public class DeclarationIfAssginmentTest {
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Declaration {
     /** Generate test cases for this parameterized class.
-     *
      * @return a collection of cases, where each case is an array of three
      *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//

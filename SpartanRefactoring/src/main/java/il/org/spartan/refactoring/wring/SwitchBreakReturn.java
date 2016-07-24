@@ -17,7 +17,6 @@ import org.eclipse.text.edits.*;
  * System.out.println("1 detected"); return "success"; case 2:
  * System.out.println("2 detected"); return "success"; default:
  * System.out.println("wrong number!"); return "failure"; }</code>
- *
  * @author Ori Roth
  * @since 2016-04-25 */
 public class SwitchBreakReturn extends Wring.MultipleReplaceToNextStatement<SwitchStatement> implements Kind.ConsolidateStatements {

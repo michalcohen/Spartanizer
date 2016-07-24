@@ -10,18 +10,15 @@ import org.eclipse.jdt.core.dom.*;
  * Typical usage is in the form <code>new Plan(expression).in(host)</code> where
  * <code>location</code> is the parent under which the expression is to be
  * placed.
- *
  * @author Yossi Gil
  * @since 2015-08-20 */
 public class Plant {
   /** Instantiates this class, recording the expression that might be wrapped.
-   *
    * @param inner JD */
   public Plant(final Expression inner) {
     this.inner = inner;
   }
   /** Executes conditional wrapping in parenthesis.
-   *
    * @param host the destined parent
    * @return either the expression itself, or the expression wrapped in
    *         parenthesis, depending on the relative precedences of the

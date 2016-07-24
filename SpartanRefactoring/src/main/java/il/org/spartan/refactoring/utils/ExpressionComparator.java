@@ -9,12 +9,10 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 
 /** Various methods for comparing
- *
  * @author Yossi Gil
  * @since 2015-07-19 */
 public enum ExpressionComparator implements Comparator<Expression> {
   /** Order on terms in addition: literals must be last. Sort literals by length.
-   *
    * @author Yossi Gil
    * @since 2015-07-19 */
   ADDITION {
@@ -25,7 +23,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
   },
   /** Order on terms in multiplication: literals must be last. Sort literals by
    * length.
-   *
    * @author Yossi Gil
    * @since 2015-07-19 */
   MULTIPLICATION {
@@ -35,7 +32,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
     }
   },
   /** Order on terms in addition: except that we do not sort alphabetically
-   *
    * @author Yossi Gil
    * @since 2015-07-19 */
   PRUDENT {
@@ -45,14 +41,12 @@ public enum ExpressionComparator implements Comparator<Expression> {
     }
   };
   /** Counts the number of non-space characters in a tree rooted at a given node
-   *
    * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter. */
   public static int countNonWhites(final ASTNode n) {
     return condense(n).length();
   }
   /** Counts the number of statements in a tree rooted at a given node
-   *
    * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter. */
   public static int lineCount(final ASTNode n) {
@@ -90,7 +84,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return $.inner;
   }
   /** Compare the length of the left and right arguments of an infix expression
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> if the left operand of the
    *         parameter is is longer than the second argument */
@@ -98,7 +91,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return isLonger(left(e), right(e));
   }
   /** Compare method invocations by the number of arguments
-   *
    * @param e1 JD
    * @param e2 JD
    * @return <code><b>true</b></code> <i>iff</i> the first argument is a method
@@ -107,7 +99,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return argumentsCompare(e1, e2) > 0;
   }
   /** Counts the number of nodes in a tree rooted at a given node
-   *
    * @param n JD
    * @return Number of abstract syntax tree nodes under the parameter. */
   public static int nodesCount(final ASTNode n) {
@@ -129,7 +120,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
         );
   }
   /** Lexicographical comparison expressions by their number of characters
-   *
    * @param e1 JD
    * @param e2 JD
    * @return an integer which is either negative, zero, or positive, if the
@@ -149,7 +139,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
     return b ? 1 : 0;
   }
   /** Compare expressions by their number of characters
-   *
    * @param e1 JD
    * @param e2 JD
    * @return an integer which is either negative, zero, or positive, if the
@@ -174,7 +163,6 @@ public enum ExpressionComparator implements Comparator<Expression> {
   private static Specificity specificity = new Specificity();
 
   /** Sorts the {@link Expression} list
-   *
    * @param es an {@link Expression} list to sort
    * @return True if the list was modified */
   public boolean sort(final List<Expression> es) {

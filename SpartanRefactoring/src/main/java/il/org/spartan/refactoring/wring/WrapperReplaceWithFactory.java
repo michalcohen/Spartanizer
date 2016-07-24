@@ -20,7 +20,6 @@ import org.eclipse.jdt.core.dom.*;
  * </pre>
  *
  * </code>
- *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
  * @since 2016-04-06 */
 public class WrapperReplaceWithFactory extends Wring.ReplaceCurrentNode<ClassInstanceCreation> implements Kind.REPLACE_CLASS_INSTANCE_CREATION {

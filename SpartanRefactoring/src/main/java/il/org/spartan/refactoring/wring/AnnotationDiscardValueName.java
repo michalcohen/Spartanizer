@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.dom.*;
 /** A {@link Wring} to remove the "value" member from annotations that only have
  * a single member, converting <code>@SuppressWarnings(value =
  * "unchecked")</code> to <code>@SuppressWarnings("unchecked")</code>
- *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2016-04-02 */
 public class AnnotationDiscardValueName extends Wring.ReplaceCurrentNode<NormalAnnotation> implements Kind.OPTIMIZE_ANNOTATIONS {

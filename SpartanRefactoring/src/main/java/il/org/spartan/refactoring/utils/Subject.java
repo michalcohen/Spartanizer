@@ -72,7 +72,6 @@ import org.eclipse.jdt.core.dom.*;
       return $;
     }
     /** Create a new {@link ReturnStatement} with which returns our operand
-     *
      * @return the new return statement */
     public ReturnStatement toReturn() {
       final ReturnStatement $ = ast.newReturnStatement();

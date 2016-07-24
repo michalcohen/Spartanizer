@@ -16,7 +16,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** An {@link IApplication} extension entry point, allowing execution of this
  * plug-in from the command line.
- *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015/09/19 */
 @SuppressWarnings("static-method") public class Application implements IApplication {

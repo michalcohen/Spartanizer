@@ -25,14 +25,12 @@ import org.eclipse.text.edits.*;
     assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
   }
   /** A test to check that the actual output is similar to the actual value.
-   *
    * @param expected JD
    * @param actual JD */
   public static void assertSimilar(final String expected, final Document actual) {
     assertSimilar(expected, actual.get());
   }
   /** A test to check that the actual output is similar to the actual value.
-   *
    * @param expected JD
    * @param actual JD */
   public static void assertSimilar(final String expected, final String actual) {
@@ -41,7 +39,6 @@ import org.eclipse.text.edits.*;
   }
   /** Convert a given {@link String} into an {@link Statement}, or fail the
    * current test, if such a conversion is not possible
-   *
    * @param statement a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter. */
   public static Statement asSingle(final String statement) {

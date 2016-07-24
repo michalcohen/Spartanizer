@@ -9,14 +9,12 @@ import java.util.*;
 
 /** An abstract representation of our test suite, which is represented in
  * directory tree.
- *
  * @author Yossi Gil
  * @since 2014/05/24
  * @author Yossi GIl */
 public abstract class FileTestUtils {
   /** Instantiates a {@link Class} object if possible, otherwise generate an
    * assertion failure
-   *
    * @param c an arbitrary class object
    * @return an instance of the parameter */
   public static Object getInstance(final Class<?> c) {
@@ -35,7 +33,6 @@ public abstract class FileTestUtils {
   }
   /** Convert a canonical name of a class into a {@link Class} object, if
    * possible, otherwise generate an assertion failure
-   *
    * @param name the canonical name of some class
    * @return the object representing this class
    * @since 2014/05/23 */
@@ -85,7 +82,6 @@ public abstract class FileTestUtils {
     return createTempFile($, TestDirection.Out, f);
   }
   /** Creates a temporary file - including lazy deletion.
-   *
    * @param b
    * @param d
    * @param f
@@ -114,7 +110,6 @@ public abstract class FileTestUtils {
 
   /** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
-   *
    * @seTestUtils.SATestSuite.Files
    * @see FileTestUtils.Traverse
    * @author Yossi Gil
@@ -134,7 +129,6 @@ public abstract class FileTestUtils {
 
   /** An abstract class to be extended and implemented by client, while
    * overriding {@link #go(List, File)} as per customer's need.
-   *
    * @seTestUtils.SATestSuite.Directories
    * @see FileTestUtils.Traverse
    * @author Yossi Gil
@@ -215,7 +209,6 @@ public abstract class FileTestUtils {
    * RemoteTestRunner.java:192) */
   /** An abstract class representing the concept of traversing the
    * {@link #location} while generating test cases.
-   *
    * @seTestUtils.SATestSuite.Files
    * @seTestUtils.SATestSuite.Directories
    * @author Yossi Gil
@@ -233,7 +226,6 @@ public abstract class FileTestUtils {
       return $;
     }
     /** Collect test cases from each file in {@link #location}
-     *
      * @param $ where to save the collected test cases
      * @param f an entry in {@link #location} */
     public abstract void go(List<Object[]> $, final File f);

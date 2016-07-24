@@ -7,7 +7,6 @@ import org.eclipse.jdt.core.dom.*;
 /** Determines whether an {@link ASTNode} is spartanization disabled. In the
  * current implementation, only instances of {@link BodyDeclaration} may be
  * disabled, and only via their {@link Javadoc} comment
- *
  * @author Ori Roth
  * @since 2016/05/13 */
 public class Disable {

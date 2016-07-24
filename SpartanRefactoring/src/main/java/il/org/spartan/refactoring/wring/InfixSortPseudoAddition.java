@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.*;
  * sorting order as {@link Operator#PLUS} expression, except that we do not
  * worry about commutativity. Unlike {@link InfixSortAddition}, we know that the
  * reordering is always possible.
- *
  * @see InfixSortAddition
  * @author Yossi Gil
  * @since 2015-07-17 */

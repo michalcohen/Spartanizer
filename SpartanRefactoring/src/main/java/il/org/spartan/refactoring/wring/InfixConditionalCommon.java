@@ -13,7 +13,6 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
 /** A {@link Wring} to convert <code>b && true</code> to <code>b</code>
- *
  * @author Yossi Gil
  * @since 2015-07-20 */
 public final class InfixConditionalCommon extends Wring.ReplaceCurrentNode<InfixExpression> implements Kind.Simplify {

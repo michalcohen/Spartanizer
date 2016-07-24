@@ -21,7 +21,6 @@ import org.eclipse.jdt.core.dom.*;
  * </pre>
  *
  * </code>
- *
  * @author Ori Roth
  * @since 2016/05/08 */
 public class StringEqualsConstant extends ReplaceCurrentNode<MethodInvocation> implements Kind.ReorganizeExpression {

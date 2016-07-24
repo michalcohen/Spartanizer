@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} to convert <code>a ? (f,g,h) : c(d,e)</code> into <code>a ?
  * c(d,e) : f(g,h)</code>
- *
  * @author Yossi Gil
  * @since 2015-08-14 */
 public final class TernaryShortestFirst extends Wring.ReplaceCurrentNode<ConditionalExpression> implements Kind.ReorganizeExpression {

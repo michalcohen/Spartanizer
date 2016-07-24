@@ -11,7 +11,6 @@ import org.eclipse.text.edits.*;
 
 /** A parent wring for changing variables names TODO Ori: check safety of
  * Collect.usesOf(n.getName()).in(p)
- *
  * @author Ori Roth
  * @since 2016/05/08
  * @param <N> either SingleVariableDeclaration or VariableDeclarationFragment */

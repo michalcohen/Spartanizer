@@ -18,7 +18,6 @@ import static il.org.spartan.refactoring.wring.Wrings.*;
  * character in the last word of the variable's name.
  * <p>
  * This wring is applied to all methods in the code, excluding constructors.
- *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015/09/24 */
 public class SingleVariableDeclarationAbbreviation extends Wring<SingleVariableDeclaration> implements Kind.RENAME_PARAMETERS {

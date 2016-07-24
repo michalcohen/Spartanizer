@@ -12,7 +12,6 @@ import org.eclipse.jface.text.*;
 /** An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
  * like a sentence phrase.
- *
  * @author Yossi Gil
  * @since 2015-07-16 */
 public enum ast {
@@ -66,7 +65,6 @@ public enum ast {
     }
   }
   /** Converts a boolean into a bit value
-   *
    * @param $ JD
    * @return 1 if the parameter is <code><b>true</b></code>, 0 if it is
    *         <code><b>false</b></code> */
@@ -74,7 +72,6 @@ public enum ast {
     return $ ? 1 : 0;
   }
   /** Downcast <code>List<?></code> into <code>List<Expression></code>
-   *
    * @param es JD
    * @return the parameter, properly downcasted */
   @SuppressWarnings("unchecked") public static List<Expression> expressions(final List<?> es) {
@@ -82,35 +79,30 @@ public enum ast {
   }
   /** Downcast <code>List<?></code> into
    * <code>List<VariableDeclarationFragment></code>
-   *
    * @param fs JD
    * @return the parameter, properly downcasted */
   @SuppressWarnings("unchecked") public static List<VariableDeclarationFragment> fragments(final List<?> fs) {
     return (List<VariableDeclarationFragment>) fs;
   }
   /** IFile -> ICompilationUnit converter
-   *
    * @param f File
    * @return ICompilationUnit */
   public static ICompilationUnit iCompilationUnit(final IFile f) {
     return JavaCore.createCompilationUnitFrom(f);
   }
   /** IMarker -> ICompilationUnit converter
-   *
    * @param m IMarker
    * @return CompilationUnit */
   public static ICompilationUnit iCompilationUnit(final IMarker m) {
     return iCompilationUnit((IFile) m.getResource());
   }
   /** Downcast <code>List<?></code> into <code>List<Statement></code>
-   *
    * @param ss JD
    * @return the parameter, properly downcasted */
   @SuppressWarnings("unchecked") public static List<Statement> statements(final List<?> ss) {
     return (List<Statement>) ss;
   }
   /** Convert file contents into a {@link String}
-   *
    * @param f JD
    * @return the entire contents of this file, as one string */
   public static String string(final File f) {
@@ -124,7 +116,6 @@ public enum ast {
     }
   }
   /** Creates a {@link StringBuilder} object out of a file object.
-   *
    * @param f JD
    * @return {@link StringBuilder} whose content is the same as the contents of
    *         the parameter. */
@@ -142,14 +133,12 @@ public enum ast {
     this.kind = kind;
   }
   /** Parses a given {@link Document}.
-   *
    * @param d JD
    * @return the {@link ASTNode} obtained by parsing */
   public final ASTNode from(final Document d) {
     return from(d.get());
   }
   /** File -> ASTNode converter
-   *
    * @param f File
    * @return ASTNode */
   public ASTNode from(final File f) {
@@ -161,7 +150,6 @@ public enum ast {
     return Make.of(this).parser(f).createAST(null);
   }
   /** IMarker, SubProgressMonitor -> ASTNode converter
-   *
    * @param m Marker
    * @param pm ProgressMonitor
    * @return ASTNode */
@@ -169,14 +157,12 @@ public enum ast {
     return Make.of(this).parser(m).createAST(pm);
   }
   /** String -> ASTNode converter
-   *
    * @param s String
    * @return ASTNode */
   public ASTNode from(final String s) {
     return makeParser(s).createAST(null);
   }
   /** Creates a no-binding parser for a given text
-   *
    * @param text what to parse
    * @return a newly created parser for the parameter */
   public ASTParser makeParser(final char[] text) {
@@ -185,7 +171,6 @@ public enum ast {
     return $;
   }
   /** Creates a no-binding parser for a given compilation unit
-   *
    * @param u what to parse
    * @return a newly created parser for the parameter */
   public ASTParser makeParser(final ICompilationUnit u) {
@@ -194,7 +179,6 @@ public enum ast {
     return $;
   }
   /** Creates a no-binding parser for a given text
-   *
    * @param text what to parse
    * @return a newly created parser for the parameter */
   public ASTParser makeParser(final String text) {

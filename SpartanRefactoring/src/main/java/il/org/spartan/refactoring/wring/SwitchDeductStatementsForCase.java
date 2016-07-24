@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.*;
 /** Inserts to every case within a {@link SwitchStatement} all the statements it
  * would conduct when matching the case. In other words, this {@link Wring}
  * makes sure every case would end with a sequencer TODO Ori: add tests
- *
  * @author Ori Roth
  * @since 2016/05/16 */
 @Deprecated public class SwitchDeductStatementsForCase extends ReplaceCurrentNode<SwitchStatement> implements Kind.SWITCH_IF_CONVERTION {

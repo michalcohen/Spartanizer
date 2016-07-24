@@ -20,7 +20,6 @@ import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 /** A wring is a transformation that works on an AstNode. Such a transformation
  * make a single simplification of the tree. A wring is so small that it is
  * idempotent: Applying a wring to the output of itself is the empty operation.
- *
  * @param <N> type of node which triggers the transformation.
  * @author Yossi Gil
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
@@ -42,7 +41,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
   abstract String description(N n);
   /** Determine whether the parameter is "eligible" for application of this
    * instance. The parameter must be within the scope of the current instance.
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object. */
@@ -59,7 +57,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
    * {@link PrefixExpression} is within the "scope" of this . Note that a
    * {@link Wring} is applicable in principle to an object, but that actual
    * application will be vacuous.
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is noneligible for
    *         the simplification offered by this object.
@@ -71,7 +68,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
    * {@link InfixExpression} is within the "scope" of this . Note that it could
    * be the case that a {@link Wring} is applicable in principle to an object,
    * but that actual application will be vacuous.
-   *
    * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
    *         scope of this object */
@@ -118,7 +114,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
 
   /** MultipleReplaceCurrentNode replaces multiple nodes in current statement
    * with multiple nodes (or a single node).
-   *
    * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
    * @since 2016-04-25 */
   static abstract class MultipleReplaceCurrentNode<N extends ASTNode> extends Wring<N> {
@@ -145,7 +140,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
 
   /** MultipleReplaceToNextStatement replaces multiple nodes in current statement
    * with multiple nodes (or a single node) in next statement.
-   *
    * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
    * @since 2016-04-25 */
   static abstract class MultipleReplaceToNextStatement<N extends ASTNode> extends Wring<N> {
@@ -256,7 +250,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
      * fragments which are not live in the containing
      * {@link VariabelDeclarationStatement}. If no fragments are left, then this
      * containing node is eliminated as well.
-     *
      * @param f
      * @param r
      * @param g */
@@ -322,7 +315,6 @@ public abstract class Wring<N extends ASTNode> implements Kind {
     /** Removes a {@link VariableDeclarationFragment}, leaving intact any other
      * fragment fragments in the containing {@link VariabelDeclarationStatement}
      * . Still, if the containing node left empty, it is removed as well.
-     *
      * @param f
      * @param r
      * @param g */
@@ -399,7 +391,6 @@ final class LocalInliner {
     }
     /** Computes the number of AST nodes added as a result of the replacement
      * operation.
-     *
      * @param es JD
      * @return A non-negative integer, computed from the number of occurrences
      *         of {@link #name} in the operands, and the size of the
@@ -414,7 +405,6 @@ final class LocalInliner {
       return canInlineInto(ns) && unsafeUses(ns).isEmpty();
     }
     /** Computes the total number of AST nodes in the replaced parameters
-     *
      * @param es JD
      * @return A non-negative integer, computed from original size of the
      *         parameters, the number of occurrences of {@link #name} in the

@@ -11,7 +11,6 @@ import static il.org.spartan.refactoring.utils.Funcs.*;
 
 /** A utility class for finding occurrences of an {@link Expression} in an
  * {@link ASTNode}.
- *
  * @author Boris van Sosin <boris.van.sosin @ gmail.com>
  * @author Yossi Gil <yossi.gil @ gmail.com> (major refactoring 2013/07/10)
  * @since 2013/07/01 */
@@ -286,7 +285,6 @@ public enum Collect {
   static final ASTMatcher matcher = new ASTMatcher();
 
   /** Creates a function object for searching for a given value.
-   *
    * @param n what to search for
    * @return a function object to be used for searching for the parameter in a
    *         given location */
@@ -299,7 +297,6 @@ public enum Collect {
   }
   /** Creates a function object for searching for a given {@link SimpleName}, as
    * specified by the {@link VariableDeclarationFragment},
-   *
    * @param f JD
    * @return a function object to be used for searching for the
    *         {@link SimpleName} embedded in the parameter. */
@@ -307,7 +304,6 @@ public enum Collect {
     return of(f.getName());
   }
   /** Lists the required occurrences
-   *
    * @param what the expression to search for
    * @param ns the n in which to counted
    * @return the list of uses */
@@ -325,7 +321,6 @@ public enum Collect {
   /** An abstract class to carry out the collection process. Should not be
    * instantiated or used directly by clients, other than the use as part of
    * fluent API.
-   *
    * @author Yossi Gil
    * @since 2015-09-06 */
   public abstract static class Collector {
@@ -350,13 +345,11 @@ public enum Collect {
    * the value we search for; it represents the function that, given a location
    * for the search, will carry out the search for the captured value in its
    * location parameter.
-   *
    * @see Collect#of
    * @author Yossi Gil <yossi.gil @ gmail.com>
    * @since 2013/14/07 */
   public static abstract class Of {
     /** Determine whether this instance occurs in a bunch of expressions
-     *
      * @param ns JD
      * @return <code><b>true</b></code> <i>iff</i> this instance occurs in the
      *         Parameter. */
@@ -364,7 +357,6 @@ public enum Collect {
       return !in(ns).isEmpty();
     }
     /** the method that will carry out the search
-     *
      * @param ns where to search
      * @return a list of occurrences of the captured value in the parameter. */
     public abstract List<SimpleName> in(ASTNode... ns);

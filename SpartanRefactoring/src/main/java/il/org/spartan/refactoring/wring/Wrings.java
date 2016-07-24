@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
 /** A number of utility functions common to all wrings.
- *
  * @author Yossi Gil
  * @since 2015-07-17 */
 public enum Wrings {

@@ -5,12 +5,10 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 
 /** An {@link Iterable} yielding all ancestors of a given node.
- *
  * @author Yossi Gil
  * @date 2015-09-21 */
 public class Ancestors implements Iterable<ASTNode> {
   /** Instantiates this class
-   *
    * @param from start iteration from this node */
   public Ancestors(final ASTNode from) {
     this.from = from;

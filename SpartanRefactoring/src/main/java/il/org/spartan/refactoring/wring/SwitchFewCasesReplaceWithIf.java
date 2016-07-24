@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
  *
  * </code> TODO Ori: consider adding option for switch-case-nobreak-default to
  * become if statement + default statements
- *
  * @author Ori Roth
  * @since 2016/05/09 */
 @SuppressWarnings("unchecked") public class SwitchFewCasesReplaceWithIf extends ReplaceCurrentNode<SwitchStatement> implements Kind.SWITCH_IF_CONVERTION {

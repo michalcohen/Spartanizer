@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.*;
  * {@link GroupFieldEditor#getFieldEditor()} as its parent.
  * <li>Add the {@link GroupFieldEditor} to the parent as usual
  * </ol>
- *
  * @author alf (original)
  * @author Daniel Mittelman (fixed and revised)
  * @since 29/03/2016 */
@@ -30,7 +29,6 @@ public class GroupFieldEditor extends FieldEditor {
   private static final int GROUP_PADDING = 8;
 
   /** Create a group of {@link FieldEditor} objects
-   *
    * @param title (optional) the text that will appear in the top label. For no
    *          label, pass {@code null}
    * @param parent the widget's parent, usually
@@ -42,7 +40,6 @@ public class GroupFieldEditor extends FieldEditor {
   }
   /** Adds a new {@link FieldEditor} object to the group. Controls must be added
    * before the group is drawn to the parent.
-   *
    * @param e JD */
   public void add(final FieldEditor e) {
     if (initialized)
@@ -51,7 +48,6 @@ public class GroupFieldEditor extends FieldEditor {
   }
   /** Returns the parent for all the FieldEditors inside of this group. In this
    * class, the actual {@link Group} object is returned
-   *
    * @return the parent {@link Composite} object */
   public Composite getFieldEditor() {
     return group;

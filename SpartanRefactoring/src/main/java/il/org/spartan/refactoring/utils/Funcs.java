@@ -19,7 +19,6 @@ public enum Funcs {
   /** Convert an {@link Expression} into {@link InfixExpression} whose operator
    * is either {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#AND} or
    * {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#OR}.
-   *
    * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
    *         conversion is not possible for it */
@@ -27,7 +26,6 @@ public enum Funcs {
     return !Is.infix(e) || !Is.deMorgan(asInfixExpression(e).getOperator()) ? null : asInfixExpression(e);
   }
   /** Convert, is possible, an {@link ASTNode} to an {@link Assignment}
-   *
    * @param $ JD
    * @return the argument, but down-casted to a {@link Assignment}, or
    *         <code><b>null</b></code> if the downcast is impossible. */
@@ -35,7 +33,6 @@ public enum Funcs {
     return !is($, ASSIGNMENT) ? null : (Assignment) $;
   }
   /** Convert, is possible, an {@link ASTNode} to a {@link Block}
-   *
    * @param $ JD
    * @return the argument, but down-casted to a {@link Block}, or
    *         <code><b>null</b></code> if no such down-cast is possible.. */
@@ -43,7 +40,6 @@ public enum Funcs {
     return $.getNodeType() != BLOCK ? null : (Block) $;
   }
   /** Down-cast, if possible, to {@link BooleanLiteral}
-   *
    * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -53,7 +49,6 @@ public enum Funcs {
   /** Convert an {@link Expression} into {@link InfixExpression} whose operator
    * is one of the six comparison operators: <code><</code>, <code><=</code>,
    * <code>></code>, <code>>=</code>, <code>!=</code>, or <code>==</code>.
-   *
    * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
    *         conversion is not possible for it */
@@ -61,7 +56,6 @@ public enum Funcs {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
   /** Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
-   *
    * @param n JD
    * @return the argument, but down-casted to a {@link ConditionalExpression},
    *         or <code><b>null</b></code> if no such down-cast is possible.. */
@@ -69,7 +63,6 @@ public enum Funcs {
     return !(n instanceof ConditionalExpression) ? null : (ConditionalExpression) n;
   }
   /** Down-cast, if possible, to {@link ConditionalExpression}
-   *
    * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -77,7 +70,6 @@ public enum Funcs {
     return !(e instanceof ConditionalExpression) ? null : (ConditionalExpression) e;
   }
   /** Down-cast, if possible, to {@link Expression}
-   *
    * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -85,7 +77,6 @@ public enum Funcs {
     return !(n instanceof Expression) ? null : (Expression) n;
   }
   /** Down-cast, if possible, to {@link ExpressionStatement}
-   *
    * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -93,7 +84,6 @@ public enum Funcs {
     return !(n instanceof ExpressionStatement) ? null : (ExpressionStatement) n;
   }
   /** Down-cast, if possible, to {@link IfStatement}
-   *
    * @param $ JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -101,7 +91,6 @@ public enum Funcs {
     return $ == null || $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
   }
   /** Down-cast, if possible, to {@link InfixExpression}
-   *
    * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -109,7 +98,6 @@ public enum Funcs {
     return !(n instanceof InfixExpression) ? null : (InfixExpression) n;
   }
   /** Convert, is possible, an {@link ASTNode} to a {@link MethodDeclaration}
-   *
    * @param $ JD
    * @return the argument, but down-casted to a {@link MethodDeclaration}, or
    *         <code><b>null</b></code> if no such down-cast is possible.. */
@@ -117,7 +105,6 @@ public enum Funcs {
     return $.getNodeType() != METHOD_DECLARATION ? null : (MethodDeclaration) $;
   }
   /** Down-cast, if possible, to {@link MethodInvocation}
-   *
    * @param e JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -126,7 +113,6 @@ public enum Funcs {
   }
   /** Convert an {@link Expression} into a {@link PrefixExpression} whose
    * operator is <code>!</code>,
-   *
    * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
    *         conversion is not possible for it */
@@ -134,7 +120,6 @@ public enum Funcs {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
   }
   /** Down-cast, if possible, to {@link InfixExpression}
-   *
    * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -142,7 +127,6 @@ public enum Funcs {
     return !(n instanceof PostfixExpression) ? null : (PostfixExpression) n;
   }
   /** Down-cast, if possible, to {@link PrefixExpression}
-   *
    * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -150,7 +134,6 @@ public enum Funcs {
     return !(n instanceof PrefixExpression) ? null : (PrefixExpression) n;
   }
   /** Down-cast, if possible, to {@link ReturnStatement}
-   *
    * @param $ JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -158,7 +141,6 @@ public enum Funcs {
     return $ == null || $.getNodeType() != RETURN_STATEMENT ? null : (ReturnStatement) $;
   }
   /** Convert, is possible, an {@link ASTNode} to a {@link SimpleName}
-   *
    * @param $ JD
    * @return the argument, but down-casted to a {@link SimpleName}, or
    *         <code><b>null</b></code> if no such down-cast is possible.. */
@@ -166,7 +148,6 @@ public enum Funcs {
     return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName) $;
   }
   /** Down-cast, if possible, to {@link Statement}
-   *
    * @param n JD
    * @return the parameter down-casted to the returned type, or
    *         <code><b>null</b></code> if no such down-casting is possible. */
@@ -174,7 +155,6 @@ public enum Funcs {
     return !(n instanceof Statement) ? null : (Statement) n;
   }
   /** Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
-   *
    * @param n JD
    * @return the argument, but down-casted to a {@link ConditionalExpression},
    *         or <code><b>null</b></code> if no such down-cast is possible.. */
@@ -197,7 +177,6 @@ public enum Funcs {
   }
   /** the function checks if all the given assignments have the same left hand
    * side(variable) and operator
-   *
    * @param base The assignment to compare all others to
    * @param as The assignments to compare
    * @return true if all assignments has the same left hand side and operator as
@@ -211,7 +190,6 @@ public enum Funcs {
     return true;
   }
   /** String wise comparison of all the given SimpleNames
-   *
    * @param cmpTo a string to compare all names to
    * @param names SimplesNames to compare by their string value to cmpTo
    * @return true if all names are the same (string wise) or false otherwise */
@@ -235,7 +213,6 @@ public enum Funcs {
     return true;
   }
   /** Obtain a condensed textual representation of an {@link ASTNode}
-   *
    * @param n JD
    * @return the textual representation of the parameter, */
   public static String condense(final ASTNode n) {
@@ -254,7 +231,6 @@ public enum Funcs {
     return false;
   }
   /** Make a duplicate, suitable for tree rewrite, of the parameter
-   *
    * @param n JD
    * @return a duplicate of the parameter, downcasted to the returned type. */
   @SuppressWarnings("unchecked")//
@@ -262,14 +238,12 @@ public enum Funcs {
     return Scalpel.isInaccessible(n) ? n : (N) copySubtree(n.getAST(), n);
   }
   /** Shorthand for {@link ConditionalExpression#getElseExpression()}
-   *
    * @param e JD
    * @return the else part of the parameter */
   public static Expression elze(final ConditionalExpression e) {
     return e.getElseExpression();
   }
   /** Shorthand for {@link IfStatement#getElseStatement}
-   *
    * @param s JD
    * @return the else statement of the parameter */
   public static Statement elze(final IfStatement s) {
@@ -277,7 +251,6 @@ public enum Funcs {
   }
   /** Swap the order of the left and right operands to an expression, changing
    * the operator if necessary.
-   *
    * @param e JD
    * @return a newly created expression with its operands thus swapped.
    * @throws IllegalArgumentException when the parameter has extra operands.
@@ -290,7 +263,6 @@ public enum Funcs {
   /** Makes an opposite operator from a given one, which keeps its logical
    * operation after the node swapping. e.g. "&" is commutative, therefore no
    * change needed. "<" isn't commutative, but it has its opposite: ">=".
-   *
    * @param o The operator to flip
    * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
    *         "+". */
@@ -306,7 +278,6 @@ public enum Funcs {
         (SimpleName) name);
   }
   /** Determine whether a node is a return statement
-   *
    * @param n node to check
    * @return true if the given node is a block statement */
   public static boolean isBlock(final ASTNode n) {
@@ -319,14 +290,12 @@ public enum Funcs {
     return is(n, BOOLEAN_LITERAL) || is(n, NULL_LITERAL);
   }
   /** Determined if a node is an "expression statement"
-   *
    * @param n node to check
    * @return true if the given node is expression statement */
   public static boolean isExpressionStatement(final ASTNode n) {
     return is(n, EXPRESSION_STATEMENT);
   }
   /** Determine whether a variable declaration is final or not
-   *
    * @param s JD
    * @return true if the variable is declared as final */
   public static boolean isFinal(final VariableDeclarationStatement s) {
@@ -371,21 +340,18 @@ public enum Funcs {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
   /** Shorthand for {@link Assignment#getLeftHandSide()}
-   *
    * @param a JD
    * @return the left operand of the parameter */
   public static Expression left(final Assignment a) {
     return a.getLeftHandSide();
   }
   /** Shorthand for {@link InfixExpression#getLeftOperand()}
-   *
    * @param e JD
    * @return the left operand of the parameter */
   public static Expression left(final InfixExpression e) {
     return e.getLeftOperand();
   }
   /** Shorthand for {@link InstanceofExpression#getLeftOperand()}
-   *
    * @param e JD
    * @return the left operand of the parameter */
   public static Expression left(final InstanceofExpression e) {
@@ -412,7 +378,6 @@ public enum Funcs {
             : as.bit(e instanceof NumberLiteral && ((NumberLiteral) e).getToken().startsWith("-"));
   }
   /** Create a new {@link SimpleName} instance at the AST of the parameter
-   *
    * @param n JD
    * @param newName the name that the returned value shall bear
    * @return a new {@link SimpleName} instance at the AST of the parameter */
@@ -420,14 +385,12 @@ public enum Funcs {
     return n.getAST().newSimpleName(newName);
   }
   /** Shorthand for {@link ASTNode#getParent()}
-   *
    * @param n JD
    * @return the parent of the parameter */
   public static ASTNode parent(final ASTNode n) {
     return n.getParent();
   }
   /** Peels all consecutive negations from an expression
-   *
    * @param $ JD
    * @return the parameter, thus peeled */
   public static Expression peelNegation(final Expression $) {
@@ -437,7 +400,6 @@ public enum Funcs {
             : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
   }
   /** Retrieve previous item in a list
-   *
    * @param i an index of specific item in a list
    * @param ts the indexed list
    * @return the previous item in the list, if such an item exists, otherwise,
@@ -446,7 +408,6 @@ public enum Funcs {
     return ts.get(i < 1 ? 0 : i - 1);
   }
   /** Make a duplicate, suitable for tree rewrite, of the parameter
-   *
    * @param n JD
    * @param t JD
    * @return a duplicate of the parameter, downcasted to the returned type.
@@ -463,7 +424,6 @@ public enum Funcs {
   }
   /** Remove all occurrences of a boolean literal from a list of
    * {@link Expression}s
-   *
    * @param b JD
    * @param es JD */
   public static void removeAll(final boolean b, final List<Expression> es) {
@@ -475,21 +435,18 @@ public enum Funcs {
     }
   }
   /** Shorthand for {@link Assignment#getRightHandSide()}
-   *
    * @param a JD
    * @return the left operand of the parameter */
   public static Expression right(final Assignment a) {
     return a.getRightHandSide();
   }
   /** Shorthand for {@link CastExpression#getExpression()}
-   *
    * @param e JD
    * @return the right operand of the parameter */
   public static Expression right(final CastExpression e) {
     return e.getExpression();
   }
   /** Shorthand for {@link InfixExpression#getRightOperand()}
-   *
    * @param e JD
    * @return the right operand of the parameter */
   public static Expression right(final InfixExpression e) {
@@ -501,7 +458,6 @@ public enum Funcs {
    * Each of the parameters may be <code><b>null</b></code>; a
    * <code><b>null</b></code> is only equal to<
    * code><b>null</b></code>
-   *
    * @param n1 JD
    * @param n2 JD
    * @return <code><b>true</b></code> if the parameters are the same. */
@@ -510,7 +466,6 @@ public enum Funcs {
   }
   /** Determine whether two lists of nodes are the same, in the sense that their
    * textual representations is identical.
-   *
    * @param ns1 first list to compare
    * @param ns2 second list to compare
    * @return are the lists equal string-wise */
@@ -535,14 +490,12 @@ public enum Funcs {
                     : t instanceof UnionType ? shortName((UnionType) t) : null;
   }
   /** Shorthand for {@link ConditionalExpression#getThenExpression()}
-   *
    * @param e JD
    * @return the then part of the parameter */
   public static Expression then(final ConditionalExpression e) {
     return e.getThenExpression();
   }
   /** Shorthand for {@link IfStatement#getThenStatement}
-   *
    * @param s JD
    * @return the then statement of the parameter */
   public static Statement then(final IfStatement s) {

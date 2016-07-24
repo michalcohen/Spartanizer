@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.dom.*;
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code> */
 public class Builder extends IncrementalProjectBuilder {
   /** deletes all spartanization suggestion markers
-   *
    * @param f the file from which to delete the markers
    * @throws CoreException if this method fails. Reasons include: This resource
    *           does not exist. This resource is a project that is not open.

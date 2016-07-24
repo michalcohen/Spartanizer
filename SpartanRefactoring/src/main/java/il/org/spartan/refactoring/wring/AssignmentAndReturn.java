@@ -11,7 +11,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>a = 3;return a;</code> to <code>return a =
  * 3;</code>
- *
  * @author Yossi Gil
  * @since 2015-08-28 */
 public class AssignmentAndReturn extends Wring.ReplaceToNextStatement<Assignment> implements Kind.ConsolidateStatements {

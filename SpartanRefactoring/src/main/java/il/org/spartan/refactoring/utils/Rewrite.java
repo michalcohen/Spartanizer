@@ -8,13 +8,11 @@ import org.eclipse.text.edits.*;
 
 /** A function object representing a sequence of operations on an
  * {@link ASTRewrite} object.
- *
  * @author Yossi Gil
  * @since 2015-08-28 */
 public abstract class Rewrite extends Range {
   /** A factory function that converts a sequence of ASTNodes into a
    * {@link Range}
-   *
    * @param n arbitrary
    * @param ns */
   static Range range(final ASTNode n, final ASTNode... ns) {
@@ -31,7 +29,6 @@ public abstract class Rewrite extends Range {
     return new Range(from, from + n.getLength());
   }
   /** Instantiates this class
-   *
    * @param description a textual description of the changes described by this
    *          instance
    * @param n the node on which change is to be carried out
@@ -45,7 +42,6 @@ public abstract class Rewrite extends Range {
     this.description = description;
   }
   /** Convert the rewrite into changes on an {@link ASTRewrite}
-   *
    * @param r where to place the changes
    * @param g to be associated with these changes */
   public abstract void go(ASTRewrite r, TextEditGroup g);

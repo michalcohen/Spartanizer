@@ -6,12 +6,10 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A class that contains a bunch of {@link Wring} objects, allowing selecting
  * and applying the most appropriate such object for a given {@link ASTNode}.
- *
  * @author Yossi Gil
  * @since 2015-08-22 */
 public class Toolbox {
   /** Initialize this class' internal instance object in the non static approach
-   *
    * @param u a {@link CompilationUnit}
    * @return new {@link Maker} ready for use */
   public static Toolbox generate(final CompilationUnit u) {
@@ -119,7 +117,6 @@ public class Toolbox {
   static Toolbox instance = generate(null);
 
   /** Find the first {@link Wring} appropriate for an {@link ASTNode}
-   *
    * @param n JD
    * @return the first {@link Wring} for which the parameter is within scope, or
    *         <code><b>null</b></code>i if no such {@link Wring} is found. */
@@ -138,7 +135,6 @@ public class Toolbox {
   private final Map<Class<? extends ASTNode>, List<Object>> inner = new HashMap<>();
 
   /** A builder for the enclosing class.
-   *
    * @author Yossi Gil
    * @since 2015-08-22 */
   public static class Maker extends Toolbox {
@@ -148,7 +144,6 @@ public class Toolbox {
     }
     /** Associate a bunch of{@link Wring} with a given sub-class of
      * {@link ASTNode}.
-     *
      * @param c JD
      * @param ws JD
      * @return <code><b>this</b></code>, for easy chaining. */
@@ -164,7 +159,6 @@ public class Toolbox {
       return this;
     }
     /** Terminate a fluent API chain.
-     *
      * @return the newly created object */
     public Toolbox seal() {
       return this;

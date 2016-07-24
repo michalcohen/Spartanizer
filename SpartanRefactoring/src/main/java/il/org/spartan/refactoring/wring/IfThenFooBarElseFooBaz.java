@@ -13,7 +13,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>if (X) {foo(); bar();} else {foo();
  * baz();}</code> into <code>foo(); if (X) bar(); else baz();</code>
- *
  * @author Yossi Gil
  * @since 2015-07-29 */
 public final class IfThenFooBarElseFooBaz extends Wring<IfStatement> implements Kind.Simplify {

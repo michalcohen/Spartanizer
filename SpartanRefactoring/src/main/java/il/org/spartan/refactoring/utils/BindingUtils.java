@@ -4,7 +4,6 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.internal.corext.dom.*;
 
 /** Some useful utility functions used for binding manipulations.
- *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
  * @since 2016-04-24 */
 @SuppressWarnings("restriction") public class BindingUtils {
@@ -22,7 +21,6 @@ import org.eclipse.jdt.internal.corext.dom.*;
     return u.getPackage().resolveBinding();
   }
   /** Finds visible method in hierarchy.
-   *
    * @param b base type
    * @param mn method name
    * @param bs method parameters
@@ -37,7 +35,6 @@ import org.eclipse.jdt.internal.corext.dom.*;
     return isVisible($, n, u) ? $ : null;
   }
   /** Checks if expression is simple.
-   *
    * @param e an expression
    * @return true iff e is simple */
   public static boolean isSimple(final Expression e) {
@@ -46,7 +43,6 @@ import org.eclipse.jdt.internal.corext.dom.*;
   }
   /** Determines whether an invocation of a method is legal in a specific
    * context.
-   *
    * @param b a method
    * @param n the context in which the method is invoked
    * @param u current {@link CompilationUnit}

@@ -14,7 +14,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>if (X) return A; if (Y) return A;</code>
  * into <code>if (X || Y) return A;</code>
- *
  * @author Yossi Gil
  * @since 2015-07-29 */
 public final class IfFooSequencerIfFooSameSequencer extends Wring.ReplaceToNextStatement<IfStatement> implements Kind.ConsolidateStatements {

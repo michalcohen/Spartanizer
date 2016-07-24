@@ -21,13 +21,11 @@ import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 
 /** Run tests in which a specific transformation is not supposed to change the
  * input text
- *
  * @author Yossi Gil
  * @since 2014/05/24 */
 @RunWith(Parameterized.class)//
 public class InOutTest {
   /** Generate test cases for this parameterized class.
-   *
    * @return a collection of cases, where each case is an array of four objects,
    *         the spartanization, the test case name, the input file, and the
    *         output file. */

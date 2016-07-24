@@ -13,7 +13,6 @@ import org.eclipse.text.edits.*;
  * <pre> &#64;Override void foo() { super.foo(); } </pre>
  * 
  * </code> will be completely removed.
- *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2016-04-06 */
 public class MethodRemoveDegenerateOverride extends Wring<MethodDeclaration> implements Kind.Simplify {

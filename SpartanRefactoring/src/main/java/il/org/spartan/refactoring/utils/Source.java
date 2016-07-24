@@ -10,7 +10,6 @@ import org.eclipse.text.edits.*;
 
 /** Give access to source code per file. Creates {@link Disable}rs and
  * {@link Scalpel}s to manipulate source code and change it.
- *
  * @author Ori Roth
  * @since 2016-04-17 */
 public class Source {

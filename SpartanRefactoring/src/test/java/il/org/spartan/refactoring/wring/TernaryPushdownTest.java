@@ -11,7 +11,6 @@ import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
 
 /** Unit tests for {@link Wrings#ADDITION_SORTER}.
- *
  * @author Yossi Gil
  * @since 2014-07-13 */
 @SuppressWarnings({ "javadoc", })//
@@ -22,7 +21,6 @@ public class TernaryPushdownTest {
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
     /** Generate test cases for this parameterized class.
-     *
      * @return a collection of cases, where each case is an array of three
      *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
@@ -76,7 +74,6 @@ public class TernaryPushdownTest {
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Conditional {
     /** Generate test cases for this parameterized class.
-     *
      * @return a collection of cases, where each case is an array of three
      *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//

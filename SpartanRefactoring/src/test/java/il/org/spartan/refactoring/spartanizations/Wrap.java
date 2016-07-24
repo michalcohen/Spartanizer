@@ -9,7 +9,6 @@ import org.eclipse.jface.text.*;
 /** An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
  * like a sentence phrase.
- *
  * @author Yossi Gil
  * @since 2015-07-16 */
 public enum Wrap {
@@ -38,7 +37,6 @@ public enum Wrap {
   //
   ;
   /** Finds the most appropriate Wrap for a given code fragment
-   *
    * @param codeFragment JD
    * @return the most appropriate Wrap, or null, if the parameter could not be
    *         parsed appropriately. */
@@ -66,7 +64,6 @@ public enum Wrap {
   }
   /** Wrap a given code fragment, and then parse it, converting it into a
    * {@link CompilationUnit}.
-   *
    * @param codeFragment JD
    * @return a newly created {@link CompilationUnit} representing the parsed AST
    *         of the wrapped parameter. */
@@ -74,7 +71,6 @@ public enum Wrap {
     return (CompilationUnit) ast.COMPILIATION_UNIT.from(on(codeFragment));
   }
   /** Wrap a given code fragment, and converts it into a {@link Document}
-   *
    * @param codeFragment JD
    * @return a newly created {@link CompilationUnit} representing the parsed AST
    *         of the wrapped parameter. */
@@ -82,14 +78,12 @@ public enum Wrap {
     return new Document(on(codeFragment));
   }
   /** Remove a wrap from around a phrase
-   *
    * @param codeFragment a wrapped program phrase
    * @return the unwrapped phrase */
   public final String off(final String codeFragment) {
     return before.isEmpty() || after.isEmpty() ? codeFragment : removeSuffix(removePrefix(codeFragment, before), after);
   }
   /** Place a wrap around a phrase
-   *
    * @param codeFragment some program phrase
    * @return the wrapped phrase */
   public final String on(final String codeFragment) {

@@ -15,7 +15,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} that sorts the arguments of a {@link Operator#DIVIDE}
  * expression.
- *
  * @author Yossi Gil
  * @since 2015-09-05 */
 public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpression> implements Kind.ReorganizeExpression {

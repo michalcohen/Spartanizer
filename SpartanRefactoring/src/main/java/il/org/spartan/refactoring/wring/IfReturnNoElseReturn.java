@@ -10,7 +10,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>if (x) return foo(); return bar();</code>
  * into <code>return a ? foo (): bar();</code> return a; } g();</code>
- *
  * @author Yossi Gil
  * @since 2015-07-29 */
 public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfStatement> implements Kind.Ternarize {

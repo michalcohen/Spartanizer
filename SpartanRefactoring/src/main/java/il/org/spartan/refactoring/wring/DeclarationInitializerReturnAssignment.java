@@ -14,7 +14,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>int a = 3; return a;</code> into
  * <code>return a;</code>
- *
  * @author Yossi Gil
  * @since 2015-08-07 */
 public final class DeclarationInitializerReturnAssignment extends Wring.VariableDeclarationFragementAndStatement implements Kind.InlineVariable {

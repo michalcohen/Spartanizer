@@ -9,7 +9,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to eliminate degenerate if statements such as <code>if (x) ;
  * else ;</code>
- *
  * @author Yossi Gil
  * @since 2015-08-26 */
 public final class IfEmptyThenEmptyElse extends Wring<IfStatement> implements Kind.Simplify {

@@ -6,7 +6,6 @@ import il.org.spartan.refactoring.utils.*;
 import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} to convert <code>b && true</code> to <code>b</code>
- *
  * @author Yossi Gil
  * @since 2015-07-20 */
 public final class InfixConditionalAndTrue extends Wring.ReplaceCurrentNode<InfixExpression> implements Kind.Simplify {

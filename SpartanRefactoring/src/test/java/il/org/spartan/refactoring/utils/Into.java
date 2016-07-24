@@ -11,14 +11,12 @@ import org.eclipse.jdt.core.dom.*;
 /** An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
  * like a sentence phrase.
- *
  * @author Yossi Gil
  * @since 2015-07-16 */
 public enum Into {
   ;
   /** Convert a given {@link String} into an {@link Assignment}, or fail the
    * current test, if such a conversion is not possible
-   *
    * @param expression a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter. */
   public static Assignment a(final String expression) {
@@ -26,7 +24,6 @@ public enum Into {
   }
   /** Convert a given {@link String} into an {@link ConditionalExpression}, or
    * fail the current test, if such a conversion is not possible
-   *
    * @param conditionalExpression a {@link String} that represents a
    *          "conditional" (also known as "ternary") expression.
    * @return an {@link Statement} data structure representing the parameter. */
@@ -40,7 +37,6 @@ public enum Into {
    * appropriately wrapping it with text to make it a reasonably looking
    * {@link CompilationUnit}, parsing it, and then extracting the first method
    * in it. possible
-   *
    * @param methodDelclaration a {@link String} that represents a Java method
    *          declaration
    * @return an {@link MethodDeclaration} data structure representing the
@@ -51,7 +47,6 @@ public enum Into {
   }
   /** Convert a given {@link String} into an {@link Expression}, or fail the
    * current test, if such a conversion is not possible
-   *
    * @param expression a {@link String} that represents a Java expression
    * @return an {@link Expression} data structure representing the parameter. */
   public static Expression e(final String expression) {
@@ -60,7 +55,6 @@ public enum Into {
   /** Convert an array of {@link String} into a {@link List} of
    * {@link Expression}, or fail the current test, if such a conversion is not
    * possible
-   *
    * @param expressions an array of {@link String}s, each representing a Java
    *          expression
    * @return a {@link List} of {@link Expression} data structures, each
@@ -73,7 +67,6 @@ public enum Into {
   }
   /** Convert a given {@link String} into an {@link InfixExpression}, or fail the
    * current test, if such a conversion is not possible
-   *
    * @param expression a {@link String} that represents a Java expression
    * @return an {@link InfixExpression} data structure representing the
    *         parameter. */
@@ -82,7 +75,6 @@ public enum Into {
   }
   /** Convert a given {@link String} into an {@link PrefixExpression}, or fail
    * the current test, if such a conversion is not possible
-   *
    * @param expression a {@link String} that represents a Java expression
    * @return a {@link PrefixExpression} data structure representing the
    *         parameter. */
@@ -91,7 +83,6 @@ public enum Into {
   }
   /** Convert a given {@link String} into an {@link Statement}, or fail the
    * current test, if such a conversion is not possible
-   *
    * @param statement a {@link String} that represents a Java statement
    * @return an {@link Statement} data structure representing the parameter. */
   public static Statement s(final String statement) {

@@ -7,7 +7,6 @@ import java.util.*;
 
 /** Utility class for computing the "Longest Common Subsequence" of two strings.
  * The LCS is computed after removing all spaces from both strings.
- *
  * @author Yossi Gil
  * @since 2015-09-23 */
 public class LongestCommonSubsequence {
@@ -32,7 +31,6 @@ public class LongestCommonSubsequence {
    * <code>as[0]...as[i]</code>, and <code>as[0]...as[i]</code>, i (respectively
    * j) must be a valid index of array a (respectively b), or else, the
    * substring of a (respectively b) are empty.
-   *
    * @param i
    * @param j
    * @return TODO document return type */

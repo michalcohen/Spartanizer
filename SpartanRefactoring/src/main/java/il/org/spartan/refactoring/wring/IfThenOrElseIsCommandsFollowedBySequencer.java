@@ -14,7 +14,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code> f() { x++; y++; if (a) { i++; j++; k++; }
  * }</code> into <code>if (x) { f(); return a; } g();</code>
- *
  * @author Yossi Gil
  * @since 2015-07-29 */
 public final class IfThenOrElseIsCommandsFollowedBySequencer extends Wring<IfStatement> implements Kind.SIMPLIFY_NESTED_BLOCK {

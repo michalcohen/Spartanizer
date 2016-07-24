@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.*;
  * @since 2015-08-23 */
 public class Specificity implements Comparator<Expression> {
   /** Determine
-   *
    * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the parameter has a defined
    *         level of specificity. */
@@ -18,7 +17,6 @@ public class Specificity implements Comparator<Expression> {
     return Level.defined(e);
   }
   /** A comparison of two {@link Expression} by their level of specificity.
-   *
    * @param e1 JD
    * @param e2 JD
    * @return a negative, zero, or positive integer, depending on the level of

@@ -10,7 +10,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} to convert <code>{;; g(); {}{;{;{;}};} }</code> into
  * <code>g();</code>
- *
  * @author Yossi Gil
  * @since 2015-07-29 */
 public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> implements Kind.REMOVE_REDUNDANT_PUNCTUATION {

@@ -11,13 +11,11 @@ import org.eclipse.text.edits.*;
 /** Does {@link ASTNode} replacement operation, by duplication of nodes,
  * extraction of comments and rewriting the result using an {@link ASTRewrite}r
  * and a {@link TextEditGroup}
- *
  * @author Ori Roth
  * @since 2016/05/13 */
 public class Scalpel {
   /** Checks whether this node is inaccessible, i.e. created using this scalpel's
    * duplication
-   *
    * @param n node
    * @return true iff n is artificial node created with this scalpel */
   public static boolean isInaccessible(final ASTNode n) {
@@ -47,7 +45,6 @@ public class Scalpel {
     used = new HashSet<>();
   }
   /** Adding comments of node to preserved comments
-   *
    * @param n node
    * @return this scalpel */
   public Scalpel addComments(final ASTNode n) {
@@ -56,7 +53,6 @@ public class Scalpel {
   }
   /** Duplicating statements from a list. The duplicated nodes have all original
    * comments included
-   *
    * @param src source list
    * @return duplicated list */
   public <N extends ASTNode> List<N> duplicate(final List<N> src) {
@@ -79,7 +75,6 @@ public class Scalpel {
   }
   /** Duplicating statements from one list to another. The duplicated nodes have
    * all original comments included
-   *
    * @param from source list
    * @param to destination list */
   public <M extends ASTNode, N extends M> void duplicateInto(final List<N> from, final List<M> to) {
@@ -88,7 +83,6 @@ public class Scalpel {
         to.add(duplicate(n));
   }
   /** As duplicateWith, but for multiple lists of elements
-   *
    * @param nls lists of equal statements
    * @return list of statements with comments from all lists */
   @SuppressWarnings("unchecked") public <N extends ASTNode> List<N> duplicateWith(final List<N>... nls) {
@@ -105,7 +99,6 @@ public class Scalpel {
   }
   /** Duplicates a node with comments from other nodes. Used in order to merge
    * multiple equal nodes into one node, containing comments from both nodes
-   *
    * @param ns
    * @return a duplicate node containing all comments */
   @SuppressWarnings("unchecked") public <@Nullable N extends ASTNode> N duplicateWith(final N... ns) {
@@ -131,7 +124,6 @@ public class Scalpel {
         n.getNodeType()));
   }
   /** Merge comments of statements of equals lists
-   *
    * @param l1 list
    * @param l2 list
    * @return l1 with comments from l2 */
@@ -142,7 +134,6 @@ public class Scalpel {
   }
   /** Prepare this scalpel to replace b. Remembers comments of both b and nodes
    * in ns
-   *
    * @param b base node
    * @param ns nodes
    * @return this scalpel */
@@ -157,7 +148,6 @@ public class Scalpel {
   }
   /** Ends operation without replacement, so the node is replaced with its
    * comments
-   *
    * @return this scalpel */
   public Scalpel remove() {
     comments.removeAll(used);
@@ -178,7 +168,6 @@ public class Scalpel {
   }
   /** Commit surgery: replace base node with replacement, while removing
    * additional nodes and adding predefined comments to the replacement
-   *
    * @param n replacement node
    * @return this scalpel */
   public Scalpel replaceWith(final ASTNode n) {
@@ -186,7 +175,6 @@ public class Scalpel {
   }
   /** Commit surgery: replace base node with replacements, while removing
    * additional nodes and adding predefined comments to the replacements
-   *
    * @param ns replacements nodes
    * @return this scalpel */
   public Scalpel replaceWith(final ASTNode... ns) {

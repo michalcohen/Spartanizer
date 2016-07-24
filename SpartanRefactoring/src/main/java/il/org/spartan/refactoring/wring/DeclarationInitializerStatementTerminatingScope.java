@@ -15,7 +15,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>int a = 3; b = a;</code> into <code>b =
  * a</code>
- *
  * @author Yossi Gil
  * @since 2015-08-07 */
 public final class DeclarationInitializerStatementTerminatingScope extends Wring.VariableDeclarationFragementAndStatement implements Kind.ConsolidateStatements {

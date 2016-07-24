@@ -10,7 +10,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.handlers.*;
 
 /** A command handler which toggles the spartanization nature
- *
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>

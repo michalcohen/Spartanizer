@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.dom.*;
 
 /** A {@link Wring} to convert <code>if (x) return b; else return c;</code> into
  * <code>return x? b : c</code>
- *
  * @author Yossi Gil
  * @since 2015-07-29 */
 public final class IfReturnFooElseReturnBar extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.Ternarize {

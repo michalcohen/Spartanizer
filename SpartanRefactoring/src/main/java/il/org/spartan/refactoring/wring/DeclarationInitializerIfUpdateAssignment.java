@@ -13,7 +13,6 @@ import org.eclipse.text.edits.*;
 
 /** A {@link Wring} to convert <code>int a = 2; if (b) a = 3;</code> into
  * <code>int a = b ? 3 : 2;</code>
- *
  * @author Yossi Gil
  * @since 2015-08-07 */
 public final class DeclarationInitializerIfUpdateAssignment extends Wring.VariableDeclarationFragementAndStatement implements Kind.Ternarize {

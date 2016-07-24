@@ -27,9 +27,8 @@ import static il.org.spartan.refactoring.utils.Funcs.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<VariableDeclarationFragment> {
   /** Generate test cases for this parameterized class.
-   *
-   * @return a collection of cases, where each case is an array of three
-   *         objects, the test case name, the input, and the file. */
+   * @return a collection of cases, where each case is an array of three objects,
+   *         the test case name, the input, and the file. */
   // TODO: JUnit bug: gets confused when value contains new line characters:
   // @Parameters(name = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"") //
   @Parameters(name = "Test #{index}. ({0}) ")//

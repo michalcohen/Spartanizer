@@ -12,7 +12,6 @@ import org.eclipse.text.edits.*;
 /** A {@link Wring} to convert <code>if (a) { return x; } </code> into
  * <code>return x;</code> provided that this <code><b>if</b></code> statement is
  * the last statement in a method.
- *
  * @author Yossi Gil
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2015-09-09 */

@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
 /** A {@link Wring} that pushes down "<code>!</code>", the negation operator as
  * much as possible, using the de-Morgan and other simplification rules.
- *
  * @author Yossi Gil
  * @since 2015-7-17 */
 public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpression> implements Kind.ReorganizeExpression {
@@ -29,7 +28,6 @@ public final class PrefixNotPushdown extends Wring.ReplaceCurrentNode<PrefixExpr
   }
   /** A utility function, which tries to simplify a boolean expression, whose top
    * most parameter is logical negation.
-   *
    * @param e JD
    * @return the simplified parameter */
   public static Expression simplifyNot(final PrefixExpression e) {

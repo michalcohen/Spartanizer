@@ -17,7 +17,6 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 /** Test cases in which the transformation should not do anything
- *
  * @author Yossi Gil
  * @since 2014/05/24 */
 @RunWith(Parameterized.class)//

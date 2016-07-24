@@ -11,7 +11,6 @@ import org.eclipse.text.edits.*;
 /** A {@link Wring} to convert <code>int a = 3; return a;</code> into
  * <code>return a;</code>
  * https://docs.oracle.com/javase/tutorial/java/nutsandbolts/op1.html
- *
  * @author Yossi Gil
  * @since 2015-08-07 */
 public final class DeclarationInitializerReturnVariable extends Wring.VariableDeclarationFragementAndStatement implements Kind.InlineVariable {

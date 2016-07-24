@@ -108,7 +108,6 @@ import il.org.spartan.refactoring.builder.*;
     }
     /** Queries the plugin's preferences store and retrieves whether the wring
      * group is currently enabled by the user
-     *
      * @return whether the group is enabled or not */
     public boolean isEnabled() {
       return Plugin.getDefault() == null || "on".equals(Plugin.getDefault().getPreferenceStore().getString(id));

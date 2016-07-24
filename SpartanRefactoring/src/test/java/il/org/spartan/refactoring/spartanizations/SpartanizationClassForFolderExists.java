@@ -13,7 +13,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 /** Tests that each directory in our test suite is a name of valid
  * {@link Spartanization} class.
- *
  * @author Yossi Gil
  * @since 2014/05/24 */
 @RunWith(Parameterized.class)//

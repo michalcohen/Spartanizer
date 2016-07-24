@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.dom.*;
  * conditional expression, when two of the three inner expressions are
  * identical, e.g., converting <code>a ? b ? x : z :z</code> into <code>a && b ?
  * x : z</code>.
- *
  * @author Yossi Gil
  * @since 2015-9-19 */
 public class TernaryCollapse extends Wring.ReplaceCurrentNode<ConditionalExpression> implements Kind.Ternarize {
