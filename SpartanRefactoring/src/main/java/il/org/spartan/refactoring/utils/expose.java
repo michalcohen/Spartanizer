@@ -128,4 +128,17 @@ public enum expose {
   @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> resources(final TryStatement s) {
     return s.resources();
   }
+  /**
+   * Expose the list of resources contained in a {@link ParameterizedType}
+   *
+   * @param t
+   *          JD
+   * @return a reference to the list of resources contained in the argument
+   */
+  @SuppressWarnings("unchecked") public static List<Type> typeArguments(final ParameterizedType t) {
+    return t.typeArguments();
+  }
+  @SuppressWarnings("unchecked") public static List<TagElement> tags(Javadoc j) {
+    return j.tags();
+  }
 }

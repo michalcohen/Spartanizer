@@ -90,7 +90,7 @@ public class TrimmerTestsUtils {
       azzert.that("Trimming of " + get() + "is just reformatting", compressSpaces(peeled), not(compressSpaces(get())));
       final Set<String> csa = getComments(unpeeled);
       for (final String c : csb)
-        assertTrue("Comment " + c + " not preserved", csa.contains(c));
+        azzert.aye("Comment " + c + " not preserved", csa.contains(c));
       return new Operand(peeled);
     }
     public Operand to(final String expected) {

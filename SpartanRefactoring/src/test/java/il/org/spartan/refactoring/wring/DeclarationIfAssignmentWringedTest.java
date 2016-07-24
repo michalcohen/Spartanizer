@@ -1,10 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.azzert.*;
-import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -21,6 +16,11 @@ import org.junit.runner.*;
 import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import static il.org.spartan.Utils.*;
+import static il.org.spartan.azzert.*;
+import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static il.org.spartan.refactoring.utils.Funcs.*;
 
 @SuppressWarnings({ "javadoc" })//
 @RunWith(Parameterized.class)//
@@ -46,9 +46,9 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
       new String[] { "Empty nested else", "int a=2; if (x) a = 3; else {{{}}}", " int a = x ? 3 : 2;" }, //
       new String[] { "Two fragments", //
           "int n2 = 0, n3;" + //
-          "  if (d)\n" + //
-          "    n2 = 2;", //
-      "int n2 = d ? 2 : 0, n3;" }, null);
+              "  if (d)\n" + //
+              "    n2 = 2;", //
+          "int n2 = d ? 2 : 0, n3;" }, null);
   /** Description of a test case for {@link Parameter} annotation */
   protected static final String DESCRIPTION = "Test #{index}. ({0}) \"{1}\" ==> \"{2}\"";
   final static DeclarationInitializerIfAssignment WRING = new DeclarationInitializerIfAssignment();
@@ -83,7 +83,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
     final VariableDeclarationFragment s = asMe();
     assert inner != null;
     assert s != null;
-    assertTrue(s.toString(), inner.eligible(s));
+    azzert.aye(s.toString(), inner.eligible(s));
   }
   @Test public void findsSimplifier() {
     azzert.that(Toolbox.instance.find(asMe()), notNullValue());
@@ -146,7 +146,7 @@ public class DeclarationIfAssignmentWringedTest extends AbstractWringTest<Variab
   }
   @Override protected CompilationUnit asCompilationUnit() {
     final CompilationUnit $ = (CompilationUnit) ast.COMPILIATION_UNIT.from(Wrap.Statement.on(input));
-    assertNotNull($);
+    azzert.notNull($);
     return $;
   }
   @Override protected VariableDeclarationFragment asMe() {

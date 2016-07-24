@@ -1,12 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.azzert.*;
-import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static il.org.spartan.refactoring.utils.Into.*;
-import static il.org.spartan.refactoring.utils.Restructure.*;
-import static org.junit.Assert.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.spartanizations.*;
 import il.org.spartan.refactoring.utils.*;
@@ -19,6 +12,14 @@ import org.eclipse.text.edits.*;
 import org.hamcrest.*;
 import org.junit.*;
 import org.junit.runners.Parameterized.Parameter;
+
+import static il.org.spartan.Utils.*;
+import static il.org.spartan.azzert.*;
+import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.utils.Into.*;
+import static il.org.spartan.refactoring.utils.Restructure.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Yossi Gil
@@ -401,7 +402,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     @Test public void hasOpportunity() {
       if (inner == null)
         return;
-      assertTrue(inner.scopeIncludes(asMe()));
+      azzert.aye(inner.scopeIncludes(asMe()));
       final CompilationUnit u = asCompilationUnit();
       azzert.that(u.toString(), wringer.findOpportunities(u).size(), is(greaterThanOrEqualTo(0)));
     }
@@ -423,7 +424,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     @Test public void scopeIncludes() {
       if (inner == null)
         return;
-      assertTrue(inner.scopeIncludes(asMe()));
+      azzert.aye(inner.scopeIncludes(asMe()));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       if (inner == null)
@@ -481,7 +482,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     @Test public void eligible() {
       if (inner == null)
         return;
-      assertTrue(inner.eligible((E) asExpression()));
+      azzert.aye(inner.eligible((E) asExpression()));
     }
     @Override @Test public void findsSimplifier() {
       if (inner == null)
@@ -650,7 +651,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         return;
       final IfStatement s = asMe();
       assert s != null;
-      assertTrue(s.toString(), inner.eligible(s));
+      azzert.aye(s.toString(), inner.eligible(s));
     }
     @Override @Test public void findsSimplifier() {
       if (input == null)
@@ -660,7 +661,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
     @Test public void hasOpportunity() {
       if (inner == null)
         return;
-      azzert.that(inner.scopeIncludes(asMe()), is(true));
+      azzert.aye(inner.scopeIncludes(asMe()));
       final CompilationUnit u = asCompilationUnit();
       azzert.that(u.toString(), wringer.findOpportunities(u).size(), is(greaterThanOrEqualTo(0)));
     }
@@ -691,7 +692,7 @@ public class AbstractWringTest<@Nullable N extends ASTNode> extends AbstractTest
         return;
       @Nullable final IfStatement me = asMe();
       if (me != null)
-        assertTrue(me.toString(), inner.scopeIncludes(me));
+        azzert.aye(me.toString(), inner.scopeIncludes(me));
     }
     @Test public void simiplifies() throws MalformedTreeException, IllegalArgumentException {
       if (inner == null)

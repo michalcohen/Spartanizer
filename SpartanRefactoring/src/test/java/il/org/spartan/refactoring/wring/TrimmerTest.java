@@ -399,10 +399,10 @@ public class TrimmerTest {
   }
   @Test public void comaprisonWithSpecific0Legibiliy00() {
     final InfixExpression e = i("this != a");
-    assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
+    azzert.aye(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
     azzert.that(Is.booleanLiteral(right(e)), is(false));
     azzert.that(Is.booleanLiteral(left(e)), is(false));
-    assertTrue(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
+    azzert.aye(in(e.getOperator(), Operator.EQUALS, Operator.NOT_EQUALS));
   }
   @Test public void comaprisonWithSpecific1() {
     trimming("null != a").to("a != null");
@@ -1245,12 +1245,12 @@ public class TrimmerTest {
   }
   @Ignore @Test public void inlineSingleUse09() {
     trimming(
-        " final A a = new D().new A(V){\nABRA\n{\nCADABRA\n{V;);   assertEquals(5, a.new Context().lineCount());   final PureIterable&lt;Mutant&gt; ms = a.generateMutants();   assertEquals(2, count(ms));   final PureIterator&lt;Mutant&gt; i = ms.iterator();   assertTrue(i.hasNext());   assertEquals(V;{\nABRA\nABRA\n{\nCADABRA\n{\nV;, i.next().text);   assertTrue(i.hasNext());   assertEquals(V;{\nABRA\n{\nCADABRA\nCADABRA\n{\nV;, i.next().text);   assertFalse(i.hasNext());  ")
+        " final A a = new D().new A(V){\nABRA\n{\nCADABRA\n{V;);   assertEquals(5, a.new Context().lineCount());   final PureIterable&lt;Mutant&gt; ms = a.generateMutants();   assertEquals(2, count(ms));   final PureIterator&lt;Mutant&gt; i = ms.iterator();   azzert.aye(i.hasNext());   assertEquals(V;{\nABRA\nABRA\n{\nCADABRA\n{\nV;, i.next().text);   azzert.aye(i.hasNext());   assertEquals(V;{\nABRA\n{\nCADABRA\nCADABRA\n{\nV;, i.next().text);   assertFalse(i.hasNext());  ")
         .to("");
   }
   @Ignore @Test public void inlineSingleUse10() {
     trimming(
-        "      final A a = new A(\"{\nABRA\n{\nCADABRA\n{\");        assertEquals(5, a.new Context().lineCount());        final PureIterable<Mutant> ms = a.mutantsGenerator();        assertEquals(2, count(ms));        final PureIterator<Mutant> i = ms.iterator();        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\nABRA\n{\nCADABRA\n{\n\", i.next().text);        assertTrue(i.hasNext());        assertEquals(\"{\nABRA\n{\nCADABRA\nCADABRA\n{\n\", i.next().text);        assertFalse(i.hasNext());")
+        "      final A a = new A(\"{\nABRA\n{\nCADABRA\n{\");        assertEquals(5, a.new Context().lineCount());        final PureIterable<Mutant> ms = a.mutantsGenerator();        assertEquals(2, count(ms));        final PureIterator<Mutant> i = ms.iterator();        azzert.aye(i.hasNext());        assertEquals(\"{\nABRA\nABRA\n{\nCADABRA\n{\n\", i.next().text);        azzert.aye(i.hasNext());        assertEquals(\"{\nABRA\n{\nCADABRA\nCADABRA\n{\n\", i.next().text);        assertFalse(i.hasNext());")
         .to("");
   }
   @Test public void inlineSingleUseKillingVariable() {
@@ -1300,10 +1300,10 @@ public class TrimmerTest {
     final Expression e2 = right(e);
     assertFalse(has.nulls(e1, e2));
     final boolean tokenWiseGreater = nodesCount(e1) > nodesCount(e2) + NODES_THRESHOLD;
-    assertTrue(tokenWiseGreater);
-    assertTrue(ExpressionComparator.moreArguments(e1, e2));
-    assertTrue(ExpressionComparator.longerFirst(e));
-    assertTrue(s.eligible(e));
+    azzert.aye(tokenWiseGreater);
+    azzert.aye(ExpressionComparator.moreArguments(e1, e2));
+    azzert.aye(ExpressionComparator.longerFirst(e));
+    azzert.aye(s.eligible(e));
     final ASTNode replacement = ((Wring.ReplaceCurrentNode<InfixExpression>) s).replacement(e);
     azzert.that(replacement, notNullValue());
     azzert.that(replacement.toString(), is("f(a,b,c) * f(a,b,c,d,e)"));

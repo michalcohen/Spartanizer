@@ -1,12 +1,13 @@
 package il.org.spartan.refactoring.utils;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.refactoring.utils.Funcs.*;
 import il.org.spartan.*;
 
 import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
+
+import static il.org.spartan.Utils.*;
+import static il.org.spartan.refactoring.utils.Funcs.*;
 
 /**
  * A utility class for finding occurrences of an {@link Expression} in an
@@ -215,7 +216,7 @@ public enum Collect {
         return consider(extract.initializers(s));
       }
       @Override public boolean visit(final TryStatement s) {
-        return consider(s.resources());
+        return consider(expose.resources(s));
       }
       @Override public boolean visit(final VariableDeclarationFragment f) {
         return add(f.getName());

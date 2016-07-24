@@ -39,10 +39,10 @@ public class MethodExplorer {
         return add(s.getParameter());
       }
       @Override public boolean visit(final ForStatement s) {
-        return add(s.initializers());
+        return add(expose.initializers(s));
       }
       @Override public boolean visit(final TryStatement s) {
-        return add(s.resources());
+        return add(expose.resources(s));
       }
       @Override public boolean visit(final VariableDeclarationStatement s) {
         addFragments(expose.fragments(s));

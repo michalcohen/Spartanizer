@@ -1,7 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static il.org.spartan.refactoring.wring.Wrings.*;
 import il.org.spartan.refactoring.preferences.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -10,6 +8,9 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
+
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.wring.Wrings.*;
 
 /**
  * A {@link Wring} that abbreviates the name of a method parameter that is a
@@ -71,7 +72,7 @@ public class SingleVariableDeclarationAbbreviation extends Wring<SingleVariableD
         final Javadoc j = m.getJavadoc();
         if (j == null)
           return;
-        final List<TagElement> ts = j.tags();
+        final List<TagElement> ts = expose.tags(j);
         if (ts == null)
           return;
         for (final TagElement t : ts) {

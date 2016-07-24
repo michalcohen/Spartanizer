@@ -1,9 +1,5 @@
 package il.org.spartan.refactoring.utils;
 
-import static il.org.spartan.Utils.*;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
 import il.org.spartan.*;
 import il.org.spartan.refactoring.wring.*;
 
@@ -11,6 +7,11 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+
+import static il.org.spartan.Utils.*;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
 
 /**
  * Useful Functions
@@ -589,9 +590,9 @@ public enum Funcs {
    */
   public static Expression peelNegation(final Expression $) {
     return //
-        $ instanceof PrefixExpression ? peelNegation((PrefixExpression) $) //
-            : $ instanceof ParenthesizedExpression ? peelNegation(extract.core($)) //
-                : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
+    $ instanceof PrefixExpression ? peelNegation((PrefixExpression) $) //
+        : $ instanceof ParenthesizedExpression ? peelNegation(extract.core($)) //
+            : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
   }
   /**
    * Retrieve previous item in a list
@@ -746,7 +747,7 @@ public enum Funcs {
         LESS_EQUALS, //
         EQUALS, //
         NOT_EQUALS //
-        ) ? e : null;
+    ) ? e : null;
   }
   private static Expression find(final boolean b, final List<Expression> es) {
     for (final Expression $ : es)
@@ -808,7 +809,7 @@ public enum Funcs {
       case "List":
       case "Queue":
       case "Set":
-        final String $ = shortName(t.typeArguments());
+        final String $ = shortName(expose.typeArguments(t));
         if ($ == null)
           return null;
         return $ + "s";

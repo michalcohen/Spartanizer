@@ -1,10 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.azzert.*;
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static il.org.spartan.refactoring.utils.Into.*;
-import static il.org.spartan.refactoring.utils.extract.*;
-import static org.junit.Assert.*;
 import il.org.spartan.*;
 
 import java.util.*;
@@ -14,6 +9,11 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
+
+import static il.org.spartan.azzert.*;
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.utils.Into.*;
+import static il.org.spartan.refactoring.utils.extract.*;
 
 /**
  * Unit tests for {@link Wrings#ADDITION_SORTER}.
@@ -37,7 +37,7 @@ public class TernaryCollapseTest {
     azzert.that(thenThen, notNullValue());
     final Expression thenElse = core(then.getElseExpression());
     azzert.that(thenElse, notNullValue());
-    assertTrue(same(thenElse, elze));
+    azzert.aye(same(thenElse, elze));
   }
 
   @RunWith(Parameterized.class)//
@@ -54,7 +54,7 @@ public class TernaryCollapseTest {
     }
 
     static String[][] cases = as.array(
-        //
+    //
         new String[] { "No boolean", "a?b:c" }, //
         new String[] { "F X", "a ? false : c" }, //
         new String[] { "T X", "a ? true : c" }, //
