@@ -74,37 +74,37 @@ public enum expose {
   }
   /** Expose the list of statements contained in a {@link Block}
    *
-   * @param b JD
+   * @param ¢ JD
    * @return a reference to the list of statements contained in the argument */
-  public static List<Statement> statements(final Block b) {
-    return ast.statements(b.statements());
+  public static List<Statement> statements(final Block ¢) {
+    return ast.statements(¢.statements());
   }
-  /** Expose the list of initializers contained in a {@link ForStatement}
+  /** Expose the list of initializers contained in ¢ {@link ForStatement}
    *
-   * @param s JD
+   * @param ¢ JD
    * @return a reference to the list of initializers contained in the argument */
-  @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> initializers(final ForStatement s) {
-    return s.initializers();
+  @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> initializers(final ForStatement ¢) {
+    return ¢.initializers();
   }
   /** Expose the list of resources contained in a {@link TryStatement}
    *
-   * @param s JD
+   * @param ¢ JD
    * @return a reference to the list of resources contained in the argument */
-  @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> resources(final TryStatement s) {
-    return s.resources();
+  @SuppressWarnings("unchecked") static List<VariableDeclarationExpression> resources(final TryStatement ¢) {
+    return ¢.resources();
   }
   /** Expose the list of resources contained in a {@link ParameterizedType}
    *
-   * @param t JD
+   * @param ¢ JD
    * @return a reference to the list of resources contained in the argument */
-  @SuppressWarnings("unchecked") public static List<Type> typeArguments(final ParameterizedType t) {
-    return t.typeArguments();
+  @SuppressWarnings("unchecked") public static List<Type> typeArguments(final ParameterizedType ¢) {
+    return ¢.typeArguments();
   }
   /** Expose the list of resources contained in a {@link ParameterizedType}
    *
-   * @param j JD
+   * @param ¢ JD
    * @return a reference to the list of resources contained in the argument */
-  @SuppressWarnings("unchecked") public static List<TagElement> tags(final Javadoc j) {
-    return j.tags();
+  @SuppressWarnings("unchecked") public static List<TagElement> tags(final Javadoc ¢) {
+    return ¢.tags();
   }
 }
