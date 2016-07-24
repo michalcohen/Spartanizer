@@ -138,7 +138,7 @@ public enum expose {
   @SuppressWarnings("unchecked") public static List<Type> typeArguments(final ParameterizedType t) {
     return t.typeArguments();
   }
-  @SuppressWarnings("unchecked") public static List<TagElement> tags(Javadoc j) {
+  @SuppressWarnings("unchecked") public static List<TagElement> tags(final Javadoc j) {
     return j.tags();
   }
 }
