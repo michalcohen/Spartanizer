@@ -1,6 +1,5 @@
 package il.org.spartan.refactoring.spartanizations;
 
-import static il.org.spartan.refactoring.spartanizations.DialogBoxes.*;
 import il.org.spartan.refactoring.handlers.*;
 import il.org.spartan.refactoring.utils.*;
 
@@ -17,6 +16,8 @@ import org.eclipse.ltk.core.refactoring.*;
 import org.eclipse.ltk.ui.refactoring.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+
+import static il.org.spartan.refactoring.spartanizations.DialogBoxes.*;
 
 /**
  * the base class for all Spartanization Refactoring classes, contains common
@@ -212,8 +213,8 @@ public abstract class Spartanization extends Refactoring {
       @Override public void run(final IMarker m) {
         try {
           runAsMarkerFix(new NullProgressMonitor(), m);
-        } catch (final CoreException e) {
-          e.printStackTrace();
+        } catch (final CoreException x) {
+          x.printStackTrace();
         }
       }
     };

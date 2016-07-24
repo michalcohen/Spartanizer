@@ -1,9 +1,5 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static il.org.spartan.refactoring.wring.Wrings.*;
-import static org.eclipse.jdt.core.dom.Assignment.Operator.*;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import il.org.spartan.misc.*;
 import il.org.spartan.refactoring.preferences.*;
 import il.org.spartan.refactoring.utils.*;
@@ -15,6 +11,11 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
+
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.wring.Wrings.*;
+import static org.eclipse.jdt.core.dom.Assignment.Operator.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 
 /**
  * A wring is a transformation that works on an AstNode. Such a transformation
@@ -44,8 +45,8 @@ public abstract class Wring<N extends ASTNode> implements Kind {
    *          current compilation unit
    * @return this wring
    */
-  public Wring<N> initialize(final CompilationUnit compilationUnit) {
-    this.compilationUnit = compilationUnit;
+  public Wring<N> initialize(final CompilationUnit u) {
+    this.compilationUnit = u;
     return this;
   }
   abstract String description(N n);
@@ -58,7 +59,7 @@ public abstract class Wring<N extends ASTNode> implements Kind {
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
    *         the simplification offered by this object.
    */
-  boolean eligible(final N n) {
+  boolean eligible(@SuppressWarnings("unused") final N n) {
     return true;
   }
   Rewrite make(final N n) {
