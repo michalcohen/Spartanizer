@@ -18,20 +18,16 @@ import static il.org.spartan.refactoring.utils.Into.*;
 import static il.org.spartan.refactoring.wring.TrimmerTestsUtils.*;
 import static org.junit.Assert.*;
 
-/**
- * * Unit tests for the nesting class Unit test for the containing class. Note
+/** * Unit tests for the nesting class Unit test for the containing class. Note
  * our naming convention: a) test methods do not use the redundant "test"
  * prefix. b) test methods begin with the name of the method they check.
  *
  * @author Yossi Gil
- * @since 2014-07-10
- */
+ * @since 2014-07-10 */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 @SuppressWarnings({ "static-method", "javadoc" })//
 public class TrimmerTest {
-  /**
-   * END OF STABLING TESTS
-   */
+  /** END OF STABLING TESTS */
   @Test public void actualExampleForSortAddition() {
     trimming("1 + b.statements().indexOf(declarationStmt)").to("");
   }
@@ -1183,9 +1179,7 @@ public class TrimmerTest {
   @Test public void inlineInitializersSecondStep() {
     trimming("int a = 2; return 3*a*4;").to("return 3 * 2 * 4;");
   }
-  /**
-   * START OF STABLING TESTS
-   */
+  /** START OF STABLING TESTS */
   @Test public void inlineIntoInstanceCreation() {
     TrimmerTestsUtils.trimming("" //
         + "public Statement methodBlock(FrameworkMethod m) {\n" //
@@ -2569,9 +2563,7 @@ public class TrimmerTest {
   @Test public void rightSipmlificatioForNulNNVariable() {
     azzert.that(Toolbox.instance.find(i("null != a")), instanceOf(InfixComparisonSpecific.class));
   }
-  /**
-   * Not passing because no resolved binding in tests
-   */
+  /** Not passing because no resolved binding in tests */
   @Test public void sameAssignmentDifferentTypes() {
     TrimmerTestsUtils.trimming("" //
         + "public void f() {\n" //

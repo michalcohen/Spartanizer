@@ -5,13 +5,11 @@ import il.org.spartan.refactoring.utils.*;
 
 import java.util.*;
 
-/**
- * Utility class for computing the "Longest Common Subsequence" of two strings.
+/** Utility class for computing the "Longest Common Subsequence" of two strings.
  * The LCS is computed after removing all spaces from both strings.
  *
  * @author Yossi Gil
- * @since 2015-09-23
- */
+ * @since 2015-09-23 */
 public class LongestCommonSubsequence {
   public LongestCommonSubsequence(final String a, final String b) {
     as = compressSpaces(a).toCharArray();
@@ -20,9 +18,7 @@ public class LongestCommonSubsequence {
     for (int i = 0; i < as.length; ++i)
       Arrays.fill(length[i] = new int[bs.length], -1);
   }
-  /**
-   * @return A value between 0 and 1
-   */
+  /** @return A value between 0 and 1 */
   public double similarity() {
     return 2. * length() / (as.length + bs.length);
   }
@@ -32,16 +28,14 @@ public class LongestCommonSubsequence {
   private int length() {
     return as.length <= 0 || bs.length <= 0 ? 0 : length(as.length - 1, bs.length - 1); //
   }
-  /**
-   * Returns the length of the LCS of two prefixes of the current strings,
+  /** Returns the length of the LCS of two prefixes of the current strings,
    * <code>as[0]...as[i]</code>, and <code>as[0]...as[i]</code>, i (respectively
    * j) must be a valid index of array a (respectively b), or else, the
    * substring of a (respectively b) are empty.
    *
    * @param i
    * @param j
-   * @return TODO document return type
-   */
+   * @return TODO document return type */
   private int length(final int i, final int j) {
     return i < 0 || j < 0 ? 0 : obtainLength(i, j);
   }

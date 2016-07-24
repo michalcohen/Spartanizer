@@ -9,24 +9,26 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
-/**
- * Used to replace a switch statement containing a single case (+ optional
+/** Used to replace a switch statement containing a single case (+ optional
  * default) with an if else statement. replaces
  *
- * <pre> <code> switch (x) { case 1: System.out.println("1 detected!"); break;
- * default: System.out.println("error!"); break; } </pre>
+ * <pre>
+ * <code> switch (x) { case 1: System.out.println("1 detected!"); break;
+ * default: System.out.println("error!"); break; }
+ * </pre>
  *
  * </code> with
  *
- * <pre> <code> if (x == 1) { System.out.println("1 detected!"); } else {
- * System.out.println("error!"); } </pre>
+ * <pre>
+ * <code> if (x == 1) { System.out.println("1 detected!"); } else {
+ * System.out.println("error!"); }
+ * </pre>
  *
  * </code> TODO Ori: consider adding option for switch-case-nobreak-default to
  * become if statement + default statements
  *
  * @author Ori Roth
- * @since 2016/05/09
- */
+ * @since 2016/05/09 */
 @SuppressWarnings("unchecked") public class SwitchFewCasesReplaceWithIf extends ReplaceCurrentNode<SwitchStatement> implements Kind.SWITCH_IF_CONVERTION {
   protected IfStatement buildIfStatement(final AST a, final List<Statement> ss, final Expression e, final Expression t) {
     final IfStatement $ = a.newIfStatement();

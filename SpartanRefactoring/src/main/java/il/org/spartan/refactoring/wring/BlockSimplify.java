@@ -8,13 +8,11 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to convert <code>{;; g(); {}{;{;{;}};} }</code> into
+/** A {@link Wring} to convert <code>{;; g(); {}{;{;{;}};} }</code> into
  * <code>g();</code>
  *
  * @author Yossi Gil
- * @since 2015-07-29
- */
+ * @since 2015-07-29 */
 public class BlockSimplify extends Wring.ReplaceCurrentNode<Block> implements Kind.REMOVE_REDUNDANT_PUNCTUATION {
   private static boolean identical(final List<Statement> os1, final List<Statement> os2) {
     if (os1.size() != os2.size())

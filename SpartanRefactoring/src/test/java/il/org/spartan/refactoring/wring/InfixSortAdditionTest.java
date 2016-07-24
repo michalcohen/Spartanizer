@@ -15,12 +15,10 @@ import org.junit.runners.Parameterized.Parameters;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.utils.Restructure.*;
 
-/**
- * Unit tests for {@link Wrings#ADDITION_SORTER}.
+/** Unit tests for {@link Wrings#ADDITION_SORTER}.
  *
  * @author Yossi Gil
- * @since 2014-07-13
- */
+ * @since 2014-07-13 */
 @SuppressWarnings({ "javadoc", "static-method" })//
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class InfixSortAdditionTest {
@@ -41,12 +39,10 @@ public class InfixSortAdditionTest {
 
   @RunWith(Parameterized.class)//
   public static class Noneligible extends AbstractWringTest.Noneligible.Infix {
-    /**
-     * Generate test cases for this parameterized class.
+    /** Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
+     *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
     public static Collection<Object[]> cases() {
       return collect(cases);
@@ -94,12 +90,10 @@ public class InfixSortAdditionTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Infix {
-    /**
-     * Generate test cases for this parameterized class.
+    /** Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
+     *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
     public static Collection<Object[]> cases() {
       return collect(cases);
@@ -118,9 +112,7 @@ public class InfixSortAdditionTest {
         new String[] { "Sort expressions by size", "1*f(a,b,c,d) + 2*f(a,b) + 3*f()", "3*f() +2*f(a,b)+ 1*f(a,b,c,d)" }, //
         null);
 
-    /**
-     * Instantiates the enclosing class ({@link WringedExpression})
-     */
+    /** Instantiates the enclosing class ({@link WringedExpression}) */
     public Wringed() {
       super(WRING);
     }

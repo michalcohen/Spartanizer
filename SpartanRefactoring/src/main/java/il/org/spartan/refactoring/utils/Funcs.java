@@ -13,241 +13,176 @@ import static org.eclipse.jdt.core.dom.ASTNode.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
 
-/**
- * Useful Functions
- */
+/** Useful Functions */
 public enum Funcs {
   ;
-  /**
-   * Convert an {@link Expression} into {@link InfixExpression} whose operator
+  /** Convert an {@link Expression} into {@link InfixExpression} whose operator
    * is either {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#AND} or
    * {@link org.eclipse.jdt.core.dom.InfixExpression.Operator#OR}.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
-   *         conversion is not possible for it
-   */
+   *         conversion is not possible for it */
   public static InfixExpression asAndOrOr(final Expression e) {
     return !Is.infix(e) || !Is.deMorgan(asInfixExpression(e).getOperator()) ? null : asInfixExpression(e);
   }
-  /**
-   * Convert, is possible, an {@link ASTNode} to an {@link Assignment}
+  /** Convert, is possible, an {@link ASTNode} to an {@link Assignment}
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the argument, but down-casted to a {@link Assignment}, or
-   *         <code><b>null</b></code> if the downcast is impossible.
-   */
+   *         <code><b>null</b></code> if the downcast is impossible. */
   public static Assignment asAssignment(final ASTNode $) {
     return !is($, ASSIGNMENT) ? null : (Assignment) $;
   }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link Block}
+  /** Convert, is possible, an {@link ASTNode} to a {@link Block}
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the argument, but down-casted to a {@link Block}, or
-   *         <code><b>null</b></code> if no such down-cast is possible..
-   */
+   *         <code><b>null</b></code> if no such down-cast is possible.. */
   public static Block asBlock(final ASTNode $) {
     return $.getNodeType() != BLOCK ? null : (Block) $;
   }
-  /**
-   * Down-cast, if possible, to {@link BooleanLiteral}
+  /** Down-cast, if possible, to {@link BooleanLiteral}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static BooleanLiteral asBooleanLiteral(final Expression e) {
     return !(e instanceof BooleanLiteral) ? null : (BooleanLiteral) e;
   }
-  /**
-   * Convert an {@link Expression} into {@link InfixExpression} whose operator
+  /** Convert an {@link Expression} into {@link InfixExpression} whose operator
    * is one of the six comparison operators: <code><</code>, <code><=</code>,
    * <code>></code>, <code>>=</code>, <code>!=</code>, or <code>==</code>.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
-   *         conversion is not possible for it
-   */
+   *         conversion is not possible for it */
   public static InfixExpression asComparison(final Expression e) {
     return !(e instanceof InfixExpression) ? null : asComparison((InfixExpression) e);
   }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
+  /** Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the argument, but down-casted to a {@link ConditionalExpression},
-   *         or <code><b>null</b></code> if no such down-cast is possible..
-   */
+   *         or <code><b>null</b></code> if no such down-cast is possible.. */
   public static ConditionalExpression asConditionalExpression(final ASTNode n) {
     return !(n instanceof ConditionalExpression) ? null : (ConditionalExpression) n;
   }
-  /**
-   * Down-cast, if possible, to {@link ConditionalExpression}
+  /** Down-cast, if possible, to {@link ConditionalExpression}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static ConditionalExpression asConditionalExpression(final Expression e) {
     return !(e instanceof ConditionalExpression) ? null : (ConditionalExpression) e;
   }
-  /**
-   * Down-cast, if possible, to {@link Expression}
+  /** Down-cast, if possible, to {@link Expression}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static Expression asExpression(final ASTNode n) {
     return !(n instanceof Expression) ? null : (Expression) n;
   }
-  /**
-   * Down-cast, if possible, to {@link ExpressionStatement}
+  /** Down-cast, if possible, to {@link ExpressionStatement}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static ExpressionStatement asExpressionStatement(final ASTNode n) {
     return !(n instanceof ExpressionStatement) ? null : (ExpressionStatement) n;
   }
-  /**
-   * Down-cast, if possible, to {@link IfStatement}
+  /** Down-cast, if possible, to {@link IfStatement}
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static IfStatement asIfStatement(final ASTNode $) {
     return $ == null || $.getNodeType() != IF_STATEMENT ? null : (IfStatement) $;
   }
-  /**
-   * Down-cast, if possible, to {@link InfixExpression}
+  /** Down-cast, if possible, to {@link InfixExpression}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static InfixExpression asInfixExpression(final ASTNode n) {
     return !(n instanceof InfixExpression) ? null : (InfixExpression) n;
   }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link MethodDeclaration}
+  /** Convert, is possible, an {@link ASTNode} to a {@link MethodDeclaration}
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the argument, but down-casted to a {@link MethodDeclaration}, or
-   *         <code><b>null</b></code> if no such down-cast is possible..
-   */
+   *         <code><b>null</b></code> if no such down-cast is possible.. */
   public static MethodDeclaration asMethodDeclaration(final ASTNode $) {
     return $.getNodeType() != METHOD_DECLARATION ? null : (MethodDeclaration) $;
   }
-  /**
-   * Down-cast, if possible, to {@link MethodInvocation}
+  /** Down-cast, if possible, to {@link MethodInvocation}
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static MethodInvocation asMethodInvocation(final Expression e) {
     return !(e instanceof MethodInvocation) ? null : (MethodInvocation) e;
   }
-  /**
-   * Convert an {@link Expression} into a {@link PrefixExpression} whose
+  /** Convert an {@link Expression} into a {@link PrefixExpression} whose
    * operator is <code>!</code>,
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return the parameter thus converted, or <code><b>null</b> if the
-   *         conversion is not possible for it
-   */
+   *         conversion is not possible for it */
   public static PrefixExpression asNot(final Expression e) {
     return !(e instanceof PrefixExpression) ? null : asNot(asPrefixExpression(e));
   }
-  /**
-   * Down-cast, if possible, to {@link InfixExpression}
+  /** Down-cast, if possible, to {@link InfixExpression}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static PostfixExpression asPostfixExpression(final ASTNode n) {
     return !(n instanceof PostfixExpression) ? null : (PostfixExpression) n;
   }
-  /**
-   * Down-cast, if possible, to {@link PrefixExpression}
+  /** Down-cast, if possible, to {@link PrefixExpression}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static PrefixExpression asPrefixExpression(final ASTNode n) {
     return !(n instanceof PrefixExpression) ? null : (PrefixExpression) n;
   }
-  /**
-   * Down-cast, if possible, to {@link ReturnStatement}
+  /** Down-cast, if possible, to {@link ReturnStatement}
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static ReturnStatement asReturnStatement(final ASTNode $) {
     return $ == null || $.getNodeType() != RETURN_STATEMENT ? null : (ReturnStatement) $;
   }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link SimpleName}
+  /** Convert, is possible, an {@link ASTNode} to a {@link SimpleName}
    *
-   * @param $
-   *          JD
+   * @param $ JD
    * @return the argument, but down-casted to a {@link SimpleName}, or
-   *         <code><b>null</b></code> if no such down-cast is possible..
-   */
+   *         <code><b>null</b></code> if no such down-cast is possible.. */
   public static SimpleName asSimpleName(final ASTNode $) {
     return $.getNodeType() != SIMPLE_NAME ? null : (SimpleName) $;
   }
-  /**
-   * Down-cast, if possible, to {@link Statement}
+  /** Down-cast, if possible, to {@link Statement}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the parameter down-casted to the returned type, or
-   *         <code><b>null</b></code> if no such down-casting is possible.
-   */
+   *         <code><b>null</b></code> if no such down-casting is possible. */
   public static Statement asStatement(final ASTNode n) {
     return !(n instanceof Statement) ? null : (Statement) n;
   }
-  /**
-   * Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
+  /** Convert, is possible, an {@link ASTNode} to a {@link ConditionalExpression}
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return the argument, but down-casted to a {@link ConditionalExpression},
-   *         or <code><b>null</b></code> if no such down-cast is possible..
-   */
+   *         or <code><b>null</b></code> if no such down-cast is possible.. */
   public static ThrowStatement asThrowStatement(final ASTNode n) {
     return !(n instanceof ThrowStatement) ? null : (ThrowStatement) n;
   }
-  /**
-   * @param root
-   *          the node whose children we return
-   * @return A list containing all the nodes in the given root's sub tree
-   */
+  /** @param root the node whose children we return
+   * @return A list containing all the nodes in the given root's sub tree */
   public static List<ASTNode> collectDescendants(final ASTNode root) {
     if (root == null)
       return null;
@@ -260,17 +195,13 @@ public enum Funcs {
     $.remove(0);
     return $;
   }
-  /**
-   * the function checks if all the given assignments have the same left hand
+  /** the function checks if all the given assignments have the same left hand
    * side(variable) and operator
    *
-   * @param base
-   *          The assignment to compare all others to
-   * @param as
-   *          The assignments to compare
+   * @param base The assignment to compare all others to
+   * @param as The assignments to compare
    * @return true if all assignments has the same left hand side and operator as
-   *         the first one or false otherwise
-   */
+   *         the first one or false otherwise */
   public static boolean compatible(final Assignment base, final Assignment... as) {
     if (has.nulls(base, as))
       return false;
@@ -279,15 +210,11 @@ public enum Funcs {
         return false;
     return true;
   }
-  /**
-   * String wise comparison of all the given SimpleNames
+  /** String wise comparison of all the given SimpleNames
    *
-   * @param cmpTo
-   *          a string to compare all names to
-   * @param names
-   *          SimplesNames to compare by their string value to cmpTo
-   * @return true if all names are the same (string wise) or false otherwise
-   */
+   * @param cmpTo a string to compare all names to
+   * @param names SimplesNames to compare by their string value to cmpTo
+   * @return true if all names are the same (string wise) or false otherwise */
   public static boolean compatibleNames(final Expression cmpTo, final Expression... names) {
     if (has.nulls(cmpTo, names) || cmpTo.getNodeType() != SIMPLE_NAME)
       return false;
@@ -296,13 +223,9 @@ public enum Funcs {
         return false;
     return true;
   }
-  /**
-   * @param cmpTo
-   *          the assignment operator to compare all to
-   * @param os
-   *          A unknown number of assignments operators
-   * @return true if all the operator are the same or false otherwise
-   */
+  /** @param cmpTo the assignment operator to compare all to
+   * @param os A unknown number of assignments operators
+   * @return true if all the operator are the same or false otherwise */
   public static boolean compatibleOps(final Assignment.Operator cmpTo, final Assignment.Operator... os) {
     if (has.nulls(cmpTo, os))
       return false;
@@ -311,23 +234,17 @@ public enum Funcs {
         return false;
     return true;
   }
-  /**
-   * Obtain a condensed textual representation of an {@link ASTNode}
+  /** Obtain a condensed textual representation of an {@link ASTNode}
    *
-   * @param n
-   *          JD
-   * @return the textual representation of the parameter,
-   */
+   * @param n JD
+   * @return the textual representation of the parameter, */
   public static String condense(final ASTNode n) {
     return removeWhites(as.string(n));
   }
-  /**
-   * @param ns
-   *          unknown number of nodes to check
+  /** @param ns unknown number of nodes to check
    * @return true if one of the nodes is an Expression Statement of type Post or
    *         Pre Expression with ++ or -- operator. false if none of them are or
-   *         if the given parameter is null.
-   */
+   *         if the given parameter is null. */
   public static boolean containIncOrDecExp(final ASTNode... ns) {
     if (ns == null)
       return false;
@@ -336,141 +253,100 @@ public enum Funcs {
         return true;
     return false;
   }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
+  /** Make a duplicate, suitable for tree rewrite, of the parameter
    *
-   * @param n
-   *          JD
-   * @return a duplicate of the parameter, downcasted to the returned type.
-   */
+   * @param n JD
+   * @return a duplicate of the parameter, downcasted to the returned type. */
   @SuppressWarnings("unchecked")//
   public static <N extends ASTNode> N duplicate(final N n) {
     return Scalpel.isInaccessible(n) ? n : (N) copySubtree(n.getAST(), n);
   }
-  /**
-   * Shorthand for {@link ConditionalExpression#getElseExpression()}
+  /** Shorthand for {@link ConditionalExpression#getElseExpression()}
    *
-   * @param e
-   *          JD
-   * @return the else part of the parameter
-   */
+   * @param e JD
+   * @return the else part of the parameter */
   public static Expression elze(final ConditionalExpression e) {
     return e.getElseExpression();
   }
-  /**
-   * Shorthand for {@link IfStatement#getElseStatement}
+  /** Shorthand for {@link IfStatement#getElseStatement}
    *
-   * @param s
-   *          JD
-   * @return the else statement of the parameter
-   */
+   * @param s JD
+   * @return the else statement of the parameter */
   public static Statement elze(final IfStatement s) {
     return s.getElseStatement();
   }
-  /**
-   * Swap the order of the left and right operands to an expression, changing
+  /** Swap the order of the left and right operands to an expression, changing
    * the operator if necessary.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return a newly created expression with its operands thus swapped.
-   * @throws IllegalArgumentException
-   *           when the parameter has extra operands.
-   * @see InfixExpression#hasExtendedOperands
-   */
+   * @throws IllegalArgumentException when the parameter has extra operands.
+   * @see InfixExpression#hasExtendedOperands */
   public static InfixExpression flip(final InfixExpression e) {
     if (e.hasExtendedOperands())
       throw new IllegalArgumentException(e + ": flipping undefined for an expression with extra operands ");
     return Subject.pair(right(e), left(e)).to(flip(e.getOperator()));
   }
-  /**
-   * Makes an opposite operator from a given one, which keeps its logical
+  /** Makes an opposite operator from a given one, which keeps its logical
    * operation after the node swapping. e.g. "&" is commutative, therefore no
    * change needed. "<" isn't commutative, but it has its opposite: ">=".
    *
-   * @param o
-   *          The operator to flip
+   * @param o The operator to flip
    * @return The correspond operator - e.g. "<=" will become ">", "+" will stay
-   *         "+".
-   */
+   *         "+". */
   public static Operator flip(final Operator o) {
     return !conjugate.containsKey(o) ? o : conjugate.get(o);
   }
-  /**
-   * @param n
-   *          the node from which to expose the proper fragment
-   * @param name
-   *          the name by which to look for the fragment
+  /** @param n the node from which to expose the proper fragment
+   * @param name the name by which to look for the fragment
    * @return the fragment if such with the given name exists or null otherwise
-   *         (or if s or name are null)
-   */
+   *         (or if s or name are null) */
   public static VariableDeclarationFragment getVarDeclFrag(final ASTNode n, final Expression name) {
     return has.nulls(n, name) || n.getNodeType() != VARIABLE_DECLARATION_STATEMENT || name.getNodeType() != SIMPLE_NAME ? null : getVarDeclFrag(expose.fragments((VariableDeclarationStatement) n),
         (SimpleName) name);
   }
-  /**
-   * Determine whether a node is a return statement
+  /** Determine whether a node is a return statement
    *
-   * @param n
-   *          node to check
-   * @return true if the given node is a block statement
-   */
+   * @param n node to check
+   * @return true if the given node is a block statement */
   public static boolean isBlock(final ASTNode n) {
     return is(n, BLOCK);
   }
-  /**
-   * @param n
-   *          node to check
+  /** @param n node to check
    * @return true if the given node is a boolean or null literal or false
-   *         otherwise
-   */
+   *         otherwise */
   public static boolean isBoolOrNull(final ASTNode n) {
     return is(n, BOOLEAN_LITERAL) || is(n, NULL_LITERAL);
   }
-  /**
-   * Determined if a node is an "expression statement"
+  /** Determined if a node is an "expression statement"
    *
-   * @param n
-   *          node to check
-   * @return true if the given node is expression statement
-   */
+   * @param n node to check
+   * @return true if the given node is expression statement */
   public static boolean isExpressionStatement(final ASTNode n) {
     return is(n, EXPRESSION_STATEMENT);
   }
-  /**
-   * Determine whether a variable declaration is final or not
+  /** Determine whether a variable declaration is final or not
    *
-   * @param s
-   *          JD
-   * @return true if the variable is declared as final
-   */
+   * @param s JD
+   * @return true if the variable is declared as final */
   public static boolean isFinal(final VariableDeclarationStatement s) {
     return (Modifier.FINAL & s.getModifiers()) != 0;
   }
-  /**
-   * @param n
-   *          JD
-   * @return true if the given node is an infix expression or false otherwise
-   */
+  /** @param n JD
+   * @return true if the given node is an infix expression or false otherwise */
   public static boolean isInfix(final ASTNode n) {
     return is(n, INFIX_EXPRESSION);
   }
-  /**
-   * @param n
-   *          node to check
-   * @return true if the given node is a method invocation or false otherwise
-   */
+  /** @param n node to check
+   * @return true if the given node is a method invocation or false otherwise */
   public static boolean isMethodInvocation(final ASTNode n) {
     return is(n, METHOD_INVOCATION);
   }
-  /**
-   * @param n
-   *          node to check
+  /** @param n node to check
    * @return true if node is an Expression Statement of type Post or Pre
    *         Expression with ++ or -- operator false if node is not an
    *         Expression Statement or its a Post or Pre fix expression that its
-   *         operator is not ++ or --
-   */
+   *         operator is not ++ or -- */
   public static boolean isNodeIncOrDecExp(final ASTNode n) {
     switch (n.getNodeType()) {
       case EXPRESSION_STATEMENT:
@@ -483,141 +359,99 @@ public enum Funcs {
         return false;
     }
   }
-  /**
-   * @param a
-   *          the assignment who's operator we want to check
-   * @return true is the assignment's operator is assign
-   */
+  /** @param a the assignment who's operator we want to check
+   * @return true is the assignment's operator is assign */
   public static boolean isOpAssign(final Assignment a) {
     return a != null && a.getOperator() == Assignment.Operator.ASSIGN;
   }
-  /**
-   * @param n
-   *          node to check
+  /** @param n node to check
    * @return true if the given node is a variable declaration statement or false
-   *         otherwise
-   */
+   *         otherwise */
   public static boolean isVarDeclStmt(final ASTNode n) {
     return is(n, VARIABLE_DECLARATION_STATEMENT);
   }
-  /**
-   * Shorthand for {@link Assignment#getLeftHandSide()}
+  /** Shorthand for {@link Assignment#getLeftHandSide()}
    *
-   * @param a
-   *          JD
-   * @return the left operand of the parameter
-   */
+   * @param a JD
+   * @return the left operand of the parameter */
   public static Expression left(final Assignment a) {
     return a.getLeftHandSide();
   }
-  /**
-   * Shorthand for {@link InfixExpression#getLeftOperand()}
+  /** Shorthand for {@link InfixExpression#getLeftOperand()}
    *
-   * @param e
-   *          JD
-   * @return the left operand of the parameter
-   */
+   * @param e JD
+   * @return the left operand of the parameter */
   public static Expression left(final InfixExpression e) {
     return e.getLeftOperand();
   }
-  /**
-   * Shorthand for {@link InstanceofExpression#getLeftOperand()}
+  /** Shorthand for {@link InstanceofExpression#getLeftOperand()}
    *
-   * @param e
-   *          JD
-   * @return the left operand of the parameter
-   */
+   * @param e JD
+   * @return the left operand of the parameter */
   public static Expression left(final InstanceofExpression e) {
     return e.getLeftOperand();
   }
-  /**
-   * @param e
-   *          JD
-   * @return the parameter, but logically negated and simplified
-   */
+  /** @param e JD
+   * @return the parameter, but logically negated and simplified */
   public static Expression logicalNot(final Expression e) {
     final PrefixExpression $ = Subject.operand(e).to(NOT);
     final Expression $$ = PrefixNotPushdown.simplifyNot($);
     return $$ == null ? $ : $$;
   }
-  /**
-   * @param e
-   *          the expression to return in the return statement
-   * @return the new return statement
-   */
+  /** @param e the expression to return in the return statement
+   * @return the new return statement */
   public static ThrowStatement makeThrowStatement(final Expression e) {
     return Subject.operand(e).toThrow();
   }
-  /**
-   * @param e
-   *          JD
+  /** @param e JD
    * @return a non-negative integer, representing the negation level of the
-   *         parameter
-   */
+   *         parameter */
   public static int negationLevel(final Expression e) {
     return e instanceof PrefixExpression ? negationLevel((PrefixExpression) e) //
         : e instanceof ParenthesizedExpression ? negationLevel(extract.core(e)) //
             : as.bit(e instanceof NumberLiteral && ((NumberLiteral) e).getToken().startsWith("-"));
   }
-  /**
-   * Create a new {@link SimpleName} instance at the AST of the parameter
+  /** Create a new {@link SimpleName} instance at the AST of the parameter
    *
-   * @param n
-   *          JD
-   * @param newName
-   *          the name that the returned value shall bear
-   * @return a new {@link SimpleName} instance at the AST of the parameter
-   */
+   * @param n JD
+   * @param newName the name that the returned value shall bear
+   * @return a new {@link SimpleName} instance at the AST of the parameter */
   public static SimpleName newSimpleName(final ASTNode n, final String newName) {
     return n.getAST().newSimpleName(newName);
   }
-  /**
-   * Shorthand for {@link ASTNode#getParent()}
+  /** Shorthand for {@link ASTNode#getParent()}
    *
-   * @param n
-   *          JD
-   * @return the parent of the parameter
-   */
+   * @param n JD
+   * @return the parent of the parameter */
   public static ASTNode parent(final ASTNode n) {
     return n.getParent();
   }
-  /**
-   * Peels all consecutive negations from an expression
+  /** Peels all consecutive negations from an expression
    *
-   * @param $
-   *          JD
-   * @return the parameter, thus peeled
-   */
+   * @param $ JD
+   * @return the parameter, thus peeled */
   public static Expression peelNegation(final Expression $) {
     return //
     $ instanceof PrefixExpression ? peelNegation((PrefixExpression) $) //
         : $ instanceof ParenthesizedExpression ? peelNegation(extract.core($)) //
             : $ instanceof NumberLiteral ? peelNegation((NumberLiteral) $) : $;
   }
-  /**
-   * Retrieve previous item in a list
+  /** Retrieve previous item in a list
    *
-   * @param i
-   *          an index of specific item in a list
-   * @param ts
-   *          the indexed list
+   * @param i an index of specific item in a list
+   * @param ts the indexed list
    * @return the previous item in the list, if such an item exists, otherwise,
-   *         the last node
-   */
+   *         the last node */
   public static <T> T prev(final int i, final List<T> ts) {
     return ts.get(i < 1 ? 0 : i - 1);
   }
-  /**
-   * Make a duplicate, suitable for tree rewrite, of the parameter
+  /** Make a duplicate, suitable for tree rewrite, of the parameter
    *
-   * @param n
-   *          JD
-   * @param t
-   *          JD
+   * @param n JD
+   * @param t JD
    * @return a duplicate of the parameter, downcasted to the returned type.
    * @see ASTNode#copySubtree
-   * @see ASTRewrite
-   */
+   * @see ASTRewrite */
   @SuppressWarnings("unchecked") public static <N extends ASTNode> N rebase(final N n, final AST t) {
     return Scalpel.isInaccessible(n) ? n : (N) copySubtree(t, n);
   }
@@ -627,15 +461,11 @@ public enum Funcs {
       $ = ((IfStatement) $).getElseStatement();
     return $;
   }
-  /**
-   * Remove all occurrences of a boolean literal from a list of
+  /** Remove all occurrences of a boolean literal from a list of
    * {@link Expression}s
    *
-   * @param b
-   *          JD
-   * @param es
-   *          JD
-   */
+   * @param b JD
+   * @param es JD */
   public static void removeAll(final boolean b, final List<Expression> es) {
     for (;;) {
       final Expression e = find(b, es);
@@ -644,61 +474,46 @@ public enum Funcs {
       es.remove(e);
     }
   }
-  /**
-   * Shorthand for {@link Assignment#getRightHandSide()}
+  /** Shorthand for {@link Assignment#getRightHandSide()}
    *
-   * @param a
-   *          JD
-   * @return the left operand of the parameter
-   */
+   * @param a JD
+   * @return the left operand of the parameter */
   public static Expression right(final Assignment a) {
     return a.getRightHandSide();
   }
-  /**
-   * Shorthand for {@link CastExpression#getExpression()}
+  /** Shorthand for {@link CastExpression#getExpression()}
    *
-   * @param e
-   *          JD
-   * @return the right operand of the parameter
-   */
+   * @param e JD
+   * @return the right operand of the parameter */
   public static Expression right(final CastExpression e) {
     return e.getExpression();
   }
-  /**
-   * Shorthand for {@link InfixExpression#getRightOperand()}
+  /** Shorthand for {@link InfixExpression#getRightOperand()}
    *
-   * @param e
-   *          JD
-   * @return the right operand of the parameter
-   */
+   * @param e JD
+   * @return the right operand of the parameter */
   public static Expression right(final InfixExpression e) {
     return e.getRightOperand();
   }
-  /**
-   * Determine whether two nodes are the same, in the sense that their textual
-   * representations is identical. <p> Each of the parameters may be
-   * <code><b>null</b></code>; a <code><b>null</b></code> is only equal to<
+  /** Determine whether two nodes are the same, in the sense that their textual
+   * representations is identical.
+   * <p>
+   * Each of the parameters may be <code><b>null</b></code>; a
+   * <code><b>null</b></code> is only equal to<
    * code><b>null</b></code>
    *
-   * @param n1
-   *          JD
-   * @param n2
-   *          JD
-   * @return <code><b>true</b></code> if the parameters are the same.
-   */
+   * @param n1 JD
+   * @param n2 JD
+   * @return <code><b>true</b></code> if the parameters are the same. */
   public static boolean same(final ASTNode n1, final ASTNode n2) {
     return n1 == n2 || n1 != null && n2 != null && n1.getNodeType() == n2.getNodeType() && n1.toString().equals(n2.toString());
   }
-  /**
-   * Determine whether two lists of nodes are the same, in the sense that their
+  /** Determine whether two lists of nodes are the same, in the sense that their
    * textual representations is identical.
    *
-   * @param ns1
-   *          first list to compare
-   * @param ns2
-   *          second list to compare
-   * @return are the lists equal string-wise
-   */
+   * @param ns1 first list to compare
+   * @param ns2 second list to compare
+   * @return are the lists equal string-wise */
   public static <T extends ASTNode> boolean same(final List<T> ns1, final List<T> ns2) {
     if (ns1 == ns2)
       return true;
@@ -719,23 +534,17 @@ public enum Funcs {
                 : t instanceof ParameterizedType ? shortName((ParameterizedType) t)//
                     : t instanceof UnionType ? shortName((UnionType) t) : null;
   }
-  /**
-   * Shorthand for {@link ConditionalExpression#getThenExpression()}
+  /** Shorthand for {@link ConditionalExpression#getThenExpression()}
    *
-   * @param e
-   *          JD
-   * @return the then part of the parameter
-   */
+   * @param e JD
+   * @return the then part of the parameter */
   public static Expression then(final ConditionalExpression e) {
     return e.getThenExpression();
   }
-  /**
-   * Shorthand for {@link IfStatement#getThenStatement}
+  /** Shorthand for {@link IfStatement#getThenStatement}
    *
-   * @param s
-   *          JD
-   * @return the then statement of the parameter
-   */
+   * @param s JD
+   * @return the then statement of the parameter */
   public static Statement then(final IfStatement s) {
     return s.getThenStatement();
   }

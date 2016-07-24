@@ -9,13 +9,11 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} to convert <code>if (x) if (a) f();</code> into <code>if (x
+/** A {@link Wring} to convert <code>if (x) if (a) f();</code> into <code>if (x
  * && a) f();</code>
  *
  * @author Yossi Gil
- * @since 2015-09-01
- */
+ * @since 2015-09-01 */
 public final class IfThenIfThenNoElseNoElse extends Wring<IfStatement> implements Kind.ConsolidateStatements {
   static void collapse(final IfStatement s, final ASTRewrite r, final TextEditGroup g) {
     final IfStatement then = asIfStatement(extract.singleThen(s));

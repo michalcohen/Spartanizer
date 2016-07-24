@@ -8,20 +8,22 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * Used to replace
+/** Used to replace
  *
- * <pre> <code> s.equals("s") </pre>
+ * <pre>
+ * <code> s.equals("s")
+ * </pre>
  *
  * </code> with safer
  *
- * <pre> <code> "s".equals(s) </pre>
+ * <pre>
+ * <code> "s".equals(s)
+ * </pre>
  *
  * </code>
  *
  * @author Ori Roth
- * @since 2016/05/08
- */
+ * @since 2016/05/08 */
 public class StringEqualsConstant extends ReplaceCurrentNode<MethodInvocation> implements Kind.ReorganizeExpression {
   final static String[] _mns = { "equals", "equalsIgnoreCase" };
   final static List<String> mns = Arrays.asList(_mns);

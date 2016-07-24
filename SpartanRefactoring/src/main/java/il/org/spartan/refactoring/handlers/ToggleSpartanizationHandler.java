@@ -9,15 +9,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.handlers.*;
 
-/**
- * A command handler which toggles the spartanization nature
+/** A command handler which toggles the spartanization nature
  *
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- * @since 2013/07/01
- */
+ * @since 2013/07/01 */
 public class ToggleSpartanizationHandler extends AbstractHandler {
   private static void disableNature(final IProject p) throws CoreException {
     final IProjectDescription description = p.getDescription();
@@ -59,9 +57,7 @@ public class ToggleSpartanizationHandler extends AbstractHandler {
     if (state)
       enableNature(p);
   }
-  /**
-   * the main method of the command handler, runs when the command is called.
-   */
+  /** the main method of the command handler, runs when the command is called. */
   @Override public Void execute(final ExecutionEvent e) throws ExecutionException {
     // Invert the old value to get the new
     final boolean newValue = !HandlerUtil.toggleCommandState(e.getCommand());

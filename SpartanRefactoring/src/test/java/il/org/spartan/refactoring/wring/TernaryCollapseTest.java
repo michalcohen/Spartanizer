@@ -15,12 +15,10 @@ import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.utils.Into.*;
 import static il.org.spartan.refactoring.utils.extract.*;
 
-/**
- * Unit tests for {@link Wrings#ADDITION_SORTER}.
+/** Unit tests for {@link Wrings#ADDITION_SORTER}.
  *
  * @author Yossi Gil
- * @since 2014-07-13
- */
+ * @since 2014-07-13 */
 @SuppressWarnings({ "javadoc", "static-method" })//
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class TernaryCollapseTest {
@@ -42,12 +40,10 @@ public class TernaryCollapseTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope.Exprezzion<ConditionalExpression> {
-    /**
-     * Generate test cases for this parameterized class.
+    /** Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
+     *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
     public static Collection<Object[]> cases() {
       return collect(cases);
@@ -107,12 +103,10 @@ public class TernaryCollapseTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.WringedExpression.Conditional {
-    /**
-     * Generate test cases for this parameterized class.
+    /** Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
+     *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
     public static Collection<Object[]> cases() {
       return collect(cases);

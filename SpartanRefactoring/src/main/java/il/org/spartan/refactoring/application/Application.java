@@ -14,13 +14,11 @@ import org.eclipse.equinox.app.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * An {@link IApplication} extension entry point, allowing execution of this
+/** An {@link IApplication} extension entry point, allowing execution of this
  * plug-in from the command line.
  *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- * @since 2015/09/19
- */
+ * @since 2015/09/19 */
 @SuppressWarnings("static-method") public class Application implements IApplication {
   static int countLines(final File f) throws IOException {
     try (LineNumberReader lr = new LineNumberReader(new FileReader(f))) {
@@ -65,14 +63,12 @@ import org.eclipse.jdt.core.dom.*;
   @Override public void stop() {
     // Unused
   }
-  /**
-   * @param f
+  /** @param f
    * @param u
    * @return
    * @throws IOException
    * @throws FileNotFoundException
-   * @throws JavaModelException
-   */
+   * @throws JavaModelException */
   private FileStats a(final File f, final ICompilationUnit u) throws IOException, FileNotFoundException, JavaModelException {
     final FileStats $ = new FileStats(f);
     for (int i = 0; i < optRounds; ++i) {
@@ -231,10 +227,8 @@ import org.eclipse.jdt.core.dom.*;
   IPackageFragment pack;
   IPackageFragmentRoot srcRoot;
 
-  /**
-   * Data structure designed to hold and compute information about a single
-   * file, in order to produce statistics when completed execution
-   */
+  /** Data structure designed to hold and compute information about a single
+   * file, in order to produce statistics when completed execution */
   private class FileStats {
     public FileStats(final File file) throws IOException {
       linesBefore = countLines(this.file = file);

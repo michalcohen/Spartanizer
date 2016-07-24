@@ -9,11 +9,9 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * @author Artium Nihamkin (original)
+/** @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
- * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3)
- */
+ * @author Tomer Zeltzer <code><tomerr90 [at] gmail.com></code> (v3) */
 // TODO: There <b>must</b> be an option to
 // * disable this warning in selected places. Consider this example: <pre>
 // public

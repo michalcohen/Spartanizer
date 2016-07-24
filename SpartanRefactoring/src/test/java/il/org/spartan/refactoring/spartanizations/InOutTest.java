@@ -19,22 +19,18 @@ import static il.org.spartan.Utils.*;
 import static il.org.spartan.azzert.*;
 import static il.org.spartan.refactoring.spartanizations.TESTUtils.*;
 
-/**
- * Run tests in which a specific transformation is not supposed to change the
+/** Run tests in which a specific transformation is not supposed to change the
  * input text
  *
  * @author Yossi Gil
- * @since 2014/05/24
- */
+ * @since 2014/05/24 */
 @RunWith(Parameterized.class)//
 public class InOutTest {
-  /**
-   * Generate test cases for this parameterized class.
+  /** Generate test cases for this parameterized class.
    *
    * @return a collection of cases, where each case is an array of four objects,
    *         the spartanization, the test case name, the input file, and the
-   *         output file.
-   */
+   *         output file. */
   @Parameters(name = "{index}) \"{0}\" =={2}==>> \"{1}\"")//
   public static Collection<Object[]> cases() {
     return new FileTestUtils.Files() {
@@ -63,10 +59,8 @@ public class InOutTest {
     }
     assertSimilar(expected, rewrite.get());
   }
-  /**
-   * Runs a parameterized test case, based on the instance variables of this
-   * instance
-   */
+  /** Runs a parameterized test case, based on the instance variables of this
+   * instance */
   @Test public void go() {
     azzert.notNull(spartanization);
     go(spartanization, input, output);

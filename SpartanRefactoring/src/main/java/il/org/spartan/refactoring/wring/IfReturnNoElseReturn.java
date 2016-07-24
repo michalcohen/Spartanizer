@@ -8,13 +8,11 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} to convert <code>if (x) return foo(); return bar();</code>
+/** A {@link Wring} to convert <code>if (x) return foo(); return bar();</code>
  * into <code>return a ? foo (): bar();</code> return a; } g();</code>
  *
  * @author Yossi Gil
- * @since 2015-07-29
- */
+ * @since 2015-07-29 */
 public final class IfReturnNoElseReturn extends Wring.ReplaceToNextStatement<IfStatement> implements Kind.Ternarize {
   @Override String description(final IfStatement s) {
     return "Consolidate if(" + s.getExpression() + ") ... into a single 'return'";

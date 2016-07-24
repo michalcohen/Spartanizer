@@ -10,14 +10,12 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A wring to remove ineffective cases from a switch statement.
+/** A wring to remove ineffective cases from a switch statement.
  *
  * TODO Ori: add care of sequencers in switch statements (??)
  *
  * @author Ori Roth
- * @since 2016/05/11
- */
+ * @since 2016/05/11 */
 public class SwitchSimplify extends ReplaceCurrentNode<SwitchStatement> implements Kind.SWITCH_IF_CONVERTION {
   @SuppressWarnings({ "javadoc", "unchecked" }) public static Map<SwitchCase, List<Statement>> branchesOf(final SwitchStatement n) {
     final Map<SwitchCase, List<Statement>> $ = new LinkedHashMap<>();
@@ -67,7 +65,7 @@ public class SwitchSimplify extends ReplaceCurrentNode<SwitchStatement> implemen
   static int escapeLevel(final Statement s, final boolean b) {
     return !b && Is.sequencer(s) || s instanceof ThrowStatement || s instanceof ReturnStatement ? s instanceof ThrowStatement ? 0 : s instanceof ReturnStatement ? 1
         : s instanceof ContinueStatement ? 2 : 3 : s instanceof IfStatement ? Math.max(escapeLevel(((IfStatement) s).getThenStatement(), b), escapeLevel(((IfStatement) s).getElseStatement(), b))
-            : s instanceof ForStatement ? escapeLevel(((ForStatement) s).getBody(), true) : s instanceof WhileStatement ? escapeLevel(((WhileStatement) s).getBody(), true) : !(s instanceof Block)
+        : s instanceof ForStatement ? escapeLevel(((ForStatement) s).getBody(), true) : s instanceof WhileStatement ? escapeLevel(((WhileStatement) s).getBody(), true) : !(s instanceof Block)
             || ((Block) s).statements().isEmpty() ? 4 : escapeLevel((Statement) ((Block) s).statements().get(((Block) s).statements().size() - 1), b);
   }
   @Override String description(@SuppressWarnings("unused") final SwitchStatement __) {

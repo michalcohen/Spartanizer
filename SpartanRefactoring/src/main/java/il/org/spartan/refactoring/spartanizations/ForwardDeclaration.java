@@ -10,8 +10,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * @author Artium Nihamkin (original)
+/** @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code> (v3 /
  *         04.06.2014)
@@ -20,15 +19,21 @@ import org.eclipse.text.edits.*;
  * @since 2013/01/01 TODO: There <b>must</b> be an option to disable this
  *        warning in selected places. Consider this example:
  *
- *        <pre> public static &lt;T&gt; void swap(final T[] ts, final int i,
- *        final int j) { final T t = ts[i]; ts[i] = ts[j]; ts[j] = t; } </pre>
+ *        <pre>
+ * public static &lt;T&gt; void swap(final T[] ts, final int i, final int j) {
+ *   final T t = ts[i];
+ *   ts[i] = ts[j];
+ *   ts[j] = t;
+ * }
+ * </pre>
  *
  *        Require comment
  *
- *        <pre> public static &lt;T&gt; void swap(final T[] ts, final int i,
+ *        <pre>
+ * public static &lt;T&gt; void swap(final T[] ts, final int i,
  *        final int j) { final T t = ts[i]; // Don't move! ts[i] = ts[j]; ts[j]
- *        = t; } </pre>
- */
+ *        = t; }
+ * </pre> */
 public class ForwardDeclaration extends Spartanization {
   static int findBeginingOfDeclarationBlock(final Block b, final int declaredIdx, final int firstUseIdx) {
     int $ = firstUseIdx - 1;

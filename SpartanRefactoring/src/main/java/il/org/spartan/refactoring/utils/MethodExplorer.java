@@ -4,31 +4,25 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A class for analyzing a method.
+/** A class for analyzing a method.
  *
  * @author Yossi Gil
- * @since 2015-08-29
- */
+ * @since 2015-08-29 */
 public class MethodExplorer {
-  /**
-   * Instantiate this class
+  /** Instantiate this class
    *
-   * @param inner
-   *          JD
-   */
+   * @param inner JD */
   public MethodExplorer(final MethodDeclaration inner) {
     this.inner = inner;
   }
-  /**
-   * Computes the list of all local variable declarations found in a method.
-   * {@link MethodDeclaration}. <p> This method correctly ignores declarations
-   * made within nested types. It also correctly adds variables declared within
-   * plain and extended for loops, just as local variables defined within a try
-   * and catch clauses.
+  /** Computes the list of all local variable declarations found in a method.
+   * {@link MethodDeclaration}.
+   * <p>
+   * This method correctly ignores declarations made within nested types. It
+   * also correctly adds variables declared within plain and extended for loops,
+   * just as local variables defined within a try and catch clauses.
    *
-   * @return a list of {@link SimpleName} from the given method.
-   */
+   * @return a list of {@link SimpleName} from the given method. */
   public List<SimpleName> localVariables() {
     final List<SimpleName> $ = new ArrayList<>();
     inner.accept(new IgnoreNestedMethods() {
@@ -65,13 +59,12 @@ public class MethodExplorer {
     });
     return $;
   }
-  /**
-   * Computes the list of all return statements found in a
-   * {@link MethodDeclaration}. <p> This method correctly ignores return
-   * statements found within nested types.
+  /** Computes the list of all return statements found in a
+   * {@link MethodDeclaration}.
+   * <p>
+   * This method correctly ignores return statements found within nested types.
    *
-   * @return a list of {@link ReturnStatement} from the given method.
-   */
+   * @return a list of {@link ReturnStatement} from the given method. */
   public List<ReturnStatement> returnStatements() {
     final List<ReturnStatement> $ = new ArrayList<>();
     inner.accept(new IgnoreNestedMethods() {

@@ -9,13 +9,11 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} to convert <code>int a = 3; return a;</code> into
+/** A {@link Wring} to convert <code>int a = 3; return a;</code> into
  * <code>return a;</code>
  *
  * @author Yossi Gil
- * @since 2015-08-07
- */
+ * @since 2015-08-07 */
 public final class DeclarationInitializerReturnExpression extends Wring.VariableDeclarationFragementAndStatement implements Kind.InlineVariable {
   private static ASTRewrite go(final ASTRewrite $, final VariableDeclarationFragment f, final SimpleName n, final Expression e, final TextEditGroup g, final ReturnStatement s) {
     if (s == null)

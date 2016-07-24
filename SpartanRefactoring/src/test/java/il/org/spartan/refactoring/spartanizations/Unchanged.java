@@ -16,18 +16,14 @@ import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-/**
- * Test cases in which the transformation should not do anything
+/** Test cases in which the transformation should not do anything
  *
  * @author Yossi Gil
- * @since 2014/05/24
- */
+ * @since 2014/05/24 */
 @RunWith(Parameterized.class)//
 public class Unchanged {
-  /**
-   * @return a collection of cases, where each cases is an array of three
-   *         objects, the spartanization, the test case name, and the input file
-   */
+  /** @return a collection of cases, where each cases is an array of three
+   *         objects, the spartanization, the test case name, and the input file */
   @Parameters(name = "{index}: {0} {1}")//
   public static Collection<Object[]> cases() {
     return new FileTestUtils.Files() {
@@ -40,11 +36,9 @@ public class Unchanged {
       }
     }.go();
   }
-  /**
-   * Runs a parameterized test case, based on the instance variables of this
+  /** Runs a parameterized test case, based on the instance variables of this
    * instance, and check that no matter what, even if the number of
-   * opportunities is zero, the input does not change.
-   */
+   * opportunities is zero, the input does not change. */
   @Test public void checkNoChange() {
     azzert.notNull("Cannot instantiate Spartanization object", spartanization);
     if (input.getName().indexOf(FileTestUtils.testSuffix) <= 0)
@@ -53,10 +47,8 @@ public class Unchanged {
       azzert.that("", TESTUtils.rewrite(spartanization, (CompilationUnit) ast.COMPILIATION_UNIT.from(input), new Document(ast.string(FileTestUtils.makeInFile(input)))).get(),
           is(ast.string(FileTestUtils.makeInFile(input))));
   }
-  /**
-   * Runs a parameterized test case, based on the instance variables of this
-   * instance, and check that no opportunities are found.
-   */
+  /** Runs a parameterized test case, based on the instance variables of this
+   * instance, and check that no opportunities are found. */
   @Test public void checkNoOpportunities() {
     azzert.notNull("Cannot instantiate spartanization object", spartanization);
     final ASTNode n = ast.COMPILIATION_UNIT.from(input);
@@ -68,16 +60,10 @@ public class Unchanged {
     return ast.string(input);
   }
 
-  /**
-   * Where the input text can be found
-   */
+  /** Where the input text can be found */
   @Parameter(2) public File input;
-  /**
-   * The name of the specific test for this transformation
-   */
+  /** The name of the specific test for this transformation */
   @Parameter(1) public String name;
-  /**
-   * An object describing the required transformation
-   */
+  /** An object describing the required transformation */
   @Parameter(0) public Spartanization spartanization;
 }

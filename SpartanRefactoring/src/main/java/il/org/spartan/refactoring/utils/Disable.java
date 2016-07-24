@@ -4,19 +4,15 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * Determines whether an {@link ASTNode} is spartanization disabled. In the
+/** Determines whether an {@link ASTNode} is spartanization disabled. In the
  * current implementation, only instances of {@link BodyDeclaration} may be
  * disabled, and only via their {@link Javadoc} comment
  *
  * @author Ori Roth
- * @since 2016/05/13
- */
+ * @since 2016/05/13 */
 public class Disable {
-  /**
-   * Disable spartanization identifier, used by the programmer to indicate a
-   * method/class/code line not to be spartanized
-   */
+  /** Disable spartanization identifier, used by the programmer to indicate a
+   * method/class/code line not to be spartanized */
   public final static String dsi = "@DisableSpartan";
 
   protected Disable(final CompilationUnit u) {
@@ -25,11 +21,8 @@ public class Disable {
       return;
     u.accept(new BodyDeclarationVisitor(dns));
   }
-  /**
-   * @param n
-   *          node
-   * @return true iff spartanization is disabled for n
-   */
+  /** @param n node
+   * @return true iff spartanization is disabled for n */
   public boolean check(final ASTNode n) {
     for (ASTNode p = n; p != null; p = p.getParent())
       if (dns.contains(p))

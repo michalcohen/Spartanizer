@@ -5,16 +5,14 @@ import il.org.spartan.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-/**
- * @author Artium Nihamkin
- * @since 2013/07/01
- */
+/** @author Artium Nihamkin
+ * @since 2013/07/01 */
 public class Nature implements IProjectNature {
   /** ID of this project nature */
   public static final String NATURE_ID = "org.spartan.refactoring.NatureID";
 
   /* (non-Javadoc)
-   *
+   * 
    * @see org.eclipse.core.resources.IProjectNature#configure() */
   @Override public void configure() throws CoreException {
     final IProjectDescription d = project.getDescription();
@@ -28,7 +26,7 @@ public class Nature implements IProjectNature {
     project.setDescription(d, null);
   }
   /* (non-Javadoc)
-   *
+   * 
    * @see org.eclipse.core.resources.IProjectNature#deconfigure() */
   @Override public void deconfigure() throws CoreException {
     final IProjectDescription description = getProject().getDescription();

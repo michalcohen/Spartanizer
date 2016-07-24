@@ -12,12 +12,10 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * @author Artium Nihamkin (original)
+/** @author Artium Nihamkin (original)
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code> (v2)
  * @author Yossi Gil (v3)
- * @since 2013/01/01
- */
+ * @since 2013/01/01 */
 public class MethodRenameReturnToDollar extends Wring<MethodDeclaration> implements Kind.RENAME_RETURN_VARIABLE {
   @Override String description(final MethodDeclaration d) {
     return d.getName().toString();

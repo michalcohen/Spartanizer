@@ -9,57 +9,50 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- * A {@link FieldEditor} designed to store multiple controls within a group
+/** A {@link FieldEditor} designed to store multiple controls within a group
  * panel widget, to be used in conjunction with an
- * {@link FieldEditorPreferencePage} instance. <p> <b>To use</b> <ol> <li>Create
- * a new {@link GroupFieldEditor} object. <li>Add {@link FieldEditor} objects
- * using the {@link GroupFieldEditor#add(FieldEditor)} method. Each
- * {@link FieldEditor} should be initialized to have the return value of
- * {@link GroupFieldEditor#getFieldEditor()} as its parent. <li>Add the
- * {@link GroupFieldEditor} to the parent as usual </ol>
+ * {@link FieldEditorPreferencePage} instance.
+ * <p>
+ * <b>To use</b>
+ * <ol>
+ * <li>Create a new {@link GroupFieldEditor} object.
+ * <li>Add {@link FieldEditor} objects using the
+ * {@link GroupFieldEditor#add(FieldEditor)} method. Each {@link FieldEditor}
+ * should be initialized to have the return value of
+ * {@link GroupFieldEditor#getFieldEditor()} as its parent.
+ * <li>Add the {@link GroupFieldEditor} to the parent as usual
+ * </ol>
  *
  * @author alf (original)
  * @author Daniel Mittelman (fixed and revised)
- * @since 29/03/2016
- *
- */
+ * @since 29/03/2016 */
 public class GroupFieldEditor extends FieldEditor {
   private static final int GROUP_PADDING = 8;
 
-  /**
-   * Create a group of {@link FieldEditor} objects
+  /** Create a group of {@link FieldEditor} objects
    *
-   * @param title
-   *          (optional) the text that will appear in the top label. For no
+   * @param title (optional) the text that will appear in the top label. For no
    *          label, pass {@code null}
-   * @param parent
-   *          the widget's parent, usually
-   *          {@link FieldEditorPreferencePage#getFieldEditorParent()}
-   */
+   * @param parent the widget's parent, usually
+   *          {@link FieldEditorPreferencePage#getFieldEditorParent()} */
   public GroupFieldEditor(final String title, final Composite parent) {
     this.parent = parent;
     group = new Group(parent, SWT.SHADOW_OUT);
     group.setText(title);
   }
-  /**
-   * Adds a new {@link FieldEditor} object to the group. Controls must be added
+  /** Adds a new {@link FieldEditor} object to the group. Controls must be added
    * before the group is drawn to the parent.
    *
-   * @param e
-   *          JD
-   */
+   * @param e JD */
   public void add(final FieldEditor e) {
     if (initialized)
       throw new RuntimeException("The GroupFieldEditor has already been drawn, new fields cannot be added at this time");
     members.add(e);
   }
-  /**
-   * Returns the parent for all the FieldEditors inside of this group. In this
+  /** Returns the parent for all the FieldEditors inside of this group. In this
    * class, the actual {@link Group} object is returned
    *
-   * @return the parent {@link Composite} object
-   */
+   * @return the parent {@link Composite} object */
   public Composite getFieldEditor() {
     return group;
   }
@@ -67,9 +60,7 @@ public class GroupFieldEditor extends FieldEditor {
   @Override public int getNumberOfControls() {
     return members.size();
   }
-  /**
-   * Initializes using the currently added field editors.
-   */
+  /** Initializes using the currently added field editors. */
   public void init() {
     if (initialized)
       return;

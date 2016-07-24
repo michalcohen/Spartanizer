@@ -9,13 +9,11 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} that sorts the arguments of a {@link Operator#DIVIDE}
+/** A {@link Wring} that sorts the arguments of a {@link Operator#DIVIDE}
  * expression.
  *
  * @author Yossi Gil
- * @since 2015-09-05
- */
+ * @since 2015-09-05 */
 public final class InfixSortDivision extends Wring.InfixSortingOfCDR implements Kind.ReorganizeExpression {
   @Override boolean scopeIncludes(final InfixExpression e) {
     return in(e.getOperator(), DIVIDE);

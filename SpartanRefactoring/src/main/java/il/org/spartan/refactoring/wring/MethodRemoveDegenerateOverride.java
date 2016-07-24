@@ -7,17 +7,15 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} to remove overriding methods that only call their counterpart
+/** A {@link Wring} to remove overriding methods that only call their counterpart
  * in the parent class, for example: <code>
- *
+ * 
  * <pre> &#64;Override void foo() { super.foo(); } </pre>
- *
+ * 
  * </code> will be completely removed.
  *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- * @since 2016-04-06
- */
+ * @since 2016-04-06 */
 public class MethodRemoveDegenerateOverride extends Wring<MethodDeclaration> implements Kind.Simplify {
   private static boolean shouldRemove(final MethodDeclaration d, final SuperMethodInvocation i) {
     for (final Object m : d.modifiers())

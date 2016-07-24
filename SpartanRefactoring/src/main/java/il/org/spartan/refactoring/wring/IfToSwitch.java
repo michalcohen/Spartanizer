@@ -8,22 +8,24 @@ import org.eclipse.jdt.annotation.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
-/**
- * A wring to replace if statements with switch statements.
+/** A wring to replace if statements with switch statements.
  *
- * <pre> <code> if (x == 1) return 1; else if (x == 2) return 2; else return -1;
- * </code> </pre>
+ * <pre>
+ * <code> if (x == 1) return 1; else if (x == 2) return 2; else return -1;
+ * </code>
+ * </pre>
  *
  * becomes
  *
- * <pre> <code> switch(x) { case 1: return 1; case 2: return 2; default: return
- * -1; </code> </pre>
+ * <pre>
+ * <code> switch(x) { case 1: return 1; case 2: return 2; default: return
+ * -1; </code>
+ * </pre>
  *
  * TODO Ori: add binding if needed
  *
  * @author Ori Roth
- * @since 2016/05/11
- */
+ * @since 2016/05/11 */
 @Deprecated public class IfToSwitch extends ReplaceCurrentNode<IfStatement> implements Kind.SWITCH_IF_CONVERTION {
   @SuppressWarnings("unchecked") protected static int countCases(final SwitchStatement s) {
     int $ = 0;

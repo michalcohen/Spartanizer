@@ -9,8 +9,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} to replace break statements within a switch with following
+/** A {@link Wring} to replace break statements within a switch with following
  * return: <code>switch(x) { case 1: System.out.println("1 detected"); break;
  * case 2: System.out.println("2 detected"); break; default:
  * System.out.println("wrong number!"); return "failure"; } return
@@ -20,8 +19,7 @@ import org.eclipse.text.edits.*;
  * System.out.println("wrong number!"); return "failure"; }</code>
  *
  * @author Ori Roth
- * @since 2016-04-25
- */
+ * @since 2016-04-25 */
 public class SwitchBreakReturn extends Wring.MultipleReplaceToNextStatement<SwitchStatement> implements Kind.ConsolidateStatements {
   public static boolean caseEndsWithSequencer(final List<Statement> ss, int i) {
     if (i == ss.size() - 1)

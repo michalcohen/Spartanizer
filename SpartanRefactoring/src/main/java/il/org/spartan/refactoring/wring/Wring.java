@@ -17,48 +17,35 @@ import static il.org.spartan.refactoring.wring.Wrings.*;
 import static org.eclipse.jdt.core.dom.Assignment.Operator.*;
 import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
 
-/**
- * A wring is a transformation that works on an AstNode. Such a transformation
+/** A wring is a transformation that works on an AstNode. Such a transformation
  * make a single simplification of the tree. A wring is so small that it is
  * idempotent: Applying a wring to the output of itself is the empty operation.
  *
- * @param <N>
- *          type of node which triggers the transformation.
+ * @param <N> type of node which triggers the transformation.
  * @author Yossi Gil
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- * @since 2015-07-09
- */
+ * @since 2015-07-09 */
 public abstract class Wring<N extends ASTNode> implements Kind {
-  /**
-   * @param r
-   *          rewriter
-   * @param g
-   *          text edit group
-   * @return this wring
-   */
+  /** @param r rewriter
+   * @param g text edit group
+   * @return this wring */
   public Wring<N> createScalpel(final ASTRewrite r, final TextEditGroup g) {
     scalpel = Source.getScalpel(compilationUnit, r, g);
     return this;
   }
-  /**
-   * @param u
-   *          current compilation unit
-   * @return this wring
-   */
+  /** @param u current compilation unit
+   * @return this wring */
   public Wring<N> initialize(final CompilationUnit u) {
     this.compilationUnit = u;
     return this;
   }
   abstract String description(N n);
-  /**
-   * Determine whether the parameter is "eligible" for application of this
+  /** Determine whether the parameter is "eligible" for application of this
    * instance. The parameter must be within the scope of the current instance.
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is eligible for
-   *         the simplification offered by this object.
-   */
+   *         the simplification offered by this object. */
   boolean eligible(@SuppressWarnings("unused") final N n) {
     return true;
   }
@@ -68,32 +55,26 @@ public abstract class Wring<N extends ASTNode> implements Kind {
   Rewrite make(final N n, @SuppressWarnings("unused") final ExclusionManager __) {
     return make(n);
   }
-  /**
-   * Determines whether this {@link Wring} object is not applicable for a given
+  /** Determines whether this {@link Wring} object is not applicable for a given
    * {@link PrefixExpression} is within the "scope" of this . Note that a
    * {@link Wring} is applicable in principle to an object, but that actual
    * application will be vacuous.
    *
-   * @param e
-   *          JD
+   * @param e JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is noneligible for
    *         the simplification offered by this object.
-   * @see #eligible(InfixExpression)
-   */
+   * @see #eligible(InfixExpression) */
   final boolean nonEligible(final N n) {
     return !eligible(n);
   }
-  /**
-   * Determines whether this {@link Wring} object is applicable for a given
+  /** Determines whether this {@link Wring} object is applicable for a given
    * {@link InfixExpression} is within the "scope" of this . Note that it could
    * be the case that a {@link Wring} is applicable in principle to an object,
    * but that actual application will be vacuous.
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return <code><b>true</b></code> <i>iff</i> the argument is within the
-   *         scope of this object
-   */
+   *         scope of this object */
   boolean scopeIncludes(final N n) {
     return make(n, null) != null;
   }
@@ -135,13 +116,11 @@ public abstract class Wring<N extends ASTNode> implements Kind {
     }
   }
 
-  /**
-   * MultipleReplaceCurrentNode replaces multiple nodes in current statement
+  /** MultipleReplaceCurrentNode replaces multiple nodes in current statement
    * with multiple nodes (or a single node).
    *
    * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
-   * @since 2016-04-25
-   */
+   * @since 2016-04-25 */
   static abstract class MultipleReplaceCurrentNode<N extends ASTNode> extends Wring<N> {
     abstract ASTRewrite go(ASTRewrite r, N n, TextEditGroup g, List<ASTNode> bss, List<ASTNode> crs);
     @Override Rewrite make(final N n) {
@@ -164,13 +143,11 @@ public abstract class Wring<N extends ASTNode> implements Kind {
     }
   }
 
-  /**
-   * MultipleReplaceToNextStatement replaces multiple nodes in current statement
+  /** MultipleReplaceToNextStatement replaces multiple nodes in current statement
    * with multiple nodes (or a single node) in next statement.
    *
    * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
-   * @since 2016-04-25
-   */
+   * @since 2016-04-25 */
   static abstract class MultipleReplaceToNextStatement<N extends ASTNode> extends Wring<N> {
     abstract ASTRewrite go(ASTRewrite r, N n, Statement nextStatement, TextEditGroup g, List<ASTNode> bss, List<ASTNode> crs);
     @Override Rewrite make(final N n, final ExclusionManager exclude) {
@@ -212,9 +189,7 @@ public abstract class Wring<N extends ASTNode> implements Kind {
     }
   }
 
-  /**
-   * Similar to {@link ReplaceCurrentNode}, but with an {@link ExclusionManager}
-   */
+  /** Similar to {@link ReplaceCurrentNode}, but with an {@link ExclusionManager} */
   static abstract class ReplaceCurrentNodeExclude<N extends ASTNode> extends Wring<N> {
     @Override final Rewrite make(final N n, final ExclusionManager m) {
       return !eligible(n) ? null : new Rewrite(description(n), n) {
@@ -277,16 +252,14 @@ public abstract class Wring<N extends ASTNode> implements Kind {
           return true;
       return false;
     }
-    /**
-     * Eliminates a {@link VariableDeclarationFragment}, with any other fragment
+    /** Eliminates a {@link VariableDeclarationFragment}, with any other fragment
      * fragments which are not live in the containing
      * {@link VariabelDeclarationStatement}. If no fragments are left, then this
      * containing node is eliminated as well.
      *
      * @param f
      * @param r
-     * @param g
-     */
+     * @param g */
     static void eliminate(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
       final List<VariableDeclarationFragment> live = live(f, expose.fragments(parent));
@@ -346,15 +319,13 @@ public abstract class Wring<N extends ASTNode> implements Kind {
       newParent.fragments().remove(parent.fragments().indexOf(f));
       return $ - size(newParent);
     }
-    /**
-     * Removes a {@link VariableDeclarationFragment}, leaving intact any other
+    /** Removes a {@link VariableDeclarationFragment}, leaving intact any other
      * fragment fragments in the containing {@link VariabelDeclarationStatement}
      * . Still, if the containing node left empty, it is removed as well.
      *
      * @param f
      * @param r
-     * @param g
-     */
+     * @param g */
     static void remove(final VariableDeclarationFragment f, final ASTRewrite r, final TextEditGroup g) {
       final VariableDeclarationStatement parent = (VariableDeclarationStatement) f.getParent();
       r.remove(parent.fragments().size() > 1 ? f : parent, g);
@@ -426,16 +397,13 @@ final class LocalInliner {
     @SafeVarargs protected final void inlineInto(final ASTNode... ns) {
       inlineInto(wrap(ns));
     }
-    /**
-     * Computes the number of AST nodes added as a result of the replacement
+    /** Computes the number of AST nodes added as a result of the replacement
      * operation.
      *
-     * @param es
-     *          JD
+     * @param es JD
      * @return A non-negative integer, computed from the number of occurrences
      *         of {@link #name} in the operands, and the size of the
-     *         replacement.
-     */
+     *         replacement. */
     int addedSize(final ASTNode... ns) {
       return uses(ns).size() * (size(get()) - 1);
     }
@@ -445,15 +413,12 @@ final class LocalInliner {
     boolean canSafelyInlineInto(final ASTNode... ns) {
       return canInlineInto(ns) && unsafeUses(ns).isEmpty();
     }
-    /**
-     * Computes the total number of AST nodes in the replaced parameters
+    /** Computes the total number of AST nodes in the replaced parameters
      *
-     * @param es
-     *          JD
+     * @param es JD
      * @return A non-negative integer, computed from original size of the
      *         parameters, the number of occurrences of {@link #name} in the
-     *         operands, and the size of the replacement.
-     */
+     *         operands, and the size of the replacement. */
     int replacedSize(final ASTNode... ns) {
       return size(ns) + uses(ns).size() * (size(get()) - 1);
     }

@@ -12,22 +12,20 @@ import org.eclipse.ui.*;
     super(GRID);
     listener = new SpartanPropertyListener();
   }
-  /**
-   * Build the preferences page by adding controls
-   */
+  /** Build the preferences page by adding controls */
   @Override public void createFieldEditors() {
     // Add the startup behavior combo box
     addField(new ComboFieldEditor(PluginPreferencesResources.PLUGIN_STARTUP_BEHAVIOR_ID, //
         PluginPreferencesResources.PLUGIN_STARTUP_BEHAVIOR_TEXT, //
         PluginPreferencesResources.PLUGIN_STARTUP_BEHAVIOR_OPTIONS, //
         getFieldEditorParent()) //
-        );
+    );
     // Add the enabled for new projects checkbox
     addField(new BooleanFieldEditor( //
         PluginPreferencesResources.NEW_PROJECTS_ENABLE_BY_DEFAULT_ID, //
         PluginPreferencesResources.NEW_PROJECTS_ENABLE_BY_DEFAULT_TEXT, //
         getFieldEditorParent()) //
-        );
+    );
     // Add the "resolve bindings" checkbox
     final BooleanFieldEditor bindingsCheckbox = new BooleanFieldEditor( //
         PluginPreferencesResources.ENABLE_BINDING_RESOLUTION_ID, //
@@ -49,10 +47,8 @@ import org.eclipse.ui.*;
 
   private final SpartanPropertyListener listener;
 
-  /**
-   * An event handler used to re-initialize the Trimmer spartanization once a
-   * wring preference was modified.
-   */
+  /** An event handler used to re-initialize the Trimmer spartanization once a
+   * wring preference was modified. */
   private static class SpartanPropertyListener implements IPropertyChangeListener {
     @Override public void propertyChange(@SuppressWarnings("unused") final PropertyChangeEvent __) {
       // Recreate the toolbox's internal instance, adding only enabled wrings

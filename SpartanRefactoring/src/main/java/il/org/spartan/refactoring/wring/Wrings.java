@@ -13,12 +13,10 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A number of utility functions common to all wrings.
+/** A number of utility functions common to all wrings.
  *
  * @author Yossi Gil
- * @since 2015-07-17
- */
+ * @since 2015-07-17 */
 public enum Wrings {
   ;
   private static int positivePrefixLength(final IfStatement $) {
@@ -120,7 +118,7 @@ public enum Wrings {
   }
   static void rename(final SimpleName oldName, final SimpleName newName, final MethodDeclaration d, final ASTRewrite r, final TextEditGroup g) {
     new LocalInliner(oldName, r, g).byValue(newName)//
-    .inlineInto(Collect.usesOf(oldName).in(d).toArray(new Expression[] {}));
+        .inlineInto(Collect.usesOf(oldName).in(d).toArray(new Expression[] {}));
   }
   static ASTRewrite replaceTwoStatements(final ASTRewrite r, final Statement what, final Statement by, final TextEditGroup g) {
     final Block parent = asBlock(what.getParent());

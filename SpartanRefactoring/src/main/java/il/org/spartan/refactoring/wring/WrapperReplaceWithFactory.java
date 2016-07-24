@@ -6,21 +6,23 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to replace primitive class (and String) instance creation
+/** A {@link Wring} to replace primitive class (and String) instance creation
  * with recommended factory method <code>valueOf()</code>:
  *
- * <pre> Integer x = new Integer(2); </pre>
+ * <pre>
+ * Integer x = new Integer(2);
+ * </pre>
  *
  * can be replaced with
  *
- * <pre> Integer x = Integer.valueOf(2); </pre>
+ * <pre>
+ * Integer x = Integer.valueOf(2);
+ * </pre>
  *
  * </code>
  *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
- * @since 2016-04-06
- */
+ * @since 2016-04-06 */
 public class WrapperReplaceWithFactory extends Wring.ReplaceCurrentNode<ClassInstanceCreation> implements Kind.REPLACE_CLASS_INSTANCE_CREATION {
   @Override String description(final ClassInstanceCreation c) {
     return "Use factory method " + c.getType() + ".valueOf() instead of initialization";

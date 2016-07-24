@@ -4,62 +4,48 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A class to search in the ancestry line of a given node.
+/** A class to search in the ancestry line of a given node.
  *
  * @author Yossi Gil
- * @since 2015-08-22
- */
+ * @since 2015-08-22 */
 public abstract class AncestorSearch {
-  /**
-   * Factory method, returning an instance which can search by a node class
+  /** Factory method, returning an instance which can search by a node class
    *
-   * @param c
-   *          JD
+   * @param c JD
    * @return a newly created instance
-   * @see ASTNode#getNodeType()
-   */
+   * @see ASTNode#getNodeType() */
   public static <N extends ASTNode> AncestorSearch forClass(final Class<N> c) {
     return new ByNodeClass(c);
   }
-  /**
-   * Factory method, returning an instance which can search by the integer
+  /** Factory method, returning an instance which can search by the integer
    * present on a node.
    *
-   * @param type
-   *          JD
+   * @param type JD
    * @return a newly created instance
-   * @see ASTNode#getNodeType()
-   */
+   * @see ASTNode#getNodeType() */
   public static AncestorSearch forType(final int type) {
     return new ByNodeType(type);
   }
-  /**
-   * A fluent API method to support e.g.,
+  /** A fluent API method to support e.g.,
    *
-   * <pre> AncestorSearch.until(thisNode).ancestors(current) </pre>
+   * <pre>
+   * AncestorSearch.until(thisNode).ancestors(current)
+   * </pre>
    *
-   * @param n
-   *          JD
+   * @param n JD
    * @return a new instance of class {@link until} created from this the
-   *         parameter
-   */
+   *         parameter */
   public static until until(final ASTNode n) {
     return new until(n);
   }
-  /**
-   * @param n
-   *          JD
-   * @return the closest ancestor whose type matches the given type.
-   */
+  /** @param n JD
+   * @return the closest ancestor whose type matches the given type. */
   public abstract ASTNode from(final ASTNode n);
 
-  /**
-   * An auxiliary class for fluent API
+  /** An auxiliary class for fluent API
    *
    * @author Yossi Gil
-   * @since 2015-08-22
-   */
+   * @since 2015-08-22 */
   public static class until {
     until(final ASTNode until) {
       this.until = until;

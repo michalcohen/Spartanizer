@@ -12,16 +12,15 @@ import org.eclipse.text.edits.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 import static il.org.spartan.refactoring.wring.Wrings.*;
 
-/**
- * A {@link Wring} that abbreviates the name of a method parameter that is a
+/** A {@link Wring} that abbreviates the name of a method parameter that is a
  * viable candidate for abbreviation (meaning that its name is suitable for
  * renaming, and isn't the desired name). The abbreviated name is the first
- * character in the last word of the variable's name. <p> This wring is applied
- * to all methods in the code, excluding constructors.
+ * character in the last word of the variable's name.
+ * <p>
+ * This wring is applied to all methods in the code, excluding constructors.
  *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- * @since 2015/09/24
- */
+ * @since 2015/09/24 */
 public class SingleVariableDeclarationAbbreviation extends Wring<SingleVariableDeclaration> implements Kind.RENAME_PARAMETERS {
   private static boolean isShort(final SingleVariableDeclaration d) {
     final String n = Funcs.shortName(d.getType());

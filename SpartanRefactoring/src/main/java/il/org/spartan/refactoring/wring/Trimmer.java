@@ -11,18 +11,13 @@ import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.text.edits.*;
 
-/**
- * @author Yossi Gil
- * @since 2015/07/10
- */
+/** @author Yossi Gil
+ * @since 2015/07/10 */
 public class Trimmer extends Spartanization {
-  /**
-   * Apply trimming repeatedly, until no more changes
+  /** Apply trimming repeatedly, until no more changes
    *
-   * @param from
-   *          what to process
-   * @return the trimmed text
-   */
+   * @param from what to process
+   * @return the trimmed text */
   public static String fixedPoint(final String from) {
     final Trimmer t = new Trimmer();
     final Document $ = new Document(from);
@@ -50,9 +45,7 @@ public class Trimmer extends Spartanization {
   public Trimmer() {
     super("Trimmer");
   }
-  /**
-   * @DisableSpartan
-   */
+  /** @DisableSpartan */
   @Override protected ASTVisitor collect(final List<Rewrite> $, final CompilationUnit u) {
     return new DispatchingVisitor() {
       @Override <N extends ASTNode> boolean go(final N n) {
@@ -63,9 +56,7 @@ public class Trimmer extends Spartanization {
       }
     };
   }
-  /**
-   * @DisableSpartan
-   */
+  /** @DisableSpartan */
   @Override protected final void fillRewrite(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     final Disable disable = Source.getDisable(u);
     final Toolbox toolbox = Toolbox.generate(u);

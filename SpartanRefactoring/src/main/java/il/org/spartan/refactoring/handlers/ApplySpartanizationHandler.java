@@ -11,14 +11,12 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.ui.*;
 
-/**
- * A handler for {@link Spartanizations} This handler executes all safe
+/** A handler for {@link Spartanizations} This handler executes all safe
  * spartanizations on all Java files in the current project, while exposing
  * static methods to spartanize only specific compulation units.
  *
  * @author Ofir Elmakias <code><elmakias [at] outlook.com></code>
- * @since 2015/08/01
- */
+ * @since 2015/08/01 */
 public class ApplySpartanizationHandler extends BaseHandler {
   @SuppressWarnings("javadoc") public static void execute(final ICompilationUnit cu) {
     execute(cu, new Range(0, 0));
@@ -44,9 +42,7 @@ public class ApplySpartanizationHandler extends BaseHandler {
     return (ITextSelection) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorSite().getSelectionProvider().getSelection();
   }
 
-  /**
-   * Sets the maximum number of repetitions made when applying a spartanization
-   */
+  /** Sets the maximum number of repetitions made when applying a spartanization */
   public static final int max_spartanization_repetitions = 16;
   private static int MAX_SPARTANIZATION_REPETITIONS = max_spartanization_repetitions;
   static final Spartanization[] inner = { new Trimmer() };

@@ -7,13 +7,11 @@ import il.org.spartan.refactoring.utils.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to convert <code>if (x) f(a); else f(b);</code> into
+/** A {@link Wring} to convert <code>if (x) f(a); else f(b);</code> into
  * <code>f(x ? a : b);</code>
  *
  * @author Yossi Gil
- * @since 2015-07-29
- */
+ * @since 2015-07-29 */
 public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.ConsolidateStatements {
   @Override String description(final IfStatement s) {
     return "Consolidate two branches of 'if(" + s.getExpression() + ") ... into one";

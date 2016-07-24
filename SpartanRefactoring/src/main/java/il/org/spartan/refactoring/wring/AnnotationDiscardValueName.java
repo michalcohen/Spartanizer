@@ -5,14 +5,12 @@ import il.org.spartan.refactoring.preferences.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to remove the "value" member from annotations that only have
+/** A {@link Wring} to remove the "value" member from annotations that only have
  * a single member, converting <code>@SuppressWarnings(value =
  * "unchecked")</code> to <code>@SuppressWarnings("unchecked")</code>
  *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
- * @since 2016-04-02
- */
+ * @since 2016-04-02 */
 public class AnnotationDiscardValueName extends Wring.ReplaceCurrentNode<NormalAnnotation> implements Kind.OPTIMIZE_ANNOTATIONS {
   @Override String description(final NormalAnnotation a) {
     return "Discard the \"value\" member from the @" + a.getTypeName().getFullyQualifiedName() + " annotation";

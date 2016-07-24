@@ -71,11 +71,9 @@ import org.eclipse.jdt.core.dom.*;
       $.setOperand(new Plant(inner).into($));
       return $;
     }
-    /**
-     * Create a new {@link ReturnStatement} with which returns our operand
+    /** Create a new {@link ReturnStatement} with which returns our operand
      *
-     * @return the new return statement
-     */
+     * @return the new return statement */
     public ReturnStatement toReturn() {
       final ReturnStatement $ = ast.newReturnStatement();
       $.setExpression(inner);

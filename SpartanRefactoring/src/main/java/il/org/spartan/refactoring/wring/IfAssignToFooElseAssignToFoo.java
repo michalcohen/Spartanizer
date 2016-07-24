@@ -6,13 +6,11 @@ import il.org.spartan.refactoring.utils.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to convert <code>if (x) a += 3; else a += 9;</code> into
+/** A {@link Wring} to convert <code>if (x) a += 3; else a += 9;</code> into
  * <code>a += x ? 3 : 9;</code>
  *
  * @author Yossi Gil
- * @since 2015-07-29
- */
+ * @since 2015-07-29 */
 public final class IfAssignToFooElseAssignToFoo extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.Ternarize {
   @Override String description(final IfStatement s) {
     return "Consolidate assignments to " + left(extract.assignment(then(s)));

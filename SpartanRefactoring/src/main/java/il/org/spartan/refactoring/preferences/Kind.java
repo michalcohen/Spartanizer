@@ -3,13 +3,11 @@ package il.org.spartan.refactoring.preferences;
 import il.org.spartan.refactoring.preferences.PluginPreferencesResources.WringGroup;
 
 public interface Kind {
-  /**
-   * Returns the preference group to which the wring belongs to. This method
+  /** Returns the preference group to which the wring belongs to. This method
    * should be overridden for each wring and should return one of the values of
    * {@link WringGroup}
    *
-   * @return the preference group this wring belongs to
-   */
+   * @return the preference group this wring belongs to */
   abstract WringGroup kind();
 
   interface ConsolidateStatements extends Kind {

@@ -50,54 +50,52 @@ import il.org.spartan.refactoring.builder.*;
   public static final String SWITCH_IF_CONVERTION_TEXT = "Convertion between switch and if statements and vise versa";
   public static final String WRING_COMBO_OPTIONS[][] = { { "Enabled", "on" }, { "Disabled", "off" } };
 
-  /**
-   * An enum holding together all the "enabled spartanizations" options, also
-   * allowing to get the set preference value for each of them
-   */
+  /** An enum holding together all the "enabled spartanizations" options, also
+   * allowing to get the set preference value for each of them */
   public enum WringGroup {
     CONSOLIDATE_ASSIGNMENTS_STATEMENTS( //
         CONSOLIDATE_ASSIGNMENTS_STATEMENTS_ID, //
         CONSOLIDATE_ASSIGNMENTS_STATEMENTS_TEXT), //
-        DISCARD_METHOD_INVOCATION( //
-            DISCARD_METHOD_INVOCATION_ID, //
-            DISCARD_METHOD_INVOCATION_TEXT), //
-            ELIMINATE_TEMP( //
-                ELIMINATE_TEMP_ID, //
-                ELIMINATE_TEMP_TEXT), //
-                OPTIMIZE_ANNOTATIONS( //
-                    OPTIMIZE_ANNOTATIONS_ID, //
-                    OPTIMIZE_ANNOTATIONS_TEXT), //
-                    REFACTOR_INEFFECTIVE( //
-                        REFACTOR_INEFFECTIVE_ID, //
-                        REFACTOR_INEFFECTIVE_TEXT), //
-                        REMOVE_REDUNDANT_PUNCTUATION( //
-                            REMOVE_REDUNDANT_PUNCTUATION_ID, //
-                            REMOVE_REDUNDANT_PUNCTUATION_TEXT), //
-                            RENAME_PARAMETERS( //
-                                RENAME_PARAMETERS_ID, //
-                                RENAME_PARAMETERS_TEXT), //
-                                RENAME_RETURN_VARIABLE( //
-                                    RENAME_RETURN_VARIABLE_ID, //
-                                    RENAME_RETURN_VARIABLE_TEXT), //
-                                    REORDER_EXPRESSIONS( //
-                                        REORDER_EXPRESSIONS_ID, //
-                                        REORDER_EXPRESSIONS_TEXT), //
-                                        REPLACE_CLASS_INSTANCE_CREATION( //
-                                            REPLACE_CLASS_INSTANCE_CREATION_ID, //
-                                            REPLACE_CLASS_INSTANCE_CREATION_TEXT), //
-                                            REPLACE_SEQUENSER( //
-                                                REPLACE_SEQUENSER_ID, //
-                                                REPLACE_SEQUENSER_TEXT), //
-                                                SIMPLIFY_NESTED_BLOCKS( //
-                                                    SIMPLIFY_NESTED_BLOCKS_ID, //
-                                                    SIMPLIFY_NESTED_BLOCKS_TEXT), //
-                                                    SWITCH_IF_CONVERTION( //
-                                                        SWITCH_IF_CONVERTION_ID, //
-                                                        SWITCH_IF_CONVERTION_TEXT), //
-                                                        Ternarize( //
-                                                            IF_TO_TERNARY_ID, //
-                                                            IF_TO_TERNARY_TEXT), //
-                                                            ;
+    DISCARD_METHOD_INVOCATION( //
+        DISCARD_METHOD_INVOCATION_ID, //
+        DISCARD_METHOD_INVOCATION_TEXT), //
+    ELIMINATE_TEMP( //
+        ELIMINATE_TEMP_ID, //
+        ELIMINATE_TEMP_TEXT), //
+    OPTIMIZE_ANNOTATIONS( //
+        OPTIMIZE_ANNOTATIONS_ID, //
+        OPTIMIZE_ANNOTATIONS_TEXT), //
+    REFACTOR_INEFFECTIVE( //
+        REFACTOR_INEFFECTIVE_ID, //
+        REFACTOR_INEFFECTIVE_TEXT), //
+    REMOVE_REDUNDANT_PUNCTUATION( //
+        REMOVE_REDUNDANT_PUNCTUATION_ID, //
+        REMOVE_REDUNDANT_PUNCTUATION_TEXT), //
+    RENAME_PARAMETERS( //
+        RENAME_PARAMETERS_ID, //
+        RENAME_PARAMETERS_TEXT), //
+    RENAME_RETURN_VARIABLE( //
+        RENAME_RETURN_VARIABLE_ID, //
+        RENAME_RETURN_VARIABLE_TEXT), //
+    REORDER_EXPRESSIONS( //
+        REORDER_EXPRESSIONS_ID, //
+        REORDER_EXPRESSIONS_TEXT), //
+    REPLACE_CLASS_INSTANCE_CREATION( //
+        REPLACE_CLASS_INSTANCE_CREATION_ID, //
+        REPLACE_CLASS_INSTANCE_CREATION_TEXT), //
+    REPLACE_SEQUENSER( //
+        REPLACE_SEQUENSER_ID, //
+        REPLACE_SEQUENSER_TEXT), //
+    SIMPLIFY_NESTED_BLOCKS( //
+        SIMPLIFY_NESTED_BLOCKS_ID, //
+        SIMPLIFY_NESTED_BLOCKS_TEXT), //
+    SWITCH_IF_CONVERTION( //
+        SWITCH_IF_CONVERTION_ID, //
+        SWITCH_IF_CONVERTION_TEXT), //
+    Ternarize( //
+        IF_TO_TERNARY_ID, //
+        IF_TO_TERNARY_TEXT), //
+    ;
     WringGroup(final String id, final String label) {
       this.id = id;
       this.label = label;
@@ -108,12 +106,10 @@ import il.org.spartan.refactoring.builder.*;
     public String getLabel() {
       return label;
     }
-    /**
-     * Queries the plugin's preferences store and retrieves whether the wring
+    /** Queries the plugin's preferences store and retrieves whether the wring
      * group is currently enabled by the user
      *
-     * @return whether the group is enabled or not
-     */
+     * @return whether the group is enabled or not */
     public boolean isEnabled() {
       return Plugin.getDefault() == null || "on".equals(Plugin.getDefault().getPreferenceStore().getString(id));
     }

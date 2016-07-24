@@ -8,13 +8,11 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} to convert <code>int a; a = 3;</code> into <code>int a =
+/** A {@link Wring} to convert <code>int a; a = 3;</code> into <code>int a =
  * 3;</code>
  *
  * @author Yossi Gil
- * @since 2015-08-07
- */
+ * @since 2015-08-07 */
 public final class DeclarationAssignment extends Wring.VariableDeclarationFragementAndStatement implements Kind.ConsolidateStatements {
   private static VariableDeclarationFragment makeVariableDeclarationFragement(final VariableDeclarationFragment f, final Expression e) {
     final VariableDeclarationFragment $ = duplicate(f);

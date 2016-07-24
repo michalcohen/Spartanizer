@@ -6,8 +6,7 @@ import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to replace String appending using StringBuilder or
+/** A {@link Wring} to replace String appending using StringBuilder or
  * StringBuffer with appending using operator "+" <code><pre>String s = new
  * StringBuilder
  * (myName).append("'s grade is ").append(100).toString();</pre></code> can be
@@ -15,19 +14,15 @@ import org.eclipse.jdt.core.dom.*;
  * 100;</pre></code>
  *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
- * @since 2016-04-11
- */
+ * @since 2016-04-11 */
 public class StringFromStringBuilder extends Wring.ReplaceCurrentNode<MethodInvocation> implements Kind.REPLACE_CLASS_INSTANCE_CREATION {
   private static InfixExpression.Operator PLUS = InfixExpression.Operator.PLUS;
 
-  /**
-   * Adds parenthesis to expression if needed.
+  /** Adds parenthesis to expression if needed.
    *
-   * @param e
-   *          an Expression
+   * @param e an Expression
    * @return e itself if no parenthesis needed, otherwise a
-   *         ParenthesisExpression containing e
-   */
+   *         ParenthesisExpression containing e */
   private Expression addParenthesisIfNeeded(final Expression e) {
     final AST a = e.getAST();
     if (!isParethesisNeeded(e))
@@ -36,28 +31,22 @@ public class StringFromStringBuilder extends Wring.ReplaceCurrentNode<MethodInvo
     $.setExpression((Expression) ASTNode.copySubtree(a, e));
     return $;
   }
-  /**
-   * Checks if an expression need parenthesis in order to interpreted correctly
+  /** Checks if an expression need parenthesis in order to interpreted correctly
    *
-   * @param e
-   *          an Expression
+   * @param e an Expression
    * @return whether or not this expression need parenthesis when put together
    *         with other expressions in infix expression. There could be non
    *         explicit parenthesis if the expression is located in an arguments
    *         list, so making it a part of infix expression require additional
-   *         parenthesis
-   */
+   *         parenthesis */
   private boolean isParethesisNeeded(final Expression e) {
     for (final Class<?> c : np)
       if (c.isInstance(e))
         return true;
     return false;
   }
-  /**
-   * @param e
-   *          an Expression
-   * @return true iff e is a String
-   */
+  /** @param e an Expression
+   * @return true iff e is a String */
   private static boolean isString(final Expression e) {
     return e instanceof StringLiteral;
   }

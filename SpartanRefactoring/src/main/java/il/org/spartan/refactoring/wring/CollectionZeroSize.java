@@ -8,14 +8,12 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
 
-/**
- * A {@link Wring} to change emptiness check from <code><pre>x.size() !=
+/** A {@link Wring} to change emptiness check from <code><pre>x.size() !=
  * 0</pre></code> or <code><pre>x.size() > 0</pre></code> to
  * <code><pre>!x.isEmpty()</pre></code>. TODO add tests
  *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
- * @since 2016-04-24
- */
+ * @since 2016-04-24 */
 public class CollectionZeroSize extends Wring.ReplaceCurrentNode<InfixExpression> implements Kind.DiscardRedundant {
   @Override String description(final InfixExpression n) {
     final Expression e = ((MethodInvocation) n.getLeftOperand()).getExpression();

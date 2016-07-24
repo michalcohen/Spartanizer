@@ -6,14 +6,12 @@ import il.org.spartan.refactoring.wring.Wring.ReplaceCurrentNodeExclude;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to change name of unused variable to double underscore "__"
+/** A {@link Wring} to change name of unused variable to double underscore "__"
  * TODO Ori: (maybe) inherent VariableChangeName instead of
  * ReplaceCurrentNodeExclude
  *
  * @author Ori Roth <code><ori.rothh [at] gmail.com></code>
- * @since 2016-05-08
- */
+ * @since 2016-05-08 */
 @SuppressWarnings("javadoc") public class MethodRenameUnusedVariableToUnderscore extends ReplaceCurrentNodeExclude<SingleVariableDeclaration> implements Kind.RENAME_PARAMETERS {
   public static boolean isUsed(final MethodDeclaration d, final SimpleName n) {
     final IsUsed u = new IsUsed(n);

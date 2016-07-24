@@ -20,12 +20,10 @@ import org.junit.runner.*;
 import org.junit.runners.*;
 import org.junit.runners.Parameterized.Parameters;
 
-/**
- * Unit tests for {@link Wrings#ADDITION_SORTER}.
+/** Unit tests for {@link Wrings#ADDITION_SORTER}.
  *
  * @author Yossi Gil
- * @since 2014-07-13
- */
+ * @since 2014-07-13 */
 @SuppressWarnings({ "javadoc", "static-method" })//
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
 public class IfCommandsSequencerElseSomethingTest {
@@ -104,12 +102,10 @@ public class IfCommandsSequencerElseSomethingTest {
 
   @RunWith(Parameterized.class)//
   public static class OutOfScope extends AbstractWringTest.OutOfScope<IfStatement> {
-    /**
-     * Generate test cases for this parameterized class.
+    /** Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
+     *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
     public static Collection<Object[]> cases() {
       return collect(cases);
@@ -136,12 +132,10 @@ public class IfCommandsSequencerElseSomethingTest {
   @RunWith(Parameterized.class)//
   @FixMethodOrder(MethodSorters.NAME_ASCENDING)//
   public static class Wringed extends AbstractWringTest.Wringed.IfStatementAndSurrounding {
-    /**
-     * Generate test cases for this parameterized class.
+    /** Generate test cases for this parameterized class.
      *
      * @return a collection of cases, where each case is an array of three
-     *         objects, the test case name, the input, and the file.
-     */
+     *         objects, the test case name, the input, and the file. */
     @Parameters(name = DESCRIPTION)//
     public static Collection<Object[]> cases() {
       return collect(cases);
@@ -161,7 +155,7 @@ public class IfCommandsSequencerElseSomethingTest {
             "   return a;\n" + //
             " }\n" + //
             " g();\n" + //
-        "" }, //
+            "" }, //
         null, //
         new String[] { "Complex with many junk statements", "" + //
             " if (x) {\n" + //
@@ -175,17 +169,15 @@ public class IfCommandsSequencerElseSomethingTest {
             "   }\n" + //
             " }\n" + //
             "", "" + //
-                " if (x) {\n" + //
-                "   f();\n" + //
-                "   return a;\n" + //
-                " }\n" + //
-                " g();\n" + //
-        "" }, //
+            " if (x) {\n" + //
+            "   f();\n" + //
+            "   return a;\n" + //
+            " }\n" + //
+            " g();\n" + //
+            "" }, //
         null);
 
-    /**
-     * Instantiates the enclosing class ({@link Wringed})
-     */
+    /** Instantiates the enclosing class ({@link Wringed}) */
     public Wringed() {
       super(WRING);
     }

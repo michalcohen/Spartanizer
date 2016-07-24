@@ -9,28 +9,22 @@ import org.eclipse.jdt.core.dom.*;
 import static il.org.spartan.Utils.*;
 import static il.org.spartan.refactoring.utils.Funcs.*;
 
-/**
- * A utility class for finding occurrences of an {@link Expression} in an
+/** A utility class for finding occurrences of an {@link Expression} in an
  * {@link ASTNode}.
  *
  * @author Boris van Sosin <boris.van.sosin @ gmail.com>
  * @author Yossi Gil <yossi.gil @ gmail.com> (major refactoring 2013/07/10)
- * @since 2013/07/01
- */
+ * @since 2013/07/01 */
 public enum Collect {
-  /**
-   * collects assignments AND lexical (single use for loops) uses of an
-   * expression
-   */
+  /** collects assignments AND lexical (single use for loops) uses of an
+   * expression */
   BOTH_LEXICAL {
     @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return as.array(lexicalUsesCollector(into, n), definitionsCollector(into, n));
     }
   },
-  /**
-   * collects assignments AND semantic (multiple uses for loops) uses of an
-   * expression
-   */
+  /** collects assignments AND semantic (multiple uses for loops) uses of an
+   * expression */
   BOTH_SEMANTIC {
     @Override ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into) {
       return as.array(new UsesCollector(into, n), lexicalUsesCollector(into, n), definitionsCollector(into, n));
@@ -291,14 +285,11 @@ public enum Collect {
 
   static final ASTMatcher matcher = new ASTMatcher();
 
-  /**
-   * Creates a function object for searching for a given value.
+  /** Creates a function object for searching for a given value.
    *
-   * @param n
-   *          what to search for
+   * @param n what to search for
    * @return a function object to be used for searching for the parameter in a
-   *         given location
-   */
+   *         given location */
   public Of of(final SimpleName n) {
     return new Of() {
       @Override public List<SimpleName> in(final ASTNode... ns) {
@@ -306,27 +297,20 @@ public enum Collect {
       }
     };
   }
-  /**
-   * Creates a function object for searching for a given {@link SimpleName}, as
+  /** Creates a function object for searching for a given {@link SimpleName}, as
    * specified by the {@link VariableDeclarationFragment},
    *
-   * @param f
-   *          JD
+   * @param f JD
    * @return a function object to be used for searching for the
-   *         {@link SimpleName} embedded in the parameter.
-   */
+   *         {@link SimpleName} embedded in the parameter. */
   public Of of(final VariableDeclarationFragment f) {
     return of(f.getName());
   }
-  /**
-   * Lists the required occurrences
+  /** Lists the required occurrences
    *
-   * @param what
-   *          the expression to search for
-   * @param ns
-   *          the n in which to counted
-   * @return the list of uses
-   */
+   * @param what the expression to search for
+   * @param ns the n in which to counted
+   * @return the list of uses */
   final List<SimpleName> collect(final SimpleName what, final ASTNode... ns) {
     final List<SimpleName> $ = new ArrayList<>();
     for (final ASTNode n : ns)
@@ -338,14 +322,12 @@ public enum Collect {
   }
   abstract ASTVisitor[] collectors(final SimpleName n, final List<SimpleName> into);
 
-  /**
-   * An abstract class to carry out the collection process. Should not be
+  /** An abstract class to carry out the collection process. Should not be
    * instantiated or used directly by clients, other than the use as part of
    * fluent API.
    *
    * @author Yossi Gil
-   * @since 2015-09-06
-   */
+   * @since 2015-09-06 */
   public abstract static class Collector {
     Collector(final SimpleName name) {
       this.name = name;
@@ -360,38 +342,31 @@ public enum Collect {
     protected final SimpleName name;
   }
 
-  /**
-   * An auxiliary class which makes it possible to use an easy invocation
+  /** An auxiliary class which makes it possible to use an easy invocation
    * sequence for the various offerings of the containing class. This class
-   * should never be instantiated or inherited by clients. <p> This class
-   * realizes the function object concept; an instance of it records the value
-   * we search for; it represents the function that, given a location for the
-   * search, will carry out the search for the captured value in its location
-   * parameter.
+   * should never be instantiated or inherited by clients.
+   * <p>
+   * This class realizes the function object concept; an instance of it records
+   * the value we search for; it represents the function that, given a location
+   * for the search, will carry out the search for the captured value in its
+   * location parameter.
    *
    * @see Collect#of
    * @author Yossi Gil <yossi.gil @ gmail.com>
-   * @since 2013/14/07
-   */
+   * @since 2013/14/07 */
   public static abstract class Of {
-    /**
-     * Determine whether this instance occurs in a bunch of expressions
+    /** Determine whether this instance occurs in a bunch of expressions
      *
-     * @param ns
-     *          JD
+     * @param ns JD
      * @return <code><b>true</b></code> <i>iff</i> this instance occurs in the
-     *         Parameter.
-     */
+     *         Parameter. */
     public boolean existIn(final ASTNode... ns) {
       return !in(ns).isEmpty();
     }
-    /**
-     * the method that will carry out the search
+    /** the method that will carry out the search
      *
-     * @param ns
-     *          where to search
-     * @return a list of occurrences of the captured value in the parameter.
-     */
+     * @param ns where to search
+     * @return a list of occurrences of the captured value in the parameter. */
     public abstract List<SimpleName> in(ASTNode... ns);
   }
 }

@@ -13,13 +13,11 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
 
-/**
- * A {@link Wring} that sorts the arguments of a {@link Operator#DIVIDE}
+/** A {@link Wring} that sorts the arguments of a {@link Operator#DIVIDE}
  * expression.
  *
  * @author Yossi Gil
- * @since 2015-09-05
- */
+ * @since 2015-09-05 */
 public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpression> implements Kind.ReorganizeExpression {
   private static int countNegations(final List<Expression> es) {
     int $ = 0;

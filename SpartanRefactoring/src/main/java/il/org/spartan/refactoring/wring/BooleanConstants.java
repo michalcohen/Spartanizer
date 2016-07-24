@@ -5,22 +5,20 @@ import il.org.spartan.refactoring.preferences.*;
 
 import org.eclipse.jdt.core.dom.*;
 
-/**
- * A {@link Wring} to remove unnecessary uses of Boolean.valueOf, for example by
+/** A {@link Wring} to remove unnecessary uses of Boolean.valueOf, for example by
  * converting <code>
- *
+ * 
  * <pre> Boolean b = Boolean.valueOf(true) </pre>
- *
+ * 
  * <code> into <code>
- *
+ * 
  * <pre> Boolean b = Boolean.TRUE </pre>
- *
+ * 
  * <code>
  *
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  *
- * @since 2016-04-04
- */
+ * @since 2016-04-04 */
 public class BooleanConstants extends Wring.ReplaceCurrentNode<MethodInvocation> implements Kind.ConsolidateStatements {
   @Override String description(@SuppressWarnings("unused") final MethodInvocation __) {
     return "Use built-in boolean constant instead of valueOf()";
