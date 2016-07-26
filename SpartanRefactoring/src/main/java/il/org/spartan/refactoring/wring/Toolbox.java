@@ -14,11 +14,11 @@ public class Toolbox {
    * @return new {@link Maker} ready for use */
   public static Toolbox generate(final CompilationUnit u) {
     return new Maker(u)//
-        .add(SwitchStatement.class, //
-            new SwitchBreakReturn(), //
-            new SwitchSimplify(), //
-            new SwitchFewCasesReplaceWithIf(), //
-            null) //
+        // .add(SwitchStatement.class, //
+        // new SwitchBreakReturn(), //
+        // new SwitchSimplify(), //
+        // new SwitchFewCasesReplaceWithIf(), //
+        // null) //
         .add(Assignment.class, //
             new AssignmentAndAssignment(), //
             new AssignmentAndReturn(), //
@@ -41,10 +41,12 @@ public class Toolbox {
             new InfixSortSubstraction(), //
             new InfixSortDivision(), //
             new InfixConditionalCommon(), //
-            null).add(MethodDeclaration.class, //
+            null)//
+        .add(MethodDeclaration.class, //
             new MethodRenameReturnToDollar(), //
             new MethodRemoveDegenerateOverride(), //
-            null).add(MethodInvocation.class, //
+            null)//
+        .add(MethodInvocation.class, //
             new BooleanConstants(), //
             new StringFromStringBuilder(), //
             new StringEqualsConstant(), //

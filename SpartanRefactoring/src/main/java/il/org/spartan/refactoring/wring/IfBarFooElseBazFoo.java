@@ -1,9 +1,6 @@
 package il.org.spartan.refactoring.wring;
 
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static il.org.spartan.refactoring.wring.Wrings.*;
 import il.org.spartan.refactoring.preferences.*;
-import il.org.spartan.refactoring.preferences.PluginPreferencesResources.WringGroup;
 import il.org.spartan.refactoring.utils.*;
 
 import java.util.*;
@@ -11,6 +8,9 @@ import java.util.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.text.edits.*;
+
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static il.org.spartan.refactoring.wring.Wrings.*;
 
 /** A {@link Wring} to convert <code>if (X) {bar(); foo();} else {baz();
  * foo();}</code> into <code>if (X) bar(); else baz(); foo();</code>
@@ -70,9 +70,6 @@ public final class IfBarFooElseBazFoo extends Wring<IfStatement> implements Kind
   }
   @Override Rewrite make(final IfStatement s, final ExclusionManager exclude) {
     return super.make(s, exclude);
-  }
-  @Override public WringGroup kind() {
-    return WringGroup.CONSOLIDATE_ASSIGNMENTS_STATEMENTS;
   }
 
   private class DefinitionsCollector extends ASTVisitor {
