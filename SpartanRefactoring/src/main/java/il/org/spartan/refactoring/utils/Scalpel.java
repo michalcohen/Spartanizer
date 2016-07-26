@@ -35,10 +35,10 @@ public class Scalpel {
     return n;
   }
   protected Scalpel(final CompilationUnit u, final String s, final ASTRewrite r, final TextEditGroup g) {
-    this.u = u;
+    this.compilationUnit = u;
     this.s = s;
-    this.r = r;
-    this.g = g;
+    this.rewrite = r;
+    this.editGroup = g;
     base = replacement = null;
     additionals = null;
     comments = new ArrayList<>();
@@ -65,13 +65,13 @@ public class Scalpel {
   @SuppressWarnings({ "unchecked" }) public <@Nullable N extends ASTNode> N duplicate(final N n) {
     if (n == null)
       return null;
-    if (u == null || r == null || s == null)
+    if (compilationUnit == null || rewrite == null || s == null)
       return Funcs.duplicate(n);
-    final int sp = u.getExtendedStartPosition(n);
+    final int sp = compilationUnit.getExtendedStartPosition(n);
     if (sp < 0)
       return Funcs.duplicate(n);
     used.addAll(extract(n));
-    return mark((N) r.createStringPlaceholder(cut(s, sp, sp + u.getExtendedLength(n)), n.getNodeType()));
+    return mark((N) rewrite.createStringPlaceholder(cut(s, sp, sp + compilationUnit.getExtendedLength(n)), n.getNodeType()));
   }
   /** Duplicating statements from one list to another. The duplicated nodes have
    * all original comments included
@@ -104,7 +104,7 @@ public class Scalpel {
   @SuppressWarnings("unchecked") public <@Nullable N extends ASTNode> N duplicateWith(final N... ns) {
     if (ns == null)
       return null;
-    if (u == null || r == null || s == null)
+    if (compilationUnit == null || rewrite == null || s == null)
       return Funcs.duplicate(ns[ns.length - 1]);
     final StringBuilder sb = new StringBuilder();
     final N n = ns[ns.length - 1];
@@ -113,14 +113,14 @@ public class Scalpel {
       final List<Comment> cl = extract(element);
       used.addAll(cl);
       for (final Comment c : cl) {
-        sb.append(cut(s, u.getExtendedStartPosition(c), u.getExtendedStartPosition(c) + u.getExtendedLength(c))).append("\n");
+        sb.append(cut(s, compilationUnit.getExtendedStartPosition(c), compilationUnit.getExtendedStartPosition(c) + compilationUnit.getExtendedLength(c))).append("\n");
         ++cc;
       }
     }
     assert n != null;
     @Nullable final String string = n.toString();
     assert string != null;
-    return mark(cc != 1 ? (N) r.createStringPlaceholder(sb.append(string).toString().trim(), n.getNodeType()) : (N) r.createStringPlaceholder(string.trim() + " " + sb.toString().trim(),
+    return mark(cc != 1 ? (N) rewrite.createStringPlaceholder(sb.append(string).toString().trim(), n.getNodeType()) : (N) rewrite.createStringPlaceholder(string.trim() + " " + sb.toString().trim(),
         n.getNodeType()));
   }
   /** Merge comments of statements of equals lists
@@ -155,15 +155,15 @@ public class Scalpel {
     comments.clear();
     comments.addAll(unique);
     if (comments.isEmpty())
-      r.remove(base, g);
+      rewrite.remove(base, editGroup);
     else {
       final List<ASTNode> $ = new ArrayList<>();
       for (final Comment c : comments)
-        $.add(0, r.createStringPlaceholder(s.substring(c.getStartPosition(), c.getStartPosition() + c.getLength()), ASTNode.BLOCK));
-      r.replace(base, r.createGroupNode($.toArray(new ASTNode[$.size()])), g);
+        $.add(0, rewrite.createStringPlaceholder(s.substring(c.getStartPosition(), c.getStartPosition() + c.getLength()), ASTNode.BLOCK));
+      rewrite.replace(base, rewrite.createGroupNode($.toArray(new ASTNode[$.size()])), editGroup);
     }
     for (final ASTNode a : additionals)
-      r.remove(a, g);
+      rewrite.remove(a, editGroup);
     return this;
   }
   /** Commit surgery: replace base node with replacement, while removing
@@ -178,16 +178,16 @@ public class Scalpel {
    * @param ns replacements nodes
    * @return this scalpel */
   public Scalpel replaceWith(final ASTNode... ns) {
-    return replaceWith(r == null ? null : r.createGroupNode(ns), true);
+    return replaceWith(rewrite == null ? null : rewrite.createGroupNode(ns), true);
   }
   @SuppressWarnings("unchecked") private <N extends ASTNode> List<Comment> extract(final N n) {
     final List<Comment> $ = new ArrayList<>();
-    if (s == null || u == null || r == null)
+    if (s == null || compilationUnit == null || rewrite == null)
       return $;
-    final int sp = u.getExtendedStartPosition(n);
-    final int ep = sp + u.getExtendedLength(n);
-    for (final Comment c : (List<Comment>) u.getCommentList()) {
-      final int csp = u.getExtendedStartPosition(c);
+    final int sp = compilationUnit.getExtendedStartPosition(n);
+    final int ep = sp + compilationUnit.getExtendedLength(n);
+    for (final Comment c : (List<Comment>) compilationUnit.getCommentList()) {
+      final int csp = compilationUnit.getExtendedStartPosition(c);
       if (csp < sp)
         continue;
       if (csp >= ep)
@@ -198,45 +198,45 @@ public class Scalpel {
   }
   @SuppressWarnings("unchecked") private Scalpel replaceWith(final ASTNode n, final boolean isCollapsed) {
     replacement = n;
-    if (r == null)
+    if (rewrite == null)
       return this;
-    if (s == null || base == null || replacement == null || u == null) {
-      r.replace(base, replacement, g);
+    if (s == null || base == null || replacement == null || compilationUnit == null) {
+      rewrite.replace(base, replacement, editGroup);
       for (final ASTNode a : additionals)
-        r.remove(a, g);
+        rewrite.remove(a, editGroup);
       return this;
     }
     comments.removeAll(used);
     final Set<Comment> unique = new LinkedHashSet<>(comments);
     comments.clear();
     comments.addAll(unique);
-    final SourceRange sr = r.getExtendedSourceRangeComputer().computeSourceRange(base);
+    final SourceRange sr = rewrite.getExtendedSourceRangeComputer().computeSourceRange(base);
     final List<ASTNode> $ = new ArrayList<>();
     if (replacement instanceof Block && !isCollapsed) {
       final Block bl = (Block) replacement;
       Collections.reverse(comments);
       for (final Comment c : comments)
-        bl.statements().add(0, r.createStringPlaceholder(s.substring(u.getExtendedStartPosition(c), u.getExtendedStartPosition(c) + u.getExtendedLength(c)), ASTNode.BLOCK));
+        bl.statements().add(0, rewrite.createStringPlaceholder(s.substring(compilationUnit.getExtendedStartPosition(c), compilationUnit.getExtendedStartPosition(c) + compilationUnit.getExtendedLength(c)), ASTNode.BLOCK));
       $.add(bl);
     } else {
       if (comments.size() != 1 || !shouldMoveCommentToEnd(comments.get(0), isCollapsed)) {
         for (final Comment c : comments)
-          $.add(r.createStringPlaceholder(s.substring(u.getExtendedStartPosition(c), u.getExtendedStartPosition(c) + u.getExtendedLength(c))
+          $.add(rewrite.createStringPlaceholder(s.substring(compilationUnit.getExtendedStartPosition(c), compilationUnit.getExtendedStartPosition(c) + compilationUnit.getExtendedLength(c))
               + (replacement instanceof Statement || c.isLineComment() ? "\n" : ""), c.getNodeType()));
         $.add(replacement);
       } else {
         final Comment c = comments.get(0);
         final String f = !c.isLineComment() || allWhiteSpaces(s.substring(sr.getStartPosition() + sr.getLength()).split("\n")[0]) ? "" : "\n";
         $.add(replacement);
-        final SourceRange csr = r.getExtendedSourceRangeComputer().computeSourceRange(c);
-        $.add(r.createStringPlaceholder(" " + s.substring(csr.getStartPosition(), csr.getStartPosition() + csr.getLength()) + f, c.getNodeType()));
+        final SourceRange csr = rewrite.getExtendedSourceRangeComputer().computeSourceRange(c);
+        $.add(rewrite.createStringPlaceholder(" " + s.substring(csr.getStartPosition(), csr.getStartPosition() + csr.getLength()) + f, c.getNodeType()));
       }
       if (replacement instanceof Statement && !allWhiteSpaces(s.substring(rowStartIndex(sr.getStartPosition()), sr.getStartPosition())))
-        $.add(0, r.createStringPlaceholder("", ASTNode.BLOCK));
+        $.add(0, rewrite.createStringPlaceholder("", ASTNode.BLOCK));
     }
-    r.replace(base, r.createGroupNode($.toArray(new ASTNode[$.size()])), g);
+    rewrite.replace(base, rewrite.createGroupNode($.toArray(new ASTNode[$.size()])), editGroup);
     for (final ASTNode a : additionals)
-      r.remove(a, g);
+      rewrite.remove(a, editGroup);
     return this;
   }
   private int rowStartIndex(final int i) {
@@ -265,10 +265,10 @@ public class Scalpel {
   private ASTNode[] additionals;
   private ASTNode base;
   private final List<Comment> comments;
-  private final TextEditGroup g;
-  private final ASTRewrite r;
+  private final TextEditGroup editGroup;
+  private final ASTRewrite rewrite;
   private ASTNode replacement;
   private final String s;
-  private final CompilationUnit u;
+  private final CompilationUnit compilationUnit;
   private final Set<Comment> used;
 }

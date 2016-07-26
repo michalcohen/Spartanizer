@@ -1,16 +1,17 @@
 package il.org.spartan.refactoring.utils;
 
-import static il.org.spartan.Utils.*;
-import static il.org.spartan.refactoring.utils.Funcs.*;
-import static org.eclipse.jdt.core.dom.ASTNode.*;
-import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
-import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
 import il.org.spartan.misc.*;
 
 import java.util.*;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.InfixExpression.Operator;
+
+import static il.org.spartan.Utils.*;
+import static il.org.spartan.refactoring.utils.Funcs.*;
+import static org.eclipse.jdt.core.dom.ASTNode.*;
+import static org.eclipse.jdt.core.dom.InfixExpression.Operator.*;
+import static org.eclipse.jdt.core.dom.PrefixExpression.Operator.*;
 
 /** An empty <code><b>enum</b></code> for fluent programming. The name should say
  * it all: The name, followed by a dot, followed by a method name, should read
@@ -62,7 +63,6 @@ public enum Is {
     return blockRequiredInReplacement(s1, s1);
   }
   public static boolean blockRequiredInReplacement(final IfStatement old, final IfStatement newIf) {
-    System.out.println("OK");
     if (newIf == null || old != newIf && elze(old) == null == (elze(newIf) == null))
       return false;
     final IfStatement parent = asIfStatement(parent(old));
@@ -201,7 +201,7 @@ public enum Is {
         LESS, //
         NOT_EQUALS, //
         OR, //
-        PLUS, // Too risky? (who wrote this)
+        PLUS2, // Too risky? (who wrote this)
         TIMES, //
         XOR, //
         null);
@@ -504,13 +504,13 @@ public enum Is {
     return false;
   }
   private static boolean nonAssociative(final InfixExpression e) {
-    return e != null && in(e.getOperator(), MINUS, DIVIDE, REMAINDER);
+    return e != null && in(e.getOperator(), MINUS2, DIVIDE, REMAINDER);
   }
   private static boolean notStringUp(final Expression e) {
     for (ASTNode context = e.getParent(); context != null; context = context.getParent())
       switch (context.getNodeType()) {
         case INFIX_EXPRESSION:
-          if (asInfixExpression(context).getOperator().equals(PLUS))
+          if (asInfixExpression(context).getOperator().equals(PLUS2))
             continue;
           return true;
         case ARRAY_ACCESS:
@@ -535,7 +535,7 @@ public enum Is {
     return notStringSelf(e) || notStringDown(asInfixExpression(e));
   }
   static boolean notStringDown(final InfixExpression e) {
-    return e != null && (e.getOperator() != PLUS || are.notString(extract.allOperands(e)));
+    return e != null && (e.getOperator() != PLUS2 || are.notString(extract.allOperands(e)));
   }
   static boolean notStringSelf(final Expression e) {
     return intIsIn(e.getNodeType(), //
@@ -553,7 +553,7 @@ public enum Is {
     return sideEffectsFree(extract.dimensions(c)) && sideEffectsFree(extract.expressions(c));
   }
   static boolean sideEffectFreePrefixExpression(final PrefixExpression e) {
-    return in(e.getOperator(), PLUS, MINUS, COMPLEMENT, NOT) && sideEffectFree(e.getOperand());
+    return in(e.getOperator(), PLUS2, MINUS2, COMPLEMENT, NOT) && sideEffectFree(e.getOperand());
   }
   static boolean sideEffectsFree(final Expression... es) {
     for (final Expression e : es)
@@ -570,6 +570,6 @@ public enum Is {
     return true;
   }
 
-  private static InfixExpression.Operator MINUS = InfixExpression.Operator.MINUS;
-  private static InfixExpression.Operator PLUS = InfixExpression.Operator.PLUS;
+  private static InfixExpression.Operator MINUS2 = InfixExpression.Operator.MINUS;
+  private static InfixExpression.Operator PLUS2 = InfixExpression.Operator.PLUS;
 }
