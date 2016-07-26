@@ -28,7 +28,7 @@ public class Scalpel {
     return true;
   }
   private static String cut(final String s, final int sp, final int ep) {
-    return s.substring(sp, ep).replaceAll("\n(\t| )*", "\n");
+    return s;
   }
   @SuppressWarnings("boxing") static <N extends ASTNode> N mark(final N n) {
     n.setProperty("inaccessible", true);
