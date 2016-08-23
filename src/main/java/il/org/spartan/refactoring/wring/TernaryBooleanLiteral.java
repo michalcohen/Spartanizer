@@ -8,10 +8,13 @@ import org.eclipse.jdt.core.dom.*;
 
 import il.org.spartan.refactoring.utils.*;
 
-/** <pre>
+/** Deal with
+ * 
+ * <pre>
  * a ? b : c
  * </pre>
- *
+ * 
+ * when either b or c is a boolean literal. To work this out, notice that the above
  * is the same as
  *
  * <pre>
@@ -57,7 +60,7 @@ import il.org.spartan.refactoring.utils.*;
  * .
  * @author Yossi Gil
  * @since 2015-07-20 */
-public final class TernaryBooleanLiteral extends Wring.ReplaceCurrentNode<ConditionalExpression> implements Kind.NoImpact {
+public final class TernaryBooleanLiteral extends Wring.ReplaceCurrentNode<ConditionalExpression> implements Kind.NOP {
   private static boolean isTernaryOfBooleanLitreral(final ConditionalExpression e) {
     return e != null && Have.booleanLiteral(core(e.getThenExpression()), core(e.getElseExpression()));
   }

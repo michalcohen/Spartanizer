@@ -16,7 +16,7 @@ import il.org.spartan.refactoring.wring.Wring.*;
  * with <code>int i = a</code>, etc.
  * @author Matteo Orru'
  * @since 2016 */
-public class PrefixPlusRemove extends ReplaceCurrentNode<PrefixExpression> implements Kind.NoImpact {
+public class PrefixPlusRemove extends ReplaceCurrentNode<PrefixExpression> implements Kind.NOP {
   @Override ASTNode replacement(final PrefixExpression e) {
     return e.getOperator() != PLUS ? null : plant(duplicate(heart(e.getOperand()))).into(e.getParent());
   }

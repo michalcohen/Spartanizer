@@ -45,7 +45,7 @@ import il.org.spartan.refactoring.utils.*;
  *
  * @author Matteo Orrù
  * @since 2016 */
-public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpression> implements Kind.NoImpact {
+public final class InfixDivisionMultiplicationNegatives extends Wring<InfixExpression> implements Kind.Idiomatic {
   private static List<Expression> gather(final Expression e, final List<Expression> $) {
     if (e instanceof InfixExpression)
       return gather(asInfixExpression(e), $);

@@ -9,7 +9,7 @@ import il.org.spartan.refactoring.wring.Wring.*;
  * expression like <code> "" + X </code> but ONLY if X is a String.
  * @author Matteo Orru' <code><matt.orru [at] gmail.com></code>
  * @since 2016-08-14 */
-public class InfixEmptyString extends ReplaceCurrentNode<InfixExpression> {
+public class InfixEmptyString extends ReplaceCurrentNode<InfixExpression> implements Kind.NOP {
   @Override ASTNode replacement(final InfixExpression e) {
     return Wrings.eliminateLiteral(e, true);
   }
@@ -18,12 +18,5 @@ public class InfixEmptyString extends ReplaceCurrentNode<InfixExpression> {
     return "Remove \"\" from \"\" + X if X is a String";
   }
 
-  @Override public WringGroup wringGroup() {
-    return null;
-  }
 
-  @Override public String description() {
-    // TODO Auto-generated method stub
-    return null;
-  }
 }

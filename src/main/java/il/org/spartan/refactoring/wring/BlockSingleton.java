@@ -11,7 +11,9 @@ import il.org.spartan.utils.*;
 /** convert
  *
  * <pre>
- * if {a) g();}
+ * if (a) {
+ *   g();
+ * }
  * </pre>
  *
  * into

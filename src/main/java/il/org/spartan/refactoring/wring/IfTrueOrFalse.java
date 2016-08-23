@@ -31,7 +31,7 @@ import org.eclipse.jdt.core.dom.*;
  * @author Alex Kopzon
  * @author Dan Greenstein
  * @since 2016 */
-public final class IfTrueOrFalse extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.Canonicalization {
+public final class IfTrueOrFalse extends Wring.ReplaceCurrentNode<IfStatement> implements Kind.NOP {
   @Override String description(@SuppressWarnings("unused") final IfStatement __) {
     return "if the condition is 'true'  convert to 'then' statement," + " if the condition is 'false' convert to 'else' statement";
   }

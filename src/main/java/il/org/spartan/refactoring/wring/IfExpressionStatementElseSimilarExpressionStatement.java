@@ -25,7 +25,7 @@ import il.org.spartan.refactoring.utils.*;
  * @author Yossi Gil
  * @since 2015-07-29 */
 public final class IfExpressionStatementElseSimilarExpressionStatement extends Wring.ReplaceCurrentNode<IfStatement>
-    implements Kind.Canonicalization {
+    implements Kind.Ternarization {
   @Override String description(@SuppressWarnings("unused") final IfStatement __) {
     return "Consolidate two branches of an 'if' into a single ";
   }

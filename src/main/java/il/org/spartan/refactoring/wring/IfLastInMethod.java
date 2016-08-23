@@ -10,19 +10,8 @@ import org.eclipse.text.edits.*;
 
 import il.org.spartan.refactoring.utils.*;
 
-/** convert
- *
- * <pre>
- * <b>if</b> (a) { f(); g(); }
- * </pre>
- *
- * into
- *
- * <pre>
- * <b>if</b> (!a) return f(); g();
- * </pre>
- *
- * provided that this
+/** convert <code><b>if</b> (a) { f(); g(); }</code> into
+ * <code> <b>if</b> (!a) return; f(); g();</code> provided that this
  *
  * <pre>
  * <b>if</b>
@@ -31,7 +20,7 @@ import il.org.spartan.refactoring.utils.*;
  * statement is the last statement in a method.
  * @author Yossi Gil
  * @since 2015-09-09 */
-public final class IfLastInMethod extends Wring<IfStatement> implements Kind.Canonicalization {
+public final class IfLastInMethod extends Wring<IfStatement> implements Kind.EarlyReturn {
   @Override String description(final IfStatement s) {
     return "Invert conditional " + s.getExpression() + " for early return";
   }

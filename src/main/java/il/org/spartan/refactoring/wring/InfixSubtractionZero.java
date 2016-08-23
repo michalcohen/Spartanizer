@@ -19,7 +19,7 @@ import il.org.spartan.refactoring.wring.Wring.*;
  * @author Alex Kopzon
  * @author Dan Greenstein
  * @since 2016 */
-public final class InfixSubtractionZero extends ReplaceCurrentNode<InfixExpression> implements Kind.NoImpact {
+public final class InfixSubtractionZero extends ReplaceCurrentNode<InfixExpression> implements Kind.NOP {
   @Override String description(final InfixExpression e) {
     return "Remove subtraction of 0 in " + e;
   }

@@ -14,7 +14,7 @@ import il.org.spartan.refactoring.wring.Wring.*;
 /** Replace <code> s.equals("s")</code> by <code>"s".equals(s)</code>
  * @author Ori Roth
  * @since 2016/05/08 */
-public final class StringEqualsConstant extends ReplaceCurrentNode<MethodInvocation> implements Kind.Canonicalization {
+public final class StringEqualsConstant extends ReplaceCurrentNode<MethodInvocation> implements Kind.Idiomatic {
   final static List<String> mns = as.list("equals", "equalsIgnoreCase");
 
   @Override String description(final MethodInvocation i) {

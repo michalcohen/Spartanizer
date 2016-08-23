@@ -24,7 +24,7 @@ import il.org.spartan.refactoring.utils.*;
  *
  * @author Yossi Gil
  * @since 2015-08-28 */
-public final class AssignmentAndReturn extends Wring.ReplaceToNextStatement<Assignment> implements Kind.Canonicalization {
+public final class AssignmentAndReturn extends Wring.ReplaceToNextStatement<Assignment> implements Kind.Collapse {
   @Override String description(final Assignment a) {
     return "Inline assignment to " + left(a) + " with its subsequent 'return'";
   }

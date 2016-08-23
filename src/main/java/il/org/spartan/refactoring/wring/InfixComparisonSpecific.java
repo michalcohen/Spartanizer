@@ -22,7 +22,7 @@ import il.org.spartan.refactoring.utils.*;
  * .
  * @author Yossi Gil
  * @since 2015-07-17 */
-public final class InfixComparisonSpecific extends Wring.ReplaceCurrentNode<InfixExpression> implements Kind.Canonicalization {
+public final class InfixComparisonSpecific extends Wring.ReplaceCurrentNode<InfixExpression> implements Kind.Idiomatic {
   private static final Specificity specifity = new Specificity();
 
   @Override String description(@SuppressWarnings("unused") final InfixExpression __) {

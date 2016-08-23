@@ -10,10 +10,10 @@ import org.eclipse.jdt.core.dom.*;
 import il.org.spartan.refactoring.utils.*;
 import il.org.spartan.refactoring.wring.Wring.*;
 
-/** Replace <code>1*X</code> by <code>X</code>
+/** Replace <code>0+X</code> by <code>X</code>
  * @author Yossi Gil
  * @since 2015-09-05 */
-public final class InfixAdditionNeutralElement extends ReplaceCurrentNode<InfixExpression> implements Kind.NoImpact {
+public final class InfixAdditionNeutralElement extends ReplaceCurrentNode<InfixExpression> implements Kind.NOP {
   @Override String description(final InfixExpression e) {
     return "Remove 0 from  " + e;
   }

@@ -11,7 +11,7 @@ import il.org.spartan.refactoring.utils.*;
  * <code>Boolean.valueOf(true) </code> into <code>Boolean.TRUE</code>
  * @author Daniel Mittelman <code><mittelmania [at] gmail.com></code>
  * @since 2016-04-04 */
-public final class BooleanConstants extends Wring.ReplaceCurrentNode<MethodInvocation> implements Kind.Canonicalization {
+public final class BooleanConstants extends Wring.ReplaceCurrentNode<MethodInvocation> implements Kind.Idiomatic {
   @Override String description(final MethodInvocation i) {
     return "Replace valueOf (" + onlyArgument(i) + ") with Boolean." + asString(asBooleanLiteral(onlyArgument(i)));
   }

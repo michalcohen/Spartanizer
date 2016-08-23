@@ -14,19 +14,19 @@ import il.org.spartan.refactoring.utils.*;
 /** convert
  *
  * <pre>
- * a = 3;
+ * ++a;
  * return a;
  * </pre>
  *
  * to
  *
  * <pre>
- * return a = 3;
+ * return ++a;
  * </pre>
  *
  * @author Yossi Gil
  * @since 2015-08-28 */
-public final class PrefixIncrementDecrementReturn extends Wring.ReplaceToNextStatement<PrefixExpression> implements Kind.Canonicalization {
+public final class PrefixIncrementDecrementReturn extends Wring.ReplaceToNextStatement<PrefixExpression> implements Kind.Collapse {
   @Override String description(final PrefixExpression e) {
     return "Consolidate " + e + " with subsequent 'return' of " + operand(e);
   }

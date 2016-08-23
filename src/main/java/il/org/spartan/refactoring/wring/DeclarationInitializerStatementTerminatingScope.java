@@ -24,7 +24,7 @@ import il.org.spartan.refactoring.wring.LocalInliner.*;
  * into
  *
  * <pre>
- * b = a
+ * b = 3
  * </pre>
  *
  * @author Yossi Gil

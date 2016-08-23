@@ -19,7 +19,7 @@ import il.org.spartan.refactoring.wring.LocalInliner.*;
  * into
  *
  * <pre>
- * return a;
+ * return 3;
  * </pre>
  *
  * @author Yossi Gil

@@ -12,7 +12,7 @@ import il.org.spartan.refactoring.utils.*;
  * @author Alex Kopzon
  * @author Dan Greenstein
  * @since 2016 */
-public final class CastToLong2Multiply1L extends Wring.ReplaceCurrentNode<CastExpression> implements Kind.NoImpact {
+public final class CastToLong2Multiply1L extends Wring.ReplaceCurrentNode<CastExpression> implements Kind.NOP {
   @Override String description(final CastExpression e) {
     return "Use 1L*" + expression(e) + " instead of (long)" + expression(e);
   }

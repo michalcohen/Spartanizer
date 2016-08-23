@@ -11,7 +11,7 @@ import il.org.spartan.refactoring.utils.*;
  * increment/decrement
  * @author Yossi Gil
  * @since 2015-7-17 */
-public final class PostfixToPrefix extends Wring.ReplaceCurrentNode<PostfixExpression> implements Kind.Canonicalization {
+public final class PostfixToPrefix extends Wring.ReplaceCurrentNode<PostfixExpression> implements Kind.Idiomatic {
   private static String description(final Operator o) {
     return o == PostfixExpression.Operator.DECREMENT ? "decrement" : "increment";
   }
