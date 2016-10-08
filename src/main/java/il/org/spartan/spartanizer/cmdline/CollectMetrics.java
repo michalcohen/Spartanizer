@@ -29,7 +29,7 @@ public final class CollectMetrics {
     System.err.println("Your output should be here: " + output.close());
   }
 
-  public static Document rewrite(final GUI$Applicator a, final CompilationUnit u, final Document $) {
+  public static Document rewrite(final GUIApplicator a, final CompilationUnit u, final Document $) {
     try {
       a.createRewrite(u).rewriteAST($, null).apply($);
       return $;
@@ -40,7 +40,7 @@ public final class CollectMetrics {
 
   // TODO Yossi Gil: eliminate warning
   private static void collectTips(final String javaCode, final CompilationUnit before) {
-    reportTips(new DefunctPolicyMaker().collectSuggesions(before));
+    reportTips(new ForTestCompatabilityRewritePolicy().weaveRewriter(before));
   }
 
   private static void go(final File f) {
@@ -115,7 +115,7 @@ public final class CollectMetrics {
   }
 
   private static CompilationUnit spartanize(final String javaCode) {
-    final DefunctPolicyMaker t = new DefunctPolicyMaker();
+    final ForTestCompatabilityRewritePolicy t = new ForTestCompatabilityRewritePolicy();
     final String spartanized = t.fixed(javaCode);
     output.put("Characters", spartanized.length());
     return (CompilationUnit) makeAST.COMPILATION_UNIT.from(spartanized);

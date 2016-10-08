@@ -30,7 +30,7 @@ public class SpartanMovie extends AbstractHandler {
     final IWorkbenchWindow window = workbench == null ? null : workbench.getActiveWorkbenchWindow();
     final IWorkbenchPage page = window == null ? null : window.getActivePage();
     final IProgressService progressService = workbench == null ? null : workbench.getProgressService();
-    final DefunctPolicyMaker DefunctRewritePolicyMaker = new DefunctPolicyMaker();
+    final AdviceGenerator DefunctRewritePolicyMaker = new ForTestCompatabilityRewritePolicy();
     if (compilationUnits == null || page == null || progressService == null)
       return null;
     try {

@@ -124,7 +124,7 @@ public final class Application implements IApplication {
           if (n == 0)
             break;
           s.addRoundStat(n);
-          new DefunctPolicyMaker().apply(u);
+          new ForTestCompatabilityRewritePolicy().apply(u);
         }
         FileUtils.writeToFile(determineOutputFilename(f.getAbsolutePath()), u.getSource());
         if (optVerbose)

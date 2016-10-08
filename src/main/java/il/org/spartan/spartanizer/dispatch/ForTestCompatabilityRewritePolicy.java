@@ -3,7 +3,11 @@ package il.org.spartan.spartanizer.dispatch;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import javax.xml.bind.Marshaller.*;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.*;
 import org.eclipse.jface.text.*;
@@ -17,7 +21,7 @@ import il.org.spartan.spartanizer.utils.*;
 
 /** @author Yossi Gil
  * @since 2015/07/10 */
-public class DefunctPolicyMaker extends GUI$Applicator {
+public class ForTestCompatabilityRewritePolicy extends AdviceGenerator {
   public static boolean prune(final Tip r, final List<Tip> rs) {
     if (r != null) {
       r.pruneIncluders(rs);
@@ -25,56 +29,39 @@ public class DefunctPolicyMaker extends GUI$Applicator {
     }
     return true;
   }
-
-  public final Toolbox toolbox;
-
-  /** Instantiates this class */
-  public DefunctPolicyMaker() {
-    this(Toolbox.defaultInstance());
-  }
-
-  public DefunctPolicyMaker(final Toolbox toolbox) {
-    super("Apply");
-    this.toolbox = toolbox;
-  }
-
-  @Override public void consolidateTips(final ASTRewrite r, final CompilationUnit u, final IMarker m, final AtomicInteger i) {
-    Toolbox.refresh();
-    u.accept(new DispatchingVisitor() {
-      @Override protected <N extends ASTNode> boolean go(final N n) {
-        progressMonitor.worked(1);
-        TrimmerLog.visitation(n);
-        if (!check(n) || !inRange(m, n) || disabling.on(n))
+  public void makeAdvice(final ASTRewrite r, final CompilationUnit u, final IMarker m, final AtomicInteger i) {
+      u.accept(new DispatchingVisitor() {
+        @Override protected <N extends ASTNode> boolean go(final N n) {
+          config.listeners().hit(n);
+          if (!check(n) || !inRange(m, n) || disabling.on(n))
+            return true;
+          final Tipper<N> w = getTipper(n);
+          if (w == null)
+            return true;
+          Tip s = null;
+          try {
+            s = w.tip(n, exclude);
+            TrimmerLog.tip(w, n);
+          } catch (final TipperFailure f) {
+            monitor.debug(this, f);
+          }
+          if (s != null) {
+            i.incrementAndGet();
+          }
           return true;
-        final Tipper<N> w = getTipper(n);
-        if (w == null)
-          return true;
-        Tip s = null;
-        try {
-          s = w.tip(n, exclude);
-          TrimmerLog.tip(w, n);
-        } catch (final TipperFailure f) {
-          monitor.debug(this, f);
         }
-        if (s != null) {
-          i.incrementAndGet();
-          if (LogManager.isActive())
-            LogManager.getLogWriter().printRow(u.getJavaElement().getElementName(), s.description, s.lineNumber + "");
-          TrimmerLog.application(r, s);
+  
+  
+  
+        @Override protected void initialization(final ASTNode ¢) {
+          disabling.scan(¢);
         }
-        return true;
-      }
-
-      @Override protected void initialization(final ASTNode ¢) {
-        disabling.scan(¢);
-      }
-    });
-  }
-
+      });
+    }
   public String fixed(final String from) {
     for (final Document $ = new Document(from);;) {
       final CompilationUnit u = (CompilationUnit) makeAST.COMPILATION_UNIT.from($.get());
-      final ASTRewrite r = createRewrite(u);
+      final ASTRewrite r = ASTRewrite.createRewrite(u);
       final TextEdit e = r.rewriteAST($, null);
       try {
         e.apply($);
@@ -86,16 +73,15 @@ public class DefunctPolicyMaker extends GUI$Applicator {
         return $.get();
     }
   }
-
-  @Override protected ASTVisitor makeTipsCollector(final List<Tip> $) {
+ ASTVisitor makeTipsCollector(final List<Tip> $) {
     return new DispatchingVisitor() {
       @Override protected <N extends ASTNode> boolean go(final N n) {
-        progressMonitor.worked(1);
+        config.listeners().hit(n);
         if (!check(n) || disabling.on(n))
           return true;
-        final Tipper<N> w = getTipper(n);
+        final Tipper<N> w = config.toolbox.getTipper(n);
         if (w != null)
-          progressMonitor.worked(5);
+          config.listeners().select(n, w);
         try {
           return w == null || w.cantTip(n) || prune(w.tip(n, exclude), $);
         } catch (final TipperFailure f) {
@@ -111,8 +97,8 @@ public class DefunctPolicyMaker extends GUI$Applicator {
   }
 
   public abstract class With {
-    public DefunctPolicyMaker defunctPolicyMaker() {
-      return DefunctPolicyMaker.this;
+    public AdviceGenerator forTestCompatabilityRewritePolicy() {
+      return ForTestCompatabilityRewritePolicy.this;
     }
   }
 

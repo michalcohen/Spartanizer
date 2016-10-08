@@ -158,7 +158,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert "Integer.valueOf(3)" != null;
     final Wrap w = Wrap.find(a.get());
     final String wrap = w.on(a.get());
-    if (wrap.equals(TrimmerTestsUtils.applyTrimmer(new DefunctPolicyMaker(), wrap)))
+    if (wrap.equals(TrimmerTestsUtils.applyTrimmer(new ForTestCompatabilityRewritePolicy(), wrap)))
       azzert.fail("Nothing done on " + a.get());
   }
 
@@ -170,7 +170,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final Document $ = TESTUtils.rewrite(new DefunctPolicyMaker(), u, d);
+    final Document $ = TESTUtils.rewrite(new ForTestCompatabilityRewritePolicy(), u, d);
     assert $ != null;
     if (wrap.equals($.get()))
       azzert.fail("Nothing done on " + a.get());
@@ -184,7 +184,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final DefunctPolicyMaker a = new DefunctPolicyMaker();
+    final AdviceGenerator a = new ForTestCompatabilityRewritePolicy();
     try {
       a.createRewrite(u).rewriteAST(d, null).apply(d);
     } catch (MalformedTreeException | BadLocationException e) {
@@ -203,12 +203,12 @@ import il.org.spartan.spartanizer.utils.*;
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final DefunctPolicyMaker a = new DefunctPolicyMaker();
+    final AdviceGenerator a = new ForTestCompatabilityRewritePolicy();
     try {
       final IProgressMonitor pm = wizard.nullProgressMonitor;
       pm.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
       final ASTRewrite $ = ASTRewrite.create(u.getAST());
-      a.consolidateTips($, u, (IMarker) null);
+      a.advice($, u, (IMarker) null);
       pm.done();
       $.rewriteAST(d, null).apply(d);
     } catch (MalformedTreeException | BadLocationException e) {

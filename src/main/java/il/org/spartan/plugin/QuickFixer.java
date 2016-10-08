@@ -7,13 +7,17 @@ import org.eclipse.ui.*;
 
 import static il.org.spartan.spartanizer.ast.navigate.wizard.*;
 
+import il.org.spartan.spartanizer.dispatch.*;
+import il.org.spartan.spartanizer.tipping.*;
+
 /** A quickfix generator for spartanization refactoring
  * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
  * @since 2013/07/01 */
 public final class QuickFixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
-      final GUI$Applicator $ = Tips.get((String) m.getAttribute(Builder.SPARTANIZATION_TYPE_KEY));
+      @SuppressWarnings("unchecked") Class<? extends Tipper<? >>  tipper = (Class<? extends Tipper<?>>) m.getAttribute(Builder.TIPPER_TYPE);
+      final GUIApplicator $ = new GUIApplicator(); 
       assert $ != null;
       return new IMarkerResolution[] { //
           $.getFix(), //

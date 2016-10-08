@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.dom.*;
 import il.org.spartan.spartanizer.dispatch.*;
 import il.org.spartan.spartanizer.tipping.*;
 
-public class fluentTrimmer extends DefunctPolicyMaker {
+public class fluentTrimmer extends ForTestCompatabilityRewritePolicy {
   @SafeVarargs public <N extends ASTNode> fluentTrimmer(final Class<N> clazz, final Tipper<N>... ws) {
     super(Toolbox.make(clazz, ws));
   }

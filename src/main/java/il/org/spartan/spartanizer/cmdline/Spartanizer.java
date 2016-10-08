@@ -78,7 +78,7 @@ public final class Spartanizer {
     return null;
   }
 
-  public void consolidateTips(final ASTRewrite r, final CompilationUnit u) {
+  public void advice(final ASTRewrite r, final CompilationUnit u) {
     u.accept(new DispatchingVisitor() {
       @Override protected <N extends ASTNode> boolean go(final N n) {
         TrimmerLog.visitation(n);
@@ -109,7 +109,7 @@ public final class Spartanizer {
 
   public ASTRewrite createRewrite(final CompilationUnit ¢) {
     final ASTRewrite $ = ASTRewrite.create(¢.getAST());
-    consolidateTips($, ¢);
+    advice($, ¢);
     return $;
   }
 
@@ -131,7 +131,7 @@ public final class Spartanizer {
 
   public ASTRewrite rewriterOf(final CompilationUnit ¢) {
     final ASTRewrite $ = ASTRewrite.create(¢.getAST());
-    consolidateTips($, ¢);
+    advice($, ¢);
     return $;
   }
 

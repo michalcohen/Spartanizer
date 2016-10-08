@@ -16,7 +16,7 @@ import il.org.spartan.spartanizer.dispatch.*;
 import il.org.spartan.spartanizer.engine.*;
 import il.org.spartan.spartanizer.tipping.*;
 
-public class fluentTrimmerApplication extends DefunctPolicyMaker.With {
+public class fluentTrimmerApplication extends ForTestCompatabilityRewritePolicy.With {
   public final String codeFragment;
   public final GuessedContext guessedContext;
   public final String wrappedFragment;
@@ -26,7 +26,7 @@ public class fluentTrimmerApplication extends DefunctPolicyMaker.With {
   public final TextEdit textEdit;
   public final UndoEdit undoEdit;
 
-  public fluentTrimmerApplication(final DefunctPolicyMaker t, final String codeFragment) {
+  public fluentTrimmerApplication(final AdviceGenerator t, final String codeFragment) {
     t.super();
     this.codeFragment = codeFragment;
     assert codeFragment != null;
@@ -43,7 +43,7 @@ public class fluentTrimmerApplication extends DefunctPolicyMaker.With {
     dump.go(document.get(), "and this is its content");
     compilationUnit = guessedContext.intoCompilationUnit(document.get());
     assert compilationUnit != null;
-    createRewrite = defunctPolicyMaker().createRewrite(compilationUnit);
+    createRewrite = forTestCompatabilityRewritePolicy().createRewrite(compilationUnit);
     assert createRewrite != null;
     textEdit = createRewrite.rewriteAST(document, null);
     assert textEdit != null;
@@ -109,7 +109,7 @@ public class fluentTrimmerApplication extends DefunctPolicyMaker.With {
               + "\n   to '" + expected + "', but for it converted instead" //
               + "\n   to '" + difference + "'!" //
       );
-    return new fluentTrimmerApplication(defunctPolicyMaker(), document.get());
+    return new fluentTrimmerApplication(forTestCompatabilityRewritePolicy(), document.get());
   }
 
   public void stays() {
@@ -127,9 +127,9 @@ public class fluentTrimmerApplication extends DefunctPolicyMaker.With {
   protected final void fillRewrite(final ASTRewrite r, final IMarker m) {
     compilationUnit.accept(new DispatchingVisitor() {
       @Override protected <N extends ASTNode> boolean go(final N n) {
-        if (!defunctPolicyMaker().inRange(m, n))
+        if (!forTestCompatabilityRewritePolicy().inRange(m, n))
           return true;
-        final Tipper<N> w = defunctPolicyMaker().toolbox.firstTipper(n);
+        final Tipper<N> w = forTestCompatabilityRewritePolicy().config.toolbox().firstTipper(n);
         if (w != null) {
           Tip make = null;
           try {

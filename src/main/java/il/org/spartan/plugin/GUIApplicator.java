@@ -29,7 +29,7 @@ import il.org.spartan.utils.*;
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/10
  * @since 2013/01/01 */
-public abstract class GUI$Applicator extends Refactoring {
+public abstract class GUIApplicator extends Refactoring {
   public IProgressMonitor progressMonitor = nullProgressMonitor;
   final Collection<TextFileChange> changes = new ArrayList<>();
   private CompilationUnit compilationUnit;
@@ -42,7 +42,7 @@ public abstract class GUI$Applicator extends Refactoring {
 
   /*** Instantiates this class, with message identical to name
    * @param name a short name of this instance */
-  protected GUI$Applicator(final String name) {
+  protected GUIApplicator(final String name) {
     this.name = name;
   }
 
@@ -79,7 +79,7 @@ public abstract class GUI$Applicator extends Refactoring {
    * @param u what to check
    * @return a collection of {@link Tip} objects each containing a laconic
    *         tip */
-  public final List<Tip> collectSuggesions(final CompilationUnit ¢) {
+  public final List<Tip> advice(final CompilationUnit ¢) {
     final List<Tip> $ = new ArrayList<>();
     ¢.accept(makeTipsCollector($));
     return $;
@@ -198,8 +198,8 @@ public abstract class GUI$Applicator extends Refactoring {
       @Override public void run(final IMarker m) {
         setMarker(m);
         try {
-          new RefactoringWizardOpenOperation(new Wizard(GUI$Applicator.this)).run(Display.getCurrent().getActiveShell(),
-              "Laconization: " + s + GUI$Applicator.this);
+          new RefactoringWizardOpenOperation(new Wizard(GUIApplicator.this)).run(Display.getCurrent().getActiveShell(),
+              "Laconization: " + s + GUIApplicator.this);
         } catch (final InterruptedException e) {
           monitor.logCancellationRequest(this, e);
         }
@@ -278,7 +278,7 @@ public abstract class GUI$Applicator extends Refactoring {
   public ASTRewrite rewriterOf(final CompilationUnit u, final IMarker m, final AtomicInteger counter) {
     progressMonitor.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
     final ASTRewrite $ = ASTRewrite.create(u.getAST());
-    consolidateTips($, u, m, counter);
+    advice($, u, m, counter);
     progressMonitor.done();
     return $;
   }
@@ -319,10 +319,10 @@ public abstract class GUI$Applicator extends Refactoring {
     return name;
   }
 
-  protected abstract void consolidateTips(ASTRewrite r, CompilationUnit u, IMarker m, final AtomicInteger counter);
+  protected abstract void advice(ASTRewrite r, CompilationUnit u, IMarker m, final AtomicInteger counter);
 
-  public void consolidateTips(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
-    consolidateTips(r, u, m, new AtomicInteger(0));
+  public void advice(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
+    advice(r, u, m, new AtomicInteger(0));
   }
 
   /** Determines if the node is outside of the selected text.
@@ -355,7 +355,7 @@ public abstract class GUI$Applicator extends Refactoring {
     textChange.setEdit(createRewrite(cu, counter).rewriteAST());
     if (textChange.getEdit().getLength() != 0)
       changes.add(textChange);
-    totalChanges += collectSuggesions(cu).size();
+    totalChanges += advice(cu).size();
     m.done();
     return counter.get();
   }

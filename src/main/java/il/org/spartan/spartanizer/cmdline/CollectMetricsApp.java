@@ -194,7 +194,7 @@ public final class CollectMetricsApp implements IApplication {
       ICompilationUnit u = null;
       try {
         u = openCompilationUnit(f);
-        for (int ¢ = 0; ¢ < optRounds; ++¢, new DefunctPolicyMaker().apply(u))
+        for (int ¢ = 0; ¢ < optRounds; ++¢, new ForTestCompatabilityRewritePolicy().apply(u))
           if (new LaconizeProject().countTips() == 0)
             break;
         FileUtils.writeToFile(determineOutputFilename(f.getAbsolutePath()), u.getSource());

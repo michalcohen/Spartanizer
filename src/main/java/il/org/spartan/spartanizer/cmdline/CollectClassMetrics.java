@@ -26,7 +26,7 @@ public final class CollectClassMetrics {
   }
 
   static CompilationUnit spartanize(final CompilationUnit before) {
-    final DefunctPolicyMaker tr = new DefunctPolicyMaker();
+    final AdviceGenerator tr = new ForTestCompatabilityRewritePolicy();
     assert tr != null;
     final ICompilationUnit $ = (ICompilationUnit) before.getJavaElement();
     tr.setICompilationUnit($);

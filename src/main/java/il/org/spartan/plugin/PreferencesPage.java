@@ -39,7 +39,7 @@ public final class PreferencesPage extends FieldEditorPreferencePage implements 
     store().addPropertyChangeListener(listener);
   }
 
-  /** An event handler used to re-initialize the {@link DefunctPolicyMaker} spartanization
+  /** An event handler used to re-initialize the {@link ForTestCompatabilityRewritePolicy} spartanization
    * once a tipper preference was modified. */
   static class SpartanPropertyListener implements IPropertyChangeListener {
     @Override public void propertyChange(@SuppressWarnings("unused") final PropertyChangeEvent __) {

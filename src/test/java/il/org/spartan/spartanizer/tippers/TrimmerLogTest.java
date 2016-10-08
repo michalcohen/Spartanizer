@@ -39,12 +39,12 @@ public class TrimmerLogTest {
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final DefunctPolicyMaker a = new DefunctPolicyMaker();
+    final AdviceGenerator a = new ForTestCompatabilityRewritePolicy();
     try {
       final IProgressMonitor pm = wizard.nullProgressMonitor;
       pm.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
       final ASTRewrite $ = ASTRewrite.create(u.getAST());
-      a.consolidateTips($, u, (IMarker) null);
+      a.advice($, u, (IMarker) null);
       pm.done();
       $.rewriteAST(d, null).apply(d);
     } catch (MalformedTreeException | BadLocationException e) {
@@ -63,12 +63,12 @@ public class TrimmerLogTest {
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final DefunctPolicyMaker a = new DefunctPolicyMaker();
+    final AdviceGenerator a = new ForTestCompatabilityRewritePolicy();
     try {
       final IProgressMonitor pm = wizard.nullProgressMonitor;
       pm.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
       final ASTRewrite $ = ASTRewrite.create(u.getAST());
-      a.consolidateTips($, u, (IMarker) null);
+      a.advice($, u, (IMarker) null);
       pm.done();
       $.rewriteAST(d, null).apply(d);
     } catch (MalformedTreeException | BadLocationException e) {
@@ -98,10 +98,10 @@ public class TrimmerLogTest {
     final String path = "/home/matteo/MUTATION_TESTING_REFACTORING/test-common-lang/commons-lang/src/main/java/org/apache/commons/lang3/ArrayUtils.java";
     final File f = new File(path);
     final CompilationUnit cu = (CompilationUnit) makeAST.COMPILATION_UNIT.from(f);
-    final DefunctPolicyMaker defunctPolicyMaker = new DefunctPolicyMaker();
-    final int opp = TrimmerTestsUtils.countOpportunities(defunctPolicyMaker, cu);
+    final ForTestCompatabilityRewritePolicy forTestCompatabilityRewritePolicy = new ForTestCompatabilityRewritePolicy();
+    final int opp = TrimmerTestsUtils.countOpportunities(forTestCompatabilityRewritePolicy, cu);
     System.out.println(opp);
-    for (final Tip ¢ : defunctPolicyMaker.collectSuggesions(cu))
+    for (final Tip ¢ : forTestCompatabilityRewritePolicy.weaveRewriter(cu))
       System.out.println(¢.description);
   }
 }

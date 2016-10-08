@@ -27,7 +27,7 @@ public final class Builder extends IncrementalProjectBuilder {
   public static final String MARKER_TYPE = "il.org.spartan.tip";
   /** the key in the marker's properties map under which the type of the
    * spartanization is stored */
-  public static final String SPARTANIZATION_TYPE_KEY = "il.org.spartan.spartanizer.spartanizationType";
+  public static final String TIPPER_TYPE = "il.org.spartan.spartanizer.spartanizationType";
   /** the key in the marker's properties map under which the type of the tipper
    * used to create the marker is stored */
   public static final String SPARTANIZATION_TIPPER_KEY = "il.org.spartan.spartanizer.spartanizationTipper";
@@ -59,9 +59,9 @@ public final class Builder extends IncrementalProjectBuilder {
       addMarkers((IFile) ¢);
   }
 
-  private static void addMarker(final GUI$Applicator a, final Tip r, final IMarker m) throws CoreException {
+  private static void addMarker(final Tip r, final IMarker m) throws CoreException {
     m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-    m.setAttribute(SPARTANIZATION_TYPE_KEY, a + "");
+    m.setAttribute(TIPPER_TYPE, r.getClass()); 
     m.setAttribute(SPARTANIZATION_TIPPER_KEY, r.tipperClass);
     m.setAttribute(IMarker.MESSAGE, prefix() + r.description);
     m.setAttribute(IMarker.CHAR_START, r.from);
@@ -71,16 +71,19 @@ public final class Builder extends IncrementalProjectBuilder {
   }
 
   private static void addMarkers(final IFile ¢) throws CoreException {
-    Tips.reset();
     deleteMarkers(¢);
     addMarkers(¢, (CompilationUnit) makeAST.COMPILATION_UNIT.from(¢));
   }
 
   private static void addMarkers(final IFile f, final CompilationUnit u) throws CoreException {
-    for (final GUI$Applicator s : Tips.all())
-      for (final Tip ¢ : s.collectSuggesions(u))
+    ForTestCompatabilityRewritePolicy s = new ForTestCompatabilityRewritePolicy();
+      for (final Tip ¢ : s.config.with(u).tips())
         if (¢ != null)
-          addMarker(s, ¢, f.createMarker(MARKER_TYPE));
+          addMarker(¢, newMarker(f));
+  }
+
+  public static IMarker newMarker(final IFile f) throws CoreException {
+    return f.createMarker(MARKER_TYPE);
   }
 
   private static String prefix() {
@@ -90,7 +93,7 @@ public final class Builder extends IncrementalProjectBuilder {
   @Override protected IProject[] build(final int kind, @SuppressWarnings({ "unused", "rawtypes" }) final Map __, final IProgressMonitor m)
       throws CoreException {
     if (m != null)
-      m.beginTask("Checking for spartanization opportunities", IProgressMonitor.UNKNOWN);
+      m.beginTask("Searching for laconization tips", IProgressMonitor.UNKNOWN);
     Toolbox.refresh();
     build(kind);
     if (m != null)

@@ -35,7 +35,7 @@ public final class LaconizeProject extends BaseHandler {
     if (todo.isEmpty())
       return 0;
     final AtomicInteger $ = new AtomicInteger(0);
-    final GUI$Applicator ¢ = new DefunctPolicyMaker();
+    final AdviceGenerator ¢ = new ForTestCompatabilityRewritePolicy();
     try {
       PlatformUI.getWorkbench().getProgressService().run(true, true, pm -> {
         pm.beginTask("Looking for tips in " + javaProject, IProgressMonitor.UNKNOWN);
@@ -84,7 +84,7 @@ public final class LaconizeProject extends BaseHandler {
   }
 
   boolean singlePass() {
-    final DefunctPolicyMaker t = new DefunctPolicyMaker();
+    final AdviceGenerator t = new ForTestCompatabilityRewritePolicy();
     final IProgressService ps = workench.getProgressService();
     final AtomicInteger passNum = new AtomicInteger(passNumber + 1);
     final AtomicBoolean cancelled = new AtomicBoolean(false);

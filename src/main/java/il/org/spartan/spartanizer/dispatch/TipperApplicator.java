@@ -12,10 +12,10 @@ import il.org.spartan.spartanizer.engine.*;
 import il.org.spartan.spartanizer.tipping.*;
 
 /** An adapter that converts the protocol of a single @{link Tipper} instance
- * into that of {@link GUI$Applicator}. This class must eventually die.
+ * into that of {@link GUIApplicator}. This class must eventually die.
  * @author Yossi Gil
  * @since 2015/07/25 */
-public final class TipperApplicator extends GUI$Applicator {
+public final class TipperApplicator extends GUIApplicator {
   final Tipper<ASTNode> tipper;
   final Class<? extends ASTNode> clazz;
 
@@ -29,7 +29,7 @@ public final class TipperApplicator extends GUI$Applicator {
     assert clazz != null : "Oops, cannot find kind of operands of " + w.myName();
   }
 
-  @Override protected void consolidateTips(final ASTRewrite r, final CompilationUnit u, final IMarker m,
+  @Override protected void advice(final ASTRewrite r, final CompilationUnit u, final IMarker m,
       @SuppressWarnings("unused") final AtomicInteger __) {
     u.accept(new ASTVisitor() {
       @Override public void preVisit(final ASTNode ¢) {

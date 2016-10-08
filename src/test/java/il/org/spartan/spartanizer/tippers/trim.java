@@ -26,12 +26,12 @@ import il.org.spartan.spartanizer.tipping.*;
  * @author Yossi Gil
  * @since 2016 */
 public interface trim {
-  static int countOpportunities(final GUI$Applicator a, final CompilationUnit u) {
-    return a.collectSuggesions(u).size();
+  static int countOpportunities(final GUIApplicator a, final CompilationUnit u) {
+    return a.advice(u).size();
   }
 
   static fluentTrimmerApplication of(final String codeFragment) {
-    return new fluentTrimmerApplication(new DefunctPolicyMaker(), codeFragment);
+    return new fluentTrimmerApplication(new ForTestCompatabilityRewritePolicy(), codeFragment);
   }
 
   @SafeVarargs //
@@ -48,7 +48,7 @@ public interface trim {
    * .gives("a+b-c")</code> */
   interface repeatedly {
     static fluentTrimmerApplication of(final String codeFragment) {
-      return new fluentTrimmerApplication(new DefunctPolicyMaker(), codeFragment) {
+      return new fluentTrimmerApplication(new ForTestCompatabilityRewritePolicy(), codeFragment) {
         @Override public fluentTrimmerApplication gives(final String expected) {
           return super.gives(new InteractiveSpartanizer().fixedPoint(expected));
         }

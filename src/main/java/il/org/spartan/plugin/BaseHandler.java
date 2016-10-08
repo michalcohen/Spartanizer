@@ -13,7 +13,7 @@ import org.eclipse.ui.handlers.*;
  *         2013/07/11
  * @since 2013/07/01 */
 public abstract class BaseHandler extends AbstractHandler {
-  private final GUI$Applicator inner;
+  private final GUIApplicator inner;
 
   /** Instantiates this class */
   BaseHandler() {
@@ -22,7 +22,7 @@ public abstract class BaseHandler extends AbstractHandler {
 
   /** Instantiates this class
    * @param inner JD */
-  BaseHandler(final GUI$Applicator inner) {
+  BaseHandler(final GUIApplicator inner) {
     this.inner = inner;
   }
 
@@ -38,7 +38,7 @@ public abstract class BaseHandler extends AbstractHandler {
     return inner.getName();
   }
 
-  protected GUI$Applicator getRefactoring() {
+  protected GUIApplicator getRefactoring() {
     return inner;
   }
 
@@ -56,7 +56,7 @@ public abstract class BaseHandler extends AbstractHandler {
   }
 
   private RefactoringWizard getWizard(final ITextSelection s, final ICompilationUnit u) {
-    final GUI$Applicator $ = getRefactoring();
+    final GUIApplicator $ = getRefactoring();
     $.setSelection(s);
     $.setICompilationUnit(u);
     return new Wizard($);

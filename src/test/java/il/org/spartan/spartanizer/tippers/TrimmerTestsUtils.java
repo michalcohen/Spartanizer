@@ -14,8 +14,8 @@ import il.org.spartan.spartanizer.tipping.*;
 import il.org.spartan.spartanizer.utils.*;
 
 public final class TrimmerTestsUtils {
-  public static int countOpportunities(final GUI$Applicator a, final CompilationUnit u) {
-    return a.collectSuggesions(u).size();
+  public static int countOpportunities(final GUIApplicator a, final CompilationUnit u) {
+    return a.advice(u).size();
   }
 
   static String apply(final Tipper<? extends ASTNode> n, final String from) {
@@ -24,7 +24,7 @@ public final class TrimmerTestsUtils {
     return TESTUtils.rewrite(new TipperApplicator(n), u, new Document(from)).get();
   }
 
-  static String applyTrimmer(final DefunctPolicyMaker t, final String from) {
+  static String applyTrimmer(final ForTestCompatabilityRewritePolicy t, final String from) {
     final CompilationUnit u = (CompilationUnit) makeAST.COMPILATION_UNIT.from(from);
     assert u != null;
     final Document d = new Document(from);
@@ -63,7 +63,7 @@ public final class TrimmerTestsUtils {
       assert expected != null;
       final Wrap w = Wrap.find(get());
       final String wrap = w.on(get());
-      final String unpeeled = TrimmerTestsUtils.applyTrimmer(new DefunctPolicyMaker(), wrap);
+      final String unpeeled = TrimmerTestsUtils.applyTrimmer(new ForTestCompatabilityRewritePolicy(), wrap);
       if (wrap.equals(unpeeled))
         azzert.fail("Nothing done on " + get());
       final String peeled = w.off(unpeeled);
@@ -82,7 +82,7 @@ public final class TrimmerTestsUtils {
     void checkExpected(final String expected) {
       final Wrap w = Wrap.find(get());
       final String wrap = w.on(get());
-      final String unpeeled = TrimmerTestsUtils.applyTrimmer(new DefunctPolicyMaker(), wrap);
+      final String unpeeled = TrimmerTestsUtils.applyTrimmer(new ForTestCompatabilityRewritePolicy(), wrap);
       if (wrap.equals(unpeeled))
         azzert.fail("Nothing done on " + get());
       final String peeled = w.off(unpeeled);
@@ -96,7 +96,7 @@ public final class TrimmerTestsUtils {
     private void checkSame() {
       final Wrap w = Wrap.find(get());
       final String wrap = w.on(get());
-      final String unpeeled = TrimmerTestsUtils.applyTrimmer(new DefunctPolicyMaker(), wrap);
+      final String unpeeled = TrimmerTestsUtils.applyTrimmer(new ForTestCompatabilityRewritePolicy(), wrap);
       if (wrap.equals(unpeeled))
         return;
       final String peeled = w.off(unpeeled);

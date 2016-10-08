@@ -15,10 +15,10 @@ import il.org.spartan.spartanizer.ast.navigate.*;
 import il.org.spartan.spartanizer.dispatch.*;
 import il.org.spartan.spartanizer.tipping.*;
 
-/** Single tipper applicator implementation using modified {@link DefunctPolicyMaker}
+/** Single tipper applicator implementation using modified {@link ForTestCompatabilityRewritePolicy}
  * @author Ori Roth
  * @since 2016 */
-public class SingleTipper<N extends ASTNode> extends DefunctPolicyMaker {
+public class SingleTipper<N extends ASTNode> extends ForTestCompatabilityRewritePolicy {
   final Tipper<N> tipper;
 
   public SingleTipper(final Tipper<N> tipper) {
@@ -144,11 +144,11 @@ public class SingleTipper<N extends ASTNode> extends DefunctPolicyMaker {
       return true;
     }
 
-    @Override public IRunnableWithProgress initialWork(final GUI$Applicator a, final List<ICompilationUnit> us, final Map<attribute, Object> m) {
+    @Override public IRunnableWithProgress initialWork(final GUIApplicator a, final List<ICompilationUnit> us, final Map<attribute, Object> m) {
       return countTipsInProject(a, us, m, attribute.TIPS_BEFORE);
     }
 
-    @Override public IRunnableWithProgress finalWork(final GUI$Applicator a, final List<ICompilationUnit> us, final Map<attribute, Object> m) {
+    @Override public IRunnableWithProgress finalWork(final GUIApplicator a, final List<ICompilationUnit> us, final Map<attribute, Object> m) {
       return countTipsInProject(a, us, m, attribute.TIPS_AFTER);
     }
 
@@ -175,12 +175,12 @@ public class SingleTipper<N extends ASTNode> extends DefunctPolicyMaker {
     public abstract String getLabelSuffix();
 
     @SuppressWarnings({ "unchecked", "rawtypes" }) //
-    @Override public GUI$Applicator getApplicator(final IMarker m) {
+    @Override public GUIApplicator getApplicator(final IMarker m) {
       try {
         assert m.getAttribute(Builder.SPARTANIZATION_TIPPER_KEY) != null;
         if (m.getResource() == null)
           return null;
-        final GUI$Applicator $ = getSingleTipper((Class<? extends Tipper>) m.getAttribute(Builder.SPARTANIZATION_TIPPER_KEY));
+        final GUIApplicator $ = getSingleTipper((Class<? extends Tipper>) m.getAttribute(Builder.SPARTANIZATION_TIPPER_KEY));
         if ($ == null)
           return null;
         final ITextSelection t = domain(m);

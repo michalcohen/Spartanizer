@@ -60,11 +60,11 @@ public class RefactorerUtil {
   }
 
   /** [[SuppressWarningsSpartan]] */
-  public static IRunnableWithProgress countTipsInProject(@SuppressWarnings("unused") final GUI$Applicator __, final List<ICompilationUnit> us,
+  public static IRunnableWithProgress countTipsInProject(@SuppressWarnings("unused") final GUIApplicator __, final List<ICompilationUnit> us,
       final Map<attribute, Object> m, final attribute t) {
     if (us.isEmpty())
       return null;
-    final DefunctPolicyMaker tr = new DefunctPolicyMaker();
+    final AdviceGenerator tr = new ForTestCompatabilityRewritePolicy();
     return new IRunnableWithProgress() {
       @SuppressWarnings("boxing") @Override public void run(final IProgressMonitor pm) {
         pm.beginTask("Counting tips in " + us.get(0).getResource().getProject().getName(), IProgressMonitor.UNKNOWN);

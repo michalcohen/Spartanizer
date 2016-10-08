@@ -41,14 +41,14 @@ import il.org.spartan.spartanizer.dispatch.*;
   /** @param e JD
    * @return the applicator used by this refactorer
    *         [[SuppressWarningsSpartan]] */
-  public GUI$Applicator getApplicator(@SuppressWarnings("unused") final ExecutionEvent e) {
+  public GUIApplicator getApplicator(@SuppressWarnings("unused") final ExecutionEvent e) {
     return null;
   }
 
   /** @param m JD
    * @return the applicator used by this refactorer
    *         [[SuppressWarningsSpartan]] */
-  public GUI$Applicator getApplicator(@SuppressWarnings("unused") final IMarker m) {
+  public GUIApplicator getApplicator(@SuppressWarnings("unused") final IMarker m) {
     return null;
   }
 
@@ -108,7 +108,7 @@ import il.org.spartan.spartanizer.dispatch.*;
    * @param attributes JD
    * @return work to be done before running the refactorer main loop
    *         [[SuppressWarningsSpartan]] */
-  @SuppressWarnings("unused") public IRunnableWithProgress initialWork(final GUI$Applicator applicator,
+  @SuppressWarnings("unused") public IRunnableWithProgress initialWork(final GUIApplicator applicator,
       final List<ICompilationUnit> targetCompilationUnits, final Map<attribute, Object> attributes) {
     return null;
   }
@@ -118,7 +118,7 @@ import il.org.spartan.spartanizer.dispatch.*;
    * @param attributes JD
    * @return work to be done after running the refactorer main loop
    *         [[SuppressWarningsSpartan]] */
-  @SuppressWarnings("unused") public IRunnableWithProgress finalWork(final GUI$Applicator applicator,
+  @SuppressWarnings("unused") public IRunnableWithProgress finalWork(final GUIApplicator applicator,
       final List<ICompilationUnit> targetCompilationUnits, final Map<attribute, Object> attributes) {
     return null;
   }
@@ -138,7 +138,7 @@ import il.org.spartan.spartanizer.dispatch.*;
 
   private Void go(final ExecutionEvent e, final IMarker m) {
     final List<ICompilationUnit> targetCompilationUnits = getTargetCompilationUnits();
-    final GUI$Applicator applicator = either(getApplicator(e), getApplicator(m));
+    final GUIApplicator applicator = either(getApplicator(e), getApplicator(m));
     if (!valid(targetCompilationUnits, applicator))
       return null;
     final Map<attribute, Object> attributes = unknowns();
@@ -184,7 +184,7 @@ import il.org.spartan.spartanizer.dispatch.*;
     return true;
   }
 
-  private IRunnableWithProgress runnable(final List<ICompilationUnit> us, final GUI$Applicator a, final Map<attribute, Object> attributes) {
+  private IRunnableWithProgress runnable(final List<ICompilationUnit> us, final GUIApplicator a, final Map<attribute, Object> attributes) {
     return new IRunnableWithProgress() {
       @SuppressWarnings("synthetic-access") @Override public void run(final IProgressMonitor pm) {
         final int passesCount = passesCount();
@@ -202,7 +202,7 @@ import il.org.spartan.spartanizer.dispatch.*;
           for (final ICompilationUnit u : currentCompilationUnits) {
             if (pm.isCanceled())
               break;
-            final GUI$Applicator a = new DefunctPolicyMaker();
+            final ForTestCompatabilityRewritePolicy a = new ForTestCompatabilityRewritePolicy();
             pm.subTask(getProgressMonitorSubMessage(currentCompilationUnits, u));
             final int tipsCommited = a.fuzzyImplementationApply(u, a.getSelection());
             totalTips += tipsCommited;
