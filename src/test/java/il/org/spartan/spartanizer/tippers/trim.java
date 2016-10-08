@@ -31,7 +31,7 @@ public interface trim {
   }
 
   static fluentTrimmerApplication of(final String codeFragment) {
-    return new fluentTrimmerApplication(new Trimmer(), codeFragment);
+    return new fluentTrimmerApplication(new DefunctPolicyMaker(), codeFragment);
   }
 
   @SafeVarargs //
@@ -48,7 +48,7 @@ public interface trim {
    * .gives("a+b-c")</code> */
   interface repeatedly {
     static fluentTrimmerApplication of(final String codeFragment) {
-      return new fluentTrimmerApplication(new Trimmer(), codeFragment) {
+      return new fluentTrimmerApplication(new DefunctPolicyMaker(), codeFragment) {
         @Override public fluentTrimmerApplication gives(final String expected) {
           return super.gives(new InteractiveSpartanizer().fixedPoint(expected));
         }

@@ -40,7 +40,7 @@ public final class Version230 {
     final Wrap w = Wrap.Expression;
     final String wrap = w.on(from);
     azzert.that(from, is(w.off(wrap)));
-    final Trimmer t = new Trimmer();
+    final DefunctPolicyMaker t = new DefunctPolicyMaker();
     final String unpeeled = applyTrimmer(t, wrap);
     if (wrap.equals(unpeeled))
       azzert.fail("Nothing done on " + from);
@@ -3531,9 +3531,9 @@ public final class Version230 {
   }
 
   @Test public void twoOpportunityExample() {
-    azzert.that(TrimmerTestsUtils.countOpportunities(new Trimmer(),
+    azzert.that(TrimmerTestsUtils.countOpportunities(new DefunctPolicyMaker(),
         (CompilationUnit) makeAST.COMPILATION_UNIT.from(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(1));
-    azzert.that(TrimmerTestsUtils.countOpportunities(new Trimmer(),
+    azzert.that(TrimmerTestsUtils.countOpportunities(new DefunctPolicyMaker(),
         (CompilationUnit) makeAST.COMPILATION_UNIT.from(Wrap.Expression.on("on * notion * of * no * nothion != the * plain + kludge"))), is(1));
   }
 

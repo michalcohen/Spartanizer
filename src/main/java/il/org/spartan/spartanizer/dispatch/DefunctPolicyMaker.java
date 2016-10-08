@@ -17,7 +17,7 @@ import il.org.spartan.spartanizer.utils.*;
 
 /** @author Yossi Gil
  * @since 2015/07/10 */
-public class Trimmer extends GUI$Applicator {
+public class DefunctPolicyMaker extends GUI$Applicator {
   public static boolean prune(final Tip r, final List<Tip> rs) {
     if (r != null) {
       r.pruneIncluders(rs);
@@ -29,11 +29,11 @@ public class Trimmer extends GUI$Applicator {
   public final Toolbox toolbox;
 
   /** Instantiates this class */
-  public Trimmer() {
+  public DefunctPolicyMaker() {
     this(Toolbox.defaultInstance());
   }
 
-  public Trimmer(final Toolbox toolbox) {
+  public DefunctPolicyMaker(final Toolbox toolbox) {
     super("Apply");
     this.toolbox = toolbox;
   }
@@ -111,8 +111,8 @@ public class Trimmer extends GUI$Applicator {
   }
 
   public abstract class With {
-    public Trimmer trimmer() {
-      return Trimmer.this;
+    public DefunctPolicyMaker defunctPolicyMaker() {
+      return DefunctPolicyMaker.this;
     }
   }
 

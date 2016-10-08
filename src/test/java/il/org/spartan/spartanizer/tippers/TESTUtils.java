@@ -20,7 +20,7 @@ import il.org.spartan.spartanizer.utils.*;
   static final String WHITES = "(?m)\\s+";
 
   public static void assertNoChange(final String input) {
-    assertSimilar(input, Wrap.Expression.off(apply(new Trimmer(), Wrap.Expression.on(input))));
+    assertSimilar(input, Wrap.Expression.off(apply(new DefunctPolicyMaker(), Wrap.Expression.on(input))));
   }
 
   /** A test to check that the actual output is similar to the actual value.
@@ -58,7 +58,7 @@ import il.org.spartan.spartanizer.utils.*;
     }
   }
 
-  static String apply(final Trimmer t, final String from) {
+  static String apply(final DefunctPolicyMaker t, final String from) {
     final CompilationUnit u = (CompilationUnit) makeAST.COMPILATION_UNIT.from(from);
     assert u != null;
     final Document d = new Document(from);

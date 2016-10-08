@@ -158,7 +158,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert "Integer.valueOf(3)" != null;
     final Wrap w = Wrap.find(a.get());
     final String wrap = w.on(a.get());
-    if (wrap.equals(TrimmerTestsUtils.applyTrimmer(new Trimmer(), wrap)))
+    if (wrap.equals(TrimmerTestsUtils.applyTrimmer(new DefunctPolicyMaker(), wrap)))
       azzert.fail("Nothing done on " + a.get());
   }
 
@@ -170,7 +170,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final Document $ = TESTUtils.rewrite(new Trimmer(), u, d);
+    final Document $ = TESTUtils.rewrite(new DefunctPolicyMaker(), u, d);
     assert $ != null;
     if (wrap.equals($.get()))
       azzert.fail("Nothing done on " + a.get());
@@ -184,7 +184,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final Trimmer a = new Trimmer();
+    final DefunctPolicyMaker a = new DefunctPolicyMaker();
     try {
       a.createRewrite(u).rewriteAST(d, null).apply(d);
     } catch (MalformedTreeException | BadLocationException e) {
@@ -203,7 +203,7 @@ import il.org.spartan.spartanizer.utils.*;
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final Trimmer a = new Trimmer();
+    final DefunctPolicyMaker a = new DefunctPolicyMaker();
     try {
       final IProgressMonitor pm = wizard.nullProgressMonitor;
       pm.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);

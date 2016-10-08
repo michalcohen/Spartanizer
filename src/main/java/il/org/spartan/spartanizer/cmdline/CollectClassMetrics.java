@@ -26,7 +26,7 @@ public final class CollectClassMetrics {
   }
 
   static CompilationUnit spartanize(final CompilationUnit before) {
-    final Trimmer tr = new Trimmer();
+    final DefunctPolicyMaker tr = new DefunctPolicyMaker();
     assert tr != null;
     final ICompilationUnit $ = (ICompilationUnit) before.getJavaElement();
     tr.setICompilationUnit($);

@@ -15,10 +15,10 @@ import il.org.spartan.spartanizer.ast.navigate.*;
 import il.org.spartan.spartanizer.dispatch.*;
 import il.org.spartan.spartanizer.tipping.*;
 
-/** Single tipper applicator implementation using modified {@link Trimmer}
+/** Single tipper applicator implementation using modified {@link DefunctPolicyMaker}
  * @author Ori Roth
  * @since 2016 */
-public class SingleTipper<N extends ASTNode> extends Trimmer {
+public class SingleTipper<N extends ASTNode> extends DefunctPolicyMaker {
   final Tipper<N> tipper;
 
   public SingleTipper(final Tipper<N> tipper) {

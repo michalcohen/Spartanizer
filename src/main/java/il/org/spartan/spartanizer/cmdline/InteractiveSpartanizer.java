@@ -41,7 +41,7 @@ public final class InteractiveSpartanizer {
    * @param from what to process
    * @return trimmed text */
   public String fixedPoint(final String from) {
-    return new Trimmer(toolbox).fixed(from);
+    return new DefunctPolicyMaker(toolbox).fixed(from);
   }
 
   ASTVisitor collect(final List<Tip> $) {
@@ -49,7 +49,7 @@ public final class InteractiveSpartanizer {
       @Override protected <N extends ASTNode> boolean go(final N n) {
         final Tipper<N> t = toolbox.firstTipper(n);
         try {
-          return t == null || t.cantTip(n) || Trimmer.prune(t.tip(n, exclude), $);
+          return t == null || t.cantTip(n) || DefunctPolicyMaker.prune(t.tip(n, exclude), $);
         } catch (final TipperFailure e) {
           e.printStackTrace();
         }

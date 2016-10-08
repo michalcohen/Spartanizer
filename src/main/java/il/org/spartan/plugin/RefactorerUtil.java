@@ -64,7 +64,7 @@ public class RefactorerUtil {
       final Map<attribute, Object> m, final attribute t) {
     if (us.isEmpty())
       return null;
-    final Trimmer tr = new Trimmer();
+    final DefunctPolicyMaker tr = new DefunctPolicyMaker();
     return new IRunnableWithProgress() {
       @SuppressWarnings("boxing") @Override public void run(final IProgressMonitor pm) {
         pm.beginTask("Counting tips in " + us.get(0).getResource().getProject().getName(), IProgressMonitor.UNKNOWN);

@@ -39,7 +39,7 @@ public class TrimmerLogTest {
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final Trimmer a = new Trimmer();
+    final DefunctPolicyMaker a = new DefunctPolicyMaker();
     try {
       final IProgressMonitor pm = wizard.nullProgressMonitor;
       pm.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
@@ -63,7 +63,7 @@ public class TrimmerLogTest {
     assert u != null;
     final Document d = new Document(wrap);
     assert d != null;
-    final Trimmer a = new Trimmer();
+    final DefunctPolicyMaker a = new DefunctPolicyMaker();
     try {
       final IProgressMonitor pm = wizard.nullProgressMonitor;
       pm.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
@@ -98,10 +98,10 @@ public class TrimmerLogTest {
     final String path = "/home/matteo/MUTATION_TESTING_REFACTORING/test-common-lang/commons-lang/src/main/java/org/apache/commons/lang3/ArrayUtils.java";
     final File f = new File(path);
     final CompilationUnit cu = (CompilationUnit) makeAST.COMPILATION_UNIT.from(f);
-    final Trimmer trimmer = new Trimmer();
-    final int opp = TrimmerTestsUtils.countOpportunities(trimmer, cu);
+    final DefunctPolicyMaker defunctPolicyMaker = new DefunctPolicyMaker();
+    final int opp = TrimmerTestsUtils.countOpportunities(defunctPolicyMaker, cu);
     System.out.println(opp);
-    for (final Tip ¢ : trimmer.collectSuggesions(cu))
+    for (final Tip ¢ : defunctPolicyMaker.collectSuggesions(cu))
       System.out.println(¢.description);
   }
 }

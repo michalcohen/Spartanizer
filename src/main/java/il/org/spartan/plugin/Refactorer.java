@@ -202,7 +202,7 @@ import il.org.spartan.spartanizer.dispatch.*;
           for (final ICompilationUnit u : currentCompilationUnits) {
             if (pm.isCanceled())
               break;
-            final GUI$Applicator a = new Trimmer();
+            final GUI$Applicator a = new DefunctPolicyMaker();
             pm.subTask(getProgressMonitorSubMessage(currentCompilationUnits, u));
             final int tipsCommited = a.fuzzyImplementationApply(u, a.getSelection());
             totalTips += tipsCommited;

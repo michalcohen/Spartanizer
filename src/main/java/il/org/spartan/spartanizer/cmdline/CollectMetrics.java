@@ -40,7 +40,7 @@ public final class CollectMetrics {
 
   // TODO Yossi Gil: eliminate warning
   private static void collectTips(final String javaCode, final CompilationUnit before) {
-    reportTips(new Trimmer().collectSuggesions(before));
+    reportTips(new DefunctPolicyMaker().collectSuggesions(before));
   }
 
   private static void go(final File f) {
@@ -115,7 +115,7 @@ public final class CollectMetrics {
   }
 
   private static CompilationUnit spartanize(final String javaCode) {
-    final Trimmer t = new Trimmer();
+    final DefunctPolicyMaker t = new DefunctPolicyMaker();
     final String spartanized = t.fixed(javaCode);
     output.put("Characters", spartanized.length());
     return (CompilationUnit) makeAST.COMPILATION_UNIT.from(spartanized);

@@ -30,7 +30,7 @@ public class SpartanMovie extends AbstractHandler {
     final IWorkbenchWindow window = workbench == null ? null : workbench.getActiveWorkbenchWindow();
     final IWorkbenchPage page = window == null ? null : window.getActivePage();
     final IProgressService progressService = workbench == null ? null : workbench.getProgressService();
-    final Trimmer trimmer = new Trimmer();
+    final DefunctPolicyMaker DefunctRewritePolicyMaker = new DefunctPolicyMaker();
     if (compilationUnits == null || page == null || progressService == null)
       return null;
     try {
@@ -56,7 +56,7 @@ public class SpartanMovie extends AbstractHandler {
               IDE.openEditor(page, marker, true);
               refresh(page);
               sleep(SLEEP_BETWEEN);
-              trimmer.runAsMarkerFix(marker);
+              DefunctRewritePolicyMaker.runAsMarkerFix(marker);
               ++changes;
               marker.delete(); // TODO Roth: does not seam to make a difference
               refresh(page);

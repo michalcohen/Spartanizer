@@ -31,7 +31,7 @@ public abstract class LaconizeSelection extends BaseHandler {
     // TODO Roth: Can we erase this one? I would like to lower our `W` metric.
     new JOptionPane(status, JOptionPane.INFORMATION_MESSAGE, JOptionPane.NO_OPTION, eclipse.icon, null, Integer.valueOf(0));
     final IWorkbench wb = PlatformUI.getWorkbench();
-    final GUI$Applicator applicator = new Trimmer();
+    final GUI$Applicator applicator = new DefunctPolicyMaker();
     applicator.setICompilationUnit(currentCompilationUnit);
     int i, total = 0;
     for (i = 0; i < (!isRepeating() ? 1 : MAX_PASSES); ++i) {
