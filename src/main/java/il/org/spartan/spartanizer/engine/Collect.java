@@ -122,6 +122,22 @@ public enum Collect {
     };
   }
 
+  public static Collector usesOf(final String s) {
+    return new Collector(s) {
+      @Override public List<SimpleName> in(final ASTNode... ns) {
+        return null;
+      }
+
+      @Override public List<String> inside(final ASTNode... ns) {
+        final List<String> $ = new ArrayList<>();
+        for (final ASTNode ¢ : ns)
+          if (¢ != null)
+            ¢.accept(new StringCollector($, stringName));
+        return $;
+      }
+    };
+  }
+
   /** Creates an ASTVisitor that adds to the provided SimpleName list all the
    * identifiers of variable declarations expressions, which are identical the
    * provided ASTNode's.
@@ -453,9 +469,22 @@ public enum Collect {
    * @since 2015-09-06 */
   public abstract static class Collector {
     protected final SimpleName name;
+    protected final String stringName;
 
     Collector(final SimpleName name) {
       this.name = name;
+      stringName = name + "";
+    }
+
+    /** @param ns
+     * @return */
+    public List<String> inside(final ASTNode... ns) {
+      return null;
+    }
+
+    Collector(final String name) {
+      this.name = null;
+      stringName = name;
     }
 
     public abstract List<SimpleName> in(final ASTNode... ns);

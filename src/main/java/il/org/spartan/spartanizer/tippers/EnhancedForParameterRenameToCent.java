@@ -20,13 +20,13 @@ public final class EnhancedForParameterRenameToCent extends EagerTipper<Enhanced
     return "Rename '" + ¢.getParameter().getName() + "' to ¢ in enhanced for loop";
   }
 
-  @Override public Tip tip(final EnhancedForStatement s, final ExclusionManager m) {
+  @Override public ShortTip tip(final EnhancedForStatement s, final ExclusionManager m) {
     final SingleVariableDeclaration d = s.getParameter();
     final SimpleName n = d.getName();
     if (in(n.getIdentifier(), "$", "¢", "__", "_") || !isJohnDoe(d))
       return null;
     final Statement body = s.getBody();
-    if (haz.variableDefinition(body) || Collect.usesOf(n).in(body).isEmpty())
+    if (haz.variableDefinition(body) || haz.cent(body) || Collect.usesOf(n).in(body).isEmpty())
       return null;
     final SimpleName ¢ = s.getAST().newSimpleName("¢");
     if (m != null)

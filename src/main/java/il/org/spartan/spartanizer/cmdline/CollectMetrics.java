@@ -105,7 +105,7 @@ public final class CollectMetrics {
   }
 
   private static void reportTips(final List<Tip> ¢) {
-    for (final Tip $ : ¢) {
+    for (final ShortTip $ : ¢) {
       Tips.put("description", $.description);
       Tips.put("from", $.from);
       Tips.put("to", $.to);

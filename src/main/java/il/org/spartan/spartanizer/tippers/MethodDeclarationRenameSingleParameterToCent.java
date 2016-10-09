@@ -24,7 +24,7 @@ public final class MethodDeclarationRenameSingleParameterToCent extends EagerTip
     return ¢.getName() + "";
   }
 
-  @Override public Tip tip(final MethodDeclaration d, final ExclusionManager m) {
+  @Override public ShortTip tip(final MethodDeclaration d, final ExclusionManager m) {
     assert d != null;
     if (d.isConstructor() || iz.abstract¢(d))
       return null;
@@ -36,7 +36,7 @@ public final class MethodDeclarationRenameSingleParameterToCent extends EagerTip
     if (in(n.getIdentifier(), "$", "¢", "__", "_"))
       return null;
     final Block b = d.getBody();
-    if (b == null || haz.variableDefinition(b) || Collect.usesOf(n).in(b).isEmpty())
+    if (b == null || haz.variableDefinition(b) || haz.cent(b) || Collect.usesOf(n).in(b).isEmpty())
       return null;
     if (m != null)
       m.exclude(d);

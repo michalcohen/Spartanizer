@@ -13,13 +13,11 @@ import org.eclipse.jface.operation.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
-import il.org.spartan.spartanizer.dispatch.*;
-
 /** A meta class containing handler and marker resolution strategies.
  * @author Ori Roth
  * @since 2016 */
 @SuppressWarnings("static-method") public abstract class Refactorer extends AbstractHandler implements IMarkerResolution {
-  public static final attribute UNKNOWN = attribute.UNKNOWN;
+  public static final attribute unknown = attribute.UNKNOWN;
 
   /** Used to collect attributes from a Refactorer's run, used later in printing
    * actions (such as {@link eclipse#announce}) */
@@ -54,8 +52,14 @@ import il.org.spartan.spartanizer.dispatch.*;
 
   /** @return the compilation units designated for refactorer
    *         [[SuppressWarningsSpartan]] */
-  public List<ICompilationUnit> getTargetCompilationUnits() {
-    return Collections.emptyList();
+  public Selection getSelection() {
+    return null;
+  }
+
+  /** @return the compilation units designated for refactorer
+   *         [[SuppressWarningsSpartan]] */
+  public Selection getSelection(@SuppressWarnings("unused") final IMarker marker) {
+    return null;
   }
 
   /** Return null for canceled message.
@@ -137,18 +141,18 @@ import il.org.spartan.spartanizer.dispatch.*;
   }
 
   private Void go(final ExecutionEvent e, final IMarker m) {
-    final List<ICompilationUnit> targetCompilationUnits = getTargetCompilationUnits();
+    final Selection selection = either(getSelection(), getSelection(m));
     final GUIApplicator applicator = either(getApplicator(e), getApplicator(m));
-    if (!valid(targetCompilationUnits, applicator))
+    if (!valid(selection, applicator) || selection.compilationUnits.isEmpty())
       return null;
     final Map<attribute, Object> attributes = unknowns();
     put(attributes, attribute.EVENT, e);
     put(attributes, attribute.MARKER, m);
-    put(attributes, attribute.CU, targetCompilationUnits);
+    put(attributes, attribute.CU, selection.compilationUnits);
     put(attributes, attribute.APPLICATOR, applicator);
-    doWork(initialWork(applicator, targetCompilationUnits, attributes), eclipse.progressMonitorDialog(hasDisplay()));
+    doWork(initialWork(applicator, selection.compilationUnits, attributes), eclipse.progressMonitorDialog(hasDisplay()));
     final ProgressMonitorDialog progressMonitorDialog = eclipse.progressMonitorDialog(hasDisplay());
-    final IRunnableWithProgress r = runnable(targetCompilationUnits, applicator, attributes);
+    final IRunnableWithProgress r = runnable(selection, applicator, attributes);
     final MessageDialog initialDialog = show(getOpeningMessage(attributes));
     if (hasDisplay())
       initializeProgressDialog(progressMonitorDialog);
@@ -159,7 +163,7 @@ import il.org.spartan.spartanizer.dispatch.*;
       return null;
     }
     closeDialog(initialDialog);
-    doWork(finalWork(applicator, targetCompilationUnits, attributes), eclipse.progressMonitorDialog(hasDisplay()));
+    doWork(finalWork(applicator, selection.compilationUnits, attributes), eclipse.progressMonitorDialog(hasDisplay()));
     show(getEndingMessage(attributes));
     return null;
   }
@@ -167,7 +171,7 @@ import il.org.spartan.spartanizer.dispatch.*;
   private Map<attribute, Object> unknowns() {
     final Map<attribute, Object> $ = new HashMap<>();
     for (final attribute ¢ : attribute.values())
-      $.put(¢, UNKNOWN);
+      $.put(¢, unknown);
     return $;
   }
 
@@ -184,7 +188,7 @@ import il.org.spartan.spartanizer.dispatch.*;
     return true;
   }
 
-  private IRunnableWithProgress runnable(final List<ICompilationUnit> us, final GUIApplicator a, final Map<attribute, Object> attributes) {
+  private IRunnableWithProgress runnable(final Selection s, final GUIApplicator a, final Map<attribute, Object> attributes) {
     return new IRunnableWithProgress() {
       @SuppressWarnings("synthetic-access") @Override public void run(final IProgressMonitor pm) {
         final int passesCount = passesCount();
@@ -193,8 +197,8 @@ import il.org.spartan.spartanizer.dispatch.*;
         final List<ICompilationUnit> deadCompilationUnits = new LinkedList<>();
         final Set<ICompilationUnit> modifiedCompilationUnits = new HashSet<>();
         for (pass = 0; pass < passesCount && !finish(pm); ++pass) {
-          pm.beginTask(getProgressMonitorMessage(us, pass), getProgressMonitorWork(us));
-          final List<ICompilationUnit> currentCompilationUnits = currentCompilationUnits(us, deadCompilationUnits);
+          pm.beginTask(getProgressMonitorMessage(s.compilationUnits, pass), getProgressMonitorWork(s.compilationUnits));
+          final List<ICompilationUnit> currentCompilationUnits = currentCompilationUnits(s.compilationUnits, deadCompilationUnits);
           if (currentCompilationUnits.isEmpty()) {
             finish(pm);
             break;
@@ -202,12 +206,11 @@ import il.org.spartan.spartanizer.dispatch.*;
           for (final ICompilationUnit u : currentCompilationUnits) {
             if (pm.isCanceled())
               break;
-            final ForTestCompatabilityRewritePolicy a = new ForTestCompatabilityRewritePolicy();
             pm.subTask(getProgressMonitorSubMessage(currentCompilationUnits, u));
-            final int tipsCommited = a.fuzzyImplementationApply(u, a.getSelection());
+            final int tipsCommited = a.fuzzyImplementationApply(u, s.textSelection);
             totalTips += tipsCommited;
             (tipsCommited == 0 ? deadCompilationUnits : modifiedCompilationUnits).add(u);
-            (a.fuzzyImplementationApply(u, a.getSelection()) != 0 ? deadCompilationUnits : modifiedCompilationUnits).add(u);
+            (a.fuzzyImplementationApply(u, s.textSelection) != 0 ? deadCompilationUnits : modifiedCompilationUnits).add(u);
             pm.worked(1);
           }
         }

@@ -17,7 +17,7 @@ public final class QuickFixer implements IMarkerResolutionGenerator {
   @Override public IMarkerResolution[] getResolutions(final IMarker m) {
     try {
       @SuppressWarnings("unchecked") Class<? extends Tipper<? >>  tipper = (Class<? extends Tipper<?>>) m.getAttribute(Builder.TIPPER_TYPE);
-      final GUIApplicator $ = new GUIApplicator(); 
+      final ForTestCompatabilityRewritePolicy $ = new ForTestCompatabilityRewritePolicy(); 
       assert $ != null;
       return new IMarkerResolution[] { //
           $.getFix(), //
@@ -25,12 +25,9 @@ public final class QuickFixer implements IMarkerResolutionGenerator {
           new LaconizeCurrent(), //
           new LaconizeSelection.Enclosure(MethodDeclaration.class, "Laconize function"),
           new LaconizeSelection.Enclosure(TypeDeclaration.class, "Laconize class"), //
-          // fixers.applyFunction(), //
           SingleTipper.InDeclaration.instance(), //
-          // fixers.applyFile(), //
-          // SingleTipper.InFile.instance(), //
-          // fixers.applyProject(), //
-          // SingleTipper.InProject.instance(), //
+          SingleTipper.InFile.instance(), //
+          SingleTipper.InProject.instance(), //
           fixers.disableFunctionFix(), //
           fixers.disableClassFix(), //
           fixers.disableFileFix() };//

@@ -27,7 +27,7 @@ public final class MethodDeclarationOverrideDegenerateRemove extends EagerTipper
     return "Remove vacous '" + ¢.getName() + "' overriding method";
   }
 
-  @Override public Tip tip(final MethodDeclaration d) {
+  @Override public ShortTip tip(final MethodDeclaration d) {
     final ExpressionStatement s = extract.expressionStatement(d);
     return s == null || !(s.getExpression() instanceof SuperMethodInvocation) || !shouldRemove(d, (SuperMethodInvocation) s.getExpression()) ? null
         : new Tip(description(d), d, this.getClass()) {

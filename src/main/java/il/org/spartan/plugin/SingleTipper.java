@@ -15,10 +15,10 @@ import il.org.spartan.spartanizer.ast.navigate.*;
 import il.org.spartan.spartanizer.dispatch.*;
 import il.org.spartan.spartanizer.tipping.*;
 
-/** Single tipper applicator implementation using modified {@link ForTestCompatabilityRewritePolicy}
+/** Single tipper applicator implementation using modified {@link Trimmer}
  * @author Ori Roth
  * @since 2016 */
-public class SingleTipper<N extends ASTNode> extends ForTestCompatabilityRewritePolicy {
+public class SingleTipper<N extends ASTNode> extends Trimmer {
   final Tipper<N> tipper;
 
   public SingleTipper(final Tipper<N> tipper) {
@@ -53,8 +53,8 @@ public class SingleTipper<N extends ASTNode> extends ForTestCompatabilityRewrite
       return "enclosing function";
     }
 
-    @Override public List<ICompilationUnit> getTargetCompilationUnits() {
-      return Collections.singletonList(eclipse.currentCompilationUnit());
+    @Override public Selection getSelection(final IMarker ¢) {
+      return RefactorerUtil.selection.getCurrentCompilationUnit().setTextSelection(domain(¢));
     }
 
     private static InDeclaration instance;
@@ -78,8 +78,8 @@ public class SingleTipper<N extends ASTNode> extends ForTestCompatabilityRewrite
       return "compilation unit";
     }
 
-    @Override public List<ICompilationUnit> getTargetCompilationUnits() {
-      return Collections.singletonList(eclipse.currentCompilationUnit());
+    @Override public Selection getSelection() {
+      return RefactorerUtil.selection.getCurrentCompilationUnit();
     }
 
     private static InFile instance;
@@ -103,13 +103,8 @@ public class SingleTipper<N extends ASTNode> extends ForTestCompatabilityRewrite
       return "entire project";
     }
 
-    @Override public List<ICompilationUnit> getTargetCompilationUnits() {
-      try {
-        return eclipse.compilationUnits(eclipse.currentCompilationUnit(), new NullProgressMonitor());
-      } catch (final JavaModelException x) {
-        monitor.log(x);
-        return Collections.emptyList();
-      }
+    @Override public Selection getSelection() {
+      return RefactorerUtil.selection.getAllCompilationUnits();
     }
 
     /** [[SuppressWarningsSpartan]] */
@@ -178,16 +173,7 @@ public class SingleTipper<N extends ASTNode> extends ForTestCompatabilityRewrite
     @Override public GUIApplicator getApplicator(final IMarker m) {
       try {
         assert m.getAttribute(Builder.SPARTANIZATION_TIPPER_KEY) != null;
-        if (m.getResource() == null)
-          return null;
-        final GUIApplicator $ = getSingleTipper((Class<? extends Tipper>) m.getAttribute(Builder.SPARTANIZATION_TIPPER_KEY));
-        if ($ == null)
-          return null;
-        final ITextSelection t = domain(m);
-        if (t == null)
-          return null;
-        $.setSelection(t);
-        return $;
+        return m.getResource() == null ? null : getSingleTipper((Class<? extends Tipper>) m.getAttribute(Builder.SPARTANIZATION_TIPPER_KEY));
       } catch (final CoreException x) {
         monitor.log(x);
       }

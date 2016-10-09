@@ -42,7 +42,7 @@ import il.org.spartan.spartanizer.tipping.*;
  * @author Yossi Gil
  * @since 2015-09-05 */
 public final class IfBarFooElseBazFoo extends EagerTipper<IfStatement> implements TipperCategory.Ternarization {
-  /** XXX: This is a bug of auto-laconize [[SuppressWarningsSpartan]] */
+  /** XXX: This is a bug of auto-laconize */
   private static List<Statement> commmonSuffix(final List<Statement> ss1, final List<Statement> ss2) {
     final List<Statement> $ = new ArrayList<>();
     for (; !ss1.isEmpty() && !ss2.isEmpty(); ss2.remove(ss2.size() - 1)) {
@@ -60,7 +60,7 @@ public final class IfBarFooElseBazFoo extends EagerTipper<IfStatement> implement
     return "Consolidate commmon suffix of then and else branches to just after if statement";
   }
 
-  @Override public Tip tip(final IfStatement s) {
+  @Override public ShortTip tip(final IfStatement s) {
     final List<Statement> then = extract.statements(then(s));
     if (then.isEmpty())
       return null;
@@ -99,7 +99,7 @@ public final class IfBarFooElseBazFoo extends EagerTipper<IfStatement> implement
     };
   }
 
-  @Override public Tip tip(final IfStatement s, final ExclusionManager exclude) throws TipperFailure {
+  @Override public ShortTip tip(final IfStatement s, final ExclusionManager exclude) throws TipperFailure {
     return super.tip(s, exclude);
   }
 

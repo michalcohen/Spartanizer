@@ -108,7 +108,7 @@ public final class BlockBreakToReturnInfiniteFor extends CarefulTipper<ForStatem
     return ¢ != null && extract.nextReturn(¢) != null && isInfiniteLoop(¢);
   }
 
-  @Override public Tip tip(final ForStatement vor, final ExclusionManager exclude) {
+  @Override public ShortTip tip(final ForStatement vor, final ExclusionManager exclude) {
     if (vor == null || !isInfiniteLoop(vor))
       return null;
     final ReturnStatement nextReturn = extract.nextReturn(vor);

@@ -2,56 +2,159 @@ package il.org.spartan.spartanizer.research;
 
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.jdt.core.dom.*;
+import il.org.spartan.spartanizer.cmdline.*;
+import il.org.spartan.spartanizer.engine.*;
+import il.org.spartan.spartanizer.utils.*;
+import il.org.spartan.utils.*;
 
-/** TODO: nothing implemented yet, will be working on this..
- * @author Ori Marcovitch
+/** @author Ori Marcovitch
  * @since 2016 */
 public class Analyzer {
   public static void main(final String args[]) {
-    analyze(args[0]);
+    if (args.length != 3)
+      System.out.println("Usage: Analyzer <operation> <inputFolder> <outputFolder>");
+    final String inputFolder = args[1];
+    switch (args[0]) {
+      case "-clean":
+        clean(inputFolder, args[2]);
+        break;
+      case "-analyze":
+        analyze(inputFolder);
+        break;
+      case "-spartanize":
+        spartanize(inputFolder, args[2]);
+        break;
+      case "-full":
+      default:
+        spartanize(inputFolder, args[2]);
+        clean(inputFolder, args[2]);
+        analyze(inputFolder);
+    }
+  }
+
+  private static void clean(final String inputFolder, String outputFolder) {
+    for (final File f : getJavaFiles(inputFolder)) {
+      final ASTNode cu = getCompilationUnit(f);
+      clean(cu);
+      updateFile(f, cu);
+    }
+  }
+
+  private static void updateFile(final File f, final ASTNode cu) {
+    updateFile(f, cu);
+  }
+
+  private static void writeFile(final File f, final String s) {
+    try (final PrintWriter writer = new PrintWriter(f.getAbsolutePath())) {
+      writer.print(s);
+      writer.close();
+    } catch (final FileNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private static void appendFile(final File f, final String s) {
+    try (FileWriter fw = new FileWriter(f, true)) {
+      fw.write(s);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private static void clean(final ASTNode cu) {
+    cu.accept(new CommentsCleanerVisitor());
+  }
+
+  private static ASTNode getCompilationUnit(final File ¢) {
+    return makeAST.COMPILATION_UNIT.from(¢);
+  }
+
+  static String readFile(final String fileName) {
+    try {
+      return FileUtils.read(new File(fileName));
+    } catch (final IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   public static void analyze(final String folderName) {
-    for (final File ¢ : getFiles(folderName))
-      analyze(¢);
+    for (final File f : getJavaFiles(folderName)) {
+      final ASTNode cu = getCompilationUnit(f);
+      analyze(cu);
+      updateFile(f, cu);
+    }
+  }
+
+  private static Set<File> getJavaFiles(final String folderName) {
+    return getJavaFiles(new File(folderName));
   }
 
   /** @param folderName
    * @return */
-  private static List<File> getFiles(final String folderName) {
-    // TODO get all files recursively
-    return null;
+  private static Set<File> getJavaFiles(final File dir) {
+    final Set<File> $ = new HashSet<>();
+    if (dir == null || dir.listFiles() == null)
+      return $;
+    for (final File entry : dir.listFiles())
+      if (entry.isFile() && entry.getName().endsWith(".java") && !entry.getPath().contains("src/test") && !entry.getName().contains("Test"))
+        $.add(entry);
+      else
+        $.addAll(getJavaFiles(entry));
+    return $;
   }
 
-  /** @param f */
-  private static void analyze(final File f) {
-    markAllNP(spartanize());
-    report();
-  }
-
-  /**
-   *
-   */
-  private static void report() {
-    // TODO output statistics
-  }
-
-  /**
-   *
-   */
-  private static void markAllNP(final ASTNode n) {
-    // TODO create visitor which adds comments each time it find an NP, No need
-    // for iterative, just one traversal.
-    // collect statistics of course
+  private static void analyze(final ASTNode ¢) {
+    markAllNP(¢);
+    report(¢);
   }
 
   /**
    *
    */
-  private static ASTNode spartanize() {
-    return null;
-    // TODO call some spartanizer
+  private static void report(final ASTNode root) {
+    System.out.println("[" + markedNodes(root) + "/" + nodes(root) + "]");
+    // TODO: much more then that..
+  }
+
+  static int nodes(final ASTNode root) {
+    final Int $ = new Int();
+    root.accept(new ASTVisitor() {
+      @Override public void preVisit(@SuppressWarnings("unused") ASTNode __) {
+        $.inner += 1;
+      }
+    });
+    return $.inner;
+  }
+
+  static int markedNodes(final ASTNode root) {
+    final Int $ = new Int();
+    root.accept(new ASTVisitor() {
+      @Override public void preVisit(ASTNode ¢) {
+        if (¢.getProperty(Marker.AST_PROPERTY_NAME_NP_LIST) != null)
+          $.inner += 1;
+      }
+    });
+    return $.inner;
+  }
+
+  /**
+   *
+   */
+  private static void markAllNP(final ASTNode ¢) {
+    ¢.accept(new NPMarkerVisitor());
+  }
+
+  /** @param inputFolder
+   * @param outputFolder */
+  private static void spartanize(final String inputFolder, String outputFolder) {
+    InteractiveSpartanizer is = new InteractiveSpartanizer();
+    String spartanizedCode = "";
+    for (final File ¢ : getJavaFiles(inputFolder)) {
+      System.out.println("Now: " + ¢.getName());
+      spartanizedCode = is.fixedPoint(getCompilationUnit(¢) + "");
+      appendFile((new File(outputFolder + "/after.java")), spartanizedCode);
+    }
   }
 }

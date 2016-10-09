@@ -14,7 +14,7 @@ public abstract class ReplaceToNextStatement<N extends ASTNode> extends CarefulT
     return next != null && go(ASTRewrite.create(current.getAST()), current, next, null) != null;
   }
 
-  @Override public Tip tip(final N n, final ExclusionManager exclude) {
+  @Override public ShortTip tip(final N n, final ExclusionManager exclude) {
     final Statement nextStatement = extract.nextStatement(n);
     assert nextStatement != null;
     if (exclude != null)

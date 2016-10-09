@@ -18,7 +18,7 @@ import il.org.spartan.spartanizer.dispatch.*;
 import il.org.spartan.spartanizer.engine.*;
 import il.org.spartan.spartanizer.tipping.*;
 
-/** XXX: This is a bug of auto-laconize [[SuppressWarningsSpartan]] Converts
+/** XXX: This is a bug of auto-laconize Converts
  *
  * <pre>
  * if (X) {
@@ -60,7 +60,7 @@ public final class IfThenFooBarElseFooBaz extends EagerTipper<IfStatement> imple
     return "Condolidate commmon prefix of then and else branches to just before if statement";
   }
 
-  @Override public Tip tip(final IfStatement s) {
+  @Override public ShortTip tip(final IfStatement s) {
     final List<Statement> then = extract.statements(then(s));
     if (then.isEmpty())
       return null;
@@ -94,7 +94,7 @@ public final class IfThenFooBarElseFooBaz extends EagerTipper<IfStatement> imple
     };
   }
 
-  @Override public Tip tip(final IfStatement s, final ExclusionManager exclude) throws TipperFailure {
+  @Override public ShortTip tip(final IfStatement s, final ExclusionManager exclude) throws TipperFailure {
     return super.tip(s, exclude);
   }
 }

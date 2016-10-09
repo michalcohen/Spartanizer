@@ -96,7 +96,7 @@ public final class ReturnToBreakFiniteWhile extends CarefulTipper<WhileStatement
     return ¢ != null && extract.nextReturn(¢) != null && !isInfiniteLoop(¢);
   }
 
-  @Override public Tip tip(final WhileStatement b, final ExclusionManager exclude) {
+  @Override public ShortTip tip(final WhileStatement b, final ExclusionManager exclude) {
     final ReturnStatement nextReturn = extract.nextReturn(b);
     if (b == null || isInfiniteLoop(b) || nextReturn == null)
       return null;

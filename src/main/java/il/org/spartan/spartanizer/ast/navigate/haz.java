@@ -33,6 +33,14 @@ public enum haz {
     return ¢ != null && ¢.getAST() != null && ¢.getAST().hasResolvedBindings();
   }
 
+  public static boolean cent(final ASTNode ¢) {
+    return !Collect.usesOf("¢").inside(¢).isEmpty();
+  }
+  
+  public static boolean dollar(final ASTNode ¢) {
+    return !Collect.usesOf("$").inside(¢).isEmpty();
+  }
+
   /** Determine whether an {@link ASTNode} contains as a children a
    * {@link ContinueStatement}
    * @param ¢ JD
@@ -47,6 +55,13 @@ public enum haz {
   public static boolean dollar(final List<SimpleName> ns) {
     for (final SimpleName ¢ : ns)
       if ("$".equals(identifier(¢)))
+        return true;
+    return false;
+  }
+
+  public static boolean Final(final List<IExtendedModifier> ms) {
+    for (final IExtendedModifier ¢ : ms)
+      if (IExtendedModifiersOrdering.compare(¢, IExtendedModifiersOrdering.FINAL) == 0)
         return true;
     return false;
   }

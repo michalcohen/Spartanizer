@@ -13,7 +13,7 @@ import il.org.spartan.spartanizer.utils.*;
 public abstract class ReplaceCurrentNode<N extends ASTNode> extends CarefulTipper<N> {
   public abstract ASTNode replacement(N n);
 
-  @Override public final Tip tip(final N n) {
+  @Override public final ShortTip tip(final N n) {
     assert prerequisite(n) : fault.dump() + "\n n = " + n + fault.done();
     final ASTNode $ = replacement(n);
     return $ == null ? null : new Tip(description(n), n, this.getClass()) {

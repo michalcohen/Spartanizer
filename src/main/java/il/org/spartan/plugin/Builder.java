@@ -59,7 +59,7 @@ public final class Builder extends IncrementalProjectBuilder {
       addMarkers((IFile) ¢);
   }
 
-  private static void addMarker(final Tip r, final IMarker m) throws CoreException {
+  private static void addMarker(final ShortTip r, final IMarker m) throws CoreException {
     m.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
     m.setAttribute(TIPPER_TYPE, r.getClass()); 
     m.setAttribute(SPARTANIZATION_TIPPER_KEY, r.tipperClass);
@@ -77,7 +77,7 @@ public final class Builder extends IncrementalProjectBuilder {
 
   private static void addMarkers(final IFile f, final CompilationUnit u) throws CoreException {
     ForTestCompatabilityRewritePolicy s = new ForTestCompatabilityRewritePolicy();
-      for (final Tip ¢ : s.config.with(u).tips())
+      for (final ShortTip ¢ : s.config.with(u).tips())
         if (¢ != null)
           addMarker(¢, newMarker(f));
   }

@@ -107,8 +107,8 @@ abstract class $VariableDeclarationFragementAndStatement extends ReplaceToNextSt
     return $;
   }
 
-  @Override public Tip tip(final VariableDeclarationFragment f, final ExclusionManager exclude) {
-    final Tip $ = super.tip(f, exclude);
+  @Override public ShortTip tip(final VariableDeclarationFragment f, final ExclusionManager exclude) {
+    final ShortTip $ = super.tip(f, exclude);
     if ($ != null && exclude != null)
       exclude.exclude(f.getParent());
     return $;

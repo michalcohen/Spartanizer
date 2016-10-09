@@ -38,7 +38,7 @@ public class ForTestCompatabilityRewritePolicy extends AdviceGenerator {
           final Tipper<N> w = getTipper(n);
           if (w == null)
             return true;
-          Tip s = null;
+          ShortTip s = null;
           try {
             s = w.tip(n, exclude);
             TrimmerLog.tip(w, n);
@@ -102,8 +102,7 @@ public class ForTestCompatabilityRewritePolicy extends AdviceGenerator {
     }
   }
 
-  /** [[SuppressWarningsSpartan]] */
-  @SuppressWarnings("static-method") protected <N extends ASTNode> boolean check(@SuppressWarnings("unused") final N ¢) {
+  @SuppressWarnings("static-method") protected <N extends ASTNode> boolean check(@SuppressWarnings("unused") final N __) {
     return true;
   }
 

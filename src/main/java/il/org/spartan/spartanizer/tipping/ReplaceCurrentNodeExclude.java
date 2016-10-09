@@ -11,7 +11,7 @@ import il.org.spartan.spartanizer.utils.*;
 /** Similar to {@link ReplaceCurrentNode}, but with an
  * {@link ExclusionManager} */
 public abstract class ReplaceCurrentNodeExclude<N extends ASTNode> extends ReplaceCurrentNode<N> {
-  @Override public final Tip tip(final N n, final ExclusionManager m) {
+  @Override public final ShortTip tip(final N n, final ExclusionManager m) {
     assert prerequisite(n) : fault.dump() + "\n n = " + n + "\n m = " + m + fault.done();
     final ASTNode $ = replacement(n, m);
     return $ == null ? null : new Tip(description(n), n, this.getClass()) {

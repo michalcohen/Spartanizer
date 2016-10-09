@@ -32,7 +32,7 @@ public final class IfNullReturnNull extends NanoPatternTipper<IfStatement> imple
     return operator(condition) == EQUALS && iz.nullLiteral(then) && (iz.nullLiteral(step.left(condition)) || iz.nullLiteral(step.right(condition)));
   }
 
-  @Override public Tip tip(final IfStatement s) {
+  @Override public ShortTip tip(final IfStatement s) {
     return new Tip(description(s), s, this.getClass()) {
       @Override public void go(final ASTRewrite r, final TextEditGroup g) {
         r.replace(step.expression(step.then(s)), into.e("Null.value"), g);

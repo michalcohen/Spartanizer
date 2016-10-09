@@ -23,7 +23,7 @@ public class TipperFactory {
         return description;
       }
 
-      @Override public Tip tip(final N n) {
+      @Override public ShortTip tip(final N n) {
         return new Tip(description(n), n, this.getClass()) {
           @Override public void go(final ASTRewrite r, final TextEditGroup g) {
             final Map<String, ASTNode> enviroment = collectEnviroment(n);
@@ -84,15 +84,5 @@ public class TipperFactory {
 
   static String reformat$Bs(final String ¢) {
     return ¢.replaceAll("\\$B\\d*", "$0\\(\\);");
-    // for(int i =0 ; i < s.length(); ++ i){
-    // if(s.substring(i).startsWith("$B")){
-    // int j = i + 2;
-    // while(j < s.length() && '0' <= s.charAt(j) && s.charAt(j) <= '9'){
-    // ++j;
-    // }
-    // s = s.substring(beginIndex, endIndex)
-    // i = j - 1;
-    // }
-    // }
   }
 }

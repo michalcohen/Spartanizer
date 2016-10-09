@@ -2,8 +2,6 @@ package il.org.spartan.plugin;
 
 import java.lang.reflect.*;
 
-import javax.swing.*;
-
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.jdt.core.*;
@@ -24,12 +22,10 @@ import il.org.spartan.utils.*;
 public abstract class LaconizeSelection extends BaseHandler {
   private final int MAX_PASSES = 20;
 
-  /** XXX: This is a bug of auto-laconize [[SuppressWarningsSpartan]] */
   public Void execute() throws ExecutionException {
     final ICompilationUnit currentCompilationUnit = eclipse.currentCompilationUnit();
     final StringBuilder status = new StringBuilder("Spartanizing " + currentCompilationUnit.getElementName());
-    // TODO Roth: Can we erase this one? I would like to lower our `W` metric.
-    new JOptionPane(status, JOptionPane.INFORMATION_MESSAGE, JOptionPane.NO_OPTION, eclipse.icon, null, Integer.valueOf(0));
+    eclipse.announce(status);
     final IWorkbench wb = PlatformUI.getWorkbench();
     final AdviceGenerator applicator = new ForTestCompatabilityRewritePolicy();
     applicator.setICompilationUnit(currentCompilationUnit);
@@ -41,7 +37,7 @@ public abstract class LaconizeSelection extends BaseHandler {
         ps.busyCursorWhile(pm -> {
           pm.setTaskName(status + "");
           applicator.config.listeners().
-          add(new AdviceGenerator.Listener.Tracing());
+          add(new Listener.Tracing());
           applicator.parse();
           applicator.scan();
           n.inner = applicator.countTips();

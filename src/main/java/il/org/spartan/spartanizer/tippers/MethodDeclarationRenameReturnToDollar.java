@@ -24,7 +24,7 @@ public final class MethodDeclarationRenameReturnToDollar extends EagerTipper<Met
     return ¢.getName() + "";
   }
 
-  @Override public Tip tip(final MethodDeclaration d, final ExclusionManager exclude) {
+  @Override public ShortTip tip(final MethodDeclaration d, final ExclusionManager exclude) {
     final Type t = d.getReturnType2();
     if (t instanceof PrimitiveType && ((PrimitiveType) t).getPrimitiveTypeCode() == PrimitiveType.VOID)
       return null;
@@ -73,7 +73,7 @@ abstract class AbstractRenamePolicy {
   abstract SimpleName innerSelectReturnVariable();
 
   final SimpleName selectReturnVariable() {
-    return returnStatements == null || localVariables == null || localVariables.isEmpty() || haz.dollar(localVariables) ? null
+    return returnStatements == null || localVariables == null || localVariables.isEmpty() || haz.dollar(step.body(inner)) ? null
         : innerSelectReturnVariable();
   }
 }

@@ -1,0 +1,372 @@
+package il.org.spartan.plugin;
+
+import static il.org.spartan.plugin.eclipse.*;
+
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.atomic.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.rewrite.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.ltk.core.refactoring.*;
+import org.eclipse.ltk.ui.refactoring.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.text.edits.*;
+import org.eclipse.ui.*;
+
+import static il.org.spartan.spartanizer.ast.navigate.wizard.*;
+
+import il.org.spartan.spartanizer.dispatch.*;
+import il.org.spartan.spartanizer.dispatch.Listener;
+import il.org.spartan.spartanizer.engine.*;
+import il.org.spartan.utils.*;
+
+public interface Applicator {
+  static Action newWorker() {
+   return new Action(); 
+  }
+  class Settings extends Listener.S {
+    private static final long serialVersionUID = 6799382119868535830L;
+    final Collection<TextFileChange> changes = new ArrayList<>();
+    CompilationUnit compilationUnit;
+    ICompilationUnit iCompilationUnit;
+    IMarker marker;
+    String name;
+    ITextSelection selection;
+    final List<Tip> tips = new ArrayList<>();
+
+    public IFile compilatinUnitIFile() {
+      return (IFile) iCompilationUnit.getResource();
+    }
+
+    public String compilationUnitName() {
+      return iCompilationUnit.getElementName();
+    }
+
+    public ICompilationUnit iCompilationUnit() {
+      return iCompilationUnit;
+    }
+
+    public final String name() {
+      return name;
+    }
+
+    /** @return selection */
+    public ITextSelection selection() {
+      return selection;
+    }
+
+    public List<Tip> tips() {
+      return tips;
+    }
+  }
+
+  /** An applicator based on an {@link AdviceGenerator}
+   * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>
+   * @since 2016 */
+  public class Action extends Settings {
+
+    public boolean apply(final ICompilationUnit cu) {
+      return apply(cu, new Range(0, 0));
+    }
+
+    public boolean apply(final ICompilationUnit cu, final Range r) {
+      return fuzzyImplementationApply(cu, r == null || r.isEmpty() ? new TextSelection(0, 0) : new TextSelection(r.from, r.size())) > 0;
+    }
+
+    /** Checks a Compilation Unit (outermost ASTNode in the Java Grammar) for
+     * tipper tips
+     * @param u what to check
+       * @return a collection of {@link Tip} objects each containing a laconic
+       *         tip */
+    public final List<Tip> advice(final CompilationUnit ¢) {
+      final List<Tip> $ = new ArrayList<>();
+      ¢.accept(makeTipsCollector($));
+      return $;
+    }
+
+    /** Count the number of tips offered by this instance.
+     * <p>
+     * This is a slow operation. Do not call light-headedly.
+     * @return total number of tips offered by this instance */
+    public int countTips() {
+      setMarker(null);
+      return 1; 
+    }
+
+    /** creates an ASTRewrite which contains the changes
+     * @param counter
+     * @param u the Compilation Unit (outermost ASTNode in the Java Grammar)
+     * @param m a progress monitor in which the progress of the refactoring is
+     *        displayed
+     * @return an ASTRewrite which contains the changes */
+    public final ASTRewrite createRewrite(final CompilationUnit ¢, final AtomicInteger counter) {
+      return rewriterOf(¢, (IMarker) null, counter);
+    }
+
+    public final ASTRewrite createRewrite(final CompilationUnit ¢) {
+      return rewriterOf(¢, (IMarker) null, new AtomicInteger(0));
+    }
+
+    public boolean follow() throws CoreException {
+      event("Preparing the change ...");
+      final ASTRewrite astRewrite = ASTRewrite.create(compilationUnit.getAST());
+      final TextEditGroup g = new TextEditGroup("spartanization: textEditGroup");
+      for (final Tip ¢ : tips) {
+        event("follow ",¢);
+        ¢.go(astRewrite, g);
+      }
+      event("");
+      final TextEdit rewriteAST = astRewrite.rewriteAST();
+      final TextFileChange textFileChange = new TextFileChange(compilationUnitName(), compilatinUnitIFile());
+      textFileChange.setTextType("java");
+      textFileChange.setEdit(rewriteAST);
+      final boolean $ = textFileChange.getEdit().getLength() != 0;
+      if ($)
+        textFileChange.perform(nullProgressMonitor);
+      event("DONE");
+      return $;
+    }
+
+    public int fuzzyImplementationApply(final ICompilationUnit cu, final ITextSelection s) {
+      try {
+        setICompilationUnit(cu);
+        setSelection(s != null && s.getLength() > 0 && !s.isEmpty() ? s : null);
+        return performRule(cu);
+      } catch (final CoreException x) {
+        monitor.logEvaluationError(this, x);
+      }
+      return 0;
+    }
+
+    /** a quickfix which automatically performs the tip
+     * @author Boris van Sosin <code><boris.van.sosin [at] gmail.com></code>
+     * @since 2013/07/01 */
+    /** @return a quick fix for this instance */
+    public IMarkerResolution getFix() {
+      return new IMarkerResolution() {
+        @Override public String getLabel() {
+          return getName();
+        }
+
+        @Override public void run(final IMarker m) {
+          try {
+            runAsMarkerFix(m);
+          } catch (final CoreException x) {
+            monitor.logEvaluationError(this, x);
+          }
+        }
+      };
+    }
+
+    public int go() throws CoreException {
+      progressMonitor.beginTask("Creating change for a single compilation unit...", IProgressMonitor.UNKNOWN);
+      final TextFileChange textChange = new TextFileChange(compilationUnitName(), compilatinUnitIFile());
+      textChange.setTextType("java");
+      final IProgressMonitor m = newSubMonitor(progressMonitor);
+      final AtomicInteger counter = new AtomicInteger(0);
+      textChange.setEdit(createRewrite((CompilationUnit) Make.COMPILATION_UNIT.parser(iCompilationUnit).createAST(m), counter).rewriteAST());
+      if (textChange.getEdit().getLength() != 0)
+        textChange.perform(progressMonitor);
+      progressMonitor.done();
+      return counter.get();
+    }
+
+    /** .
+     * @return True if there are tipss which can be performed on the compilation
+     *         unit. */
+    public final boolean haveTips() {
+      return countTips() > 0;
+    }
+
+    /** @param m marker which represents the range to apply the tipper within
+     * @param n the node which needs to be within the range of
+     *        <code><b>m</b></code>
+     * @return True if the node is within range */
+    public final boolean inRange(final IMarker m, final ASTNode n) {
+      return m != null ? !eclipse.facade.isNodeOutsideMarker(n, m) : !isTextSelected() || !isNodeOutsideSelection(n);
+    }
+
+    /** Performs the current tipper on the provided compilation unit
+     * @param u the compilation to Spartanize
+     * @param pm progress monitor for long operations (could be
+     *        {@link NullProgressMonitor} for light operations)
+     * @throws CoreException exception from the <code>pm</code> */
+    public int performRule(final ICompilationUnit u) throws CoreException {
+      progressMonitor.beginTask("Creating change for a single compilation unit...", IProgressMonitor.UNKNOWN);
+      final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
+      textChange.setTextType("java");
+      final IProgressMonitor m = newSubMonitor(progressMonitor);
+      final AtomicInteger counter = new AtomicInteger(0);
+      textChange.setEdit(createRewrite((CompilationUnit) Make.COMPILATION_UNIT.parser(u).createAST(m), counter).rewriteAST());
+      if (textChange.getEdit().getLength() != 0)
+        textChange.perform(progressMonitor);
+      progressMonitor.done();
+      return counter.get();
+    }
+
+    public ASTRewrite rewriterOf(final CompilationUnit u, final IMarker m, final AtomicInteger counter) {
+      progressMonitor.beginTask("Creating rewrite operation...", IProgressMonitor.UNKNOWN);
+      final ASTRewrite $ = ASTRewrite.create(u.getAST());
+      advice($, u, m, counter);
+      progressMonitor.done();
+      return $;
+    }
+
+    /** @param iCompilationUnit the compilationUnit to set */
+    public void setICompilationUnit(final ICompilationUnit ¢) {
+      iCompilationUnit = ¢;
+    }
+
+    /** @param marker the marker to set for the refactoring */
+    public final void setMarker(final IMarker ¢) {
+      marker = ¢;
+    }
+
+    public void setProgressMonitor(final IProgressMonitor ¢) {
+      progressMonitor = ¢;
+    }
+
+    /** @param subject the selection to set */
+    public void setSelection(final ITextSelection ¢) {
+      selection = ¢;
+    }
+
+    public int TipsCount() {
+      return tips.size();
+    }
+
+    @Override public String toString() {
+      return name;
+    }
+
+    protected void advice(ASTRewrite r, CompilationUnit u, IMarker m, final AtomicInteger counter) {
+    }
+
+    public void advice(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
+      advice(r, u, m, new AtomicInteger(0));
+    }
+
+    /** Determines if the node is outside of the selected text.
+     * @return true if the node is not inside selection. If there is no
+     *         selection at all will return false.
+     * @DisableSpartan */
+    protected boolean isNodeOutsideSelection(final ASTNode ¢) {
+      return !isSelected(¢.getStartPosition());
+    }
+
+    protected ASTVisitor makeTipsCollector(final S<Tip> $) {
+      return null;
+    }
+
+    protected void parse() {
+      compilationUnit = (CompilationUnit) Make.COMPILATION_UNIT.parser(iCompilationUnit).createAST(progressMonitor);
+    }
+
+    protected void scan() {
+      tips.clear();
+      compilationUnit.accept(makeTipsCollector(tips));
+    }
+
+    /** @param u JD
+     * @throws CoreException */
+    protected int scanCompilationUnit(final ICompilationUnit u, final IProgressMonitor m) throws CoreException {
+      m.beginTask("Collecting tips for " + u.getElementName(), IProgressMonitor.UNKNOWN);
+      final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
+      textChange.setTextType("java");
+      final CompilationUnit cu = (CompilationUnit) Make.COMPILATION_UNIT.parser(u).createAST(m);
+      final AtomicInteger counter = new AtomicInteger(0);
+      textChange.setEdit(createRewrite(cu, counter).rewriteAST());
+      if (textChange.getEdit().getLength() != 0)
+        changes.add(textChange);
+      totalChanges += advice(cu).size();
+      m.done();
+      return counter.get();
+    }
+
+    protected void scanCompilationUnitForMarkerFix(final IMarker m, final boolean preview) throws CoreException {
+      progressMonitor.beginTask("Parsing of " + m, IProgressMonitor.UNKNOWN);
+      final ICompilationUnit u = makeAST.iCompilationUnit(m);
+      progressMonitor.done();
+      final TextFileChange textChange = new TextFileChange(u.getElementName(), (IFile) u.getResource());
+      textChange.setTextType("java");
+      progressMonitor.beginTask("Collecting tips for " + m, IProgressMonitor.UNKNOWN);
+      textChange.setEdit(createRewrite(m).rewriteAST());
+      progressMonitor.done();
+      if (textChange.getEdit().getLength() != 0)
+        if (preview)
+          changes.add(textChange);
+        else {
+          progressMonitor.beginTask("Applying tips", IProgressMonitor.UNKNOWN);
+          textChange.perform(progressMonitor);
+          progressMonitor.done();
+        }
+    }
+
+    /** Creates a change from each compilation unit and stores it in the changes
+     * list
+     * @throws IllegalArgumentException
+     * @throws CoreException */
+    protected void scanCompilationUnits(final S<ICompilationUnit> us) throws IllegalArgumentException, CoreException {
+      progressMonitor.beginTask("Iterating over laconizeable compilation units...", us.size());
+      for (final ICompilationUnit ¢ : us)
+        scanCompilationUnit(¢, newSubMonitor(progressMonitor));
+      progressMonitor.done();
+    }
+
+    boolean apply() {
+      return apply(iCompilationUnit, new Range(0, 0));
+    }
+
+    void collectAllTips() throws JavaModelException, CoreException {
+      progressMonitor.beginTask("Collecting tips...", IProgressMonitor.UNKNOWN);
+      scanCompilationUnits(getUnits());
+      progressMonitor.done();
+    }
+
+    void collectTips() {
+      progressMonitor.beginTask("Collecting tips...", IProgressMonitor.UNKNOWN);
+      scan();
+      progressMonitor.done();
+    }
+
+    /** creates an ASTRewrite, under the context of a text marker, which
+     * contains the changes
+     * @param pm a progress monitor in which to display the progress of the
+     *        refactoring
+     * @param m the marker
+     * @return an ASTRewrite which contains the changes */
+    private ASTRewrite createRewrite(final IMarker ¢) {
+      return rewriterOf((CompilationUnit) makeAST.COMPILATION_UNIT.from(¢, progressMonitor), ¢, new AtomicInteger(0));
+    }
+
+    private S<ICompilationUnit> getUnits() throws JavaModelException {
+      if (!isTextSelected())
+        return compilationUnits(iCompilationUnit != null ? iCompilationUnit : currentCompilationUnit(), newSubMonitor(progressMonitor));
+      final S<ICompilationUnit> $ = new ArrayList<>();
+      $.add(iCompilationUnit);
+      return $;
+    }
+
+    private RefactoringStatus innerRunAsMarkerFix(final IMarker m, final boolean preview) throws CoreException {
+      marker = m;
+      progressMonitor.beginTask("Running refactoring...", IProgressMonitor.UNKNOWN);
+      scanCompilationUnitForMarkerFix(m, preview);
+      marker = null;
+      progressMonitor.done();
+      return new RefactoringStatus();
+    }
+
+    private boolean isSelected(final int offset) {
+      return isTextSelected() && offset >= selection.getOffset() && offset < selection.getLength() + selection.getOffset();
+    }
+
+    protected boolean isTextSelected() {
+      return selection != null && !selection.isEmpty() && selection.getLength() != 0;
+    }
+  }
+}

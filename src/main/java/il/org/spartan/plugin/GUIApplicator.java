@@ -29,7 +29,7 @@ import il.org.spartan.utils.*;
  * @author Yossi Gil <code><yossi.gil [at] gmail.com></code>: major refactoring
  *         2013/07/10
  * @since 2013/01/01 */
-public abstract class GUIApplicator extends Refactoring {
+public class GUIApplicator extends Refactoring {
   public IProgressMonitor progressMonitor = nullProgressMonitor;
   final Collection<TextFileChange> changes = new ArrayList<>();
   private CompilationUnit compilationUnit;
@@ -319,7 +319,8 @@ public abstract class GUIApplicator extends Refactoring {
     return name;
   }
 
-  protected abstract void advice(ASTRewrite r, CompilationUnit u, IMarker m, final AtomicInteger counter);
+  protected void advice(ASTRewrite r, CompilationUnit u, IMarker m, final AtomicInteger counter) {
+  }
 
   public void advice(final ASTRewrite r, final CompilationUnit u, final IMarker m) {
     advice(r, u, m, new AtomicInteger(0));
@@ -333,7 +334,9 @@ public abstract class GUIApplicator extends Refactoring {
     return !isSelected(¢.getStartPosition());
   }
 
-  protected abstract ASTVisitor makeTipsCollector(final List<Tip> $);
+  protected ASTVisitor makeTipsCollector(final List<Tip> $) {
+    return null;
+  }
 
   protected void parse() {
     compilationUnit = (CompilationUnit) Make.COMPILATION_UNIT.parser(iCompilationUnit).createAST(progressMonitor);
